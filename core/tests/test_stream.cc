@@ -1,7 +1,7 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
-#include <phoenix/detail/stream.hh>
 #include <phoenix/detail/error.hh>
+#include <phoenix/detail/stream.hh>
 
 #include "catch2.hh"
 

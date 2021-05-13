@@ -37,7 +37,7 @@ namespace phoenix {
 		if (obj.version == MATERIAL_VERSION_G1_V108k) {
 			mat._m_name = in->read_string();
 			mat._m_group = static_cast<material_group>(in->read_byte());// Quirk: This is not an enum
-			mat._m_color = in->read_color();                              // Quirk: This is not a color
+			mat._m_color = in->read_color();                            // Quirk: This is not a color
 			mat._m_smooth_angle = in->read_float();
 			mat._m_texture = in->read_string();
 
@@ -58,7 +58,7 @@ namespace phoenix {
 		} else {
 			mat._m_name = in->read_string();
 			mat._m_group = static_cast<material_group>(in->read_byte());// Quirk: This is not an enum
-			mat._m_color = in->read_color();                              // Quirk: This is not a color
+			mat._m_color = in->read_color();                            // Quirk: This is not a color
 			mat._m_smooth_angle = in->read_float();
 			mat._m_texture = in->read_string();
 

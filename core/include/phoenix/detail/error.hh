@@ -25,4 +25,4 @@ namespace phoenix {
 	class parser_error : public io_error {
 		using io_error::io_error;
 	};
-}
+}// namespace phoenix

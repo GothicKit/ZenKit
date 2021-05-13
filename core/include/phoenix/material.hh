@@ -17,8 +17,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #pragma once
-#include <phoenix/archive.hh>
 #include <glm/vec2.hpp>
+#include <phoenix/archive.hh>
 #include <string>
 
 namespace phoenix {
@@ -191,4 +191,4 @@ namespace phoenix {
 		glm::vec2 _m_default_mapping {};
 	};
 
-}// namespace openzen
+}// namespace phoenix

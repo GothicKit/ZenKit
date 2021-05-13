@@ -7,9 +7,9 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
+#include <functional>
 #include <memory>
 #include <string>
-#include <functional>
 
 namespace phoenix {
 	struct archive_header {
@@ -161,7 +161,7 @@ namespace phoenix {
 		 * @param fnc The function to execute.
 		 * @return The return value of @p fnc.
 		 */
-		bool peek_input(const std::function<bool(reader&)> &fnc);
+		bool peek_input(const std::function<bool(reader&)>& fnc);
 
 	protected:
 		archive_header header;
