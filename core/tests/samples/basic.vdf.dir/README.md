@@ -1,0 +1,1 @@
+This is just some sample data which is merged into `test/samples/basic.vdf`.
