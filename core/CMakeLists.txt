@@ -6,12 +6,14 @@ option(PX_CORE_BUILD_TESTS "Build core library tests" ON)
 
 set(PX_CORE_SRCS
 		source/detail/stream.cc
-		source/detail/compat.cc)
+		source/detail/compat.cc
+		source/vdfs.cc)
 
 set(PX_CORE_TESTS
 		tests/test_runner.cc
 		tests/test_stream.cc
-		tests/test_compat.cc)
+		tests/test_compat.cc
+		tests/test_vdfs.cc)
 
 set(PX_CORE_DEFINES)
 
