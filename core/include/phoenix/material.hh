@@ -57,7 +57,7 @@ namespace phoenix {
 		/**
 		 * @return The color of the material.
 		 */
-		[[nodiscard]] uint32_t color() const noexcept { return _m_color; }
+		[[nodiscard]] ::color color() const noexcept { return _m_color; }
 
 		/**
 		 * @return The smooth angle.
@@ -167,7 +167,7 @@ namespace phoenix {
 	private:
 		std::string _m_name;
 		material_group _m_group;
-		uint32_t _m_color {0xFFFFFFFF};
+		::color _m_color {0, 0, 0, 0};
 		float _m_smooth_angle {0.0f};
 		std::string _m_texture;
 		glm::vec2 _m_texture_scale;
