@@ -17,3 +17,10 @@ using f64 = double;
 struct color {
 	u8 r, g, b, a;
 };
+
+inline bool operator==(color a, color b) {
+	return a.r == b.r &&
+		   a.g == b.g &&
+		   a.b == b.b &&
+		   a.a == b.a;
+}
