@@ -1,0 +1,4 @@
+Checks: '-*,bugprone-*,cppcoreguidelines-*,concurrency-*,clang-analyzer-*,hicpp-*,misc-*,modernize-*,performance-*,'
+        'portability-*,readability-*,-modernize-use-trailing-return-type,-cppcoreguidelines-pro-bounds-pointer-arithmetic,'
+        '-cppcoreguidelines-prefer-member-initializer,-cppcoreguidelines-avoid-c-arrays,-hicpp-avoid-c-arrays,-modernize-avoid-c-arrays'
+WarningsAsErrors: '*'
