@@ -15,5 +15,5 @@ using f32 = float;
 using f64 = double;
 
 struct color {
-	u8 a, r, g, b;
+	u8 r, g, b, a;
 };
