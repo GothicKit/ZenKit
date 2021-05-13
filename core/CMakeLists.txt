@@ -13,13 +13,15 @@ set(PX_CORE_SRCS
 		source/archive/archive_binsafe.cc
 		source/archive.cc
 
-		source/vdfs.cc)
+		source/vdfs.cc
+		source/material.cc)
 
 set(PX_CORE_TESTS
 		tests/test_runner.cc
 		tests/test_stream.cc
 		tests/test_compat.cc
 		tests/test_archive.cc
+		tests/test_material.cc
 		tests/test_vdfs.cc)
 
 set(PX_CORE_DEFINES)
