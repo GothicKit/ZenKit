@@ -24,7 +24,7 @@ phoenix::reader phoenix::reader::from(const std::string& path) {
 	if (buffer == MAP_FAILED) { throw io_error("failed to mmap \"" + path + "\": " + std::strerror(errno)); }
 	close(fd);
 
-	return reader {std::string_view {static_cast<char*>(buffer), static_cast<uint64_t>(st.st_size)}};
+	return reader {std::string_view {static_cast<char*>(buffer), static_cast<u64>(st.st_size)}};
 }
 #endif
 

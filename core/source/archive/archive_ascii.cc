@@ -76,7 +76,7 @@ namespace phoenix {
 		return read_entry("string");
 	}
 
-	int32_t archive_reader_ascii::read_int() {
+	s32 archive_reader_ascii::read_int() {
 		return std::stoi(read_entry("int"));
 	}
 
@@ -84,15 +84,15 @@ namespace phoenix {
 		return std::stof(read_entry("float"));
 	}
 
-	uint8_t archive_reader_ascii::read_byte() {
+	u8 archive_reader_ascii::read_byte() {
 		return std::stoul(read_entry("byte")) & 0xFF;
 	}
 
-	uint16_t archive_reader_ascii::read_word() {
+	u16 archive_reader_ascii::read_word() {
 		return std::stoul(read_entry("word")) & 0xFF'FF;
 	}
 
-	uint32_t archive_reader_ascii::read_enum() {
+	u32 archive_reader_ascii::read_enum() {
 		return std::stoul(read_entry("enum")) & 0xFFFF'FFFF;
 	}
 
@@ -103,9 +103,9 @@ namespace phoenix {
 	color archive_reader_ascii::read_color() {
 		std::stringstream in {read_entry("color")};
 
-		uint16_t r, g, b, a;
+		u16 r, g, b, a;
 		in >> r >> g >> b >> a;
-		return color {(uint8_t) r, (uint8_t) g, (uint8_t) b, (uint8_t) a};
+		return color {(u8) r, (u8) g, (u8) b, (u8) a};
 	}
 
 	glm::vec3 archive_reader_ascii::read_vec3() {

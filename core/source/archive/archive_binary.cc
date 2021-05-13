@@ -51,7 +51,7 @@ namespace phoenix {
 		return input.read_line(false);
 	}
 
-	int32_t archive_reader_binary::read_int() {
+	s32 archive_reader_binary::read_int() {
 		return input.read_s32();
 	}
 
@@ -59,15 +59,15 @@ namespace phoenix {
 		return input.read_f32();
 	}
 
-	uint8_t archive_reader_binary::read_byte() {
+	u8 archive_reader_binary::read_byte() {
 		return input.read_u8();
 	}
 
-	uint16_t archive_reader_binary::read_word() {
+	u16 archive_reader_binary::read_word() {
 		return input.read_u16();
 	}
 
-	uint32_t archive_reader_binary::read_enum() {
+	u32 archive_reader_binary::read_enum() {
 		return input.read_u32();
 	}
 

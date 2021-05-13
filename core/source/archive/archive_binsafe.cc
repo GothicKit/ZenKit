@@ -56,11 +56,11 @@ namespace phoenix {
 
 	void archive_reader_binsafe::skip_optional_hash() {
 		if (peek_input([](reader& in) { return in.read_u8() == bs_hash; })) {
-			input.ignore(sizeof(uint32_t));
+			input.ignore(sizeof(u32));
 		}
 	}
 
-	uint16_t archive_reader_binsafe::assure_entry(archive_binsafe_type tp) {
+	u16 archive_reader_binsafe::assure_entry(archive_binsafe_type tp) {
 		auto type = input.read_u8();
 		auto size = (type == bs_string || type == bs_raw || type == bs_raw_float) ? input.read_u16() : type_sizes[type];
 
@@ -76,7 +76,7 @@ namespace phoenix {
 		return input.read_string(assure_entry(bs_string));
 	}
 
-	int32_t archive_reader_binsafe::read_int() {
+	s32 archive_reader_binsafe::read_int() {
 		assure_entry(bs_int);
 		auto rv = input.read_s32();
 		skip_optional_hash();
@@ -90,21 +90,21 @@ namespace phoenix {
 		return rv;
 	}
 
-	uint8_t archive_reader_binsafe::read_byte() {
+	u8 archive_reader_binsafe::read_byte() {
 		assure_entry(bs_byte);
 		auto rv = input.read_u8();
 		skip_optional_hash();
 		return rv;
 	}
 
-	uint16_t archive_reader_binsafe::read_word() {
+	u16 archive_reader_binsafe::read_word() {
 		assure_entry(bs_word);
 		auto rv = input.read_u16();
 		skip_optional_hash();
 		return rv;
 	}
 
-	uint32_t archive_reader_binsafe::read_enum() {
+	u32 archive_reader_binsafe::read_enum() {
 		assure_entry(bs_enum);
 		auto rv = input.read_u32();
 		skip_optional_hash();

@@ -27,11 +27,11 @@ namespace phoenix {
 		bool read_object_begin(archive_object& obj) override;
 		bool read_object_end() override;
 		std::string read_string() override;
-		int32_t read_int() override;
+		s32 read_int() override;
 		float read_float() override;
-		uint8_t read_byte() override;
-		uint16_t read_word() override;
-		uint32_t read_enum() override;
+		u8 read_byte() override;
+		u16 read_word() override;
+		u32 read_enum() override;
 		bool read_bool() override;
 		color read_color() override;
 		glm::vec3 read_vec3() override;
