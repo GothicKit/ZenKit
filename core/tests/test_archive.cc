@@ -72,7 +72,30 @@ TEST_CASE("ascii archives are read correctly", "[archive]") {
 }
 
 TEST_CASE("binary archives are read correctly", "[archive]") {
-	// FIXME: Stub
+	auto reader = phoenix::archive_reader::open(phoenix::reader::from("./samples/binary.zen"));
+	REQUIRE(reader->read_string() == "DT_BOOKSHELF_V1_1");
+
+	phoenix::archive_object obj;
+	REQUIRE(reader->read_object_begin(obj));
+
+	REQUIRE(obj.object_name == "%");
+	REQUIRE(obj.class_name == "zCMaterial");
+	REQUIRE(obj.version == 17408);
+	REQUIRE(obj.index == 0);
+
+	REQUIRE(reader->read_string() == "DT_BOOKSHELF_V1_1");
+	REQUIRE(reader->read_byte() == 0);
+
+	auto color = reader->read_color();
+	REQUIRE(color.r == 0x19);
+	REQUIRE(color.g == 0x23);
+	REQUIRE(color.b == 0x2A);
+	REQUIRE(color.a == 0xFF);
+
+	REQUIRE(reader->read_float() == 60.0f);
+	REQUIRE(reader->read_string() == "MODIBOOKS01.TGA");
+	REQUIRE(reader->read_string() == "256 256");
+	REQUIRE(reader->read_float() == 0.0f);
 }
 
 TEST_CASE("binsafe archives are read correctly", "[archive]") {
