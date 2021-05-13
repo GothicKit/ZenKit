@@ -1,0 +1,160 @@
+// Copyright 2021 Luis Michaelis
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of
+// this software and associated documentation files (the "Software"), to deal in
+// the Software without restriction, including without limitation the rights to use,
+// copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
+// Software, and to permit persons to whom the Software is furnished to do so,
+// subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#include "archive_binsafe.hh"
+
+#include <fmt/format.h>
+#include <phoenix/detail/error.hh>
+#include <sstream>
+
+namespace phoenix {
+	void archive_reader_binsafe::read_header() {
+		_m_bs_version = input.read_u32();
+		_m_object_count = input.read_u32();
+		_m_hash_table_offset = input.read_u32();// TODO: Understand and implement hashes
+	}
+
+	bool archive_reader_binsafe::read_object_begin(archive_object& obj) {
+		return peek_input([&](reader& in) {
+			if (in.read_u8() != bs_string) { return false; }
+
+			auto line = in.read_string(in.read_u16());
+			if (!line.starts_with('[') || !line.ends_with(']')) { return false; }
+			if (line.length() <= 2) { return false; }
+
+			std::stringstream ss {line.substr(1, line.size() - 2)};
+			ss >> obj.object_name >> obj.class_name >> obj.version >> obj.index;
+			return true;
+		});
+	}
+
+	bool archive_reader_binsafe::read_object_end() {
+		return peek_input([&](reader& in) {
+			if (in.read_u8() != bs_string) { return false; }
+			if (in.read_u16() != 2) { return false; }
+			if (in.read_string(2) != "[]") { return false; }
+			skip_optional_hash();
+
+			return true;
+		});
+	}
+
+	void archive_reader_binsafe::skip_optional_hash() {
+		if (peek_input([](reader& in) { return in.read_u8() == bs_hash; })) {
+			input.ignore(sizeof(uint32_t));
+		}
+	}
+
+	uint16_t archive_reader_binsafe::assure_entry(archive_binsafe_type tp) {
+		auto type = input.read_u8();
+		auto size = (type == bs_string || type == bs_raw || type == bs_raw_float) ? input.read_u16() : type_sizes[type];
+
+		if (type != tp) {
+			input.ignore(size);
+			throw parser_error(fmt::format("archive_reader_binsafe: type mismatch: expected {}, got: {}", tp, type));
+		}
+
+		return size;
+	}
+
+	std::string archive_reader_binsafe::read_string() {
+		return input.read_string(assure_entry(bs_string));
+	}
+
+	int32_t archive_reader_binsafe::read_int() {
+		assure_entry(bs_int);
+		auto rv = input.read_s32();
+		skip_optional_hash();
+		return rv;
+	}
+
+	float archive_reader_binsafe::read_float() {
+		assure_entry(bs_float);
+		auto rv = input.read_f32();
+		skip_optional_hash();
+		return rv;
+	}
+
+	uint8_t archive_reader_binsafe::read_byte() {
+		assure_entry(bs_byte);
+		auto rv = input.read_u8();
+		skip_optional_hash();
+		return rv;
+	}
+
+	uint16_t archive_reader_binsafe::read_word() {
+		assure_entry(bs_word);
+		auto rv = input.read_u16();
+		skip_optional_hash();
+		return rv;
+	}
+
+	uint32_t archive_reader_binsafe::read_enum() {
+		assure_entry(bs_enum);
+		auto rv = input.read_u32();
+		skip_optional_hash();
+		return rv;
+	}
+
+	bool archive_reader_binsafe::read_bool() {
+		assure_entry(bs_bool);
+		auto rv = input.read_u32();// TODO: Check if this actually applies
+		skip_optional_hash();
+		return rv == 1;
+	}
+
+	color archive_reader_binsafe::read_color() {
+		assure_entry(bs_color);
+		color c {
+				input.read_u8(),
+				input.read_u8(),
+				input.read_u8(),
+				input.read_u8(),
+		};
+		skip_optional_hash();
+		return c;
+	}
+
+	glm::vec3 archive_reader_binsafe::read_vec3() {
+		assure_entry(bs_vec3);
+		glm::vec3 c {
+				input.read_f32(),
+				input.read_f32(),
+				input.read_f32(),
+		};
+		skip_optional_hash();
+		return c;
+	}
+
+	glm::vec2 archive_reader_binsafe::read_vec2() {
+		auto size = assure_entry(bs_raw_float) - 2 * sizeof(float);
+
+		if (size < 0) {
+			throw parser_error("archive_reader_binsafe: cannot read vec2 (2 * float): not enough space in rawFloat entry.");
+		}
+
+		glm::vec2 c {
+				input.read_f32(),
+				input.read_f32()};
+
+		// There might be more bytes in this. We'll ignore them.
+		input.ignore(size);
+		skip_optional_hash();
+		return c;
+	}
+}// namespace phoenix

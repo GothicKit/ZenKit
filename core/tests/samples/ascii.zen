@@ -1,0 +1,27 @@
+ZenGin Archive
+ver 1
+zCArchiverGeneric
+ASCII
+saveGame 0
+date 01.01.2001 00:00:00
+user luis
+END
+objects 23
+END
+
+[root_obj % 21237 1]
+	someField0=string:a basic string
+	someField00=bool:1
+
+	someField1=int:672
+	someField2=float:12.12421
+	someField3=byte:255
+	someField4=word:32621
+	someField5=enum:6
+	someField6=bool:1
+	someField7=color:255 1 2 3
+	someField8=vec3:50 100.123 -150
+
+	[child_obj test:class:name 7323 2]
+	[]
+[]
