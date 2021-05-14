@@ -25,10 +25,6 @@ static void write_tga(const std::string& file, const std::vector<u8>& data, u32 
 	stbi_write_tga(file.c_str(), (s32) width, (s32) height, 4, data.data());
 }
 
-static void print_help() {
-	fmt::print(HELP_MESSAGE, PXTEX_VERSION);
-}
-
 int main(int argc, const char** argv) {
 	argh::parser args {argc, argv, argh::parser::PREFER_PARAM_FOR_UNREG_OPTION};
 
@@ -38,7 +34,7 @@ int main(int argc, const char** argv) {
 	}
 
 	if (args[{"-h", "--help"}]) {
-		print_help();
+		fmt::print(HELP_MESSAGE, PXTEX_VERSION);
 		return EXIT_SUCCESS;
 	}
 
