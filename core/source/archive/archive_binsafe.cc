@@ -132,28 +132,22 @@ namespace phoenix {
 
 	glm::vec3 archive_reader_binsafe::read_vec3() {
 		assure_entry(bs_vec3);
-		glm::vec3 c {
-				input.read_f32(),
-				input.read_f32(),
-				input.read_f32(),
-		};
+		auto c = input.read_vec3();
 		skip_optional_hash();
 		return c;
 	}
 
 	glm::vec2 archive_reader_binsafe::read_vec2() {
-		auto size = assure_entry(bs_raw_float) - 2 * sizeof(float);
+		auto unused = assure_entry(bs_raw_float) - 2 * sizeof(float);
 
-		if (size < 0) {
+		if (unused < 0) {
 			throw parser_error("archive_reader_binsafe: cannot read vec2 (2 * float): not enough space in rawFloat entry.");
 		}
 
-		glm::vec2 c {
-				input.read_f32(),
-				input.read_f32()};
+		auto c = input.read_vec2();
 
 		// There might be more bytes in this. We'll ignore them.
-		input.ignore(size);
+		input.ignore(unused);
 		skip_optional_hash();
 		return c;
 	}

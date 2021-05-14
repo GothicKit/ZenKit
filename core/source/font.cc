@@ -42,11 +42,11 @@ namespace phoenix {
 		}
 
 		for (int i = 0; i < FONT_MAX_GLYPHS; ++i) {
-			fnt._m_glyphs[i].uv[0] = glm::vec2(in.read_f32(), in.read_f32());
+			fnt._m_glyphs[i].uv[0] = in.read_vec2();
 		}
 
 		for (int i = 0; i < FONT_MAX_GLYPHS; ++i) {
-			fnt._m_glyphs[i].uv[1] = glm::vec2(in.read_f32(), in.read_f32());
+			fnt._m_glyphs[i].uv[1] = in.read_vec2();
 		}
 
 		return fnt;

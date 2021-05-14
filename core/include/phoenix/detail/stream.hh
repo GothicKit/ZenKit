@@ -3,6 +3,10 @@
 #pragma once
 #include <phoenix/detail/types.hh>
 
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+
 #include <string>
 #include <string_view>
 
@@ -169,6 +173,27 @@ namespace phoenix {
 		 * @throws io_error if reading the value would be out-of-range.
 		 */
 		[[nodiscard]] inline f64 read_f64() { return _read_t<f64>(); }
+
+		/**
+		 * @brief Reads two `float`s from the internal buffer as a glm::vec2.
+		 * @return Two `float`s as a vec2.
+		 * @throws io_error if reading the value would be out-of-range.
+		 */
+		inline glm::vec2 read_vec2() { return {read_f32(), read_f32()}; }
+
+		/**
+		 * @brief Reads three `float`s from the internal buffer as a glm::vec3.
+		 * @return Three float`s as a vec3.
+		 * @throws io_error if reading the value would be out-of-range.
+		 */
+		inline glm::vec3 read_vec3() { return {read_f32(), read_f32(), read_f32()}; }
+
+		/**
+		 * @brief Reads four `float`s from the internal buffer as a glm::vec4.
+		 * @return Four `float`s as a vec4.
+		 * @throws io_error if reading the value would be out-of-range.
+		 */
+		inline glm::vec4 read_vec4() { return {read_f32(), read_f32(), read_f32(), read_f32()}; }
 
 	protected:
 		/**

@@ -80,10 +80,10 @@ namespace phoenix {
 	}
 
 	glm::vec3 archive_reader_binary::read_vec3() {
-		return glm::vec3 {input.read_f32(), input.read_f32(), input.read_f32()};
+		return input.read_vec3();
 	}
 
 	glm::vec2 archive_reader_binary::read_vec2() {
-		return glm::vec2 {input.read_f32(), input.read_f32()};
+		return input.read_vec2();
 	}
 }// namespace phoenix
