@@ -12,12 +12,12 @@
 namespace phoenix {
 	static constexpr std::string_view VDF_SIGNATURE_G1 = "PSVDSC_V2.00\r\n\r\n";
 	static constexpr std::string_view VDF_SIGNATURE_G2 = "PSVDSC_V2.00\n\r\n\r";
-	static constexpr uint32_t VDF_MASK_DIRECTORY = 0x80'00'00'00;
-	static constexpr uint32_t VDF_MASK_LAST = 0x40'00'00'00;
-	static constexpr uint32_t VDF_VERSION = 0x50;
-	static constexpr uint32_t VDF_COMMENT_LENGTH = 256;
-	static constexpr uint32_t VDF_SIGNATURE_LENGTH = 16;
-	static constexpr uint32_t VDF_ENTRY_NAME_LENGTH = 64;
+	static constexpr u32 VDF_MASK_DIRECTORY = 0x80'00'00'00;
+	static constexpr u32 VDF_MASK_LAST = 0x40'00'00'00;
+	static constexpr u32 VDF_VERSION = 0x50;
+	static constexpr u32 VDF_COMMENT_LENGTH = 256;
+	static constexpr u32 VDF_SIGNATURE_LENGTH = 16;
+	static constexpr u32 VDF_ENTRY_NAME_LENGTH = 64;
 
 	/**
 	 * @brief \brief Represents the header of a VDF.
@@ -46,12 +46,12 @@ namespace phoenix {
 		/**
 		 * @return The number of file entries in the VDF.
 		 */
-		[[nodiscard]] inline uint32_t file_count() const noexcept { return _m_file_count; }
+		[[nodiscard]] inline u32 file_count() const noexcept { return _m_file_count; }
 
 		/**
 		 * @return The total number of entries in the VDF.
 		 */
-		[[nodiscard]] inline uint32_t entry_count() const noexcept { return _m_entry_count; }
+		[[nodiscard]] inline u32 entry_count() const noexcept { return _m_entry_count; }
 
 		/**
 		 * @return The timestamp of the VDF.
@@ -61,17 +61,17 @@ namespace phoenix {
 		/**
 		 * @return The total size of the VDF in bytes.
 		 */
-		[[nodiscard]] inline uint32_t size() const noexcept { return _m_size; };
+		[[nodiscard]] inline u32 size() const noexcept { return _m_size; };
 
 		/**
 		 * @return The offset of the entry catalog in bytes.
 		 */
-		[[nodiscard]] inline uint32_t catalog_offset() const noexcept { return _m_catalog_offset; }
+		[[nodiscard]] inline u32 catalog_offset() const noexcept { return _m_catalog_offset; }
 
 		/**
 	     * @return The version of the VDF.
 	     */
-		[[nodiscard]] inline uint32_t version() const noexcept { return _m_version; }
+		[[nodiscard]] inline u32 version() const noexcept { return _m_version; }
 
 	protected:
 		/**
@@ -86,19 +86,19 @@ namespace phoenix {
 		 */
 		static vdf_header read(reader& in);
 
-		static constexpr const auto packed_size = VDF_COMMENT_LENGTH + VDF_SIGNATURE_LENGTH + 6 * sizeof(uint32_t);
+		static constexpr const auto packed_size = VDF_COMMENT_LENGTH + VDF_SIGNATURE_LENGTH + 6 * sizeof(u32);
 
 	private:
 		friend class vdf_file;
 
 		std::string _m_comment;
 		std::string _m_signature {VDF_SIGNATURE_G2};
-		uint32_t _m_entry_count {0};
-		uint32_t _m_file_count {0};
+		u32 _m_entry_count {0};
+		u32 _m_file_count {0};
 		std::time_t _m_timestamp {0};
-		uint32_t _m_size {0};
-		uint32_t _m_catalog_offset {0};
-		uint32_t _m_version {VDF_VERSION};
+		u32 _m_size {0};
+		u32 _m_catalog_offset {0};
+		u32 _m_version {VDF_VERSION};
 	};
 
 	/**
@@ -111,7 +111,7 @@ namespace phoenix {
 		 * @param name The name of the entry to create.
 		 * @param attributes Attributes to set on the entry.
 		 */
-		explicit vdf_entry(std::string_view name, uint32_t attributes = 0);
+		explicit vdf_entry(std::string_view name, u32 attributes = 0);
 
 		/**
 		 * @brief Creates a new file entry with the given name, data and attributes.
@@ -120,7 +120,7 @@ namespace phoenix {
 		 * @param size The number of bytes in the data.
 		 * @param attributes Attributes to set on the entry.
 		 */
-		explicit vdf_entry(std::string_view name, const char* data, uint32_t size, uint32_t attributes = 0);
+		explicit vdf_entry(std::string_view name, const char* data, u32 size, u32 attributes = 0);
 
 		/**
 	     * @brief Searches the entry for the first child with the given name.
@@ -160,12 +160,12 @@ namespace phoenix {
 		/**
 		 * @return The offset of the entry.
 		 */
-		[[nodiscard]] inline uint32_t offset() const noexcept { return _m_offset; }
+		[[nodiscard]] inline u32 offset() const noexcept { return _m_offset; }
 
 		/**
 	  	 * @return The size of the entry in bytes.
 	  	 */
-		[[nodiscard]] inline uint32_t size() const noexcept { return _m_size; }
+		[[nodiscard]] inline u32 size() const noexcept { return _m_size; }
 
 		/**
 		 * @return A new reader for the contents of the entry.
@@ -175,7 +175,7 @@ namespace phoenix {
 		/**
 		 * @return The attributes of the file.
 		 */
-		[[nodiscard]] inline uint32_t attributes() const noexcept { return _m_attributes; }
+		[[nodiscard]] inline u32 attributes() const noexcept { return _m_attributes; }
 
 		/**
 		 * @return `true` if the entry is a file entry, `false` if not.
@@ -204,9 +204,9 @@ namespace phoenix {
 		 * @param catalog_offset The offset of the entry catalog.
 		 * @return The entry read.
 		 */
-		static vdf_entry read(reader& in, uint32_t catalog_offset);
+		static vdf_entry read(reader& in, u32 catalog_offset);
 
-		static constexpr const auto packed_size = VDF_ENTRY_NAME_LENGTH + 4 * sizeof(uint32_t);
+		static constexpr const auto packed_size = VDF_ENTRY_NAME_LENGTH + 4 * sizeof(u32);
 
 	private:
 		friend class vdf_file;
@@ -214,10 +214,10 @@ namespace phoenix {
 		std::vector<vdf_entry> _m_children;
 		std::string _m_name;
 		reader _m_data;
-		uint32_t _m_offset {0};
-		uint32_t _m_size {0};
-		uint32_t _m_type {0};
-		uint32_t _m_attributes {0};
+		u32 _m_offset {0};
+		u32 _m_size {0};
+		u32 _m_type {0};
+		u32 _m_attributes {0};
 	};
 
 	/**

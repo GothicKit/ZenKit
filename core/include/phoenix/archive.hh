@@ -31,8 +31,8 @@ namespace phoenix {
 	struct archive_object {
 		std::string object_name;
 		std::string class_name;
-		uint16_t version;
-		uint32_t index;
+		u16 version;
+		u32 index;
 	};
 
 	/**
@@ -91,7 +91,7 @@ namespace phoenix {
 		 * @return The value read.
 		 * @throws parser_error if the value actually present is not an integer
 		 */
-		virtual int32_t read_int() = 0;
+		virtual s32 read_int() = 0;
 
 		/**
 		 * @brief Reads a float value from the reader.
@@ -105,21 +105,21 @@ namespace phoenix {
 		 * @return The value read.
 		 * @throws parser_error if the value actually present is not a byte
 		 */
-		virtual uint8_t read_byte() = 0;
+		virtual u8 read_byte() = 0;
 
 		/**
 		 * @brief Reads a word (`uint16_t`) value from the reader.
 		 * @return The value read.
 		 * @throws parser_error if the value actually present is not a word
 		 */
-		virtual uint16_t read_word() = 0;
+		virtual u16 read_word() = 0;
 
 		/**
 		 * @brief Reads a enum (`uint32_t`) value from the reader.
 		 * @return The value read.
 		 * @throws parser_error if the value actually present is not a enum
 		 */
-		virtual uint32_t read_enum() = 0;
+		virtual u32 read_enum() = 0;
 
 		/**
 		 * @brief Reads a bool value from the reader.

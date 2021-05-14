@@ -29,7 +29,7 @@ namespace phoenix {
 	 * @brief Represents one glyph.
 	 */
 	struct glyph {
-		uint8_t width;
+		u8 width;
 		glm::vec2 uv[2];
 	};
 
@@ -53,7 +53,7 @@ namespace phoenix {
 		/**
 		 * @return The height of the font
 		 */
-		[[nodiscard]] inline uint32_t height() const noexcept { return _m_height; }
+		[[nodiscard]] inline u32 height() const noexcept { return _m_height; }
 
 		/**
 		 * @return The glyphs in the font (length of FONT_MAX_GLYPHS)
@@ -65,7 +65,7 @@ namespace phoenix {
 
 	private:
 		std::string _m_name;
-		uint32_t _m_height;
+		u32 _m_height;
 		glyph _m_glyphs[FONT_MAX_GLYPHS];
 	};
 
