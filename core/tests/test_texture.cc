@@ -11,6 +11,18 @@ TEST_CASE("textures are read correctly", "[texture]") {
 
 	REQUIRE(texture.height() == 128);
 	REQUIRE(texture.width() == 128);
+
+	REQUIRE(texture.mipmap_width(0) == 128);
+	REQUIRE(texture.mipmap_height(0) == 128);
+	REQUIRE(texture.mipmap_width(1) == 64);
+	REQUIRE(texture.mipmap_height(1) == 64);
+	REQUIRE(texture.mipmap_width(2) == 32);
+	REQUIRE(texture.mipmap_height(2) == 32);
+
+	REQUIRE(texture.ref_height() == 128);
+	REQUIRE(texture.ref_width() == 128);
+
+	REQUIRE(texture.mipmaps() == 5);
 	REQUIRE(texture.format() == tex_R8G8B8A8);
 
 	// we only test mipmap 0 (full size) here
