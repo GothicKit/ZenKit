@@ -50,6 +50,11 @@ namespace phoenix {
 		[[nodiscard]] inline u64 size() const noexcept { return _m_buffer.size(); }
 
 		/**
+		 * @return The data of the internal buffer.
+		 */
+		[[nodiscard]] const char* data() const noexcept { return _m_buffer.data(); }
+
+		/**
 		 * @brief Set the read offset into the internal buffer to the given @p offset.
 		 * @param offset The new read offset to set.
 		 * @throws io_error if setting the given @p offset would be out-of-range of the reader.
