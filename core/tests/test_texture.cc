@@ -14,7 +14,7 @@ TEST_CASE("textures are read correctly", "[texture]") {
 	REQUIRE(texture.format() == tex_R8G8B8A8);
 
 	// we only test mipmap 0 (full size) here
-	const auto& data = texture.data(0);
+	const auto& data = texture.as_rgba8(0);
 	auto expected = reader::from("./samples/erz.expected.0.bin");
 
 	for (u32 i = 0; i < data.size(); i += 4) {

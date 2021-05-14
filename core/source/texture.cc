@@ -4,6 +4,7 @@
 #include <phoenix/texture.hh>
 
 #include <squish.h>
+#include <fmt/format.h>
 
 namespace phoenix {
 	/**
@@ -123,5 +124,97 @@ namespace phoenix {
 	texture texture::read(const std::string& path) {
 		reader rdr {path};
 		return read(rdr);
+	}
+
+	std::vector<u8> texture::as_rgba8(u32 mipmap_level) const {
+		std::vector<u8> conv;
+
+		switch (_m_format) {
+			case tex_B8G8R8A8: {
+				const auto& map = data(mipmap_level);
+				conv.resize(map.size());
+
+				for (u32 i = 0; i < map.size(); i += 4) {
+					conv[i + 0] = map[i + 2];
+					conv[i + 1] = map[i + 1];
+					conv[i + 2] = map[i + 0];
+					conv[i + 3] = map[i + 3];
+				}
+
+				return conv;
+			}
+			case tex_R8G8B8A8:
+				return data(mipmap_level);
+			case tex_A8B8G8R8:{
+				const auto& map = data(mipmap_level);
+				conv.resize(map.size());
+
+				for (u32 i = 0; i < map.size(); i += 4) {
+					conv[i + 0] = map[i + 3];
+					conv[i + 1] = map[i + 2];
+					conv[i + 2] = map[i + 1];
+					conv[i + 3] = map[i + 0];
+				}
+
+				return conv;
+			}
+			case tex_A8R8G8B8:{
+				const auto& map = data(mipmap_level);
+				conv.resize(map.size());
+
+				for (u32 i = 0; i < map.size(); i += 4) {
+					conv[i + 0] = map[i + 1];
+					conv[i + 1] = map[i + 2];
+					conv[i + 2] = map[i + 3];
+					conv[i + 3] = map[i + 0];
+				}
+
+				return conv;
+			}
+			case tex_B8G8R8:{
+				const auto& map = data(mipmap_level);
+				conv.resize(map.size() );
+
+				for (u32 i = 0; i < map.size(); i += 3) {
+					conv[i + 0] = map[i + 2];
+					conv[i + 1] = map[i + 1];
+					conv[i + 2] = map[i + 0];
+					conv[i + 3] = 0;
+				}
+
+				return conv;
+			}
+			case tex_R8G8B8:{
+				const auto& map = data(mipmap_level);
+				conv.resize(map.size() );
+
+				for (u32 i = 0; i < map.size(); i += 3) {
+					conv[i + 0] = map[i + 0];
+					conv[i + 1] = map[i + 1];
+					conv[i + 2] = map[i + 2];
+					conv[i + 3] = 0;
+				}
+
+				return conv;
+			}
+			case tex_p8:{
+				const auto& map = data(mipmap_level);
+				conv.resize(map.size() * sizeof(u8) * 4);
+
+				for (u32 i = 0; i < map.size(); ++i) {
+					auto palentry = _m_palette[map[i]];
+					conv[i + 0] = palentry.r;
+					conv[i + 1] = palentry.g;
+					conv[i + 2] = palentry.b;
+					conv[i + 3] = palentry.a;
+				}
+
+				return conv;
+			}
+			default:
+				throw parser_error(fmt::format("texture: cannot convert format to rgba: {}", _m_format));
+		}
+
+		return std::vector<u8>();
 	}
 }// namespace openzen

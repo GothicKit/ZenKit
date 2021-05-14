@@ -124,6 +124,14 @@ namespace phoenix {
 		 */
 		[[nodiscard]] inline const std::vector<u8>& data(u32 mipmap_level = 0) const noexcept { return _m_textures.at(_m_mipmap_count - 1 - mipmap_level); }
 
+		/**
+		 * @brief Converts the texture data of the given mipmap-level to RGBA8
+		 * @param mipmap_level The mipmap level of the texture to convert
+		 * @return The converted texture data.
+		 * @attention This method is very expensive as it allocates a new buffer and copies the internal data into it.
+		 */
+		[[nodiscard]] std::vector<u8> as_rgba8(u32 mipmap_level = 0) const;
+
 	private:
 		texture() = default;
 
