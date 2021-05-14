@@ -5,7 +5,7 @@ option(PX_BUILD_TOOLS "Build phoenix tool executables" ON)
 option(PX_BUILD_ENGINE "Build the phoenix engine library" ON)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 
 if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
 	set(CMAKE_CXX_FLAGS "-fstandalone-debug -fsanitize=address -fsanitize=undefined -fsanitize=leak ${CMAKE_CXX_FLAGS}")
