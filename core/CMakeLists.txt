@@ -15,7 +15,8 @@ set(PX_CORE_SRCS
 
 		source/vdfs.cc
 		source/material.cc
-		source/font.cc)
+		source/font.cc
+		source/animation.cc)
 
 set(PX_CORE_TESTS
 		tests/test_runner.cc
@@ -24,7 +25,8 @@ set(PX_CORE_TESTS
 		tests/test_archive.cc
 		tests/test_material.cc
 		tests/test_vdfs.cc
-		tests/test_font.cc)
+		tests/test_font.cc
+		tests/test_animation.cc)
 
 set(PX_CORE_DEFINES)
 
