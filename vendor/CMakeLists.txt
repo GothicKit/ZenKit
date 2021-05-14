@@ -17,3 +17,6 @@ if(NOT libsquish_POPULATED)
 	add_subdirectory(${libsquish_SOURCE_DIR} ${libsquish_BINARY_DIR})
 	target_include_directories(squish PUBLIC ${libsquish_SOURCE_DIR})
 endif()
+
+add_library(stb INTERFACE)
+target_include_directories(stb INTERFACE stb)
