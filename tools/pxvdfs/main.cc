@@ -51,10 +51,6 @@ static void do_list(const fs::path& self, const std::vector<phoenix::vdf_entry>&
 	}
 }
 
-static void print_help() {
-	fmt::print(HELP_MESSAGE, PXVDFS_VERSION);
-}
-
 int main(int argc, const char** argv) {
 	argh::parser args {argc, argv, argh::parser::PREFER_PARAM_FOR_UNREG_OPTION};
 
@@ -64,7 +60,7 @@ int main(int argc, const char** argv) {
 	}
 
 	if (args[{"-h", "--help"}]) {
-		print_help();
+		fmt::print(HELP_MESSAGE, PXVDFS_VERSION);
 		return EXIT_SUCCESS;
 	}
 
