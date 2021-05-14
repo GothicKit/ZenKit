@@ -37,16 +37,16 @@ namespace phoenix {
 		// might be the number of glyphs stored in the font.
 		(void) in.read_u32();
 
-		for (int i = 0; i < FONT_MAX_GLYPHS; ++i) {
-			fnt._m_glyphs[i].width = in.read_u8();
+		for (auto& _m_glyph : fnt._m_glyphs) {
+			_m_glyph.width = in.read_u8();
 		}
 
-		for (int i = 0; i < FONT_MAX_GLYPHS; ++i) {
-			fnt._m_glyphs[i].uv[0] = in.read_vec2();
+		for (auto& _m_glyph : fnt._m_glyphs) {
+			_m_glyph.uv[0] = in.read_vec2();
 		}
 
-		for (int i = 0; i < FONT_MAX_GLYPHS; ++i) {
-			fnt._m_glyphs[i].uv[1] = in.read_vec2();
+		for (auto& _m_glyph : fnt._m_glyphs) {
+			_m_glyph.uv[1] = in.read_vec2();
 		}
 
 		return fnt;
