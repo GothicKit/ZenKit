@@ -34,6 +34,18 @@ namespace phoenix {
 
 	/**
 	 * @brief Represents a material.
+	 *
+	 * Parses ZenGin materials. These are normally found embedded within meshes.
+	 * The reference implementation can be found on GitHub:
+	 * https://github.com/Try/ZenLib/blob/732077c82589f5060d1762839293b996c8222c18/zenload/zCMaterial.cpp and the
+	 * original version by Andre Taulien was also referenced:
+	 * https://github.com/ataulien/ZenLib/blob/e1a5e1b12e71690a5470f3be2aa3d0d6419f5191/zenload/zCMaterial.cpp
+	 *
+	 * Thanks to the original author, Andre Taulien as well as Try for additional work on their
+	 * ZenLib fork!
+	 *
+	 * @see https://github.com/Try/ZenLib
+	 * @see https://github.com/ataulien/ZenLib
 	 */
 	class material {
 	public:

@@ -21,6 +21,11 @@ namespace phoenix {
 
 	/**
 	 * @brief \brief Represents the header of a VDF.
+	 *
+	 * Based upon the ReGoth documentation (https://github.com/REGoth-project/REGoth/wiki/VDF-File-Format)
+	 * and the original implementation in PhysicsFS (https://hg.icculus.org/icculus/physfs/file/tip/src/physfs_archiver_vdf.c).
+	 *
+	 * Thanks to Francesco Bertolaccini, Andre Taulien and Nico Bendlin for the original implementation!
 	 */
 	class vdf_header {
 	public:

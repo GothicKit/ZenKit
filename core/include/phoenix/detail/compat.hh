@@ -9,6 +9,12 @@
 namespace phoenix {
 	/**
 	 * @brief Converts a `DOS` timestamp into a unix timestamp.
+	 *
+	 * Adapted from PhysicFS' VDF implementation:
+	 * https://hg.icculus.org/icculus/physfs/file/tip/src/physfs_archiver_vdf.c#l37
+	 *
+	 * Thanks to Francesco Bertolaccini for the original implementation!
+	 *
 	 * @param dos The timestamp to convert.
 	 * @return The converted unix timestamp.
 	 * @note Assumes the `DOS` timestamp is in the `GMT` timezone.

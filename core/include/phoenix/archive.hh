@@ -37,6 +37,15 @@ namespace phoenix {
 
 	/**
 	 * @brief Reader for ZEN archives (`.ZEN` files).
+	 *
+	 * The reference implementation can be found on GitHub:
+	 * https://github.com/ataulien/ZenLib/blob/e1a5e1b12e71690a5470f3be2aa3d0d6419f5191/zenload/zenParser.h and an
+	 * adapted version used by OpenGothic was also referenced:
+	 * https://github.com/Try/ZenLib/blob/732077c82589f5060d1762839293b996c8222c18/zenload/zenParser.cpp
+	 *
+	 * Thanks to the original author, Andre Taulien as well as Try for additional work on their
+	 * ZenLib fork!
+	 *
 	 * @note To instantiate an archive_reader use #open,
 	 */
 	class archive_reader {

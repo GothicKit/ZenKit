@@ -75,7 +75,7 @@ namespace phoenix {
 	 * adapted version used by OpenGothic was also referenced:
 	 * https://github.com/Try/ZenLib/blob/732077c82589f5060d1762839293b996c8222c18/zenload/zCModelAni.cpp
 	 *
-	 * Thanks to the original authors, Andre Taulien and Alexander Stillich as well as Try for additional work on his
+	 * Thanks to the original authors, Andre Taulien and Alexander Stillich as well as Try for additional work on their
 	 * ZenLib fork!
 	 *
 	 * @see https://github.com/ataulien/ZenLib
