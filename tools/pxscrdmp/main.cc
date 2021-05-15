@@ -12,7 +12,31 @@
 
 using namespace phoenix;
 
-static constexpr const auto HELP_MESSAGE = "";
+static constexpr const auto HELP_MESSAGE = "Usage: pxscrdmp [--version]\n"
+										   "       pxscrdmp [-h|--help]\n"
+										   "       pxscrdmp <FILE> [-t|--symbolize] [-I|--include <IFLAGS>] [-E|--exclude <EFLAGS>]\n"
+										   "                       [-f|--search <TERM>] [-s|--symbol <NAME>]\n"
+										   "       pxscrdmp <FILE> [-d|--disassemble] [-s|--symbol <NAME>]\n"
+										   "\n"
+										   "phoenix pxscrdmp v{}\n"
+										   "View contents of compiled Daedalus script files.\n"
+										   "\n"
+										   "\n"
+										   "Include and exclude flags:\n"
+										   "\tc - const symbols\n"
+										   "\tr - symbols that have a return value\n"
+										   "\tm - member symbol_name\n"
+										   "\te - extern symbols\n"
+										   "\tM - merged symbols\n"
+										   "\tg - generated symbols\n"
+										   "\tv - symbols of type void\n"
+										   "\tf - symbols of type float\n"
+										   "\ti - symbols of type int\n"
+										   "\ts - symbols of type string\n"
+										   "\tC - classes\n"
+										   "\tF - functions\n"
+										   "\tP - prototypes\n"
+										   "\tI - instances\n";
 
 
 #define PRINT_FLAG(cond, flag)  \
@@ -59,7 +83,6 @@ int main(int argc, char** argv) {
 	action_symbolize = cmdl[{"-t", "--symbolize"}];
 	action_disassemble = cmdl[{"-d", "--disassemble"}];
 	action_help = cmdl[{"-h", "--help"}];
-	help_flags = cmdl[{"-F", "--flags"}];
 
 	cmdl({"-f", "--search"}) >> search;
 	cmdl({"-I", "--include"}) >> include;
@@ -70,26 +93,7 @@ int main(int argc, char** argv) {
 	}
 
 	if (action_help) {
-		if (help_flags) {
-			fmt::print("The following flags are available for filtering:\n"
-					   "\tc - const symbols\n"
-					   "\tr - symbols that have a return value\n"
-					   "\tm - member symbol_name\n"
-					   "\te - extern symbols\n"
-					   "\tM - merged symbols\n"
-					   "\tg - generated symbols\n"
-					   "\tv - symbols of type void\n"
-					   "\tf - symbols of type float\n"
-					   "\ti - symbols of type int\n"
-					   "\ts - symbols of type string\n"
-					   "\tC - classes\n"
-					   "\tF - functions\n"
-					   "\tP - prototypes\n"
-					   "\tI - instances\n");
-		} else {
-			fmt::print(HELP_MESSAGE, PXSCRDMP_VERSION);
-		}
-
+		fmt::print(HELP_MESSAGE, PXSCRDMP_VERSION);
 		return EXIT_SUCCESS;
 	} else {
 		script scr {input};
