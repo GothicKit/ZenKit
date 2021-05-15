@@ -22,7 +22,11 @@ static constexpr const auto HELP_MESSAGE = "Usage: pxtex [--version]\n"
 										   "Convert ZenGin textures from the ZTEX to TGA format.\n";
 
 static void write_tga(const std::string& file, const std::vector<u8>& data, u32 width, u32 height) {
-	stbi_write_tga(file.c_str(), (s32) width, (s32) height, 4, data.data());
+	if (file.empty()) {
+		stbi_write_tga("pxtex.tga", (s32) width, (s32) height, 4, data.data());
+	} else {
+		stbi_write_tga(file.c_str(), (s32) width, (s32) height, 4, data.data());
+	}
 }
 
 int main(int argc, const char** argv) {
@@ -46,8 +50,7 @@ int main(int argc, const char** argv) {
 
 	std::string output;
 	if (!(args({"-o", "--output"}) >> output)) {
-		auto dir = file.rfind('/');
-		output = file.substr(dir == std::string::npos ? 0 : (dir + 1), file.find('.'));
+		output = "";
 	}
 
 	u32 level = 0;
@@ -83,18 +86,20 @@ int main(int argc, const char** argv) {
 		auto texture = phoenix::texture::read(in);
 
 		if (all_levels) {
-
-			for (u32 i = 0; i < texture.mipmaps(); ++i) {
-				write_tga(fmt::format("{}.{}.tga", output, i), texture.as_rgba8(i), texture.mipmap_width(i), texture.mipmap_height(i));
+			if (output.empty()) {
+				output = "{}.tga";
 			}
 
+			for (u32 i = 0; i < texture.mipmaps(); ++i) {
+				write_tga(fmt::format(output, i), texture.as_rgba8(i), texture.mipmap_width(i), texture.mipmap_height(i));
+			}
 		} else {
 			if (level > texture.mipmaps() - 1) {
 				fmt::print(stderr, "mipmap {} not available. mipmaps 0 to {} are available", level, texture.mipmaps() - 1);
 				return EXIT_FAILURE;
 			}
 
-			write_tga(fmt::format("{}.tga", output), texture.as_rgba8(level), texture.mipmap_width(level), texture.mipmap_height(level));
+			write_tga(output, texture.as_rgba8(level), texture.mipmap_width(level), texture.mipmap_height(level));
 		}
 	} catch (const std::exception& e) {
 		fmt::print(stderr, "cannot convert texture: {}", e.what());
