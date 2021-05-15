@@ -107,9 +107,11 @@ namespace phoenix {
 					break;
 				case animation_chunk::data:
 					anim._m_checksum = in.read_u32();
+					anim._m_node_indices.resize(anim._m_node_count);
 
-					// FIXME: Ignored data
-					in.ignore(anim._m_node_count * sizeof(u32));
+					for (u32 i = 0; i < anim._m_node_count; ++i) {
+						anim._m_node_indices[i] = in.read_u32();
+					}
 
 					anim._m_samples.resize(anim._m_node_count * anim._m_frame_count);
 

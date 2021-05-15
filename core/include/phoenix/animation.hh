@@ -100,6 +100,8 @@ namespace phoenix {
 
 		[[nodiscard]] inline const std::vector<animation_event>& events() const noexcept { return _m_events; }
 
+		[[nodiscard]] inline const std::vector<u32>& node_indices() const noexcept { return _m_node_indices; }
+
 	protected:
 		animation() = default;
 
@@ -118,6 +120,7 @@ namespace phoenix {
 
 		std::vector<animation_sample> _m_samples;
 		std::vector<animation_event> _m_events;
+		std::vector<u32> _m_node_indices;
 	};
 
 }// namespace phoenix
