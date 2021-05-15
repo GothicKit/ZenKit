@@ -125,19 +125,19 @@ namespace phoenix {
 					break;
 				case animation_chunk::animation:
 					// TODO: not implemented:
-					fmt::print("warning: animation: chunk not implemented: 'animation'\n");
+					fmt::print(stderr, "warning: animation: chunk not implemented: 'animation'\n");
 					break;
 				case animation_chunk::source:
 					// TODO: not implemented:
-					fmt::print("warning: animation: chunk not implemented: 'source'\n");
+					fmt::print(stderr, "warning: animation: chunk not implemented: 'source'\n");
 					break;
 				default:
-					fmt::print("warning: animation: chunk not implemented: 0x{:X}\n", chunk);
+					fmt::print(stderr, "warning: animation: chunk not implemented: 0x{:X}\n", chunk);
 					break;
 			}
 
 			if (in.tell() != end) {
-				fmt::print("warning: animation: not all data consumed from section 0x{:X}\n", chunk);
+				fmt::print(stderr, "warning: animation: not all data consumed from section 0x{:X}\n", chunk);
 				in.seek(end);
 			}
 		} while (in.tell() < in.size() - 4);
