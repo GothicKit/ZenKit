@@ -6,7 +6,8 @@
 #include "catch2.hh"
 
 TEST_CASE("ascii archives are read correctly", "[archive]") {
-	auto reader = phoenix::archive_reader::open(phoenix::reader::from("./samples/ascii.zen"));
+	auto in = phoenix::reader::from("./samples/ascii.zen");
+	auto reader = phoenix::archive_reader::open(in);
 
 	phoenix::archive_object obj;
 
@@ -56,7 +57,8 @@ TEST_CASE("ascii archives are read correctly", "[archive]") {
 }
 
 TEST_CASE("binary archives are read correctly", "[archive]") {
-	auto reader = phoenix::archive_reader::open(phoenix::reader::from("./samples/binary.zen"));
+	auto in = phoenix::reader::from("./samples/binary.zen");
+	auto reader = phoenix::archive_reader::open(in);
 	REQUIRE(reader->read_string() == "DT_BOOKSHELF_V1_1");
 
 	phoenix::archive_object obj;

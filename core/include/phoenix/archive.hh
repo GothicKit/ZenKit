@@ -55,7 +55,7 @@ namespace phoenix {
 		 * @param in The reader to read from
 		 * @param header The header of the archive.
 		 */
-		inline archive_reader(reader in, archive_header&& header) : header(std::move(header)), input(in) {}
+		inline archive_reader(reader& in, archive_header&& header) : header(std::move(header)), input(in) {}
 		virtual ~archive_reader() = default;
 
 		/**
@@ -65,7 +65,7 @@ namespace phoenix {
 		 * @throws phoenix::io_error
 		 * @throws phoenix::parser_error
 		 */
-		static std::unique_ptr<archive_reader> open(reader in);
+		static std::unique_ptr<archive_reader> open(reader& in);
 
 		/**
 		 * @brief Tries to read the begin of a new object from the archive.
@@ -174,7 +174,7 @@ namespace phoenix {
 
 	protected:
 		archive_header header;
-		reader input;
+		reader& input;
 	};
 
 	using archive_reader_ref = std::unique_ptr<archive_reader>;

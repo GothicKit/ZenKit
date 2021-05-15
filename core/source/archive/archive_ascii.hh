@@ -6,7 +6,7 @@
 namespace phoenix {
 	class archive_reader_ascii final : public archive_reader {
 	public:
-		inline archive_reader_ascii(const reader& in, archive_header&& header) : archive_reader(in, std::move(header)) {}
+		inline archive_reader_ascii(reader& in, archive_header&& header) : archive_reader(in, std::move(header)) {}
 
 		bool read_object_begin(archive_object& obj) override;
 		bool read_object_end() override;

@@ -46,7 +46,7 @@ namespace phoenix {
 		return header;
 	}
 
-	std::unique_ptr<archive_reader> archive_reader::open(reader in) {
+	std::unique_ptr<archive_reader> archive_reader::open(reader& in) {
 		auto header = archive_header::read(in);
 		std::unique_ptr<archive_reader> reader;
 
