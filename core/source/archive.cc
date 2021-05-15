@@ -74,4 +74,19 @@ namespace phoenix {
 
 		return true;
 	}
+
+	void archive_reader::skip_object(bool skip_current) {
+		archive_object tmp;
+		int level = skip_current ? 1 : 0;
+
+		do {
+			if (read_object_begin(tmp)) {
+				++level;
+			} else if (read_object_end()) {
+				--level;
+			} else {
+				skip_entry();
+			}
+		} while (level > 0);
+	}
 }// namespace phoenix

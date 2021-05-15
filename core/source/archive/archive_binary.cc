@@ -70,4 +70,11 @@ namespace phoenix {
 	glm::vec2 archive_reader_binary::read_vec2() {
 		return input.read_vec2();
 	}
+
+	void archive_reader_binary::skip_entry() {}
+
+	void archive_reader_binary::skip_object(bool skip_current) {
+		// FIXME: skip_current is ignored here
+		input.ignore(input.read_u32());
+	}
 }// namespace phoenix

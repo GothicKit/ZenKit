@@ -158,11 +158,23 @@ namespace phoenix {
 		 */
 		virtual glm::vec2 read_vec2() = 0;
 
+		/**
+		 * @brief Skips the next object in the reader and all it's children
+		 * @param skip_current Assume that the object to be skipped is the one currently read. If set to `false`
+		 * assume to skip the object beginning at the current read offset.
+		 */
+		virtual void skip_object(bool skip_current);
+
 	protected:
 		/**
 		 * @brief Read the header of the specific archive format.
 		 */
 		virtual void read_header() = 0;
+
+		/**
+		 * @brief Skips the next entry in the reader.
+		 */
+		virtual void skip_entry() = 0;
 
 		/**
 		 * @brief Saves the current read offset of the reader and calls @p fnc. If @p fnc returns `false` the reader is

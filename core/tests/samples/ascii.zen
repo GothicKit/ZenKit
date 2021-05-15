@@ -13,6 +13,10 @@ END
 	someField0=string:a basic string
 	someField00=bool:1
 
+	[skipped % 0 3]
+		skippedField=string:skipped
+	[]
+
 	someField1=int:672
 	someField2=float:12.12421
 	someField3=byte:255

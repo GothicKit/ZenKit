@@ -135,4 +135,35 @@ namespace phoenix {
 		skip_optional_hash();
 		return c;
 	}
+
+	void archive_reader_binsafe::skip_entry() {
+		auto type = static_cast<archive_binsafe_type>(input.read_u8());
+
+		switch (type) {
+			case bs_string:
+			case bs_raw:
+			case bs_raw_float:
+				input.ignore(input.read_u16());
+				break;
+			case bs_enum:
+			case bs_hash:
+			case bs_int:
+			case bs_float:
+			case bs_bool:
+			case bs_color:
+				input.ignore(sizeof(u32));
+				break;
+			case bs_byte:
+				input.ignore(sizeof(u8));
+				break;
+			case bs_word:
+				input.ignore(sizeof(u16));
+				break;
+			case bs_vec3:
+				input.ignore(sizeof(float) * 3);
+				break;
+		}
+
+		skip_optional_hash();
+	}
 }// namespace phoenix

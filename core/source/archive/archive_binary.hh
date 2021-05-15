@@ -22,6 +22,12 @@ namespace phoenix {
 		glm::vec2 read_vec2() override;
 
 	protected:
+		void skip_entry() override;
+
+	public:
+		void skip_object(bool skip_current) override;
+
+	protected:
 		void read_header() override;
 
 	private:

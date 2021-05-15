@@ -22,6 +22,9 @@ namespace phoenix {
 		glm::vec2 read_vec2() override;
 
 	protected:
+		void skip_entry() override;
+
+	protected:
 		void read_header() override;
 
 		std::string read_entry(std::string_view type);

@@ -25,6 +25,8 @@ TEST_CASE("ascii archives are read correctly", "[archive]") {
 	// or if it should just revert to the beginning of the line to enable re-parsing it.
 	REQUIRE_THROWS_AS(reader->read_string(), phoenix::parser_error);
 
+	reader->skip_object();
+
 	REQUIRE(reader->read_int() == 672);
 	REQUIRE(reader->read_float() == 12.12421f);
 	REQUIRE(reader->read_byte() == 255);

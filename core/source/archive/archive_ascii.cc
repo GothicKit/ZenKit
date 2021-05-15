@@ -107,4 +107,8 @@ namespace phoenix {
 		in >> v.x >> v.y;
 		return v;
 	}
+
+	void archive_reader_ascii::skip_entry() {
+		(void) input.read_line();
+	}
 }// namespace phoenix
