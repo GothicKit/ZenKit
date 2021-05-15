@@ -18,7 +18,8 @@ set(PX_CORE_SRCS
 		source/font.cc
 		source/animation.cc
 		source/texture.cc
-		source/script.cc)
+		source/script.cc
+		source/mesh.cc)
 
 set(PX_CORE_TESTS
 		tests/test_runner.cc
@@ -30,7 +31,8 @@ set(PX_CORE_TESTS
 		tests/test_font.cc
 		tests/test_animation.cc
 		tests/test_texture.cc
-		tests/test_script.cc)
+		tests/test_script.cc
+		tests/test_mesh.cc)
 
 set(PX_CORE_DEFINES)
 
