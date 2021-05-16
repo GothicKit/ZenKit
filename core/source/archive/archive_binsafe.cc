@@ -23,6 +23,8 @@ namespace phoenix {
 
 			std::stringstream ss {line.substr(1, line.size() - 2)};
 			ss >> obj.object_name >> obj.class_name >> obj.version >> obj.index;
+
+			skip_optional_hash();
 			return true;
 		});
 	}
