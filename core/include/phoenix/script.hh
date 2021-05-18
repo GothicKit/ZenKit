@@ -435,10 +435,11 @@ namespace phoenix {
 	class script {
 	public:
 		/**
-		 * @brief Reads in a compiled daedalus script.
+		 * @brief Parses in a compiled daedalus script.
 		 * @param path The path of the script file.
+		 * @return The script parsed
 		 */
-		explicit script(const std::string& path);
+		static script parse(const std::string& path);
 
 		/**
 		 * @brief Registers a member offset
@@ -510,6 +511,9 @@ namespace phoenix {
 		 * @return The instruction.
 		 */
 		instruction instruction_at(u32 address) const;
+
+	protected:
+		script() = default;
 
 	private:
 		std::vector<symbol> _m_symbols;

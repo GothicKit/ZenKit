@@ -73,29 +73,32 @@ namespace phoenix {
 		return s;
 	}
 
-	script::script(const std::string& path) {
+	script script::parse(const std::string& path) {
+		script scr {};
 		auto in = reader::from(path);
-		_m_version = in.read_u8();
+
+		scr._m_version = in.read_u8();
 		auto symbol_count = in.read_u32();
 
-		_m_symbols.reserve(symbol_count);
-		_m_symbols_by_name.reserve(symbol_count);
-		_m_symbols_by_address.reserve(symbol_count);
+		scr._m_symbols.reserve(symbol_count);
+		scr._m_symbols_by_name.reserve(symbol_count);
+		scr._m_symbols_by_address.reserve(symbol_count);
 		in.ignore(symbol_count * sizeof(u32));// Sort table
 
 		for (u32 i = 0; i < symbol_count; ++i) {
-			auto* sym = &_m_symbols.emplace_back(symbol::parse(in));
-			_m_symbols_by_name[sym->name()] = sym;
+			auto* sym = &scr._m_symbols.emplace_back(symbol::parse(in));
+			scr._m_symbols_by_name[sym->name()] = sym;
 			sym->_m_index = i;
 
 			if (sym->type() == dt_prototype || sym->type() == dt_instance ||
 				(sym->type() == dt_function && sym->is_const() && !sym->is_member())) {
-				_m_symbols_by_address[sym->address()] = sym;
+				scr._m_symbols_by_address[sym->address()] = sym;
 			}
 		}
 
 		u32 text_size = in.read_u32();
-		_m_text = in.fork(text_size);
+		scr._m_text = in.fork(text_size);
+		return scr;
 	}
 
 	instruction script::instruction_at(u32 address) const {
