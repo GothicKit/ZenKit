@@ -164,10 +164,11 @@ namespace phoenix {
 	class symbol final {
 	public:
 		/**
-		 * @brief Reads a symbol from the given reader.
+		 * @brief Parses a symbol from the given reader.
 		 * @param[in,out] in The reader to read the symbol from.
+		 * @return The symbol parsed.
 		 */
-		explicit symbol(reader& in);
+		static symbol parse(reader& in);
 
 		/**
 		 * @brief Validates that the symbol is a string and retrieves it's value in the given context.
@@ -318,6 +319,9 @@ namespace phoenix {
 		[[nodiscard]] inline u32 char_start() const noexcept { return _m_char_start; }
 		[[nodiscard]] inline u32 char_count() const noexcept { return _m_char_count; }
 		[[nodiscard]] inline u32 class_size() const noexcept { return _m_class_size; }
+
+	protected:
+		symbol() = default;
 
 	private:
 		friend class script;
