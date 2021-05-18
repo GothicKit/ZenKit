@@ -34,11 +34,11 @@ namespace phoenix {
 	class font {
 	public:
 		/**
-		 * @brief Reads in a font from the given reader.
+		 * @brief Parses in a font from the given reader.
 		 * @param in The reader to read from
-		 * @return The font read.
+		 * @return The font parsed.
 		 */
-		static font read(reader& in);
+		static font parse(reader& in);
 
 		/**
 		 * @return The name of the font

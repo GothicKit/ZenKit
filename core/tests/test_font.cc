@@ -8,7 +8,7 @@ using namespace phoenix;
 
 TEST_CASE("fonts are read correctly", "[font]") {
 	auto in = reader::from("./samples/font.fnt");
-	auto fnt = font::read(in);
+	auto fnt = font::parse(in);
 
 	REQUIRE(fnt.name() == "FONT_OLD_10_WHITE_HI.TGA");
 	REQUIRE(fnt.height() == 17);

@@ -6,7 +6,7 @@
 #include <fmt/format.h>
 
 namespace phoenix {
-	font font::read(reader& in) {
+	font font::parse(reader& in) {
 		font fnt {};
 
 		auto version = in.read_line();
