@@ -33,10 +33,10 @@ namespace phoenix {
 				archive->read_object_end();// TODO: Require end read!
 			} else if (chnk.object_name == "VobTree") {
 				auto count = archive->read_int();
-				wld._m_root_vobs.resize(count);
+				wld._m_root_vobs.reserve(count);
 
 				for (int i = 0; i < count; ++i) {
-					wld._m_root_vobs[i] = vob_tree::parse(archive, version);
+					wld._m_root_vobs.emplace_back(vob_tree::parse(archive, version));
 				}
 
 				archive->read_object_end();// TODO: Require end read!
