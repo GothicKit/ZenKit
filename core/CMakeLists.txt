@@ -23,6 +23,7 @@ set(PX_CORE_SRCS
 
 		source/world.cc
 		source/world/bsp_tree.cc
+		source/world/vob_tree.cc
 		source/world/world_mesh.cc)
 
 set(PX_CORE_TESTS
