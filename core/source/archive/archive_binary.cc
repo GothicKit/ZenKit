@@ -81,4 +81,13 @@ namespace phoenix {
 	std::tuple<glm::vec3, glm::vec3> archive_reader_binary::read_bbox() {
 		return std::make_tuple(input.read_vec3(), input.read_vec3());
 	}
+
+	glm::mat3x3 archive_reader_binary::read_mat3x3() {
+		glm::mat3x3 v {};
+		v[0] = input.read_vec3();
+		v[1] = input.read_vec3();
+		v[2] = input.read_vec3();
+
+		return v;
+	}
 }// namespace phoenix

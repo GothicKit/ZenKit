@@ -57,6 +57,18 @@ TEST_CASE("ascii archives are read correctly", "[archive]") {
 	REQUIRE(bbox_max.y == 89.0f);
 	REQUIRE(bbox_max.z == 0.0f);
 
+	auto mat3 = reader->read_mat3x3();
+	// d8a47e3f 00000000 e584d23d 00000000 0000803f 00000000 e584d2bd 00000000 d8a47e3f
+	REQUIRE(mat3[0][0] == 0.994702816f);
+	REQUIRE(mat3[0][1] == 0.0f);
+	REQUIRE(mat3[0][2] == 0.102792539f);
+	REQUIRE(mat3[1][0] == 0.0f);
+	REQUIRE(mat3[1][1] == 1.0f);
+	REQUIRE(mat3[1][2] == 0.0f);
+	REQUIRE(mat3[2][0] == -0.102792539f);
+	REQUIRE(mat3[2][1] == 0.0f);
+	REQUIRE(mat3[2][2] == 0.994702816f);
+
 	REQUIRE(reader->read_object_begin(obj));
 	REQUIRE(!reader->read_object_begin(obj));
 

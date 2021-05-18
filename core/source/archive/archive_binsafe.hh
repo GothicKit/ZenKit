@@ -59,6 +59,7 @@ namespace phoenix {
 		glm::vec3 read_vec3() override;
 		glm::vec2 read_vec2() override;
 		std::tuple<glm::vec3, glm::vec3> read_bbox() override;
+		glm::mat3x3 read_mat3x3() override;
 
 	protected:
 		void skip_entry() override;

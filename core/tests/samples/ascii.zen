@@ -27,6 +27,7 @@ END
 	someField8=vec3:50 100.123 -150
 	someField9=rawFloat:111.11 -12.99
 	someField10=rawFloat:12 34 56 78 89 0
+	someField11=raw:d8a47e3f00000000e584d23d000000000000803f00000000e584d2bd00000000d8a47e3f
 
 	[child_obj test:class:name 7323 2]
 	[]
