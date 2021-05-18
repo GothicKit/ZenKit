@@ -59,7 +59,9 @@ namespace phoenix {
 	}
 
 	std::string archive_reader_binsafe::read_string() {
-		return input.read_string(assure_entry(bs_string));
+		auto rv = input.read_string(assure_entry(bs_string));
+		skip_optional_hash();
+		return rv;
 	}
 
 	s32 archive_reader_binsafe::read_int() {
@@ -185,7 +187,7 @@ namespace phoenix {
 	}
 
 	glm::mat3x3 archive_reader_binsafe::read_mat3x3() {
-		auto unused = assure_entry(bs_raw) - 3 * 3 * sizeof(float); // TODO: Check that this is actually a raw field
+		auto unused = assure_entry(bs_raw) - 3 * 3 * sizeof(float);// TODO: Check that this is actually a raw field
 
 		if (unused < 0) {
 			throw parser_error("archive_reader_binsafe: cannot read bbox (9 * float): not enough space in raw entry.");
