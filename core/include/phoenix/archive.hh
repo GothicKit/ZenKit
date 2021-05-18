@@ -159,6 +159,13 @@ namespace phoenix {
 		virtual glm::vec2 read_vec2() = 0;
 
 		/**
+		 * @brief Reads a bounding box consisting of two consecutive vec3's from the reader.
+		 * @return The value read.
+		 * @throws parser_error if the value actually present is not a bounding box
+		 */
+		virtual std::tuple<glm::vec3, glm::vec3> read_bbox() = 0;
+
+		/**
 		 * @brief Skips the next object in the reader and all it's children
 		 * @param skip_current Assume that the object to be skipped is the one currently read. If set to `false`
 		 * assume to skip the object beginning at the current read offset.

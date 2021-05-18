@@ -168,4 +168,19 @@ namespace phoenix {
 
 		skip_optional_hash();
 	}
+
+	std::tuple<glm::vec3, glm::vec3> archive_reader_binsafe::read_bbox() {
+		auto unused = assure_entry(bs_raw_float) - 3 * 2 * sizeof(float);
+
+		if (unused < 0) {
+			throw parser_error("archive_reader_binsafe: cannot read bbox (6 * float): not enough space in rawFloat entry.");
+		}
+
+		auto c = std::make_tuple(input.read_vec3(), input.read_vec3());
+
+		// There might be more bytes in this. We'll ignore them.
+		input.ignore(unused);
+		skip_optional_hash();
+		return c;
+	}
 }// namespace phoenix

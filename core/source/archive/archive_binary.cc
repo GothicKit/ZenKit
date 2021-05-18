@@ -77,4 +77,8 @@ namespace phoenix {
 		// FIXME: skip_current is ignored here
 		input.ignore(input.read_u32());
 	}
+
+	std::tuple<glm::vec3, glm::vec3> archive_reader_binary::read_bbox() {
+		return std::make_tuple(input.read_vec3(), input.read_vec3());
+	}
 }// namespace phoenix

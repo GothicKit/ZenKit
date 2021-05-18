@@ -45,6 +45,18 @@ TEST_CASE("ascii archives are read correctly", "[archive]") {
 	REQUIRE(vec3.y == 100.123f);
 	REQUIRE(vec3.z == -150);
 
+	auto vec2 = reader->read_vec2();
+	REQUIRE(vec2.x == 111.11f);
+	REQUIRE(vec2.y == -12.99f);
+
+	auto [bbox_min, bbox_max] = reader->read_bbox();
+	REQUIRE(bbox_min.x == 12.0f);
+	REQUIRE(bbox_min.y == 34.0f);
+	REQUIRE(bbox_min.z == 56.0f);
+	REQUIRE(bbox_max.x == 78.0f);
+	REQUIRE(bbox_max.y == 89.0f);
+	REQUIRE(bbox_max.z == 0.0f);
+
 	REQUIRE(reader->read_object_begin(obj));
 	REQUIRE(!reader->read_object_begin(obj));
 

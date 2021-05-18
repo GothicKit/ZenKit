@@ -25,6 +25,8 @@ END
 	someField6=bool:1
 	someField7=color:255 1 2 3
 	someField8=vec3:50 100.123 -150
+	someField9=rawFloat:111.11 -12.99
+	someField10=rawFloat:12 34 56 78 89 0
 
 	[child_obj test:class:name 7323 2]
 	[]
