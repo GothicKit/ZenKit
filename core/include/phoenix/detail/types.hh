@@ -14,6 +14,11 @@ using s64 = std::int64_t;
 using f32 = float;
 using f64 = double;
 
+enum class game_version {
+	gothic_1,
+	gothic_2
+};
+
 struct color {
 	u8 r, g, b, a;
 };
