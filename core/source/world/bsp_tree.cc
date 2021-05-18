@@ -17,6 +17,7 @@ namespace phoenix {
 	bsp_tree bsp_tree::read(reader& in) {
 		bsp_tree bsp;
 
+		u16 version {};
 		bool finished = false;
 		bsp_chunk chunk = bsp_chunk::unknown;
 		u32 end = 0;
@@ -29,7 +30,7 @@ namespace phoenix {
 
 			switch (chunk) {
 				case bsp_chunk::header:
-					bsp._m_version = in.read_u16();
+					version = in.read_u16();
 					bsp._m_mode = static_cast<bsp_tree_mode>(in.read_u32());
 					break;
 				case bsp_chunk::polygons:

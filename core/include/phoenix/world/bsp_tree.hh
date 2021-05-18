@@ -14,14 +14,11 @@ namespace phoenix {
 	public:
 		static bsp_tree read(reader& in);
 
-		u32 version() const noexcept { return _m_version; }
-		bsp_tree_mode mode() const noexcept { return _m_mode; }
-		const std::vector<u32>& polygon_indices() const noexcept { return _m_polygon_indices; }
+		[[nodiscard]] bsp_tree_mode mode() const noexcept { return _m_mode; }
+		[[nodiscard]] const std::vector<u32>& polygon_indices() const noexcept { return _m_polygon_indices; }
 
 	private:
-		u16 _m_version;
 		bsp_tree_mode _m_mode;
-
 		std::vector<u32> _m_polygon_indices;
 	};
 }
