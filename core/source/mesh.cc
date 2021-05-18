@@ -57,7 +57,7 @@ namespace phoenix {
 					// read all materials
 					auto mats = archive_reader::open(in);
 					for (int i = 0; i < submesh_count; ++i) {
-						msh._m_materials.emplace_back(material::read(mats));
+						msh._m_materials.emplace_back(material::parse(mats));
 					}
 
 					if (version == 0x0905 /*G2*/) {

@@ -38,7 +38,7 @@ namespace phoenix {
 		 * @param[in,out] in The reader to read from.
 		 * @return The material.
 		 */
-		static material read(archive_reader_ref& in);
+		static material parse(archive_reader_ref& in);
 
 		/**
 		 * @return The name of the material.

@@ -8,7 +8,7 @@
 namespace phoenix {
 	static constexpr auto MATERIAL_VERSION_G1_V108k = 17408;
 
-	material material::read(archive_reader_ref& in) {
+	material material::parse(archive_reader_ref& in) {
 		material mat {};
 
 		// name of the material - ignored

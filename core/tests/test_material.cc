@@ -12,7 +12,7 @@ TEST_CASE("Gothic 1 materials are read correctly", "[material]") {
 	{
 		auto in = reader::from("./samples/material1_g1.mat");
 		auto archive = archive_reader::open(in);
-		auto m1 = material::read(archive);
+		auto m1 = material::parse(archive);
 
 		REQUIRE(m1.name() == "DT_BOOKSHELF_V1_1");
 		REQUIRE(m1.group() == material_group::undef);
@@ -30,7 +30,7 @@ TEST_CASE("Gothic 1 materials are read correctly", "[material]") {
 		REQUIRE(m1.default_mapping().x == 2.343750f);
 		REQUIRE(m1.default_mapping().y == 2.343750f);
 
-		auto m2 = material::read(archive);
+		auto m2 = material::parse(archive);
 		REQUIRE(m2.name() == "DT_BOOKSHELF_V1_2");
 		REQUIRE(m2.group() == material_group::undef);
 		REQUIRE(m2.color() == color {0x19, 0x2A, 0x39, 0xFF});
@@ -51,7 +51,7 @@ TEST_CASE("Gothic 1 materials are read correctly", "[material]") {
 	{
 		auto in = reader::from("./samples/material2_g1.mat");
 		auto archive = archive_reader::open(in);
-		auto m1 = material::read(archive);
+		auto m1 = material::parse(archive);
 
 		REQUIRE(m1.name() == "MATERIAL #356");
 		REQUIRE(m1.group() == material_group::undef);
@@ -69,7 +69,7 @@ TEST_CASE("Gothic 1 materials are read correctly", "[material]") {
 		REQUIRE(m1.default_mapping().x == 2.343750f);
 		REQUIRE(m1.default_mapping().y == 2.343750f);
 
-		auto m2 = material::read(archive);
+		auto m2 = material::parse(archive);
 		REQUIRE(m2.name() == "ERZZB1_TL");
 		REQUIRE(m2.group() == material_group::undef);
 		REQUIRE(m2.color() == color {0x17, 0x1A, 0x21, 0xFF});

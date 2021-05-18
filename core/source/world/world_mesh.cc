@@ -58,7 +58,7 @@ namespace phoenix {
 					msh._m_materials.resize(material_count);
 
 					for (u32 i = 0; i < material_count; ++i) {
-						msh._m_materials[i] = material::read(matreader);
+						msh._m_materials[i] = material::parse(matreader);
 					}
 
 					break;
