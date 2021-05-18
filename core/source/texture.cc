@@ -52,7 +52,7 @@ namespace phoenix {
 		}
 	}
 
-	texture texture::read(reader& in) {
+	texture texture::parse(reader& in) {
 		texture tex;
 
 		if (in.read_string(4) != ZTEX_SIGNATURE) {
@@ -121,9 +121,9 @@ namespace phoenix {
 		return tex;
 	}
 
-	texture texture::read(const std::string& path) {
+	texture texture::parse(const std::string& path) {
 		reader rdr {path};
-		return read(rdr);
+		return parse(rdr);
 	}
 
 	std::vector<u8> texture::as_rgba8(u32 mipmap_level) const {

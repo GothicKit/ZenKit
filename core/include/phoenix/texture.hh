@@ -54,22 +54,22 @@ namespace phoenix {
 	class texture {
 	public:
 		/**
-		 * @brief Reads in a texture from the given reader.
+		 * @brief Parses a texture from the given reader.
 		 *
 		 * If the texture is compressed using DXT1, DXT3 or DXT5 it is automatically decompressed.
 		 *
 		 * @param in The reader to read from
 		 * @return The texture.
 		 */
-		static texture read(reader& in);
+		static texture parse(reader& in);
 
 		/**
-		 * @brief Reads in a texture from the given file.
+		 * @brief Parses a texture from the given file.
 		 * @param path The path to a file to read.
 		 * @return The texture.
-		 * @see #read
+		 * @see #parse
 		 */
-		static texture read(const std::string& path);
+		static texture parse(const std::string& path);
 
 		/**
 		 * @return The format of the texture.

@@ -7,7 +7,7 @@ using namespace phoenix;
 
 TEST_CASE("textures are read correctly", "[texture]") {
 	auto in = reader::from("./samples/erz.tex");
-	auto texture = texture::read(in);
+	auto texture = texture::parse(in);
 
 	REQUIRE(texture.height() == 128);
 	REQUIRE(texture.width() == 128);
