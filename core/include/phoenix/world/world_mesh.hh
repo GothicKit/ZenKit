@@ -55,7 +55,6 @@ namespace phoenix {
 	public:
 		static world_mesh read(reader& in);
 
-		inline u16 version() const noexcept { return _m_version; }
 		inline phoenix::date date() const noexcept { return _m_date; }
 		inline const std::string& name() const noexcept { return _m_name; }
 		inline std::tuple<glm::vec4, glm::vec4> bbox() const noexcept { return std::make_tuple(_m_bbox[0], _m_bbox[1]); }
@@ -65,7 +64,6 @@ namespace phoenix {
 		inline const std::vector<polygon>& polygons() const noexcept { return _m_polygons; }
 
 	private:
-		u16 _m_version;
 		phoenix::date _m_date;
 		std::string _m_name;
 		glm::vec4 _m_bbox[2];

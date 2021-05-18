@@ -22,6 +22,7 @@ namespace phoenix {
 	world_mesh world_mesh::read(reader& in) {
 		world_mesh msh;
 
+		u16 version {};
 		bool finished = false;
 		world_mesh_chunk chunk = world_mesh_chunk::unknown;
 		u32 end = 0;
@@ -34,7 +35,7 @@ namespace phoenix {
 
 			switch (chunk) {
 				case world_mesh_chunk::mesh:
-					msh._m_version = in.read_u32();
+					version = in.read_u32();
 					msh._m_date = {
 							in.read_u32(),
 							in.read_u16(),
@@ -90,7 +91,7 @@ namespace phoenix {
 						p.lightmap_index = in.read_u16();
 						p.polygon_plane = {in.read_f32(), in.read_vec3()};
 
-						if (msh._m_version == 265 /* G26fix */) {
+						if (version == 265 /* G26fix */) {
 							u8 flags = in.read_u8();
 							p.flags.is_portal = (flags & 0b00000011) >> 0;
 							p.flags.is_occluder = (flags & 0b00000100) >> 2;
@@ -118,7 +119,7 @@ namespace phoenix {
 
 						for (int j = 0; j < p.vertex_count; ++j) {
 							p.indices[j] = {
-									msh._m_version == 265 /* G26fix */ ? in.read_u32() : in.read_u16(),
+									version == 265 /* G26fix */ ? in.read_u32() : in.read_u16(),
 									in.read_u32()};
 						}
 					}
