@@ -70,7 +70,7 @@ namespace phoenix {
 		 * @param map A a section map for the sub-mesh.
 		 * @return The sub-mesh read.
 		 */
-		static sub_mesh read(reader& in, const sub_mesh_section& map);
+		static sub_mesh parse(reader& in, const sub_mesh_section& map);
 	};
 
 	/**
@@ -93,7 +93,7 @@ namespace phoenix {
 		 * @param in The reader to read from.
 		 * @return The mesh read.
 		 */
-		static proto_mesh read(reader& in);
+		static proto_mesh parse(reader& in);
 
 		/**
 		 * @return The vertex positions associated with the mesh.

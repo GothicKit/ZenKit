@@ -22,7 +22,7 @@ static bool compare_plane(phoenix::mesh::plane a, phoenix::mesh::plane b) {
 
 TEST_CASE("proto meshes (MRMs) are read correctly", "[mesh][mrm]") {
 	auto in = phoenix::reader::from("./samples/mesh0.mrm");
-	auto mesh = phoenix::proto_mesh::read(in);
+	auto mesh = phoenix::proto_mesh::parse(in);
 
 	const auto& positions = mesh.positions();
 	REQUIRE(positions.size() == 8);

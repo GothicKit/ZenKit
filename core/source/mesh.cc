@@ -11,7 +11,7 @@ namespace phoenix {
 		end = 0xB1FF
 	};
 
-	proto_mesh proto_mesh::read(reader& in) {
+	proto_mesh proto_mesh::parse(reader& in) {
 		proto_mesh msh {};
 
 		proto_chunk chunk = proto_chunk::unknown;
@@ -86,7 +86,7 @@ namespace phoenix {
 					msh._m_sub_meshes.resize(submesh_count);
 
 					for (int i = 0; i < submesh_count; ++i) {
-						msh._m_sub_meshes[i] = sub_mesh::read(content, submesh_sections[i]);
+						msh._m_sub_meshes[i] = sub_mesh::parse(content, submesh_sections[i]);
 						msh._m_sub_meshes[i].material = msh._m_materials[i];
 					}
 
@@ -109,7 +109,7 @@ namespace phoenix {
 		return msh;
 	}
 
-	sub_mesh sub_mesh::read(reader& in, const sub_mesh_section& map) {
+	sub_mesh sub_mesh::parse(reader& in, const sub_mesh_section& map) {
 		sub_mesh subm {};
 
 		// triangles
