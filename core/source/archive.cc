@@ -10,7 +10,7 @@
 #include <fmt/format.h>
 
 namespace phoenix {
-	archive_header archive_header::read(reader& in) {
+	archive_header archive_header::parse(reader& in) {
 		archive_header header {};
 
 		if (in.read_line() != "ZenGin Archive") {
@@ -47,7 +47,7 @@ namespace phoenix {
 	}
 
 	std::unique_ptr<archive_reader> archive_reader::open(reader& in) {
-		auto header = archive_header::read(in);
+		auto header = archive_header::parse(in);
 		std::unique_ptr<archive_reader> reader;
 
 		if (header.format == "ASCII") {

@@ -26,7 +26,7 @@ namespace phoenix {
 		 * @param in The reader to read from.
 		 * @return The header read.
 		 */
-		static archive_header read(reader& in);
+		static archive_header parse(reader& in);
 	};
 
 	struct archive_object {
