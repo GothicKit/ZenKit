@@ -86,9 +86,10 @@ namespace phoenix {
 					anim._m_next = in.read_line();
 					break;
 				case animation_chunk::events:
-					anim._m_events.resize(in.read_u32());
+					anim._m_events.reserve(in.read_u32());
 
-					for (auto& event : anim._m_events) {
+					for (u32 i = 0; i < anim._m_events.size(); ++i) {
+						auto& event = anim._m_events.emplace_back();
 						event.type = static_cast<animation_event_type>(in.read_u32());
 						event.no = in.read_u32();
 						event.tag = in.read_line();
