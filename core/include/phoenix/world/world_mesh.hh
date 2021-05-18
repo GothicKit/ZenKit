@@ -74,11 +74,11 @@ namespace phoenix {
 	class world_mesh {
 	public:
 		/**
-		 * @brief Reads a world mesh from the given reader.
+		 * @brief Parses a world mesh from the given reader.
 		 * @param in The reader to read from.
-		 * @return The mesh read.
+		 * @return The mesh parsed.
 		 */
-		[[nodiscard]] static world_mesh read(reader& in);
+		[[nodiscard]] static world_mesh parse(reader& in);
 
 		/**
 		 * @return The creation date of the mesh.

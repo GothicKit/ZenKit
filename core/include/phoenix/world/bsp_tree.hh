@@ -28,11 +28,11 @@ namespace phoenix {
 	class bsp_tree {
 	public:
 		/**
-		 * @brief Reads a BSP tree from the given reader.
+		 * @brief Parses a BSP tree from the given reader.
 		 * @param in The reader to read from.
-		 * @return The tree read.
+		 * @return The tree parsed.
 		 */
-		[[nodiscard]] static bsp_tree read(reader& in);
+		[[nodiscard]] static bsp_tree parse(reader& in);
 
 		/**
 		 * @return The mode of the tree (either indoor or outdoor).

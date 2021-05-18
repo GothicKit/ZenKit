@@ -14,7 +14,7 @@ namespace phoenix {
 		end = 0xC0FF
 	};
 
-	bsp_tree bsp_tree::read(reader& in) {
+	bsp_tree bsp_tree::parse(reader& in) {
 		bsp_tree bsp;
 
 		u16 version {};

@@ -5,7 +5,7 @@
 
 TEST_CASE("world meshes are read correctly", "[world][mesh]") {
 	auto in = phoenix::reader::from("./samples/world.proprietary.zen");
-	auto wld = phoenix::world::read(in, game_version::gothic_1);
+	auto wld = phoenix::world::parse(in, game_version::gothic_1);
 
 	auto& mesh = wld.mesh();
 	REQUIRE(mesh.vertices().size() == 55439);
@@ -55,7 +55,7 @@ TEST_CASE("world meshes are read correctly", "[world][mesh]") {
 
 TEST_CASE("the bsp-tree is read correctly", "[world][bsp]") {
 	auto in = phoenix::reader::from("./samples/world.proprietary.zen");
-	auto wld = phoenix::world::read(in, game_version::gothic_1);
+	auto wld = phoenix::world::parse(in, game_version::gothic_1);
 	auto& tree = wld.tree();
 
 	REQUIRE(tree.mode() == phoenix::bsp_tree_mode::outdoor);
@@ -72,7 +72,7 @@ TEST_CASE("the bsp-tree is read correctly", "[world][bsp]") {
 
 TEST_CASE("the vob-tree is read correctly", "[world][vob]") {
 	auto in = phoenix::reader::from("./samples/world.proprietary.zen");
-	auto wld = phoenix::world::read(in, game_version::gothic_1);
+	auto wld = phoenix::world::parse(in, game_version::gothic_1);
 	auto& vobs = wld.vobs();
 
 	REQUIRE(vobs.size() == 14);

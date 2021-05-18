@@ -16,12 +16,12 @@ namespace phoenix {
 	class vob_tree {
 	public:
 		/**
-		 * @brief Reads a VOB tree from the given reader.
+		 * @brief Parses a VOB tree from the given reader.
 		 * @param in The reader to read from.
 		 * @param version The version of Gothic being used.
-		 * @return The tree read.
+		 * @return The tree parsed.
 		 */
-		[[nodiscard]] static vob_tree read_tree(archive_reader_ref& in, game_version version);
+		[[nodiscard]] static vob_tree parse(archive_reader_ref& in, game_version version);
 
 		/**
 		 * @return A list of child VOBs.

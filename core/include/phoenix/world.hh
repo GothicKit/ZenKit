@@ -27,11 +27,11 @@ namespace phoenix {
 	class world {
 	public:
 		/**
-		 * @brief Reads a world from the given reader.
+		 * @brief Parses a world from the given reader.
 		 * @param in The reader to read from.
-		 * @return The world read.
+		 * @return The world parsed.
 		 */
-		[[nodiscard]] static world read(reader& in, game_version version);
+		[[nodiscard]] static world parse(reader& in, game_version version);
 
 		/**
 		 * @return All root VOBs of the world.

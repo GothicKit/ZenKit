@@ -19,7 +19,7 @@ namespace phoenix {
 	};
 
 
-	world_mesh world_mesh::read(reader& in) {
+	world_mesh world_mesh::parse(reader& in) {
 		world_mesh msh;
 
 		u16 version {};

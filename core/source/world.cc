@@ -7,7 +7,7 @@
 #include <fmt/format.h>
 
 namespace phoenix {
-	world world::read(reader& in, game_version version) {
+	world world::parse(reader& in, game_version version) {
 		world wld;
 
 		auto archive = archive_reader::open(in);
@@ -27,8 +27,8 @@ namespace phoenix {
 				auto size = in.read_u32();
 
 				auto content = in.fork(size);
-				wld._m_mesh = world_mesh::read(content);
-				wld._m_tree = bsp_tree::read(content);
+				wld._m_mesh = world_mesh::parse(content);
+				wld._m_tree = bsp_tree::parse(content);
 
 				archive->read_object_end();// TODO: Require end read!
 			} else if (chnk.object_name == "VobTree") {
@@ -36,7 +36,7 @@ namespace phoenix {
 				wld._m_root_vobs.resize(count);
 
 				for (int i = 0; i < count; ++i) {
-					wld._m_root_vobs[i] = vob_tree::read_tree(archive, version);
+					wld._m_root_vobs[i] = vob_tree::parse(archive, version);
 				}
 
 				archive->read_object_end();// TODO: Require end read!

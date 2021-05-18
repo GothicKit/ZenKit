@@ -7,7 +7,7 @@
 
 namespace phoenix {
 
-	vob_tree vob_tree::read_tree(archive_reader_ref& in, game_version version) {
+	vob_tree vob_tree::parse(archive_reader_ref& in, game_version version) {
 		vob_tree vob {};
 
 		archive_object obj;
@@ -128,7 +128,7 @@ namespace phoenix {
 		vob._m_children.reserve(child_count);
 
 		for (int i = 0; i < child_count; ++i) {
-			vob._m_children.emplace_back(vob_tree::read_tree(in, version));
+			vob._m_children.emplace_back(vob_tree::parse(in, version));
 		}
 
 		return vob;
