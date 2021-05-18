@@ -83,11 +83,11 @@ namespace phoenix {
 					}
 
 					// read submeshes
-					msh._m_sub_meshes.resize(submesh_count);
+					msh._m_sub_meshes.reserve(submesh_count);
 
 					for (int i = 0; i < submesh_count; ++i) {
-						msh._m_sub_meshes[i] = sub_mesh::parse(content, submesh_sections[i]);
-						msh._m_sub_meshes[i].material = msh._m_materials[i];
+						auto& mesh = msh._m_sub_meshes.emplace_back(sub_mesh::parse(content, submesh_sections[i]));
+						mesh.material = msh._m_materials[i];
 					}
 
 					break;
