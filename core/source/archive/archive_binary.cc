@@ -77,4 +77,21 @@ namespace phoenix {
 		// FIXME: skip_current is ignored here
 		input.ignore(input.read_u32());
 	}
+
+	std::tuple<glm::vec3, glm::vec3> archive_reader_binary::read_bbox() {
+		return std::make_tuple(input.read_vec3(), input.read_vec3());
+	}
+
+	glm::mat3x3 archive_reader_binary::read_mat3x3() {
+		glm::mat3x3 v {};
+		v[0] = input.read_vec3();
+		v[1] = input.read_vec3();
+		v[2] = input.read_vec3();
+
+		return v;
+	}
+
+	std::vector<u8> archive_reader_binary::read_raw_bytes() {
+		throw parser_error("archive_reader_binary: getting raw bytes from a binary archive is not supported");
+	}
 }// namespace phoenix

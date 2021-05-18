@@ -6,6 +6,7 @@
 
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+#include <glm/mat3x3.hpp>
 
 #include <functional>
 #include <memory>
@@ -157,6 +158,26 @@ namespace phoenix {
 		 * @throws parser_error if the value actually present is not a vec2
 		 */
 		virtual glm::vec2 read_vec2() = 0;
+
+		/**
+		 * @brief Reads a bounding box consisting of two consecutive vec3's from the reader.
+		 * @return The value read.
+		 * @throws parser_error if the value actually present is not a bounding box
+		 */
+		virtual std::tuple<glm::vec3, glm::vec3> read_bbox() = 0;
+
+		/**
+		 * @brief Reads a 3-by-3 matrix from the reader.
+		 * @return The matrix.
+		 */
+		virtual glm::mat3x3 read_mat3x3() = 0;
+
+		/**
+		 * @brief Reads a raw entry and returns the raw bytes stored within.
+		 * @return A vector containing the raw bytes of the entry.
+		 * @throws parser_error if the value actually present is not raw
+		 */
+		virtual std::vector<u8> read_raw_bytes() = 0;
 
 		/**
 		 * @brief Skips the next object in the reader and all it's children

@@ -4,6 +4,9 @@
 
 #include <fmt/format.h>
 #include <phoenix/detail/error.hh>
+
+#include <bit>
+#include <charconv>
 #include <sstream>
 
 namespace phoenix {
@@ -110,5 +113,54 @@ namespace phoenix {
 
 	void archive_reader_ascii::skip_entry() {
 		(void) input.read_line();
+	}
+
+	std::tuple<glm::vec3, glm::vec3> archive_reader_ascii::read_bbox() {
+		std::stringstream in {read_entry("rawFloat")};
+		glm::vec3 min {};
+		glm::vec3 max {};
+
+		in >> min.x >> min.y >> min.z >> max.x >> max.y >> max.z;
+		return std::make_tuple(min, max);
+	}
+
+	glm::mat3x3 archive_reader_ascii::read_mat3x3() {
+		auto in = read_entry("raw");
+
+		if (in.length() < 2 /* 2 chars a byte */ * sizeof(float) * 9) {
+			throw parser_error("archive_reader_ascii: raw entry does not contain enough bytes to be a 3x3 matrix");
+		}
+
+		auto beg_it = in.begin().base();
+
+		glm::mat3x3 v {};
+		u8 tmp[4];
+
+		for (int i = 0; i < 9; ++i) {
+			std::from_chars(beg_it + 0, beg_it + 2, tmp[0], 16);
+			std::from_chars(beg_it + 2, beg_it + 4, tmp[1], 16);
+			std::from_chars(beg_it + 4, beg_it + 6, tmp[2], 16);
+			std::from_chars(beg_it + 6, beg_it + 8, tmp[3], 16);
+			beg_it += 8;
+
+			memcpy(&v[i / 3][i % 3], tmp, sizeof(float));
+		}
+
+		return v;
+	}
+
+	std::vector<u8> archive_reader_ascii::read_raw_bytes() {
+		auto in = read_entry("raw");
+		std::vector<u8> out {};
+		out.resize(in.length() / 2);
+
+		auto beg_it = in.begin().base();
+
+		for (u8& i : out) {
+			std::from_chars(beg_it + 0, beg_it + 2, i, 16);
+			beg_it += 2;
+		}
+
+		return out;
 	}
 }// namespace phoenix

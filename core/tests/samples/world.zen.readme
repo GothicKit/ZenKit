@@ -1,0 +1,2 @@
+To run the world tests you need to own a copy of Gothic 1. Extract WORLD.ZEN from $GOTHIC_INSTALL_DIR/Data/worlds.VDF
+and link or copy it here with the name 'world.proprietary.zen' (this is automatically excluded from version control).

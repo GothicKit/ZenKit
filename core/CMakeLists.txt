@@ -19,7 +19,12 @@ set(PX_CORE_SRCS
 		source/animation.cc
 		source/texture.cc
 		source/script.cc
-		source/mesh.cc)
+		source/mesh.cc
+
+		source/world.cc
+		source/world/bsp_tree.cc
+		source/world/vob_tree.cc
+		source/world/world_mesh.cc)
 
 set(PX_CORE_TESTS
 		tests/test_runner.cc
@@ -32,7 +37,8 @@ set(PX_CORE_TESTS
 		tests/test_animation.cc
 		tests/test_texture.cc
 		tests/test_script.cc
-		tests/test_mesh.cc)
+		tests/test_mesh.cc
+		tests/test_world.cc)
 
 set(PX_CORE_DEFINES)
 

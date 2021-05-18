@@ -59,7 +59,9 @@ namespace phoenix {
 	}
 
 	std::string archive_reader_binsafe::read_string() {
-		return input.read_string(assure_entry(bs_string));
+		auto rv = input.read_string(assure_entry(bs_string));
+		skip_optional_hash();
+		return rv;
 	}
 
 	s32 archive_reader_binsafe::read_int() {
@@ -167,5 +169,48 @@ namespace phoenix {
 		}
 
 		skip_optional_hash();
+	}
+
+	std::tuple<glm::vec3, glm::vec3> archive_reader_binsafe::read_bbox() {
+		auto unused = assure_entry(bs_raw_float) - 3 * 2 * sizeof(float);
+
+		if (unused < 0) {
+			throw parser_error("archive_reader_binsafe: cannot read bbox (6 * float): not enough space in rawFloat entry.");
+		}
+
+		auto c = std::make_tuple(input.read_vec3(), input.read_vec3());
+
+		// There might be more bytes in this. We'll ignore them.
+		input.ignore(unused);
+		skip_optional_hash();
+		return c;
+	}
+
+	glm::mat3x3 archive_reader_binsafe::read_mat3x3() {
+		auto unused = assure_entry(bs_raw) - 3 * 3 * sizeof(float);// TODO: Check that this is actually a raw field
+
+		if (unused < 0) {
+			throw parser_error("archive_reader_binsafe: cannot read bbox (9 * float): not enough space in raw entry.");
+		}
+
+		glm::mat3x3 v {};
+		v[0] = input.read_vec3();
+		v[1] = input.read_vec3();
+		v[2] = input.read_vec3();
+
+		input.ignore(unused);
+		skip_optional_hash();
+		return v;
+	}
+
+	std::vector<u8> archive_reader_binsafe::read_raw_bytes() {
+		auto length = assure_entry(bs_raw);
+
+		std::vector<u8> out {};
+		out.resize(length);
+		input.read(out.data(), length);
+
+		skip_optional_hash();
+		return out;
 	}
 }// namespace phoenix
