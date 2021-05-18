@@ -3,6 +3,7 @@
 #include <phoenix/detail/compat.hh>
 #include <phoenix/mesh.hh>
 #include <phoenix/vdfs.hh>
+#include <phoenix/world.hh>
 
 #include <argh.h>
 #include <fmt/format.h>
@@ -20,6 +21,19 @@ static constexpr const auto HELP_MESSAGE = "Usage: pxmdl [--version]\n"
 										   "phoenix pxmdl v{}\n"
 										   "Convert ZenGin models to Wavefront (.obj) models.\n";
 
+static void dump_material(const std::string& name, const std::vector<phoenix::material>& materials) {
+	std::ofstream mtl {name + ".mtl"};
+
+	for (const auto& mat : materials) {
+		if (!mat.texture().empty()) {
+			mtl << "newmtl " << mat.name() << "\n";
+			mtl << "Kd 1.00 1.00 1.00\n";
+			mtl << "map_Kd " << mat.texture() << "\n";
+		}
+	}
+
+	mtl.close();
+}
 
 static void dump_wavefront(std::ostream& out, const std::string& name, const phoenix::proto_mesh& mesh) {
 	out << "# pxmdl exported mesh\n"
@@ -61,16 +75,53 @@ static void dump_wavefront(std::ostream& out, const std::string& name, const pho
 		}
 	}
 
-	std::ofstream mtl {name + ".mtl"};
+	dump_material(name, mesh.materials());
+}
 
-	for (const auto& mat : mesh.materials()) {
-		mtl << "newmtl " << mat.name() << "\n";
-		mtl << "Kd 1.00 1.00 1.00"
-			<< "\n";
-		mtl << "map_Kd " << mat.texture() << "\n";
+static void dump_wavefront(std::ostream& out, const std::string& name, const phoenix::world_mesh& mesh) {
+	out << "# pxmdl exported mesh\n"
+		<< "mtllib " << name << ".mtl\n\n"
+		<< "# vertices\n";
+
+	for (const auto& item : mesh.vertices()) {
+		out << "v " << item.x << " " << item.y << " " << item.z << "\n";
 	}
 
-	mtl.close();
+	auto& mats = mesh.materials();
+	auto& feats = mesh.features();
+
+	out << "\n# normals\n";
+	for (const auto& feat : feats) {
+		out << "vn " << feat.normal[0] << " " << feat.normal[1] << " " << feat.normal[2] << "\n";
+	}
+
+	out << "\n# textures\n";
+	for (const auto& feat : feats) {
+		out << "vt " << feat.texture[0] << " " << feat.texture[1] << "\n";
+	}
+
+	int i = 0;
+	for (const auto& poly : mesh.polygons()) {
+		if (poly.vertex_count != 0) {
+			auto& mat = mats[poly.material_index];
+			out << "usemtl " << mat.name() << "\n";
+
+			if (poly.vertex_count == 3) {
+				out << "f " << poly.indices[0].vertex + 1 << "/" << poly.indices[0].feature + 1 << "/" << poly.indices[0].feature + 1 << " "
+					<< poly.indices[1].vertex + 1 << "/" << poly.indices[1].feature + 1 << "/" << poly.indices[1].feature + 1 << " "
+					<< poly.indices[2].vertex + 1 << "/" << poly.indices[2].feature + 1 << "/" << poly.indices[2].feature + 1 << "\n";
+			} else {
+				// Calculate triangle fans
+				for (int j = 1; j < poly.vertex_count - 1; ++j) {
+					out << "f " << poly.indices[0].vertex + 1 << "/" << poly.indices[0].feature + 1 << "/" << poly.indices[0].feature + 1 << " "
+						<< poly.indices[i].vertex + 1 << "/" << poly.indices[i].feature + 1 << "/" << poly.indices[i].feature + 1 << " "
+						<< poly.indices[i + 1].vertex + 1 << "/" << poly.indices[i + 1].feature + 1 << "/" << poly.indices[i + 1].feature + 1 << "\n";
+				}
+			}
+		}
+	}
+
+	dump_material(name, mats);
 }
 
 
@@ -121,17 +172,22 @@ int main(int argc, const char** argv) {
 			in = phoenix::reader::from(file);
 		}
 
+		output = output.empty() ? (file.substr(file.rfind('/') + 1, file.rfind('.') - file.rfind('/') - 1) + ".obj") : output;
 
 		auto extension = file.substr(file.find('.') + 1);
-
+		std::ofstream out {output};
 
 		if (phoenix::iequals(extension, "MRM")) {
 			auto mesh = phoenix::proto_mesh::read(in);
 
-			std::ofstream out {output.empty() ? (file.substr(file.rfind('/') + 1, file.rfind('.'))) : output};
 			dump_wavefront(out, output, mesh);
 			out.close();
 
+		} else if (phoenix::iequals(extension, "ZEN")) {
+			auto wld = phoenix::world::read(in, game_version::gothic_1); // FIXME: implement algorithm of detecting the actual version of Gothic!
+
+			dump_wavefront(out, output, wld.mesh());
+			out.close();
 		} else {
 			fmt::print(stderr, "format not supported: {}", extension);
 			return EXIT_FAILURE;
