@@ -18,7 +18,7 @@ namespace phoenix {
 	/**
 	 * @brief Represents a vertex feature.
 	 */
-	struct mesh_feature {
+	struct vertex_feature {
 		glm::vec2 texture;
 		uint32_t light;
 		glm::vec3 normal;
@@ -108,7 +108,7 @@ namespace phoenix {
 		/**
 		 * @return A list of vertex features of the mesh.
 		 */
-		[[nodiscard]] inline const std::vector<mesh_feature>& features() const noexcept { return _m_features; }
+		[[nodiscard]] inline const std::vector<vertex_feature>& features() const noexcept { return _m_features; }
 
 		/**
 		 * @return A list of polygons of the mesh.
@@ -121,7 +121,7 @@ namespace phoenix {
 		glm::vec4 _m_bbox[2];
 		std::vector<material> _m_materials;
 		std::vector<glm::vec3> _m_vertices;
-		std::vector<mesh_feature> _m_features;
+		std::vector<vertex_feature> _m_features;
 		std::vector<polygon> _m_polygons;
 	};
 }// namespace phoenix
