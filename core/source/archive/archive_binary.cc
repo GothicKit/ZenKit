@@ -90,4 +90,8 @@ namespace phoenix {
 
 		return v;
 	}
+
+	std::vector<u8> archive_reader_binary::read_raw_bytes() {
+		throw parser_error("archive_reader_binary: getting raw bytes from a binary archive is not supported");
+	}
 }// namespace phoenix

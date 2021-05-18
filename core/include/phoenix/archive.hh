@@ -173,6 +173,13 @@ namespace phoenix {
 		virtual glm::mat3x3 read_mat3x3() = 0;
 
 		/**
+		 * @brief Reads a raw entry and returns the raw bytes stored within.
+		 * @return A vector containing the raw bytes of the entry.
+		 * @throws parser_error if the value actually present is not raw
+		 */
+		virtual std::vector<u8> read_raw_bytes() = 0;
+
+		/**
 		 * @brief Skips the next object in the reader and all it's children
 		 * @param skip_current Assume that the object to be skipped is the one currently read. If set to `false`
 		 * assume to skip the object beginning at the current read offset.

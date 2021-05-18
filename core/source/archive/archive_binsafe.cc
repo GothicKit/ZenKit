@@ -200,4 +200,15 @@ namespace phoenix {
 		skip_optional_hash();
 		return v;
 	}
+
+	std::vector<u8> archive_reader_binsafe::read_raw_bytes() {
+		auto length = assure_entry(bs_raw);
+
+		std::vector<u8> out {};
+		out.resize(length);
+		input.read(out.data(), length);
+
+		skip_optional_hash();
+		return out;
+	}
 }// namespace phoenix

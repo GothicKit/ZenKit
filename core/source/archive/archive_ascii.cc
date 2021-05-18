@@ -148,4 +148,19 @@ namespace phoenix {
 
 		return v;
 	}
+
+	std::vector<u8> archive_reader_ascii::read_raw_bytes() {
+		auto in = read_entry("raw");
+		std::vector<u8> out {};
+		out.resize(in.length() / 2);
+
+		auto beg_it = in.begin().base();
+
+		for (u8& i : out) {
+			std::from_chars(beg_it + 0, beg_it + 2, i, 16);
+			beg_it += 2;
+		}
+
+		return out;
+	}
 }// namespace phoenix

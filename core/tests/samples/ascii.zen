@@ -28,6 +28,7 @@ END
 	someField9=rawFloat:111.11 -12.99
 	someField10=rawFloat:12 34 56 78 89 0
 	someField11=raw:d8a47e3f00000000e584d23d000000000000803f00000000e584d2bd00000000d8a47e3f
+	someField12=raw:f242a710
 
 	[child_obj test:class:name 7323 2]
 	[]
