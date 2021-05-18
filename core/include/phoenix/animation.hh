@@ -68,11 +68,11 @@ namespace phoenix {
 	class animation {
 	public:
 		/**
-		 * @brief Read the animation from the given reader.
+		 * @brief Parses the animation from the given reader.
 		 * @param in The reader to read from.
-		 * @return The animation read.
+		 * @return The animation pared.
 		 */
-		static animation read(reader& in);
+		static animation parse(reader& in);
 
 		/**
 		 * @return The name of the animation

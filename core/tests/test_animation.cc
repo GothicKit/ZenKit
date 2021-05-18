@@ -7,7 +7,7 @@ using namespace phoenix;
 
 TEST_CASE("animations are read correctly", "[animation]") {
 	auto in = reader::from("./samples/animation.man");
-	auto anim = animation::read(in);
+	auto anim = animation::parse(in);
 
 	REQUIRE(anim.name() == "S_BRUSH_S0");
 	REQUIRE(anim.next() == "S_BRUSH_S0");

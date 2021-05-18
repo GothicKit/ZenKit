@@ -58,7 +58,7 @@ namespace phoenix {
 		return v;
 	}
 
-	animation animation::read(reader& in) {
+	animation animation::parse(reader& in) {
 		animation anim {};
 
 		animation_chunk chunk = animation_chunk::unknown;
