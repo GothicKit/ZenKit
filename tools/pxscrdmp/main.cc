@@ -425,12 +425,12 @@ void print_symbol_list(const script& scr, std::string_view include_filter, std::
 		// Return type
 		if (sym.is_const() && sym.type() == dt_function) {
 			if (sym.has_return()) {
-				fmt::print("{}", get_type_abbrev(sym.rtype()));
+				fmt::print("{} ", get_type_abbrev(sym.rtype()));
 			} else {
-				fmt::print("v");
+				fmt::print("v ");
 			}
 		} else {
-			fmt::print(" ");
+			fmt::print("  ");
 		}
 
 		// Symbol name
