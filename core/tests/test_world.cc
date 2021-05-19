@@ -3,7 +3,7 @@
 #include "catch2.hh"
 #include <phoenix/world.hh>
 
-TEST_CASE("world meshes are read correctly", "[world][mesh]") {
+TEST_CASE("world meshes are read correctly", "[world][mesh][proprietary]") {
 	auto in = phoenix::reader::from("./samples/world.proprietary.zen");
 	auto wld = phoenix::world::parse(in, game_version::gothic_1);
 
@@ -53,7 +53,7 @@ TEST_CASE("world meshes are read correctly", "[world][mesh]") {
 	REQUIRE(mat500.texture() == "OMWABROWNGREEN01.TGA");
 }
 
-TEST_CASE("the bsp-tree is read correctly", "[world][bsp]") {
+TEST_CASE("the bsp-tree is read correctly", "[world][bsp][proprietary]") {
 	auto in = phoenix::reader::from("./samples/world.proprietary.zen");
 	auto wld = phoenix::world::parse(in, game_version::gothic_1);
 	auto& tree = wld.tree();
@@ -70,7 +70,7 @@ TEST_CASE("the bsp-tree is read correctly", "[world][bsp]") {
 	REQUIRE(polys[152] == 92);
 }
 
-TEST_CASE("the vob-tree is read correctly", "[world][vob]") {
+TEST_CASE("the vob-tree is read correctly", "[world][vob][proprietary]") {
 	auto in = phoenix::reader::from("./samples/world.proprietary.zen");
 	auto wld = phoenix::world::parse(in, game_version::gothic_1);
 	auto& vobs = wld.vobs();
