@@ -93,22 +93,22 @@ namespace phoenix {
 			vob._m_vob_name = in->read_string();
 			vob._m_visual_name = in->read_string();
 			vob._m_show_visual = in->read_bool();
-			vob._m_camera_alignment = in->read_byte();
+			vob._m_camera_alignment = in->read_enum();
 
 			if (version == game_version::gothic_1) {
 				vob._m_cd_static = in->read_bool();
 				vob._m_cd_dynamic = in->read_bool();
 				vob._m_vob_static = in->read_bool();
-				vob._m_dynamic_shadows = in->read_byte();
-				vob._m_animation_mode = in->read_byte();
+				vob._m_dynamic_shadows = in->read_enum();
+				// vob._m_animation_mode = in->read_byte();
 			} else {
-				vob._m_animation_mode = in->read_byte();
+				vob._m_animation_mode = in->read_enum();
 				vob._m_animation_strength = in->read_float();
 				vob._m_far_clip_scale = in->read_float();
 				vob._m_cd_static = in->read_bool();
 				vob._m_cd_dynamic = in->read_bool();
 				vob._m_vob_static = in->read_bool();
-				vob._m_dynamic_shadows = in->read_byte();
+				vob._m_dynamic_shadows = in->read_enum();
 				vob._m_bias = in->read_int();
 				vob._m_ambient = in->read_bool();
 			}
