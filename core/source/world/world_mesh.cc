@@ -55,10 +55,10 @@ namespace phoenix {
 					auto matreader = archive_reader::open(in);
 
 					u32 material_count = in.read_u32();
-					msh._m_materials.resize(material_count);
+					msh._m_materials.reserve(material_count);
 
 					for (u32 i = 0; i < material_count; ++i) {
-						msh._m_materials[i] = material::parse(matreader);
+						msh._m_materials.emplace_back(material::parse(matreader));
 					}
 
 					break;
