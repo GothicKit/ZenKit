@@ -22,7 +22,15 @@ namespace phoenix {
 		header.version = std::stoi(version.substr(version.find(' ') + 1));
 
 		header.archiver = in.read_line();
-		header.format = in.read_line();
+
+		auto format = in.read_line();
+		if (format == "ASCII") {
+			header.format = archive_format::ascii;
+		} else if (format == "BINARY") {
+			header.format = archive_format::binary;
+		} else if (format == "BIN_SAFE") {
+			header.format = archive_format::binsafe;
+		}
 
 		std::string save_game = in.read_line();
 		if (!save_game.starts_with("saveGame ")) { throw parser_error("not an archive: saveGame missing"); }
@@ -50,11 +58,11 @@ namespace phoenix {
 		auto header = archive_header::parse(in);
 		std::unique_ptr<archive_reader> reader;
 
-		if (header.format == "ASCII") {
+		if (header.format == archive_format::ascii) {
 			reader = std::make_unique<archive_reader_ascii>(in, std::move(header));
-		} else if (header.format == "BINARY") {
+		} else if (header.format == archive_format::binary) {
 			reader = std::make_unique<archive_reader_binary>(in, std::move(header));
-		} else if (header.format == "BIN_SAFE") {
+		} else if (header.format == archive_format::binsafe) {
 			reader = std::make_unique<archive_reader_binsafe>(in, std::move(header));
 		} else {
 			throw parser_error(fmt::format("cannot load archive: format '{}' is not supported", header.format));

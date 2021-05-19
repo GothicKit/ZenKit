@@ -4,19 +4,25 @@
 #include <phoenix/detail/stream.hh>
 #include <phoenix/detail/types.hh>
 
+#include <glm/mat3x3.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
-#include <glm/mat3x3.hpp>
 
 #include <functional>
 #include <memory>
 #include <string>
 
 namespace phoenix {
+	enum class archive_format {
+		binary,
+		binsafe,
+		ascii
+	};
+
 	struct archive_header {
 		int version;
 		std::string archiver;
-		std::string format;
+		archive_format format;
 		bool save {false};
 		std::string user;
 		std::string date;
