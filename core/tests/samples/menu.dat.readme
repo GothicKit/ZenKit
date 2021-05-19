@@ -1,0 +1,3 @@
+To run the script tests you need to own a copy of Gothic 1. Copy or link MENU.DAT from
+$GOTHIC_INSTALL_DIR/_work/DATA/scripts/_compiled here with the name 'menu.proprietary.dat'
+(this is automatically excluded from version control).
