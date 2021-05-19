@@ -83,7 +83,7 @@ int main(int argc, const char** argv) {
 			in = phoenix::reader::from(file);
 		}
 
-		auto texture = phoenix::texture::read(in);
+		auto texture = phoenix::texture::parse(in);
 
 		if (all_levels) {
 			if (output.empty()) {

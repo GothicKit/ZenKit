@@ -96,7 +96,7 @@ int main(int argc, char** argv) {
 		fmt::print(HELP_MESSAGE, PXSCRDMP_VERSION);
 		return EXIT_SUCCESS;
 	} else {
-		script scr {input};
+		auto scr = script::parse(input);
 		const symbol* sym = nullptr;
 
 		if (specific) {

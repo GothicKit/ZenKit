@@ -178,13 +178,13 @@ int main(int argc, const char** argv) {
 		std::ofstream out {output};
 
 		if (phoenix::iequals(extension, "MRM")) {
-			auto mesh = phoenix::proto_mesh::read(in);
+			auto mesh = phoenix::proto_mesh::parse(in);
 
 			dump_wavefront(out, output, mesh);
 			out.close();
 
 		} else if (phoenix::iequals(extension, "ZEN")) {
-			auto wld = phoenix::world::read(in, game_version::gothic_1); // FIXME: implement algorithm of detecting the actual version of Gothic!
+			auto wld = phoenix::world::parse(in, game_version::gothic_1); // FIXME: implement algorithm of detecting the actual version of Gothic!
 
 			dump_wavefront(out, output, wld.mesh());
 			out.close();
