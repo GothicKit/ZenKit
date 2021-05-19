@@ -49,7 +49,7 @@ namespace phoenix {
 			bool has_visual_name = static_cast<bool>((bit1 & 0b000000000000100u) >> 2u);
 			bool has_visual_object = static_cast<bool>((bit1 & 0b000000000001000u) >> 3u);
 			bool has_ai_object = static_cast<bool>((bit1 & 0b000000000010000u) >> 4u);
-			bool has_event_man_object = static_cast<bool>((bit1 & 0b000000000100000u) >> 5u);
+			// bool has_event_man_object = static_cast<bool>((bit1 & 0b000000000100000u) >> 5u);
 			vob._m_physics_enabled = static_cast<bool>((bit1 & 0b000000001000000u) >> 6u);
 
 			if (version == game_version::gothic_2) {

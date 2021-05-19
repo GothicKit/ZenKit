@@ -66,7 +66,6 @@ int main(int argc, char** argv) {
 	bool action_help = false;
 
 	bool specific = false;
-	bool help_flags = false;
 
 	if (cmdl["--version"]) {
 		fmt::print("pxscrdmp v{}\n", PXSCRDMP_VERSION);

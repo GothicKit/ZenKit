@@ -23,7 +23,7 @@ namespace phoenix {
 			archive->read_object_begin(chnk);
 
 			if (chnk.object_name == "MeshAndBsp") {
-				auto version = in.read_u32();
+				/* auto version = */ (void) in.read_u32();
 				auto size = in.read_u32();
 
 				auto content = in.fork(size);
