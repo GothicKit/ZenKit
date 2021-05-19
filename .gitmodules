@@ -9,4 +9,4 @@
 	url = https://github.com/adishavit/argh
 [submodule "vendor/stb"]
 	path = vendor/stb
-	url = https://github.com/nothings/stb
+	url = https://gitlab.com/lmichaelis/phoenix-stb
