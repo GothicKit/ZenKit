@@ -186,6 +186,11 @@ namespace phoenix {
 		 */
 		virtual void skip_object(bool skip_current);
 
+		/**
+		 * @return The header of the archive
+		 */
+		[[nodiscard]] const archive_header& get_header() const noexcept { return header; };
+
 	protected:
 		/**
 		 * @brief Read the header of the specific archive format.
