@@ -4,8 +4,71 @@
 #include <phoenix/world/vob_tree.hh>
 
 #include <fmt/format.h>
+#include <unordered_map>
 
 namespace phoenix {
+	static std::unordered_map<std::string, vob_type> _vob_type_map = {
+			{"", vob_type::zUnknown},
+			{"\xA7", vob_type::zReference},
+			{"zCCSLib", vob_type::zCCSLib},
+			{"zCCSBlock", vob_type::zCCSBlock},
+			{"zCCSAtomicBlock", vob_type::zCCSAtomicBlock},
+			{"oCMsgConversation:oCNpcMessage:zCEventMessage", vob_type::oCMsgConversation},
+			{"zCDecal", vob_type::zCDecal},
+			{"zCProgMeshProto", vob_type::zCProgMeshProto},
+			{"zCParticleFX", vob_type::zCParticleFX},
+			{"zCMesh", vob_type::zCMesh},
+			{"zCModel", vob_type::zCModel},
+			{"zCMorphMesh", vob_type::zCMorphMesh},
+			{"oCWorld:zCWorld", vob_type::zCWorld},
+			{"zCWayNet", vob_type::zCWayNet},
+			{"zCWaypoint", vob_type::zCWaypoint},
+			{"zCVob", vob_type::zCVob},
+			{"zCVobLevelCompo:zCVob", vob_type::zCVobLevelCompo},
+			{"oCItem:zCVob", vob_type::oCItem},
+			{"oCMOB:zCVob", vob_type::oCMOB},
+			{"oCMobInter:oCMOB:zCVob", vob_type::oCMobInter},
+			{"oCMobBed:oCMobInter:oCMOB:zCVob", vob_type::oCMobBed},
+			{"oCMobFire:oCMobInter:oCMOB:zCVob", vob_type::oCMobFire},
+			{"oCMobLadder:oCMobInter:oCMOB:zCVob", vob_type::oCMobLadder},
+			{"oCMobSwitch:oCMobInter:oCMOB:zCVob", vob_type::oCMobSwitch},
+			{"oCMobWheel:oCMobInter:oCMOB:zCVob", vob_type::oCMobWheel},
+			{"oCMobContainer:oCMobInter:oCMOB:zCVob", vob_type::oCMobContainer},
+			{"oCMobDoor:oCMobInter:oCMOB:zCVob", vob_type::oCMobDoor},
+			{"zCPFXControler:zCVob", vob_type::zCPFXController},
+			{"zCVobAnimate:zCVob", vob_type::zCVobAnimate},
+			{"zCVobLensFlare:zCVob", vob_type::zCVobLensFlare},
+			{"zCVobLight:zCVob", vob_type::zCVobLight},
+			{"zCVobSpot:zCVob", vob_type::zCVobSpot},
+			{"zCVobStartpoint:zCVob", vob_type::zCVobStartpoint},
+			{"zCVobSound:zCVob", vob_type::zCVobSound},
+			{"zCVobSoundDaytime:zCVobSound:zCVob", vob_type::zCVobSoundDaytime},
+			{"oCZoneMusic:zCVob", vob_type::oCZoneMusic},
+			{"oCZoneMusicDefault:oCZoneMusic:zCVob", vob_type::oCZoneMusicDefault},
+			{"zCZoneZFog:zCVob", vob_type::zCZoneZFog},
+			{"zCZoneZFogDefault:zCZoneZFog:zCVob", vob_type::zCZoneZFogDefault},
+			{"zCZoneVobFarPlane:zCVob", vob_type::zCZoneVobFarPlane},
+			{"zCZoneVobFarPlaneDefault:zCZoneVobFarPlane:zCVob", vob_type::zCZoneVobFarPlaneDefault},
+			{"zCMessageFilter:zCVob", vob_type::zCMessageFilter},
+			{"zCCodeMaster:zCVob", vob_type::zCCodeMaster},
+			{"zCTrigger:zCVob", vob_type::zCTrigger},
+			{"zCTriggerList:zCTrigger:zCVob", vob_type::zCTriggerList},
+			{"oCTriggerScript:zCTrigger:zCVob", vob_type::oCTriggerScript},
+			{"zCMover:zCTrigger:zCVob", vob_type::zCMover},
+			{"oCTriggerChangeLevel:zCTrigger:zCVob", vob_type::oCTriggerChangeLevel},
+			{"zCTriggerWorldStart:zCVob", vob_type::zCTriggerWorldStart},
+			{"zCTriggerUntouch:zCVob", vob_type::zCTriggerUntouch},
+			{"zCCSCamera:zCVob", vob_type::zCCSCamera},
+			{"zCCamTrj_KeyFrame:zCVob", vob_type::zCCamTrj_KeyFrame},
+			{"oCTouchDamage:zCTouchDamage:zCVob", vob_type::oCTouchDamage},
+			{"zCEarthquake:zCVob", vob_type::zCEarthquake},
+			{"zCAICamera", vob_type::zCAICamera},
+			{"zCMoverControler:zCVob", vob_type::zCMoverController},
+			{"zCVobScreenFX:zCVob", vob_type::zCVobScreenFX},
+			{"zCVobStair:zCVob", vob_type::zCVobStair},
+			{"oCCSTrigger:zCTrigger:zCVob", vob_type::oCCSTrigger},
+	};
+
 
 	vob_tree vob_tree::parse(archive_reader_ref& in, game_version version) {
 		vob_tree vob {};
@@ -16,6 +79,7 @@ namespace phoenix {
 		}
 
 		auto packed = in->read_int() != 0;
+		vob._m_type = _vob_type_map[obj.class_name];
 
 		if (packed) {
 			auto raw = in->read_raw_bytes();
