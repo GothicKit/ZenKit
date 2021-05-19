@@ -1,0 +1,3 @@
+To run the message database tests you need to own a German copy of Gothic 1. Copy or link OU.BIN from
+$GOTHIC_INSTALL_DIR/_work/DATA/scripts/content/CUTSCENE here with the name 'ou.proprietary.bin'
+(this is automatically excluded from version control).
