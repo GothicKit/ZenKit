@@ -15,7 +15,7 @@ job-configure:
     - echo "Configuring the CMake project:"
     - mkdir "$CI_PROJECT_DIR/build/"
     - cd "$CI_PROJECT_DIR/build/"
-    - cmake -DCMAKE_BUILD_TYPE=Debug -G Unix Makefiles ..
+    - cmake -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles" ..
 
 job-build:
     stage: build
