@@ -22,7 +22,7 @@ job-build:
         - make
     artifacts:
         paths:
-            - $CI_PROJECT_DIR/build/phoenix-core-tests
+            - build/core/phoenix-core-tests
 
 
 job-test:
