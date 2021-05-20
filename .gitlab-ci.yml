@@ -1,5 +1,8 @@
 image: gcc
 
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
 stages:
   - configure
   - build
