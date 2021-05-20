@@ -8,6 +8,8 @@ stages:
 job-configure:
   stage: configure
   before_script:
+      - apt update
+      - apt upgrade
       - apt install cmake
   script:
     - echo "Configuring the CMake project:"
