@@ -87,7 +87,7 @@ namespace phoenix {
 
 					for (int i = 0; i < submesh_count; ++i) {
 						auto& mesh = msh._m_sub_meshes.emplace_back(sub_mesh::parse(content, submesh_sections[i]));
-						mesh.material = msh._m_materials[i];
+						mesh.mat = msh._m_materials[i];
 					}
 
 					break;

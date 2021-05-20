@@ -53,7 +53,7 @@ namespace phoenix {
 	 * @brief Represents a sub-mesh
 	 */
 	struct sub_mesh {
-		material material;
+		material mat;
 		std::vector<mesh::triangle> triangles;
 		std::vector<mesh::wedge> wedges;
 		std::vector<float> colors;

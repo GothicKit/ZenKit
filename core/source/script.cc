@@ -208,6 +208,7 @@ namespace phoenix {
 
 				case dt_instance:
 					sym._m_value = instance_ptr {};
+					[[fallthrough]];
 				case dt_function:
 				case dt_prototype:
 					sym._m_address = in.read_s32();

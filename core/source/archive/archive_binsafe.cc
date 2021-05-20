@@ -126,7 +126,7 @@ namespace phoenix {
 	}
 
 	glm::vec2 archive_reader_binsafe::read_vec2() {
-		auto unused = assure_entry(bs_raw_float) - 2 * sizeof(float);
+		auto unused = static_cast<s32>(assure_entry(bs_raw_float) - 2 * sizeof(float));
 
 		if (unused < 0) {
 			throw parser_error("archive_reader_binsafe: cannot read vec2 (2 * float): not enough space in rawFloat entry.");
@@ -172,7 +172,7 @@ namespace phoenix {
 	}
 
 	std::tuple<glm::vec3, glm::vec3> archive_reader_binsafe::read_bbox() {
-		auto unused = assure_entry(bs_raw_float) - 3 * 2 * sizeof(float);
+		auto unused = static_cast<s32>(assure_entry(bs_raw_float) - 3 * 2 * sizeof(float));
 
 		if (unused < 0) {
 			throw parser_error("archive_reader_binsafe: cannot read bbox (6 * float): not enough space in rawFloat entry.");
@@ -187,7 +187,7 @@ namespace phoenix {
 	}
 
 	glm::mat3x3 archive_reader_binsafe::read_mat3x3() {
-		auto unused = assure_entry(bs_raw) - 3 * 3 * sizeof(float);// TODO: Check that this is actually a raw field
+		auto unused = static_cast<s32>(assure_entry(bs_raw) - 3 * 3 * sizeof(float));// TODO: Check that this is actually a raw field
 
 		if (unused < 0) {
 			throw parser_error("archive_reader_binsafe: cannot read bbox (9 * float): not enough space in raw entry.");

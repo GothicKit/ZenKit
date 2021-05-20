@@ -41,8 +41,8 @@ TEST_CASE("proto meshes (MRMs) are read correctly", "[mesh][mrm]") {
 	REQUIRE(submeshes.size() == 1);
 
 	const auto& submesh = submeshes[0];
-	REQUIRE(submesh.material.name() == "EVT_TPL_GITTERKAEFIG_01");
-	REQUIRE(submesh.material.texture() == "OCODFLGATELI.TGA");
+	REQUIRE(submesh.mat.name() == "EVT_TPL_GITTERKAEFIG_01");
+	REQUIRE(submesh.mat.texture() == "OCODFLGATELI.TGA");
 
 	REQUIRE(submesh.colors.empty());
 	REQUIRE(submesh.triangle_edges.empty());
