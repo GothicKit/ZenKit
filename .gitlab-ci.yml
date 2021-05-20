@@ -35,4 +35,4 @@ job-test:
     artifacts:
         when: always
         reports:
-            junit: report.xml
+            junit: $CI_PROJECT_DIR/core/tests/report.xml
