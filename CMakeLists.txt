@@ -8,7 +8,11 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
 
 if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
-	set(CMAKE_CXX_FLAGS "-fstandalone-debug -fsanitize=address -fsanitize=undefined -fsanitize=leak ${CMAKE_CXX_FLAGS}")
+	set(CMAKE_CXX_FLAGS "-fsanitize=address -fsanitize=undefined -fsanitize=leak ${CMAKE_CXX_FLAGS}")
+
+	if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstandalone-debug")
+	endif()
 endif()
 
 
