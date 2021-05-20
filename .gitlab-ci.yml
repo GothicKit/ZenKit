@@ -4,30 +4,26 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
 stages:
-  - configure
   - build
   - test
 
-job-configure:
-  stage: configure
-  before_script:
-      - apt update -y
-      - apt upgrade -y
-      - apt install cmake -y
-  script:
-    - echo "Configuring the CMake project:"
-    - mkdir "$CI_PROJECT_DIR/build/"
-    - cd "$CI_PROJECT_DIR/build/"
-    - cmake -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles" ..
 
 job-build:
     stage: build
+    before_script:
+      - apt update -y
+      - apt upgrade -y
+      - apt install cmake -y
     script:
-        - echo "Building the test executable:"
+        - mkdir "$CI_PROJECT_DIR/build/"
+        - cd "$CI_PROJECT_DIR/build/"
+        - cmake -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles" ..
         - cd "$CI_PROJECT_DIR/build/"
         - make
-    needs: 
-        - job-configure
+    artifacts:
+        paths:
+            - $CI_PROJECT_DIR/build/phoenix-core-tests
+
 
 job-test:
     stage: test
