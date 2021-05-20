@@ -8,9 +8,9 @@ stages:
 job-configure:
   stage: configure
   before_script:
-      - apt update
-      - apt upgrade
-      - apt install cmake
+      - apt update -y
+      - apt upgrade -y
+      - apt install cmake -y
   script:
     - echo "Configuring the CMake project:"
     - mkdir "$CI_PROJECT_DIR/build/"
