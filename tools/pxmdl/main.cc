@@ -52,12 +52,11 @@ static void dump_wavefront(std::ostream& out, const std::string& name, const pho
 	int i = 0;
 	for (const auto& msh : mesh.submeshes()) {
 		out << "g sub" << ++i << "\n"
-			<< "\tusemtl " << msh.material.name() << "\n";
+			<< "\tusemtl " << msh.mat.name() << "\n";
 
 		for (const auto& item : msh.wedges) {
 			out << "\tvn " << item.normal.x << " " << item.normal.y << " " << item.normal.z << "\n";
 		}
-
 		for (const auto& item : msh.wedges) {
 			out << "\tvt " << item.texture.x << " " << item.texture.y << "\n";
 		}

@@ -321,6 +321,8 @@ constexpr char get_type_abbrev(datatype tp) {
 		case dt_instance:
 			return 'I';
 	}
+
+	return '?';
 }
 
 /// \brief Print a string containing all the given symbols flags
@@ -543,6 +545,8 @@ constexpr std::string_view get_opcode_name(opcode code) {
 		case op_set_instance:
 			return "setinst";
 	}
+
+	return "???";
 }
 
 /// \brief Prints the given instruction as raw bytes
