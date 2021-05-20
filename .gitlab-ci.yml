@@ -1,0 +1,37 @@
+image: gcc
+
+stages:
+  - configure
+  - build
+  - test
+
+job-configure:
+  stage: configure
+  before_script:
+      - apt install cmake
+  script:
+    - echo "Configuring the CMake project:"
+    - mkdir "$CI_PROJECT_DIR/build/"
+    - cd "$CI_PROJECT_DIR/build/"
+    - cmake -DCMAKE_BUILD_TYPE=Debug -G Unix Makefiles ..
+
+job-build:
+    stage: build
+    script:
+        - echo "Building the test executable:"
+        - cd "$CI_PROJECT_DIR/build/"
+        - make
+    needs: 
+        - job-configure
+
+job-test:
+    stage: test
+    script:
+        - cd "$CI_PROJECT_DIR/core/tests/"
+        - $CI_PROJECT_DIR/build/core/phoenix-core-tests ~[proprietary] -r junit -o report.xml
+    needs:
+        - job-build
+    artifacts:
+        when: always
+        reports:
+            junit: report.xml
