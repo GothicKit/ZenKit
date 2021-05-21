@@ -10,7 +10,26 @@ namespace phoenix {
 	void archive_reader_binsafe::read_header() {
 		_m_bs_version = input.read_u32();
 		_m_object_count = input.read_u32();
-		_m_hash_table_offset = input.read_u32();// TODO: Understand and implement hashes
+		auto hash_table_offset = input.read_u32();
+
+		// TODO: Understand and implement hashes
+		auto revert = input.tell();
+
+		{
+			input.seek(hash_table_offset);
+			auto hash_table_size = input.read_u32();
+			_m_hash_table_entries.resize(hash_table_size);
+
+			for (u32 i = 0; i < hash_table_size; ++i) {
+				auto key_length = input.read_u16();
+				auto insertion_index = input.read_u16();
+				auto hash_value = input.read_u32();
+
+				_m_hash_table_entries[insertion_index] = hash_table_entry {input.read_string(key_length), hash_value};
+			}
+		}
+
+		input.seek(revert);
 	}
 
 	bool archive_reader_binsafe::read_object_begin(archive_object& obj) {

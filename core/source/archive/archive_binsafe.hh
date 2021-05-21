@@ -2,6 +2,8 @@
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
 #include <phoenix/archive.hh>
+#include <unordered_map>
+#include <vector>
 
 namespace phoenix {
 	constexpr u8 type_sizes[] = {
@@ -41,6 +43,10 @@ namespace phoenix {
 		bs_hash = 0x12,
 	};
 
+	struct hash_table_entry {
+		std::string key;
+		u32 hash;
+	};
 
 	class archive_reader_binsafe final : public archive_reader {
 	public:
@@ -73,7 +79,8 @@ namespace phoenix {
 
 	private:
 		u32 _m_object_count {0};
-		u32 _m_hash_table_offset {0};
 		u32 _m_bs_version {0};
+
+		std::vector<hash_table_entry> _m_hash_table_entries;
 	};
 }// namespace phoenix
