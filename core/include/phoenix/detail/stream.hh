@@ -7,6 +7,7 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
+#include <ostream>
 #include <string>
 #include <string_view>
 
@@ -218,5 +219,136 @@ namespace phoenix {
 	private:
 		std::string_view _m_buffer {};
 		u64 _m_offset {0};
+	};
+
+	/**
+	 * @brief Facility to write binary data to an output stream.
+	 *
+	 * Provides safe and simple methods to write arithmetic types and strings to an output stream.
+	 * It provides a much simpler and more cohesive interface than a std::ostream and supports all
+	 * arithmetic types natively.
+	 */
+	class writer {
+	public:
+		/**
+		 * @brief Creates a new writer which writes to the given output stream.
+		 * @param out The stream to write to.
+		 */
+		explicit writer(std::ostream& out);
+
+		/**
+		 * @return The current write offset into the stream.
+		 */
+		inline u64 tell() const noexcept { return _m_stream.tellp(); };
+
+		/**
+		 * @brief Writes @p size bytes from @p data to the stream.
+		 * @param data The bytes to write.
+		 * @param size The number of bytes to write.
+		 * @throws io_error if writing fails for any reason.
+		 */
+		void write(const void* data, u64 size);
+
+		/**
+		 * @brief Writes a string to to the stream.
+		 * @param str The string to write.
+		 * @throws io_error if writing fails for any reason.
+		 */
+		inline void write_string(std::string_view str) { write(str.begin(), str.size()); }
+
+		/**
+		 * @brief Writes a string and a newline char to to the stream.
+		 * @param str The string to write.
+		 * @throws io_error if writing fails for any reason.
+		 */
+		inline void write_line(std::string_view str) {
+			write_string(str);
+			write_u8('\n');
+		}
+
+		/**
+		 * @brief Writes a `u8` value to the stream.
+		 * @param v The value to write.
+		 * @throws io_error if writing fails for any reason.
+		 */
+		inline void write_u8(u8 v) { _write_t<u8>(v); }
+
+		/**
+		 * @brief Writes a `u16` value to the stream.
+		 * @param v The value to write.
+		 * @throws io_error if writing fails for any reason.
+		 */
+		inline void write_u16(u16 v) { _write_t<u16>(v); }
+
+		/**
+		 * @brief Writes a `u32` value to the stream.
+		 * @param v The value to write.
+		 * @throws io_error if writing fails for any reason.
+		 */
+		inline void write_u32(u32 v) { _write_t<u32>(v); }
+
+		/**
+		 * @brief Writes a `u64` value to the stream.
+		 * @param v The value to write.
+		 * @throws io_error if writing fails for any reason.
+		 */
+		inline void write_u64(u64 v) { _write_t<u64>(v); }
+
+		/**
+		 * @brief Writes a `s8` value to the stream.
+		 * @param v The value to write.
+		 * @throws io_error if writing fails for any reason.
+		 */
+		inline void write_s8(s8 v) { _write_t<s8>(v); }
+
+		/**
+		 * @brief Writes a `s16` value to the stream.
+		 * @param v The value to write.
+		 * @throws io_error if writing fails for any reason.
+		 */
+		inline void write_s16(s16 v) { _write_t<s16>(v); }
+
+		/**
+		 * @brief Writes a `s32` value to the stream.
+		 * @param v The value to write.
+		 * @throws io_error if writing fails for any reason.
+		 */
+		inline void write_s32(s32 v) { _write_t<s32>(v); }
+
+		/**
+		 * @brief Writes a `s64` value to the stream.
+		 * @param v The value to write.
+		 * @throws io_error if writing fails for any reason.
+		 */
+		inline void write_s64(s64 v) { _write_t<s64>(v); }
+
+		/**
+		 * @brief Writes a `f32` value to the stream.
+		 * @param v The value to write.
+		 * @throws io_error if writing fails for any reason.
+		 */
+		inline void write_f32(f32 v) { _write_t<f32>(v); }
+
+		/**
+		 * @brief Writes a `f64` value to the stream.
+		 * @param v The value to write.
+		 * @throws io_error if writing fails for any reason.
+		 */
+		inline void write_f64(f64 v) { _write_t<f64>(v); }
+
+	protected:
+		/**
+		 * @brief Writes a value of type @p T to the stream.
+		 * @tparam T The type of value to write
+		 * @param v The value to write.
+		 * @throws io_error if writing fails for any reason.
+		 */
+		template <typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+		void _write_t(T v) {
+			write(&v, sizeof(T));
+		}
+
+	private:
+		std::ostream& _m_stream;
 	};
 }// namespace phoenix

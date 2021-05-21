@@ -96,4 +96,20 @@ namespace phoenix {
 
 		return tmp;
 	}
+
+	writer::writer(std::ostream& out) : _m_stream(out) {
+		try {
+			_m_stream.exceptions(std::ios::failbit | std::ios::eofbit | std::ios::badbit);
+		} catch (const std::ios::failure& fail) {
+			throw io_error(fail.what());
+		}
+	}
+
+	void writer::write(const void* data, u64 size) {
+		try {
+			_m_stream.write(static_cast<const char*>(data), static_cast<s32>(size));
+		} catch (const std::ios::failure& fail) {
+			throw io_error(fail.what());
+		}
+	}
 }// namespace phoenix

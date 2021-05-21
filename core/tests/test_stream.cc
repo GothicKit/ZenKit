@@ -5,7 +5,22 @@
 
 #include "catch2.hh"
 
+#include <sstream>
+#include <fstream>
+
 using namespace phoenix;
+
+static std::string read_file(const std::string& str) {
+	std::string v {};
+	std::ifstream in {str, std::ios::binary | std::ios::ate};
+
+	v.resize(in.tellg());
+	in.seekg(0);
+	in.read(reinterpret_cast<char*>(v.data()), static_cast<s32>(v.size()));
+	in.close();
+
+	return v;
+}
 
 TEST_CASE("reader fails to open illegal paths", "[stream][reader]") {
 	REQUIRE_THROWS_AS(reader::from("."), io_error);
@@ -60,4 +75,28 @@ TEST_CASE("readers can be forked", "[stream][reader]") {
 	REQUIRE(in.tell() == 10);
 	REQUIRE(fork2.size() == 50);
 	REQUIRE(fork2.tell() == 0);
+}
+
+TEST_CASE("writer writes binary files correctly", "[stream][writer]") {
+	std::ostringstream ss {};
+	phoenix::writer out {ss};
+
+	out.write_s8(-8);
+	out.write_s16(-16);
+	out.write_s32(-32);
+	out.write_s64(-64);
+	out.write_u8(8);
+	out.write_u16(16);
+	out.write_u32(32);
+	out.write_u64(64);
+	out.write_f32(-32.42f);
+	out.write_f64(-64.42069);
+
+	out.write_line("line1");
+	out.write_string("  \n");
+	out.write_line("line2");
+	out.write_string("arbitrarylongstring");
+
+	REQUIRE(out.tell() == 76);
+	REQUIRE(ss.str() == read_file("./samples/basic.bin"));
 }
