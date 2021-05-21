@@ -239,7 +239,15 @@ namespace phoenix {
 		/**
 		 * @return The current write offset into the stream.
 		 */
-		inline u64 tell() const noexcept { return _m_stream.tellp(); };
+		[[nodiscard]]inline u64 tell() const noexcept { return _m_stream.tellp(); };
+
+		/**
+		 * @brief Set the current write offset into the stream.
+		 * @param offset The new read offset to set.
+		 * @throws io_error if setting the given @p offset fails for any reason.
+		 * @see	#tell
+		 */
+		void seek(u64 offset);
 
 		/**
 		 * @brief Writes @p size bytes from @p data to the stream.
@@ -350,5 +358,6 @@ namespace phoenix {
 
 	private:
 		std::ostream& _m_stream;
+		u64 _m_begin;
 	};
 }// namespace phoenix
