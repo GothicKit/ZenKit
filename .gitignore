@@ -4,5 +4,6 @@
 
 /build/
 /cmake-build-*/
+/data/
 
 *.proprietary.*
