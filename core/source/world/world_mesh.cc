@@ -48,8 +48,12 @@ namespace phoenix {
 					msh._m_name = in.read_line(false);
 					break;
 				case world_mesh_chunk::bbox:
+					// first, we find a basic AABB bounding box
 					msh._m_bbox[0] = in.read_vec3();
 					msh._m_bbox[1] = in.read_vec3();
+
+					// but second, we find a list of OOBBs with one acting as a parent
+					msh._m_obb = obb::parse(in);
 					break;
 				case world_mesh_chunk::material: {
 					auto matreader = archive_reader::open(in);

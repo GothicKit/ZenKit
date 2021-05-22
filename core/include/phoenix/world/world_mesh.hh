@@ -3,6 +3,7 @@
 #pragma once
 #include <phoenix/detail/stream.hh>
 #include <phoenix/material.hh>
+#include <phoenix/math/obb.hh>
 #include <phoenix/mesh.hh>
 
 namespace phoenix {
@@ -115,10 +116,16 @@ namespace phoenix {
 		 */
 		[[nodiscard]] inline const std::vector<polygon>& polygons() const noexcept { return _m_polygons; }
 
+		/**
+		 * @return The oriented bbox tree of the mesh.
+		 */
+		[[nodiscard]] const obb& oriented_bbox() const noexcept { return _m_obb; };
+
 	private:
 		phoenix::date _m_date;
 		std::string _m_name;
 		glm::vec3 _m_bbox[2];
+		obb _m_obb;
 		std::vector<material> _m_materials;
 		std::vector<glm::vec3> _m_vertices;
 		std::vector<vertex_feature> _m_features;

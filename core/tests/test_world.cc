@@ -17,6 +17,11 @@ TEST_CASE("world meshes are read correctly", "[world][mesh][proprietary]") {
 	REQUIRE(min == glm::vec3 {0, 0, 0});
 	REQUIRE(max == glm::vec3 {0, 0, 0});
 
+	auto obb = mesh.oriented_bbox();
+	REQUIRE(obb.center == glm::vec3 {0, 0, 0});
+	REQUIRE(obb.rotation == glm::mat3x3 {0, 0, 0, 0, 0, 0, 0, 0, 0});
+	REQUIRE(obb.half_width == glm::vec3 {0, 0, 0});
+
 	auto& verts = mesh.vertices();
 	REQUIRE(verts[0] == glm::vec3 {91365, -4026.60083, 46900});
 	REQUIRE(verts[1] == glm::vec3 {92900, -4029.99976, 38399.9961});
