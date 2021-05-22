@@ -6,7 +6,7 @@
 
 namespace phoenix {
 	struct light_map {
-		std::shared_ptr<texture> texture;
+		std::shared_ptr<texture> image;
 		glm::vec3 normals[2];
 		glm::vec3 origin;
 	};
