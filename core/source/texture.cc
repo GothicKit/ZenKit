@@ -126,6 +126,16 @@ namespace phoenix {
 		return parse(rdr);
 	}
 
+#pragma pack(push, 1)
+	struct r5g5b5 {
+		u8 r : 5;
+		u8 g : 5;
+		u8 b : 5;
+	};
+#pragma pack(pop)
+
+	static_assert(sizeof(r5g5b5) == 2);
+
 	std::vector<u8> texture::as_rgba8(u32 mipmap_level) const {
 		std::vector<u8> conv;
 
@@ -186,13 +196,28 @@ namespace phoenix {
 			}
 			case tex_R8G8B8:{
 				const auto& map = data(mipmap_level);
-				conv.resize(map.size() );
+				conv.resize(map.size());
 
 				for (u32 i = 0; i < map.size(); i += 3) {
 					conv[i + 0] = map[i + 0];
 					conv[i + 1] = map[i + 1];
 					conv[i + 2] = map[i + 2];
 					conv[i + 3] = 0;
+				}
+
+				return conv;
+			}
+			case tex_R5G6B5: {
+				const auto& map = data(mipmap_level);
+				conv.resize(map.size() * 2);
+
+				u32 idx = 0;
+				for (u32 i = 0; i < map.size(); i += 2) {
+					r5g5b5* rgb = (r5g5b5*) &map[i];
+					conv[idx++] = rgb->r;
+					conv[idx++] = rgb->g;
+					conv[idx++] = rgb->b;
+					conv[idx++] = 0xff;
 				}
 
 				return conv;
