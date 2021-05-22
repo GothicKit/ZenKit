@@ -77,6 +77,7 @@ TEST_CASE("the vob-tree is read correctly", "[world][vob]") {
 
 	REQUIRE(vobs.size() == 14);
 
+	// FIXME: Test all kinds of VOBs
 	auto& vob0 = vobs[0];
 	auto& vob0_data = vob0.get<phoenix::vob::base>();
 

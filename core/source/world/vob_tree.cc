@@ -341,10 +341,121 @@ namespace phoenix {
 			throw parser_error(fmt::format("vob_tree: expected a '*:zCVob' object but got '{}'", obj.class_name));
 		}
 
-		vob::base data {};
-		vob::base::parse(data, in, version);
+		switch (vob._m_type) {
+			case vob_type::zCZoneVobFarPlaneDefault:
+			case vob_type::zCCamTrj_KeyFrame:
+			case vob_type::zCZoneZFogDefault:
+			case vob_type::zCZoneVobFarPlane:
+			case vob_type::zCVobLevelCompo:
+			case vob_type::zCVobStartpoint:
+			case vob_type::zCVobScreenFX:
+			case vob_type::zCEarthquake:
+			case vob_type::zCVobAnimate:
+			case vob_type::zCZoneZFog:
+			case vob_type::zCCSCamera:
+			case vob_type::zCVobStair:
+			case vob_type::zCVobSpot:
+			case vob_type::zCVob:
+				vob._m_content = vob::base {};
+				vob::base::parse(std::get<vob::base>(vob._m_content), in, version);
+				break;
+			case vob_type::oCItem:
+			case vob_type::zCVobLensFlare:
+				vob._m_content = vob::item {};
+				vob::item::parse(std::get<vob::item>(vob._m_content), in, version);
+				break;
+			case vob_type::zCTrigger:
+			case vob_type::oCCSTrigger:
+				vob._m_content = vob::trigger {};
+				vob::trigger::parse(std::get<vob::trigger>(vob._m_content), in, version);
+				break;
+			case vob_type::oCMOB:
+				vob._m_content = vob::mob {};
+				vob::mob::parse(std::get<vob::mob>(vob._m_content), in, version);
+				break;
+			case vob_type::oCMobInter:
+			case vob_type::oCMobLadder:
+			case vob_type::oCMobSwitch:
+			case vob_type::oCMobWheel:
+			case vob_type::oCMobBed:
+				vob._m_content = vob::mob_inter {};
+				vob::mob_inter::parse(std::get<vob::mob_inter>(vob._m_content), in, version);
+				break;
+			case vob_type::oCMobFire:
+				vob._m_content = vob::mob_fire {};
+				vob::mob_fire::parse(std::get<vob::mob_fire>(vob._m_content), in, version);
+				break;
+			case vob_type::oCMobContainer:
+				vob._m_content = vob::mob_container {};
+				vob::mob_container::parse(std::get<vob::mob_container>(vob._m_content), in, version);
+				break;
+			case vob_type::oCMobDoor:
+				vob._m_content = vob::mob_door {};
+				vob::mob_door::parse(std::get<vob::mob_door>(vob._m_content), in, version);
+				break;
+			case vob_type::zCPFXController:
+				vob._m_content = vob::pfx_controller {};
+				vob::pfx_controller::parse(std::get<vob::pfx_controller>(vob._m_content), in, version);
+				break;
+			case vob_type::zCVobLight:
+				vob._m_content = vob::light {};
+				vob::light::parse(std::get<vob::light>(vob._m_content), in, version);
+				break;
+			case vob_type::zCVobSound:
+				vob._m_content = vob::sound {};
+				vob::sound::parse(std::get<vob::sound>(vob._m_content), in, version);
+				break;
+			case vob_type::zCVobSoundDaytime:
+				vob._m_content = vob::sound_daytime {};
+				vob::sound_daytime::parse(std::get<vob::sound_daytime>(vob._m_content), in, version);
+				break;
+			case vob_type::oCZoneMusic:
+			case vob_type::oCZoneMusicDefault:
+				vob._m_content = vob::zone_music {};
+				vob::zone_music::parse(std::get<vob::zone_music>(vob._m_content), in, version);
+				break;
+			case vob_type::zCMessageFilter:
+				vob._m_content = vob::message_filter {};
+				vob::message_filter::parse(std::get<vob::message_filter>(vob._m_content), in, version);
+				break;
+			case vob_type::zCCodeMaster:
+				vob._m_content = vob::code_master {};
+				vob::code_master::parse(std::get<vob::code_master>(vob._m_content), in, version);
+				break;
+			case vob_type::zCTriggerList:
+				vob._m_content = vob::trigger_list {};
+				vob::trigger_list::parse(std::get<vob::trigger_list>(vob._m_content), in, version);
+				break;
+			case vob_type::oCTriggerScript:
+				vob._m_content = vob::trigger_script {};
+				vob::trigger_script::parse(std::get<vob::trigger_script>(vob._m_content), in, version);
+				break;
+			case vob_type::zCMover:
+				vob._m_content = vob::trigger_mover {};
+				vob::trigger_mover::parse(std::get<vob::trigger_mover>(vob._m_content), in, version);
+				break;
+			case vob_type::oCTriggerChangeLevel:
+				vob._m_content = vob::trigger_change_level {};
+				vob::trigger_change_level::parse(std::get<vob::trigger_change_level>(vob._m_content), in, version);
+				break;
+			case vob_type::zCTriggerWorldStart:
+				vob._m_content = vob::trigger_world_start {};
+				vob::trigger_world_start::parse(std::get<vob::trigger_world_start>(vob._m_content), in, version);
+				break;
+			case vob_type::oCTouchDamage:
+				vob._m_content = vob::touch_damage {};
+				vob::touch_damage::parse(std::get<vob::touch_damage>(vob._m_content), in, version);
+				break;
+			case vob_type::zCTriggerUntouch:
+				vob._m_content = vob::trigger_untouch {};
+				vob::trigger_untouch::parse(std::get<vob::trigger_untouch>(vob._m_content), in, version);
+				break;
+			case vob_type::zCMoverController:
+				vob._m_content = vob::mover_controller {};
+				vob::mover_controller::parse(std::get<vob::mover_controller>(vob._m_content), in, version);
+				break;
+		}
 
-		vob._m_content = data;
 
 		if (!in->read_object_end()) {
 			in->skip_object(true);
