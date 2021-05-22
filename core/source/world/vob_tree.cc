@@ -64,7 +64,12 @@ namespace phoenix {
 		}
 
 		auto packed = in->read_int() != 0;
-		vob._m_type = _vob_type_map[obj.class_name];
+
+		if (const auto& it = _vob_type_map.find(obj.class_name); it != _vob_type_map.end()) {
+			vob._m_type = it->second;
+		} else {
+			throw parser_error(fmt::format("vob_tree: expected a '*:zCVob' object but got '{}'", obj.class_name));
+		}
 
 		if (packed) {
 			auto raw = in->read_raw_bytes();
