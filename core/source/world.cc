@@ -29,8 +29,6 @@ namespace phoenix {
 				auto content = in.fork(size);
 				wld._m_mesh = world_mesh::parse(content);
 				wld._m_tree = bsp_tree::parse(content);
-
-				archive->read_object_end();// TODO: Require end read!
 			} else if (chnk.object_name == "VobTree") {
 				auto count = archive->read_int();
 				wld._m_root_vobs.reserve(count);
@@ -38,13 +36,12 @@ namespace phoenix {
 				for (int i = 0; i < count; ++i) {
 					wld._m_root_vobs.emplace_back(vob_tree::parse(archive, version));
 				}
-
-				archive->read_object_end();// TODO: Require end read!
 			} else if (chnk.object_name == "WayNet") {
 				wld._m_way_net = way_net::parse(archive);
-				archive->read_object_end();// TODO: Require end read!
-			} else {
-				fmt::print(stderr, "warning: world: unknown world object '[{} {} {} {}]'\n", chnk.object_name,
+			}
+
+			if (!archive->read_object_end()) {
+				fmt::print(stderr, "warning: world: not all data consumed of object '[{} {} {} {}]'\n", chnk.object_name,
 						   chnk.class_name, chnk.version, chnk.index);
 				archive->skip_object(true);
 			}
