@@ -80,10 +80,31 @@ namespace phoenix {
 	};
 
 	namespace vob {
-		struct empty {
+		struct base {
+			glm::vec3 bbox[2];
+			glm::vec3 position;
+			glm::mat3x3 rotation;
+			bool show_visual;
+			u8 camera_alignment;
+			bool cd_static;
+			bool cd_dynamic;
+			bool vob_static;
+			bool dynamic_shadows;
+			bool physics_enabled;
+			u8 animation_mode;
+			s32 bias;
+			bool ambient;
+			float animation_strength;
+			float far_clip_scale;
+
+			std::string preset_name;
+			std::string vob_name;
+			std::string visual_name;
+
+			static void parse(base& vob, archive_reader_ref& in, game_version version);
 		};
 
-		struct item {
+		struct item : public base {
 			std::string instance;
 		};
 
@@ -304,112 +325,17 @@ namespace phoenix {
 		 * @return The data.
 		 */
 		template <typename T>
-		inline const T& get() { return std::get<T>(_m_content); }
+		inline const T& get() const { return std::get<T>(_m_content); }
 
 		/**
 		 * @return A list of child VOBs.
 		 */
 		[[nodiscard]] inline const std::vector<vob_tree>& children() const noexcept { return _m_children; }
 
-		/**
-		 * @return The bounding box of the VOB as a (min, max) tuple.
-		 */
-		[[nodiscard]] inline std::tuple<glm::vec3, glm::vec3> bbox() const noexcept { return std::make_tuple(_m_bbox[0], _m_bbox[1]); }
-
-		/**
-		 * @return The position of the VOB
-		 */
-		[[nodiscard]] inline glm::vec3 position() const noexcept { return _m_position; }
-
-		/**
-		 * @return The rotation of the VOB
-		 */
-		[[nodiscard]] inline glm::mat3x3 rotation() const noexcept { return _m_rotation; }
-
-		/**
-		 * @return ???
-		 */
-		[[nodiscard]] inline bool show_visual() const noexcept { return _m_show_visual; }
-
-		/**
-		 * @return ???
-		 */
-		[[nodiscard]] inline u8 camera_alignment() const noexcept { return _m_camera_alignment; }
-
-		/**
-		 * @return ???
-		 */
-		[[nodiscard]] inline u8 animation_mode() const noexcept { return _m_animation_mode; }
-
-		/**
-		 * @return ???
-		 */
-		[[nodiscard]] inline s32 bias() const noexcept { return _m_bias; }
-
-		/**
-		 * @return ???
-		 */
-		[[nodiscard]] inline f32 animation_strength() const noexcept { return _m_animation_strength; }
-
-		/**
-		 * @return ???
-		 */
-		[[nodiscard]] inline f32 far_clip_scale() const noexcept { return _m_far_clip_scale; }
-
-		/**
-		 * @return ???
-		 */
-		[[nodiscard]] inline u8 dynamic_shadows() const noexcept { return _m_dynamic_shadows; }
-
-		/**
-		 * @return The name of the preset being used
-		 */
-		[[nodiscard]] inline const std::string& preset_name() const noexcept { return _m_preset_name; }
-
-		/**
-		 * @return The name of the VOB
-		 */
-		[[nodiscard]] inline const std::string& vob_name() const noexcept { return _m_vob_name; }
-
-		/**
-		 * @return The name of the attached visual
-		 */
-		[[nodiscard]] inline const std::string& visual_name() const noexcept { return _m_visual_name; }
-
-		/**
-		 * @return ???
-		 */
-		[[nodiscard]] inline bool is_cd_static() const noexcept { return _m_cd_static; }
-
-		/**
-		 * @return ???
-		 */
-		[[nodiscard]] inline bool is_cd_dynamic() const noexcept { return _m_cd_dynamic; }
-
-		/**
-		 * @return ???
-		 */
-		[[nodiscard]] inline bool is_vob_static() const noexcept { return _m_vob_static; }
-
-		/**
-		 * @return `true` if physics should be activated for the VOB
-		 */
-		[[nodiscard]] inline bool is_physics_enabled() const noexcept { return _m_physics_enabled; }
-
-		/**
-		 * @return ???
-		 */
-		[[nodiscard]] inline bool is_ambient() const noexcept { return _m_ambient; }
-
-		/**
-		 * @return The type of the VOB.
-		 */
-		[[nodiscard]] inline vob_type type() const noexcept { return _m_type; }
-
 	private:
 		std::vector<vob_tree> _m_children;
 		std::variant<
-				vob::empty,
+				vob::base,
 				vob::item,
 				vob::pfx_controller,
 				vob::light,
@@ -435,25 +361,6 @@ namespace phoenix {
 				_m_content;
 
 		vob_type _m_type;
-		glm::vec3 _m_bbox[2];
-		glm::vec3 _m_position;
-		glm::mat3x3 _m_rotation;
-		bool _m_show_visual;
-		u8 _m_camera_alignment;
-		bool _m_cd_static;
-		bool _m_cd_dynamic;
-		bool _m_vob_static;
-		bool _m_dynamic_shadows;
-		bool _m_physics_enabled;
-		u8 _m_animation_mode;
-		s32 _m_bias;
-		bool _m_ambient;
-		float _m_animation_strength;
-		float _m_far_clip_scale;
-
-		std::string _m_preset_name;
-		std::string _m_vob_name;
-		std::string _m_visual_name;
 	};
 
 
