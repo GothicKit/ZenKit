@@ -47,7 +47,6 @@ namespace phoenix {
 			{"zCCamTrj_KeyFrame:zCVob", vob_type::zCCamTrj_KeyFrame},
 			{"oCTouchDamage:zCTouchDamage:zCVob", vob_type::oCTouchDamage},
 			{"zCEarthquake:zCVob", vob_type::zCEarthquake},
-			{"zCAICamera", vob_type::zCAICamera},
 			{"zCMoverControler:zCVob", vob_type::zCMoverController},
 			{"zCVobScreenFX:zCVob", vob_type::zCVobScreenFX},
 			{"zCVobStair:zCVob", vob_type::zCVobStair},
