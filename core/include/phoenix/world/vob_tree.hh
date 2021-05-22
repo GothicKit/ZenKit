@@ -181,6 +181,19 @@ namespace phoenix {
 			static void parse(zone_music& vob, archive_reader_ref& in, game_version version);
 		};
 
+		struct zone_fog : public base {
+			float field1;
+			float field2;
+			color field3;
+
+			static void parse(zone_fog& vob, archive_reader_ref& in, game_version version) {
+				base::parse(vob, in, version);
+				vob.field1 = in->read_float();
+				vob.field2 = in->read_float();
+				vob.field3 = in->read_color();
+			}
+		};
+
 		struct message_filter : public base {
 			std::string target;
 			u8 on_trigger;
@@ -451,7 +464,8 @@ namespace phoenix {
 				vob::mob_container,
 				vob::mob_door,
 				vob::trigger_mover,
-				vob::animate>
+				vob::animate,
+				vob::zone_fog>
 				_m_content;
 
 		vob_type _m_type;
