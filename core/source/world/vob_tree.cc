@@ -180,7 +180,7 @@ namespace phoenix {
 				vob.range_animation_smooth = in->read_bool();
 				vob.color_animation_list = in->read_string();
 				vob.color_animation_fps = in->read_float();
-				vob.color_animation_smooth = in->read_float();
+				vob.color_animation_smooth = in->read_bool();
 
 				if (version == game_version::gothic_2) {
 					vob.can_move = in->read_bool();
@@ -206,7 +206,7 @@ namespace phoenix {
 		void zone_music::parse(zone_music& vob, archive_reader_ref& in, game_version version) {
 			base::parse(vob, in, version);
 			vob.enabled = in->read_bool();
-			vob.priority = in->read_enum();
+			vob.priority = in->read_int();
 			vob.ellipsoid = in->read_bool();
 			vob.reverb = in->read_float();
 			vob.volume = in->read_float();
@@ -230,8 +230,8 @@ namespace phoenix {
 		void trigger::parse(trigger& vob, archive_reader_ref& in, game_version version) {
 			base::parse(vob, in, version);
 			vob.target = in->read_string();
-			vob.flags = in->read_byte();
-			vob.filter_flags = in->read_byte();
+			vob.flags = in->read_raw_bytes()[0];
+			vob.filter_flags = in->read_raw_bytes()[0];
 			vob.vob_target = in->read_string();
 			vob.max_activation_count = in->read_int();
 			vob.retrigger_delay_sec = in->read_float();

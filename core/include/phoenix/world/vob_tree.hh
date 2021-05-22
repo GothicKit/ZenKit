@@ -126,7 +126,7 @@ namespace phoenix {
 			bool range_animation_smooth;
 			std::string color_animation_list;
 			float color_animation_fps;
-			float color_animation_smooth;
+			bool color_animation_smooth;
 			bool can_move;
 
 			static void parse(light& vob, archive_reader_ref& in, game_version version);
@@ -163,7 +163,7 @@ namespace phoenix {
 
 		struct zone_music : public base {
 			bool enabled;
-			u32 priority;
+			s32 priority;
 			bool ellipsoid;
 			float reverb;
 			float volume;
@@ -215,12 +215,12 @@ namespace phoenix {
 				float delay;
 			};
 
-			s32 list_process;
+			u32 list_process;
 			std::vector<target> targets;
 
 			static void parse(trigger_list& vob, archive_reader_ref& in, game_version version) {
 				trigger::parse(vob, in, version);
-				vob.list_process = in->read_int();
+				vob.list_process = in->read_enum();
 
 				auto target_count = in->read_byte();
 				for (int i = 0; i < target_count; ++i) {
