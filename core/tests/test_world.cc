@@ -77,15 +77,19 @@ TEST_CASE("the vob-tree is read correctly", "[world][vob][proprietary]") {
 
 	REQUIRE(vobs.size() == 14);
 
+	// FIXME: Test all kinds of VOBs
 	auto& vob0 = vobs[0];
+	auto& vob0_data = vob0.get<phoenix::vob::base>();
+
 	auto& vob13 = vobs[13];
+	auto& vob13_data = vob13.get<phoenix::vob::base>();
 
 	{
-		auto [min, max] = vob0.bbox();
+		auto [min, max] = vob0_data.bbox;
 		REQUIRE(min == glm::vec3 {-71919.9609, -13091.8232, -59900});
 		REQUIRE(max == glm::vec3 {108999.992, 20014.0352, 67399.9921});
 
-		auto mat = vob0.rotation();
+		auto mat = vob0_data.rotation;
 		REQUIRE(mat[0][0] == 1.0f);
 		REQUIRE(mat[0][1] == 0.0f);
 		REQUIRE(mat[0][2] == 0.0f);
@@ -96,34 +100,35 @@ TEST_CASE("the vob-tree is read correctly", "[world][vob][proprietary]") {
 		REQUIRE(mat[2][1] == 0.0f);
 		REQUIRE(mat[2][2] == 1.0f);
 
-		REQUIRE(vob0.vob_name() == "LEVEL-VOB");
-		REQUIRE(vob0.visual_name() == "SURFACE.3DS");
-		REQUIRE(vob0.preset_name().empty());
-		REQUIRE(vob0.position() == glm::vec3 {0, 0, 0});
-		REQUIRE(!vob0.show_visual());
-		REQUIRE(vob0.camera_alignment() == 0);
-		REQUIRE(vob0.animation_mode() == 0);
-		REQUIRE(vob0.animation_strength() == 0.0f);
-		REQUIRE(vob0.far_clip_scale() == 0);
-		REQUIRE(vob0.is_cd_static());
-		REQUIRE(!vob0.is_cd_dynamic());
-		REQUIRE(!vob0.is_vob_static());
-		REQUIRE(vob0.dynamic_shadows() == 0);
-		REQUIRE(vob0.bias() == 0);
-		REQUIRE(!vob0.is_ambient());
-		REQUIRE(!vob0.is_physics_enabled());
+		REQUIRE(vob0_data.vob_name == "LEVEL-VOB");
+		REQUIRE(vob0_data.visual_name == "SURFACE.3DS");
+		REQUIRE(vob0_data.preset_name.empty());
+		REQUIRE(vob0_data.position == glm::vec3 {0, 0, 0});
+		REQUIRE(!vob0_data.show_visual);
+		REQUIRE(vob0_data.camera_alignment == 0);
+		REQUIRE(vob0_data.animation_mode == 0);
+		REQUIRE(vob0_data.animation_strength == 0.0f);
+		REQUIRE(vob0_data.far_clip_scale == 0);
+		REQUIRE(vob0_data.cd_static);
+		REQUIRE(!vob0_data.cd_dynamic);
+		REQUIRE(!vob0_data.vob_static);
+		REQUIRE(vob0_data.dynamic_shadows == 0);
+		REQUIRE(vob0_data.bias == 0);
+		REQUIRE(!vob0_data.ambient);
+		REQUIRE(!vob0_data.physics_enabled);
 
 		auto& children = vob0.children();
 		REQUIRE(children.size() == 7496);
 
 		auto& child1 = children[0];
+		auto& child1_data = child1.get<phoenix::vob::base>();
 
 		{
-			auto [minc, maxc] = child1.bbox();
+			auto [minc, maxc] = child1_data.bbox;
 			REQUIRE(minc == glm::vec3 {-18596.9004, -161.17189, 4091.1333});
 			REQUIRE(maxc == glm::vec3 {-18492.0723, -111.171906, 4191.26221});
 
-			auto matc = child1.rotation();
+			auto matc = child1_data.rotation;
 			REQUIRE(matc[0][0] == -0.779196978f);
 			REQUIRE(matc[0][1] == 0.0f);
 			REQUIRE(matc[0][2] == 0.626779079f);
@@ -134,33 +139,33 @@ TEST_CASE("the vob-tree is read correctly", "[world][vob][proprietary]") {
 			REQUIRE(matc[2][1] == 0.0f);
 			REQUIRE(matc[2][2] == -0.779196978f);
 
-			REQUIRE(child1.vob_name() == "FP_CAMPFIRE_PATH_BANDITOS2_03_02");
-			REQUIRE(child1.visual_name().empty());
-			REQUIRE(child1.preset_name().empty());
-			REQUIRE(child1.position() == glm::vec3 {-18544.4863, -136.171906, 4141.19727});
-			REQUIRE(!child1.show_visual());
-			REQUIRE(child1.camera_alignment() == 0);
-			REQUIRE(child1.animation_mode() == 0);
-			REQUIRE(child1.animation_strength() == 0.0f);
-			REQUIRE(child1.far_clip_scale() == 0);
-			REQUIRE(!child1.is_cd_static());
-			REQUIRE(!child1.is_cd_dynamic());
-			REQUIRE(!child1.is_vob_static());
-			REQUIRE(child1.dynamic_shadows() == 0);
-			REQUIRE(child1.bias() == 0);
-			REQUIRE(!child1.is_ambient());
-			REQUIRE(!child1.is_physics_enabled());
+			REQUIRE(child1_data.vob_name == "FP_CAMPFIRE_PATH_BANDITOS2_03_02");
+			REQUIRE(child1_data.visual_name.empty());
+			REQUIRE(child1_data.preset_name.empty());
+			REQUIRE(child1_data.position == glm::vec3 {-18544.4863, -136.171906, 4141.19727});
+			REQUIRE(!child1_data.show_visual);
+			REQUIRE(child1_data.camera_alignment == 0);
+			REQUIRE(child1_data.animation_mode == 0);
+			REQUIRE(child1_data.animation_strength == 0.0f);
+			REQUIRE(child1_data.far_clip_scale == 0);
+			REQUIRE(!child1_data.cd_static);
+			REQUIRE(!child1_data.cd_dynamic);
+			REQUIRE(!child1_data.vob_static);
+			REQUIRE(child1_data.dynamic_shadows == 0);
+			REQUIRE(child1_data.bias == 0);
+			REQUIRE(!child1_data.ambient);
+			REQUIRE(!child1_data.physics_enabled);
 
 			REQUIRE(child1.children().empty());
 		}
 	}
 
 	{
-		auto [min, max] = vob13.bbox();
+		auto [min, max] = vob13_data.bbox;
 		REQUIRE(min == glm::vec3 {-9999.40234, -10000.0039, -9200});
 		REQUIRE(max == glm::vec3 {9060.59765, 5909.90039, 7537.47461});
 
-		auto mat = vob13.rotation();
+		auto mat = vob13_data.rotation;
 		REQUIRE(mat[0][0] == 1.0f);
 		REQUIRE(mat[0][1] == 0.0f);
 		REQUIRE(mat[0][2] == 0.0f);
@@ -171,22 +176,22 @@ TEST_CASE("the vob-tree is read correctly", "[world][vob][proprietary]") {
 		REQUIRE(mat[2][1] == 0.0f);
 		REQUIRE(mat[2][2] == 1.0f);
 
-		REQUIRE(vob13.vob_name() == "LEVEL-VOB");
-		REQUIRE(vob13.visual_name() == "OLDCAMP.3DS");
-		REQUIRE(vob13.preset_name().empty());
-		REQUIRE(vob13.position() == glm::vec3 {0, 0, 0});
-		REQUIRE(!vob13.show_visual());
-		REQUIRE(vob13.camera_alignment() == 0);
-		REQUIRE(vob13.animation_mode() == 0);
-		REQUIRE(vob13.animation_strength() == 0.0f);
-		REQUIRE(vob13.far_clip_scale() == 0);
-		REQUIRE(!vob13.is_cd_static());
-		REQUIRE(!vob13.is_cd_dynamic());
-		REQUIRE(!vob13.is_vob_static());
-		REQUIRE(vob13.dynamic_shadows() == 0);
-		REQUIRE(vob13.bias() == 0);
-		REQUIRE(!vob13.is_ambient());
-		REQUIRE(!vob13.is_physics_enabled());
+		REQUIRE(vob13_data.vob_name == "LEVEL-VOB");
+		REQUIRE(vob13_data.visual_name == "OLDCAMP.3DS");
+		REQUIRE(vob13_data.preset_name.empty());
+		REQUIRE(vob13_data.position == glm::vec3 {0, 0, 0});
+		REQUIRE(!vob13_data.show_visual);
+		REQUIRE(vob13_data.camera_alignment == 0);
+		REQUIRE(vob13_data.animation_mode == 0);
+		REQUIRE(vob13_data.animation_strength == 0.0f);
+		REQUIRE(vob13_data.far_clip_scale == 0);
+		REQUIRE(!vob13_data.cd_static);
+		REQUIRE(!vob13_data.cd_dynamic);
+		REQUIRE(!vob13_data.vob_static);
+		REQUIRE(vob13_data.dynamic_shadows == 0);
+		REQUIRE(vob13_data.bias == 0);
+		REQUIRE(!vob13_data.ambient);
+		REQUIRE(!vob13_data.physics_enabled);
 
 		auto& children = vob13.children();
 		REQUIRE(children.size() == 3250);
