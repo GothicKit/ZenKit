@@ -41,8 +41,8 @@ namespace phoenix {
 
 				archive->read_object_end();// TODO: Require end read!
 			} else if (chnk.object_name == "WayNet") {
-				fmt::print(stderr, "warning: world: WayNet stub\n");
-				archive->skip_object(true);
+				wld._m_way_net = way_net::parse(archive);
+				archive->read_object_end();// TODO: Require end read!
 			} else {
 				fmt::print(stderr, "warning: world: unknown world object '[{} {} {} {}]'\n", chnk.object_name,
 						   chnk.class_name, chnk.version, chnk.index);

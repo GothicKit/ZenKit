@@ -192,3 +192,55 @@ TEST_CASE("the vob-tree is read correctly", "[world][vob][proprietary]") {
 		REQUIRE(children.size() == 3250);
 	}
 }
+
+TEST_CASE("the way-net is read correctly", "[world][waynet][proprietary]") {
+	auto in = phoenix::reader::from("./samples/world.proprietary.zen");
+	auto wld = phoenix::world::parse(in, game_version::gothic_1);
+	auto& waynet = wld.waynet();
+
+	REQUIRE(waynet.waypoints().size() == 2784);
+	REQUIRE(waynet.edges().size() == 3500);
+
+	auto& wp0 = waynet.waypoints()[0];
+	auto& wp100 = waynet.waypoints()[100];
+	auto& wp500 = waynet.waypoints()[500];
+
+	REQUIRE(wp0.name == "LOCATION_28_07");
+	REQUIRE(wp0.water_depth == 0);
+	REQUIRE(!wp0.under_water);
+	REQUIRE(wp0.position == glm::vec3 {23871.457, -553.283813, 27821.3516});
+	REQUIRE(wp0.direction == glm::vec3 {0.86651814, 0, -0.499145567});
+	REQUIRE(wp0.free_point);
+
+	REQUIRE(wp100.name == "CASTLE_MOVEMENT_STRAIGHT3");
+	REQUIRE(wp100.water_depth == 0);
+	REQUIRE(!wp100.under_water);
+	REQUIRE(wp100.position == glm::vec3 {3362.21948, 8275.1709, -21067.9473});
+	REQUIRE(wp100.direction == glm::vec3 {-0.342115372, 0, 0.939657927});
+	REQUIRE(!wp100.free_point);
+
+	REQUIRE(wp500.name == "OW_FOGDUNGEON_32");
+	REQUIRE(wp500.water_depth == 0);
+	REQUIRE(!wp500.under_water);
+	REQUIRE(wp500.position == glm::vec3 {26636.0645, -1802.15601, 10523.1445});
+	REQUIRE(wp500.direction == glm::vec3 {-0.999390841, 0, 0.0348994918});
+	REQUIRE(!wp500.free_point);
+
+	auto& edge0 = waynet.edges()[0];
+	auto& edge5 = waynet.edges()[5];
+	auto& edge100 = waynet.edges()[100];
+	auto& edge500 = waynet.edges()[500];
+
+	REQUIRE(edge0.a == 20);
+	REQUIRE(edge0.b == 21);
+
+	// edge 6 is a reference
+	REQUIRE(edge5.a == 28);
+	REQUIRE(edge5.b == 30);
+
+	REQUIRE(edge100.a == 123);
+	REQUIRE(edge100.b == 126);
+
+	REQUIRE(edge500.a == 521);
+	REQUIRE(edge500.b == 515);
+}

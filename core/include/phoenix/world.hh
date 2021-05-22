@@ -5,6 +5,7 @@
 #include <phoenix/world/bsp_tree.hh>
 #include <phoenix/world/vob_tree.hh>
 #include <phoenix/world/world_mesh.hh>
+#include <phoenix/world/way_net.hh>
 
 #include <vector>
 
@@ -49,10 +50,16 @@ namespace phoenix {
 		 */
 		[[nodiscard]] inline const bsp_tree& tree() const noexcept { return _m_tree; }
 
+		/**
+		 * @return The world's way-net.
+		 */
+		[[nodiscard]] inline const way_net& waynet() const noexcept { return _m_way_net;}
+
 	private:
 		std::vector<vob_tree> _m_root_vobs;
 		world_mesh _m_mesh;
 		bsp_tree _m_tree;
+		way_net _m_way_net;
 	};
 
 }// namespace phoenix
