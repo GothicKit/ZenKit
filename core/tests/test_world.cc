@@ -14,8 +14,8 @@ TEST_CASE("world meshes are read correctly", "[world][mesh][proprietary]") {
 	REQUIRE(mesh.name() == "");
 
 	auto [min, max] = mesh.bbox();
-	REQUIRE(min == glm::vec4 {0, 0, 0, 0});
-	REQUIRE(max == glm::vec4 {0, 0, 0, 0});
+	REQUIRE(min == glm::vec3 {0, 0, 0});
+	REQUIRE(max == glm::vec3 {0, 0, 0});
 
 	auto& verts = mesh.vertices();
 	REQUIRE(verts[0] == glm::vec3 {91365, -4026.60083, 46900});
