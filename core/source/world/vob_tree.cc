@@ -458,6 +458,7 @@ namespace phoenix {
 
 
 		if (!in->read_object_end()) {
+			fmt::print(stderr, "warning: not all data consumed of vob '{}'", obj.class_name);
 			in->skip_object(true);
 		}
 
