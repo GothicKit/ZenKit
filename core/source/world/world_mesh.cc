@@ -130,6 +130,45 @@ namespace phoenix {
 
 					break;
 				}
+				case world_mesh_chunk::shared_lightmaps: {
+					auto texture_count = in.read_u32();
+
+					std::vector<std::shared_ptr<texture>> lightmap_textures {};
+					lightmap_textures.resize(texture_count);
+
+					for (u32 i = 0; i < texture_count; ++i) {
+						lightmap_textures[i] = std::make_shared<texture>(texture::parse(in));
+					}
+
+					auto lightmap_count = in.read_u32();
+					for (u32 i = 0; i < lightmap_count; ++i) {
+						auto origin = in.read_vec3();
+						auto normal_a = in.read_vec3();
+						auto normal_b = in.read_vec3();
+						u32 texture_index = in.read_u32();
+
+						msh._m_lightmaps.emplace_back(light_map {lightmap_textures[texture_index], {normal_a, normal_b}, origin});
+					}
+
+					break;
+				}
+				case world_mesh_chunk::lightmaps: {
+					auto lightmap_count = in.read_u32();
+
+					for (u32 i = 0; i < lightmap_count; ++i) {
+						auto origin = in.read_vec3();
+						auto normal_a = in.read_vec3();
+						auto normal_b = in.read_vec3();
+						auto lightmap_texture = texture::parse(in);
+
+						msh._m_lightmaps.emplace_back(light_map {
+								std::make_shared<texture>(std::move(lightmap_texture)),
+								{normal_a, normal_b},
+								origin});
+					}
+
+					break;
+				}
 				case world_mesh_chunk::end:
 					finished = true;
 					break;

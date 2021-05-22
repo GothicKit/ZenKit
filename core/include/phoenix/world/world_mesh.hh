@@ -4,7 +4,9 @@
 #include <phoenix/detail/stream.hh>
 #include <phoenix/material.hh>
 #include <phoenix/math/obb.hh>
+#include <phoenix/math/light_map.hh>
 #include <phoenix/mesh.hh>
+#include <phoenix/texture.hh>
 
 namespace phoenix {
 	struct date {
@@ -121,6 +123,10 @@ namespace phoenix {
 		 */
 		[[nodiscard]] const obb& oriented_bbox() const noexcept { return _m_obb; };
 
+		/**
+		 * @return All shared lightmaps associated with the mesh
+		 */
+		[[nodiscard]] const std::vector<light_map>& lightmaps() const noexcept { return _m_lightmaps; }
 	private:
 		phoenix::date _m_date;
 		std::string _m_name;
@@ -130,5 +136,6 @@ namespace phoenix {
 		std::vector<glm::vec3> _m_vertices;
 		std::vector<vertex_feature> _m_features;
 		std::vector<polygon> _m_polygons;
+		std::vector<light_map> _m_lightmaps;
 	};
 }// namespace phoenix
