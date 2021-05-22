@@ -93,7 +93,7 @@ namespace phoenix {
 		/**
 		 * @return The bounding box of the mesh as a (min, max) tuple.
 		 */
-		[[nodiscard]] inline std::tuple<glm::vec4, glm::vec4> bbox() const noexcept { return std::make_tuple(_m_bbox[0], _m_bbox[1]); }
+		[[nodiscard]] inline std::tuple<glm::vec3, glm::vec3> bbox() const noexcept { return std::make_tuple(_m_bbox[0], _m_bbox[1]); }
 
 		/**
 		 * @return A list of materials used by the mesh.
@@ -118,7 +118,7 @@ namespace phoenix {
 	private:
 		phoenix::date _m_date;
 		std::string _m_name;
-		glm::vec4 _m_bbox[2];
+		glm::vec3 _m_bbox[2];
 		std::vector<material> _m_materials;
 		std::vector<glm::vec3> _m_vertices;
 		std::vector<vertex_feature> _m_features;

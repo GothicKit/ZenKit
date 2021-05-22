@@ -48,8 +48,8 @@ namespace phoenix {
 					msh._m_name = in.read_line(false);
 					break;
 				case world_mesh_chunk::bbox:
-					msh._m_bbox[0] = in.read_vec4();
-					msh._m_bbox[1] = in.read_vec4();
+					msh._m_bbox[0] = in.read_vec3();
+					msh._m_bbox[1] = in.read_vec3();
 					break;
 				case world_mesh_chunk::material: {
 					auto matreader = archive_reader::open(in);
