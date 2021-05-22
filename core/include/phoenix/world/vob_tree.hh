@@ -88,6 +88,15 @@ namespace phoenix {
 			static void parse(base& vob, archive_reader_ref& in, game_version version);
 		};
 
+		struct animate : public base {
+			bool field1;
+
+			static void parse(animate& vob, archive_reader_ref& in, game_version version) {
+				base::parse(vob, in, version);
+				vob.field1 = in->read_bool();
+			}
+		};
+
 		struct item : public base {
 			std::string instance;
 
@@ -441,7 +450,8 @@ namespace phoenix {
 				vob::mob_fire,
 				vob::mob_container,
 				vob::mob_door,
-				vob::trigger_mover>
+				vob::trigger_mover,
+				vob::animate>
 				_m_content;
 
 		vob_type _m_type;

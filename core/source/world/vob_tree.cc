@@ -350,7 +350,6 @@ namespace phoenix {
 			case vob_type::zCVobStartpoint:
 			case vob_type::zCVobScreenFX:
 			case vob_type::zCEarthquake:
-			case vob_type::zCVobAnimate:
 			case vob_type::zCZoneZFog:
 			case vob_type::zCCSCamera:
 			case vob_type::zCVobStair:
@@ -358,6 +357,10 @@ namespace phoenix {
 			case vob_type::zCVob:
 				vob._m_content = vob::base {};
 				vob::base::parse(std::get<vob::base>(vob._m_content), in, version);
+				break;
+			case vob_type::zCVobAnimate:
+				vob._m_content = vob::animate {};
+				vob::animate::parse(std::get<vob::animate>(vob._m_content), in, version);
 				break;
 			case vob_type::oCItem:
 			case vob_type::zCVobLensFlare:
