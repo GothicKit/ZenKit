@@ -8,21 +8,6 @@
 
 namespace phoenix {
 	static std::unordered_map<std::string, vob_type> _vob_type_map = {
-			{"", vob_type::zUnknown},
-			{"\xA7", vob_type::zReference},
-			{"zCCSLib", vob_type::zCCSLib},
-			{"zCCSBlock", vob_type::zCCSBlock},
-			{"zCCSAtomicBlock", vob_type::zCCSAtomicBlock},
-			{"oCMsgConversation:oCNpcMessage:zCEventMessage", vob_type::oCMsgConversation},
-			{"zCDecal", vob_type::zCDecal},
-			{"zCProgMeshProto", vob_type::zCProgMeshProto},
-			{"zCParticleFX", vob_type::zCParticleFX},
-			{"zCMesh", vob_type::zCMesh},
-			{"zCModel", vob_type::zCModel},
-			{"zCMorphMesh", vob_type::zCMorphMesh},
-			{"oCWorld:zCWorld", vob_type::zCWorld},
-			{"zCWayNet", vob_type::zCWayNet},
-			{"zCWaypoint", vob_type::zCWaypoint},
 			{"zCVob", vob_type::zCVob},
 			{"zCVobLevelCompo:zCVob", vob_type::zCVobLevelCompo},
 			{"oCItem:zCVob", vob_type::oCItem},
