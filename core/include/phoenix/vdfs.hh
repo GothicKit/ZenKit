@@ -20,7 +20,7 @@ namespace phoenix {
 	static constexpr u32 VDF_ENTRY_NAME_LENGTH = 64;
 
 	/**
-	 * @brief \brief Represents the header of a VDF.
+	 * @brief Represents the header of a VDF.
 	 *
 	 * Based upon the ReGoth documentation (https://github.com/REGoth-project/REGoth/wiki/VDF-File-Format)
 	 * and the original implementation in PhysicsFS (https://hg.icculus.org/icculus/physfs/file/tip/src/physfs_archiver_vdf.c).
