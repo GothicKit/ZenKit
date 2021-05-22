@@ -342,9 +342,7 @@ namespace phoenix {
 		}
 
 		switch (vob._m_type) {
-			case vob_type::zCZoneVobFarPlaneDefault:
 			case vob_type::zCCamTrj_KeyFrame:
-			case vob_type::zCZoneVobFarPlane:
 			case vob_type::zCVobLevelCompo:
 			case vob_type::zCVobStartpoint:
 			case vob_type::zCVobScreenFX:
@@ -359,6 +357,11 @@ namespace phoenix {
 			case vob_type::zCVobAnimate:
 				vob._m_content = vob::animate {};
 				vob::animate::parse(std::get<vob::animate>(vob._m_content), in, version);
+				break;
+			case vob_type::zCZoneVobFarPlane:
+			case vob_type::zCZoneVobFarPlaneDefault:
+				vob._m_content = vob::zone_far_plane {};
+				vob::zone_far_plane::parse(std::get<vob::zone_far_plane>(vob._m_content), in, version);
 				break;
 			case vob_type::zCZoneZFogDefault:
 			case vob_type::zCZoneZFog:

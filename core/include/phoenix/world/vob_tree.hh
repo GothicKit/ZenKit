@@ -181,6 +181,17 @@ namespace phoenix {
 			static void parse(zone_music& vob, archive_reader_ref& in, game_version version);
 		};
 
+		struct zone_far_plane : public base {
+			float field1;
+			float field2;
+
+			static void parse(zone_far_plane& vob, archive_reader_ref& in, game_version version) {
+				base::parse(vob, in, version);
+				vob.field1 = in->read_float();
+				vob.field2 = in->read_float();
+			}
+		};
+
 		struct zone_fog : public base {
 			float field1;
 			float field2;
@@ -465,7 +476,8 @@ namespace phoenix {
 				vob::mob_door,
 				vob::trigger_mover,
 				vob::animate,
-				vob::zone_fog>
+				vob::zone_fog,
+				vob::zone_far_plane>
 				_m_content;
 
 		vob_type _m_type;
