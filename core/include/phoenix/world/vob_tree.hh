@@ -106,15 +106,27 @@ namespace phoenix {
 
 		struct item : public base {
 			std::string instance;
+
+			static void parse(item& vob, archive_reader_ref& in, game_version version) {
+				base::parse(vob, in, version);
+				vob.instance = in->read_string();
+			}
 		};
 
-		struct pfx_controller {
+		struct pfx_controller : public base {
 			std::string name;
 			bool kill_when_done;
 			bool initially_running;
+
+			static void parse(pfx_controller& vob, archive_reader_ref& in, game_version version) {
+				base::parse(vob, in, version);
+				vob.name = in->read_string();
+				vob.kill_when_done = in->read_bool();
+				vob.initially_running = in->read_bool();
+			}
 		};
 
-		struct light {
+		struct light : public base {
 			std::string preset;
 			u32 type;
 			float range;
@@ -132,53 +144,75 @@ namespace phoenix {
 			float color_animation_fps;
 			float color_animation_smooth;
 			bool can_move;
+
+			static void parse(light& vob, archive_reader_ref& in, game_version version);
 		};
 
-		struct sound {
+		struct sound : public base {
 			float volume;
 			u32 mode;
 			float random_delay;
 			float random_delay_var;
 			bool initially_playing;
-			bool is_ambient3d;
+			bool ambient3d;
 			bool obstruction;
 			float cone_angle;
 			u32 volume_type;
 			float radius;
 			std::string name;
+
+			static void parse(sound& vob, archive_reader_ref& in, game_version version);
 		};
 
 		struct sound_daytime : public sound {
 			float start_time;
 			float end_time;
 			std::string name2;
+
+			static void parse(sound_daytime& vob, archive_reader_ref& in, game_version version) {
+				sound::parse(vob, in, version);
+				vob.start_time = in->read_float();
+				vob.end_time = in->read_float();
+				vob.name2 = in->read_string();
+			}
 		};
 
-		struct zone_music {
+		struct zone_music : public base {
 			bool enabled;
 			u32 priority;
 			bool ellipsoid;
 			float reverb;
 			float volume;
 			bool loop;
+
+			static void parse(zone_music& vob, archive_reader_ref& in, game_version version);
 		};
 
-		struct message_filter {
+		struct message_filter : public base {
 			std::string target;
 			u8 on_trigger;
 			u8 on_untrigger;
+
+			static void parse(message_filter& vob, archive_reader_ref& in, game_version version) {
+				base::parse(vob, in, version);
+				vob.target = in->read_string();
+				vob.on_trigger = in->read_byte();
+				vob.on_untrigger = in->read_byte();
+			}
 		};
 
-		struct code_master {
+		struct code_master : public base {
 			std::string target;
 			bool ordered;
 			bool first_false_is_failure;
 			std::string failure_target;
 			bool untriggered_cancels;
 			std::vector<std::string> slaves;
+
+			static void parse(code_master& vob, archive_reader_ref& in, game_version version);
 		};
 
-		struct trigger {
+		struct trigger : public base {
 			std::string target;
 			u8 flags;
 			u8 filter_flags;
@@ -187,6 +221,8 @@ namespace phoenix {
 			float retrigger_delay_sec;
 			float damage_threshold;
 			float fire_delay_sec;
+
+			static void parse(trigger& vob, archive_reader_ref& in, game_version version);
 		};
 
 		struct trigger_list : public trigger {
@@ -197,33 +233,74 @@ namespace phoenix {
 
 			s32 list_process;
 			std::vector<target> targets;
+
+			static void parse(trigger_list& vob, archive_reader_ref& in, game_version version) {
+				trigger::parse(vob, in, version);
+				vob.list_process = in->read_int();
+
+				auto target_count = in->read_byte();
+				for (int i = 0; i < target_count; ++i) {
+					vob.targets.emplace_back(target {in->read_string(), in->read_float()});
+				}
+			}
 		};
 
 		struct trigger_script : public trigger {
 			std::string function;
+
+			static void parse(trigger_script& vob, archive_reader_ref& in, game_version version) {
+				trigger::parse(vob, in, version);
+				vob.function = in->read_string();
+			}
 		};
 
 		struct trigger_change_level : public trigger {
 			std::string level_name;
 			std::string start_vob;
+
+			static void parse(trigger_change_level& vob, archive_reader_ref& in, game_version version) {
+				trigger::parse(vob, in, version);
+				vob.level_name = in->read_string();
+				vob.start_vob = in->read_string();
+			}
 		};
 
-		struct trigger_world_start {
+		struct trigger_world_start : public base {
 			std::string target;
 			bool fire_once;
+
+			static void parse(trigger_world_start& vob, archive_reader_ref& in, game_version version) {
+				base::parse(vob, in, version);
+				vob.target = in->read_string();
+				vob.fire_once = in->read_bool();
+			}
 		};
 
-		struct trigger_untouch {
+		struct trigger_untouch : public base {
 			std::string target;
+
+			static void parse(trigger_untouch& vob, archive_reader_ref& in, game_version version) {
+				base::parse(vob, in, version);
+				vob.target = in->read_string();
+			}
 		};
 
-		struct mover_controller {
+		struct mover_controller : public base {
 			std::string target;
 			u8 message;
 			s32 key;
+
+			static void parse(mover_controller& vob, archive_reader_ref& in, game_version version) {
+				base::parse(vob, in, version);
+				vob.target = in->read_string();
+				vob.message = in->read_byte();
+				vob.key = in->read_int();
+			}
 		};
 
-		struct touch_damage {
+		struct touch_damage : public base {
+			float damage;
+
 			bool barrier;
 			bool blunt;
 			bool edge;
@@ -236,9 +313,11 @@ namespace phoenix {
 			float repeat_delay_sec;
 			float volume_scale;
 			s32 damage_type;
+
+			static void parse(touch_damage& vob, archive_reader_ref& in, game_version version);
 		};
 
-		struct mob {
+		struct mob : public base {
 			std::string name;
 			s32 hp;
 			s32 damage;
@@ -250,6 +329,8 @@ namespace phoenix {
 			std::string owner;
 			std::string owner_guild;
 			bool destroyed;
+
+			static void parse(mob& vob, archive_reader_ref& in, game_version version);
 		};
 
 		struct mob_inter : public mob {
@@ -259,11 +340,19 @@ namespace phoenix {
 			std::string condition_function;
 			std::string on_state_change_function;
 			bool rewind;
+
+			static void parse(mob_inter& vob, archive_reader_ref& in, game_version version);
 		};
 
 		struct mob_fire : public mob_inter {
 			std::string slot;
 			std::string vob_tree;
+
+			static void parse(mob_fire& vob, archive_reader_ref& in, game_version version) {
+				mob_inter::parse(vob, in, version);
+				vob.slot = in->read_string();
+				vob.vob_tree = in->read_string();
+			}
 		};
 
 		struct mob_container : public mob_inter {
@@ -271,12 +360,21 @@ namespace phoenix {
 			std::string key;
 			std::string pick_string;
 			std::string contents;
+
+			static void parse(mob_container& vob, archive_reader_ref& in, game_version version);
 		};
 
 		struct mob_door : public mob_inter {
 			bool locked;
 			std::string key;
 			std::string pick_string;
+
+			static void parse(mob_door& vob, archive_reader_ref& in, game_version version) {
+				mob_inter::parse(vob, in, version);
+				vob.locked = in->read_bool();
+				vob.key = in->read_string();
+				vob.pick_string = in->read_string();
+			}
 		};
 
 		struct trigger_mover : public trigger {
@@ -301,6 +399,8 @@ namespace phoenix {
 			std::string sfx_lock;
 			std::string sfx_unlock;
 			std::string sfx_use_locked;
+
+			static void parse(trigger_mover& vob, archive_reader_ref& in, game_version version);
 		};
 	}// namespace vob
 

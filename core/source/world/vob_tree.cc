@@ -161,6 +161,171 @@ namespace phoenix {
 				in->skip_object(false);
 			}
 		}
+
+		void light::parse(light& vob, archive_reader_ref& in, game_version version) {
+			base::parse(vob, in, version);
+
+			vob.preset_name = in->read_string();
+			vob.type = in->read_enum();
+			vob.range = in->read_float();
+			vob.colour = in->read_color();
+			vob.cone_angle = in->read_float();
+			vob.is_static = in->read_bool();
+			vob.quality = in->read_enum();
+			vob.lensflare_fx = in->read_string();
+
+			if (!vob.is_static) {
+				vob.on = in->read_bool();
+				vob.range_animation_scale = in->read_string();
+				vob.range_animation_fps = in->read_float();
+				vob.range_animation_smooth = in->read_bool();
+				vob.color_animation_list = in->read_string();
+				vob.color_animation_fps = in->read_float();
+				vob.color_animation_smooth = in->read_float();
+
+				if (version == game_version::gothic_2) {
+					vob.can_move = in->read_bool();
+				}
+			}
+		}
+
+		void sound::parse(sound& vob, archive_reader_ref& in, game_version version) {
+			base::parse(vob, in, version);
+			vob.volume = in->read_float();
+			vob.mode = in->read_enum();
+			vob.random_delay = in->read_float();
+			vob.random_delay_var = in->read_float();
+			vob.initially_playing = in->read_bool();
+			vob.ambient3d = in->read_bool();
+			vob.obstruction = in->read_bool();
+			vob.cone_angle = in->read_float();
+			vob.volume_type = in->read_enum();
+			vob.radius = in->read_float();
+			vob.name = in->read_string();
+		}
+
+		void zone_music::parse(zone_music& vob, archive_reader_ref& in, game_version version) {
+			base::parse(vob, in, version);
+			vob.enabled = in->read_bool();
+			vob.priority = in->read_enum();
+			vob.ellipsoid = in->read_bool();
+			vob.reverb = in->read_float();
+			vob.volume = in->read_float();
+			vob.loop = in->read_bool();
+		}
+
+		void code_master::parse(code_master& vob, archive_reader_ref& in, game_version version) {
+			base::parse(vob, in, version);
+			vob.target = in->read_string();
+			vob.ordered = in->read_bool();
+			vob.first_false_is_failure = in->read_bool();
+			vob.failure_target = in->read_string();
+			vob.untriggered_cancels = in->read_bool();
+
+			auto slave_count = in->read_byte();
+			for (int i = 0; i < slave_count; ++i) {
+				vob.slaves.emplace_back(in->read_string());
+			}
+		}
+
+		void trigger::parse(trigger& vob, archive_reader_ref& in, game_version version) {
+			base::parse(vob, in, version);
+			vob.target = in->read_string();
+			vob.flags = in->read_byte();
+			vob.filter_flags = in->read_byte();
+			vob.vob_target = in->read_string();
+			vob.max_activation_count = in->read_int();
+			vob.retrigger_delay_sec = in->read_float();
+			vob.damage_threshold = in->read_float();
+			vob.fire_delay_sec = in->read_float();
+		}
+
+		void touch_damage::parse(touch_damage& vob, archive_reader_ref& in, game_version version) {
+			base::parse(vob, in, version);
+			vob.damage = in->read_float();
+			vob.barrier = in->read_bool();
+			vob.blunt = in->read_bool();
+			vob.edge = in->read_bool();
+			vob.fire = in->read_bool();
+			vob.fly = in->read_bool();
+			vob.magic = in->read_bool();
+			vob.point = in->read_bool();
+			vob.fall = in->read_bool();
+			vob.repeat_delay_sec = in->read_float();
+			vob.volume_scale = in->read_float();
+			vob.damage_type = in->read_int();
+		}
+
+		void mob::parse(mob& vob, archive_reader_ref& in, game_version version) {
+			base::parse(vob, in, version);
+			vob.name = in->read_string();
+			vob.hp = in->read_int();
+			vob.damage = in->read_int();
+			vob.movable = in->read_bool();
+			vob.takable = in->read_bool();
+			vob.focus_override = in->read_bool();
+			vob.material = in->read_enum();
+			vob.visual_destroyed = in->read_string();
+			vob.owner = in->read_string();
+			vob.owner_guild = in->read_string();
+			vob.destroyed = in->read_bool();
+		}
+
+		void mob_inter::parse(mob_inter& vob, archive_reader_ref& in, game_version version) {
+			mob::parse(vob, in, version);
+			vob.state = in->read_int();
+			vob.target = in->read_string();
+			vob.item = in->read_string();
+			vob.condition_function = in->read_string();
+			vob.on_state_change_function = in->read_string();
+			vob.rewind = in->read_bool();
+		}
+
+		void mob_container::parse(mob_container& vob, archive_reader_ref& in, game_version version) {
+			mob_inter::parse(vob, in, version);
+			vob.locked = in->read_bool();
+			vob.key = in->read_string();
+			vob.pick_string = in->read_string();
+			vob.contents = in->read_string();
+		}
+
+		void trigger_mover::parse(trigger_mover& vob, archive_reader_ref& in, game_version version) {
+			trigger::parse(vob, in, version);
+			vob.behavior = in->read_enum();
+			vob.touch_blocker_damage = in->read_float();
+			vob.stay_open_time_sec = in->read_float();
+			vob.locked = in->read_bool();
+			vob.auto_link = in->read_bool();
+
+			if (version == game_version::gothic_2) {
+				vob.auto_rotate = in->read_bool();
+			}
+
+			auto keyframe_count = in->read_word();
+			if (keyframe_count > 0) {
+				vob.speed = in->read_float();
+				vob.lerp_mode = in->read_enum();
+				vob.speed_mode = in->read_enum();
+
+				auto sample_bytes = in->read_raw_bytes();
+				reader sample_reader {std::string_view {reinterpret_cast<const char*>(sample_bytes.data()), sample_bytes.size()}};
+
+				for (int i = 0; i < keyframe_count; ++i) {
+					vob.keyframes.push_back(animation_sample {
+							sample_reader.read_vec3(),
+							sample_reader.read_vec4()});
+				}
+			}
+
+			vob.sfx_open_start = in->read_string();
+			vob.sfx_open_end = in->read_string();
+			vob.sfx_transitioning = in->read_string();
+			vob.sfx_close_start = in->read_string();
+			vob.sfx_close_end = in->read_string();
+			vob.sfx_lock = in->read_string();
+			vob.sfx_unlock = in->read_string();
+			vob.sfx_use_locked = in->read_string();
+		}
 	}// namespace vob
 
 	vob_tree vob_tree::parse(archive_reader_ref& in, game_version version) {
