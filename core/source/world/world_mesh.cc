@@ -173,14 +173,14 @@ namespace phoenix {
 					finished = true;
 					break;
 				default:
-					fmt::print(stderr, "warning: world mesh: chunk not implemented: 0x{:X}\n", chunk);
 					break;
 			}
 
 			if (in.tell() != end) {
-				fmt::print(stderr, "warning: world mesh: not all data consumed from section 0x{:X}\n", chunk);
-				in.seek(end);
+				fmt::print(stderr, "warning: world mesh: not all data or too much data consumed from section 0x{:X}\n", chunk);
 			}
+
+			in.seek(end);
 		} while (!finished);
 
 		return msh;

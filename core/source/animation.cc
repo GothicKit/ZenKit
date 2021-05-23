@@ -124,9 +124,6 @@ namespace phoenix {
 					}
 
 					break;
-				case animation_chunk::animation:
-					// no content
-					break;
 				case animation_chunk::source:
 					// TODO: Find out what these do
 					in.ignore(16);
@@ -134,16 +131,18 @@ namespace phoenix {
 					anim._m_source_path = in.read_line(false);
 					anim._m_mds_source = in.read_line(false);
 					break;
+				case animation_chunk::animation:
+					break;
 				default:
-					fmt::print(stderr, "warning: animation: chunk not implemented: 0x{:X}\n", chunk);
 					break;
 			}
 
 			if (in.tell() != end) {
-				fmt::print(stderr, "warning: animation: not all data consumed from section 0x{:X}\n", chunk);
-				in.seek(end);
+				fmt::print(stderr, "warning: animation: not all data or too much data consumed from section 0x{:X}\n", chunk);
 			}
-		} while (in.tell() < in.size() - 4);
+
+			in.seek(end);
+		} while (in.tell() < in.size());
 
 		return anim;
 	}

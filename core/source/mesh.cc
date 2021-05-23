@@ -100,15 +100,15 @@ namespace phoenix {
 					end_mesh = true;
 					break;
 				default:
-					fmt::print(stderr, "warning: proto mesh: chunk not implemented: 0x{:X}\n", chunk);
 					break;
 			}
 
 			if (in.tell() != end) {
-				fmt::print(stderr, "warning: proto mesh: not all data consumed from section 0x{:X}\n", chunk);
-				in.seek(end);
+				fmt::print(stderr, "warning: proto mesh: not all data or too much data consumed from section 0x{:X}\n", chunk);
 			}
-		} while (in.tell() < in.size() - 4 || !end_mesh);
+
+			in.seek(end);
+		} while (!end_mesh);
 
 		return msh;
 	}

@@ -3,6 +3,8 @@
 #include <phoenix/detail/error.hh>
 #include <phoenix/messages.hh>
 
+#include <fmt/format.h>
+
 namespace phoenix {
 	messages messages::parse(const std::string& path) {
 		messages msgs {};
@@ -61,6 +63,10 @@ namespace phoenix {
 			if (!archive->read_object_end()) {
 				archive->skip_object(true);
 			}
+		}
+
+		if (in.tell() < in.size()) {
+			fmt::print(stderr, "warning: animation: not all data consumed from message database\n");
 		}
 
 		return msgs;
