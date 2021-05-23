@@ -125,8 +125,7 @@ namespace phoenix {
 
 					break;
 				case animation_chunk::animation:
-					// TODO: not implemented:
-					fmt::print(stderr, "warning: animation: chunk not implemented: 'animation'\n");
+					// no content
 					break;
 				case animation_chunk::source:
 					// TODO: Find out what these do
