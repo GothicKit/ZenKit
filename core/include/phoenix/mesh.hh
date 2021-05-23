@@ -3,6 +3,7 @@
 #pragma once
 #include <phoenix/detail/stream.hh>
 #include <phoenix/detail/types.hh>
+#include <phoenix/math/obb.hh>
 #include <phoenix/material.hh>
 
 namespace phoenix {
@@ -133,5 +134,6 @@ namespace phoenix {
 		std::vector<material> _m_materials;
 		u8 _m_has_alpha_test {true};
 		glm::vec3 _m_bbox[2];
+		obb _m_obbox;
 	};
 }// namespace phoenix

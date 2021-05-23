@@ -90,6 +90,10 @@ namespace phoenix {
 						mesh.mat = msh._m_materials[i];
 					}
 
+					msh._m_obbox = obb::parse(in);
+
+					// TODO: this might be a vec4 though the values don't make any sense.
+					in.ignore(0x10);
 					break;
 				}
 				case proto_chunk::end:
