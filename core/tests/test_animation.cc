@@ -16,6 +16,8 @@ TEST_CASE("animations are read correctly", "[animation]") {
 	REQUIRE(anim.frames_per_second() == 25);
 	REQUIRE(anim.frames_per_second_alt() == 25);
 	REQUIRE(anim.checksum() == 4170839982);
+	REQUIRE(anim.source_path() == "\\_WORK\\DATA\\ANIMS\\BAB_SWEEP_M01.ASC");
+	REQUIRE(anim.source_script() == "\t\t\tANI\t\t\t(\"S_BRUSH_S0\"\t\t\t1\t\"S_BRUSH_S0\"\t0.0\t0.0\tM.\t\"BAB_SWEEP_M01.ASC\"\t\t\tF\t3\t3)");
 
 	auto [bbox0, bbox1] = anim.bbox();
 	REQUIRE(bbox0 == glm::vec3 {-42.741993, -86.539772, -29.5238342});

@@ -102,6 +102,10 @@ namespace phoenix {
 
 		[[nodiscard]] inline const std::vector<u32>& node_indices() const noexcept { return _m_node_indices; }
 
+		[[nodiscard]] inline const std::string source_path() const noexcept { return _m_source_path; }
+
+		[[nodiscard]] inline const std::string source_script() const noexcept { return _m_mds_source; }
+
 	protected:
 		animation() = default;
 
@@ -117,6 +121,9 @@ namespace phoenix {
 		float _m_sample_position_scalar {};
 		glm::vec3 _m_bbox[2] {};
 		u32 _m_checksum {};
+
+		std::string _m_source_path;
+		std::string _m_mds_source;
 
 		std::vector<animation_sample> _m_samples;
 		std::vector<animation_event> _m_events;

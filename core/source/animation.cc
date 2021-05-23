@@ -129,8 +129,11 @@ namespace phoenix {
 					fmt::print(stderr, "warning: animation: chunk not implemented: 'animation'\n");
 					break;
 				case animation_chunk::source:
-					// TODO: not implemented:
-					fmt::print(stderr, "warning: animation: chunk not implemented: 'source'\n");
+					// TODO: Find out what these do
+					in.ignore(16);
+
+					anim._m_source_path = in.read_line(false);
+					anim._m_mds_source = in.read_line(false);
 					break;
 				default:
 					fmt::print(stderr, "warning: animation: chunk not implemented: 0x{:X}\n", chunk);
