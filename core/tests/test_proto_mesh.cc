@@ -3,19 +3,19 @@
 #include "catch2.hh"
 #include <phoenix/proto_mesh.hh>
 
-static bool compare_triangle(phoenix::mesh::triangle a, phoenix::mesh::triangle b) {
+static bool compare_triangle(phoenix::triangle a, phoenix::triangle b) {
 	return a.wedges[0] == b.wedges[0] &&
 		   a.wedges[1] == b.wedges[1] &&
 		   a.wedges[2] == b.wedges[2];
 }
 
-static bool compare_wedge(phoenix::mesh::wedge a, phoenix::mesh::wedge b) {
+static bool compare_wedge(phoenix::wedge a, phoenix::wedge b) {
 	return a.normal == b.normal &&
 		   a.texture == b.texture &&
 		   a.index == b.index;
 }
 
-static bool compare_plane(phoenix::mesh::plane a, phoenix::mesh::plane b) {
+static bool compare_plane(phoenix::plane a, phoenix::plane b) {
 	return a.normal == b.normal &&
 		   a.distance == b.distance;
 }

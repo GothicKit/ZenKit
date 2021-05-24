@@ -77,7 +77,7 @@ static void dump_wavefront(std::ostream& out, const std::string& name, const pho
 	dump_material(name, mesh.materials());
 }
 
-static void dump_wavefront(std::ostream& out, const std::string& name, const phoenix::world_mesh& mesh) {
+static void dump_wavefront(std::ostream& out, const std::string& name, const phoenix::mesh& mesh) {
 	out << "# pxmdl exported mesh\n"
 		<< "mtllib " << name << ".mtl\n\n"
 		<< "# vertices\n";
@@ -183,9 +183,9 @@ int main(int argc, const char** argv) {
 			out.close();
 
 		} else if (phoenix::iequals(extension, "ZEN")) {
-			auto wld = phoenix::world::parse(in, game_version::gothic_1); // FIXME: implement algorithm of detecting the actual version of Gothic!
+			auto wld = phoenix::world::parse(in, game_version::gothic_1);// FIXME: implement algorithm of detecting the actual version of Gothic!
 
-			dump_wavefront(out, output, wld.mesh());
+			dump_wavefront(out, output, wld.world_mesh());
 			out.close();
 		} else {
 			fmt::print(stderr, "format not supported: {}", extension);

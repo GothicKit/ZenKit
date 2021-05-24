@@ -2,9 +2,9 @@
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
 #include <phoenix/detail/stream.hh>
+#include <phoenix/mesh.hh>
 #include <phoenix/world/bsp_tree.hh>
 #include <phoenix/world/vob_tree.hh>
-#include <phoenix/world/world_mesh.hh>
 #include <phoenix/world/way_net.hh>
 
 #include <vector>
@@ -42,7 +42,7 @@ namespace phoenix {
 		/**
 		 * @return The world's mesh.
 		 */
-		[[nodiscard]] inline const world_mesh& mesh() const noexcept { return _m_mesh; }
+		[[nodiscard]] inline const mesh& world_mesh() const noexcept { return _m_mesh; }
 
 		/**
 		 * @return The world's BSP-tree.
@@ -53,11 +53,11 @@ namespace phoenix {
 		/**
 		 * @return The world's way-net.
 		 */
-		[[nodiscard]] inline const way_net& waynet() const noexcept { return _m_way_net;}
+		[[nodiscard]] inline const way_net& waynet() const noexcept { return _m_way_net; }
 
 	private:
 		std::vector<vob_tree> _m_root_vobs;
-		world_mesh _m_mesh;
+		mesh _m_mesh;
 		bsp_tree _m_tree;
 		way_net _m_way_net;
 	};

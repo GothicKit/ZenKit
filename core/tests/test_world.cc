@@ -7,7 +7,7 @@ TEST_CASE("world meshes are read correctly", "[world][mesh][proprietary]") {
 	auto in = phoenix::reader::from("./samples/world.proprietary.zen");
 	auto wld = phoenix::world::parse(in, game_version::gothic_1);
 
-	auto& mesh = wld.mesh();
+	auto& mesh = wld.world_mesh();
 	REQUIRE(mesh.vertices().size() == 55439);
 	REQUIRE(mesh.features().size() == 419936);
 	REQUIRE(mesh.materials().size() == 2263);

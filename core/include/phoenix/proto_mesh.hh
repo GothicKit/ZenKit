@@ -7,30 +7,28 @@
 #include <phoenix/material.hh>
 
 namespace phoenix {
-	namespace mesh {
-		struct triangle {
-			u16 wedges[3];
-		};
+	struct triangle {
+		u16 wedges[3];
+	};
 
-		struct triangle_edge {
-			u16 edges[3];
-		};
+	struct triangle_edge {
+		u16 edges[3];
+	};
 
-		struct edge {
-			u16 edges[2];
-		};
+	struct edge {
+		u16 edges[2];
+	};
 
-		struct wedge {
-			glm::vec3 normal;
-			glm::vec2 texture;
-			u16 index;
-		};
+	struct wedge {
+		glm::vec3 normal;
+		glm::vec2 texture;
+		u16 index;
+	};
 
-		struct plane {
-			float distance;
-			glm::vec3 normal;
-		};
-	}// namespace mesh
+	struct plane {
+		float distance;
+		glm::vec3 normal;
+	};
 
 	struct mesh_section {
 		u32 offset;
@@ -55,13 +53,13 @@ namespace phoenix {
 	 */
 	struct sub_mesh {
 		material mat;
-		std::vector<mesh::triangle> triangles;
-		std::vector<mesh::wedge> wedges;
+		std::vector<triangle> triangles;
+		std::vector<wedge> wedges;
 		std::vector<float> colors;
 		std::vector<u16> triangle_plane_indices;
-		std::vector<mesh::plane> triangle_planes;
-		std::vector<mesh::triangle_edge> triangle_edges;
-		std::vector<mesh::edge> edges;
+		std::vector<plane> triangle_planes;
+		std::vector<triangle_edge> triangle_edges;
+		std::vector<edge> edges;
 		std::vector<float> edge_scores;
 		std::vector<u16> wedge_map;
 

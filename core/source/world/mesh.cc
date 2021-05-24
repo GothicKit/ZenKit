@@ -1,6 +1,6 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
-#include <phoenix/world/world_mesh.hh>
+#include <phoenix/mesh.hh>
 
 #include <fmt/format.h>
 
@@ -19,8 +19,8 @@ namespace phoenix {
 	};
 
 
-	world_mesh world_mesh::parse(reader& in) {
-		world_mesh msh;
+	mesh mesh::parse(reader& in) {
+		mesh msh;
 
 		u16 version {};
 		bool finished = false;

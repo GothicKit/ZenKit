@@ -52,7 +52,7 @@ namespace phoenix {
 	struct polygon {
 		u16 material_index;
 		u16 lightmap_index;
-		mesh::plane polygon_plane;
+		plane polygon_plane;
 
 		polygon_flags flags;
 
@@ -74,14 +74,14 @@ namespace phoenix {
 	 * @see https://github.com/ataulien/ZenLib
 	 * @see https://github.com/Try/ZenLib
 	 */
-	class world_mesh {
+	class mesh {
 	public:
 		/**
 		 * @brief Parses a world mesh from the given reader.
 		 * @param in The reader to read from.
 		 * @return The mesh parsed.
 		 */
-		[[nodiscard]] static world_mesh parse(reader& in);
+		[[nodiscard]] static mesh parse(reader& in);
 
 		/**
 		 * @return The creation date of the mesh.

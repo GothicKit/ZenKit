@@ -27,7 +27,7 @@ namespace phoenix {
 				auto size = in.read_u32();
 
 				auto content = in.fork(size);
-				wld._m_mesh = world_mesh::parse(content);
+				wld._m_mesh = mesh::parse(content);
 				wld._m_tree = bsp_tree::parse(content);
 			} else if (chnk.object_name == "VobTree") {
 				auto count = archive->read_int();
