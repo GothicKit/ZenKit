@@ -8,7 +8,7 @@ namespace phoenix {
 	enum class hierarchy_chunk {
 		unknown,
 		hierarchy = 0xD100,
-		source = 0xD110,
+		stats = 0xD110,
 		end = 0xD120
 	};
 
@@ -47,6 +47,11 @@ namespace phoenix {
 					(void) /* checksum = */ in.read_u32();
 					break;
 				}
+				case hierarchy_chunk::stats:
+					// maybe a date?
+					in.ignore(16);
+					(void) /* path? = */ in.read_line(false);
+					break;
 				case hierarchy_chunk::end:
 					end_hierarchy = true;
 					break;
