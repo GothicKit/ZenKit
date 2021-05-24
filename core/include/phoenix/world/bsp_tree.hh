@@ -83,9 +83,12 @@ namespace phoenix {
 		 */
 		[[nodiscard]] const std::vector<u32>& portal_polygon_indices() const noexcept { return _m_portal_polygon_indices; }
 
+		[[nodiscard]] const std::vector<glm::vec3>& light_points() const noexcept { return _m_light_points; }
+
 	private:
 		bsp_tree_mode _m_mode;
 		std::vector<u32> _m_polygon_indices;
+		std::vector<glm::vec3> _m_light_points;
 
 		std::vector<bsp_sector> _m_sectors;
 		std::vector<u32> _m_portal_polygon_indices;

@@ -128,6 +128,9 @@ TEST_CASE("the bsp-tree is read correctly", "[world][bsp][proprietary]") {
 
 	auto& portal_polys = tree.portal_polygon_indices();
 	REQUIRE(portal_polys.size() == 0);
+
+	REQUIRE(tree.light_points().size() == 3318);
+	REQUIRE(tree.light_points()[0] == glm::vec3 {-99, -99, -99});
 }
 
 TEST_CASE("the vob-tree is read correctly", "[world][vob][proprietary]") {

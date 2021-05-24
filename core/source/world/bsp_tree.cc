@@ -11,6 +11,7 @@ namespace phoenix {
 		polygons = 0xC010,
 		tree = 0xC040,
 		outdoors = 0xC050,
+		light = 0xC045,
 		end = 0xC0FF
 	};
 
@@ -89,6 +90,14 @@ namespace phoenix {
 
 					assert(node_count == bsp._m_nodes.size());
 					assert(leaf_count == bsp._m_leaf_node_indices.size());
+					break;
+				}
+				case bsp_chunk::light: {
+					bsp._m_light_points.resize(bsp._m_leaf_node_indices.size());
+
+					for (u32 i = 0; i < bsp._m_light_points.size(); ++i) {
+						bsp._m_light_points[i] = in.read_vec3();
+					}
 					break;
 				}
 				case bsp_chunk::outdoors: {
