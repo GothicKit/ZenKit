@@ -133,6 +133,7 @@ namespace phoenix {
 					break;
 				}
 				case bsp_chunk::end:
+					in.ignore(1);
 					finished = true;
 					break;
 				default:
