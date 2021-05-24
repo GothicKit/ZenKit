@@ -91,6 +91,38 @@ namespace phoenix {
 					assert(leaf_count == bsp._m_leaf_node_indices.size());
 					break;
 				}
+				case bsp_chunk::outdoors: {
+					auto sector_count = in.read_u32();
+					bsp._m_sectors.reserve(sector_count);
+
+					for (u32 i = 0; i < sector_count; ++i) {
+						auto& sector = bsp._m_sectors.emplace_back();
+
+						sector.name = in.read_line(false);
+
+						auto node_count = in.read_u32();
+						auto polygon_count = in.read_u32();
+
+						sector.node_indices.resize(node_count);
+						sector.portal_polygon_indices.resize(polygon_count);
+
+						for (u32 j = 0; j < node_count; ++j) {
+							sector.node_indices[j] = in.read_u32();
+						}
+
+						for (u32 j = 0; j < polygon_count; ++j) {
+							sector.portal_polygon_indices[j] = in.read_u32();
+						}
+					}
+
+					auto portal_count = in.read_u32();
+					bsp._m_portal_polygon_indices.resize(portal_count);
+
+					for (u32 i = 0; i < portal_count; ++i) {
+						bsp._m_portal_polygon_indices[i] = in.read_u32();
+					}
+					break;
+				}
 				case bsp_chunk::end:
 					finished = true;
 					break;

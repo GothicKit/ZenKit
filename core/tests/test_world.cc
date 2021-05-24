@@ -114,6 +114,20 @@ TEST_CASE("the bsp-tree is read correctly", "[world][bsp][proprietary]") {
 	REQUIRE(nodes[26].polygon_count == 24);
 	REQUIRE(nodes[26].bbox[0] == glm::vec3 {48899.9961f, -4029.99976f, 47400});
 	REQUIRE(nodes[26].bbox[1] == glm::vec3 {67900, -4026.59961f, 67399.9921f});
+
+	auto& sectors = tree.sectors();
+	REQUIRE(sectors.size() == 299);
+
+	REQUIRE(sectors[0].name == "WALD11");
+	REQUIRE(sectors[0].node_indices.size() == 9);
+	REQUIRE(sectors[0].portal_polygon_indices.size() == 24);
+
+	REQUIRE(sectors[50].name == "OWCAVE01");
+	REQUIRE(sectors[50].node_indices.size() == 4);
+	REQUIRE(sectors[50].portal_polygon_indices.size() == 2);
+
+	auto& portal_polys = tree.portal_polygon_indices();
+	REQUIRE(portal_polys.size() == 0);
 }
 
 TEST_CASE("the vob-tree is read correctly", "[world][vob][proprietary]") {

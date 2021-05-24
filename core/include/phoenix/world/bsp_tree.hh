@@ -23,6 +23,12 @@ namespace phoenix {
 		inline bool is_leaf() const noexcept { return front_index == -1 && back_index == -1; }
 	};
 
+	struct bsp_sector {
+		std::string name;
+		std::vector<u32> node_indices;
+		std::vector<u32> portal_polygon_indices;
+	};
+
 	/**
 	 * @brief Represents a BSP tree.
 	 *
@@ -67,9 +73,22 @@ namespace phoenix {
 		 */
 		[[nodiscard]] const std::vector<u32>& leaf_node_indices() const noexcept { return _m_leaf_node_indices; }
 
+		/**
+		 * @return All BSP sectors.
+		 */
+		[[nodiscard]] const std::vector<bsp_sector>& sectors() const noexcept { return _m_sectors; }
+
+		/**
+		 * @return Polygon indices of portals.
+		 */
+		[[nodiscard]] const std::vector<u32>& portal_polygon_indices() const noexcept { return _m_portal_polygon_indices; }
+
 	private:
 		bsp_tree_mode _m_mode;
 		std::vector<u32> _m_polygon_indices;
+
+		std::vector<bsp_sector> _m_sectors;
+		std::vector<u32> _m_portal_polygon_indices;
 
 		std::vector<bsp_node> _m_nodes;
 		std::vector<u32> _m_leaf_node_indices;
