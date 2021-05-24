@@ -61,9 +61,9 @@ namespace phoenix {
 	};
 
 	/**
-	 * @brief Represents a world mesh.
+	 * @brief Represents a basic mesh.
 	 *
-	 * Parses ZenGin world meshes. The reference implementation can be found on GitHub:
+	 * Parses ZenGin meshes. The reference implementation can be found on GitHub:
 	 * https://github.com/Try/ZenLib/blob/master/zenload/zCMesh.cpp and the
 	 * original version by Andre Taulien was also referenced:
 	 * https://github.com/ataulien/ZenLib/blob/e1a5e1b12e71690a5470f3be2aa3d0d6419f5191/zenload/zCMesh.cpp
@@ -77,7 +77,7 @@ namespace phoenix {
 	class mesh {
 	public:
 		/**
-		 * @brief Parses a world mesh from the given reader.
+		 * @brief Parses a mesh from the given reader.
 		 * @param in The reader to read from.
 		 * @return The mesh parsed.
 		 */
