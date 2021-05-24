@@ -21,11 +21,12 @@ set(PX_CORE_SRCS
 		source/script.cc
 		source/proto_mesh.cc
 		source/messages.cc
+		source/mesh.cc
+		source/morph_mesh.cc
 
 		source/world.cc
 		source/world/bsp_tree.cc
 		source/world/vob_tree.cc
-		source/mesh.cc
 		source/world/way_net.cc)
 
 set(PX_CORE_TESTS
@@ -41,7 +42,8 @@ set(PX_CORE_TESTS
 		tests/test_script.cc
 		tests/test_proto_mesh.cc
 		tests/test_world.cc
-		tests/test_messages.cc)
+		tests/test_messages.cc
+		tests/test_morph_mesh.cc)
 
 set(PX_CORE_DEFINES)
 
