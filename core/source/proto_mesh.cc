@@ -108,6 +108,8 @@ namespace phoenix {
 				if (in.tell() != end) {
 					fmt::print(stderr, "warning: proto mesh: not all data or too much data consumed from section 0x{:X}\n", chunk);
 				}
+
+				in.seek(end);
 			}
 		} while (!end_mesh);
 
