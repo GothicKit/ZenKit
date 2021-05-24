@@ -1,7 +1,7 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #include "catch2.hh"
-#include <phoenix/mesh.hh>
+#include <phoenix/proto_mesh.hh>
 
 static bool compare_triangle(phoenix::mesh::triangle a, phoenix::mesh::triangle b) {
 	return a.wedges[0] == b.wedges[0] &&

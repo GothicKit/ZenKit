@@ -19,7 +19,7 @@ set(PX_CORE_SRCS
 		source/animation.cc
 		source/texture.cc
 		source/script.cc
-		source/mesh.cc
+		source/proto_mesh.cc
 		source/messages.cc
 
 		source/world.cc
@@ -39,7 +39,7 @@ set(PX_CORE_TESTS
 		tests/test_animation.cc
 		tests/test_texture.cc
 		tests/test_script.cc
-		tests/test_mesh.cc
+		tests/test_proto_mesh.cc
 		tests/test_world.cc
 		tests/test_messages.cc)
 

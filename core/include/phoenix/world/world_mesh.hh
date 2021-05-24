@@ -3,9 +3,9 @@
 #pragma once
 #include <phoenix/detail/stream.hh>
 #include <phoenix/material.hh>
-#include <phoenix/math/obb.hh>
 #include <phoenix/math/light_map.hh>
-#include <phoenix/mesh.hh>
+#include <phoenix/math/obb.hh>
+#include <phoenix/proto_mesh.hh>
 #include <phoenix/texture.hh>
 
 namespace phoenix {
@@ -127,6 +127,7 @@ namespace phoenix {
 		 * @return All shared lightmaps associated with the mesh
 		 */
 		[[nodiscard]] const std::vector<light_map>& lightmaps() const noexcept { return _m_lightmaps; }
+
 	private:
 		phoenix::date _m_date;
 		std::string _m_name;

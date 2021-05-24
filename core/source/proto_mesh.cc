@@ -1,6 +1,6 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
-#include <phoenix/mesh.hh>
+#include <phoenix/proto_mesh.hh>
 
 #include <fmt/format.h>
 
