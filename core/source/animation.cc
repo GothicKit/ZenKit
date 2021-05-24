@@ -125,8 +125,18 @@ namespace phoenix {
 
 					break;
 				case animation_chunk::source:
-					// TODO: Find out what these do
-					in.ignore(16);
+					// this is actually a date though it is 4 bytes aligned
+					anim._m_source_file_date = {
+							in.read_u32(),
+							in.read_u16(),
+							in.read_u16(),
+							in.read_u16(),
+							in.read_u16(),
+							in.read_u16(),
+					};
+
+					// discard alignment bytes
+					in.ignore(2);
 
 					anim._m_source_path = in.read_line(false);
 					anim._m_mds_source = in.read_line(false);

@@ -3,6 +3,7 @@
 #pragma once
 #include <phoenix/detail/stream.hh>
 #include <phoenix/detail/types.hh>
+#include <phoenix/mesh.hh>
 
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
@@ -122,6 +123,7 @@ namespace phoenix {
 		glm::vec3 _m_bbox[2] {};
 		u32 _m_checksum {};
 
+		date _m_source_file_date;
 		std::string _m_source_path;
 		std::string _m_mds_source;
 
