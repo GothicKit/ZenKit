@@ -12,6 +12,7 @@ File formats currently supported are:
 * `.DAT` __-__ compiled daedalus script
 * `.TEX` __-__ textures
 * `.ZEN` __-__ world meshes, BSP trees and the world's VOB (entity or object) tree
+* `.MSH` __-__ basic mesh
 
 File formats currently __NOT__ supported:
 * `.MDS` __-__ _"model script"_ files containing mesh/animation components, transitions and sound effects
@@ -19,4 +20,3 @@ File formats currently __NOT__ supported:
 * `.MMB` __-__ _"morph mesh"_
 * `.MDH` __-__ _"model hierarchy"_
 * `.MDL` __-__ combined `MDH` and `MDM`
-* `.MSH` __-__ basic mesh
