@@ -73,6 +73,47 @@ TEST_CASE("the bsp-tree is read correctly", "[world][bsp][proprietary]") {
 	REQUIRE(polys[150] == 102);
 	REQUIRE(polys[151] == 103);
 	REQUIRE(polys[152] == 92);
+
+	auto& nodes = tree.nodes();
+	REQUIRE(nodes.size() == 6644);
+	REQUIRE(nodes[0].plane == glm::vec4 {1, 0, 0, 18540.0156f});
+	REQUIRE(nodes[0].front_index == 1);
+	REQUIRE(nodes[0].parent_index == -1);
+	REQUIRE(nodes[0].back_index == 1599);
+	REQUIRE(nodes[0].polygon_index == 0);
+	REQUIRE(nodes[0].polygon_count == 0);
+	REQUIRE(nodes[0].bbox[0] == glm::vec3 {-71919.9609f, -12000, -59900});
+	REQUIRE(nodes[0].bbox[1] == glm::vec3 {108999.992f, 20014.0371f, 67399.9921f});
+	REQUIRE(!nodes[0].is_leaf());
+
+	REQUIRE(nodes[1].plane == glm::vec4 {0, 0, 1, 3749.99609f});
+	REQUIRE(nodes[1].front_index == 2);
+	REQUIRE(nodes[1].parent_index == 0);
+	REQUIRE(nodes[1].back_index == 445);
+	REQUIRE(nodes[1].polygon_index == 0);
+	REQUIRE(nodes[1].polygon_count == 0);
+	REQUIRE(nodes[1].bbox[0] == glm::vec3 {15499.999f, -12000, -59900});
+	REQUIRE(nodes[1].bbox[1] == glm::vec3 {108999.992f, 19502.1973f, 67399.9921f});
+	REQUIRE(!nodes[1].is_leaf());
+
+	auto& leaves = tree.leaf_node_indices();
+	REQUIRE(leaves.size() == 3318);
+	REQUIRE(leaves[0] == 5);
+	REQUIRE(leaves[10] == 26);
+
+	REQUIRE(nodes[5].is_leaf());
+	REQUIRE(nodes[5].parent_index == 4);
+	REQUIRE(nodes[5].polygon_index == 0);
+	REQUIRE(nodes[5].polygon_count == 22);
+	REQUIRE(nodes[5].bbox[0] == glm::vec3 {81900, -4029.99976f, 28500.0039f});
+	REQUIRE(nodes[5].bbox[1] == glm::vec3 {100000, -4026.60083f, 53899.9922f});
+
+	REQUIRE(nodes[26].is_leaf());
+	REQUIRE(nodes[26].parent_index == 25);
+	REQUIRE(nodes[26].polygon_index == 446);
+	REQUIRE(nodes[26].polygon_count == 24);
+	REQUIRE(nodes[26].bbox[0] == glm::vec3 {48899.9961f, -4029.99976f, 47400});
+	REQUIRE(nodes[26].bbox[1] == glm::vec3 {67900, -4026.59961f, 67399.9921f});
 }
 
 TEST_CASE("the vob-tree is read correctly", "[world][vob][proprietary]") {

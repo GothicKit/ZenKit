@@ -10,6 +10,19 @@ namespace phoenix {
 		outdoor = 1,
 	};
 
+	struct bsp_node {
+		glm::vec4 plane;
+		glm::vec3 bbox[2];
+		u32 polygon_index;
+		u32 polygon_count;
+
+		s32 front_index {-1};
+		s32 back_index {-1};
+		s32 parent_index {-1};
+
+		inline bool is_leaf() const noexcept { return front_index == -1 && back_index == -1; }
+	};
+
 	/**
 	 * @brief Represents a BSP tree.
 	 *
@@ -44,8 +57,21 @@ namespace phoenix {
 		 */
 		[[nodiscard]] const std::vector<u32>& polygon_indices() const noexcept { return _m_polygon_indices; }
 
+		/**
+		 * @return All BSP nodes associated with the tree.
+		 */
+		[[nodiscard]] const std::vector<bsp_node>& nodes() const noexcept { return _m_nodes; }
+
+		/**
+		 * @return All BSP leaf node indices.
+		 */
+		[[nodiscard]] const std::vector<u32>& leaf_node_indices() const noexcept { return _m_leaf_node_indices; }
+
 	private:
 		bsp_tree_mode _m_mode;
 		std::vector<u32> _m_polygon_indices;
+
+		std::vector<bsp_node> _m_nodes;
+		std::vector<u32> _m_leaf_node_indices;
 	};
-}
+}// namespace phoenix
