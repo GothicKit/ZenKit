@@ -24,6 +24,8 @@ set(PX_CORE_SRCS
 		source/mesh.cc
 		source/morph_mesh.cc
 		source/model_hierarchy.cc
+		source/softskin_mesh.cc
+		source/model_mesh.cc
 
 		source/world.cc
 		source/world/bsp_tree.cc
@@ -45,7 +47,8 @@ set(PX_CORE_TESTS
 		tests/test_world.cc
 		tests/test_messages.cc
 		tests/test_morph_mesh.cc
-		tests/test_model_hierarchy.cc)
+		tests/test_model_hierarchy.cc
+		tests/test_model_mesh.cc)
 
 set(PX_CORE_DEFINES)
 
