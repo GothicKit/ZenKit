@@ -23,6 +23,10 @@ job-build:
     artifacts:
         paths:
             - build/core/phoenix-core-tests
+            - build/tools/pxmdl/pxmdl
+            - build/tools/pxscrdump/pxscrdump
+            - build/tools/pxtex/pxtex
+            - build/tools/pxvdfs/pxvdfs
 
 
 job-test:
