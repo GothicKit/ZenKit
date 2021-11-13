@@ -3,6 +3,7 @@ include(FetchContent)
 add_subdirectory(glm)
 add_subdirectory(fmt)
 add_subdirectory(argh)
+add_subdirectory(mio)
 
 FetchContent_Declare(
 		libsquish

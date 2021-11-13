@@ -10,3 +10,6 @@
 [submodule "vendor/stb"]
 	path = vendor/stb
 	url = https://gitlab.com/lmichaelis/phoenix-stb
+[submodule "vendor/mio"]
+	path = vendor/mio
+	url = https://github.com/mandreyel/mio
