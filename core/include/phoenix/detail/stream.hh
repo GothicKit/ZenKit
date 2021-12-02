@@ -7,10 +7,7 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
-#include <mio/mmap.hpp>
-
 #include <ostream>
-#include <memory>
 #include <string>
 #include <string_view>
 
@@ -205,8 +202,6 @@ namespace phoenix {
 		inline glm::vec4 read_vec4() { return {read_f32(), read_f32(), read_f32(), read_f32()}; }
 
 	protected:
-		reader(std::string_view buffer, std::shared_ptr<mio::mmap_source> source);
-
 		/**
 		 * @brief Reads a value of type @p T from the internal buffer.
 		 * @tparam T any arithmetic type
@@ -222,7 +217,6 @@ namespace phoenix {
 		}
 
 	private:
-		std::shared_ptr<mio::mmap_source> _m_source {};
 		std::string_view _m_buffer {};
 		u64 _m_offset {0};
 	};

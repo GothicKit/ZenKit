@@ -60,7 +60,7 @@ endif ()
 
 add_library(phoenix-core ${PX_CORE_SRCS})
 target_include_directories(phoenix-core PUBLIC include)
-target_link_libraries(phoenix-core PUBLIC glm fmt squish mio)
+target_link_libraries(phoenix-core PUBLIC glm fmt squish)
 target_compile_definitions(phoenix-core PUBLIC ${PX_CORE_DEFINES})
 
 if (PX_CORE_BUILD_TESTS)

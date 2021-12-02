@@ -5,23 +5,31 @@
 
 #include <fmt/format.h>
 
+#if defined(PX_POSIX_MMAP)
+#include <cstring>
+#include <sys/fcntl.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/unistd.h>
+
 phoenix::reader phoenix::reader::from(const std::string& path) {
-	try {
-		auto src = std::make_shared<mio::mmap_source>(path);
-		return reader {
-				std::string_view {src->data(), static_cast<u64>(src->size())},
-				src};
-	} catch (const std::system_error& e) {
-		throw io_error(e.what());
-	}
+	auto fd = open(path.c_str(), O_RDONLY);
+	if (fd < 0) { throw io_error("failed to open \"" + path + "\": " + std::strerror(errno)); }
+
+	struct stat st {};
+	if (fstat(fd, &st) != 0) { throw io_error("failed to stat \"" + path + "\": " + std::strerror(errno)); }
+	if (S_ISDIR(st.st_mode)) { throw io_error("refusing to open directory \"" + path + "\""); }
+
+	void* buffer = mmap(nullptr, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
+	if (buffer == MAP_FAILED) { throw io_error("failed to mmap \"" + path + "\": " + std::strerror(errno)); }
+	close(fd);
+
+	return reader {std::string_view {static_cast<char*>(buffer), static_cast<u64>(st.st_size)}};
 }
+#endif
 
 namespace phoenix {
 	reader::reader(std::string_view buffer) : _m_buffer(buffer) {
-	}
-
-	reader::reader(std::string_view buffer, std::shared_ptr<mio::mmap_source> source)
-		: _m_source(std::move(source)), _m_buffer(buffer), _m_offset(0) {
 	}
 
 	void reader::seek(u64 offset) {
