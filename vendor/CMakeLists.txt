@@ -16,6 +16,7 @@ if(NOT libsquish_POPULATED)
 	SET(BUILD_SQUISH_WITH_OPENMP OFF CACHE BOOL "" FORCE)
 	add_subdirectory(${libsquish_SOURCE_DIR} ${libsquish_BINARY_DIR})
 	target_include_directories(squish PUBLIC ${libsquish_SOURCE_DIR})
+	target_compile_options(squish PRIVATE -Wno-unused-but-set-variable)
 endif()
 
 add_library(stb INTERFACE)
