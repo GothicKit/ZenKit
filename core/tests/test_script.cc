@@ -7,7 +7,7 @@ TEST_CASE("compiled daedalus script symbols are read correctly", "[script][propr
 	auto scr = phoenix::script::parse("./samples/menu.proprietary.dat");
 
 	auto& syms = scr.symbols();
-	REQUIRE(syms.size() == 1093);
+	REQUIRE(syms.size() == 1094);
 
 	auto* class_symbol = scr.find_symbol_by_index(118);
 	auto* member_symbol = scr.find_symbol_by_name("C_MENU.BACKPIC");

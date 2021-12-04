@@ -30,7 +30,9 @@ set(PX_CORE_SRCS
 		source/world.cc
 		source/world/bsp_tree.cc
 		source/world/vob_tree.cc
-		source/world/way_net.cc)
+		source/world/way_net.cc
+
+		source/vm/daedalus.cc)
 
 set(PX_CORE_TESTS
 		tests/test_runner.cc

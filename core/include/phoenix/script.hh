@@ -152,12 +152,6 @@ namespace phoenix {
 		illegal_member_offset(const symbol& sym, u32 max, u32 actual, u32 value_size);
 	};
 
-	struct instance_ptr {
-		u32 klass {unset};
-		u32 size {unset};
-		char* object {nullptr};
-	};
-
 	/**
 	 * @brief Represents a compiled daedalus symbol.
 	 */
@@ -176,7 +170,7 @@ namespace phoenix {
 		 * @param context An instance to use as context for getting member variables.
 		 * @return The string associated with the symbol.
 		 */
-		const std::string& get_string(u8 index = 0, const instance* context = nullptr) const;
+		const std::string& get_string(u8 index = 0, const std::shared_ptr<instance>& context = nullptr) const;
 
 		/**
 		 * @brief Validates that the symbol is a float and retrieves it's value in the given context.
@@ -184,7 +178,7 @@ namespace phoenix {
 		 * @param context An instance to use as context for getting member variables.
 		 * @return The float value associated with the symbol.
 		 */
-		float get_float(u8 index = 0, const instance* context = nullptr) const;
+		float get_float(u8 index = 0, const std::shared_ptr<instance>& context = nullptr) const;
 
 		/**
 		 * @brief Validates that the symbol is an int and retrieves it's value in the given context.
@@ -192,13 +186,13 @@ namespace phoenix {
 		 * @param context An instance to use as context for getting member variables.
 		 * @return The int value associated with the symbol.
 		 */
-		s32 get_int(u8 index = 0, const instance* context = nullptr) const;
+		s32 get_int(u8 index = 0, const std::shared_ptr<instance>& context = nullptr) const;
 
 		/**
 		 * @brief Validates that the symbol is an instance and retrieves it's value
 		 * @return The instance associated with the symbol.
 		 */
-		instance get_instance();
+		std::shared_ptr<instance> get_instance();
 
 		// -=-= Value setters =-=- //
 
@@ -208,7 +202,7 @@ namespace phoenix {
 		 * @param index The index of the value to set
 		 * @param context An instance to use as context for setting member variables.
 		 */
-		void set_string(const std::string& value, u8 index = 0, instance* context = nullptr);
+		void set_string(const std::string& value, u8 index = 0, const std::shared_ptr<instance>& context = nullptr);
 
 		/**
 		 * @brief Validates that the symbol is a float and not constant and sets it's value in the given context.
@@ -216,7 +210,7 @@ namespace phoenix {
 		 * @param index The index of the value to set
 		 * @param context An instance to use as context for setting member variables.
 		 */
-		void set_float(float value, u8 index = 0, instance* context = nullptr);
+		void set_float(float value, u8 index = 0, const std::shared_ptr<instance>& context = nullptr);
 
 		/**
 		 * @brief Validates that the symbol is an int and not constant and sets it's value in the given context.
@@ -224,13 +218,13 @@ namespace phoenix {
 		 * @param index The index of the value to set
 		 * @param context An instance to use as context for setting member variables.
 		 */
-		void set_int(s32 value, u8 index = 0, instance* context = nullptr);
+		void set_int(s32 value, u8 index = 0, const std::shared_ptr<instance>& context = nullptr);
 
 		/**
 		 * @brief Validates that the symbol is an instance and sets it's value
 		 * @param inst The instance value to set
 		 */
-		void set_instance(instance inst);
+		void set_instance(std::shared_ptr<instance> inst);
 
 		/**
 		 * @brief Tests whether the symbol is a constant.
@@ -323,10 +317,32 @@ namespace phoenix {
 	protected:
 		symbol() = default;
 
+		template <typename T>
+		const T* get_member_ptr(u8 index, const std::shared_ptr<instance>& context) const {
+			// if (sym.parent() != _m_data.klass) { throw illegal_instance_access(sym, _m_data.klass); }  // TODO: fix this check - Inheritance chains don't work:  C_NPC -> NPC_DEFAULT -> STT_309_WHISTLER
+			if (offset_as_member() == unset) { throw unbound_member_access(*this); }
+
+			u32 target_offset = offset_as_member() + index * sizeof(T);
+			// if (target_offset + sizeof(T) > _m_data.size) { throw illegal_member_offset(sym, _m_data.size, target_offset, sizeof(T)); } // TODO: fix this check!
+
+			return reinterpret_cast<const T*>(reinterpret_cast<const char*>(context.get()) + target_offset);
+		}
+
+		template <typename T>
+		T* get_member_ptr(u8 index, const std::shared_ptr<instance>& context) {
+			// if (sym.parent() != _m_data.klass) { throw illegal_instance_access(sym, _m_data.klass); }  // TODO: fix this check - Inheritance chains don't work:  C_NPC -> NPC_DEFAULT -> STT_309_WHISTLER
+			if (offset_as_member() == unset) { throw unbound_member_access(*this); }
+
+			u32 target_offset = offset_as_member() + index * sizeof(T);
+			// if (target_offset + sizeof(T) > _m_data.size) { throw illegal_member_offset(sym, _m_data.size, target_offset, sizeof(T)); } // TODO: fix this check!
+
+			return reinterpret_cast<T*>(reinterpret_cast<char*>(context.get()) + target_offset);
+		}
+
 	private:
 		friend class script;
 		std::string _m_name;
-		std::variant<std::unique_ptr<s32[]>, std::unique_ptr<float[]>, std::unique_ptr<std::string[]>, instance_ptr> _m_value;
+		std::variant<std::unique_ptr<s32[]>, std::unique_ptr<float[]>, std::unique_ptr<std::string[]>, std::shared_ptr<instance>> _m_value;
 
 		u32 _m_address {unset};
 		u32 _m_parent {unset};
@@ -346,68 +362,20 @@ namespace phoenix {
 		u32 _m_class_size {unset};
 		datatype _m_return_type {dt_void};
 		u32 _m_index {unset};
+
+		// TODO: type safety using std::type_info and typeid
 	};
 
 	/**
 	 * @brief Represents an object associated with an instance in the script.
 	 */
-	class instance final {
+	class instance {
 	public:
-		/**
-		 * @brief Creates a new instance pointer with additional information attached.
-		 * @tparam T The type of the instance class
-		 * @param klass The symbol index of the class inside the script
-		 * @param object The object to reference.
-		 */
-		template <typename T>
-		instance(u32 klass, T* object) : _m_data {klass, sizeof(T), reinterpret_cast<char*>(object)} {
-		}
+		explicit instance(symbol* sym) : sym(sym) {}
 
-		/**
-		 * @brief Creates a new instance from the given instance_ptr
-		 * @param inst The instance_ptr to use
-		 */
-		explicit instance(instance_ptr inst) : _m_data(inst) {
-		}
+		virtual ~instance() = default;
 
-		instance() = default;
-
-		[[nodiscard]] char* object() const noexcept { return _m_data.object; }
-
-	protected:
-		/**
-		 * @brief Retrieves a pointer to the member referenced by \p sym of this instance.
-		 * @tparam T The type of value to get
-		 * @param sym The member symbol to reference
-		 * @param index The index of the value to get
-		 * @return A pointer to that value.
-		 */
-		template <typename T>
-		const T* get_member_ptr(const symbol& sym, u8 index) const {
-			if (sym.parent() != _m_data.klass) { throw illegal_instance_access(sym, _m_data.klass); }
-			if (sym.offset_as_member() == unset) { throw unbound_member_access(sym); }
-
-			u32 target_offset = sym.offset_as_member() + index * sizeof(T);
-			if (target_offset + sizeof(T) > _m_data.size) { throw illegal_member_offset(sym, _m_data.size, target_offset, sizeof(T)); }
-
-			return reinterpret_cast<T*>(_m_data.object + target_offset);
-		}
-
-		/**
-		 * @brief Retrieves a pointer to the member referenced by \p sym of this instance.
-		 * @tparam T The type of value to get
-		 * @param sym The member symbol to reference
-		 * @param index The index of the value to get
-		 * @return A pointer to that value.
-		 */
-		template <typename T>
-		T* get_member_ptr(const symbol& sym, u8 index) {
-			return const_cast<T*>(const_cast<const instance*>(this)->get_member_ptr<T>(sym, index));
-		}
-
-	private:
-		friend class symbol;
-		instance_ptr _m_data {unset, 0, nullptr};
+		symbol* sym;
 	};
 
 	/**
@@ -431,6 +399,7 @@ namespace phoenix {
 
 	/**
 	 * @brief Represents a compiled daedalus script
+	 * @todo Add a way to register external symbols as functions
 	 */
 	class script {
 	public:
@@ -450,10 +419,13 @@ namespace phoenix {
 		void register_member(const std::string& name, _member _class::*field) {
 			auto* sym = find_symbol_by_name(name);
 			if (sym == nullptr) { throw std::runtime_error("cannot register member " + name + ": not found"); }
-
+			if (!sym->is_member()) { throw std::runtime_error("cannot register member " + name + ": not a member"); }
 
 			_class* base = 0;
 			_member* member = &(base->*field);
+
+			// TODO: check type of _member and make sure it is one of: s32, f32, s32[], f32[], std::string, std::string[]
+			//       depending on sym.type()
 
 			sym->_m_member_offset = (u64) member;
 		}
@@ -512,6 +484,13 @@ namespace phoenix {
 		 */
 		instruction instruction_at(u32 address) const;
 
+		/**
+		 * @return The total size of the script.
+		 */
+		[[nodiscard]] u32 size() const noexcept { return _m_text.size(); }
+
+		symbol& dynamic_strings() const noexcept { return *_m_dynamic_strings; }
+
 	protected:
 		script() = default;
 
@@ -519,6 +498,8 @@ namespace phoenix {
 		std::vector<symbol> _m_symbols;
 		std::unordered_map<std::string, symbol*> _m_symbols_by_name;
 		std::unordered_map<u32, symbol*> _m_symbols_by_address;
+
+		symbol* _m_dynamic_strings;
 
 		mutable reader _m_text {};
 		u8 _m_version {0};
