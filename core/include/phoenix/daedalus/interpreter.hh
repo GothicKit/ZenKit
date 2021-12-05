@@ -79,8 +79,13 @@ namespace phoenix {
 		template <class _instance_t>// clang-format off
 		requires (std::derived_from<_instance_t, instance>)
 		std::shared_ptr<_instance_t> init_instance(const std::string& name) {// clang-format on
-			auto* sym = _m_script.find_symbol_by_name(name);
-			if (sym == nullptr) { throw std::runtime_error {"Cannot init " + name + ": not found"}; }
+			return init_instance<_instance_t>(_m_script.find_symbol_by_name(name));
+		}
+
+		template <class _instance_t>// clang-format off
+		requires (std::derived_from<_instance_t, instance>)
+		std::shared_ptr<_instance_t> init_instance(symbol* sym) {// clang-format on
+			if (sym == nullptr) { throw std::runtime_error {"Cannot init instance: not found"}; }
 			if (sym->type() != dt_instance) { throw std::runtime_error {"Cannot init " + sym->name() + ": not an instance"}; }
 
 			// check that the parent class is registered for the given instance type
