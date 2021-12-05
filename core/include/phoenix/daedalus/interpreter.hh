@@ -10,12 +10,12 @@
 #include <variant>
 
 namespace phoenix {
-	template<typename T>
+	template <typename T>
 	struct is_instance_ptr : std::false_type {};
 
-	template<typename T>
+	template <typename T>// clang-format off
 	requires (std::derived_from<T, instance>)
-	struct is_instance_ptr<std::shared_ptr<T>> : std::true_type {
+	struct is_instance_ptr<std::shared_ptr<T>> : std::true_type {// clang-format on
 		using instance_type = T;
 	};
 
