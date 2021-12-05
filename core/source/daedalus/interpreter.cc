@@ -159,8 +159,8 @@ namespace phoenix {
 				}
 				case op_assign_string: {
 					auto [target, target_idx] = pop_reference();
-					auto [source, source_idx] = pop_reference();
-					target->set_string(source->get_string(source_idx, _m_instance), target_idx, _m_instance);
+					auto source = pop_string();
+					target->set_string(source, target_idx, _m_instance);
 					break;
 				}
 				case op_assign_stringref:
