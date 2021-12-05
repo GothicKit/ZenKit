@@ -127,83 +127,33 @@ namespace phoenix {
 
 		template <typename T>// clang-format off
 		requires (std::same_as<std::shared_ptr<instance>, T> || std::same_as<float, T> || std::same_as<s32, T> ||
-		          std::same_as<const std::string*, T>)
+		          std::same_as<std::string_view, T>)
 		inline T pop_value() {// clang-format on
 			if constexpr (std::same_as<std::shared_ptr<instance>, T>) {
 				return pop_instance();
+			} else if constexpr (std::same_as<float, T>) {
+				return pop_float();
+			} else if constexpr (std::same_as<s32, T>) {
+				return pop_int();
+			} else if constexpr (std::same_as<std::string_view, T>) {
+				return pop_string();
 			} else {
 				throw std::runtime_error {"pop: unsupported stack frame type "};
 			}
 		}
 
-		template <>
-		inline s32 pop_value() { return pop_int(); }
-
-		template <>
-		inline float pop_value() { return pop_float(); }
-
-		template <>
-		inline const std::string* pop_value() { return &pop_string(); }
-
 		template <typename T>// clang-format off
-		requires (std::same_as<float, T> || std::convertible_to<int32_t, T> || std::convertible_to<std::string, T>)
-		void push_value(T) {// clang-format on
-			throw std::runtime_error {"push: unsupported stack frame type"};
-		}
-
-		template <>
-		inline void push_value(s32 v) {
-			push_int(v);
-		}
-
-		template <>
-		inline void push_value(u32 v) {
-			push_int(static_cast<s32>(v));
-		}
-
-		template <>
-		inline void push_value(bool v) {
-			push_int(static_cast<s32>(v));
-		}
-
-		template <>
-		inline void push_value(s16 v) {
-			push_int(static_cast<s32>(v));
-		}
-
-		template <>
-		inline void push_value(s8 v) {
-			push_int(static_cast<s32>(v));
-		}
-
-		template <>
-		inline void push_value(u16 v) {
-			push_int(static_cast<s32>(v));
-		}
-
-		template <>
-		inline void push_value(u8 v) {
-			push_int(static_cast<s32>(v));
-		}
-
-		template <>
-		inline void push_value(float v) {
-			push_float(v);
-		}
-
-		template <>
-		inline void push_value(const std::string& v) {
-			push_string(v);
-		}
-
-		template <>
-		inline void push_value(std::string&& v) {
-			push_string(v);
-		}
-
-		template <>
-		inline void push_value(std::string v) {
-			push_string(v);
+		requires (std::floating_point<T> || std::convertible_to<s32, T> || std::convertible_to<std::string, T>)
+		void push_value(T v) {// clang-format on
+			if constexpr (std::floating_point<T>) {
+				push_float(static_cast<float>(v));
+			} else if constexpr (std::convertible_to<s32, T>) {
+				push_int(static_cast<s32>(v));
+			} else if constexpr (std::convertible_to<std::string, T>) {
+				push_string(v);
+			} else {
+				throw std::runtime_error {"push: unsupported stack frame type"};
+			}
 		}
 
 		template <typename P, typename... Px>
@@ -211,22 +161,21 @@ namespace phoenix {
 			if constexpr (sizeof...(Px) > 0) {
 				auto v = pop_values_reverse<Px...>();
 
-				if constexpr (std::same_as<P, s32> || std::same_as<P, f32> || std::same_as<P, const std::string*>) {
+				if constexpr (std::same_as<P, s32> || std::same_as<P, f32> || std::same_as<P, std::string_view>) {
 					return std::tuple_cat(std::make_tuple(pop_value<P>()), std::move(v));
 				} else {
 					auto k = pop_value<std::shared_ptr<instance>>();
 					return std::tuple_cat(std::make_tuple(reinterpret_cast<P&>(k)), std::move(v));
 				}
 			} else {
-				if constexpr (std::same_as<P, s32> || std::same_as<P, f32> || std::same_as<P, const std::string*>) {
-					return {std::move(pop_value<P>())};
+				if constexpr (std::same_as<P, s32> || std::same_as<P, f32> || std::same_as<P, std::string_view>) {
+					return {pop_value<P>()};
 				} else {
 					auto k = pop_value<std::shared_ptr<instance>>();
 					return {reinterpret_cast<P&>(k)};
 				}
 			}
 		}
-
 
 	private:
 		script& _m_script;
