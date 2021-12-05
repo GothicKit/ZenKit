@@ -216,7 +216,7 @@ namespace phoenix {
 					push_reference(sym, instr.index);
 					break;
 			}
-		} catch (const std::domain_error& err) {
+		} catch (const std::runtime_error& err) {
 			print_stack_trace();
 			throw std::domain_error {std::string {err.what()}};
 		}
