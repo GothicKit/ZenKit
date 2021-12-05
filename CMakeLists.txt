@@ -20,7 +20,3 @@ add_subdirectory(core)
 add_subdirectory(tools)
 add_subdirectory(engine)
 add_subdirectory(vendor)
-
-
-add_executable(test test.cc)
-target_link_libraries(test phoenix-core)
