@@ -225,12 +225,13 @@ namespace phoenix {
 	}
 
 	void daedalus_interpreter::push_call(const symbol* sym) {
-		_m_call_stack.push({sym, _m_pc, _m_dynamic_string_index});
+		_m_call_stack.push({sym, _m_pc, _m_dynamic_string_index, _m_instance});
 	}
 
 	void daedalus_interpreter::pop_call() {
 		const auto& call = _m_call_stack.top();
 		_m_pc = call.program_counter;
+		_m_instance = call.context;
 
 		if (call.function->has_return() && call.function->rtype() != dt_string) {
 			_m_dynamic_string_index = call.dynamic_string_index;

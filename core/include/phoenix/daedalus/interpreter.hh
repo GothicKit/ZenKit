@@ -44,6 +44,7 @@ namespace phoenix {
 		const symbol* function;
 		u32 program_counter;
 		u32 dynamic_string_index;
+		std::shared_ptr<instance> context;
 	};
 
 	class daedalus_interpreter {
