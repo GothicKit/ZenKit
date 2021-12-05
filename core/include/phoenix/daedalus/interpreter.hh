@@ -227,10 +227,18 @@ namespace phoenix {
 			// *evil template hacking ensues*
 			_m_externals[sym] = [callback](daedalus_interpreter& vm) {
 				if constexpr (std::same_as<void, R>) {
-					auto v = vm.pop_values_for_external<P...>();
-					std::apply(callback, v);
+					if constexpr (sizeof...(P) > 0) {
+						auto v = vm.pop_values_for_external<P...>();
+						std::apply(callback, v);
+					} else {
+						callback();
+					}
 				} else {
-					vm.push_value_from_external(std::apply(callback, vm.pop_values_for_external<P...>()));
+					if constexpr (sizeof...(P) > 0) {
+						vm.push_value_from_external(std::apply(callback, vm.pop_values_for_external<P...>()));
+					}else {
+						vm.push_value_from_external(callback());
+					}
 				}
 			};
 		}
