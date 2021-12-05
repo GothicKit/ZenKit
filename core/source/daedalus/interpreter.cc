@@ -191,8 +191,7 @@ namespace phoenix {
 				}
 				case op_assign_instance: {
 					auto [target, target_idx] = pop_reference();
-					auto [source, source_idx] = pop_reference();
-					target->set_instance(source->get_instance());
+					target->set_instance(pop_instance());
 					break;
 				}
 				case op_jump:
