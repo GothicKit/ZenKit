@@ -5,6 +5,7 @@
 #include <phoenix/detail/types.hh>
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <variant>
@@ -27,7 +28,7 @@ namespace phoenix {
 		dt_instance = 7U,
 	};
 
-	constexpr const char * const DAEDALUS_DATA_TYPE_NAMES[] = {
+	constexpr const char* const DAEDALUS_DATA_TYPE_NAMES[] = {
 			"void",
 			"float",
 			"int",
@@ -35,8 +36,7 @@ namespace phoenix {
 			"class",
 			"function",
 			"prototype",
-			"instance"
-	};
+			"instance"};
 
 	/**
 	 * @brief Flags set on symbols.
@@ -97,8 +97,25 @@ namespace phoenix {
 		op_push_array_var = 245,// EParOp_PushVar + EParOp_Array
 	};
 
-	class instance;
 	class symbol;
+
+
+	/**
+	 * @brief Represents an object associated with an instance in the script.
+	 */
+	class instance {
+	public:
+		virtual ~instance() = default;
+
+		[[nodiscard]] const symbol* get_symbol() const noexcept { return _m_symbol; }
+
+	private:
+		friend class symbol;
+		friend class daedalus_interpreter;
+
+		const symbol* _m_symbol {nullptr};
+		const std::type_info* _m_type {nullptr};
+	};
 
 	/**
 	 * @brief An exception thrown when the value of a symbol is illegally accessed.
@@ -325,28 +342,31 @@ namespace phoenix {
 		[[nodiscard]] inline u32 char_count() const noexcept { return _m_char_count; }
 		[[nodiscard]] inline u32 class_size() const noexcept { return _m_class_size; }
 
+		[[nodiscard]] inline const std::type_info& registered_to() const noexcept { return *_m_registered_to; };
+
 	protected:
 		symbol() = default;
 
 		template <typename T>
 		const T* get_member_ptr(u8 index, const std::shared_ptr<instance>& context) const {
-			// if (sym.parent() != _m_data.klass) { throw illegal_instance_access(sym, _m_data.klass); }  // TODO: fix this check - Inheritance chains don't work:  C_NPC -> NPC_DEFAULT -> STT_309_WHISTLER
-			if (offset_as_member() == unset) { throw unbound_member_access(*this); }
+			if (!_m_registered_to) { throw unbound_member_access(*this); }
+			if (*_m_registered_to != *context->_m_type)
+				throw std::runtime_error {"cannot access member " + name() + " on context instance of type " +
+										  *context->_m_type->name() + " because this symbol is registered to instances of type " + _m_registered_to->name()};
+
 
 			u32 target_offset = offset_as_member() + index * sizeof(T);
-			// if (target_offset + sizeof(T) > _m_data.size) { throw illegal_member_offset(sym, _m_data.size, target_offset, sizeof(T)); } // TODO: fix this check!
-
 			return reinterpret_cast<const T*>(reinterpret_cast<const char*>(context.get()) + target_offset);
 		}
 
 		template <typename T>
 		T* get_member_ptr(u8 index, const std::shared_ptr<instance>& context) {
-			// if (sym.parent() != _m_data.klass) { throw illegal_instance_access(sym, _m_data.klass); }  // TODO: fix this check - Inheritance chains don't work:  C_NPC -> NPC_DEFAULT -> STT_309_WHISTLER
-			if (offset_as_member() == unset) { throw unbound_member_access(*this); }
+			if (!_m_registered_to) { throw unbound_member_access(*this); }
+			if (*_m_registered_to != *context->_m_type)
+				throw std::runtime_error {"cannot access member " + name() + " on context instance of type " +
+										  *context->_m_type->name() + " because this symbol is registered to instances of type " + _m_registered_to->name()};
 
 			u32 target_offset = offset_as_member() + index * sizeof(T);
-			// if (target_offset + sizeof(T) > _m_data.size) { throw illegal_member_offset(sym, _m_data.size, target_offset, sizeof(T)); } // TODO: fix this check!
-
 			return reinterpret_cast<T*>(reinterpret_cast<char*>(context.get()) + target_offset);
 		}
 
@@ -373,20 +393,7 @@ namespace phoenix {
 		u32 _m_class_size {unset};
 		datatype _m_return_type {dt_void};
 		u32 _m_index {unset};
-
-		// TODO: type safety using std::type_info and typeid
-	};
-
-	/**
-	 * @brief Represents an object associated with an instance in the script.
-	 */
-	class instance {
-	public:
-		explicit instance(symbol* sym) : sym(sym) {}
-
-		virtual ~instance() = default;
-
-		symbol* sym;
+		const std::type_info* _m_registered_to {nullptr};
 	};
 
 	/**
@@ -420,6 +427,8 @@ namespace phoenix {
 		 */
 		[[nodiscard]] static script parse(const std::string& path);
 
+		// todo: dedup code
+
 		/**
 		 * @brief Registers a member offset
 		 * @param name The name of the member in the script
@@ -428,11 +437,24 @@ namespace phoenix {
 		template <typename _class, typename _member>// clang-format off
 		requires (std::same_as<std::string, _member> || std::same_as<float, _member> || std::same_as<int32_t, _member>)
 		void register_member(const std::string& name, _member _class::*field) {// clang-format on
+			auto* type = &typeid(_class);
 			auto* sym = find_symbol_by_name(name);
+
 			if (sym == nullptr) { throw std::runtime_error("cannot register member " + name + ": not found"); }
 			if (!sym->is_member()) { throw std::runtime_error("cannot register member " + name + ": not a member"); }
 			if (sym->count() != 1) throw std::runtime_error("cannot register member " + name + ": should be an array");
 
+			// check class registration
+			auto* parent = find_symbol_by_index(sym->parent());
+			if (parent == nullptr) throw std::runtime_error("cannot register member " + name + ": no parent found");
+
+			if (parent->_m_registered_to == nullptr) {
+				parent->_m_registered_to = type;
+			} else if (parent->_m_registered_to != type) {
+				throw std::runtime_error("cannot register member " + name + ": parent class is already registered with a different type (" + parent->_m_registered_to->name() + ")");
+			}
+
+			// check type matches
 			if constexpr (std::same_as<std::string, _member>) {
 				if (sym->type() != dt_string)
 					throw std::runtime_error("cannot register member " + name + ": wrong datatype, provided 'string', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
@@ -450,6 +472,7 @@ namespace phoenix {
 			_class* base = 0;
 			_member* member = &(base->*field);
 			sym->_m_member_offset = (u64) member;
+			sym->_m_registered_to = type;
 		}
 
 		/**
@@ -460,11 +483,24 @@ namespace phoenix {
 		template <typename _class, typename _member, int N>// clang-format off
 		requires (std::same_as<std::string, _member> || std::same_as<int32_t, _member> || std::same_as<float, _member>)
 		void register_member(const std::string& name, _member (_class::*field)[N]) {// clang-format on
+			auto* type = &typeid(_class);
 			auto* sym = find_symbol_by_name(name);
+
 			if (sym == nullptr) { throw std::runtime_error("cannot register member " + name + ": not found"); }
 			if (!sym->is_member()) { throw std::runtime_error("cannot register member " + name + ": not a member"); }
 			if (sym->count() != N) throw std::runtime_error("cannot register member " + name + ": incorrect number of elements, given " + std::to_string(N) + " expected " + std::to_string(sym->count()));
 
+			// check class registration
+			auto* parent = find_symbol_by_index(sym->parent());
+			if (parent == nullptr) throw std::runtime_error("cannot register member " + name + ": no parent found");
+
+			if (parent->_m_registered_to == nullptr) {
+				parent->_m_registered_to = type;
+			} else if (parent->_m_registered_to != type) {
+				throw std::runtime_error("cannot register member " + name + ": parent class is already registered with a different type (" + parent->_m_registered_to->name() + ")");
+			}
+
+			// check type matches
 			if constexpr (std::same_as<std::string, _member>) {
 				if (sym->type() != dt_string)
 					throw std::runtime_error("cannot register member " + name + ": wrong datatype, provided 'string', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
@@ -482,6 +518,7 @@ namespace phoenix {
 			_class* base = 0;
 			auto member = &(base->*field);
 			sym->_m_member_offset = (u64) member;
+			sym->_m_registered_to = type;
 		}
 
 		/**

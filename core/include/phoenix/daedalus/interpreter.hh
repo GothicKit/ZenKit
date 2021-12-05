@@ -7,6 +7,7 @@
 #include <optional>
 #include <stack>
 #include <tuple>
+#include <typeinfo>
 #include <variant>
 
 namespace phoenix {
@@ -75,13 +76,28 @@ namespace phoenix {
 		 * @param name The name of the instance to initialize (ie. 'STT_309_WHISTLER')
 		 * @return The initialized instance.
 		 */
-		template <class _instance_t>
-		std::shared_ptr<_instance_t> init_instance(const std::string& name) {
+		template <class _instance_t>// clang-format off
+		requires (std::derived_from<_instance_t, instance>)
+		std::shared_ptr<_instance_t> init_instance(const std::string& name) {// clang-format on
 			auto* sym = _m_script.find_symbol_by_name(name);
-			if (sym == nullptr) { throw std::runtime_error {"Cannot call " + name + ": not found"}; }
-			if (sym->type() != dt_instance) { throw std::runtime_error {"Cannot call " + sym->name() + ": not an instance"}; }
+			if (sym == nullptr) { throw std::runtime_error {"Cannot init " + name + ": not found"}; }
+			if (sym->type() != dt_instance) { throw std::runtime_error {"Cannot init " + sym->name() + ": not an instance"}; }
 
-			auto inst = std::make_shared<_instance_t>(sym);
+			// check that the parent class is registered for the given instance type
+			auto* parent = _m_script.find_symbol_by_index(sym->parent());
+			while (parent->type() != dt_class) {
+				parent = _m_script.find_symbol_by_index(parent->parent());
+			}
+
+			if (parent->registered_to() != typeid(_instance_t)) {
+				throw std::runtime_error {"Cannot init " + sym->name() + ": parent class is not registered or is "
+																		 "registered to a different instance class"};
+			}
+
+			// create the instance
+			auto inst = std::make_shared<_instance_t>();
+			inst->_m_symbol = sym;
+			inst->_m_type = &typeid(_instance_t);
 
 			// set the proper instances
 			_m_instance = inst;
