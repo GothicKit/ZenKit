@@ -225,18 +225,13 @@ namespace phoenix {
 	}
 
 	void daedalus_interpreter::push_call(const symbol* sym) {
-		_m_call_stack.push({sym, _m_pc, _m_dynamic_string_index, _m_instance});
+		_m_call_stack.push({sym, _m_pc, _m_instance});
 	}
 
 	void daedalus_interpreter::pop_call() {
 		const auto& call = _m_call_stack.top();
 		_m_pc = call.program_counter;
 		_m_instance = call.context;
-
-		if (call.function->has_return() && call.function->rtype() != dt_string) {
-			_m_dynamic_string_index = call.dynamic_string_index;
-		}
-
 		_m_call_stack.pop();
 	}
 
@@ -249,12 +244,9 @@ namespace phoenix {
 	}
 
 	void daedalus_interpreter::push_string(const std::string& value) {
-		if (_m_dynamic_string_index >= _m_script.dynamic_strings().count()) { throw std::runtime_error {"Cannot allocate dynamic string object: out of slots"}; }
-		auto& sym = _m_script.dynamic_strings();
-		sym.set_string(value, _m_dynamic_string_index);
-		push_reference(&sym, _m_dynamic_string_index);
-
-		_m_dynamic_string_index++;
+		auto& sym = _m_script.dynamic_string();
+		sym.set_string(value);
+		push_reference(&sym);
 	}
 
 	void daedalus_interpreter::push_float(f32 value) {

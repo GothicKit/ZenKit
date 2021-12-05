@@ -43,7 +43,6 @@ namespace phoenix {
 	struct daedalus_call_stack_frame {
 		const symbol* function;
 		u32 program_counter;
-		u32 dynamic_string_index;
 		std::shared_ptr<instance> context;
 	};
 
@@ -438,7 +437,6 @@ namespace phoenix {
 		symbol* _m_self_sym;
 		std::shared_ptr<instance> _m_instance;
 		u32 _m_pc {0};
-		u32 _m_dynamic_string_index {0};
 
 		void print_stack_trace();
 	};
