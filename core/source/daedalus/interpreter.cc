@@ -259,8 +259,7 @@ namespace phoenix {
 
 	s32 daedalus_interpreter::pop_int() {
 		if (_m_stack.empty()) {
-			// throw std::runtime_error {"Popping from empty stack!"};
-			std::cerr << "WARN: popping 0 from empty stack!\n";
+			// std::cerr << "WARN: popping 0 from empty stack!\n";
 			return 0;
 		}
 
@@ -289,7 +288,7 @@ namespace phoenix {
 		} else if (std::holds_alternative<float>(v.value)) {
 			return std::get<float>(v.value);
 		} else if (std::holds_alternative<s32>(v.value)) {
-			std::cerr << "WARN: Popping int and reinterpreting as float\n";
+			// std::cerr << "WARN: Popping int and reinterpreting as float\n";
 			auto k = std::get<s32>(v.value);
 			return reinterpret_cast<float&>(k);
 		} else {
