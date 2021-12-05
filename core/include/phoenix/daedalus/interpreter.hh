@@ -190,7 +190,6 @@ namespace phoenix {
 		 */
 		template <typename R, typename... P>
 		void register_external(const std::string& name, const std::function<R(P...)>& callback) {
-			// TODO: function parameters and return types!
 			auto* sym = _m_script.find_symbol_by_name(name);
 			if (sym == nullptr) throw std::runtime_error {"symbol not found"};
 			if (!sym->is_external()) throw std::runtime_error {"symbol is not external"};

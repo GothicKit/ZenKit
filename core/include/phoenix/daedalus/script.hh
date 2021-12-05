@@ -427,8 +427,6 @@ namespace phoenix {
 		 */
 		[[nodiscard]] static script parse(const std::string& path);
 
-		// todo: dedup code
-
 		/**
 		 * @brief Registers a member offset
 		 * @param name The name of the member in the script
@@ -438,39 +436,10 @@ namespace phoenix {
 		requires (std::same_as<std::string, _member> || std::same_as<float, _member> || std::same_as<int32_t, _member>)
 		void register_member(const std::string& name, _member _class::*field) {// clang-format on
 			auto* type = &typeid(_class);
-			auto* sym = find_symbol_by_name(name);
-
-			if (sym == nullptr) { throw std::runtime_error("cannot register member " + name + ": not found"); }
-			if (!sym->is_member()) { throw std::runtime_error("cannot register member " + name + ": not a member"); }
-			if (sym->count() != 1) throw std::runtime_error("cannot register member " + name + ": should be an array");
-
-			// check class registration
-			auto* parent = find_symbol_by_index(sym->parent());
-			if (parent == nullptr) throw std::runtime_error("cannot register member " + name + ": no parent found");
-
-			if (parent->_m_registered_to == nullptr) {
-				parent->_m_registered_to = type;
-			} else if (parent->_m_registered_to != type) {
-				throw std::runtime_error("cannot register member " + name + ": parent class is already registered with a different type (" + parent->_m_registered_to->name() + ")");
-			}
-
-			// check type matches
-			if constexpr (std::same_as<std::string, _member>) {
-				if (sym->type() != dt_string)
-					throw std::runtime_error("cannot register member " + name + ": wrong datatype, provided 'string', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
-			} else if constexpr (std::same_as<float, _member>) {
-				if (sym->type() != dt_float)
-					throw std::runtime_error("cannot register member " + name + ": wrong datatype, provided 'float', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
-			} else if constexpr (std::same_as<int32_t, _member>) {
-				// TODO: create own function datatype
-				if (sym->type() != dt_integer && sym->type() != dt_function)
-					throw std::runtime_error("cannot register member " + name + ": wrong datatype, provided 'int', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
-			} else {
-				throw std::runtime_error("illegal type");
-			}
+			auto* sym = _check_member<_class, _member, 1>(name, type);
 
 			_class* base = 0;
-			_member* member = &(base->*field);
+			auto member = &(base->*field);
 			sym->_m_member_offset = (u64) member;
 			sym->_m_registered_to = type;
 		}
@@ -484,36 +453,7 @@ namespace phoenix {
 		requires (std::same_as<std::string, _member> || std::same_as<int32_t, _member> || std::same_as<float, _member>)
 		void register_member(const std::string& name, _member (_class::*field)[N]) {// clang-format on
 			auto* type = &typeid(_class);
-			auto* sym = find_symbol_by_name(name);
-
-			if (sym == nullptr) { throw std::runtime_error("cannot register member " + name + ": not found"); }
-			if (!sym->is_member()) { throw std::runtime_error("cannot register member " + name + ": not a member"); }
-			if (sym->count() != N) throw std::runtime_error("cannot register member " + name + ": incorrect number of elements, given " + std::to_string(N) + " expected " + std::to_string(sym->count()));
-
-			// check class registration
-			auto* parent = find_symbol_by_index(sym->parent());
-			if (parent == nullptr) throw std::runtime_error("cannot register member " + name + ": no parent found");
-
-			if (parent->_m_registered_to == nullptr) {
-				parent->_m_registered_to = type;
-			} else if (parent->_m_registered_to != type) {
-				throw std::runtime_error("cannot register member " + name + ": parent class is already registered with a different type (" + parent->_m_registered_to->name() + ")");
-			}
-
-			// check type matches
-			if constexpr (std::same_as<std::string, _member>) {
-				if (sym->type() != dt_string)
-					throw std::runtime_error("cannot register member " + name + ": wrong datatype, provided 'string', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
-			} else if constexpr (std::same_as<float, _member>) {
-				if (sym->type() != dt_float)
-					throw std::runtime_error("cannot register member " + name + ": wrong datatype, provided 'float', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
-			} else if constexpr (std::same_as<int32_t, _member>) {
-				// TODO: create own function datatype
-				if (sym->type() != dt_integer && sym->type() != dt_function)
-					throw std::runtime_error("cannot register member " + name + ": wrong datatype, provided 'int', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
-			} else {
-				throw std::runtime_error("illegal type");
-			}
+			auto* sym = _check_member<_class, _member, N>(name, type);
 
 			_class* base = 0;
 			auto member = &(base->*field);
@@ -602,12 +542,47 @@ namespace phoenix {
 	protected:
 		script() = default;
 
+		template <typename _class, typename _member, int N>
+		symbol* _check_member(const std::string& name, const std::type_info* type) {
+			auto* sym = find_symbol_by_name(name);
+
+			if (sym == nullptr) { throw std::runtime_error("cannot register member " + name + ": not found"); }
+			if (!sym->is_member()) { throw std::runtime_error("cannot register member " + sym->name() + ": not a member"); }
+			if (sym->count() != N) throw std::runtime_error("cannot register member " + sym->name() + ": incorrect number of elements, given " + std::to_string(N) + " expected " + std::to_string(sym->count()));
+
+			// check class registration
+			auto* parent = find_symbol_by_index(sym->parent());
+			if (parent == nullptr) throw std::runtime_error("cannot register member " + sym->name() + ": no parent found");
+
+			if (parent->_m_registered_to == nullptr) {
+				parent->_m_registered_to = type;
+			} else if (parent->_m_registered_to != type) {
+				throw std::runtime_error("cannot register member " + sym->name() + ": parent class is already registered with a different type (" + parent->_m_registered_to->name() + ")");
+			}
+
+			// check type matches
+			if constexpr (std::same_as<std::string, _member>) {
+				if (sym->type() != dt_string)
+					throw std::runtime_error("cannot register member " + sym->name() + ": wrong datatype, provided 'string', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
+			} else if constexpr (std::same_as<float, _member>) {
+				if (sym->type() != dt_float)
+					throw std::runtime_error("cannot register member " + sym->name() + ": wrong datatype, provided 'float', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
+			} else if constexpr (std::same_as<int32_t, _member>) {
+				if (sym->type() != dt_integer && sym->type() != dt_function)
+					throw std::runtime_error("cannot register member " + sym->name() + ": wrong datatype, provided 'int', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
+			} else {
+				throw std::runtime_error("illegal type");
+			}
+
+			return sym;
+		}
+
 	private:
 		std::vector<symbol> _m_symbols;
 		std::unordered_map<std::string, symbol*> _m_symbols_by_name;
 		std::unordered_map<u32, symbol*> _m_symbols_by_address;
 
-		symbol* _m_dynamic_strings;
+		symbol* _m_dynamic_strings {nullptr};
 
 		mutable reader _m_text {};
 		u8 _m_version {0};
