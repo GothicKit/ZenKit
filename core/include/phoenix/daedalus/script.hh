@@ -425,18 +425,62 @@ namespace phoenix {
 		 * @param name The name of the member in the script
 		 * @param field The field to register
 		 */
-		template <typename _class, typename _member>
-		void register_member(const std::string& name, _member _class::*field) {
+		template <typename _class, typename _member>// clang-format off
+		requires (std::same_as<std::string, _member> || std::same_as<float, _member> || std::same_as<int32_t, _member>)
+		void register_member(const std::string& name, _member _class::*field) {// clang-format on
 			auto* sym = find_symbol_by_name(name);
 			if (sym == nullptr) { throw std::runtime_error("cannot register member " + name + ": not found"); }
 			if (!sym->is_member()) { throw std::runtime_error("cannot register member " + name + ": not a member"); }
+			if (sym->count() != 1) throw std::runtime_error("cannot register member " + name + ": should be an array");
+
+			if constexpr (std::same_as<std::string, _member>) {
+				if (sym->type() != dt_string)
+					throw std::runtime_error("cannot register member " + name + ": wrong datatype, provided 'string', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
+			} else if constexpr (std::same_as<float, _member>) {
+				if (sym->type() != dt_float)
+					throw std::runtime_error("cannot register member " + name + ": wrong datatype, provided 'float', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
+			} else if constexpr (std::same_as<int32_t, _member>) {
+				// TODO: create own function datatype
+				if (sym->type() != dt_integer && sym->type() != dt_function)
+					throw std::runtime_error("cannot register member " + name + ": wrong datatype, provided 'int', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
+			} else {
+				throw std::runtime_error("illegal type");
+			}
 
 			_class* base = 0;
 			_member* member = &(base->*field);
+			sym->_m_member_offset = (u64) member;
+		}
 
-			// TODO: check type of _member and make sure it is one of: s32, f32, s32[], f32[], std::string, std::string[]
-			//       depending on sym.type()
+		/**
+		 * @brief Registers a member offset
+		 * @param name The name of the member in the script
+		 * @param field The field to register
+		 */
+		template <typename _class, typename _member, int N>// clang-format off
+		requires (std::same_as<std::string, _member> || std::same_as<int32_t, _member> || std::same_as<float, _member>)
+		void register_member(const std::string& name, _member (_class::*field)[N]) {// clang-format on
+			auto* sym = find_symbol_by_name(name);
+			if (sym == nullptr) { throw std::runtime_error("cannot register member " + name + ": not found"); }
+			if (!sym->is_member()) { throw std::runtime_error("cannot register member " + name + ": not a member"); }
+			if (sym->count() != N) throw std::runtime_error("cannot register member " + name + ": incorrect number of elements, given " + std::to_string(N) + " expected " + std::to_string(sym->count()));
 
+			if constexpr (std::same_as<std::string, _member>) {
+				if (sym->type() != dt_string)
+					throw std::runtime_error("cannot register member " + name + ": wrong datatype, provided 'string', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
+			} else if constexpr (std::same_as<float, _member>) {
+				if (sym->type() != dt_float)
+					throw std::runtime_error("cannot register member " + name + ": wrong datatype, provided 'float', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
+			} else if constexpr (std::same_as<int32_t, _member>) {
+				// TODO: create own function datatype
+				if (sym->type() != dt_integer && sym->type() != dt_function)
+					throw std::runtime_error("cannot register member " + name + ": wrong datatype, provided 'int', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
+			} else {
+				throw std::runtime_error("illegal type");
+			}
+
+			_class* base = 0;
+			auto member = &(base->*field);
 			sym->_m_member_offset = (u64) member;
 		}
 
