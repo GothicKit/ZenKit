@@ -342,9 +342,23 @@ namespace phoenix {
 		          std::same_as<std::string_view, T> || std::same_as<symbol*, T>)
 		inline T pop_value_for_external() {// clang-format on
 			if constexpr (is_instance_ptr<T>::value) {
-				// TODO: Add check that is_instance_ptr<T>::instance_type is actually the correct type of the instance
-				//  returned by pop_instance!
-				return std::static_pointer_cast<typename is_instance_ptr<T>::instance_type>(pop_instance());
+				auto r = pop_instance();
+
+				if (r != nullptr) {
+					auto& expected = typeid(typename is_instance_ptr<T>::instance_type);
+
+					if (!r->_m_type) {
+						throw std::runtime_error {"Popping instance of unregistered type: " + std::string {r->_m_type->name()} +
+												  ", expected " + expected.name()};
+					}
+
+					if (*r->_m_type != expected) {
+						throw std::runtime_error {"Popping instance of wrong type: " + std::string {r->_m_type->name()} +
+												  ", expected " + expected.name()};
+					}
+				}
+
+				return std::static_pointer_cast<typename is_instance_ptr<T>::instance_type>(r);
 			} else if constexpr (std::same_as<float, T>) {
 				return pop_float();
 			} else if constexpr (std::same_as<s32, T>) {
@@ -354,7 +368,7 @@ namespace phoenix {
 			} else if constexpr (std::same_as<symbol*, T>) {
 				return std::get<0>(pop_reference());
 			} else {
-				throw std::runtime_error {"pop: unsupported stack frame type "};
+				throw std::runtime_error {"pop: unsupported stack frame type"};
 			}
 		}
 
