@@ -419,4 +419,9 @@ namespace phoenix {
 
 		std::cerr << "\n";
 	}
+
+	illegal_external_rtype::illegal_external_rtype(const symbol* sym, std::string_view provided)
+		: illegal_external("external " + sym->name() + " has illegal return type '" + provided.data() +
+						   "', expected '" + DAEDALUS_DATA_TYPE_NAMES[sym->rtype()] + "'") {
+	}
 }// namespace phoenix

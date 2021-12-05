@@ -19,6 +19,15 @@ namespace phoenix {
 		using instance_type = T;
 	};
 
+	class illegal_external : public std::runtime_error {
+		using std::runtime_error::runtime_error;
+	};
+
+	class illegal_external_rtype : public illegal_external {
+	public:
+		illegal_external_rtype(const symbol* sym, std::string_view provided);
+	};
+
 	struct daedalus_stack_frame {
 		bool reference;
 		std::variant<int32_t, float, symbol*, std::shared_ptr<instance>> value;
@@ -81,24 +90,21 @@ namespace phoenix {
 			if (sym == nullptr) throw std::runtime_error {"symbol not found"};
 			if (!sym->is_extern()) throw std::runtime_error {"symbol is not external"};
 
-			// Todo: This can probably be better ...
-			if constexpr (is_instance_ptr<R>::value) {
-				if (!sym->has_return() || sym->rtype() != dt_instance)
-					throw std::runtime_error {"external " + std::string {name} + " has incorrect return type instance - expected: " + std::to_string(sym->rtype())};
-			} else if constexpr (std::same_as<float, R>) {
-				if (!sym->has_return() || sym->rtype() != dt_float)
-					throw std::runtime_error {"external " + std::string {name} + " has incorrect return type float - expected: " + std::to_string(sym->rtype())};
-			} else if constexpr (std::convertible_to<int32_t, R>) {
-				if (!sym->has_return() || sym->rtype() != dt_integer)
-					throw std::runtime_error {"external " + std::string {name} + " has incorrect return type int - expected: " + std::to_string(sym->rtype())};
-			} else if constexpr (std::convertible_to<std::string, R>) {
-				if (!sym->has_return() || sym->rtype() != dt_string)
-					throw std::runtime_error {"external " + std::string {name} + " has incorrect return type string - expected: " + std::to_string(sym->rtype())};
-			} else if constexpr (std::same_as<void, R>) {
-				if (sym->has_return())
-					throw std::runtime_error {"external " + std::string {name} + " has incorrect return type void - expected: " + std::to_string(sym->rtype())};
+			if constexpr (!std::same_as<void, R>) {
+				if (!sym->has_return()) throw illegal_external_rtype(sym, "<non-void>");
+				if constexpr (is_instance_ptr<R>::value) {
+					if (sym->rtype() != dt_instance) throw illegal_external_rtype(sym, "instance");
+				} else if constexpr (std::floating_point<R>) {
+					if (sym->rtype() != dt_float) throw illegal_external_rtype(sym, "float");
+				} else if constexpr (std::convertible_to<int32_t, R>) {
+					if (sym->rtype() != dt_integer) throw illegal_external_rtype(sym, "int");
+				} else if constexpr (std::convertible_to<std::string, R>) {
+					if (sym->rtype() != dt_string) throw illegal_external_rtype(sym, "string");
+				} else {
+					throw std::runtime_error {"unsupported return type"};
+				}
 			} else {
-				throw std::runtime_error {"unsupported return type"};
+				if (sym->has_return()) throw illegal_external_rtype(sym, "void");
 			}
 
 			// TODO: Check parameter types!

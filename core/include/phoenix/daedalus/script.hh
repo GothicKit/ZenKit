@@ -27,6 +27,17 @@ namespace phoenix {
 		dt_instance = 7U,
 	};
 
+	constexpr const char * const DAEDALUS_DATA_TYPE_NAMES[] = {
+			"void",
+			"float",
+			"int",
+			"string",
+			"class",
+			"function",
+			"prototype",
+			"instance"
+	};
+
 	/**
 	 * @brief Flags set on symbols.
 	 */
