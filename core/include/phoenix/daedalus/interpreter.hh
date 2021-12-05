@@ -127,7 +127,7 @@ namespace phoenix {
 
 		template <typename T>// clang-format off
 		requires (std::same_as<std::shared_ptr<instance>, T> || std::same_as<float, T> || std::same_as<s32, T> ||
-		          std::same_as<std::string_view, T>)
+		          std::same_as<std::string_view, T> || std::same_as<symbol*, T>)
 		inline T pop_value() {// clang-format on
 			if constexpr (std::same_as<std::shared_ptr<instance>, T>) {
 				return pop_instance();
@@ -137,6 +137,8 @@ namespace phoenix {
 				return pop_int();
 			} else if constexpr (std::same_as<std::string_view, T>) {
 				return pop_string();
+			} else if constexpr (std::same_as<symbol*, T>) {
+				return std::get<0>(pop_reference());
 			} else {
 				throw std::runtime_error {"pop: unsupported stack frame type "};
 			}
@@ -161,14 +163,14 @@ namespace phoenix {
 			if constexpr (sizeof...(Px) > 0) {
 				auto v = pop_values_reverse<Px...>();
 
-				if constexpr (std::same_as<P, s32> || std::same_as<P, f32> || std::same_as<P, std::string_view>) {
+				if constexpr (std::same_as<P, s32> || std::same_as<P, f32> || std::same_as<P, std::string_view> || std::same_as<P, symbol*>) {
 					return std::tuple_cat(std::make_tuple(pop_value<P>()), std::move(v));
 				} else {
 					auto k = pop_value<std::shared_ptr<instance>>();
 					return std::tuple_cat(std::make_tuple(reinterpret_cast<P&>(k)), std::move(v));
 				}
 			} else {
-				if constexpr (std::same_as<P, s32> || std::same_as<P, f32> || std::same_as<P, std::string_view>) {
+				if constexpr (std::same_as<P, s32> || std::same_as<P, f32> || std::same_as<P, std::string_view> || std::same_as<P, symbol*>) {
 					return {pop_value<P>()};
 				} else {
 					auto k = pop_value<std::shared_ptr<instance>>();
