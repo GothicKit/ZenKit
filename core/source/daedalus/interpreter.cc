@@ -355,7 +355,7 @@ namespace phoenix {
 
 		while (!_m_call_stack.empty()) {
 			auto v = _m_call_stack.top();
-			std::cerr << "in " << v.function->name() << " at " << last_pc << "\n";
+			std::cerr << "in " << v.function->name() << " at 0x" << std::hex << last_pc << std::dec << "\n";
 
 			last_pc = v.program_counter;
 			_m_call_stack.pop();
