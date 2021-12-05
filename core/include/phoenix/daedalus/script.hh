@@ -45,7 +45,7 @@ namespace phoenix {
 		sf_const = 1U << 0U,
 		sf_return = 1U << 1U,
 		sf_member = 1U << 2U,
-		sf_extern = 1U << 3U,
+		sf_external = 1U << 3U,
 		sf_merged = 1U << 4U,
 	};
 
@@ -252,7 +252,7 @@ namespace phoenix {
 		 * @brief Tests whether the symbol is an extern symbol.
 		 * @return `true` if the symbol is an extern symbol, `false` if not.
 		 */
-		[[nodiscard]] inline bool is_extern() const noexcept { return (_m_flags & sf_extern) != 0; }
+		[[nodiscard]] inline bool is_external() const noexcept { return (_m_flags & sf_external) != 0; }
 
 		/**
 		 * @brief Tests whether the symbol is merged.

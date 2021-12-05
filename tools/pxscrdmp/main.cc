@@ -196,7 +196,7 @@ void print_symbol_value(const symbol& symbol, int index = -1) {
 void print_definition(const script& scr, const symbol& sym, const symbol* parent, std::string_view indent = "") {
 	if (sym.is_member()) { return; }
 	fmt::print(indent);
-	if (sym.is_extern()) { fmt::print("extern "); }
+	if (sym.is_external()) { fmt::print("extern "); }
 
 	if (sym.type() == dt_instance) {
 		fmt::print("instance {}({}) {{ /* ... */}}", sym.name(), (parent == nullptr ? "*ERR*" : parent->name()));
@@ -268,7 +268,7 @@ void print_symbol_detailed(const script& scr, const symbol& sym) {
 	fmt::print("\t\tConst: {}\n", (sym.is_const() ? "Yes" : "No"));
 	fmt::print("\t\tReturn: {}\n", (sym.has_return() ? "Yes" : "No"));
 	fmt::print("\t\tMember: {}\n", (sym.is_member() ? "Yes" : "No"));
-	fmt::print("\t\tExtern: {}\n", (sym.is_extern() ? "Yes" : "No"));
+	fmt::print("\t\tExtern: {}\n", (sym.is_external() ? "Yes" : "No"));
 	fmt::print("\t\tMerged: {}\n", (sym.is_merged() ? "Yes" : "No"));
 	fmt::print("\tFile Index: {}\n", sym.file_index());
 	fmt::print("\tLine Start: {}\n", sym.line_start());
@@ -333,7 +333,7 @@ void print_symbol_flags(const symbol& sym) {
 	PRINT_FLAG(sym.is_const(), 'c');
 	PRINT_FLAG(sym.has_return(), 'r');
 	PRINT_FLAG(sym.is_member(), 'm');
-	PRINT_FLAG(sym.is_extern(), 'e');
+	PRINT_FLAG(sym.is_external(), 'e');
 	PRINT_FLAG(sym.is_merged(), 'M');
 	PRINT_FLAG(sym.is_generated(), 'g');
 }
@@ -368,7 +368,7 @@ bool symbol_matches_filter(const symbol& sym, std::string_view include_filter, s
 		if ((sym.is_const() && SV_CONTAINS(filter, 'c')) ||
 			(sym.has_return() && SV_CONTAINS(filter, 'r')) ||
 			(sym.is_member() && SV_CONTAINS(filter, 'm')) ||
-			(sym.is_extern() && SV_CONTAINS(filter, 'e')) ||
+			(sym.is_external() && SV_CONTAINS(filter, 'e')) ||
 			(sym.is_merged() && SV_CONTAINS(filter, 'M')) ||
 			(sym.is_generated() && SV_CONTAINS(filter, 'g'))) {
 			return true;
@@ -650,7 +650,7 @@ void print_assembly_of_symbol(const script& scr, const symbol& sym) {
 /// \param scr The script to disassemble
 void print_assembly(const script& scr) {
 	for (const auto& sym : scr.symbols()) {
-		if (sym.type() == dt_prototype || sym.type() == dt_instance || (sym.type() == dt_function && !sym.is_extern() && sym.is_const())) {
+		if (sym.type() == dt_prototype || sym.type() == dt_instance || (sym.type() == dt_function && !sym.is_external() && sym.is_const())) {
 			print_assembly_of_symbol(scr, sym);
 		}
 	}

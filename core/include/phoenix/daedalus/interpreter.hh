@@ -66,7 +66,6 @@ namespace phoenix {
 			auto inst = std::make_shared<_instance_t>(sym);
 
 			// set the proper instances
-			// TODO: this interface can be better
 			_m_instance = inst;
 			sym->set_instance(_m_instance);
 
@@ -93,7 +92,7 @@ namespace phoenix {
 		void register_external(const std::string& name, const std::function<R(P...)>& callback) {
 			auto* sym = _m_script.find_symbol_by_name(name);
 			if (sym == nullptr) throw std::runtime_error {"symbol not found"};
-			if (!sym->is_extern()) throw std::runtime_error {"symbol is not external"};
+			if (!sym->is_external()) throw std::runtime_error {"symbol is not external"};
 
 			if constexpr (!std::same_as<void, R>) {
 				if (!sym->has_return()) throw illegal_external_rtype(sym, "<non-void>");

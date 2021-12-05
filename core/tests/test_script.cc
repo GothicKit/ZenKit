@@ -68,7 +68,7 @@ TEST_CASE("compiled daedalus script symbols are read correctly", "[script][propr
 	REQUIRE(external_symbol->name() == "UPDATE_CHOICEBOX");
 	REQUIRE(external_symbol->count() == 1);
 	REQUIRE(external_symbol->type() == phoenix::dt_function);
-	REQUIRE(external_symbol->is_extern());
+	REQUIRE(external_symbol->is_external());
 	REQUIRE(external_symbol->is_const());
 	REQUIRE(!external_symbol->has_return());
 }
