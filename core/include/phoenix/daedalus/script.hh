@@ -203,7 +203,7 @@ namespace phoenix {
 		 * @brief Validates that the symbol is an instance and retrieves it's value
 		 * @return The instance associated with the symbol.
 		 */
-		std::shared_ptr<instance> get_instance();
+		const std::shared_ptr<instance>& get_instance();
 
 		// -=-= Value setters =-=- //
 
@@ -235,7 +235,7 @@ namespace phoenix {
 		 * @brief Validates that the symbol is an instance and sets it's value
 		 * @param inst The instance value to set
 		 */
-		void set_instance(std::shared_ptr<instance> inst);
+		void set_instance(const std::shared_ptr<instance>& inst);
 
 		/**
 		 * @brief Tests whether the symbol is a constant.

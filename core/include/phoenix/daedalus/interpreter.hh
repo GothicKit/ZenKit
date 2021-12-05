@@ -214,6 +214,8 @@ namespace phoenix {
 
 		template <typename P, typename... Px>
 		std::tuple<P, Px...> pop_values_for_external() {
+			// TODO: find a way to actually retain constref-ness of strings and instances through this chain of
+			//  tuple-making
 			if constexpr (sizeof...(Px) > 0) {
 				auto v = pop_values_for_external<Px...>();
 				return std::tuple_cat(std::make_tuple(pop_value<P>()), std::move(v));

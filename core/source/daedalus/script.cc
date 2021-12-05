@@ -330,13 +330,13 @@ namespace phoenix {
 		}
 	}
 
-	std::shared_ptr<instance> symbol::get_instance() {
+	const std::shared_ptr<instance>& symbol::get_instance() {
 		if (type() != dt_instance) { throw illegal_type_access(*this, dt_instance); }
 		return std::get<std::shared_ptr<instance>>(_m_value);
 	}
 
-	void symbol::set_instance(std::shared_ptr<instance> inst) {
+	void symbol::set_instance(const std::shared_ptr<instance>& inst) {
 		if (type() != dt_instance) { throw illegal_type_access(*this, dt_instance); }
-		std::get<std::shared_ptr<instance>>(_m_value) = std::move(inst);
+		std::get<std::shared_ptr<instance>>(_m_value) = inst;
 	}
 }// namespace phoenix
