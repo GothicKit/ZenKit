@@ -1,6 +1,6 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
-#include <phoenix/script.hh>
+#include <phoenix/daedalus/script.hh>
 
 #include <fmt/format.h>
 #include <string>

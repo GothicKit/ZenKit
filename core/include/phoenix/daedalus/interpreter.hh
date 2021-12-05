@@ -1,7 +1,7 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
-#include <phoenix/script.hh>
+#include <phoenix/daedalus/script.hh>
 
 #include <functional>
 #include <optional>
@@ -22,13 +22,13 @@ namespace phoenix {
 		u32 dynamic_string_index;
 	};
 
-	class daedalus_vm {
+	class daedalus_interpreter {
 	public:
 		/**
 		 * @brief Creates a DaedalusVM instance for the given script.
 		 * @param[in, out] scr The script to load into the VM.
 		 */
-		explicit daedalus_vm(script& scr);
+		explicit daedalus_interpreter(script& scr);
 
 		void call_function(const std::string& name);
 
@@ -95,7 +95,7 @@ namespace phoenix {
 			// TODO: Check parameter types!
 
 			// *evil template hacking ensues*
-			_m_externals[sym] = [callback](daedalus_vm& vm) {
+			_m_externals[sym] = [callback](daedalus_interpreter& vm) {
 				if constexpr (std::same_as<void, R>) {
 					auto v = vm.pop_values_reverse<P...>();
 
@@ -232,7 +232,7 @@ namespace phoenix {
 		script& _m_script;
 		std::stack<daedalus_stack_frame> _m_stack;
 		std::stack<daedalus_call_stack_frame> _m_call_stack;
-		std::unordered_map<symbol*, std::function<void(daedalus_vm&)>> _m_externals;
+		std::unordered_map<symbol*, std::function<void(daedalus_interpreter&)>> _m_externals;
 
 		symbol* _m_self_sym;
 		std::shared_ptr<instance> _m_instance;

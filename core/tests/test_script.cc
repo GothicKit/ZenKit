@@ -1,7 +1,7 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #include "catch2.hh"
-#include <phoenix/script.hh>
+#include <phoenix/daedalus/script.hh>
 
 TEST_CASE("compiled daedalus script symbols are read correctly", "[script][proprietary]") {
 	auto scr = phoenix::script::parse("./samples/menu.proprietary.dat");

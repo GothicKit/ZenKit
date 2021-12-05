@@ -18,7 +18,6 @@ set(PX_CORE_SRCS
 		source/font.cc
 		source/animation.cc
 		source/texture.cc
-		source/script.cc
 		source/proto_mesh.cc
 		source/messages.cc
 		source/mesh.cc
@@ -32,7 +31,8 @@ set(PX_CORE_SRCS
 		source/world/vob_tree.cc
 		source/world/way_net.cc
 
-		source/vm/daedalus.cc)
+		source/daedalus/script.cc
+		source/daedalus/interpreter.cc)
 
 set(PX_CORE_TESTS
 		tests/test_runner.cc
