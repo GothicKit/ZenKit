@@ -28,15 +28,23 @@ namespace phoenix {
 		: illegal_access(fmt::format("illegal access of unbound member {}", sym.name())) {
 	}
 
-	illegal_member_offset::illegal_member_offset(const symbol& sym, u32 max, u32 actual, u32 value_size)
-		: illegal_access(fmt::format("illegal out-of-bounds access with symbol {} resulting in calculated "
-									 "offset of {} + {} on an instance which has a size of {}",
-									 sym.name(), actual, value_size, max)) {
-	}
+	symbol_not_found::symbol_not_found(const std::string& name)
+		: std::runtime_error("symbol not found: " + name) {}
 
 	no_context::no_context(const symbol& sym)
 		: illegal_access(fmt::format("illegal access of member {} without a context set.", sym.name())) {
 	}
+
+	illegal_context_type::illegal_context_type(const symbol& sym, const std::type_info& context_type)
+		: illegal_access("cannot access member " + sym.name() + " on context instance of type " + context_type.name() +
+						 " because this symbol is registered to instances of type " + sym.registered_to().name()) {}
+
+	member_registration_error::member_registration_error(const symbol& sym, std::string_view message)
+		: std::runtime_error("cannot register member " + sym.name() + ": " + message.data()) {}
+
+	invalid_registration_datatype::invalid_registration_datatype(const symbol& sym, const std::string& given)
+		: member_registration_error(sym, "wrong datatype: provided '" + given + "' expected " +
+												 DAEDALUS_DATA_TYPE_NAMES[sym.type()]) {}
 
 	instruction instruction::decode(reader& in) {
 		instruction s {};

@@ -99,14 +99,18 @@ namespace phoenix {
 
 	class symbol;
 
-
 	/**
 	 * @brief Represents an object associated with an instance in the script.
+	 *
+	 * Every class defined in C++ that can be used as an instance has to inherit from this class.
 	 */
 	class instance {
 	public:
 		virtual ~instance() = default;
 
+		/**
+		 * @return The symbol used to create the instance. This is of cour
+		 */
 		[[nodiscard]] const symbol* get_symbol() const noexcept { return _m_symbol; }
 
 	private:
@@ -117,67 +121,69 @@ namespace phoenix {
 		const std::type_info* _m_type {nullptr};
 	};
 
+	struct symbol_not_found : public std::runtime_error {
+		explicit symbol_not_found(const std::string& name);
+	};
+
+	struct member_registration_error : public std::runtime_error {
+		explicit member_registration_error(const symbol& sym, std::string_view message);
+	};
+
+	struct invalid_registration_datatype final : member_registration_error {
+		explicit invalid_registration_datatype(const symbol& sym, const std::string& given);
+	};
+
 	/**
 	 * @brief An exception thrown when the value of a symbol is illegally accessed.
 	 */
-	class illegal_access : public std::runtime_error {
+	struct illegal_access : public std::runtime_error {
 		using std::runtime_error::runtime_error;
 	};
 
 	/**
 	 * @brief An exception thrown when the type of a symbol does not match the type expected.
 	 */
-	class illegal_type_access final : public illegal_access {
-	public:
+	struct illegal_type_access final : public illegal_access {
 		illegal_type_access(const symbol& sym, datatype expected);
 	};
 
 	/**
 	 * @brief An exception thrown when an out-of-bounds index is accessed.
 	 */
-	class illegal_index_access final : public illegal_access {
-	public:
+	struct illegal_index_access final : public illegal_access {
 		illegal_index_access(const symbol& sym, u8 index);
 	};
 
 	/**
 	 * @brief An exception thrown when a constant symbol is accessed as mutable
 	 */
-	class illegal_const_access final : public illegal_access {
-	public:
-		illegal_const_access(const symbol& sym);
+	struct illegal_const_access final : public illegal_access {
+		explicit illegal_const_access(const symbol& sym);
 	};
 
 	/**
 	 * @brief An exception thrown when the parent class of a member does not match the class of an instance.
 	 */
-	class illegal_instance_access final : public illegal_access {
-	public:
+	struct illegal_instance_access final : public illegal_access {
 		illegal_instance_access(const symbol& sym, u32 expected_parent);
 	};
 
 	/**
 	 * @brief An exception thrown when the parent class of a member does not match the class of an instance.
 	 */
-	class unbound_member_access final : public illegal_access {
-	public:
+	struct unbound_member_access final : public illegal_access {
 		explicit unbound_member_access(const symbol& sym);
 	};
 
 	/**
 	 * @brief An exception thrown when the parent class of a member does not match the class of an instance.
 	 */
-	class no_context final : public illegal_access {
-	public:
+	struct no_context final : public illegal_access {
 		explicit no_context(const symbol& sym);
 	};
 
-	/**
-	 * @brief An exception thrown when the parent class of a member does not match the class of an instance.
-	 */
-	class illegal_member_offset final : public illegal_access {
-	public:
-		illegal_member_offset(const symbol& sym, u32 max, u32 actual, u32 value_size);
+	struct illegal_context_type final : public illegal_access {
+		illegal_context_type(const symbol& sym, const std::type_info& context_type);
 	};
 
 	/**
@@ -349,11 +355,8 @@ namespace phoenix {
 
 		template <typename T>
 		const T* get_member_ptr(u8 index, const std::shared_ptr<instance>& context) const {
-			if (!_m_registered_to) { throw unbound_member_access(*this); }
-			if (*_m_registered_to != *context->_m_type)
-				throw std::runtime_error {"cannot access member " + name() + " on context instance of type " +
-										  *context->_m_type->name() + " because this symbol is registered to instances of type " + _m_registered_to->name()};
-
+			if (!_m_registered_to) throw unbound_member_access(*this);
+			if (*_m_registered_to != *context->_m_type) throw illegal_context_type {*this, *context->_m_type};
 
 			u32 target_offset = offset_as_member() + index * sizeof(T);
 			return reinterpret_cast<const T*>(reinterpret_cast<const char*>(context.get()) + target_offset);
@@ -361,10 +364,8 @@ namespace phoenix {
 
 		template <typename T>
 		T* get_member_ptr(u8 index, const std::shared_ptr<instance>& context) {
-			if (!_m_registered_to) { throw unbound_member_access(*this); }
-			if (*_m_registered_to != *context->_m_type)
-				throw std::runtime_error {"cannot access member " + name() + " on context instance of type " +
-										  *context->_m_type->name() + " because this symbol is registered to instances of type " + _m_registered_to->name()};
+			if (!_m_registered_to) throw unbound_member_access(*this);
+			if (*_m_registered_to != *context->_m_type) throw illegal_context_type {*this, *context->_m_type};
 
 			u32 target_offset = offset_as_member() + index * sizeof(T);
 			return reinterpret_cast<T*>(reinterpret_cast<char*>(context.get()) + target_offset);
@@ -546,30 +547,33 @@ namespace phoenix {
 		symbol* _check_member(const std::string& name, const std::type_info* type) {
 			auto* sym = find_symbol_by_name(name);
 
-			if (sym == nullptr) { throw std::runtime_error("cannot register member " + name + ": not found"); }
-			if (!sym->is_member()) { throw std::runtime_error("cannot register member " + sym->name() + ": not a member"); }
-			if (sym->count() != N) throw std::runtime_error("cannot register member " + sym->name() + ": incorrect number of elements, given " + std::to_string(N) + " expected " + std::to_string(sym->count()));
+			if (sym == nullptr) throw symbol_not_found {name};
+			if (!sym->is_member()) throw member_registration_error {*sym, "not a member"};
+			if (sym->count() != N)
+				throw member_registration_error {*sym, "incorrect number of elements: given " +
+															   std::to_string(N) + " expected " + std::to_string(sym->count())};
 
 			// check class registration
 			auto* parent = find_symbol_by_index(sym->parent());
-			if (parent == nullptr) throw std::runtime_error("cannot register member " + sym->name() + ": no parent found");
+			if (parent == nullptr) throw member_registration_error {*sym, "no parent found"};
 
 			if (parent->_m_registered_to == nullptr) {
 				parent->_m_registered_to = type;
 			} else if (parent->_m_registered_to != type) {
-				throw std::runtime_error("cannot register member " + sym->name() + ": parent class is already registered with a different type (" + parent->_m_registered_to->name() + ")");
+				throw member_registration_error {*sym, "parent class is already registered with a different type (" +
+															   std::string {parent->_m_registered_to->name()} + ")"};
 			}
 
 			// check type matches
 			if constexpr (std::same_as<std::string, _member>) {
 				if (sym->type() != dt_string)
-					throw std::runtime_error("cannot register member " + sym->name() + ": wrong datatype, provided 'string', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
+					throw invalid_registration_datatype {*sym, "string"};
 			} else if constexpr (std::same_as<float, _member>) {
 				if (sym->type() != dt_float)
-					throw std::runtime_error("cannot register member " + sym->name() + ": wrong datatype, provided 'float', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
+					throw invalid_registration_datatype {*sym, "float"};
 			} else if constexpr (std::same_as<int32_t, _member>) {
 				if (sym->type() != dt_integer && sym->type() != dt_function)
-					throw std::runtime_error("cannot register member " + sym->name() + ": wrong datatype, provided 'int', expected " + DAEDALUS_DATA_TYPE_NAMES[sym->type()]);
+					throw invalid_registration_datatype {*sym, "int"};
 			} else {
 				throw std::runtime_error("illegal type");
 			}
