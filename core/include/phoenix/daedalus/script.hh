@@ -410,7 +410,6 @@ namespace phoenix {
 
 	/**
 	 * @brief Represents a compiled daedalus script
-	 * @todo Add a way to register external symbols as functions
 	 */
 	class script {
 	public:
@@ -453,6 +452,11 @@ namespace phoenix {
 		 */
 		[[nodiscard]] const symbol* find_symbol_by_index(u32 index) const;
 
+		/**
+		 * @brief Looks for parameters of the given function symbol. Only works for external functions.
+		 * @param parent The function symbol to get the parameter symbols for.
+		 * @return A list of function parameter symbols.
+		 */
 		[[nodiscard]] std::vector<const symbol*> find_parameters_for_function(const symbol* parent) const;
 
 		/**
@@ -483,6 +487,11 @@ namespace phoenix {
 		 */
 		[[nodiscard]] symbol* find_symbol_by_address(u32 address);
 
+		/**
+		 * @brief Looks for parameters of the given function symbol. Only works for external functions.
+		 * @param parent The function symbol to get the parameter symbols for.
+		 * @return A list of function parameter symbols.
+		 */
 		[[nodiscard]] std::vector<symbol*> find_parameters_for_function(const symbol* parent);
 
 		/**
@@ -504,6 +513,9 @@ namespace phoenix {
 		 */
 		[[nodiscard]] u32 size() const noexcept { return _m_text.size(); }
 
+		/**
+		 * @return The symbol used to store dynamic strings returned from functions.
+		 */
 		[[nodiscard]] symbol& dynamic_strings() const noexcept { return *_m_dynamic_strings; }
 
 	protected:

@@ -53,10 +53,28 @@ namespace phoenix {
 		 */
 		explicit daedalus_interpreter(script& scr);
 
+		/**
+		 * @brief Calls a function by it's name.
+		 * @param name The name of the function to call.
+		 */
 		void call_function(const std::string& name);
 
+		/**
+		 * @brief Calls a function by it's symbol.
+		 * @param name The symbol of the function to call.
+		 */
 		void call_function(const symbol* sym);
 
+		/**
+		 * @brief Initializes an instance with the given type and name and returns it.
+		 *
+		 * This will result in a call into the VM to initialize the instance, so it may be slow.
+		 * Try to initialize all your instances before doing time-critical stuff.
+		 *
+		 * @tparam _instance_t The type of the instance to initialize (ie. C_NPC).
+		 * @param name The name of the instance to initialize (ie. 'STT_309_WHISTLER')
+		 * @return The initialized instance.
+		 */
 		template <class _instance_t>
 		std::shared_ptr<_instance_t> init_instance(const std::string& name) {
 			auto* sym = _m_script.find_symbol_by_name(name);
@@ -88,8 +106,75 @@ namespace phoenix {
 		[[nodiscard]] const std::string& pop_string();
 		[[nodiscard]] std::tuple<symbol*, u8> pop_reference();
 
+		/**
+		 * @brief Registers a Daedalus external function.
+		 *
+		 * <p>External functions are a way for Daedalus scripts to execute more complicated code in the C++ world rather
+		 * than in the interpreter. These external functions need to be registered with the interpreter in order to be
+		 * able to be called from within a script. This is what this function does.</p>
+		 *
+		 * <p>External functions are passed in as std::function objects and are rigorously checked to match their
+		 * definition in the script. They also have to meet strict criteria for argument and return types. Here's how
+		 * Daedalus <b>argument</b> types map to C++ types:</p>
+		 *
+		 * <table border="1">
+		 * 	<thead>
+		 * 	 <th>Daedalus Argument Type</th>
+		 * 	 <th>C++ Argument Type</th>
+		 * 	 <th>Comment</th>
+		 * 	</thead>
+		 * 	<tbody>
+		 * 		<tr><td>int</td><td><tt>int32_t</tt></td><td></td></tr>
+		 * 		<tr><td>func</td><td><tt>int32_t</tt></td><td>The value passed is the index of the function</td></tr>
+		 * 		<tr><td>float</td><td><tt>float</tt></td><td></td></tr>
+		 * 		<tr><td>string</td><td><tt>std::string_view</tt></td><td>Until I can find a way of properly passing <tt>const std::string&</tt></td></tr>
+		 * 		<tr><td>{instance}</td><td><tt>std::shared_ptr&lt;{instance}&gt;</tt></td><td>where {instance} is the type of instance (ie. C_NPC) [<sup>1</sup>]</td></tr>
+		 * 	</tbody>
+		 * </table>
+		 *
+		 * <p>Return values are a bit different. Due to C++ language restrictions the mapping of C++ types to Daedalus
+		 * types in return values is different than in arguments:</p>
+		 *
+		 * <table border="1">
+		 * 	<thead>
+		 * 	 <th>C++ Return Type</th>
+		 * 	 <th>Daedalus Return Type</th>
+		 * 	 <th>Comment</th>
+		 * 	</thead>
+	type of the C++ function does not match it's definition in the script.	 * 	<tbody>
+		 * 		<tr><td>int8_t</td><td><tt>int|func</tt></td><td></td></tr>
+		 * 		<tr><td>int16_t</td><td><tt>int|func</tt></td><td></td></tr>
+		 * 		<tr><td>int32_t</td><td><tt>int|func</tt></td><td></td></tr>
+		 * 		<tr><td>int64_t</td><td><tt>int|func</tt></td><td></td></tr>
+		 * 		<tr><td>uint8_t</td><td><tt>int|func</tt></td><td></td></tr>
+		 * 		<tr><td>uint16_t</td><td><tt>int|func</tt></td><td></td></tr>
+		 * 		<tr><td>uint32_t</td><td><tt>int|func</tt></td><td></td></tr>
+		 * 		<tr><td>uint64_t</td><td><tt>int|func</tt></td><td></td></tr>
+		 * 		<tr><td>bool</td><td><tt></tt>int|func</td><td></td></tr>
+		 * 		<tr><td>float</td><td><tt>float</tt></td><td></td></tr>
+		 * 		<tr><td>double</td><td><tt>float</tt></td><td></td></tr>
+		 * 		<tr><td>std::shared_ptr&lt;{instance}&gt;</td><td><tt>{instance}</tt></td><td>where {instance} is the type of instance (ie. C_NPC) [<sup>1</sup>]</td></td></tr>
+		 * 		<tr><td>std::string</td><td><tt>string</tt></td><td></td></tr>
+		 * 		<tr><td>void</td><td><tt>void</tt></td><td></td></tr>
+		 * 	</tbody>
+		 * </table>
+		 *
+		 * <p>
+		 * [<sup>1</sup>] instances in the C++-World have to inherit from phoenix::instance.
+		 * </p>
+		 *
+		 * @tparam R The return type of the external.
+		 * @tparam P The parameters types of the external.
+		 * @param name The name of the external to register.
+		 * @param callback The C++ function to register as the external.
+		 * @throws illegal_external_rtype if the return type of the C++ function does not match it's definition in the script.
+		 * @throws illegal_external_param if a parameter type of the C++ function does not match it's definition in the script.
+		 * @throws illegal_external if The number of parameters of the definition and callback is not the same.
+		 * @throws runtime_error if any other error occurs.
+		 */
 		template <typename R, typename... P>
 		void register_external(const std::string& name, const std::function<R(P...)>& callback) {
+			// TODO: function parameters and return types!
 			auto* sym = _m_script.find_symbol_by_name(name);
 			if (sym == nullptr) throw std::runtime_error {"symbol not found"};
 			if (!sym->is_external()) throw std::runtime_error {"symbol is not external"};
@@ -135,7 +220,17 @@ namespace phoenix {
 			};
 		}
 
-		// Bypass for not being able to input a lambda directly :| Please don't hurt me okay?
+		/**
+		 * @brief Registers an external function.
+		 *
+		 * Same as #register_external(const std::string&, std::function). This method is here to bypass a template
+		 * deduction failure when passing lambdas directly.
+		 *
+		 * @tparam T The type of external function to register.
+		 * @param name The name of the external to register.
+		 * @param cb The callback function to register.
+		 * @see #register_external(const std::string&, std::function)
+		 */
 		template <typename T>
 		void register_external(const std::string& name, const T& cb) {
 			register_external(name, std::function {cb});
@@ -144,17 +239,61 @@ namespace phoenix {
 		script& loaded_script() const noexcept { return _m_script; }
 
 	protected:
+		/**
+		 * @brief Calls the given symbol as a function.
+		 *
+		 * Automatically pushes a call stack frame. If the function has a return value, the caller
+		 * is required to deal with it appropriately.
+		 *
+		 * @param sym The symbol to call.
+		 */
 		void call(const symbol* sym);
 
+		/**
+		 * @brief Runs the instruction at the current program counter and advances it properly.
+		 * @return false, the instruction executed was a op_return instruction, otherwise true.
+		 */
 		bool exec();
 
+		/**
+		 * @brief Validates the given address and jumps to it (sets the program counter).
+		 * @param address The address to jump to.-
+		 */
 		void jump(u32 address);
 
+		/**
+		 * @brief Pushes a call stack frame onto the call stack.
+		 *
+		 * This method also pushes the current state of the interpreter to be restored as soon
+		 * as #pop_call is invoked.
+		 *
+		 * @param sym The symbol referring to the function called.
+		 */
 		void push_call(const symbol* sym);
 
+		/**
+		 * @brief Pops a call stack from from the call stack.
+		 *
+		 * This method restores the interpreter's state to before the function which the
+		 * call stack entry refers to was called.
+		 */
 		void pop_call();
 
-		template<int i, typename P, typename ... Px>
+		/**
+		 * @brief Checks that the type of each symbol in the given set of defined symbols matches the given type parameters.
+		 *
+		 * This is used to validate that the parameters declared on an external function actually match the parameters
+		 * defined in the script file. This prevents these hard to debug errors when the definition of an external does
+		 * not match what is required by the script.
+		 *
+		 * @tparam i An iteration counter (pass in 0 when calling this from anywhere outside of itself)
+		 * @tparam P A type
+		 * @tparam Px more types.
+		 * @param defined A list of symbols to check the types P and then P... against.
+		 * @throws illegal_external_param If the types don't match.
+		 * @note Requires that sizeof...(Px) + 1 == defined.size().
+		 */
+		template <int i, typename P, typename... Px>
 		void check_external_params(const std::vector<symbol*>& defined) {
 			if constexpr (is_instance_ptr<P>::value || std::same_as<symbol*, P>) {
 				if (defined[i]->type() != dt_instance) throw illegal_external_param(defined[i], "instance", i + 1);
@@ -172,6 +311,16 @@ namespace phoenix {
 			}
 		}
 
+		/**
+		 * @brief Pops a value of the given type from the stack.
+		 *
+		 * This is only used by #pop_values_for_external for now as it does checks related to external
+		 * functions. It is not recommended to use this function for anything else.
+		 *
+		 * @tparam T The type of the value to pop (one of std::shared_ptr<? extends instance>, float, int32_t,
+		 *            symbol*, std::string_view)
+		 * @return The value popped.
+		 */
 		template <typename T>// clang-format off
 		requires (is_instance_ptr<T>::value || std::same_as<float, T> || std::same_as<s32, T> ||
 		          std::same_as<std::string_view, T> || std::same_as<symbol*, T>)
@@ -193,6 +342,15 @@ namespace phoenix {
 			}
 		}
 
+		/**
+		 * @brief Pushes a value of the given type onto the stack.
+		 *
+		 * This is only used by #register_external for pushing the return value of external functions onto
+		 * the stack. It is not recommended to use this function for anything else.
+		 *
+		 * @tparam T The type of value to push.
+		 * @param v The value to push.
+		 */
 		template <typename T>// clang-format off
 		requires (std::floating_point<T> || std::convertible_to<s32, T> || std::convertible_to<std::string, T> ||
 		          is_instance_ptr<T>::value)
@@ -210,6 +368,17 @@ namespace phoenix {
 			}
 		}
 
+		/**
+		 * @brief The given types in reverse order using #pop_value_for_external.
+		 *
+		 * This is used to pop values from the stack in the correct order for calling an external function
+		 * since the latest value on the stack is the last parameter to the function call.
+		 *
+		 * @tparam P A value type to pop from the stack (one of std::shared_ptr<? extends instance>, float, int32_t,
+		 *           symbol*, std::string_view)
+		 * @tparam Px more value types to pop.
+		 * @return
+		 */
 		template <typename P, typename... Px>
 		std::tuple<P, Px...> pop_values_for_external() {
 			// TODO: find a way to actually retain constref-ness of strings and instances through this chain of
