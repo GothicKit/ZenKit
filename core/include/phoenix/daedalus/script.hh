@@ -173,7 +173,7 @@ namespace phoenix {
 		 * @param[in,out] in The reader to read the symbol from.
 		 * @return The symbol parsed.
 		 */
-		static symbol parse(reader& in);
+		[[nodiscard]] static symbol parse(reader& in);
 
 		/**
 		 * @brief Validates that the symbol is a string and retrieves it's value in the given context.
@@ -181,7 +181,7 @@ namespace phoenix {
 		 * @param context An instance to use as context for getting member variables.
 		 * @return The string associated with the symbol.
 		 */
-		const std::string& get_string(u8 index = 0, const std::shared_ptr<instance>& context = nullptr) const;
+		[[nodiscard]] const std::string& get_string(u8 index = 0, const std::shared_ptr<instance>& context = nullptr) const;
 
 		/**
 		 * @brief Validates that the symbol is a float and retrieves it's value in the given context.
@@ -189,7 +189,7 @@ namespace phoenix {
 		 * @param context An instance to use as context for getting member variables.
 		 * @return The float value associated with the symbol.
 		 */
-		float get_float(u8 index = 0, const std::shared_ptr<instance>& context = nullptr) const;
+		[[nodiscard]] float get_float(u8 index = 0, const std::shared_ptr<instance>& context = nullptr) const;
 
 		/**
 		 * @brief Validates that the symbol is an int and retrieves it's value in the given context.
@@ -197,13 +197,13 @@ namespace phoenix {
 		 * @param context An instance to use as context for getting member variables.
 		 * @return The int value associated with the symbol.
 		 */
-		s32 get_int(u8 index = 0, const std::shared_ptr<instance>& context = nullptr) const;
+		[[nodiscard]] s32 get_int(u8 index = 0, const std::shared_ptr<instance>& context = nullptr) const;
 
 		/**
 		 * @brief Validates that the symbol is an instance and retrieves it's value
 		 * @return The instance associated with the symbol.
 		 */
-		const std::shared_ptr<instance>& get_instance();
+		[[nodiscard]] const std::shared_ptr<instance>& get_instance();
 
 		// -=-= Value setters =-=- //
 
@@ -419,7 +419,7 @@ namespace phoenix {
 		 * @param path The path of the script file.
 		 * @return The script parsed
 		 */
-		static script parse(const std::string& path);
+		[[nodiscard]] static script parse(const std::string& path);
 
 		/**
 		 * @brief Registers a member offset
@@ -453,7 +453,7 @@ namespace phoenix {
 		 */
 		[[nodiscard]] const symbol* find_symbol_by_index(u32 index) const;
 
-		std::vector<const symbol*> find_parameters_for_function(const symbol* parent) const;
+		[[nodiscard]] std::vector<const symbol*> find_parameters_for_function(const symbol* parent) const;
 
 		/**
 		 * @brief Retrieves the symbol with the given \p address set
@@ -483,7 +483,7 @@ namespace phoenix {
 		 */
 		[[nodiscard]] symbol* find_symbol_by_address(u32 address);
 
-		std::vector<symbol*> find_parameters_for_function(const symbol* parent);
+		[[nodiscard]] std::vector<symbol*> find_parameters_for_function(const symbol* parent);
 
 		/**
 		 * @brief Retrieves the symbol with the given \p name.
@@ -497,14 +497,14 @@ namespace phoenix {
 		 * @param address The address of the instruction to decode
 		 * @return The instruction.
 		 */
-		instruction instruction_at(u32 address) const;
+		[[nodiscard]] instruction instruction_at(u32 address) const;
 
 		/**
 		 * @return The total size of the script.
 		 */
 		[[nodiscard]] u32 size() const noexcept { return _m_text.size(); }
 
-		symbol& dynamic_strings() const noexcept { return *_m_dynamic_strings; }
+		[[nodiscard]] symbol& dynamic_strings() const noexcept { return *_m_dynamic_strings; }
 
 	protected:
 		script() = default;
