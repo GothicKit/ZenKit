@@ -82,7 +82,7 @@ namespace phoenix {
 			if (!sym->is_extern()) throw std::runtime_error {"symbol is not external"};
 
 			// Todo: This can probably be better ...
-			if constexpr (std::convertible_to<std::shared_ptr<instance>, R>) {
+			if constexpr (is_instance_ptr<R>::value) {
 				if (!sym->has_return() || sym->rtype() != dt_instance)
 					throw std::runtime_error {"external " + std::string {name} + " has incorrect return type instance - expected: " + std::to_string(sym->rtype())};
 			} else if constexpr (std::same_as<float, R>) {
@@ -156,9 +156,12 @@ namespace phoenix {
 		}
 
 		template <typename T>// clang-format off
-		requires (std::floating_point<T> || std::convertible_to<s32, T> || std::convertible_to<std::string, T>)
+		requires (std::floating_point<T> || std::convertible_to<s32, T> || std::convertible_to<std::string, T> ||
+		          is_instance_ptr<T>::value)
 		void push_value(T v) {// clang-format on
-			if constexpr (std::floating_point<T>) {
+			if constexpr (is_instance_ptr<T>::value) {
+				push_instance(std::static_pointer_cast<instance>(v));
+			} else if constexpr (std::floating_point<T>) {
 				push_float(static_cast<float>(v));
 			} else if constexpr (std::convertible_to<s32, T>) {
 				push_int(static_cast<s32>(v));
