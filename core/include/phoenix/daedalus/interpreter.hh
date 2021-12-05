@@ -28,6 +28,11 @@ namespace phoenix {
 		illegal_external_rtype(const symbol* sym, std::string_view provided);
 	};
 
+	class illegal_external_param : public illegal_external {
+	public:
+		illegal_external_param(const symbol* sym, std::string_view provided, u8 i);
+	};
+
 	struct daedalus_stack_frame {
 		bool reference;
 		std::variant<int32_t, float, symbol*, std::shared_ptr<instance>> value;
@@ -107,7 +112,18 @@ namespace phoenix {
 				if (sym->has_return()) throw illegal_external_rtype(sym, "void");
 			}
 
-			// TODO: Check parameter types!
+			std::vector<symbol*> params = _m_script.find_parameters_for_function(sym);
+			if (params.size() < sizeof...(P))
+				throw illegal_external {"too many arguments declared for external " + sym->name() + ": declared " +
+										std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
+
+			if (params.size() > sizeof...(P))
+				throw illegal_external {"not enough arguments declared for external " + sym->name() + ": declared " +
+										std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
+
+			if constexpr (sizeof...(P) > 0) {
+				check_params<0, P...>(params);
+			}
 
 			// *evil template hacking ensues*
 			_m_externals[sym] = [callback](daedalus_interpreter& vm) {
@@ -139,6 +155,24 @@ namespace phoenix {
 		void push_call(const symbol* sym);
 
 		void pop_call();
+
+		template<int i, typename P, typename ... Px>
+		void check_params(const std::vector<symbol*>& defined) {
+			if constexpr (is_instance_ptr<P>::value || std::same_as<symbol*, P>) {
+				if (defined[i]->type() != dt_instance) throw illegal_external_param(defined[i], "instance", i + 1);
+			} else if constexpr (std::same_as<float, P>) {
+				if (defined[i]->type() != dt_float) throw illegal_external_param(defined[i], "float", i + 1);
+			} else if constexpr (std::same_as<int32_t, P>) {
+				if (defined[i]->type() != dt_integer && defined[i]->type() != dt_function)
+					throw illegal_external_param(defined[i], "int", i + 1);
+			} else if constexpr (std::same_as<std::string_view, P>) {
+				if (defined[i]->type() != dt_string) throw illegal_external_param(defined[i], "string", i + 1);
+			}
+
+			if constexpr (sizeof...(Px) > 0) {
+				check_params<i + 1, Px...>(defined);
+			}
+		}
 
 		template <typename T>// clang-format off
 		requires (is_instance_ptr<T>::value || std::same_as<float, T> || std::same_as<s32, T> ||

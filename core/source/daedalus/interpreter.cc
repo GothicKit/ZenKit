@@ -424,4 +424,9 @@ namespace phoenix {
 		: illegal_external("external " + sym->name() + " has illegal return type '" + provided.data() +
 						   "', expected '" + DAEDALUS_DATA_TYPE_NAMES[sym->rtype()] + "'") {
 	}
+
+	illegal_external_param::illegal_external_param(const symbol* sym, std::string_view provided, u8 i)
+			: illegal_external("external " + sym->name() + " has illegal parameter type '" + provided.data() +
+							 "' (no. " + std::to_string(i) + "), expected '" + DAEDALUS_DATA_TYPE_NAMES[sym->type()] + "'"){
+	}
 }// namespace phoenix

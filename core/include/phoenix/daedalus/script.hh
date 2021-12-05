@@ -453,6 +453,8 @@ namespace phoenix {
 		 */
 		[[nodiscard]] const symbol* find_symbol_by_index(u32 index) const;
 
+		std::vector<const symbol*> find_parameters_for_function(const symbol* parent) const;
+
 		/**
 		 * @brief Retrieves the symbol with the given \p address set
 		 * @param index The address of the symbol to get
@@ -480,6 +482,8 @@ namespace phoenix {
 		 * @return The symbol or `nullptr` if no symbol with that address was found.
 		 */
 		[[nodiscard]] symbol* find_symbol_by_address(u32 address);
+
+		std::vector<symbol*> find_parameters_for_function(const symbol* parent);
 
 		/**
 		 * @brief Retrieves the symbol with the given \p name.

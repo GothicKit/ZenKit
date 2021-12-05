@@ -160,6 +160,28 @@ namespace phoenix {
 		return nullptr;
 	}
 
+	std::vector<symbol*> script::find_parameters_for_function(const symbol* parent) {
+		std::vector<symbol*> syms {};
+		auto search = parent->name() + ".";
+
+		for (auto& sym : _m_symbols) {
+			if (sym.name().starts_with(search)) syms.push_back(&sym);
+		}
+
+		return syms;
+	}
+
+	std::vector<const symbol*> script::find_parameters_for_function(const symbol* parent) const {
+		std::vector<const symbol*> syms {};
+		auto search = parent->name() + ".";
+
+		for (auto& sym : _m_symbols) {
+			if (sym.name().starts_with(search)) syms.push_back(&sym);
+		}
+
+		return syms;
+	}
+
 	symbol symbol::parse(reader& in) {
 		symbol sym {};
 
