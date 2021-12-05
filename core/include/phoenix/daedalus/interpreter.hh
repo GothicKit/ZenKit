@@ -10,6 +10,15 @@
 #include <variant>
 
 namespace phoenix {
+	template<typename T>
+	struct is_instance_ptr : std::false_type {};
+
+	template<typename T>
+	requires (std::derived_from<T, instance>)
+	struct is_instance_ptr<std::shared_ptr<T>> : std::true_type {
+		using instance_type = T;
+	};
+
 	struct daedalus_stack_frame {
 		bool reference;
 		std::variant<int32_t, float, symbol*, std::shared_ptr<instance>> value;
@@ -97,11 +106,11 @@ namespace phoenix {
 			// *evil template hacking ensues*
 			_m_externals[sym] = [callback](daedalus_interpreter& vm) {
 				if constexpr (std::same_as<void, R>) {
-					auto v = vm.pop_values_reverse<P...>();
+					auto v = vm.pop_values_for_external<P...>();
 
 					std::apply(callback, v);
 				} else {
-					vm.push_value(std::apply(callback, vm.pop_values_reverse<P...>()));
+					vm.push_value(std::apply(callback, vm.pop_values_for_external<P...>()));
 				}
 			};
 		}
@@ -126,11 +135,13 @@ namespace phoenix {
 		void pop_call();
 
 		template <typename T>// clang-format off
-		requires (std::same_as<std::shared_ptr<instance>, T> || std::same_as<float, T> || std::same_as<s32, T> ||
+		requires (is_instance_ptr<T>::value || std::same_as<float, T> || std::same_as<s32, T> ||
 		          std::same_as<std::string_view, T> || std::same_as<symbol*, T>)
 		inline T pop_value() {// clang-format on
-			if constexpr (std::same_as<std::shared_ptr<instance>, T>) {
-				return pop_instance();
+			if constexpr (is_instance_ptr<T>::value) {
+				// TODO: Add check that is_instance_ptr<T>::instance_type is actually the correct type of the instance
+				//  returned by pop_instance!
+				return std::static_pointer_cast<typename is_instance_ptr<T>::instance_type>(pop_instance());
 			} else if constexpr (std::same_as<float, T>) {
 				return pop_float();
 			} else if constexpr (std::same_as<s32, T>) {
@@ -159,23 +170,12 @@ namespace phoenix {
 		}
 
 		template <typename P, typename... Px>
-		std::tuple<P, Px...> pop_values_reverse() {
+		std::tuple<P, Px...> pop_values_for_external() {
 			if constexpr (sizeof...(Px) > 0) {
-				auto v = pop_values_reverse<Px...>();
-
-				if constexpr (std::same_as<P, s32> || std::same_as<P, f32> || std::same_as<P, std::string_view> || std::same_as<P, symbol*>) {
-					return std::tuple_cat(std::make_tuple(pop_value<P>()), std::move(v));
-				} else {
-					auto k = pop_value<std::shared_ptr<instance>>();
-					return std::tuple_cat(std::make_tuple(reinterpret_cast<P&>(k)), std::move(v));
-				}
+				auto v = pop_values_for_external<Px...>();
+				return std::tuple_cat(std::make_tuple(pop_value<P>()), std::move(v));
 			} else {
-				if constexpr (std::same_as<P, s32> || std::same_as<P, f32> || std::same_as<P, std::string_view> || std::same_as<P, symbol*>) {
-					return {pop_value<P>()};
-				} else {
-					auto k = pop_value<std::shared_ptr<instance>>();
-					return {reinterpret_cast<P&>(k)};
-				}
+				return {pop_value<P>()};
 			}
 		}
 
