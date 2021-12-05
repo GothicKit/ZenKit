@@ -538,7 +538,7 @@ namespace phoenix {
 		/**
 		 * @return The symbol used to store dynamic strings returned from functions.
 		 */
-		[[nodiscard]] symbol& dynamic_strings() const noexcept { return *_m_dynamic_strings; }
+		[[nodiscard]] symbol& dynamic_string() const noexcept { return *_m_dynamic_strings; }
 
 	protected:
 		script() = default;

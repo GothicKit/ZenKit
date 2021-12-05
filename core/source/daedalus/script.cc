@@ -106,10 +106,10 @@ namespace phoenix {
 
 		// TODO: move this to a method
 		symbol sym {};
-		sym._m_name = "PHOENIX_FAKE_STRINGS";
+		sym._m_name = "$PHOENIX_FAKE_STRINGS";
 		sym._m_generated = true;
 		sym._m_type = dt_string;
-		sym._m_count = 100;
+		sym._m_count = 1;
 		sym._m_value = std::unique_ptr<std::string[]> {new std::string[sym._m_count]};
 		sym._m_index = scr._m_symbols.size();
 
