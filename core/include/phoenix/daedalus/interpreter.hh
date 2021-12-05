@@ -122,17 +122,16 @@ namespace phoenix {
 										std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
 
 			if constexpr (sizeof...(P) > 0) {
-				check_params<0, P...>(params);
+				check_external_params<0, P...>(params);
 			}
 
 			// *evil template hacking ensues*
 			_m_externals[sym] = [callback](daedalus_interpreter& vm) {
 				if constexpr (std::same_as<void, R>) {
 					auto v = vm.pop_values_for_external<P...>();
-
 					std::apply(callback, v);
 				} else {
-					vm.push_value(std::apply(callback, vm.pop_values_for_external<P...>()));
+					vm.push_value_from_external(std::apply(callback, vm.pop_values_for_external<P...>()));
 				}
 			};
 		}
@@ -157,7 +156,7 @@ namespace phoenix {
 		void pop_call();
 
 		template<int i, typename P, typename ... Px>
-		void check_params(const std::vector<symbol*>& defined) {
+		void check_external_params(const std::vector<symbol*>& defined) {
 			if constexpr (is_instance_ptr<P>::value || std::same_as<symbol*, P>) {
 				if (defined[i]->type() != dt_instance) throw illegal_external_param(defined[i], "instance", i + 1);
 			} else if constexpr (std::same_as<float, P>) {
@@ -170,14 +169,14 @@ namespace phoenix {
 			}
 
 			if constexpr (sizeof...(Px) > 0) {
-				check_params<i + 1, Px...>(defined);
+				check_external_params<i + 1, Px...>(defined);
 			}
 		}
 
 		template <typename T>// clang-format off
 		requires (is_instance_ptr<T>::value || std::same_as<float, T> || std::same_as<s32, T> ||
 		          std::same_as<std::string_view, T> || std::same_as<symbol*, T>)
-		inline T pop_value() {// clang-format on
+		inline T pop_value_for_external() {// clang-format on
 			if constexpr (is_instance_ptr<T>::value) {
 				// TODO: Add check that is_instance_ptr<T>::instance_type is actually the correct type of the instance
 				//  returned by pop_instance!
@@ -198,7 +197,7 @@ namespace phoenix {
 		template <typename T>// clang-format off
 		requires (std::floating_point<T> || std::convertible_to<s32, T> || std::convertible_to<std::string, T> ||
 		          is_instance_ptr<T>::value)
-		void push_value(T v) {// clang-format on
+		void push_value_from_external(T v) {// clang-format on
 			if constexpr (is_instance_ptr<T>::value) {
 				push_instance(std::static_pointer_cast<instance>(v));
 			} else if constexpr (std::floating_point<T>) {
@@ -218,9 +217,9 @@ namespace phoenix {
 			//  tuple-making
 			if constexpr (sizeof...(Px) > 0) {
 				auto v = pop_values_for_external<Px...>();
-				return std::tuple_cat(std::make_tuple(pop_value<P>()), std::move(v));
+				return std::tuple_cat(std::make_tuple(pop_value_for_external<P>()), std::move(v));
 			} else {
-				return {pop_value<P>()};
+				return {pop_value_for_external<P>()};
 			}
 		}
 
