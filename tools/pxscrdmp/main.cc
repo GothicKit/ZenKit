@@ -15,7 +15,7 @@ using namespace phoenix;
 static constexpr const auto HELP_MESSAGE = "Usage: pxscrdmp [--version]\n"
 										   "       pxscrdmp [-h|--help]\n"
 										   "       pxscrdmp <FILE> [-t|--symbolize] [-I|--include <IFLAGS>] [-E|--exclude <EFLAGS>]\n"
-										   "                       [-f|--search <TERM>] [-s|--symbol <NAME>]\n"
+										   "                       [-f|--search <TERM>] [-s|--symbol <NAME>] [-p|--parent <PARENT-NAME>]\n"
 										   "       pxscrdmp <FILE> [-d|--disassemble] [-s|--symbol <NAME>]\n"
 										   "\n"
 										   "phoenix pxscrdmp v{}\n"
@@ -52,7 +52,7 @@ void print_assembly_of_symbol(const script& scr, const symbol& sym);
 void print_assembly(const script& scr);
 
 void print_symbol_detailed(const script& scr, const symbol& sym);
-void print_symbol_list(const script& scr, std::string_view include_filter, std::string_view exclude_filter, std::string_view search);
+void print_symbol_list(const script& scr, std::string_view include_filter, std::string_view exclude_filter, std::string_view search, const symbol* parent);
 
 int main(int argc, char** argv) {
 	argh::parser cmdl {argc, argv, argh::parser::PREFER_PARAM_FOR_UNREG_OPTION};
@@ -61,6 +61,7 @@ int main(int argc, char** argv) {
 	std::string include {};
 	std::string exclude {};
 	std::string search {};
+	std::string parent {};
 	bool action_symbolize = false;
 	bool action_disassemble = false;
 	bool action_help = false;
@@ -86,6 +87,7 @@ int main(int argc, char** argv) {
 	cmdl({"-f", "--search"}) >> search;
 	cmdl({"-I", "--include"}) >> include;
 	cmdl({"-E", "--exclude"}) >> exclude;
+	cmdl({"-p", "--parent"}) >> parent;
 
 	if (cmdl({"-s", "--symbol"}) >> symbol_name) {
 		specific = true;
@@ -111,7 +113,18 @@ int main(int argc, char** argv) {
 			if (specific) {
 				print_symbol_detailed(scr, *sym);
 			} else {
-				print_symbol_list(scr, include, exclude, search);
+				const symbol* parent_symbol = nullptr;
+
+				if (!parent.empty()) {
+					parent_symbol = scr.find_symbol_by_name(std::string {parent});
+
+					if (parent_symbol == nullptr) {
+						fmt::print("parent with name {} not found\n", parent);
+						return EXIT_FAILURE;
+					}
+				}
+
+				print_symbol_list(scr, include, exclude, search, parent_symbol);
 			}
 		} else if (action_disassemble) {
 			if (specific) {
@@ -402,11 +415,15 @@ bool symbol_matches_filter(const symbol& sym, std::string_view include_filter, s
 /// \param scr The script to print the symbols of
 /// \param include_filter Filter for symbols to include
 /// \param exclude_filter Filter for symbols to exclude
-void print_symbol_list(const script& scr, std::string_view include_filter, std::string_view exclude_filter, std::string_view search) {
+void print_symbol_list(const script& scr, std::string_view include_filter, std::string_view exclude_filter, std::string_view search, const symbol* parent) {
 	fmt::print("Index    Flags   Parent                    Address  R Name\n");
 
 	for (const auto& sym : scr.symbols()) {
 		if (!symbol_matches_filter(sym, include_filter, exclude_filter) || (!search.empty() && sym.name().find(search) == std::string_view::npos)) {
+			continue;
+		}
+
+		if (parent != nullptr && sym.parent() != parent->index()) {
 			continue;
 		}
 
