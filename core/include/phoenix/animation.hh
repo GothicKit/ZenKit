@@ -49,7 +49,7 @@ namespace phoenix {
 		std::string tag;
 		std::string content[vmax];
 		float values[vmax];
-		float probability;// ?
+		float probability; // ?
 	};
 
 	/**
@@ -78,34 +78,60 @@ namespace phoenix {
 		/**
 		 * @return The name of the animation
 		 */
-		[[nodiscard]] inline const std::string& name() const noexcept { return _m_name; }
+		[[nodiscard]] inline const std::string& name() const noexcept {
+			return _m_name;
+		}
 
-		[[nodiscard]] inline const std::string& next() const noexcept { return _m_next; }
+		[[nodiscard]] inline const std::string& next() const noexcept {
+			return _m_next;
+		}
 
-		[[nodiscard]] inline u32 layer() const noexcept { return _m_layer; }
+		[[nodiscard]] inline u32 layer() const noexcept {
+			return _m_layer;
+		}
 
-		[[nodiscard]] inline u32 frames() const noexcept { return _m_frame_count; }
+		[[nodiscard]] inline u32 frames() const noexcept {
+			return _m_frame_count;
+		}
 
-		[[nodiscard]] inline float frames_per_second() const noexcept { return _m_fps; }
+		[[nodiscard]] inline float frames_per_second() const noexcept {
+			return _m_fps;
+		}
 
-		[[nodiscard]] inline float frames_per_second_alt() const noexcept { return _m_fps_source; }
+		[[nodiscard]] inline float frames_per_second_alt() const noexcept {
+			return _m_fps_source;
+		}
 
 		/**
 		 * @return The bounding box of the animation (mesh) as a (min, max) tuple.
 		 */
-		[[nodiscard]] inline std::tuple<glm::vec3, glm::vec3> bbox() const noexcept { return std::make_tuple(_m_bbox[0], _m_bbox[1]); }
+		[[nodiscard]] inline std::tuple<glm::vec3, glm::vec3> bbox() const noexcept {
+			return std::make_tuple(_m_bbox[0], _m_bbox[1]);
+		}
 
-		[[nodiscard]] inline u32 checksum() const noexcept { return _m_checksum; }
+		[[nodiscard]] inline u32 checksum() const noexcept {
+			return _m_checksum;
+		}
 
-		[[nodiscard]] inline const std::vector<animation_sample>& samples() const noexcept { return _m_samples; }
+		[[nodiscard]] inline const std::vector<animation_sample>& samples() const noexcept {
+			return _m_samples;
+		}
 
-		[[nodiscard]] inline const std::vector<animation_event>& events() const noexcept { return _m_events; }
+		[[nodiscard]] inline const std::vector<animation_event>& events() const noexcept {
+			return _m_events;
+		}
 
-		[[nodiscard]] inline const std::vector<u32>& node_indices() const noexcept { return _m_node_indices; }
+		[[nodiscard]] inline const std::vector<u32>& node_indices() const noexcept {
+			return _m_node_indices;
+		}
 
-		[[nodiscard]] inline const std::string source_path() const noexcept { return _m_source_path; }
+		[[nodiscard]] inline const std::string source_path() const noexcept {
+			return _m_source_path;
+		}
 
-		[[nodiscard]] inline const std::string source_script() const noexcept { return _m_mds_source; }
+		[[nodiscard]] inline const std::string source_script() const noexcept {
+			return _m_mds_source;
+		}
 
 	protected:
 		animation() = default;
@@ -132,4 +158,4 @@ namespace phoenix {
 		std::vector<u32> _m_node_indices;
 	};
 
-}// namespace phoenix
+} // namespace phoenix

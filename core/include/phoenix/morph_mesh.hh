@@ -54,27 +54,37 @@ namespace phoenix {
 		/**
 		 * @return All animations associated with the mesh
 		 */
-		inline const std::vector<morph_animation>& animations() const noexcept { return _m_animations; }
+		inline const std::vector<morph_animation>& animations() const noexcept {
+			return _m_animations;
+		}
 
 		/**
 		 * @return All "morph positions" associated with the mesh
 		 */
-		inline const std::vector<glm::vec3>& positions() const noexcept { return _m_morph_positions; }
+		inline const std::vector<glm::vec3>& positions() const noexcept {
+			return _m_morph_positions;
+		}
 
 		/**
 		 * @return The name of the mesh
 		 */
-		inline const std::string& name() const noexcept { return _m_name; }
+		inline const std::string& name() const noexcept {
+			return _m_name;
+		}
 
 		/**
 		 * @return The underlying mesh data
 		 */
-		inline const proto_mesh& mesh() const noexcept { return _m_mesh; }
+		inline const proto_mesh& mesh() const noexcept {
+			return _m_mesh;
+		}
 
 		/**
 		 * @return The underlying mesh data
 		 */
-		inline const std::vector<morph_source>& sources() const noexcept { return _m_sources; }
+		inline const std::vector<morph_source>& sources() const noexcept {
+			return _m_sources;
+		}
 
 	private:
 		std::string _m_name;
@@ -86,4 +96,4 @@ namespace phoenix {
 		std::vector<morph_source> _m_sources;
 	};
 
-}// namespace phoenix
+} // namespace phoenix

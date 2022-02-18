@@ -31,7 +31,7 @@ namespace phoenix {
 
 			auto& itm = msgs._m_blocks.emplace_back();
 			itm.name = archive->read_string();
-			(void) archive->read_int();  /* function unknown at this time */
+			(void) archive->read_int();   /* function unknown at this time */
 			(void) archive->read_float(); /* function unknown at this time */
 
 			if (!archive->read_object_begin(obj)) {
@@ -79,4 +79,4 @@ namespace phoenix {
 
 		return nullptr;
 	}
-}// namespace phoenix
+} // namespace phoenix

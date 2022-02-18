@@ -13,7 +13,9 @@ namespace phoenix {
 	void archive_reader_ascii::read_header() {
 		{
 			std::string objects = input.read_line();
-			if (!objects.starts_with("objects ")) { throw parser_error("not an archive: objects missing"); }
+			if (!objects.starts_with("objects ")) {
+				throw parser_error("not an archive: objects missing");
+			}
 			_m_objects = std::stoi(objects.substr(objects.find(' ') + 1));
 		}
 
@@ -26,8 +28,12 @@ namespace phoenix {
 		return peek_input([&](reader& in) {
 			auto v = in.read_line();
 
-			if (!v.starts_with('[') || !v.ends_with(']')) { return false; }
-			if (v.length() <= 2) { return false; }
+			if (!v.starts_with('[') || !v.ends_with(']')) {
+				return false;
+			}
+			if (v.length() <= 2) {
+				return false;
+			}
 
 			std::stringstream ss {v.substr(1, v.size() - 2)};
 			ss >> obj.object_name >> obj.class_name >> obj.version >> obj.index;
@@ -52,7 +58,8 @@ namespace phoenix {
 		auto colon = line.find(':');
 
 		if (line.substr(0, colon) != type) {
-			throw parser_error(fmt::format("archive_reader_ascii: type mismatch: expected {}, got: {}.", type, line.substr(0, colon)));
+			throw parser_error(
+			    fmt::format("archive_reader_ascii: type mismatch: expected {}, got: {}.", type, line.substr(0, colon)));
 		}
 
 		auto rv = line.substr(colon + 1);
@@ -163,4 +170,4 @@ namespace phoenix {
 
 		return out;
 	}
-}// namespace phoenix
+} // namespace phoenix

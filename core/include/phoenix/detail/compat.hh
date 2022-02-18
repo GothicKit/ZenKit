@@ -36,4 +36,4 @@ namespace phoenix {
 	 * @return `true` if both strings are equal when ignoring case.
 	 */
 	bool iequals(std::string_view a, std::string_view b);
-}// namespace phoenix
+} // namespace phoenix

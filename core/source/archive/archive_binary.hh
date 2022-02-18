@@ -36,4 +36,4 @@ namespace phoenix {
 	private:
 		int _m_objects {0};
 	};
-}// namespace phoenix
+} // namespace phoenix

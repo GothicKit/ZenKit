@@ -29,65 +29,67 @@ namespace phoenix {
 			end = length + in.tell();
 
 			switch (chunk) {
-				case model_mesh_chunk::header:
-					(void) /* version = */ in.read_u32();
-					break;
-				case model_mesh_chunk::source: {
-					// supposedly a date? weird values
-					date file_date = {
-							in.read_u32(),
-							in.read_u16(),
-							in.read_u16(),
-							in.read_u16(),
-							in.read_u16(),
-							in.read_u16(),
-					};
+			case model_mesh_chunk::header:
+				(void) /* version = */ in.read_u32();
+				break;
+			case model_mesh_chunk::source: {
+				// supposedly a date? weird values
+				date file_date = {
+				    in.read_u32(),
+				    in.read_u16(),
+				    in.read_u16(),
+				    in.read_u16(),
+				    in.read_u16(),
+				    in.read_u16(),
+				};
 
-					// discard alignment bytes
-					in.ignore(2);
+				// discard alignment bytes
+				in.ignore(2);
 
-					(void) file_date;
-					(void) /* source file = */ in.read_line(false);
-					break;
+				(void) file_date;
+				(void) /* source file = */ in.read_line(false);
+				break;
+			}
+			case model_mesh_chunk::nodes: {
+				auto node_count = in.read_u16();
+				std::vector<std::string> names {};
+
+				for (u32 i = 0; i < node_count; ++i) {
+					names.push_back(in.read_line());
 				}
-				case model_mesh_chunk::nodes: {
-					auto node_count = in.read_u16();
-					std::vector<std::string> names {};
 
-					for (u32 i = 0; i < node_count; ++i) {
-						names.push_back(in.read_line());
-					}
-
-					for (u32 i = 0; i < node_count; ++i) {
-						msh._m_attachments[names[i]] = proto_mesh::parse(in);
-					}
-
-					// hacky bypass for warnings
-					end = in.tell();
-					break;
+				for (u32 i = 0; i < node_count; ++i) {
+					msh._m_attachments[names[i]] = proto_mesh::parse(in);
 				}
-				case model_mesh_chunk::softskins: {
-					(void) /* checksum = */ in.read_u32();
-					auto count = in.read_u16();
-					msh._m_meshes.reserve(count);
 
-					for (int i = 0; i < count; ++i) {
-						msh._m_meshes.push_back(softskin_mesh::parse(in));
-					}
+				// hacky bypass for warnings
+				end = in.tell();
+				break;
+			}
+			case model_mesh_chunk::softskins: {
+				(void) /* checksum = */ in.read_u32();
+				auto count = in.read_u16();
+				msh._m_meshes.reserve(count);
 
-					// hacky bypass for warnings
-					end = in.tell();
-					break;
+				for (int i = 0; i < count; ++i) {
+					msh._m_meshes.push_back(softskin_mesh::parse(in));
 				}
-				case model_mesh_chunk::end:
-					end_mesh = true;
-					break;
-				default:
-					break;
+
+				// hacky bypass for warnings
+				end = in.tell();
+				break;
+			}
+			case model_mesh_chunk::end:
+				end_mesh = true;
+				break;
+			default:
+				break;
 			}
 
 			if (in.tell() != end) {
-				fmt::print(stderr, "warning: model mesh: not all data or too much data consumed from section 0x{:X}\n", chunk);
+				fmt::print(stderr,
+				           "warning: model mesh: not all data or too much data consumed from section 0x{:X}\n",
+				           chunk);
 			}
 
 			in.seek(end);
@@ -95,4 +97,4 @@ namespace phoenix {
 
 		return msh;
 	}
-}// namespace phoenix
+} // namespace phoenix

@@ -8,49 +8,49 @@
 
 namespace phoenix {
 	static std::unordered_map<std::string, vob_type> _vob_type_map = {
-			{"zCVob", vob_type::zCVob},
-			{"zCVobLevelCompo:zCVob", vob_type::zCVobLevelCompo},
-			{"oCItem:zCVob", vob_type::oCItem},
-			{"oCMOB:zCVob", vob_type::oCMOB},
-			{"oCMobInter:oCMOB:zCVob", vob_type::oCMobInter},
-			{"oCMobBed:oCMobInter:oCMOB:zCVob", vob_type::oCMobBed},
-			{"oCMobFire:oCMobInter:oCMOB:zCVob", vob_type::oCMobFire},
-			{"oCMobLadder:oCMobInter:oCMOB:zCVob", vob_type::oCMobLadder},
-			{"oCMobSwitch:oCMobInter:oCMOB:zCVob", vob_type::oCMobSwitch},
-			{"oCMobWheel:oCMobInter:oCMOB:zCVob", vob_type::oCMobWheel},
-			{"oCMobContainer:oCMobInter:oCMOB:zCVob", vob_type::oCMobContainer},
-			{"oCMobDoor:oCMobInter:oCMOB:zCVob", vob_type::oCMobDoor},
-			{"zCPFXControler:zCVob", vob_type::zCPFXController},
-			{"zCVobAnimate:zCVob", vob_type::zCVobAnimate},
-			{"zCVobLensFlare:zCVob", vob_type::zCVobLensFlare},
-			{"zCVobLight:zCVob", vob_type::zCVobLight},
-			{"zCVobSpot:zCVob", vob_type::zCVobSpot},
-			{"zCVobStartpoint:zCVob", vob_type::zCVobStartpoint},
-			{"zCVobSound:zCVob", vob_type::zCVobSound},
-			{"zCVobSoundDaytime:zCVobSound:zCVob", vob_type::zCVobSoundDaytime},
-			{"oCZoneMusic:zCVob", vob_type::oCZoneMusic},
-			{"oCZoneMusicDefault:oCZoneMusic:zCVob", vob_type::oCZoneMusicDefault},
-			{"zCZoneZFog:zCVob", vob_type::zCZoneZFog},
-			{"zCZoneZFogDefault:zCZoneZFog:zCVob", vob_type::zCZoneZFogDefault},
-			{"zCZoneVobFarPlane:zCVob", vob_type::zCZoneVobFarPlane},
-			{"zCZoneVobFarPlaneDefault:zCZoneVobFarPlane:zCVob", vob_type::zCZoneVobFarPlaneDefault},
-			{"zCMessageFilter:zCVob", vob_type::zCMessageFilter},
-			{"zCCodeMaster:zCVob", vob_type::zCCodeMaster},
-			{"zCTrigger:zCVob", vob_type::zCTrigger},
-			{"zCTriggerList:zCTrigger:zCVob", vob_type::zCTriggerList},
-			{"oCTriggerScript:zCTrigger:zCVob", vob_type::oCTriggerScript},
-			{"zCMover:zCTrigger:zCVob", vob_type::zCMover},
-			{"oCTriggerChangeLevel:zCTrigger:zCVob", vob_type::oCTriggerChangeLevel},
-			{"zCTriggerWorldStart:zCVob", vob_type::zCTriggerWorldStart},
-			{"zCTriggerUntouch:zCVob", vob_type::zCTriggerUntouch},
-			{"zCCSCamera:zCVob", vob_type::zCCSCamera},
-			{"zCCamTrj_KeyFrame:zCVob", vob_type::zCCamTrj_KeyFrame},
-			{"oCTouchDamage:zCTouchDamage:zCVob", vob_type::oCTouchDamage},
-			{"zCEarthquake:zCVob", vob_type::zCEarthquake},
-			{"zCMoverControler:zCVob", vob_type::zCMoverController},
-			{"zCVobScreenFX:zCVob", vob_type::zCVobScreenFX},
-			{"zCVobStair:zCVob", vob_type::zCVobStair},
-			{"oCCSTrigger:zCTrigger:zCVob", vob_type::oCCSTrigger},
+	    {"zCVob", vob_type::zCVob},
+	    {"zCVobLevelCompo:zCVob", vob_type::zCVobLevelCompo},
+	    {"oCItem:zCVob", vob_type::oCItem},
+	    {"oCMOB:zCVob", vob_type::oCMOB},
+	    {"oCMobInter:oCMOB:zCVob", vob_type::oCMobInter},
+	    {"oCMobBed:oCMobInter:oCMOB:zCVob", vob_type::oCMobBed},
+	    {"oCMobFire:oCMobInter:oCMOB:zCVob", vob_type::oCMobFire},
+	    {"oCMobLadder:oCMobInter:oCMOB:zCVob", vob_type::oCMobLadder},
+	    {"oCMobSwitch:oCMobInter:oCMOB:zCVob", vob_type::oCMobSwitch},
+	    {"oCMobWheel:oCMobInter:oCMOB:zCVob", vob_type::oCMobWheel},
+	    {"oCMobContainer:oCMobInter:oCMOB:zCVob", vob_type::oCMobContainer},
+	    {"oCMobDoor:oCMobInter:oCMOB:zCVob", vob_type::oCMobDoor},
+	    {"zCPFXControler:zCVob", vob_type::zCPFXController},
+	    {"zCVobAnimate:zCVob", vob_type::zCVobAnimate},
+	    {"zCVobLensFlare:zCVob", vob_type::zCVobLensFlare},
+	    {"zCVobLight:zCVob", vob_type::zCVobLight},
+	    {"zCVobSpot:zCVob", vob_type::zCVobSpot},
+	    {"zCVobStartpoint:zCVob", vob_type::zCVobStartpoint},
+	    {"zCVobSound:zCVob", vob_type::zCVobSound},
+	    {"zCVobSoundDaytime:zCVobSound:zCVob", vob_type::zCVobSoundDaytime},
+	    {"oCZoneMusic:zCVob", vob_type::oCZoneMusic},
+	    {"oCZoneMusicDefault:oCZoneMusic:zCVob", vob_type::oCZoneMusicDefault},
+	    {"zCZoneZFog:zCVob", vob_type::zCZoneZFog},
+	    {"zCZoneZFogDefault:zCZoneZFog:zCVob", vob_type::zCZoneZFogDefault},
+	    {"zCZoneVobFarPlane:zCVob", vob_type::zCZoneVobFarPlane},
+	    {"zCZoneVobFarPlaneDefault:zCZoneVobFarPlane:zCVob", vob_type::zCZoneVobFarPlaneDefault},
+	    {"zCMessageFilter:zCVob", vob_type::zCMessageFilter},
+	    {"zCCodeMaster:zCVob", vob_type::zCCodeMaster},
+	    {"zCTrigger:zCVob", vob_type::zCTrigger},
+	    {"zCTriggerList:zCTrigger:zCVob", vob_type::zCTriggerList},
+	    {"oCTriggerScript:zCTrigger:zCVob", vob_type::oCTriggerScript},
+	    {"zCMover:zCTrigger:zCVob", vob_type::zCMover},
+	    {"oCTriggerChangeLevel:zCTrigger:zCVob", vob_type::oCTriggerChangeLevel},
+	    {"zCTriggerWorldStart:zCVob", vob_type::zCTriggerWorldStart},
+	    {"zCTriggerUntouch:zCVob", vob_type::zCTriggerUntouch},
+	    {"zCCSCamera:zCVob", vob_type::zCCSCamera},
+	    {"zCCamTrj_KeyFrame:zCVob", vob_type::zCCamTrj_KeyFrame},
+	    {"oCTouchDamage:zCTouchDamage:zCVob", vob_type::oCTouchDamage},
+	    {"zCEarthquake:zCVob", vob_type::zCEarthquake},
+	    {"zCMoverControler:zCVob", vob_type::zCMoverController},
+	    {"zCVobScreenFX:zCVob", vob_type::zCVobScreenFX},
+	    {"zCVobStair:zCVob", vob_type::zCVobStair},
+	    {"oCCSTrigger:zCTrigger:zCVob", vob_type::oCCSTrigger},
 	};
 
 	namespace vob {
@@ -307,12 +307,11 @@ namespace phoenix {
 				vob.speed_mode = in->read_enum();
 
 				auto sample_bytes = in->read_raw_bytes();
-				reader sample_reader {std::string_view {reinterpret_cast<const char*>(sample_bytes.data()), sample_bytes.size()}};
+				reader sample_reader {
+				    std::string_view {reinterpret_cast<const char*>(sample_bytes.data()), sample_bytes.size()}};
 
 				for (int i = 0; i < keyframe_count; ++i) {
-					vob.keyframes.push_back(animation_sample {
-							sample_reader.read_vec3(),
-							sample_reader.read_vec4()});
+					vob.keyframes.push_back(animation_sample {sample_reader.read_vec3(), sample_reader.read_vec4()});
 				}
 			}
 
@@ -325,7 +324,7 @@ namespace phoenix {
 			vob.sfx_unlock = in->read_string();
 			vob.sfx_use_locked = in->read_string();
 		}
-	}// namespace vob
+	} // namespace vob
 
 	vob_tree vob_tree::parse(archive_reader_ref& in, game_version version) {
 		vob_tree vob {};
@@ -342,129 +341,128 @@ namespace phoenix {
 		}
 
 		switch (vob._m_type) {
-			case vob_type::zCCamTrj_KeyFrame:
-			case vob_type::zCVobLevelCompo:
-			case vob_type::zCVobStartpoint:
-			case vob_type::zCVobScreenFX:
-			case vob_type::zCEarthquake:
-			case vob_type::zCCSCamera:
-			case vob_type::zCVobStair:
-			case vob_type::zCVobSpot:
-			case vob_type::zCVob:
-				vob._m_content = vob::base {};
-				vob::base::parse(std::get<vob::base>(vob._m_content), in, version);
-				break;
-			case vob_type::zCVobAnimate:
-				vob._m_content = vob::animate {};
-				vob::animate::parse(std::get<vob::animate>(vob._m_content), in, version);
-				break;
-			case vob_type::zCZoneVobFarPlane:
-			case vob_type::zCZoneVobFarPlaneDefault:
-				vob._m_content = vob::zone_far_plane {};
-				vob::zone_far_plane::parse(std::get<vob::zone_far_plane>(vob._m_content), in, version);
-				break;
-			case vob_type::zCZoneZFogDefault:
-			case vob_type::zCZoneZFog:
-				vob._m_content = vob::zone_fog {};
-				vob::zone_fog::parse(std::get<vob::zone_fog>(vob._m_content), in, version);
-				break;
-			case vob_type::oCItem:
-			case vob_type::zCVobLensFlare:
-				vob._m_content = vob::item {};
-				vob::item::parse(std::get<vob::item>(vob._m_content), in, version);
-				break;
-			case vob_type::zCTrigger:
-			case vob_type::oCCSTrigger:
-				vob._m_content = vob::trigger {};
-				vob::trigger::parse(std::get<vob::trigger>(vob._m_content), in, version);
-				break;
-			case vob_type::oCMOB:
-				vob._m_content = vob::mob {};
-				vob::mob::parse(std::get<vob::mob>(vob._m_content), in, version);
-				break;
-			case vob_type::oCMobInter:
-			case vob_type::oCMobLadder:
-			case vob_type::oCMobSwitch:
-			case vob_type::oCMobWheel:
-			case vob_type::oCMobBed:
-				vob._m_content = vob::mob_inter {};
-				vob::mob_inter::parse(std::get<vob::mob_inter>(vob._m_content), in, version);
-				break;
-			case vob_type::oCMobFire:
-				vob._m_content = vob::mob_fire {};
-				vob::mob_fire::parse(std::get<vob::mob_fire>(vob._m_content), in, version);
-				break;
-			case vob_type::oCMobContainer:
-				vob._m_content = vob::mob_container {};
-				vob::mob_container::parse(std::get<vob::mob_container>(vob._m_content), in, version);
-				break;
-			case vob_type::oCMobDoor:
-				vob._m_content = vob::mob_door {};
-				vob::mob_door::parse(std::get<vob::mob_door>(vob._m_content), in, version);
-				break;
-			case vob_type::zCPFXController:
-				vob._m_content = vob::pfx_controller {};
-				vob::pfx_controller::parse(std::get<vob::pfx_controller>(vob._m_content), in, version);
-				break;
-			case vob_type::zCVobLight:
-				vob._m_content = vob::light {};
-				vob::light::parse(std::get<vob::light>(vob._m_content), in, version);
-				break;
-			case vob_type::zCVobSound:
-				vob._m_content = vob::sound {};
-				vob::sound::parse(std::get<vob::sound>(vob._m_content), in, version);
-				break;
-			case vob_type::zCVobSoundDaytime:
-				vob._m_content = vob::sound_daytime {};
-				vob::sound_daytime::parse(std::get<vob::sound_daytime>(vob._m_content), in, version);
-				break;
-			case vob_type::oCZoneMusic:
-			case vob_type::oCZoneMusicDefault:
-				vob._m_content = vob::zone_music {};
-				vob::zone_music::parse(std::get<vob::zone_music>(vob._m_content), in, version);
-				break;
-			case vob_type::zCMessageFilter:
-				vob._m_content = vob::message_filter {};
-				vob::message_filter::parse(std::get<vob::message_filter>(vob._m_content), in, version);
-				break;
-			case vob_type::zCCodeMaster:
-				vob._m_content = vob::code_master {};
-				vob::code_master::parse(std::get<vob::code_master>(vob._m_content), in, version);
-				break;
-			case vob_type::zCTriggerList:
-				vob._m_content = vob::trigger_list {};
-				vob::trigger_list::parse(std::get<vob::trigger_list>(vob._m_content), in, version);
-				break;
-			case vob_type::oCTriggerScript:
-				vob._m_content = vob::trigger_script {};
-				vob::trigger_script::parse(std::get<vob::trigger_script>(vob._m_content), in, version);
-				break;
-			case vob_type::zCMover:
-				vob._m_content = vob::trigger_mover {};
-				vob::trigger_mover::parse(std::get<vob::trigger_mover>(vob._m_content), in, version);
-				break;
-			case vob_type::oCTriggerChangeLevel:
-				vob._m_content = vob::trigger_change_level {};
-				vob::trigger_change_level::parse(std::get<vob::trigger_change_level>(vob._m_content), in, version);
-				break;
-			case vob_type::zCTriggerWorldStart:
-				vob._m_content = vob::trigger_world_start {};
-				vob::trigger_world_start::parse(std::get<vob::trigger_world_start>(vob._m_content), in, version);
-				break;
-			case vob_type::oCTouchDamage:
-				vob._m_content = vob::touch_damage {};
-				vob::touch_damage::parse(std::get<vob::touch_damage>(vob._m_content), in, version);
-				break;
-			case vob_type::zCTriggerUntouch:
-				vob._m_content = vob::trigger_untouch {};
-				vob::trigger_untouch::parse(std::get<vob::trigger_untouch>(vob._m_content), in, version);
-				break;
-			case vob_type::zCMoverController:
-				vob._m_content = vob::mover_controller {};
-				vob::mover_controller::parse(std::get<vob::mover_controller>(vob._m_content), in, version);
-				break;
+		case vob_type::zCCamTrj_KeyFrame:
+		case vob_type::zCVobLevelCompo:
+		case vob_type::zCVobStartpoint:
+		case vob_type::zCVobScreenFX:
+		case vob_type::zCEarthquake:
+		case vob_type::zCCSCamera:
+		case vob_type::zCVobStair:
+		case vob_type::zCVobSpot:
+		case vob_type::zCVob:
+			vob._m_content = vob::base {};
+			vob::base::parse(std::get<vob::base>(vob._m_content), in, version);
+			break;
+		case vob_type::zCVobAnimate:
+			vob._m_content = vob::animate {};
+			vob::animate::parse(std::get<vob::animate>(vob._m_content), in, version);
+			break;
+		case vob_type::zCZoneVobFarPlane:
+		case vob_type::zCZoneVobFarPlaneDefault:
+			vob._m_content = vob::zone_far_plane {};
+			vob::zone_far_plane::parse(std::get<vob::zone_far_plane>(vob._m_content), in, version);
+			break;
+		case vob_type::zCZoneZFogDefault:
+		case vob_type::zCZoneZFog:
+			vob._m_content = vob::zone_fog {};
+			vob::zone_fog::parse(std::get<vob::zone_fog>(vob._m_content), in, version);
+			break;
+		case vob_type::oCItem:
+		case vob_type::zCVobLensFlare:
+			vob._m_content = vob::item {};
+			vob::item::parse(std::get<vob::item>(vob._m_content), in, version);
+			break;
+		case vob_type::zCTrigger:
+		case vob_type::oCCSTrigger:
+			vob._m_content = vob::trigger {};
+			vob::trigger::parse(std::get<vob::trigger>(vob._m_content), in, version);
+			break;
+		case vob_type::oCMOB:
+			vob._m_content = vob::mob {};
+			vob::mob::parse(std::get<vob::mob>(vob._m_content), in, version);
+			break;
+		case vob_type::oCMobInter:
+		case vob_type::oCMobLadder:
+		case vob_type::oCMobSwitch:
+		case vob_type::oCMobWheel:
+		case vob_type::oCMobBed:
+			vob._m_content = vob::mob_inter {};
+			vob::mob_inter::parse(std::get<vob::mob_inter>(vob._m_content), in, version);
+			break;
+		case vob_type::oCMobFire:
+			vob._m_content = vob::mob_fire {};
+			vob::mob_fire::parse(std::get<vob::mob_fire>(vob._m_content), in, version);
+			break;
+		case vob_type::oCMobContainer:
+			vob._m_content = vob::mob_container {};
+			vob::mob_container::parse(std::get<vob::mob_container>(vob._m_content), in, version);
+			break;
+		case vob_type::oCMobDoor:
+			vob._m_content = vob::mob_door {};
+			vob::mob_door::parse(std::get<vob::mob_door>(vob._m_content), in, version);
+			break;
+		case vob_type::zCPFXController:
+			vob._m_content = vob::pfx_controller {};
+			vob::pfx_controller::parse(std::get<vob::pfx_controller>(vob._m_content), in, version);
+			break;
+		case vob_type::zCVobLight:
+			vob._m_content = vob::light {};
+			vob::light::parse(std::get<vob::light>(vob._m_content), in, version);
+			break;
+		case vob_type::zCVobSound:
+			vob._m_content = vob::sound {};
+			vob::sound::parse(std::get<vob::sound>(vob._m_content), in, version);
+			break;
+		case vob_type::zCVobSoundDaytime:
+			vob._m_content = vob::sound_daytime {};
+			vob::sound_daytime::parse(std::get<vob::sound_daytime>(vob._m_content), in, version);
+			break;
+		case vob_type::oCZoneMusic:
+		case vob_type::oCZoneMusicDefault:
+			vob._m_content = vob::zone_music {};
+			vob::zone_music::parse(std::get<vob::zone_music>(vob._m_content), in, version);
+			break;
+		case vob_type::zCMessageFilter:
+			vob._m_content = vob::message_filter {};
+			vob::message_filter::parse(std::get<vob::message_filter>(vob._m_content), in, version);
+			break;
+		case vob_type::zCCodeMaster:
+			vob._m_content = vob::code_master {};
+			vob::code_master::parse(std::get<vob::code_master>(vob._m_content), in, version);
+			break;
+		case vob_type::zCTriggerList:
+			vob._m_content = vob::trigger_list {};
+			vob::trigger_list::parse(std::get<vob::trigger_list>(vob._m_content), in, version);
+			break;
+		case vob_type::oCTriggerScript:
+			vob._m_content = vob::trigger_script {};
+			vob::trigger_script::parse(std::get<vob::trigger_script>(vob._m_content), in, version);
+			break;
+		case vob_type::zCMover:
+			vob._m_content = vob::trigger_mover {};
+			vob::trigger_mover::parse(std::get<vob::trigger_mover>(vob._m_content), in, version);
+			break;
+		case vob_type::oCTriggerChangeLevel:
+			vob._m_content = vob::trigger_change_level {};
+			vob::trigger_change_level::parse(std::get<vob::trigger_change_level>(vob._m_content), in, version);
+			break;
+		case vob_type::zCTriggerWorldStart:
+			vob._m_content = vob::trigger_world_start {};
+			vob::trigger_world_start::parse(std::get<vob::trigger_world_start>(vob._m_content), in, version);
+			break;
+		case vob_type::oCTouchDamage:
+			vob._m_content = vob::touch_damage {};
+			vob::touch_damage::parse(std::get<vob::touch_damage>(vob._m_content), in, version);
+			break;
+		case vob_type::zCTriggerUntouch:
+			vob._m_content = vob::trigger_untouch {};
+			vob::trigger_untouch::parse(std::get<vob::trigger_untouch>(vob._m_content), in, version);
+			break;
+		case vob_type::zCMoverController:
+			vob._m_content = vob::mover_controller {};
+			vob::mover_controller::parse(std::get<vob::mover_controller>(vob._m_content), in, version);
+			break;
 		}
-
 
 		if (!in->read_object_end()) {
 			fmt::print(stderr, "warning: not all data consumed of vob '{}'\n", obj.class_name);
@@ -480,4 +478,4 @@ namespace phoenix {
 
 		return vob;
 	}
-}// namespace phoenix
+} // namespace phoenix

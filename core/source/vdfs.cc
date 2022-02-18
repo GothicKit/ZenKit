@@ -3,10 +3,9 @@
 #include <phoenix/detail/compat.hh>
 #include <phoenix/vdfs.hh>
 
-
 namespace phoenix {
-	vdf_header::vdf_header(std::string_view comment, std::time_t timestamp) : _m_comment(comment), _m_timestamp(timestamp) {
-	}
+	vdf_header::vdf_header(std::string_view comment, std::time_t timestamp)
+	    : _m_comment(comment), _m_timestamp(timestamp) {}
 
 	vdf_header vdf_header::read(reader& in) {
 		vdf_header header {};
@@ -27,12 +26,11 @@ namespace phoenix {
 		return header;
 	}
 
-	vdf_entry::vdf_entry(std::string_view name, u32 attributes) : _m_name(name), _m_type(VDF_MASK_DIRECTORY), _m_attributes(attributes) {
-	}
+	vdf_entry::vdf_entry(std::string_view name, u32 attributes)
+	    : _m_name(name), _m_type(VDF_MASK_DIRECTORY), _m_attributes(attributes) {}
 
 	vdf_entry::vdf_entry(std::string_view name, const char* data, u32 size, u32 attributes)
-		: _m_name(name), _m_data(data), _m_size(size), _m_attributes(attributes) {
-	}
+	    : _m_name(name), _m_data(data), _m_size(size), _m_attributes(attributes) {}
 
 	const vdf_entry* vdf_entry::resolve_path(std::string_view path) const {
 		auto it = path.find('/');
@@ -105,8 +103,7 @@ namespace phoenix {
 		return entry;
 	}
 
-	vdf_file::vdf_file(std::string_view comment, std::time_t timestamp) : _m_header(comment, timestamp) {
-	}
+	vdf_file::vdf_file(std::string_view comment, std::time_t timestamp) : _m_header(comment, timestamp) {}
 
 	const vdf_entry* vdf_file::find_entry(std::string_view name) const {
 		for (const auto& entry : _m_entries) {
@@ -164,4 +161,4 @@ namespace phoenix {
 		return vdf;
 	}
 
-}// namespace phoenix
+} // namespace phoenix

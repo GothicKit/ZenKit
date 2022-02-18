@@ -18,7 +18,9 @@ namespace phoenix {
 		}
 
 		std::string version = in.read_line();
-		if (!version.starts_with("ver ")) { throw parser_error("not an archive: ver missing"); }
+		if (!version.starts_with("ver ")) {
+			throw parser_error("not an archive: ver missing");
+		}
 		header.version = std::stoi(version.substr(version.find(' ') + 1));
 
 		header.archiver = in.read_line();
@@ -33,7 +35,9 @@ namespace phoenix {
 		}
 
 		std::string save_game = in.read_line();
-		if (!save_game.starts_with("saveGame ")) { throw parser_error("not an archive: saveGame missing"); }
+		if (!save_game.starts_with("saveGame ")) {
+			throw parser_error("not an archive: saveGame missing");
+		}
 		header.save = std::stoi(save_game.substr(save_game.find(' ') + 1)) != 0;
 
 		std::string optional = in.read_line();
@@ -97,4 +101,4 @@ namespace phoenix {
 			}
 		} while (level > 0);
 	}
-}// namespace phoenix
+} // namespace phoenix

@@ -3,8 +3,8 @@
 #pragma once
 #include <phoenix/detail/stream.hh>
 #include <phoenix/detail/types.hh>
-#include <phoenix/math/obb.hh>
 #include <phoenix/material.hh>
+#include <phoenix/math/obb.hh>
 
 namespace phoenix {
 	struct triangle {
@@ -97,33 +97,45 @@ namespace phoenix {
 		/**
 		 * @return The vertex positions associated with the mesh.
 		 */
-		[[nodiscard]] inline const std::vector<glm::vec3>& positions() const noexcept { return _m_vertices; }
+		[[nodiscard]] inline const std::vector<glm::vec3>& positions() const noexcept {
+			return _m_vertices;
+		}
 
 		/**
 		 * @return The normal vectors of the mesh.
 		 * @note I'm not yet sure why this is here since normals are stored in sub-meshes as well.
 		 */
-		[[nodiscard]] inline const std::vector<glm::vec3>& normals() const noexcept { return _m_normals; }
+		[[nodiscard]] inline const std::vector<glm::vec3>& normals() const noexcept {
+			return _m_normals;
+		}
 
 		/**
 		 * @return A list of sub-meshes of the mesh.
 		 */
-		[[nodiscard]] inline const std::vector<sub_mesh>& submeshes() const noexcept { return _m_sub_meshes; }
+		[[nodiscard]] inline const std::vector<sub_mesh>& submeshes() const noexcept {
+			return _m_sub_meshes;
+		}
 
 		/**
 		 * @return A list of all materials used by the mesh.
 		 */
-		[[nodiscard]] inline const std::vector<material>& materials() const noexcept { return _m_materials; }
+		[[nodiscard]] inline const std::vector<material>& materials() const noexcept {
+			return _m_materials;
+		}
 
 		/**
 		 * @return The bounding box of the mesh as a (min, max) tuple.
 		 */
-		[[nodiscard]] inline std::tuple<glm::vec3, glm::vec3> bbox() const noexcept { return std::make_tuple(_m_bbox[0], _m_bbox[1]); }
+		[[nodiscard]] inline std::tuple<glm::vec3, glm::vec3> bbox() const noexcept {
+			return std::make_tuple(_m_bbox[0], _m_bbox[1]);
+		}
 
 		/**
 		 * @return If alpha testing should be enabled.
 		 */
-		[[nodiscard]] inline bool alpha_test() const noexcept { return _m_has_alpha_test; }
+		[[nodiscard]] inline bool alpha_test() const noexcept {
+			return _m_has_alpha_test;
+		}
 
 	private:
 		std::vector<glm::vec3> _m_vertices;
@@ -134,4 +146,4 @@ namespace phoenix {
 		glm::vec3 _m_bbox[2];
 		obb _m_obbox;
 	};
-}// namespace phoenix
+} // namespace phoenix

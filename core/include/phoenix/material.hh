@@ -43,122 +43,170 @@ namespace phoenix {
 		/**
 		 * @return The name of the material.
 		 */
-		[[nodiscard]] const std::string& name() const noexcept { return _m_name; }
+		[[nodiscard]] const std::string& name() const noexcept {
+			return _m_name;
+		}
 
 		/**
 		 * @return The group of the material.
 		 */
-		[[nodiscard]] material_group group() const noexcept { return _m_group; }
+		[[nodiscard]] material_group group() const noexcept {
+			return _m_group;
+		}
 
 		/**
 		 * @return The color of the material.
 		 */
-		[[nodiscard]] ::color color() const noexcept { return _m_color; }
+		[[nodiscard]] ::color color() const noexcept {
+			return _m_color;
+		}
 
 		/**
 		 * @return The smooth angle.
 		 */
-		[[nodiscard]] float smooth_angle() const noexcept { return _m_smooth_angle; }
+		[[nodiscard]] float smooth_angle() const noexcept {
+			return _m_smooth_angle;
+		}
 
 		/**
 		 * @return The texture of the material.
 		 */
-		[[nodiscard]] const std::string& texture() const noexcept { return _m_texture; }
+		[[nodiscard]] const std::string& texture() const noexcept {
+			return _m_texture;
+		}
 
 		/**
 		 * @return The scale of the texture.
 		 */
-		[[nodiscard]] glm::vec2 texture_scale() const noexcept { return _m_texture_scale; }
+		[[nodiscard]] glm::vec2 texture_scale() const noexcept {
+			return _m_texture_scale;
+		}
 
 		/**
 		 * @return The FPS of the animation.
 		 */
-		[[nodiscard]] float texture_anim_fps() const noexcept { return _m_texture_anim_fps; }
+		[[nodiscard]] float texture_anim_fps() const noexcept {
+			return _m_texture_anim_fps;
+		}
 
 		/**
 		 * @return The mode of the animation.
 		 */
-		[[nodiscard]] u8 texture_anim_map_mode() const noexcept { return _m_texture_anim_map_mode; }
+		[[nodiscard]] u8 texture_anim_map_mode() const noexcept {
+			return _m_texture_anim_map_mode;
+		}
 
 		/**
 		 * @return The directory of the animation texture.
 		 */
-		[[nodiscard]] glm::vec2 texture_anim_map_dir() const noexcept { return _m_texture_anim_map_dir; }
+		[[nodiscard]] glm::vec2 texture_anim_map_dir() const noexcept {
+			return _m_texture_anim_map_dir;
+		}
 
 		/**
 		 * @return Is collision disabled?
 		 */
-		[[nodiscard]] bool disable_collision() const noexcept { return _m_disable_collision; }
+		[[nodiscard]] bool disable_collision() const noexcept {
+			return _m_disable_collision;
+		}
 
 		/**
 		 * @return Is the lightmap disabled?
 		 */
-		[[nodiscard]] bool disable_lightmap() const noexcept { return _m_disable_lightmap; }
+		[[nodiscard]] bool disable_lightmap() const noexcept {
+			return _m_disable_lightmap;
+		}
 
 		/**
 		 * @return
 		 */
-		[[nodiscard]] u8 dont_collapse() const noexcept { return _m_dont_collapse; }
+		[[nodiscard]] u8 dont_collapse() const noexcept {
+			return _m_dont_collapse;
+		}
 
 		/**
 		 * @return
 		 */
-		[[nodiscard]] const std::string& detail_object() const noexcept { return _m_detail_object; }
+		[[nodiscard]] const std::string& detail_object() const noexcept {
+			return _m_detail_object;
+		}
 
 		/**
 		 * @return The detailed texture scale
 		 */
-		[[nodiscard]] float detail_texture_scale() const noexcept { return _m_detail_texture_scale; }
+		[[nodiscard]] float detail_texture_scale() const noexcept {
+			return _m_detail_texture_scale;
+		}
 
 		/**
 		 * @return
 		 */
-		[[nodiscard]] u8 force_occluder() const noexcept { return _m_force_occluder; }
+		[[nodiscard]] u8 force_occluder() const noexcept {
+			return _m_force_occluder;
+		}
 
 		/**
 		 * @return
 		 */
-		[[nodiscard]] u8 environment_mapping() const noexcept { return _m_environment_mapping; }
+		[[nodiscard]] u8 environment_mapping() const noexcept {
+			return _m_environment_mapping;
+		}
 
 		/**
 		 * @return
 		 */
-		[[nodiscard]] float environment_mapping_strength() const noexcept { return _m_environment_mapping_strength; }
+		[[nodiscard]] float environment_mapping_strength() const noexcept {
+			return _m_environment_mapping_strength;
+		}
 
 		/**
 		 * @return
 		 */
-		[[nodiscard]] u8 wave_mode() const noexcept { return _m_wave_mode; }
+		[[nodiscard]] u8 wave_mode() const noexcept {
+			return _m_wave_mode;
+		}
 
 		/**
 		 * @return
 		 */
-		[[nodiscard]] u8 wave_speed() const noexcept { return _m_wave_speed; }
+		[[nodiscard]] u8 wave_speed() const noexcept {
+			return _m_wave_speed;
+		}
 
 		/**
 		 * @return
 		 */
-		[[nodiscard]] float wave_max_amplitude() const noexcept { return _m_wave_max_amplitude; }
+		[[nodiscard]] float wave_max_amplitude() const noexcept {
+			return _m_wave_max_amplitude;
+		}
 
 		/**
 		 * @return
 		 */
-		[[nodiscard]] float wave_grid_size() const noexcept { return _m_wave_grid_size; }
+		[[nodiscard]] float wave_grid_size() const noexcept {
+			return _m_wave_grid_size;
+		}
 
 		/**
 		 * @return
 		 */
-		[[nodiscard]] u8 ignore_sun() const noexcept { return _m_ignore_sun; }
+		[[nodiscard]] u8 ignore_sun() const noexcept {
+			return _m_ignore_sun;
+		}
 
 		/**
 		 * @return
 		 */
-		[[nodiscard]] u8 alpha_func() const noexcept { return _m_alpha_func; }
+		[[nodiscard]] u8 alpha_func() const noexcept {
+			return _m_alpha_func;
+		}
 
 		/**
 		 * @return
 		 */
-		[[nodiscard]] glm::vec2 default_mapping() const noexcept { return _m_default_mapping; }
+		[[nodiscard]] glm::vec2 default_mapping() const noexcept {
+			return _m_default_mapping;
+		}
 
 	private:
 		std::string _m_name;
@@ -187,4 +235,4 @@ namespace phoenix {
 		glm::vec2 _m_default_mapping {};
 	};
 
-}// namespace phoenix
+} // namespace phoenix

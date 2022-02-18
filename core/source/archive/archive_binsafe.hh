@@ -7,25 +7,25 @@
 
 namespace phoenix {
 	constexpr u8 type_sizes[] = {
-			0,                // ?            = 0x00
-			0,                // bs_string    = 0x01,
-			sizeof(u32),      // bs_int       = 0x02,
-			sizeof(float),    // bs_float     = 0x03,
-			sizeof(u8),       // bs_byte      = 0x04,
-			sizeof(u16),      // bs_word      = 0x05,
-			sizeof(u32),      // bs_bool      = 0x06,
-			sizeof(float) * 3,// bs_vec3      = 0x07,
-			sizeof(u8) * 4,   // bs_color     = 0x08,
-			0,                // bs_raw       = 0x09,
-			0,                // ?            = 0x0A
-			0,                // ?            = 0x0B
-			0,                // ?            = 0x0C
-			0,                // ?            = 0x0D
-			0,                // ?            = 0x0E
-			0,                // ?            = 0x0F
-			0,                // bs_raw_float = 0x10,
-			sizeof(u32),      // bs_enum      = 0x11,
-			sizeof(u32),      // bs_hash      = 0x12,
+	    0,                 // ?            = 0x00
+	    0,                 // bs_string    = 0x01,
+	    sizeof(u32),       // bs_int       = 0x02,
+	    sizeof(float),     // bs_float     = 0x03,
+	    sizeof(u8),        // bs_byte      = 0x04,
+	    sizeof(u16),       // bs_word      = 0x05,
+	    sizeof(u32),       // bs_bool      = 0x06,
+	    sizeof(float) * 3, // bs_vec3      = 0x07,
+	    sizeof(u8) * 4,    // bs_color     = 0x08,
+	    0,                 // bs_raw       = 0x09,
+	    0,                 // ?            = 0x0A
+	    0,                 // ?            = 0x0B
+	    0,                 // ?            = 0x0C
+	    0,                 // ?            = 0x0D
+	    0,                 // ?            = 0x0E
+	    0,                 // ?            = 0x0F
+	    0,                 // bs_raw_float = 0x10,
+	    sizeof(u32),       // bs_enum      = 0x11,
+	    sizeof(u32),       // bs_hash      = 0x12,
 	};
 
 	enum archive_binsafe_type {
@@ -83,4 +83,4 @@ namespace phoenix {
 
 		std::vector<hash_table_entry> _m_hash_table_entries;
 	};
-}// namespace phoenix
+} // namespace phoenix

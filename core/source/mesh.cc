@@ -18,7 +18,6 @@ namespace phoenix {
 		end = 0xB060
 	};
 
-
 	mesh mesh::parse(reader& in) {
 		mesh msh;
 
@@ -34,150 +33,150 @@ namespace phoenix {
 			end = length + in.tell();
 
 			switch (chunk) {
-				case world_mesh_chunk::mesh:
-					version = in.read_u32();
-					msh._m_date = {
-							in.read_u32(),
-							in.read_u16(),
-							in.read_u16(),
-							in.read_u16(),
-							in.read_u16(),
-							in.read_u16(),
-					};
+			case world_mesh_chunk::mesh:
+				version = in.read_u32();
+				msh._m_date = {
+				    in.read_u32(),
+				    in.read_u16(),
+				    in.read_u16(),
+				    in.read_u16(),
+				    in.read_u16(),
+				    in.read_u16(),
+				};
 
-					msh._m_name = in.read_line(false);
-					break;
-				case world_mesh_chunk::bbox:
-					// first, we find a basic AABB bounding box
-					msh._m_bbox[0] = in.read_vec3();
-					msh._m_bbox[1] = in.read_vec3();
+				msh._m_name = in.read_line(false);
+				break;
+			case world_mesh_chunk::bbox:
+				// first, we find a basic AABB bounding box
+				msh._m_bbox[0] = in.read_vec3();
+				msh._m_bbox[1] = in.read_vec3();
 
-					// but second, we find a list of OOBBs with one acting as a parent
-					msh._m_obb = obb::parse(in);
-					break;
-				case world_mesh_chunk::material: {
-					auto matreader = archive_reader::open(in);
+				// but second, we find a list of OOBBs with one acting as a parent
+				msh._m_obb = obb::parse(in);
+				break;
+			case world_mesh_chunk::material: {
+				auto matreader = archive_reader::open(in);
 
-					u32 material_count = in.read_u32();
-					msh._m_materials.reserve(material_count);
+				u32 material_count = in.read_u32();
+				msh._m_materials.reserve(material_count);
 
-					for (u32 i = 0; i < material_count; ++i) {
-						msh._m_materials.emplace_back(material::parse(matreader));
-					}
-
-					break;
+				for (u32 i = 0; i < material_count; ++i) {
+					msh._m_materials.emplace_back(material::parse(matreader));
 				}
-				case world_mesh_chunk::vertices:
-					msh._m_vertices.resize(in.read_u32());
 
-					for (auto& vertex : msh._m_vertices) {
-						vertex = in.read_vec3();
-					}
-					break;
-				case world_mesh_chunk::features:
-					msh._m_features.resize(in.read_u32());
+				break;
+			}
+			case world_mesh_chunk::vertices:
+				msh._m_vertices.resize(in.read_u32());
 
-					for (auto& feature : msh._m_features) {
-						feature.texture = in.read_vec2();
-						feature.light = in.read_u32();
-						feature.normal = in.read_vec3();
-					}
-
-					break;
-				case world_mesh_chunk::polygons: {
-					auto poly_count = in.read_u32();
-					msh._m_polygons.resize(poly_count);
-
-					for (u32 i = 0; i < poly_count; ++i) {
-						polygon& p = msh._m_polygons[i];
-
-						p.material_index = in.read_u16();
-						p.lightmap_index = in.read_u16();
-						p.polygon_plane = {in.read_f32(), in.read_vec3()};
-
-						if (version == 265 /* G26fix */) {
-							u8 flags = in.read_u8();
-							p.flags.is_portal = (flags & 0b00000011) >> 0;
-							p.flags.is_occluder = (flags & 0b00000100) >> 2;
-							p.flags.is_sector = (flags & 0b00001000) >> 3;
-							p.flags.should_relight = (flags & 0b00010000) >> 4;
-							p.flags.is_outdoor = (flags & 0b00100000) >> 5;
-							p.flags.is_ghost_occluder = (flags & 0b01000000) >> 6;
-							p.flags.is_dynamically_lit = (flags & 0b10000000) >> 7;
-							p.flags.sector_index = in.read_u16();
-						} else {
-							u8 flags1 = in.read_u8();
-							u8 flags2 = in.read_u8();
-
-							p.flags.is_portal = (flags1 & 0b00000011) >> 0;
-							p.flags.is_occluder = (flags1 & 0b00000100) >> 2;
-							p.flags.is_sector = (flags1 & 0b00001000) >> 3;
-							p.flags.is_lod = (flags1 & 0b00010000) >> 4;
-							p.flags.is_outdoor = (flags1 & 0b00100000) >> 5;
-							p.flags.is_ghost_occluder = (flags1 & 0b01000000) >> 6;
-							p.flags.normal_axis = ((flags1 & 0b10000000) >> 7) | (flags2 & 0b00000001);
-							p.flags.sector_index = in.read_u16();
-						}
-
-						p.vertex_count = in.read_u8();
-
-						for (int j = 0; j < p.vertex_count; ++j) {
-							p.indices[j] = {
-									version == 265 /* G26fix */ ? in.read_u32() : in.read_u16(),
-									in.read_u32()};
-						}
-					}
-
-					break;
+				for (auto& vertex : msh._m_vertices) {
+					vertex = in.read_vec3();
 				}
-				case world_mesh_chunk::shared_lightmaps: {
-					auto texture_count = in.read_u32();
+				break;
+			case world_mesh_chunk::features:
+				msh._m_features.resize(in.read_u32());
 
-					std::vector<std::shared_ptr<texture>> lightmap_textures {};
-					lightmap_textures.resize(texture_count);
-
-					for (u32 i = 0; i < texture_count; ++i) {
-						lightmap_textures[i] = std::make_shared<texture>(texture::parse(in));
-					}
-
-					auto lightmap_count = in.read_u32();
-					for (u32 i = 0; i < lightmap_count; ++i) {
-						auto origin = in.read_vec3();
-						auto normal_a = in.read_vec3();
-						auto normal_b = in.read_vec3();
-						u32 texture_index = in.read_u32();
-
-						msh._m_lightmaps.emplace_back(light_map {lightmap_textures[texture_index], {normal_a, normal_b}, origin});
-					}
-
-					break;
+				for (auto& feature : msh._m_features) {
+					feature.texture = in.read_vec2();
+					feature.light = in.read_u32();
+					feature.normal = in.read_vec3();
 				}
-				case world_mesh_chunk::lightmaps: {
-					auto lightmap_count = in.read_u32();
 
-					for (u32 i = 0; i < lightmap_count; ++i) {
-						auto origin = in.read_vec3();
-						auto normal_a = in.read_vec3();
-						auto normal_b = in.read_vec3();
-						auto lightmap_texture = texture::parse(in);
+				break;
+			case world_mesh_chunk::polygons: {
+				auto poly_count = in.read_u32();
+				msh._m_polygons.resize(poly_count);
 
-						msh._m_lightmaps.emplace_back(light_map {
-								std::make_shared<texture>(std::move(lightmap_texture)),
-								{normal_a, normal_b},
-								origin});
+				for (u32 i = 0; i < poly_count; ++i) {
+					polygon& p = msh._m_polygons[i];
+
+					p.material_index = in.read_u16();
+					p.lightmap_index = in.read_u16();
+					p.polygon_plane = {in.read_f32(), in.read_vec3()};
+
+					if (version == 265 /* G26fix */) {
+						u8 flags = in.read_u8();
+						p.flags.is_portal = (flags & 0b00000011) >> 0;
+						p.flags.is_occluder = (flags & 0b00000100) >> 2;
+						p.flags.is_sector = (flags & 0b00001000) >> 3;
+						p.flags.should_relight = (flags & 0b00010000) >> 4;
+						p.flags.is_outdoor = (flags & 0b00100000) >> 5;
+						p.flags.is_ghost_occluder = (flags & 0b01000000) >> 6;
+						p.flags.is_dynamically_lit = (flags & 0b10000000) >> 7;
+						p.flags.sector_index = in.read_u16();
+					} else {
+						u8 flags1 = in.read_u8();
+						u8 flags2 = in.read_u8();
+
+						p.flags.is_portal = (flags1 & 0b00000011) >> 0;
+						p.flags.is_occluder = (flags1 & 0b00000100) >> 2;
+						p.flags.is_sector = (flags1 & 0b00001000) >> 3;
+						p.flags.is_lod = (flags1 & 0b00010000) >> 4;
+						p.flags.is_outdoor = (flags1 & 0b00100000) >> 5;
+						p.flags.is_ghost_occluder = (flags1 & 0b01000000) >> 6;
+						p.flags.normal_axis = ((flags1 & 0b10000000) >> 7) | (flags2 & 0b00000001);
+						p.flags.sector_index = in.read_u16();
 					}
 
-					break;
+					p.vertex_count = in.read_u8();
+
+					for (int j = 0; j < p.vertex_count; ++j) {
+						p.indices[j] = {version == 265 /* G26fix */ ? in.read_u32() : in.read_u16(), in.read_u32()};
+					}
 				}
-				case world_mesh_chunk::end:
-					finished = true;
-					break;
-				default:
-					break;
+
+				break;
+			}
+			case world_mesh_chunk::shared_lightmaps: {
+				auto texture_count = in.read_u32();
+
+				std::vector<std::shared_ptr<texture>> lightmap_textures {};
+				lightmap_textures.resize(texture_count);
+
+				for (u32 i = 0; i < texture_count; ++i) {
+					lightmap_textures[i] = std::make_shared<texture>(texture::parse(in));
+				}
+
+				auto lightmap_count = in.read_u32();
+				for (u32 i = 0; i < lightmap_count; ++i) {
+					auto origin = in.read_vec3();
+					auto normal_a = in.read_vec3();
+					auto normal_b = in.read_vec3();
+					u32 texture_index = in.read_u32();
+
+					msh._m_lightmaps.emplace_back(
+					    light_map {lightmap_textures[texture_index], {normal_a, normal_b}, origin});
+				}
+
+				break;
+			}
+			case world_mesh_chunk::lightmaps: {
+				auto lightmap_count = in.read_u32();
+
+				for (u32 i = 0; i < lightmap_count; ++i) {
+					auto origin = in.read_vec3();
+					auto normal_a = in.read_vec3();
+					auto normal_b = in.read_vec3();
+					auto lightmap_texture = texture::parse(in);
+
+					msh._m_lightmaps.emplace_back(light_map {std::make_shared<texture>(std::move(lightmap_texture)),
+					                                         {normal_a, normal_b},
+					                                         origin});
+				}
+
+				break;
+			}
+			case world_mesh_chunk::end:
+				finished = true;
+				break;
+			default:
+				break;
 			}
 
 			if (in.tell() != end) {
-				fmt::print(stderr, "warning: world mesh: not all data or too much data consumed from section 0x{:X}\n", chunk);
+				fmt::print(stderr,
+				           "warning: world mesh: not all data or too much data consumed from section 0x{:X}\n",
+				           chunk);
 			}
 
 			in.seek(end);
@@ -185,4 +184,4 @@ namespace phoenix {
 
 		return msh;
 	}
-}// namespace phoenix
+} // namespace phoenix

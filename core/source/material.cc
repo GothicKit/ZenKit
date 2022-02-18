@@ -15,13 +15,18 @@ namespace phoenix {
 		(void) in->read_string();
 
 		archive_object obj {};
-		if (!in->read_object_begin(obj)) { throw parser_error("expected archive object begin which was not found"); }
-		if (obj.class_name != "zCMaterial") { throw parser_error("expected archive class zCMaterial; got " + obj.class_name); }
+		if (!in->read_object_begin(obj)) {
+			throw parser_error("expected archive object begin which was not found");
+		}
+
+		if (obj.class_name != "zCMaterial") {
+			throw parser_error("expected archive class zCMaterial; got " + obj.class_name);
+		}
 
 		if (obj.version == MATERIAL_VERSION_G1_V108k) {
 			mat._m_name = in->read_string();
-			mat._m_group = static_cast<material_group>(in->read_byte());// Quirk: This is not an enum
-			mat._m_color = in->read_color();                            // Quirk: This is not a color
+			mat._m_group = static_cast<material_group>(in->read_byte()); // Quirk: This is not an enum
+			mat._m_color = in->read_color();                             // Quirk: This is not a color
 			mat._m_smooth_angle = in->read_float();
 			mat._m_texture = in->read_string();
 
@@ -41,8 +46,8 @@ namespace phoenix {
 			mat._m_default_mapping = in->read_vec2();
 		} else {
 			mat._m_name = in->read_string();
-			mat._m_group = static_cast<material_group>(in->read_byte());// Quirk: This is not an enum
-			mat._m_color = in->read_color();                            // Quirk: This is not a color
+			mat._m_group = static_cast<material_group>(in->read_byte()); // Quirk: This is not an enum
+			mat._m_color = in->read_color();                             // Quirk: This is not a color
 			mat._m_smooth_angle = in->read_float();
 			mat._m_texture = in->read_string();
 
@@ -82,4 +87,4 @@ namespace phoenix {
 
 		return mat;
 	}
-}// namespace phoenix
+} // namespace phoenix

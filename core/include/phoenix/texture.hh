@@ -20,7 +20,8 @@ namespace phoenix {
 		tex_B8G8R8,   /* 4, 24-bit RGB pixel format with 8 bits per channel */
 		tex_R8G8B8,   /* 5, 24-bit RGB pixel format with 8 bits per channel */
 		tex_A4R4G4B4, /* 6, 16-bit ARGB pixel format with 4 bits for each channel */
-		tex_A1R5G5B5, /* 7, 16-bit pixel format where 5 bits are reserved for each color and 1 bit is reserved for alpha */
+		tex_A1R5G5B5, /* 7, 16-bit pixel format where 5 bits are reserved for each color and 1 bit is reserved for alpha
+		               */
 		tex_R5G6B5,   /* 8, 16-bit RGB pixel format with 5 bits for red, 6 bits for green, and 5 bits for blue */
 		tex_p8,       /* 9, 8-bit color indexed */
 		tex_dxt1,     /* A, DXT1 compression texture format */
@@ -74,55 +75,75 @@ namespace phoenix {
 		/**
 		 * @return The format of the texture.
 		 */
-		[[nodiscard]] inline texture_format format() const noexcept { return _m_format; }
+		[[nodiscard]] inline texture_format format() const noexcept {
+			return _m_format;
+		}
 
 		/**
 		 * @return The width in pixels of the first mipmap level.
 		 */
-		[[nodiscard]] inline u32 width() const noexcept { return _m_width; }
+		[[nodiscard]] inline u32 width() const noexcept {
+			return _m_width;
+		}
 
 		/**
 		 * @return The height in pixels of the first mipmap level.
 		 */
-		[[nodiscard]] inline u32 height() const noexcept { return _m_height; }
+		[[nodiscard]] inline u32 height() const noexcept {
+			return _m_height;
+		}
 
 		/**
 		 * @param level The mipmap level to use (beginning from 0).
 		 * @return The width in pixels of the given mipmap level.
 		 */
-		[[nodiscard]] inline u32 mipmap_width(u32 level) const noexcept { return _m_width >> level; }
+		[[nodiscard]] inline u32 mipmap_width(u32 level) const noexcept {
+			return _m_width >> level;
+		}
 
 		/**
 		 * @param level The mipmap level to use (beginning from 0).
 		 * @return The height in pixels of the given mipmap level.
 		 */
-		[[nodiscard]] inline u32 mipmap_height(u32 level) const noexcept { return _m_height >> level; }
+		[[nodiscard]] inline u32 mipmap_height(u32 level) const noexcept {
+			return _m_height >> level;
+		}
 
 		/**
 		 * @return The width of the texture in-engine.
 		 */
-		[[nodiscard]] inline u32 ref_width() const noexcept { return _m_reference_width; }
+		[[nodiscard]] inline u32 ref_width() const noexcept {
+			return _m_reference_width;
+		}
 
 		/**
 		 * @return The height of the texture in-engine.
 		 */
-		[[nodiscard]] inline u32 ref_height() const noexcept { return _m_reference_height; }
+		[[nodiscard]] inline u32 ref_height() const noexcept {
+			return _m_reference_height;
+		}
 
 		/**
 		 * @return The number of mipmaps of the texture.
 		 */
-		[[nodiscard]] inline u32 mipmaps() const noexcept { return _m_mipmap_count; }
+		[[nodiscard]] inline u32 mipmaps() const noexcept {
+			return _m_mipmap_count;
+		}
 
 		/**
 		 * @return The average color of the texture.
 		 */
-		[[nodiscard]] inline argb average_color() const noexcept { return _m_average_color; }
+		[[nodiscard]] inline argb average_color() const noexcept {
+			return _m_average_color;
+		}
 
 		/**
 		 * @param mipmap_level The mipmap level to get.
 		 * @return The texture data at the given mipmap level.
 		 */
-		[[nodiscard]] inline const std::vector<u8>& data(u32 mipmap_level = 0) const noexcept { return _m_textures.at(_m_mipmap_count - 1 - mipmap_level); }
+		[[nodiscard]] inline const std::vector<u8>& data(u32 mipmap_level = 0) const noexcept {
+			return _m_textures.at(_m_mipmap_count - 1 - mipmap_level);
+		}
 
 		/**
 		 * @brief Converts the texture data of the given mipmap-level to RGBA8
@@ -148,4 +169,4 @@ namespace phoenix {
 		// Quirk: largest mipmap (level 0) stored at the end of the vector
 		std::vector<std::vector<u8>> _m_textures;
 	};
-}// namespace phoenix
+} // namespace phoenix

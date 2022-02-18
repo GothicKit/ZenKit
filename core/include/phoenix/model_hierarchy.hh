@@ -19,13 +19,21 @@ namespace phoenix {
 	public:
 		static model_hierachy parse(reader& in);
 
-		[[nodiscard]] const std::vector<model_hierarchy_node>& nodes() const noexcept { return _m_nodes; }
+		[[nodiscard]] const std::vector<model_hierarchy_node>& nodes() const noexcept {
+			return _m_nodes;
+		}
 
-		[[nodiscard]] std::tuple<glm::vec3, glm::vec3> bbox() const noexcept { return {_m_bbox[0], _m_bbox[1]}; }
+		[[nodiscard]] std::tuple<glm::vec3, glm::vec3> bbox() const noexcept {
+			return {_m_bbox[0], _m_bbox[1]};
+		}
 
-		[[nodiscard]] std::tuple<glm::vec3, glm::vec3> collision_bbox() const noexcept { return {_m_collision_bbox[0], _m_collision_bbox[1]}; }
+		[[nodiscard]] std::tuple<glm::vec3, glm::vec3> collision_bbox() const noexcept {
+			return {_m_collision_bbox[0], _m_collision_bbox[1]};
+		}
 
-		[[nodiscard]] glm::vec3 root_translation() const noexcept { return _m_root_translation; }
+		[[nodiscard]] glm::vec3 root_translation() const noexcept {
+			return _m_root_translation;
+		}
 
 	private:
 		std::vector<model_hierarchy_node> _m_nodes;
@@ -34,4 +42,4 @@ namespace phoenix {
 		glm::vec3 _m_root_translation;
 	};
 
-}// namespace phoenix
+} // namespace phoenix

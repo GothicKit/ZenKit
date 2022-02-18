@@ -23,7 +23,8 @@ namespace phoenix {
 	 * @brief Represents the header of a VDF.
 	 *
 	 * Based upon the ReGoth documentation (https://github.com/REGoth-project/REGoth/wiki/VDF-File-Format)
-	 * and the original implementation in PhysicsFS (https://hg.icculus.org/icculus/physfs/file/tip/src/physfs_archiver_vdf.c).
+	 * and the original implementation in PhysicsFS
+	 * (https://hg.icculus.org/icculus/physfs/file/tip/src/physfs_archiver_vdf.c).
 	 *
 	 * Thanks to Francesco Bertolaccini, Andre Taulien and Nico Bendlin for the original implementation!
 	 */
@@ -41,42 +42,58 @@ namespace phoenix {
 		/**
 		 * @return The comment of the VDF.
 		 */
-		[[nodiscard]] inline const std::string& comment() const noexcept { return _m_comment; }
+		[[nodiscard]] inline const std::string& comment() const noexcept {
+			return _m_comment;
+		}
 
 		/**
 		 * @return The signature of the VDF.
 		 */
-		[[nodiscard]] inline const std::string& signature() const noexcept { return _m_signature; }
+		[[nodiscard]] inline const std::string& signature() const noexcept {
+			return _m_signature;
+		}
 
 		/**
 		 * @return The number of file entries in the VDF.
 		 */
-		[[nodiscard]] inline u32 file_count() const noexcept { return _m_file_count; }
+		[[nodiscard]] inline u32 file_count() const noexcept {
+			return _m_file_count;
+		}
 
 		/**
 		 * @return The total number of entries in the VDF.
 		 */
-		[[nodiscard]] inline u32 entry_count() const noexcept { return _m_entry_count; }
+		[[nodiscard]] inline u32 entry_count() const noexcept {
+			return _m_entry_count;
+		}
 
 		/**
 		 * @return The timestamp of the VDF.
 		 */
-		[[nodiscard]] inline std::time_t timestamp() const noexcept { return _m_timestamp; }
+		[[nodiscard]] inline std::time_t timestamp() const noexcept {
+			return _m_timestamp;
+		}
 
 		/**
 		 * @return The total size of the VDF in bytes.
 		 */
-		[[nodiscard]] inline u32 size() const noexcept { return _m_size; };
+		[[nodiscard]] inline u32 size() const noexcept {
+			return _m_size;
+		};
 
 		/**
 		 * @return The offset of the entry catalog in bytes.
 		 */
-		[[nodiscard]] inline u32 catalog_offset() const noexcept { return _m_catalog_offset; }
+		[[nodiscard]] inline u32 catalog_offset() const noexcept {
+			return _m_catalog_offset;
+		}
 
 		/**
-	     * @return The version of the VDF.
-	     */
-		[[nodiscard]] inline u32 version() const noexcept { return _m_version; }
+		 * @return The version of the VDF.
+		 */
+		[[nodiscard]] inline u32 version() const noexcept {
+			return _m_version;
+		}
 
 	protected:
 		/**
@@ -128,10 +145,10 @@ namespace phoenix {
 		explicit vdf_entry(std::string_view name, const char* data, u32 size, u32 attributes = 0);
 
 		/**
-	     * @brief Searches the entry for the first child with the given name.
-	     * @param name The name of the child to search for.
-	     * @return The child with the given name or `nullptr` if no entry was found.
-	     */
+		 * @brief Searches the entry for the first child with the given name.
+		 * @param name The name of the child to search for.
+		 * @return The child with the given name or `nullptr` if no entry was found.
+		 */
 		[[nodiscard]] const vdf_entry* find_child(std::string_view name) const;
 
 		/**
@@ -153,49 +170,67 @@ namespace phoenix {
 		// < getters >
 
 		/**
-	     * @return A list of child entries of the entry.
-	     */
-		[[nodiscard]] inline const std::vector<vdf_entry>& children() const noexcept { return _m_children; }
+		 * @return A list of child entries of the entry.
+		 */
+		[[nodiscard]] inline const std::vector<vdf_entry>& children() const noexcept {
+			return _m_children;
+		}
 
 		/**
 		 * @return The name of the entry.
 		 */
-		[[nodiscard]] inline const std::string& name() const noexcept { return _m_name; }
+		[[nodiscard]] inline const std::string& name() const noexcept {
+			return _m_name;
+		}
 
 		/**
 		 * @return The offset of the entry.
 		 */
-		[[nodiscard]] inline u32 offset() const noexcept { return _m_offset; }
+		[[nodiscard]] inline u32 offset() const noexcept {
+			return _m_offset;
+		}
 
 		/**
-	  	 * @return The size of the entry in bytes.
-	  	 */
-		[[nodiscard]] inline u32 size() const noexcept { return _m_size; }
+		 * @return The size of the entry in bytes.
+		 */
+		[[nodiscard]] inline u32 size() const noexcept {
+			return _m_size;
+		}
 
 		/**
 		 * @return A new reader for the contents of the entry.
 		 */
-		[[nodiscard]] inline reader open() const noexcept { return _m_data; }
+		[[nodiscard]] inline reader open() const noexcept {
+			return _m_data;
+		}
 
 		/**
 		 * @return The attributes of the file.
 		 */
-		[[nodiscard]] inline u32 attributes() const noexcept { return _m_attributes; }
+		[[nodiscard]] inline u32 attributes() const noexcept {
+			return _m_attributes;
+		}
 
 		/**
 		 * @return `true` if the entry is a file entry, `false` if not.
 		 */
-		[[nodiscard]] inline bool is_file() const noexcept { return !is_directory(); }
+		[[nodiscard]] inline bool is_file() const noexcept {
+			return !is_directory();
+		}
 
 		/**
 		 * @return `true` if the entry is a directory entry, `false` if not.
 		 */
-		[[nodiscard]] inline bool is_directory() const noexcept { return (_m_type & VDF_MASK_DIRECTORY) != 0; }
+		[[nodiscard]] inline bool is_directory() const noexcept {
+			return (_m_type & VDF_MASK_DIRECTORY) != 0;
+		}
 
 		/**
 		 * @return `true` if the entry is the last entry in a directory, `false` if not.
 		 */
-		[[nodiscard]] inline bool is_last() const noexcept { return (_m_type & VDF_MASK_LAST) != 0; }
+		[[nodiscard]] inline bool is_last() const noexcept {
+			return (_m_type & VDF_MASK_LAST) != 0;
+		}
 
 	protected:
 		/**
@@ -227,7 +262,7 @@ namespace phoenix {
 
 	/**
 	 * @brief Represents a VDF file (`.VDF` files).
-	*/
+	 */
 	class vdf_file {
 	public:
 		/**
@@ -272,12 +307,16 @@ namespace phoenix {
 		/**
 		 * @return The header data of the VDF file.
 		 */
-		[[nodiscard]] inline const vdf_header& header() const noexcept { return _m_header; }
+		[[nodiscard]] inline const vdf_header& header() const noexcept {
+			return _m_header;
+		}
 
 		/**
 		 * @return A list of root entries in the VDF file.
 		 */
-		[[nodiscard]] inline const std::vector<vdf_entry>& entries() const noexcept { return _m_entries; }
+		[[nodiscard]] inline const std::vector<vdf_entry>& entries() const noexcept {
+			return _m_entries;
+		}
 
 	protected:
 		/**
@@ -290,4 +329,4 @@ namespace phoenix {
 		vdf_header _m_header;
 	};
 
-}// namespace phoenix
+} // namespace phoenix

@@ -14,9 +14,9 @@ namespace phoenix {
 	template <typename T>
 	struct is_instance_ptr : std::false_type {};
 
-	template <typename T>// clang-format off
+	template <typename T> // clang-format off
 	requires (std::derived_from<T, instance>)
-	struct is_instance_ptr<std::shared_ptr<T>> : std::true_type {// clang-format on
+	struct is_instance_ptr<std::shared_ptr<T>> : std::true_type { // clang-format on
 		using instance_type = T;
 	};
 
@@ -76,17 +76,21 @@ namespace phoenix {
 		 * @param name The name of the instance to initialize (ie. 'STT_309_WHISTLER')
 		 * @return The initialized instance.
 		 */
-		template <class _instance_t>// clang-format off
+		template <class _instance_t> // clang-format off
 		requires (std::derived_from<_instance_t, instance>)
-		std::shared_ptr<_instance_t> init_instance(const std::string& name) {// clang-format on
+		std::shared_ptr<_instance_t> init_instance(const std::string& name) { // clang-format on
 			return init_instance<_instance_t>(_m_script.find_symbol_by_name(name));
 		}
 
-		template <class _instance_t>// clang-format off
+		template <class _instance_t> // clang-format off
 		requires (std::derived_from<_instance_t, instance>)
-		std::shared_ptr<_instance_t> init_instance(symbol* sym) {// clang-format on
-			if (sym == nullptr) { throw std::runtime_error {"Cannot init instance: not found"}; }
-			if (sym->type() != dt_instance) { throw std::runtime_error {"Cannot init " + sym->name() + ": not an instance"}; }
+		std::shared_ptr<_instance_t> init_instance(symbol* sym) { // clang-format on
+			if (sym == nullptr) {
+				throw std::runtime_error {"Cannot init instance: not found"};
+			}
+			if (sym->type() != dt_instance) {
+				throw std::runtime_error {"Cannot init " + sym->name() + ": not an instance"};
+			}
 
 			// check that the parent class is registered for the given instance type
 			auto* parent = _m_script.find_symbol_by_index(sym->parent());
@@ -95,8 +99,9 @@ namespace phoenix {
 			}
 
 			if (parent->registered_to() != typeid(_instance_t)) {
-				throw std::runtime_error {"Cannot init " + sym->name() + ": parent class is not registered or is "
-																		 "registered to a different instance class"};
+				throw std::runtime_error {"Cannot init " + sym->name() +
+				                          ": parent class is not registered or is "
+				                          "registered to a different instance class"};
 			}
 
 			// create the instance
@@ -148,8 +153,10 @@ namespace phoenix {
 		 * 		<tr><td>int</td><td><tt>int32_t</tt></td><td></td></tr>
 		 * 		<tr><td>func</td><td><tt>int32_t</tt></td><td>The value passed is the index of the function</td></tr>
 		 * 		<tr><td>float</td><td><tt>float</tt></td><td></td></tr>
-		 * 		<tr><td>string</td><td><tt>std::string_view</tt></td><td>Until I can find a way of properly passing <tt>const std::string&</tt></td></tr>
-		 * 		<tr><td>{instance}</td><td><tt>std::shared_ptr&lt;{instance}&gt;</tt></td><td>where {instance} is the type of instance (ie. C_NPC) [<sup>1</sup>]</td></tr>
+		 * 		<tr><td>string</td><td><tt>std::string_view</tt></td><td>Until I can find a way of properly passing
+	<tt>const std::string&</tt></td></tr>
+		 * 		<tr><td>{instance}</td><td><tt>std::shared_ptr&lt;{instance}&gt;</tt></td><td>where {instance} is the
+	type of instance (ie. C_NPC) [<sup>1</sup>]</td></tr>
 		 * 	</tbody>
 		 * </table>
 		 *
@@ -174,7 +181,8 @@ namespace phoenix {
 		 * 		<tr><td>bool</td><td><tt></tt>int|func</td><td></td></tr>
 		 * 		<tr><td>float</td><td><tt>float</tt></td><td></td></tr>
 		 * 		<tr><td>double</td><td><tt>float</tt></td><td></td></tr>
-		 * 		<tr><td>std::shared_ptr&lt;{instance}&gt;</td><td><tt>{instance}</tt></td><td>where {instance} is the type of instance (ie. C_NPC) [<sup>1</sup>]</td></td></tr>
+		 * 		<tr><td>std::shared_ptr&lt;{instance}&gt;</td><td><tt>{instance}</tt></td><td>where {instance} is the
+	type of instance (ie. C_NPC) [<sup>1</sup>]</td></td></tr>
 		 * 		<tr><td>std::string</td><td><tt>string</tt></td><td></td></tr>
 		 * 		<tr><td>void</td><td><tt>void</tt></td><td></td></tr>
 		 * 	</tbody>
@@ -188,42 +196,52 @@ namespace phoenix {
 		 * @tparam P The parameters types of the external.
 		 * @param name The name of the external to register.
 		 * @param callback The C++ function to register as the external.
-		 * @throws illegal_external_rtype if the return type of the C++ function does not match it's definition in the script.
-		 * @throws illegal_external_param if a parameter type of the C++ function does not match it's definition in the script.
+		 * @throws illegal_external_rtype if the return type of the C++ function does not match it's definition in the
+	script.
+		 * @throws illegal_external_param if a parameter type of the C++ function does not match it's definition in the
+	script.
 		 * @throws illegal_external if The number of parameters of the definition and callback is not the same.
 		 * @throws runtime_error if any other error occurs.
 		 */
 		template <typename R, typename... P>
 		void register_external(const std::string& name, const std::function<R(P...)>& callback) {
 			auto* sym = _m_script.find_symbol_by_name(name);
-			if (sym == nullptr) throw std::runtime_error {"symbol not found"};
-			if (!sym->is_external()) throw std::runtime_error {"symbol is not external"};
+			if (sym == nullptr)
+				throw std::runtime_error {"symbol not found"};
+			if (!sym->is_external())
+				throw std::runtime_error {"symbol is not external"};
 
 			if constexpr (!std::same_as<void, R>) {
-				if (!sym->has_return()) throw illegal_external_rtype(sym, "<non-void>");
+				if (!sym->has_return())
+					throw illegal_external_rtype(sym, "<non-void>");
 				if constexpr (is_instance_ptr<R>::value) {
-					if (sym->rtype() != dt_instance) throw illegal_external_rtype(sym, "instance");
+					if (sym->rtype() != dt_instance)
+						throw illegal_external_rtype(sym, "instance");
 				} else if constexpr (std::floating_point<R>) {
-					if (sym->rtype() != dt_float) throw illegal_external_rtype(sym, "float");
+					if (sym->rtype() != dt_float)
+						throw illegal_external_rtype(sym, "float");
 				} else if constexpr (std::convertible_to<int32_t, R>) {
-					if (sym->rtype() != dt_integer) throw illegal_external_rtype(sym, "int");
+					if (sym->rtype() != dt_integer)
+						throw illegal_external_rtype(sym, "int");
 				} else if constexpr (std::convertible_to<std::string, R>) {
-					if (sym->rtype() != dt_string) throw illegal_external_rtype(sym, "string");
+					if (sym->rtype() != dt_string)
+						throw illegal_external_rtype(sym, "string");
 				} else {
 					throw std::runtime_error {"unsupported return type"};
 				}
 			} else {
-				if (sym->has_return()) throw illegal_external_rtype(sym, "void");
+				if (sym->has_return())
+					throw illegal_external_rtype(sym, "void");
 			}
 
 			std::vector<symbol*> params = _m_script.find_parameters_for_function(sym);
 			if (params.size() < sizeof...(P))
 				throw illegal_external {"too many arguments declared for external " + sym->name() + ": declared " +
-										std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
+				                        std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
 
 			if (params.size() > sizeof...(P))
 				throw illegal_external {"not enough arguments declared for external " + sym->name() + ": declared " +
-										std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
+				                        std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
 
 			if constexpr (sizeof...(P) > 0) {
 				check_external_params<0, P...>(params);
@@ -241,7 +259,7 @@ namespace phoenix {
 				} else {
 					if constexpr (sizeof...(P) > 0) {
 						vm.push_value_from_external(std::apply(callback, vm.pop_values_for_external<P...>()));
-					}else {
+					} else {
 						vm.push_value_from_external(callback());
 					}
 				}
@@ -264,7 +282,9 @@ namespace phoenix {
 			register_external(name, std::function {cb});
 		}
 
-		script& loaded_script() const noexcept { return _m_script; }
+		script& loaded_script() const noexcept {
+			return _m_script;
+		}
 
 	protected:
 		/**
@@ -308,7 +328,8 @@ namespace phoenix {
 		void pop_call();
 
 		/**
-		 * @brief Checks that the type of each symbol in the given set of defined symbols matches the given type parameters.
+		 * @brief Checks that the type of each symbol in the given set of defined symbols matches the given type
+		 * parameters.
 		 *
 		 * This is used to validate that the parameters declared on an external function actually match the parameters
 		 * defined in the script file. This prevents these hard to debug errors when the definition of an external does
@@ -324,14 +345,17 @@ namespace phoenix {
 		template <int i, typename P, typename... Px>
 		void check_external_params(const std::vector<symbol*>& defined) {
 			if constexpr (is_instance_ptr<P>::value || std::same_as<symbol*, P>) {
-				if (defined[i]->type() != dt_instance) throw illegal_external_param(defined[i], "instance", i + 1);
+				if (defined[i]->type() != dt_instance)
+					throw illegal_external_param(defined[i], "instance", i + 1);
 			} else if constexpr (std::same_as<float, P>) {
-				if (defined[i]->type() != dt_float) throw illegal_external_param(defined[i], "float", i + 1);
+				if (defined[i]->type() != dt_float)
+					throw illegal_external_param(defined[i], "float", i + 1);
 			} else if constexpr (std::same_as<int32_t, P>) {
 				if (defined[i]->type() != dt_integer && defined[i]->type() != dt_function)
 					throw illegal_external_param(defined[i], "int", i + 1);
 			} else if constexpr (std::same_as<std::string_view, P>) {
-				if (defined[i]->type() != dt_string) throw illegal_external_param(defined[i], "string", i + 1);
+				if (defined[i]->type() != dt_string)
+					throw illegal_external_param(defined[i], "string", i + 1);
 			}
 
 			if constexpr (sizeof...(Px) > 0) {
@@ -349,10 +373,10 @@ namespace phoenix {
 		 *            symbol*, std::string_view)
 		 * @return The value popped.
 		 */
-		template <typename T>// clang-format off
+		template <typename T> // clang-format off
 		requires (is_instance_ptr<T>::value || std::same_as<float, T> || std::same_as<s32, T> ||
 		          std::same_as<std::string_view, T> || std::same_as<symbol*, T>)
-		inline T pop_value_for_external() {// clang-format on
+		inline T pop_value_for_external() { // clang-format on
 			if constexpr (is_instance_ptr<T>::value) {
 				auto r = pop_instance();
 
@@ -360,13 +384,13 @@ namespace phoenix {
 					auto& expected = typeid(typename is_instance_ptr<T>::instance_type);
 
 					if (!r->_m_type) {
-						throw std::runtime_error {"Popping instance of unregistered type: " + std::string {r->_m_type->name()} +
-												  ", expected " + expected.name()};
+						throw std::runtime_error {"Popping instance of unregistered type: " +
+						                          std::string {r->_m_type->name()} + ", expected " + expected.name()};
 					}
 
 					if (*r->_m_type != expected) {
-						throw std::runtime_error {"Popping instance of wrong type: " + std::string {r->_m_type->name()} +
-												  ", expected " + expected.name()};
+						throw std::runtime_error {"Popping instance of wrong type: " +
+						                          std::string {r->_m_type->name()} + ", expected " + expected.name()};
 					}
 				}
 
@@ -393,10 +417,10 @@ namespace phoenix {
 		 * @tparam T The type of value to push.
 		 * @param v The value to push.
 		 */
-		template <typename T>// clang-format off
+		template <typename T> // clang-format off
 		requires (std::floating_point<T> || std::convertible_to<s32, T> || std::convertible_to<std::string, T> ||
 		          is_instance_ptr<T>::value)
-		void push_value_from_external(T v) {// clang-format on
+		void push_value_from_external(T v) { // clang-format on
 			if constexpr (is_instance_ptr<T>::value) {
 				push_instance(std::static_pointer_cast<instance>(v));
 			} else if constexpr (std::floating_point<T>) {
@@ -445,4 +469,4 @@ namespace phoenix {
 
 		void print_stack_trace();
 	};
-}// namespace phoenix
+} // namespace phoenix

@@ -9,7 +9,9 @@ namespace phoenix {
 	void archive_reader_binary::read_header() {
 		{
 			std::string objects = input.read_line();
-			if (!objects.starts_with("objects ")) { throw parser_error("not an archive: objects missing"); }
+			if (!objects.starts_with("objects ")) {
+				throw parser_error("not an archive: objects missing");
+			}
 			_m_objects = std::stoi(objects.substr(objects.find(' ') + 1));
 		}
 
@@ -19,7 +21,7 @@ namespace phoenix {
 	}
 
 	bool archive_reader_binary::read_object_begin(archive_object& obj) {
-		(void) input.read_u32();// chunksize including itself
+		(void) input.read_u32(); // chunksize including itself
 		obj.version = input.read_u16();
 		obj.index = input.read_u32();
 		obj.object_name = input.read_line(true);
@@ -95,4 +97,4 @@ namespace phoenix {
 	std::vector<u8> archive_reader_binary::read_raw_bytes() {
 		throw parser_error("archive_reader_binary: getting raw bytes from a binary archive is not supported");
 	}
-}// namespace phoenix
+} // namespace phoenix

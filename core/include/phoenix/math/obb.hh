@@ -23,10 +23,7 @@ namespace phoenix {
 		static obb parse(reader& in) {
 			obb bbox {};
 			bbox.center = in.read_vec3();
-			bbox.rotation = glm::mat3x3 {
-					in.read_vec3(),
-					in.read_vec3(),
-					in.read_vec3()};
+			bbox.rotation = glm::mat3x3 {in.read_vec3(), in.read_vec3(), in.read_vec3()};
 			bbox.half_width = in.read_vec3();
 
 			auto child_count = in.read_u16();
@@ -38,4 +35,4 @@ namespace phoenix {
 		}
 	};
 
-}// namespace phoenix
+} // namespace phoenix

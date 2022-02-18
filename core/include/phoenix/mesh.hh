@@ -57,7 +57,7 @@ namespace phoenix {
 		polygon_flags flags;
 
 		u8 vertex_count;
-		polygon_index indices[255];// ZenLib uses 255 here. not sure why
+		polygon_index indices[255]; // ZenLib uses 255 here. not sure why
 	};
 
 	/**
@@ -86,47 +86,65 @@ namespace phoenix {
 		/**
 		 * @return The creation date of the mesh.
 		 */
-		[[nodiscard]] inline phoenix::date date() const noexcept { return _m_date; }
+		[[nodiscard]] inline phoenix::date date() const noexcept {
+			return _m_date;
+		}
 
 		/**
 		 * @return The name of the mesh
 		 */
-		[[nodiscard]] inline const std::string& name() const noexcept { return _m_name; }
+		[[nodiscard]] inline const std::string& name() const noexcept {
+			return _m_name;
+		}
 
 		/**
 		 * @return The bounding box of the mesh as a (min, max) tuple.
 		 */
-		[[nodiscard]] inline std::tuple<glm::vec3, glm::vec3> bbox() const noexcept { return std::make_tuple(_m_bbox[0], _m_bbox[1]); }
+		[[nodiscard]] inline std::tuple<glm::vec3, glm::vec3> bbox() const noexcept {
+			return std::make_tuple(_m_bbox[0], _m_bbox[1]);
+		}
 
 		/**
 		 * @return A list of materials used by the mesh.
 		 */
-		[[nodiscard]] inline const std::vector<material>& materials() const noexcept { return _m_materials; }
+		[[nodiscard]] inline const std::vector<material>& materials() const noexcept {
+			return _m_materials;
+		}
 
 		/**
 		 * @return A list of vertices of the mesh.
 		 */
-		[[nodiscard]] inline const std::vector<glm::vec3>& vertices() const noexcept { return _m_vertices; }
+		[[nodiscard]] inline const std::vector<glm::vec3>& vertices() const noexcept {
+			return _m_vertices;
+		}
 
 		/**
 		 * @return A list of vertex features of the mesh.
 		 */
-		[[nodiscard]] inline const std::vector<vertex_feature>& features() const noexcept { return _m_features; }
+		[[nodiscard]] inline const std::vector<vertex_feature>& features() const noexcept {
+			return _m_features;
+		}
 
 		/**
 		 * @return A list of polygons of the mesh.
 		 */
-		[[nodiscard]] inline const std::vector<polygon>& polygons() const noexcept { return _m_polygons; }
+		[[nodiscard]] inline const std::vector<polygon>& polygons() const noexcept {
+			return _m_polygons;
+		}
 
 		/**
 		 * @return The oriented bbox tree of the mesh.
 		 */
-		[[nodiscard]] const obb& oriented_bbox() const noexcept { return _m_obb; };
+		[[nodiscard]] const obb& oriented_bbox() const noexcept {
+			return _m_obb;
+		};
 
 		/**
 		 * @return All shared lightmaps associated with the mesh
 		 */
-		[[nodiscard]] const std::vector<light_map>& lightmaps() const noexcept { return _m_lightmaps; }
+		[[nodiscard]] const std::vector<light_map>& lightmaps() const noexcept {
+			return _m_lightmaps;
+		}
 
 	private:
 		phoenix::date _m_date;
@@ -139,4 +157,4 @@ namespace phoenix {
 		std::vector<polygon> _m_polygons;
 		std::vector<light_map> _m_lightmaps;
 	};
-}// namespace phoenix
+} // namespace phoenix

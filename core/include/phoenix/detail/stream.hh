@@ -43,17 +43,23 @@ namespace phoenix {
 		/**
 		 * @return The current read offset into the internal buffer.
 		 */
-		[[nodiscard]] inline u64 tell() const noexcept { return _m_offset; }
+		[[nodiscard]] inline u64 tell() const noexcept {
+			return _m_offset;
+		}
 
 		/**
 		 * @return The size of the internal buffer in bytes.
 		 */
-		[[nodiscard]] inline u64 size() const noexcept { return _m_buffer.size(); }
+		[[nodiscard]] inline u64 size() const noexcept {
+			return _m_buffer.size();
+		}
 
 		/**
 		 * @return The data of the internal buffer.
 		 */
-		[[nodiscard]] const char* data() const noexcept { return _m_buffer.data(); }
+		[[nodiscard]] const char* data() const noexcept {
+			return _m_buffer.data();
+		}
 
 		/**
 		 * @brief Set the read offset into the internal buffer to the given @p offset.
@@ -115,91 +121,117 @@ namespace phoenix {
 		 * @return The value read.
 		 * @throws io_error if reading the value would be out-of-range.
 		 */
-		[[nodiscard]] inline u8 read_u8() { return _read_t<u8>(); }
+		[[nodiscard]] inline u8 read_u8() {
+			return _read_t<u8>();
+		}
 
 		/**
 		 * @brief Reads a `uint16_t` from the internal buffer.
 		 * @return The value read.
 		 * @throws io_error if reading the value would be out-of-range.
 		 */
-		[[nodiscard]] inline u16 read_u16() { return _read_t<u16>(); }
+		[[nodiscard]] inline u16 read_u16() {
+			return _read_t<u16>();
+		}
 
 		/**
 		 * @brief Reads a `uint32_t` from the internal buffer.
 		 * @return The value read.
 		 * @throws io_error if reading the value would be out-of-range.
 		 */
-		[[nodiscard]] inline u32 read_u32() { return _read_t<u32>(); }
+		[[nodiscard]] inline u32 read_u32() {
+			return _read_t<u32>();
+		}
 
 		/**
 		 * @brief Reads a `uint64_t` from the internal buffer.
 		 * @return The value read.
 		 * @throws io_error if reading the value would be out-of-range.
 		 */
-		[[nodiscard]] inline u64 read_u64() { return _read_t<u64>(); }
+		[[nodiscard]] inline u64 read_u64() {
+			return _read_t<u64>();
+		}
 
 		/**
 		 * @brief Reads a `int8_t` from the internal buffer.
 		 * @return The value read.
 		 * @throws io_error if reading the value would be out-of-range.
 		 */
-		[[nodiscard]] inline s8 read_s8() { return _read_t<s8>(); }
+		[[nodiscard]] inline s8 read_s8() {
+			return _read_t<s8>();
+		}
 
 		/**
 		 * @brief Reads a `int16_t` from the internal buffer.
 		 * @return The value read.
 		 * @throws io_error if reading the value would be out-of-range.
 		 */
-		[[nodiscard]] inline s16 read_s16() { return _read_t<s16>(); }
+		[[nodiscard]] inline s16 read_s16() {
+			return _read_t<s16>();
+		}
 
 		/**
 		 * @brief Reads a `int32_t` from the internal buffer.
 		 * @return The value read.
 		 * @throws io_error if reading the value would be out-of-range.
 		 */
-		[[nodiscard]] inline s32 read_s32() { return _read_t<s32>(); }
+		[[nodiscard]] inline s32 read_s32() {
+			return _read_t<s32>();
+		}
 
 		/**
 		 * @brief Reads a `int64_t` from the internal buffer.
 		 * @return The value read.
 		 * @throws io_error if reading the value would be out-of-range.
 		 */
-		[[nodiscard]] inline s64 read_s64() { return _read_t<s64>(); }
+		[[nodiscard]] inline s64 read_s64() {
+			return _read_t<s64>();
+		}
 
 		/**
 		 * @brief Reads a `float` from the internal buffer.
 		 * @return The value read.
 		 * @throws io_error if reading the value would be out-of-range.
 		 */
-		[[nodiscard]] inline f32 read_f32() { return _read_t<f32>(); }
+		[[nodiscard]] inline f32 read_f32() {
+			return _read_t<f32>();
+		}
 
 		/**
 		 * @brief Reads a `double` from the internal buffer.
 		 * @return The value read.
 		 * @throws io_error if reading the value would be out-of-range.
 		 */
-		[[nodiscard]] inline f64 read_f64() { return _read_t<f64>(); }
+		[[nodiscard]] inline f64 read_f64() {
+			return _read_t<f64>();
+		}
 
 		/**
 		 * @brief Reads two `float`s from the internal buffer as a glm::vec2.
 		 * @return Two `float`s as a vec2.
 		 * @throws io_error if reading the value would be out-of-range.
 		 */
-		inline glm::vec2 read_vec2() { return {read_f32(), read_f32()}; }
+		inline glm::vec2 read_vec2() {
+			return {read_f32(), read_f32()};
+		}
 
 		/**
 		 * @brief Reads three `float`s from the internal buffer as a glm::vec3.
 		 * @return Three float`s as a vec3.
 		 * @throws io_error if reading the value would be out-of-range.
 		 */
-		inline glm::vec3 read_vec3() { return {read_f32(), read_f32(), read_f32()}; }
+		inline glm::vec3 read_vec3() {
+			return {read_f32(), read_f32(), read_f32()};
+		}
 
 		/**
 		 * @brief Reads four `float`s from the internal buffer as a glm::vec4.
 		 * @return Four `float`s as a vec4.
 		 * @throws io_error if reading the value would be out-of-range.
 		 */
-		inline glm::vec4 read_vec4() { return {read_f32(), read_f32(), read_f32(), read_f32()}; }
+		inline glm::vec4 read_vec4() {
+			return {read_f32(), read_f32(), read_f32(), read_f32()};
+		}
 
 	protected:
 		/**
@@ -239,7 +271,9 @@ namespace phoenix {
 		/**
 		 * @return The current write offset into the stream.
 		 */
-		[[nodiscard]]inline u64 tell() const noexcept { return _m_stream.tellp(); };
+		[[nodiscard]] inline u64 tell() const noexcept {
+			return _m_stream.tellp();
+		};
 
 		/**
 		 * @brief Set the current write offset into the stream.
@@ -262,7 +296,9 @@ namespace phoenix {
 		 * @param str The string to write.
 		 * @throws io_error if writing fails for any reason.
 		 */
-		inline void write_string(std::string_view str) { write(str.begin(), str.size()); }
+		inline void write_string(std::string_view str) {
+			write(str.begin(), str.size());
+		}
 
 		/**
 		 * @brief Writes a string and a newline char to to the stream.
@@ -279,70 +315,90 @@ namespace phoenix {
 		 * @param v The value to write.
 		 * @throws io_error if writing fails for any reason.
 		 */
-		inline void write_u8(u8 v) { _write_t<u8>(v); }
+		inline void write_u8(u8 v) {
+			_write_t<u8>(v);
+		}
 
 		/**
 		 * @brief Writes a `u16` value to the stream.
 		 * @param v The value to write.
 		 * @throws io_error if writing fails for any reason.
 		 */
-		inline void write_u16(u16 v) { _write_t<u16>(v); }
+		inline void write_u16(u16 v) {
+			_write_t<u16>(v);
+		}
 
 		/**
 		 * @brief Writes a `u32` value to the stream.
 		 * @param v The value to write.
 		 * @throws io_error if writing fails for any reason.
 		 */
-		inline void write_u32(u32 v) { _write_t<u32>(v); }
+		inline void write_u32(u32 v) {
+			_write_t<u32>(v);
+		}
 
 		/**
 		 * @brief Writes a `u64` value to the stream.
 		 * @param v The value to write.
 		 * @throws io_error if writing fails for any reason.
 		 */
-		inline void write_u64(u64 v) { _write_t<u64>(v); }
+		inline void write_u64(u64 v) {
+			_write_t<u64>(v);
+		}
 
 		/**
 		 * @brief Writes a `s8` value to the stream.
 		 * @param v The value to write.
 		 * @throws io_error if writing fails for any reason.
 		 */
-		inline void write_s8(s8 v) { _write_t<s8>(v); }
+		inline void write_s8(s8 v) {
+			_write_t<s8>(v);
+		}
 
 		/**
 		 * @brief Writes a `s16` value to the stream.
 		 * @param v The value to write.
 		 * @throws io_error if writing fails for any reason.
 		 */
-		inline void write_s16(s16 v) { _write_t<s16>(v); }
+		inline void write_s16(s16 v) {
+			_write_t<s16>(v);
+		}
 
 		/**
 		 * @brief Writes a `s32` value to the stream.
 		 * @param v The value to write.
 		 * @throws io_error if writing fails for any reason.
 		 */
-		inline void write_s32(s32 v) { _write_t<s32>(v); }
+		inline void write_s32(s32 v) {
+			_write_t<s32>(v);
+		}
 
 		/**
 		 * @brief Writes a `s64` value to the stream.
 		 * @param v The value to write.
 		 * @throws io_error if writing fails for any reason.
 		 */
-		inline void write_s64(s64 v) { _write_t<s64>(v); }
+		inline void write_s64(s64 v) {
+			_write_t<s64>(v);
+		}
 
 		/**
 		 * @brief Writes a `f32` value to the stream.
 		 * @param v The value to write.
 		 * @throws io_error if writing fails for any reason.
 		 */
-		inline void write_f32(f32 v) { _write_t<f32>(v); }
+		inline void write_f32(f32 v) {
+			_write_t<f32>(v);
+		}
 
 		/**
 		 * @brief Writes a `f64` value to the stream.
 		 * @param v The value to write.
 		 * @throws io_error if writing fails for any reason.
 		 */
-		inline void write_f64(f64 v) { _write_t<f64>(v); }
+		inline void write_f64(f64 v) {
+			_write_t<f64>(v);
+		}
 
 	protected:
 		/**
@@ -360,4 +416,4 @@ namespace phoenix {
 		std::ostream& _m_stream;
 		u64 _m_begin;
 	};
-}// namespace phoenix
+} // namespace phoenix

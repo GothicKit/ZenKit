@@ -43,17 +43,23 @@ namespace phoenix {
 		/**
 		 * @return The name of the font
 		 */
-		[[nodiscard]] inline const std::string& name() const noexcept { return _m_name; }
+		[[nodiscard]] inline const std::string& name() const noexcept {
+			return _m_name;
+		}
 
 		/**
 		 * @return The height of the font
 		 */
-		[[nodiscard]] inline u32 height() const noexcept { return _m_height; }
+		[[nodiscard]] inline u32 height() const noexcept {
+			return _m_height;
+		}
 
 		/**
 		 * @return The glyphs in the font (length of FONT_MAX_GLYPHS)
 		 */
-		[[nodiscard]] inline const glyph* glyphs() const noexcept { return _m_glyphs; }
+		[[nodiscard]] inline const glyph* glyphs() const noexcept {
+			return _m_glyphs;
+		}
 
 	protected:
 		font() = default;
@@ -64,4 +70,4 @@ namespace phoenix {
 		glyph _m_glyphs[FONT_MAX_GLYPHS];
 	};
 
-}// namespace phoenix
+} // namespace phoenix

@@ -28,15 +28,8 @@ namespace phoenix {
 		dt_instance = 7U,
 	};
 
-	constexpr const char* const DAEDALUS_DATA_TYPE_NAMES[] = {
-			"void",
-			"float",
-			"int",
-			"string",
-			"class",
-			"function",
-			"prototype",
-			"instance"};
+	constexpr const char* const DAEDALUS_DATA_TYPE_NAMES[] =
+	    {"void", "float", "int", "string", "class", "function", "prototype", "instance"};
 
 	/**
 	 * @brief Flags set on symbols.
@@ -53,32 +46,32 @@ namespace phoenix {
 	 * @brief All opcodes supported by the daedalus interpreter
 	 */
 	enum opcode : u8 {
-		op_add = 0,              // a + b
-		op_subtract = 1,         // a - b
-		op_multiply = 2,         // a * b
-		op_divide = 3,           // a / b
-		op_modulo = 4,           // a % b
-		op_bitor = 5,            // a | b
-		op_bitand = 6,           // a & b
-		op_less = 7,             // a < b
-		op_greater = 8,          // a > b
-		op_assign_int = 9,       // a = b
-		op_or = 11,              // a || b
-		op_and = 12,             // a && b
-		op_shift_left = 13,      // a << b
-		op_shift_right = 14,     // a >> b
-		op_less_or_equal = 15,   // a <= b
-		op_equal = 16,           // a == b
-		op_not_equal = 17,       // a != b
-		op_greater_or_equal = 18,// a >= b
-		op_assign_add = 19,      // a += b (a = a + b)
-		op_assign_subtract = 20, // a -= b (a = a - b)
-		op_assign_multiply = 21, // a *= b (a = a * b)
-		op_assign_divide = 22,   // a /= b (a = a / b)
-		op_plus = 30,            // +a
-		op_minus = 31,           // -a
-		op_not = 32,             // !a
-		op_complement = 33,      // ~a
+		op_add = 0,               // a + b
+		op_subtract = 1,          // a - b
+		op_multiply = 2,          // a * b
+		op_divide = 3,            // a / b
+		op_modulo = 4,            // a % b
+		op_bitor = 5,             // a | b
+		op_bitand = 6,            // a & b
+		op_less = 7,              // a < b
+		op_greater = 8,           // a > b
+		op_assign_int = 9,        // a = b
+		op_or = 11,               // a || b
+		op_and = 12,              // a && b
+		op_shift_left = 13,       // a << b
+		op_shift_right = 14,      // a >> b
+		op_less_or_equal = 15,    // a <= b
+		op_equal = 16,            // a == b
+		op_not_equal = 17,        // a != b
+		op_greater_or_equal = 18, // a >= b
+		op_assign_add = 19,       // a += b (a = a + b)
+		op_assign_subtract = 20,  // a -= b (a = a - b)
+		op_assign_multiply = 21,  // a *= b (a = a * b)
+		op_assign_divide = 22,    // a /= b (a = a / b)
+		op_plus = 30,             // +a
+		op_minus = 31,            // -a
+		op_not = 32,              // !a
+		op_complement = 33,       // ~a
 		op_noop = 45,
 		op_return = 60,
 		op_call = 61,
@@ -94,7 +87,7 @@ namespace phoenix {
 		op_jump = 75,
 		op_jump_if_zero = 76,
 		op_set_instance = 80,
-		op_push_array_var = 245,// EParOp_PushVar + EParOp_Array
+		op_push_array_var = 245, // EParOp_PushVar + EParOp_Array
 	};
 
 	class symbol;
@@ -111,7 +104,9 @@ namespace phoenix {
 		/**
 		 * @return The symbol used to create the instance. This is of cour
 		 */
-		[[nodiscard]] const symbol* get_symbol() const noexcept { return _m_symbol; }
+		[[nodiscard]] const symbol* get_symbol() const noexcept {
+			return _m_symbol;
+		}
 
 	private:
 		friend class symbol;
@@ -204,7 +199,8 @@ namespace phoenix {
 		 * @param context An instance to use as context for getting member variables.
 		 * @return The string associated with the symbol.
 		 */
-		[[nodiscard]] const std::string& get_string(u8 index = 0, const std::shared_ptr<instance>& context = nullptr) const;
+		[[nodiscard]] const std::string& get_string(u8 index = 0,
+		                                            const std::shared_ptr<instance>& context = nullptr) const;
 
 		/**
 		 * @brief Validates that the symbol is a float and retrieves it's value in the given context.
@@ -264,99 +260,142 @@ namespace phoenix {
 		 * @brief Tests whether the symbol is a constant.
 		 * @return `true` if the symbol is a constant, `false` if not.
 		 */
-		[[nodiscard]] inline bool is_const() const noexcept { return (_m_flags & sf_const) != 0; }
+		[[nodiscard]] inline bool is_const() const noexcept {
+			return (_m_flags & sf_const) != 0;
+		}
 		/**
 		 * @brief Tests whether the symbol is a member variable.
 		 * @return `true` if the symbol is a member, `false` if not.
 		 */
-		[[nodiscard]] inline bool is_member() const noexcept { return (_m_flags & sf_member) != 0; }
+		[[nodiscard]] inline bool is_member() const noexcept {
+			return (_m_flags & sf_member) != 0;
+		}
 
 		/**
 		 * @brief Tests whether the symbol is an extern symbol.
 		 * @return `true` if the symbol is an extern symbol, `false` if not.
 		 */
-		[[nodiscard]] inline bool is_external() const noexcept { return (_m_flags & sf_external) != 0; }
+		[[nodiscard]] inline bool is_external() const noexcept {
+			return (_m_flags & sf_external) != 0;
+		}
 
 		/**
 		 * @brief Tests whether the symbol is merged.
 		 * @return `true` if the symbol is merged, `false` if not.
 		 * @note It is currently not known what 'merged' means.
 		 */
-		[[nodiscard]] inline bool is_merged() const noexcept { return (_m_flags & sf_merged) != 0; }
+		[[nodiscard]] inline bool is_merged() const noexcept {
+			return (_m_flags & sf_merged) != 0;
+		}
 
 		/**
 		 * @brief brief Tests whether the symbol is a compiler-generated symbol
 		 * @return return `true` if the symbol is generated, `false` if not.
 		 */
-		[[nodiscard]] inline bool is_generated() const noexcept { return _m_generated; }
+		[[nodiscard]] inline bool is_generated() const noexcept {
+			return _m_generated;
+		}
 
 		/**
 		 * @brief brief Tests whether the symbol has a return value.
 		 * @return return `true` if the symbol has a return value, `false` if not.
 		 */
-		[[nodiscard]] inline bool has_return() const noexcept { return (_m_flags & sf_return) != 0; }
+		[[nodiscard]] inline bool has_return() const noexcept {
+			return (_m_flags & sf_return) != 0;
+		}
 
 		/**
 		 * @return The name of the symbol.
 		 */
-		[[nodiscard]] inline const std::string& name() const noexcept { return _m_name; }
+		[[nodiscard]] inline const std::string& name() const noexcept {
+			return _m_name;
+		}
 
 		/**
 		 * @return The address of the symbol.
 		 */
-		[[nodiscard]] inline u32 address() const noexcept { return _m_address; }
+		[[nodiscard]] inline u32 address() const noexcept {
+			return _m_address;
+		}
 
 		/**
 		 * @return The index of the parent symbol or unset if the symbol does not have a parent.
 		 */
-		[[nodiscard]] inline u32 parent() const noexcept { return _m_parent; }
+		[[nodiscard]] inline u32 parent() const noexcept {
+			return _m_parent;
+		}
 
 		/**
 		 * @return The count of values stored in the symbol.
 		 */
-		[[nodiscard]] inline u32 count() const noexcept { return _m_count; }
+		[[nodiscard]] inline u32 count() const noexcept {
+			return _m_count;
+		}
 
 		/**
 		 * @return The type of the symbol.
 		 */
-		[[nodiscard]] inline datatype type() const noexcept { return _m_type; }
+		[[nodiscard]] inline datatype type() const noexcept {
+			return _m_type;
+		}
 
 		/**
 		 * @return The index of the symbol.
 		 */
-		[[nodiscard]] inline u32 index() const noexcept { return _m_index; }
+		[[nodiscard]] inline u32 index() const noexcept {
+			return _m_index;
+		}
 
 		/**
 		 * @return The return type of the symbol.
 		 */
-		[[nodiscard]] inline datatype rtype() const noexcept { return _m_return_type; }
+		[[nodiscard]] inline datatype rtype() const noexcept {
+			return _m_return_type;
+		}
 
 		/**
 		 * @return The index of the file the symbol was in.
 		 */
-		[[nodiscard]] inline u32 file_index() const noexcept { return _m_file_index; }
+		[[nodiscard]] inline u32 file_index() const noexcept {
+			return _m_file_index;
+		}
 
 		/**
 		 * @return The offset in bytes of a member from the start of the instance.
 		 */
-		[[nodiscard]] inline u32 offset_as_member() const noexcept { return _m_member_offset; }
+		[[nodiscard]] inline u32 offset_as_member() const noexcept {
+			return _m_member_offset;
+		}
 
+		[[nodiscard]] inline u32 line_start() const noexcept {
+			return _m_line_start;
+		}
+		[[nodiscard]] inline u32 line_count() const noexcept {
+			return _m_line_count;
+		}
+		[[nodiscard]] inline u32 char_start() const noexcept {
+			return _m_char_start;
+		}
+		[[nodiscard]] inline u32 char_count() const noexcept {
+			return _m_char_count;
+		}
+		[[nodiscard]] inline u32 class_size() const noexcept {
+			return _m_class_size;
+		}
 
-		[[nodiscard]] inline u32 line_start() const noexcept { return _m_line_start; }
-		[[nodiscard]] inline u32 line_count() const noexcept { return _m_line_count; }
-		[[nodiscard]] inline u32 char_start() const noexcept { return _m_char_start; }
-		[[nodiscard]] inline u32 char_count() const noexcept { return _m_char_count; }
-		[[nodiscard]] inline u32 class_size() const noexcept { return _m_class_size; }
-
-		[[nodiscard]] inline const std::type_info& registered_to() const noexcept { return *_m_registered_to; };
+		[[nodiscard]] inline const std::type_info& registered_to() const noexcept {
+			return *_m_registered_to;
+		};
 
 	protected:
 		symbol() = default;
 
 		template <typename T>
 		const T* get_member_ptr(u8 index, const std::shared_ptr<instance>& context) const {
-			if (!_m_registered_to) throw unbound_member_access(*this);
-			if (*_m_registered_to != *context->_m_type) throw illegal_context_type {*this, *context->_m_type};
+			if (!_m_registered_to)
+				throw unbound_member_access(*this);
+			if (*_m_registered_to != *context->_m_type)
+				throw illegal_context_type {*this, *context->_m_type};
 
 			u32 target_offset = offset_as_member() + index * sizeof(T);
 			return reinterpret_cast<const T*>(reinterpret_cast<const char*>(context.get()) + target_offset);
@@ -364,8 +403,10 @@ namespace phoenix {
 
 		template <typename T>
 		T* get_member_ptr(u8 index, const std::shared_ptr<instance>& context) {
-			if (!_m_registered_to) throw unbound_member_access(*this);
-			if (*_m_registered_to != *context->_m_type) throw illegal_context_type {*this, *context->_m_type};
+			if (!_m_registered_to)
+				throw unbound_member_access(*this);
+			if (*_m_registered_to != *context->_m_type)
+				throw illegal_context_type {*this, *context->_m_type};
 
 			u32 target_offset = offset_as_member() + index * sizeof(T);
 			return reinterpret_cast<T*>(reinterpret_cast<char*>(context.get()) + target_offset);
@@ -374,7 +415,11 @@ namespace phoenix {
 	private:
 		friend class script;
 		std::string _m_name;
-		std::variant<std::unique_ptr<s32[]>, std::unique_ptr<float[]>, std::unique_ptr<std::string[]>, std::shared_ptr<instance>> _m_value;
+		std::variant<std::unique_ptr<s32[]>,
+		             std::unique_ptr<float[]>,
+		             std::unique_ptr<std::string[]>,
+		             std::shared_ptr<instance>>
+		    _m_value;
 
 		u32 _m_address {unset};
 		u32 _m_parent {unset};
@@ -433,9 +478,9 @@ namespace phoenix {
 		 * @param name The name of the member in the script
 		 * @param field The field to register
 		 */
-		template <typename _class, typename _member>// clang-format off
+		template <typename _class, typename _member> // clang-format off
 		requires (std::same_as<std::string, _member> || std::same_as<float, _member> || std::same_as<int32_t, _member>)
-		void register_member(const std::string& name, _member _class::*field) {// clang-format on
+		void register_member(const std::string& name, _member _class::*field) { // clang-format on
 			auto* type = &typeid(_class);
 			auto* sym = _check_member<_class, _member, 1>(name, type);
 
@@ -450,9 +495,9 @@ namespace phoenix {
 		 * @param name The name of the member in the script
 		 * @param field The field to register
 		 */
-		template <typename _class, typename _member, int N>// clang-format off
+		template <typename _class, typename _member, int N> // clang-format off
 		requires (std::same_as<std::string, _member> || std::same_as<int32_t, _member> || std::same_as<float, _member>)
-		void register_member(const std::string& name, _member (_class::*field)[N]) {// clang-format on
+		void register_member(const std::string& name, _member (_class::*field)[N]) { // clang-format on
 			auto* type = &typeid(_class);
 			auto* sym = _check_member<_class, _member, N>(name, type);
 
@@ -465,7 +510,9 @@ namespace phoenix {
 		/**
 		 * @return All symbols in the script
 		 */
-		[[nodiscard]] inline const std::vector<symbol>& symbols() const noexcept { return _m_symbols; }
+		[[nodiscard]] inline const std::vector<symbol>& symbols() const noexcept {
+			return _m_symbols;
+		}
 
 		/**
 		 * @brief Retrieves the symbol with the given \p index
@@ -533,12 +580,16 @@ namespace phoenix {
 		/**
 		 * @return The total size of the script.
 		 */
-		[[nodiscard]] u32 size() const noexcept { return _m_text.size(); }
+		[[nodiscard]] u32 size() const noexcept {
+			return _m_text.size();
+		}
 
 		/**
 		 * @return The symbol used to store dynamic strings returned from functions.
 		 */
-		[[nodiscard]] symbol& dynamic_string() const noexcept { return *_m_dynamic_strings; }
+		[[nodiscard]] symbol& dynamic_string() const noexcept {
+			return *_m_dynamic_strings;
+		}
 
 	protected:
 		script() = default;
@@ -547,21 +598,26 @@ namespace phoenix {
 		symbol* _check_member(const std::string& name, const std::type_info* type) {
 			auto* sym = find_symbol_by_name(name);
 
-			if (sym == nullptr) throw symbol_not_found {name};
-			if (!sym->is_member()) throw member_registration_error {*sym, "not a member"};
+			if (sym == nullptr)
+				throw symbol_not_found {name};
+			if (!sym->is_member())
+				throw member_registration_error {*sym, "not a member"};
 			if (sym->count() != N)
-				throw member_registration_error {*sym, "incorrect number of elements: given " +
-															   std::to_string(N) + " expected " + std::to_string(sym->count())};
+				throw member_registration_error {*sym,
+				                                 "incorrect number of elements: given " + std::to_string(N) +
+				                                     " expected " + std::to_string(sym->count())};
 
 			// check class registration
 			auto* parent = find_symbol_by_index(sym->parent());
-			if (parent == nullptr) throw member_registration_error {*sym, "no parent found"};
+			if (parent == nullptr)
+				throw member_registration_error {*sym, "no parent found"};
 
 			if (parent->_m_registered_to == nullptr) {
 				parent->_m_registered_to = type;
 			} else if (parent->_m_registered_to != type) {
-				throw member_registration_error {*sym, "parent class is already registered with a different type (" +
-															   std::string {parent->_m_registered_to->name()} + ")"};
+				throw member_registration_error {*sym,
+				                                 "parent class is already registered with a different type (" +
+				                                     std::string {parent->_m_registered_to->name()} + ")"};
 			}
 
 			// check type matches
@@ -592,4 +648,4 @@ namespace phoenix {
 		u8 _m_version {0};
 	};
 
-}// namespace phoenix
+} // namespace phoenix

@@ -16,7 +16,8 @@ namespace phoenix {
 		archive->read_object_begin(chnk);
 
 		if (chnk.class_name != "oCWorld:zCWorld") {
-			throw parser_error(fmt::format("world: cannot read world; 'oCWorld:zCWorld' chunk expected, got '{}'", chnk.class_name));
+			throw parser_error(
+			    fmt::format("world: cannot read world; 'oCWorld:zCWorld' chunk expected, got '{}'", chnk.class_name));
 		}
 
 		while (!archive->read_object_end()) {
@@ -41,12 +42,16 @@ namespace phoenix {
 			}
 
 			if (!archive->read_object_end()) {
-				fmt::print(stderr, "warning: world: not all data consumed of object '[{} {} {} {}]'\n", chnk.object_name,
-						   chnk.class_name, chnk.version, chnk.index);
+				fmt::print(stderr,
+				           "warning: world: not all data consumed of object '[{} {} {} {}]'\n",
+				           chnk.object_name,
+				           chnk.class_name,
+				           chnk.version,
+				           chnk.index);
 				archive->skip_object(true);
 			}
 		}
 
 		return wld;
 	}
-}// namespace phoenix
+} // namespace phoenix

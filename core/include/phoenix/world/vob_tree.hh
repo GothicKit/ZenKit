@@ -9,7 +9,6 @@
 #include <memory>
 #include <variant>
 
-
 namespace phoenix {
 	/**
 	 * @brief All possible types of VOBs.
@@ -419,8 +418,7 @@ namespace phoenix {
 
 			static void parse(trigger_mover& vob, archive_reader_ref& in, game_version version);
 		};
-	}// namespace vob
-
+	} // namespace vob
 
 	/**
 	 * @brief Represents ZenGin's VOB tree.
@@ -442,46 +440,48 @@ namespace phoenix {
 		 * @return The data.
 		 */
 		template <typename T>
-		inline const T& get() const { return std::get<T>(_m_content); }
+		inline const T& get() const {
+			return std::get<T>(_m_content);
+		}
 
 		/**
 		 * @return A list of child VOBs.
 		 */
-		[[nodiscard]] inline const std::vector<vob_tree>& children() const noexcept { return _m_children; }
+		[[nodiscard]] inline const std::vector<vob_tree>& children() const noexcept {
+			return _m_children;
+		}
 
 	private:
 		std::vector<vob_tree> _m_children;
-		std::variant<
-				vob::base,
-				vob::item,
-				vob::pfx_controller,
-				vob::light,
-				vob::sound,
-				vob::sound_daytime,
-				vob::zone_music,
-				vob::message_filter,
-				vob::code_master,
-				vob::trigger,
-				vob::trigger_list,
-				vob::trigger_script,
-				vob::trigger_change_level,
-				vob::trigger_world_start,
-				vob::trigger_untouch,
-				vob::mover_controller,
-				vob::touch_damage,
-				vob::mob,
-				vob::mob_inter,
-				vob::mob_fire,
-				vob::mob_container,
-				vob::mob_door,
-				vob::trigger_mover,
-				vob::animate,
-				vob::zone_fog,
-				vob::zone_far_plane>
-				_m_content;
+		std::variant<vob::base,
+		             vob::item,
+		             vob::pfx_controller,
+		             vob::light,
+		             vob::sound,
+		             vob::sound_daytime,
+		             vob::zone_music,
+		             vob::message_filter,
+		             vob::code_master,
+		             vob::trigger,
+		             vob::trigger_list,
+		             vob::trigger_script,
+		             vob::trigger_change_level,
+		             vob::trigger_world_start,
+		             vob::trigger_untouch,
+		             vob::mover_controller,
+		             vob::touch_damage,
+		             vob::mob,
+		             vob::mob_inter,
+		             vob::mob_fire,
+		             vob::mob_container,
+		             vob::mob_door,
+		             vob::trigger_mover,
+		             vob::animate,
+		             vob::zone_fog,
+		             vob::zone_far_plane>
+		    _m_content;
 
 		vob_type _m_type;
 	};
 
-
-}// namespace phoenix
+} // namespace phoenix

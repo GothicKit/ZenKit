@@ -34,11 +34,17 @@ namespace phoenix {
 
 	bool archive_reader_binsafe::read_object_begin(archive_object& obj) {
 		return peek_input([&](reader& in) {
-			if (in.read_u8() != bs_string) { return false; }
+			if (in.read_u8() != bs_string) {
+				return false;
+			}
 
 			auto line = in.read_string(in.read_u16());
-			if (!line.starts_with('[') || !line.ends_with(']')) { return false; }
-			if (line.length() <= 2) { return false; }
+			if (!line.starts_with('[') || !line.ends_with(']')) {
+				return false;
+			}
+			if (line.length() <= 2) {
+				return false;
+			}
 
 			std::stringstream ss {line.substr(1, line.size() - 2)};
 			ss >> obj.object_name >> obj.class_name >> obj.version >> obj.index;
@@ -50,9 +56,15 @@ namespace phoenix {
 
 	bool archive_reader_binsafe::read_object_end() {
 		return peek_input([&](reader& in) {
-			if (in.read_u8() != bs_string) { return false; }
-			if (in.read_u16() != 2) { return false; }
-			if (in.read_string(2) != "[]") { return false; }
+			if (in.read_u8() != bs_string) {
+				return false;
+			}
+			if (in.read_u16() != 2) {
+				return false;
+			}
+			if (in.read_string(2) != "[]") {
+				return false;
+			}
 			skip_optional_hash();
 
 			return true;
@@ -120,7 +132,7 @@ namespace phoenix {
 
 	bool archive_reader_binsafe::read_bool() {
 		assure_entry(bs_bool);
-		auto rv = input.read_u32();// TODO: Check if this actually applies
+		auto rv = input.read_u32(); // TODO: Check if this actually applies
 		skip_optional_hash();
 		return rv == 1;
 	}
@@ -128,10 +140,10 @@ namespace phoenix {
 	color archive_reader_binsafe::read_color() {
 		assure_entry(bs_color);
 		color c {
-				input.read_u8(),
-				input.read_u8(),
-				input.read_u8(),
-				input.read_u8(),
+		    input.read_u8(),
+		    input.read_u8(),
+		    input.read_u8(),
+		    input.read_u8(),
 		};
 		skip_optional_hash();
 		return c;
@@ -148,7 +160,8 @@ namespace phoenix {
 		auto unused = static_cast<s32>(assure_entry(bs_raw_float) - 2 * sizeof(float));
 
 		if (unused < 0) {
-			throw parser_error("archive_reader_binsafe: cannot read vec2 (2 * float): not enough space in rawFloat entry.");
+			throw parser_error(
+			    "archive_reader_binsafe: cannot read vec2 (2 * float): not enough space in rawFloat entry.");
 		}
 
 		auto c = input.read_vec2();
@@ -163,28 +176,28 @@ namespace phoenix {
 		auto type = static_cast<archive_binsafe_type>(input.read_u8());
 
 		switch (type) {
-			case bs_string:
-			case bs_raw:
-			case bs_raw_float:
-				input.ignore(input.read_u16());
-				break;
-			case bs_enum:
-			case bs_hash:
-			case bs_int:
-			case bs_float:
-			case bs_bool:
-			case bs_color:
-				input.ignore(sizeof(u32));
-				break;
-			case bs_byte:
-				input.ignore(sizeof(u8));
-				break;
-			case bs_word:
-				input.ignore(sizeof(u16));
-				break;
-			case bs_vec3:
-				input.ignore(sizeof(float) * 3);
-				break;
+		case bs_string:
+		case bs_raw:
+		case bs_raw_float:
+			input.ignore(input.read_u16());
+			break;
+		case bs_enum:
+		case bs_hash:
+		case bs_int:
+		case bs_float:
+		case bs_bool:
+		case bs_color:
+			input.ignore(sizeof(u32));
+			break;
+		case bs_byte:
+			input.ignore(sizeof(u8));
+			break;
+		case bs_word:
+			input.ignore(sizeof(u16));
+			break;
+		case bs_vec3:
+			input.ignore(sizeof(float) * 3);
+			break;
 		}
 
 		skip_optional_hash();
@@ -194,7 +207,8 @@ namespace phoenix {
 		auto unused = static_cast<s32>(assure_entry(bs_raw_float) - 3 * 2 * sizeof(float));
 
 		if (unused < 0) {
-			throw parser_error("archive_reader_binsafe: cannot read bbox (6 * float): not enough space in rawFloat entry.");
+			throw parser_error(
+			    "archive_reader_binsafe: cannot read bbox (6 * float): not enough space in rawFloat entry.");
 		}
 
 		auto c = std::make_tuple(input.read_vec3(), input.read_vec3());
@@ -206,7 +220,8 @@ namespace phoenix {
 	}
 
 	glm::mat3x3 archive_reader_binsafe::read_mat3x3() {
-		auto unused = static_cast<s32>(assure_entry(bs_raw) - 3 * 3 * sizeof(float));// TODO: Check that this is actually a raw field
+		auto unused = static_cast<s32>(assure_entry(bs_raw) -
+		                               3 * 3 * sizeof(float)); // TODO: Check that this is actually a raw field
 
 		if (unused < 0) {
 			throw parser_error("archive_reader_binsafe: cannot read bbox (9 * float): not enough space in raw entry.");
@@ -232,4 +247,4 @@ namespace phoenix {
 		skip_optional_hash();
 		return out;
 	}
-}// namespace phoenix
+} // namespace phoenix

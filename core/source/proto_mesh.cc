@@ -5,11 +5,7 @@
 #include <fmt/format.h>
 
 namespace phoenix {
-	enum class proto_chunk {
-		unknown,
-		mesh = 0xB100,
-		end = 0xB1FF
-	};
+	enum class proto_chunk { unknown, mesh = 0xB100, end = 0xB1FF };
 
 	proto_mesh proto_mesh::parse(reader& in) {
 		proto_mesh msh {};
@@ -26,87 +22,89 @@ namespace phoenix {
 			end = length + in.tell();
 
 			switch (chunk) {
-				case proto_chunk::mesh: {
-					auto version = in.read_u16();
-					auto content = in.fork(in.read_u32());
+			case proto_chunk::mesh: {
+				auto version = in.read_u16();
+				auto content = in.fork(in.read_u32());
 
-					auto submesh_count = in.read_u8();
-					auto vertices_index = in.read_u32();
-					auto vertices_size = in.read_u32();
-					auto normals_index = in.read_u32();
-					auto normals_size = in.read_u32();
+				auto submesh_count = in.read_u8();
+				auto vertices_index = in.read_u32();
+				auto vertices_size = in.read_u32();
+				auto normals_index = in.read_u32();
+				auto normals_size = in.read_u32();
 
-					std::vector<sub_mesh_section> submesh_sections;
-					submesh_sections.resize(submesh_count);
+				std::vector<sub_mesh_section> submesh_sections;
+				submesh_sections.resize(submesh_count);
 
-					for (int i = 0; i < submesh_count; ++i) {
-						submesh_sections[i] = {
-								{in.read_u32(), in.read_u32()},
-								{in.read_u32(), in.read_u32()},
-								{in.read_u32(), in.read_u32()},
-								{in.read_u32(), in.read_u32()},
-								{in.read_u32(), in.read_u32()},
-								{in.read_u32(), in.read_u32()},
-								{in.read_u32(), in.read_u32()},
-								{in.read_u32(), in.read_u32()},
-								{in.read_u32(), in.read_u32()},
-								{in.read_u32(), in.read_u32()},
-						};
-					}
-
-					// read all materials
-					auto mats = archive_reader::open(in);
-					for (int i = 0; i < submesh_count; ++i) {
-						msh._m_materials.emplace_back(material::parse(mats));
-					}
-
-					if (version == 0x0905 /*G2*/) {
-						msh._m_has_alpha_test = in.read_u8() != 0;
-					}
-
-					msh._m_bbox[0] = in.read_vec3();
-					msh._m_bbox[1] = in.read_vec3();
-
-					// read positions and normals
-					msh._m_vertices.resize(vertices_size);
-					auto vertices = content.fork(vertices_size * sizeof(float) * 3, vertices_index);
-
-					for (u32 i = 0; i < vertices_size; ++i) {
-						msh._m_vertices[i] = vertices.read_vec3();
-					}
-
-					msh._m_normals.resize(normals_size);
-					auto normals = content.fork(normals_size * sizeof(float) * 3, normals_index);
-
-					for (u32 i = 0; i < normals_size; ++i) {
-						msh._m_normals[i] = normals.read_vec3();
-					}
-
-					// read submeshes
-					msh._m_sub_meshes.reserve(submesh_count);
-
-					for (int i = 0; i < submesh_count; ++i) {
-						auto& mesh = msh._m_sub_meshes.emplace_back(sub_mesh::parse(content, submesh_sections[i]));
-						mesh.mat = msh._m_materials[i];
-					}
-
-					msh._m_obbox = obb::parse(in);
-
-					// TODO: this might be a vec4 though the values don't make any sense.
-					in.ignore(0x10);
-					break;
+				for (int i = 0; i < submesh_count; ++i) {
+					submesh_sections[i] = {
+					    {in.read_u32(), in.read_u32()},
+					    {in.read_u32(), in.read_u32()},
+					    {in.read_u32(), in.read_u32()},
+					    {in.read_u32(), in.read_u32()},
+					    {in.read_u32(), in.read_u32()},
+					    {in.read_u32(), in.read_u32()},
+					    {in.read_u32(), in.read_u32()},
+					    {in.read_u32(), in.read_u32()},
+					    {in.read_u32(), in.read_u32()},
+					    {in.read_u32(), in.read_u32()},
+					};
 				}
-				case proto_chunk::end:
-					end_mesh = true;
-					break;
-				default:
-					break;
+
+				// read all materials
+				auto mats = archive_reader::open(in);
+				for (int i = 0; i < submesh_count; ++i) {
+					msh._m_materials.emplace_back(material::parse(mats));
+				}
+
+				if (version == 0x0905 /*G2*/) {
+					msh._m_has_alpha_test = in.read_u8() != 0;
+				}
+
+				msh._m_bbox[0] = in.read_vec3();
+				msh._m_bbox[1] = in.read_vec3();
+
+				// read positions and normals
+				msh._m_vertices.resize(vertices_size);
+				auto vertices = content.fork(vertices_size * sizeof(float) * 3, vertices_index);
+
+				for (u32 i = 0; i < vertices_size; ++i) {
+					msh._m_vertices[i] = vertices.read_vec3();
+				}
+
+				msh._m_normals.resize(normals_size);
+				auto normals = content.fork(normals_size * sizeof(float) * 3, normals_index);
+
+				for (u32 i = 0; i < normals_size; ++i) {
+					msh._m_normals[i] = normals.read_vec3();
+				}
+
+				// read submeshes
+				msh._m_sub_meshes.reserve(submesh_count);
+
+				for (int i = 0; i < submesh_count; ++i) {
+					auto& mesh = msh._m_sub_meshes.emplace_back(sub_mesh::parse(content, submesh_sections[i]));
+					mesh.mat = msh._m_materials[i];
+				}
+
+				msh._m_obbox = obb::parse(in);
+
+				// TODO: this might be a vec4 though the values don't make any sense.
+				in.ignore(0x10);
+				break;
+			}
+			case proto_chunk::end:
+				end_mesh = true;
+				break;
+			default:
+				break;
 			}
 
 			// quirk: we don't skip to the end if this is the last section
 			if (!end_mesh) {
 				if (in.tell() != end) {
-					fmt::print(stderr, "warning: proto mesh: not all data or too much data consumed from section 0x{:X}\n", chunk);
+					fmt::print(stderr,
+					           "warning: proto mesh: not all data or too much data consumed from section 0x{:X}\n",
+					           chunk);
 				}
 
 				in.seek(end);
@@ -196,4 +194,4 @@ namespace phoenix {
 
 		return subm;
 	}
-}// namespace phoenix
+} // namespace phoenix

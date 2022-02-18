@@ -13,11 +13,7 @@
 #include <string>
 
 namespace phoenix {
-	enum class archive_format {
-		binary,
-		binsafe,
-		ascii
-	};
+	enum class archive_format { binary, binsafe, ascii };
 
 	struct archive_header {
 		int version;
@@ -195,7 +191,9 @@ namespace phoenix {
 		/**
 		 * @return The header of the archive
 		 */
-		[[nodiscard]] const archive_header& get_header() const noexcept { return header; };
+		[[nodiscard]] const archive_header& get_header() const noexcept {
+			return header;
+		};
 
 	protected:
 		/**
@@ -222,4 +220,4 @@ namespace phoenix {
 	};
 
 	using archive_reader_ref = std::unique_ptr<archive_reader>;
-}// namespace phoenix
+} // namespace phoenix

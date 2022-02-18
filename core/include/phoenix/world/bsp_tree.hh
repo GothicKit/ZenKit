@@ -20,7 +20,9 @@ namespace phoenix {
 		s32 back_index {-1};
 		s32 parent_index {-1};
 
-		inline bool is_leaf() const noexcept { return front_index == -1 && back_index == -1; }
+		inline bool is_leaf() const noexcept {
+			return front_index == -1 && back_index == -1;
+		}
 	};
 
 	struct bsp_sector {
@@ -56,34 +58,48 @@ namespace phoenix {
 		/**
 		 * @return The mode of the tree (either indoor or outdoor).
 		 */
-		[[nodiscard]] bsp_tree_mode mode() const noexcept { return _m_mode; }
+		[[nodiscard]] bsp_tree_mode mode() const noexcept {
+			return _m_mode;
+		}
 
 		/**
 		 * @return A list of polygon indices.
 		 */
-		[[nodiscard]] const std::vector<u32>& polygon_indices() const noexcept { return _m_polygon_indices; }
+		[[nodiscard]] const std::vector<u32>& polygon_indices() const noexcept {
+			return _m_polygon_indices;
+		}
 
 		/**
 		 * @return All BSP nodes associated with the tree.
 		 */
-		[[nodiscard]] const std::vector<bsp_node>& nodes() const noexcept { return _m_nodes; }
+		[[nodiscard]] const std::vector<bsp_node>& nodes() const noexcept {
+			return _m_nodes;
+		}
 
 		/**
 		 * @return All BSP leaf node indices.
 		 */
-		[[nodiscard]] const std::vector<u32>& leaf_node_indices() const noexcept { return _m_leaf_node_indices; }
+		[[nodiscard]] const std::vector<u32>& leaf_node_indices() const noexcept {
+			return _m_leaf_node_indices;
+		}
 
 		/**
 		 * @return All BSP sectors.
 		 */
-		[[nodiscard]] const std::vector<bsp_sector>& sectors() const noexcept { return _m_sectors; }
+		[[nodiscard]] const std::vector<bsp_sector>& sectors() const noexcept {
+			return _m_sectors;
+		}
 
 		/**
 		 * @return Polygon indices of portals.
 		 */
-		[[nodiscard]] const std::vector<u32>& portal_polygon_indices() const noexcept { return _m_portal_polygon_indices; }
+		[[nodiscard]] const std::vector<u32>& portal_polygon_indices() const noexcept {
+			return _m_portal_polygon_indices;
+		}
 
-		[[nodiscard]] const std::vector<glm::vec3>& light_points() const noexcept { return _m_light_points; }
+		[[nodiscard]] const std::vector<glm::vec3>& light_points() const noexcept {
+			return _m_light_points;
+		}
 
 	private:
 		bsp_tree_mode _m_mode;
@@ -96,4 +112,4 @@ namespace phoenix {
 		std::vector<bsp_node> _m_nodes;
 		std::vector<u32> _m_leaf_node_indices;
 	};
-}// namespace phoenix
+} // namespace phoenix

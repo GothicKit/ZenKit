@@ -38,27 +38,37 @@ namespace phoenix {
 		/**
 		 * @return The embedded proto-mesh.
 		 */
-		[[nodiscard]] const proto_mesh& mesh() const noexcept { return _m_mesh; }
+		[[nodiscard]] const proto_mesh& mesh() const noexcept {
+			return _m_mesh;
+		}
 
 		/**
 		 * @return The meshes bounding boxes (there is one for each node).
 		 */
-		[[nodiscard]] const std::vector<obb>& bboxes() const noexcept { return _m_bboxes; }
+		[[nodiscard]] const std::vector<obb>& bboxes() const noexcept {
+			return _m_bboxes;
+		}
 
 		/**
 		 * @return Egde normals.
 		 */
-		[[nodiscard]] const std::vector<wedge_normal>& wedge_normals() const noexcept { return _m_wedge_normals; }
+		[[nodiscard]] const std::vector<wedge_normal>& wedge_normals() const noexcept {
+			return _m_wedge_normals;
+		}
 
 		/**
 		 * @return Node weights.
 		 */
-		[[nodiscard]] const std::vector<weight_entry>& weights() const noexcept { return _m_weights; }
+		[[nodiscard]] const std::vector<weight_entry>& weights() const noexcept {
+			return _m_weights;
+		}
 
 		/**
 		 * @return Nodes.
 		 */
-		[[nodiscard]] const std::vector<s32>& nodes() const noexcept { return _m_nodes; }
+		[[nodiscard]] const std::vector<s32>& nodes() const noexcept {
+			return _m_nodes;
+		}
 
 	private:
 		proto_mesh _m_mesh;
@@ -68,4 +78,4 @@ namespace phoenix {
 		std::vector<s32> _m_nodes;
 	};
 
-}// namespace phoenix
+} // namespace phoenix

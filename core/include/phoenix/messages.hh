@@ -1,11 +1,11 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
-#include <phoenix/detail/stream.hh>
 #include <phoenix/archive.hh>
+#include <phoenix/detail/stream.hh>
 
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace phoenix {
@@ -33,7 +33,9 @@ namespace phoenix {
 		/**
 		 * @return All message blocks in the database.
 		 */
-		inline const std::vector<message_block>& blocks() const noexcept { return _m_blocks; }
+		inline const std::vector<message_block>& blocks() const noexcept {
+			return _m_blocks;
+		}
 
 		/**
 		 * @brief Retrieves a message block by it's name.
@@ -47,4 +49,4 @@ namespace phoenix {
 		std::unordered_map<std::string, message_block*> _m_blocks_by_name;
 	};
 
-}
+} // namespace phoenix

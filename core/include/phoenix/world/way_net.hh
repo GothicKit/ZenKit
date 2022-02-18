@@ -52,16 +52,28 @@ namespace phoenix {
 		/**
 		 * @return All waypoints associated with the way-net.
 		 */
-		[[nodiscard]] inline const std::vector<way_point>& waypoints() const noexcept { return _m_waypoints; }
+		[[nodiscard]] inline const std::vector<way_point>& waypoints() const noexcept {
+			return _m_waypoints;
+		}
 
 		/**
 		 * @return All edges associated with the way-net.
 		 */
-		[[nodiscard]] inline const std::vector<way_edge>& edges() const noexcept { return _m_edges; }
+		[[nodiscard]] inline const std::vector<way_edge>& edges() const noexcept {
+			return _m_edges;
+		}
+
+		/**
+		 * @brief Get the waypoint with the given name.
+		 * @param name The name of the waypoint to get.
+		 * @return A pointer to the waypoint or `nullptr` if the waypoint was not fount.
+		 */
+		[[nodiscard]] const way_point* waypoint(const std::string& name) const;
 
 	private:
 		std::vector<way_point> _m_waypoints;
 		std::vector<way_edge> _m_edges;
+		std::unordered_map<std::string, way_point*> _m_name_to_waypoint;
 	};
 
-}// namespace phoenix
+} // namespace phoenix

@@ -15,8 +15,12 @@ namespace phoenix {
 	}
 
 	void daedalus_interpreter::call_function(const symbol* sym) {
-		if (sym == nullptr) { throw std::runtime_error {"Cannot call function: not found"}; }
-		if (sym->type() != dt_function) { throw std::runtime_error {"Cannot call " + sym->name() + ": not a function"}; }
+		if (sym == nullptr) {
+			throw std::runtime_error {"Cannot call function: not found"};
+		}
+		if (sym->type() != dt_function) {
+			throw std::runtime_error {"Cannot call " + sym->name() + ": not a function"};
+		}
 
 		call(sym);
 
@@ -45,175 +49,188 @@ namespace phoenix {
 		try {
 
 			switch (instr.op) {
-				case op_add:
-					push_int(pop_int() + pop_int());
-					break;
-				case op_subtract:
-					push_int(pop_int() - pop_int());
-					break;
-				case op_multiply:
-					push_int(pop_int() * pop_int());
-					break;
-				case op_divide:
-					push_int(pop_int() / pop_int());
-					break;
-				case op_modulo:
-					push_int(pop_int() % pop_int());
-					break;
-				case op_bitor:
-					push_int(pop_int() | pop_int());
-					break;
-				case op_bitand:
-					push_int(pop_int() & pop_int());
-					break;
-				case op_less:
-					push_int(pop_int() < pop_int());
-					break;
-				case op_greater:
-					push_int(pop_int() > pop_int());
-					break;
-				case op_shift_left:
-					push_int(pop_int() << pop_int());
-					break;
-				case op_shift_right:
-					push_int(pop_int() >> pop_int());
-					break;
-				case op_less_or_equal:
-					push_int(pop_int() <= pop_int());
-					break;
-				case op_equal:
-					push_int(pop_int() == pop_int());
-					break;
-				case op_not_equal:
-					push_int(pop_int() != pop_int());
-					break;
-				case op_greater_or_equal:
-					push_int(pop_int() >= pop_int());
-					break;
-				case op_plus:
-					push_int(+pop_int());
-					break;
-				case op_minus:
-					push_int(-pop_int());
-					break;
-				case op_not:
-					push_int(!pop_int());
-					break;
-				case op_complement:
-					push_int(~pop_int());
-					break;
-				case op_or:
-					a = pop_int();
-					b = pop_int();
-					push_int(a || b);
-					break;
-				case op_and:
-					a = pop_int();
-					b = pop_int();
-					push_int(a && b);
-					break;
-				case op_noop:
-					// Do nothing
-					break;
-				case op_return:
-					return false;
-				case op_call:
-					sym = _m_script.find_symbol_by_address(instr.address);
-					if (sym == nullptr) { throw std::runtime_error {"op_call: no symbol found for address " + std::to_string(instr.address)}; }
+			case op_add:
+				push_int(pop_int() + pop_int());
+				break;
+			case op_subtract:
+				push_int(pop_int() - pop_int());
+				break;
+			case op_multiply:
+				push_int(pop_int() * pop_int());
+				break;
+			case op_divide:
+				push_int(pop_int() / pop_int());
+				break;
+			case op_modulo:
+				push_int(pop_int() % pop_int());
+				break;
+			case op_bitor:
+				push_int(pop_int() | pop_int());
+				break;
+			case op_bitand:
+				push_int(pop_int() & pop_int());
+				break;
+			case op_less:
+				push_int(pop_int() < pop_int());
+				break;
+			case op_greater:
+				push_int(pop_int() > pop_int());
+				break;
+			case op_shift_left:
+				push_int(pop_int() << pop_int());
+				break;
+			case op_shift_right:
+				push_int(pop_int() >> pop_int());
+				break;
+			case op_less_or_equal:
+				push_int(pop_int() <= pop_int());
+				break;
+			case op_equal:
+				push_int(pop_int() == pop_int());
+				break;
+			case op_not_equal:
+				push_int(pop_int() != pop_int());
+				break;
+			case op_greater_or_equal:
+				push_int(pop_int() >= pop_int());
+				break;
+			case op_plus:
+				push_int(+pop_int());
+				break;
+			case op_minus:
+				push_int(-pop_int());
+				break;
+			case op_not:
+				push_int(!pop_int());
+				break;
+			case op_complement:
+				push_int(~pop_int());
+				break;
+			case op_or:
+				a = pop_int();
+				b = pop_int();
+				push_int(a || b);
+				break;
+			case op_and:
+				a = pop_int();
+				b = pop_int();
+				push_int(a && b);
+				break;
+			case op_noop:
+				// Do nothing
+				break;
+			case op_return:
+				return false;
+			case op_call:
+				sym = _m_script.find_symbol_by_address(instr.address);
+				if (sym == nullptr) {
+					throw std::runtime_error {"op_call: no symbol found for address " + std::to_string(instr.address)};
+				}
 
-					call(sym);
-					break;
-				case op_call_external: {
-					sym = _m_script.find_symbol_by_index(instr.symbol);
-					if (sym == nullptr) { throw std::runtime_error {"op_call_external: no external found for index " + std::to_string(instr.symbol)}; }
+				call(sym);
+				break;
+			case op_call_external: {
+				sym = _m_script.find_symbol_by_index(instr.symbol);
+				if (sym == nullptr) {
+					throw std::runtime_error {"op_call_external: no external found for index " +
+					                          std::to_string(instr.symbol)};
+				}
 
-					auto cb = _m_externals.find(sym);
-					if (cb == _m_externals.end()) {
-						throw std::runtime_error {"op_call_external: no external registered for " + sym->name()};
-					}
+				auto cb = _m_externals.find(sym);
+				if (cb == _m_externals.end()) {
+					throw std::runtime_error {"op_call_external: no external registered for " + sym->name()};
+				}
 
-					push_call(sym);
-					cb->second(*this);
-					pop_call();
-					break;
+				push_call(sym);
+				cb->second(*this);
+				pop_call();
+				break;
+			}
+			case op_push_int:
+				push_int(instr.immediate);
+				break;
+			case op_push_instance:
+			case op_push_var:
+				sym = _m_script.find_symbol_by_index(instr.symbol);
+				if (sym == nullptr) {
+					throw std::runtime_error {"op_push_var: no symbol found for index " + std::to_string(instr.symbol)};
 				}
-				case op_push_int:
-					push_int(instr.immediate);
-					break;
-				case op_push_instance:
-				case op_push_var:
-					sym = _m_script.find_symbol_by_index(instr.symbol);
-					if (sym == nullptr) { throw std::runtime_error {"op_push_var: no symbol found for index " + std::to_string(instr.symbol)}; }
-					push_reference(sym, 0);
-					break;
-				case op_assign_int:
-				case op_assign_func: {
-					auto [ref, idx] = pop_reference();
-					ref->set_int(pop_int(), idx, _m_instance);
-					break;
-				}
-				case op_assign_float: {
-					auto [ref, idx] = pop_reference();
-					ref->set_float(pop_float(), idx, _m_instance);
-					break;
-				}
-				case op_assign_string: {
-					auto [target, target_idx] = pop_reference();
-					auto source = pop_string();
-					target->set_string(source, target_idx, _m_instance);
-					break;
-				}
-				case op_assign_stringref:
-					throw std::runtime_error {"not implemented: op_assign_stringref"};
-				case op_assign_add: {
-					auto [ref, idx] = pop_reference();
-					auto result = ref->get_int(idx, _m_instance) + pop_int();
-					ref->set_int(result, idx, _m_instance);
-					break;
-				}
-				case op_assign_subtract: {
-					auto [ref, idx] = pop_reference();
-					auto result = ref->get_int(idx, _m_instance) - pop_int();
-					ref->set_int(result, idx, _m_instance);
-					break;
-				}
-				case op_assign_multiply: {
-					auto [ref, idx] = pop_reference();
-					auto result = ref->get_int(idx, _m_instance) * pop_int();
-					ref->set_int(result, idx, _m_instance);
-					break;
-				}
-				case op_assign_divide: {
-					auto [ref, idx] = pop_reference();
-					auto result = ref->get_int(idx, _m_instance) / pop_int();
-					ref->set_int(result, idx, _m_instance);
-					break;
-				}
-				case op_assign_instance: {
-					auto [target, target_idx] = pop_reference();
-					target->set_instance(pop_instance());
-					break;
-				}
-				case op_jump:
+				push_reference(sym, 0);
+				break;
+			case op_assign_int:
+			case op_assign_func: {
+				auto [ref, idx] = pop_reference();
+				ref->set_int(pop_int(), idx, _m_instance);
+				break;
+			}
+			case op_assign_float: {
+				auto [ref, idx] = pop_reference();
+				ref->set_float(pop_float(), idx, _m_instance);
+				break;
+			}
+			case op_assign_string: {
+				auto [target, target_idx] = pop_reference();
+				auto source = pop_string();
+				target->set_string(source, target_idx, _m_instance);
+				break;
+			}
+			case op_assign_stringref:
+				throw std::runtime_error {"not implemented: op_assign_stringref"};
+			case op_assign_add: {
+				auto [ref, idx] = pop_reference();
+				auto result = ref->get_int(idx, _m_instance) + pop_int();
+				ref->set_int(result, idx, _m_instance);
+				break;
+			}
+			case op_assign_subtract: {
+				auto [ref, idx] = pop_reference();
+				auto result = ref->get_int(idx, _m_instance) - pop_int();
+				ref->set_int(result, idx, _m_instance);
+				break;
+			}
+			case op_assign_multiply: {
+				auto [ref, idx] = pop_reference();
+				auto result = ref->get_int(idx, _m_instance) * pop_int();
+				ref->set_int(result, idx, _m_instance);
+				break;
+			}
+			case op_assign_divide: {
+				auto [ref, idx] = pop_reference();
+				auto result = ref->get_int(idx, _m_instance) / pop_int();
+				ref->set_int(result, idx, _m_instance);
+				break;
+			}
+			case op_assign_instance: {
+				auto [target, target_idx] = pop_reference();
+				target->set_instance(pop_instance());
+				break;
+			}
+			case op_jump:
+				jump(instr.address);
+				return true;
+			case op_jump_if_zero:
+				if (pop_int() == 0) {
 					jump(instr.address);
-					return true;
-				case op_jump_if_zero:
-					if (pop_int() == 0) {
-						jump(instr.address);
-					}
-					return true;
-				case op_set_instance: {
-					sym = _m_script.find_symbol_by_index(instr.symbol);
-					if (sym == nullptr) { throw std::runtime_error {"op_set_instance: no symbol found for index " + std::to_string(instr.symbol)}; }
-					_m_instance = sym->get_instance();
-					break;
 				}
-				case op_push_array_var:
-					sym = _m_script.find_symbol_by_index(instr.symbol);
-					if (sym == nullptr) { throw std::runtime_error {"op_push_array_var: no symbol found for index " + std::to_string(instr.symbol)}; }
+				return true;
+			case op_set_instance: {
+				sym = _m_script.find_symbol_by_index(instr.symbol);
+				if (sym == nullptr) {
+					throw std::runtime_error {"op_set_instance: no symbol found for index " +
+					                          std::to_string(instr.symbol)};
+				}
+				_m_instance = sym->get_instance();
+				break;
+			}
+			case op_push_array_var:
+				sym = _m_script.find_symbol_by_index(instr.symbol);
+				if (sym == nullptr) {
+					throw std::runtime_error {"op_push_array_var: no symbol found for index " +
+					                          std::to_string(instr.symbol)};
+				}
 
-					push_reference(sym, instr.index);
-					break;
+				push_reference(sym, instr.index);
+				break;
 			}
 		} catch (const std::runtime_error& err) {
 			print_stack_trace();
@@ -334,7 +351,9 @@ namespace phoenix {
 	}
 
 	void daedalus_interpreter::jump(u32 address) {
-		if (address == 0 || address > _m_script.size()) { throw std::runtime_error {"Cannot jump to " + std::to_string(address) + ": illegal address"}; }
+		if (address == 0 || address > _m_script.size()) {
+			throw std::runtime_error {"Cannot jump to " + std::to_string(address) + ": illegal address"};
+		}
 		_m_pc = address;
 	}
 
@@ -342,8 +361,8 @@ namespace phoenix {
 		auto last_pc = _m_pc;
 
 		std::cerr << "\n"
-				  << "------- CALL STACK (MOST RECENT CALL FIRST) -------"
-				  << "\n";
+		          << "------- CALL STACK (MOST RECENT CALL FIRST) -------"
+		          << "\n";
 
 		while (!_m_call_stack.empty()) {
 			auto v = _m_call_stack.top();
@@ -354,8 +373,8 @@ namespace phoenix {
 		}
 
 		std::cerr << "\n"
-				  << "------- STACK (MOST RECENT PUSH FIRST) -------"
-				  << "\n";
+		          << "------- STACK (MOST RECENT PUSH FIRST) -------"
+		          << "\n";
 
 		int i = 0;
 		while (!_m_stack.empty()) {
@@ -364,43 +383,43 @@ namespace phoenix {
 			if (v.reference) {
 				auto ref = std::get<symbol*>(v.value);
 				std::cerr << i << ":  "
-						  << "[REFERENCE] " << ref->name() << "[" << (int) v.index << "] = ";
+				          << "[REFERENCE] " << ref->name() << "[" << (int) v.index << "] = ";
 
 				switch (ref->type()) {
-					case dt_float:
-						std::cerr << ref->get_float(v.index, _m_instance) << "\n";
-						break;
-					case dt_integer:
-						std::cerr << ref->get_int(v.index, _m_instance) << "\n";
-						break;
-					case dt_string:
-						std::cerr << "'" << ref->get_string(v.index, _m_instance) << "'\n";
-						break;
-					case dt_function: {
-						auto index = ref->get_int(v.index, _m_instance);
-						auto sym = _m_script.find_symbol_by_index(index);
+				case dt_float:
+					std::cerr << ref->get_float(v.index, _m_instance) << "\n";
+					break;
+				case dt_integer:
+					std::cerr << ref->get_int(v.index, _m_instance) << "\n";
+					break;
+				case dt_string:
+					std::cerr << "'" << ref->get_string(v.index, _m_instance) << "'\n";
+					break;
+				case dt_function: {
+					auto index = ref->get_int(v.index, _m_instance);
+					auto sym = _m_script.find_symbol_by_index(index);
 
-						std::cout << "(func) " << sym->name() << "\n";
-						break;
-					}
-					case dt_instance: {
-						// auto inst = v.reference_value->get_instance();
-						std::cerr << "(instance)\n";
-						break;
-					}
-					default:
-						std::cerr << "<UNKNOWN>\n";
+					std::cout << "(func) " << sym->name() << "\n";
+					break;
+				}
+				case dt_instance: {
+					// auto inst = v.reference_value->get_instance();
+					std::cerr << "(instance)\n";
+					break;
+				}
+				default:
+					std::cerr << "<UNKNOWN>\n";
 				}
 			} else {
 				if (std::holds_alternative<float>(v.value)) {
 					std::cerr << i << ":  "
-							  << "[IMMEDIATE FLOAT] " << std::get<float>(v.value) << "\n";
+					          << "[IMMEDIATE FLOAT] " << std::get<float>(v.value) << "\n";
 				} else if (std::holds_alternative<int32_t>(v.value)) {
 					std::cerr << i << ":  "
-							  << "[IMMEDIATE INT] " << std::get<int32_t>(v.value) << "\n";
+					          << "[IMMEDIATE INT] " << std::get<int32_t>(v.value) << "\n";
 				} else if (std::holds_alternative<std::shared_ptr<instance>>(v.value)) {
 					std::cerr << i << ":  "
-							  << "[IMMEDIATE INSTANCE] " << std::get<std::shared_ptr<instance>>(v.value).get() << "\n";
+					          << "[IMMEDIATE INSTANCE] " << std::get<std::shared_ptr<instance>>(v.value).get() << "\n";
 				}
 			}
 
@@ -412,12 +431,10 @@ namespace phoenix {
 	}
 
 	illegal_external_rtype::illegal_external_rtype(const symbol* sym, std::string_view provided)
-		: illegal_external("external " + sym->name() + " has illegal return type '" + provided.data() +
-						   "', expected '" + DAEDALUS_DATA_TYPE_NAMES[sym->rtype()] + "'") {
-	}
+	    : illegal_external("external " + sym->name() + " has illegal return type '" + provided.data() +
+	                       "', expected '" + DAEDALUS_DATA_TYPE_NAMES[sym->rtype()] + "'") {}
 
 	illegal_external_param::illegal_external_param(const symbol* sym, std::string_view provided, u8 i)
-			: illegal_external("external " + sym->name() + " has illegal parameter type '" + provided.data() +
-							 "' (no. " + std::to_string(i) + "), expected '" + DAEDALUS_DATA_TYPE_NAMES[sym->type()] + "'"){
-	}
-}// namespace phoenix
+	    : illegal_external("external " + sym->name() + " has illegal parameter type '" + provided.data() + "' (no. " +
+	                       std::to_string(i) + "), expected '" + DAEDALUS_DATA_TYPE_NAMES[sym->type()] + "'") {}
+} // namespace phoenix

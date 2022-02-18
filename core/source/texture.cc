@@ -3,14 +3,15 @@
 #include <phoenix/detail/error.hh>
 #include <phoenix/texture.hh>
 
-#include <squish.h>
 #include <fmt/format.h>
+#include <squish.h>
 
 namespace phoenix {
 	/**
 	 * @brief Calculates the size in bytes of the texture at the given mipmap level.
 	 *
-	 * Adapted from https://github.com/ataulien/ZenLib/blob/e1a5e1b12e71690a5470f3be2aa3d0d6419f5191/zenload/ztex2dds.cpp#L39.
+	 * Adapted from
+	 * https://github.com/ataulien/ZenLib/blob/e1a5e1b12e71690a5470f3be2aa3d0d6419f5191/zenload/ztex2dds.cpp#L39.
 	 *
 	 * @return The size in bytes of the texture at the given mipmap level.
 	 */
@@ -26,29 +27,29 @@ namespace phoenix {
 		}
 
 		switch (format) {
-			case tex_B8G8R8A8:
-			case tex_R8G8B8A8:
-			case tex_A8B8G8R8:
-			case tex_A8R8G8B8:
-				return x * y * 4;
-			case tex_B8G8R8:
-			case tex_R8G8B8:
-				return x * y * 3;
-			case tex_A4R4G4B4:
-			case tex_A1R5G5B5:
-			case tex_R5G6B5:
-				return x * y * 2;
-			case tex_p8:
-				return x * y;
-			case tex_dxt1:
-				return std::max(1ul, x / 4) * std::max(1ul, y / 4) * 8;
-			case tex_dxt2:
-			case tex_dxt3:
-			case tex_dxt4:
-			case tex_dxt5:
-				return std::max(1ul, x / 4) * std::max(1ul, y / 4) * 16;
-			default:
-				return 0;
+		case tex_B8G8R8A8:
+		case tex_R8G8B8A8:
+		case tex_A8B8G8R8:
+		case tex_A8R8G8B8:
+			return x * y * 4;
+		case tex_B8G8R8:
+		case tex_R8G8B8:
+			return x * y * 3;
+		case tex_A4R4G4B4:
+		case tex_A1R5G5B5:
+		case tex_R5G6B5:
+			return x * y * 2;
+		case tex_p8:
+			return x * y;
+		case tex_dxt1:
+			return std::max(1ul, x / 4) * std::max(1ul, y / 4) * 8;
+		case tex_dxt2:
+		case tex_dxt3:
+		case tex_dxt4:
+		case tex_dxt5:
+			return std::max(1ul, x / 4) * std::max(1ul, y / 4) * 16;
+		default:
+			return 0;
 		}
 	}
 
@@ -93,24 +94,25 @@ namespace phoenix {
 			in.read(mipmap.data(), size);
 
 			switch (tex._m_format) {
-				case tex_dxt1:
-				case tex_dxt3:
-				case tex_dxt5: {
-					std::vector<u8> v;
-					auto w = tex.mipmap_width(level);
-					auto h = tex.mipmap_height(level);
-					v.resize(w * h * 4);
+			case tex_dxt1:
+			case tex_dxt3:
+			case tex_dxt5: {
+				std::vector<u8> v;
+				auto w = tex.mipmap_width(level);
+				auto h = tex.mipmap_height(level);
+				v.resize(w * h * 4);
 
-					auto flag = tex._m_format == tex_dxt1 ? squish::kDxt1 : (tex._m_format == tex_dxt3 ? squish::kDxt3 : squish::kDxt5);
+				auto flag = tex._m_format == tex_dxt1 ? squish::kDxt1
+				                                      : (tex._m_format == tex_dxt3 ? squish::kDxt3 : squish::kDxt5);
 
-					squish::DecompressImage(v.data(), w, h, mipmap.data(), flag);
-					tex._m_textures.emplace_back(std::move(v));
-					dxt_decompressed = true;
-					break;
-				}
-				default:
-					tex._m_textures.emplace_back(std::move(mipmap));
-					break;
+				squish::DecompressImage(v.data(), w, h, mipmap.data(), flag);
+				tex._m_textures.emplace_back(std::move(v));
+				dxt_decompressed = true;
+				break;
+			}
+			default:
+				tex._m_textures.emplace_back(std::move(mipmap));
+				break;
 			}
 		}
 
@@ -140,106 +142,106 @@ namespace phoenix {
 		std::vector<u8> conv;
 
 		switch (_m_format) {
-			case tex_B8G8R8A8: {
-				const auto& map = data(mipmap_level);
-				conv.resize(map.size());
+		case tex_B8G8R8A8: {
+			const auto& map = data(mipmap_level);
+			conv.resize(map.size());
 
-				for (u32 i = 0; i < map.size(); i += 4) {
-					conv[i + 0] = map[i + 2];
-					conv[i + 1] = map[i + 1];
-					conv[i + 2] = map[i + 0];
-					conv[i + 3] = map[i + 3];
-				}
-
-				return conv;
+			for (u32 i = 0; i < map.size(); i += 4) {
+				conv[i + 0] = map[i + 2];
+				conv[i + 1] = map[i + 1];
+				conv[i + 2] = map[i + 0];
+				conv[i + 3] = map[i + 3];
 			}
-			case tex_R8G8B8A8:
-				return data(mipmap_level);
-			case tex_A8B8G8R8:{
-				const auto& map = data(mipmap_level);
-				conv.resize(map.size());
 
-				for (u32 i = 0; i < map.size(); i += 4) {
-					conv[i + 0] = map[i + 3];
-					conv[i + 1] = map[i + 2];
-					conv[i + 2] = map[i + 1];
-					conv[i + 3] = map[i + 0];
-				}
+			return conv;
+		}
+		case tex_R8G8B8A8:
+			return data(mipmap_level);
+		case tex_A8B8G8R8: {
+			const auto& map = data(mipmap_level);
+			conv.resize(map.size());
 
-				return conv;
+			for (u32 i = 0; i < map.size(); i += 4) {
+				conv[i + 0] = map[i + 3];
+				conv[i + 1] = map[i + 2];
+				conv[i + 2] = map[i + 1];
+				conv[i + 3] = map[i + 0];
 			}
-			case tex_A8R8G8B8:{
-				const auto& map = data(mipmap_level);
-				conv.resize(map.size());
 
-				for (u32 i = 0; i < map.size(); i += 4) {
-					conv[i + 0] = map[i + 1];
-					conv[i + 1] = map[i + 2];
-					conv[i + 2] = map[i + 3];
-					conv[i + 3] = map[i + 0];
-				}
+			return conv;
+		}
+		case tex_A8R8G8B8: {
+			const auto& map = data(mipmap_level);
+			conv.resize(map.size());
 
-				return conv;
+			for (u32 i = 0; i < map.size(); i += 4) {
+				conv[i + 0] = map[i + 1];
+				conv[i + 1] = map[i + 2];
+				conv[i + 2] = map[i + 3];
+				conv[i + 3] = map[i + 0];
 			}
-			case tex_B8G8R8:{
-				const auto& map = data(mipmap_level);
-				conv.resize(map.size() );
 
-				for (u32 i = 0; i < map.size(); i += 3) {
-					conv[i + 0] = map[i + 2];
-					conv[i + 1] = map[i + 1];
-					conv[i + 2] = map[i + 0];
-					conv[i + 3] = 0;
-				}
+			return conv;
+		}
+		case tex_B8G8R8: {
+			const auto& map = data(mipmap_level);
+			conv.resize(map.size());
 
-				return conv;
+			for (u32 i = 0; i < map.size(); i += 3) {
+				conv[i + 0] = map[i + 2];
+				conv[i + 1] = map[i + 1];
+				conv[i + 2] = map[i + 0];
+				conv[i + 3] = 0;
 			}
-			case tex_R8G8B8:{
-				const auto& map = data(mipmap_level);
-				conv.resize(map.size());
 
-				for (u32 i = 0; i < map.size(); i += 3) {
-					conv[i + 0] = map[i + 0];
-					conv[i + 1] = map[i + 1];
-					conv[i + 2] = map[i + 2];
-					conv[i + 3] = 0;
-				}
+			return conv;
+		}
+		case tex_R8G8B8: {
+			const auto& map = data(mipmap_level);
+			conv.resize(map.size());
 
-				return conv;
+			for (u32 i = 0; i < map.size(); i += 3) {
+				conv[i + 0] = map[i + 0];
+				conv[i + 1] = map[i + 1];
+				conv[i + 2] = map[i + 2];
+				conv[i + 3] = 0;
 			}
-			case tex_R5G6B5: {
-				const auto& map = data(mipmap_level);
-				conv.resize(map.size() * 2);
 
-				u32 idx = 0;
-				for (u32 i = 0; i < map.size(); i += 2) {
-					r5g5b5* rgb = (r5g5b5*) &map[i];
-					conv[idx++] = rgb->r;
-					conv[idx++] = rgb->g;
-					conv[idx++] = rgb->b;
-					conv[idx++] = 0xff;
-				}
+			return conv;
+		}
+		case tex_R5G6B5: {
+			const auto& map = data(mipmap_level);
+			conv.resize(map.size() * 2);
 
-				return conv;
+			u32 idx = 0;
+			for (u32 i = 0; i < map.size(); i += 2) {
+				r5g5b5* rgb = (r5g5b5*) &map[i];
+				conv[idx++] = rgb->r;
+				conv[idx++] = rgb->g;
+				conv[idx++] = rgb->b;
+				conv[idx++] = 0xff;
 			}
-			case tex_p8:{
-				const auto& map = data(mipmap_level);
-				conv.resize(map.size() * sizeof(u8) * 4);
 
-				for (u32 i = 0; i < map.size(); ++i) {
-					auto palentry = _m_palette[map[i]];
-					conv[i + 0] = palentry.r;
-					conv[i + 1] = palentry.g;
-					conv[i + 2] = palentry.b;
-					conv[i + 3] = palentry.a;
-				}
+			return conv;
+		}
+		case tex_p8: {
+			const auto& map = data(mipmap_level);
+			conv.resize(map.size() * sizeof(u8) * 4);
 
-				return conv;
+			for (u32 i = 0; i < map.size(); ++i) {
+				auto palentry = _m_palette[map[i]];
+				conv[i + 0] = palentry.r;
+				conv[i + 1] = palentry.g;
+				conv[i + 2] = palentry.b;
+				conv[i + 3] = palentry.a;
 			}
-			default:
-				throw parser_error(fmt::format("texture: cannot convert format to rgba: {}", _m_format));
+
+			return conv;
+		}
+		default:
+			throw parser_error(fmt::format("texture: cannot convert format to rgba: {}", _m_format));
 		}
 
 		return std::vector<u8>();
 	}
-}// namespace openzen
+} // namespace phoenix

@@ -37,23 +37,31 @@ namespace phoenix {
 		/**
 		 * @return All root VOBs of the world.
 		 */
-		[[nodiscard]] inline const std::vector<vob_tree>& vobs() const noexcept { return _m_root_vobs; }
+		[[nodiscard]] inline const std::vector<vob_tree>& vobs() const noexcept {
+			return _m_root_vobs;
+		}
 
 		/**
 		 * @return The world's mesh.
 		 */
-		[[nodiscard]] inline const mesh& world_mesh() const noexcept { return _m_mesh; }
+		[[nodiscard]] inline const mesh& world_mesh() const noexcept {
+			return _m_mesh;
+		}
 
 		/**
 		 * @return The world's BSP-tree.
 		 * @see https://en.wikipedia.org/wiki/Binary_space_partitioning
 		 */
-		[[nodiscard]] inline const bsp_tree& tree() const noexcept { return _m_tree; }
+		[[nodiscard]] inline const bsp_tree& tree() const noexcept {
+			return _m_tree;
+		}
 
 		/**
 		 * @return The world's way-net.
 		 */
-		[[nodiscard]] inline const way_net& waynet() const noexcept { return _m_way_net; }
+		[[nodiscard]] inline const way_net& waynet() const noexcept {
+			return _m_way_net;
+		}
 
 	private:
 		std::vector<vob_tree> _m_root_vobs;
@@ -62,4 +70,4 @@ namespace phoenix {
 		way_net _m_way_net;
 	};
 
-}// namespace phoenix
+} // namespace phoenix

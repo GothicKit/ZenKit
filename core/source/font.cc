@@ -11,7 +11,9 @@ namespace phoenix {
 
 		auto version = in.read_line();
 		if (version != "1") {
-			throw parser_error(fmt::format("font: cannot parse font due to version mismatch: expected version '1', got '{}'", version));
+			throw parser_error(
+			    fmt::format("font: cannot parse font due to version mismatch: expected version '1', got '{}'",
+			                version));
 		}
 
 		fnt._m_name = in.read_line(false);
@@ -35,4 +37,4 @@ namespace phoenix {
 
 		return fnt;
 	}
-}// namespace phoenix
+} // namespace phoenix

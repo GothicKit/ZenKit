@@ -39,4 +39,4 @@ namespace phoenix {
 			return tolower(a) == tolower(b);
 		});
 	}
-}// namespace phoenix
+} // namespace phoenix
