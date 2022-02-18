@@ -33,7 +33,7 @@ job-test:
     stage: test
     script:
         - cd "$CI_PROJECT_DIR/tests/"
-        - $CI_PROJECT_DIR/build/phoenix-tests -tce messages,script,world -r junit -o report.xml
+        - $CI_PROJECT_DIR/build/phoenix-tests -tse=messages,script,world -r=junit -o=report.xml
     needs:
         - job-build
     artifacts:
