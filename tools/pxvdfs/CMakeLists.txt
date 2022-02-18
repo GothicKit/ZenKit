@@ -12,5 +12,5 @@ execute_process(
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.hh.in ${CMAKE_CURRENT_BINARY_DIR}/config.hh @ONLY)
 
 add_executable(pxvdfs main.cc)
-target_link_libraries(pxvdfs PRIVATE phoenix-core argh)
+target_link_libraries(pxvdfs PRIVATE phoenix argh)
 target_include_directories(pxvdfs PRIVATE ${CMAKE_CURRENT_BINARY_DIR})

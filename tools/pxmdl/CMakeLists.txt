@@ -12,5 +12,5 @@ execute_process(
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.hh.in ${CMAKE_CURRENT_BINARY_DIR}/config.hh @ONLY)
 
 add_executable(pxmdl main.cc)
-target_link_libraries(pxmdl PRIVATE phoenix-core argh stb)
+target_link_libraries(pxmdl PRIVATE phoenix argh stb)
 target_include_directories(pxmdl PRIVATE ${CMAKE_CURRENT_BINARY_DIR})

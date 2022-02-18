@@ -12,5 +12,5 @@ execute_process(
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.hh.in ${CMAKE_CURRENT_BINARY_DIR}/config.hh @ONLY)
 
 add_executable(pxscrdump main.cc)
-target_link_libraries(pxscrdump PRIVATE phoenix-core argh)
+target_link_libraries(pxscrdump PRIVATE phoenix argh)
 target_include_directories(pxscrdump PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
