@@ -13,3 +13,6 @@
 [submodule "vendor/doctest"]
 	path = vendor/doctest
 	url = https://github.com/doctest/doctest
+[submodule "vendor/mio"]
+	path = vendor/mio
+	url = https://github.com/mandreyel/mio

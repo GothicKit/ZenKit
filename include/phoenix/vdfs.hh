@@ -136,15 +136,6 @@ namespace phoenix {
 		explicit vdf_entry(std::string_view name, u32 attributes = 0);
 
 		/**
-		 * @brief Creates a new file entry with the given name, data and attributes.
-		 * @param name The name of the entry to create.
-		 * @param data The data of the entry
-		 * @param size The number of bytes in the data.
-		 * @param attributes Attributes to set on the entry.
-		 */
-		explicit vdf_entry(std::string_view name, const char* data, u32 size, u32 attributes = 0);
-
-		/**
 		 * @brief Searches the entry for the first child with the given name.
 		 * @param name The name of the child to search for.
 		 * @return The child with the given name or `nullptr` if no entry was found.

@@ -29,9 +29,6 @@ namespace phoenix {
 	vdf_entry::vdf_entry(std::string_view name, u32 attributes)
 	    : _m_name(name), _m_type(VDF_MASK_DIRECTORY), _m_attributes(attributes) {}
 
-	vdf_entry::vdf_entry(std::string_view name, const char* data, u32 size, u32 attributes)
-	    : _m_name(name), _m_data(data), _m_size(size), _m_attributes(attributes) {}
-
 	const vdf_entry* vdf_entry::resolve_path(std::string_view path) const {
 		auto it = path.find('/');
 		auto name = path.substr(0, it);

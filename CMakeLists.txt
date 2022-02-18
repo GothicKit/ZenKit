@@ -64,18 +64,9 @@ set(PX_TESTS
 		tests/test_model_hierarchy.cc
 		tests/test_model_mesh.cc)
 
-set(PX_DEFINES)
-
-# Check for POSIX I/O headers
-check_include_files("sys/mman.h;unistd.h;fcntl.h;sys/stat.h" HAS_POSIX_IO)
-if (HAS_POSIX_IO)
-	set(PX_DEFINES ${OZ_DEFINES} PX_POSIX_MMAP=1)
-endif ()
-
 add_library(phoenix ${PX_SOURCES})
 target_include_directories(phoenix PUBLIC include)
-target_link_libraries(phoenix PUBLIC glm fmt squish)
-target_compile_definitions(phoenix PUBLIC ${PX_DEFINES})
+target_link_libraries(phoenix PUBLIC glm fmt squish mio)
 
 if (PX_BUILD_TESTS)
 	enable_testing()

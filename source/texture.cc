@@ -124,7 +124,7 @@ namespace phoenix {
 	}
 
 	texture texture::parse(const std::string& path) {
-		reader rdr {path};
+		auto rdr = reader::from(path);
 		return parse(rdr);
 	}
 

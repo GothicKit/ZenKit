@@ -22,10 +22,12 @@ static std::string read_file(const std::string& str) {
 	return v;
 }
 
+// TODO: Add tests for vector_reader!
+
 TEST_SUITE("stream") {
 	TEST_CASE("reader fails to open illegal paths") {
-		CHECK_THROWS_AS(reader::from("."), io_error);
-		CHECK_THROWS_AS(reader::from("./nonexistent"), io_error);
+		CHECK_THROWS_AS(reader::from("."), std::system_error);
+		CHECK_THROWS_AS(reader::from("./nonexistent"), std::system_error);
 	}
 
 	TEST_CASE("reader reads binary files correctly") {
@@ -69,8 +71,8 @@ TEST_SUITE("stream") {
 		CHECK(fork.size() == 10);
 		CHECK(fork.tell() == 0);
 
-		CHECK_THROWS_AS(in.fork(100), io_error);
-		CHECK_THROWS_AS(in.fork(100, 10), io_error);
+		CHECK_THROWS_AS((void) in.fork(100), io_error);
+		CHECK_THROWS_AS((void) in.fork(100, 10), io_error);
 
 		auto fork2 = in.fork(50, 10);
 		CHECK(in.tell() == 10);

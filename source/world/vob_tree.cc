@@ -58,8 +58,7 @@ namespace phoenix {
 			auto packed = in->read_int() != 0;
 
 			if (packed) {
-				auto raw = in->read_raw_bytes();
-				reader bin {{(const char*) raw.data(), raw.size()}};
+				vector_reader bin {in->read_raw_bytes()};
 
 				vob.bbox[0] = bin.read_vec3();
 				vob.bbox[1] = bin.read_vec3();
@@ -306,9 +305,7 @@ namespace phoenix {
 				vob.lerp_mode = in->read_enum();
 				vob.speed_mode = in->read_enum();
 
-				auto sample_bytes = in->read_raw_bytes();
-				reader sample_reader {
-				    std::string_view {reinterpret_cast<const char*>(sample_bytes.data()), sample_bytes.size()}};
+				vector_reader sample_reader {in->read_raw_bytes()};
 
 				for (int i = 0; i < keyframe_count; ++i) {
 					vob.keyframes.push_back(animation_sample {sample_reader.read_vec3(), sample_reader.read_vec4()});

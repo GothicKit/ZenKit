@@ -7,59 +7,35 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
+#include <mio/mmap.hpp>
+
+#include <memory>
 #include <ostream>
 #include <string>
 #include <string_view>
 
 namespace phoenix {
 	/**
-	 * @brief Facility to extract binary data from a memory buffer.
+	 * @brief Base class for all readers.
 	 *
 	 * Provides safe and simple methods to extract arithmetic types and strings from a binary data
 	 * buffer or file. It provides a much simpler and more cohesive interface than a std::istream
 	 * and supports all arithmetic types natively.
 	 */
-	class reader {
+	template <typename SELF>
+	class base_reader {
 	public:
-		/**
-		 * @brief Creates a new reader with a size of `0`.
-		 */
-		reader() = default;
-
-		/**
-		 * @brief Creates a new reader from the given memory buffer.
-		 * @param buffer The buffer to use for the new reader.
-		 * @attention No data is copied. Any dynamically allocated data must be managed by the caller.
-		 */
-		explicit reader(std::string_view buffer);
-
-		/**
-		 * @brief Memory-maps the file at @p path and creates a reader from the resulting buffer.
-		 * @return The new reader.
-		 * @throws io_error if memory-mapping the file fails for any reason.
-		 */
-		static reader from(const std::string& path);
+		virtual ~base_reader() = default;
 
 		/**
 		 * @return The current read offset into the internal buffer.
 		 */
-		[[nodiscard]] inline u64 tell() const noexcept {
-			return _m_offset;
-		}
+		[[nodiscard]] virtual u64 tell() const noexcept = 0;
 
 		/**
 		 * @return The size of the internal buffer in bytes.
 		 */
-		[[nodiscard]] inline u64 size() const noexcept {
-			return _m_buffer.size();
-		}
-
-		/**
-		 * @return The data of the internal buffer.
-		 */
-		[[nodiscard]] const char* data() const noexcept {
-			return _m_buffer.data();
-		}
+		[[nodiscard]] virtual u64 size() const noexcept = 0;
 
 		/**
 		 * @brief Set the read offset into the internal buffer to the given @p offset.
@@ -68,14 +44,14 @@ namespace phoenix {
 		 * @see	#tell
 		 * @see	#size
 		 */
-		void seek(u64 offset);
+		virtual void seek(u64 offset) = 0;
 
 		/**
 		 * @brief Ignores (or skips) @p count bytes in the internal buffer.
 		 * @param count The number of bytes to ignore.
 		 * @throws io_error if ignoring @p count bytes would result in an out-of-range read offset.
 		 */
-		void ignore(u64 count);
+		virtual void ignore(u64 count) = 0;
 
 		/**
 		 * @brief Creates a new reader from a subsection of this reader.
@@ -90,7 +66,7 @@ namespace phoenix {
 		 * @see	#ignore
 		 * @see #tell
 		 */
-		reader fork(u64 size, s64 offset = -1);
+		virtual SELF fork(u64 size, s64 offset) = 0;
 
 		/**
 		 * @brief Reads @p size bytes from the internal buffer into the given one.
@@ -98,7 +74,7 @@ namespace phoenix {
 		 * @param size The number of bytes to read.
 		 * @throws io_error if reading @p size bytes would be out-of-range.
 		 */
-		void read(void* buffer, u64 size);
+		virtual void read(void* buffer, u64 size) = 0;
 
 		/**
 		 * @brief Reads a string of @p size from the internal buffer.
@@ -114,7 +90,7 @@ namespace phoenix {
 		 * @return The line read.
 		 * @throws io_error if reading the line or skipping whitespace would be out-of-range.
 		 */
-		std::string read_line(bool skipws = true);
+		virtual std::string read_line(bool skipws) = 0;
 
 		/**
 		 * @brief Reads a `uint8_t` from the internal buffer.
@@ -233,6 +209,11 @@ namespace phoenix {
 			return {read_f32(), read_f32(), read_f32(), read_f32()};
 		}
 
+		/**
+		 * @return The data of the internal buffer.
+		 */
+		[[nodiscard]] virtual const char* data() const noexcept = 0;
+
 	protected:
 		/**
 		 * @brief Reads a value of type @p T from the internal buffer.
@@ -247,10 +228,175 @@ namespace phoenix {
 			read(&tmp, sizeof(T));
 			return tmp;
 		}
+	};
+
+	/**
+	 * @brief Facility to extract binary data from a memory buffer.
+	 * @see base_reader
+	 */
+	class reader : public base_reader<reader> {
+	public:
+		reader() = default;
+
+		/**
+		 * @brief Creates a new reader from the given memory-mapped source.
+		 * @param source The source to use for the new reader.
+		 */
+		explicit reader(std::shared_ptr<mio::mmap_source> source);
+
+		/**
+		 * @brief Creates a new reader from the given memory-mapped source at the given offsets.
+		 * @param source The source to use for the new reader.
+		 * @param begin The offset in the given source at which to start reading.
+		 * @param end The offset in the given source at which to stop reading.
+		 */
+		reader(std::shared_ptr<mio::mmap_source> source,
+		       mio::mmap_source::const_iterator begin,
+		       mio::mmap_source::const_iterator end);
+
+		/**
+		 * @brief Memory-maps the file at @p path and creates a reader from the resulting buffer.
+		 * @return The new reader.
+		 * @throws std::system_error if memory-mapping the file fails for any reason.
+		 */
+		static reader from(const std::string& path);
+
+		/**
+		 * @see base_reader::tell
+		 */
+		[[nodiscard]] inline u64 tell() const noexcept override {
+			return _m_current - _m_begin;
+		}
+
+		/**
+		 * @see base_reader::size
+		 */
+		[[nodiscard]] inline u64 size() const noexcept override {
+			return _m_end - _m_begin;
+		}
+
+		/**
+		 * @see base_reader::seek
+		 */
+		void seek(u64 offset) override;
+
+		/**
+		 * @see base_reader::ignore
+		 */
+		void ignore(u64 count) override;
+
+		/**
+		 * @see base_reader::fork
+		 */
+		[[nodiscard]] reader fork(u64 size, s64 offset) override;
+
+		/**
+		 * @see base_reader::fork
+		 */
+		inline reader fork(u64 size) {
+			return fork(size, -1);
+		}
+
+		/**
+		 * @see base_reader::read_line
+		 */
+		[[nodiscard]] std::string read_line(bool skipws) override;
+
+		/**
+		 * @see base_reader::read_line
+		 */
+		inline std::string read_line() {
+			return read_line(true);
+		}
+
+		/**
+		 * @see base_reader::read
+		 */
+		void read(void* buffer, u64 size) override;
+
+		/**
+		 * @see base_reader::data
+		 */
+		[[nodiscard]] inline const char* data() const noexcept override {
+			return _m_source->data();
+		}
 
 	private:
-		std::string_view _m_buffer {};
-		u64 _m_offset {0};
+		std::shared_ptr<mio::mmap_source> _m_source;
+		mio::mmap_source::const_iterator _m_begin {}, _m_current {}, _m_end {};
+	};
+
+	class vector_reader : public base_reader<vector_reader> {
+	public:
+		/**
+		 * @brief Constructs a new reader using the given vector as a source.
+		 * @param content The data to use as a source.
+		 */
+		explicit vector_reader(std::vector<u8>&& content);
+
+		/**
+		 * @see base_reader::tell
+		 */
+		[[nodiscard]] inline u64 tell() const noexcept override {
+			return _m_current - _m_begin;
+		}
+
+		/**
+		 * @see base_reader::size
+		 */
+		[[nodiscard]] inline u64 size() const noexcept override {
+			return _m_end - _m_begin;
+		}
+
+		/**
+		 * @see base_reader::seek
+		 */
+		void seek(u64 offset) override;
+
+		/**
+		 * @see base_reader::ignore
+		 */
+		void ignore(u64 count) override;
+
+		/**
+		 * @see base_reader::fork
+		 */
+		[[nodiscard]] vector_reader fork(u64 size, s64 offset) override;
+
+		/**
+		 * @see base_reader::fork
+		 */
+		inline vector_reader fork(u64 size) {
+			return fork(size, -1);
+		}
+
+		/**
+		 * @see base_reader::read_line
+		 */
+		[[nodiscard]] std::string read_line(bool skipws) override;
+
+		/**
+		 * @see base_reader::read_line
+		 */
+		inline std::string read_line() {
+			return read_line(true);
+		}
+
+		/**
+		 * @see base_reader::read
+		 */
+		void read(void* buffer, u64 size) override;
+
+		/**
+		 * @see base_reader::data
+		 */
+		[[nodiscard]] inline const char* data() const noexcept override {
+			return reinterpret_cast<const char*>(_m_source.data());
+		}
+
+	private:
+		std::vector<u8> _m_source;
+		std::vector<u8>::const_iterator _m_begin {}, _m_current {}, _m_end {};
 	};
 
 	/**
