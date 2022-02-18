@@ -22,7 +22,7 @@ job-build:
         - make
     artifacts:
         paths:
-            - build/core/phoenix-core-tests
+            - build/phoenix-tests
             - build/tools/pxmdl/pxmdl
             - build/tools/pxscrdump/pxscrdump
             - build/tools/pxtex/pxtex
@@ -32,11 +32,11 @@ job-build:
 job-test:
     stage: test
     script:
-        - cd "$CI_PROJECT_DIR/core/tests/"
-        - $CI_PROJECT_DIR/build/core/phoenix-core-tests ~[proprietary] -r junit -o report.xml
+        - cd "$CI_PROJECT_DIR/tests/"
+        - $CI_PROJECT_DIR/build/phoenix-tests ~[proprietary] -r junit -o report.xml
     needs:
         - job-build
     artifacts:
         when: always
         reports:
-            junit: $CI_PROJECT_DIR/core/tests/report.xml
+            junit: $CI_PROJECT_DIR/tests/report.xml

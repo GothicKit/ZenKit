@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.15)
+include(CheckIncludeFiles)
 project(phoenix)
 
 option(PX_BUILD_TOOLS "Build phoenix tool executables" ON)
 option(PX_BUILD_ENGINE "Build the phoenix engine library" ON)
+option(PX_BUILD_TESTS "Build core library tests" ON)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
@@ -15,8 +17,76 @@ if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
 	endif()
 endif()
 
+set(PX_SOURCES
+		source/detail/stream.cc
+		source/detail/compat.cc
 
-add_subdirectory(core)
+		source/archive/archive_ascii.cc
+		source/archive/archive_binary.cc
+		source/archive/archive_binsafe.cc
+		source/archive.cc
+
+		source/vdfs.cc
+		source/material.cc
+		source/font.cc
+		source/animation.cc
+		source/texture.cc
+		source/proto_mesh.cc
+		source/messages.cc
+		source/mesh.cc
+		source/morph_mesh.cc
+		source/model_hierarchy.cc
+		source/softskin_mesh.cc
+		source/model_mesh.cc
+
+		source/world.cc
+		source/world/bsp_tree.cc
+		source/world/vob_tree.cc
+		source/world/way_net.cc
+
+		source/daedalus/script.cc
+		source/daedalus/interpreter.cc)
+
+set(PX_TESTS
+		tests/test_runner.cc
+		tests/test_stream.cc
+		tests/test_compat.cc
+		tests/test_archive.cc
+		tests/test_material.cc
+		tests/test_vdfs.cc
+		tests/test_font.cc
+		tests/test_animation.cc
+		tests/test_texture.cc
+		tests/test_script.cc
+		tests/test_proto_mesh.cc
+		tests/test_world.cc
+		tests/test_messages.cc
+		tests/test_morph_mesh.cc
+		tests/test_model_hierarchy.cc
+		tests/test_model_mesh.cc)
+
+set(PX_DEFINES)
+
+# Check for POSIX I/O headers
+check_include_files("sys/mman.h;unistd.h;fcntl.h;sys/stat.h" HAS_POSIX_IO)
+if (HAS_POSIX_IO)
+	set(PX_DEFINES ${OZ_DEFINES} PX_POSIX_MMAP=1)
+endif ()
+
+add_library(phoenix ${PX_SOURCES})
+target_include_directories(phoenix PUBLIC include)
+target_link_libraries(phoenix PUBLIC glm fmt squish)
+target_compile_definitions(phoenix PUBLIC ${PX_DEFINES})
+
+if (PX_BUILD_TESTS)
+	enable_testing()
+
+	add_executable(phoenix-tests ${PX_TESTS})
+	target_link_libraries(phoenix-tests PRIVATE phoenix)
+
+	add_test(NAME phoenix-test COMMAND $<TARGET_FILE:phoenix-tests> --check WORKING_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests)
+endif ()
+
+
 add_subdirectory(tools)
-add_subdirectory(engine)
 add_subdirectory(vendor)
