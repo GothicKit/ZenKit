@@ -10,3 +10,6 @@
 [submodule "vendor/stb"]
 	path = vendor/stb
 	url = https://gitlab.com/lmichaelis/phoenix-stb
+[submodule "vendor/doctest"]
+	path = vendor/doctest
+	url = https://github.com/doctest/doctest

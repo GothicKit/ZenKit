@@ -3,118 +3,121 @@
 #include <phoenix/archive.hh>
 #include <phoenix/detail/error.hh>
 
-#include "catch2.hh"
+#include <doctest/doctest.h>
 
-TEST_CASE("ascii archives are read correctly", "[archive]") {
-	auto in = phoenix::reader::from("./samples/ascii.zen");
-	auto reader = phoenix::archive_reader::open(in);
+TEST_SUITE("archive") {
+	TEST_CASE("ascii archives are read correctly") {
+		auto in = phoenix::reader::from("./samples/ascii.zen");
+		auto reader = phoenix::archive_reader::open(in);
 
-	phoenix::archive_object obj;
+		phoenix::archive_object obj;
 
-	REQUIRE(reader->read_object_begin(obj));
-	REQUIRE(!reader->read_object_begin(obj));
+		CHECK(reader->read_object_begin(obj));
+		CHECK(!reader->read_object_begin(obj));
 
-	REQUIRE(obj.object_name == "root_obj");
-	REQUIRE(obj.class_name == "%");
-	REQUIRE(obj.version == 21237);
-	REQUIRE(obj.index == 1);
+		CHECK(obj.object_name == "root_obj");
+		CHECK(obj.class_name == "%");
+		CHECK(obj.version == 21237);
+		CHECK(obj.index == 1);
 
-	REQUIRE(reader->read_string() == "a basic string");
+		CHECK(reader->read_string() == "a basic string");
 
-	// This failure will skip the offending entry. I am not yet sure if this is the correct behavior
-	// or if it should just revert to the beginning of the line to enable re-parsing it.
-	REQUIRE_THROWS_AS(reader->read_string(), phoenix::parser_error);
+		// This failure will skip the offending entry. I am not yet sure if this is the correct behavior
+		// or if it should just revert to the beginning of the line to enable re-parsing it.
+		REQUIRE_THROWS_AS(reader->read_string(), phoenix::parser_error);
 
-	reader->skip_object(false);
+		reader->skip_object(false);
 
-	REQUIRE(reader->read_int() == 672);
-	REQUIRE(reader->read_float() == 12.12421f);
-	REQUIRE(reader->read_byte() == 255);
-	REQUIRE(reader->read_word() == 32621);
-	REQUIRE(reader->read_enum() == 6);
-	REQUIRE(reader->read_bool());
+		CHECK(reader->read_int() == 672);
+		CHECK(reader->read_float() == 12.12421f);
+		CHECK(reader->read_byte() == 255);
+		CHECK(reader->read_word() == 32621);
+		CHECK(reader->read_enum() == 6);
+		CHECK(reader->read_bool());
 
-	auto color = reader->read_color();
-	REQUIRE(color.r == 255);
-	REQUIRE(color.g == 1);
-	REQUIRE(color.b == 2);
-	REQUIRE(color.a == 3);
+		auto color = reader->read_color();
+		CHECK(color.r == 255);
+		CHECK(color.g == 1);
+		CHECK(color.b == 2);
+		CHECK(color.a == 3);
 
-	auto vec3 = reader->read_vec3();
-	REQUIRE(vec3.x == 50);
-	REQUIRE(vec3.y == 100.123f);
-	REQUIRE(vec3.z == -150);
+		auto vec3 = reader->read_vec3();
+		CHECK(vec3.x == 50);
+		CHECK(vec3.y == 100.123f);
+		CHECK(vec3.z == -150);
 
-	auto vec2 = reader->read_vec2();
-	REQUIRE(vec2.x == 111.11f);
-	REQUIRE(vec2.y == -12.99f);
+		auto vec2 = reader->read_vec2();
+		CHECK(vec2.x == 111.11f);
+		CHECK(vec2.y == -12.99f);
 
-	auto [bbox_min, bbox_max] = reader->read_bbox();
-	REQUIRE(bbox_min.x == 12.0f);
-	REQUIRE(bbox_min.y == 34.0f);
-	REQUIRE(bbox_min.z == 56.0f);
-	REQUIRE(bbox_max.x == 78.0f);
-	REQUIRE(bbox_max.y == 89.0f);
-	REQUIRE(bbox_max.z == 0.0f);
+		auto box0 = reader->read_bbox();
+		auto min0 = std::get<0>(box0), max0 = std::get<1>(box0);
+		CHECK(min0.x == 12.0f);
+		CHECK(min0.y == 34.0f);
+		CHECK(min0.z == 56.0f);
+		CHECK(max0.x == 78.0f);
+		CHECK(max0.y == 89.0f);
+		CHECK(max0.z == 0.0f);
 
-	auto mat3 = reader->read_mat3x3();
-	REQUIRE(mat3[0][0] == 0.994702816f);
-	REQUIRE(mat3[0][1] == 0.0f);
-	REQUIRE(mat3[0][2] == 0.102792539f);
-	REQUIRE(mat3[1][0] == 0.0f);
-	REQUIRE(mat3[1][1] == 1.0f);
-	REQUIRE(mat3[1][2] == 0.0f);
-	REQUIRE(mat3[2][0] == -0.102792539f);
-	REQUIRE(mat3[2][1] == 0.0f);
-	REQUIRE(mat3[2][2] == 0.994702816f);
+		auto mat3 = reader->read_mat3x3();
+		CHECK(mat3[0][0] == 0.994702816f);
+		CHECK(mat3[0][1] == 0.0f);
+		CHECK(mat3[0][2] == 0.102792539f);
+		CHECK(mat3[1][0] == 0.0f);
+		CHECK(mat3[1][1] == 1.0f);
+		CHECK(mat3[1][2] == 0.0f);
+		CHECK(mat3[2][0] == -0.102792539f);
+		CHECK(mat3[2][1] == 0.0f);
+		CHECK(mat3[2][2] == 0.994702816f);
 
-	auto raw = reader->read_raw_bytes();
-	REQUIRE(raw[0] == 0xf2);
-	REQUIRE(raw[1] == 0x42);
-	REQUIRE(raw[2] == 0xa7);
-	REQUIRE(raw[3] == 0x10);
+		auto raw = reader->read_raw_bytes();
+		CHECK(raw[0] == 0xf2);
+		CHECK(raw[1] == 0x42);
+		CHECK(raw[2] == 0xa7);
+		CHECK(raw[3] == 0x10);
 
-	REQUIRE(reader->read_object_begin(obj));
-	REQUIRE(!reader->read_object_begin(obj));
+		CHECK(reader->read_object_begin(obj));
+		CHECK(!reader->read_object_begin(obj));
 
-	REQUIRE(obj.object_name == "child_obj");
-	REQUIRE(obj.class_name == "test:class:name");
-	REQUIRE(obj.version == 7323);
-	REQUIRE(obj.index == 2);
+		CHECK(obj.object_name == "child_obj");
+		CHECK(obj.class_name == "test:class:name");
+		CHECK(obj.version == 7323);
+		CHECK(obj.index == 2);
 
-	REQUIRE(reader->read_object_end());
-	REQUIRE(reader->read_object_end());
-	REQUIRE_THROWS_AS(reader->read_float(), phoenix::io_error);
-}
+		CHECK(reader->read_object_end());
+		CHECK(reader->read_object_end());
+		REQUIRE_THROWS_AS(reader->read_float(), phoenix::io_error);
+	}
 
-TEST_CASE("binary archives are read correctly", "[archive]") {
-	auto in = phoenix::reader::from("./samples/binary.zen");
-	auto reader = phoenix::archive_reader::open(in);
-	REQUIRE(reader->read_string() == "DT_BOOKSHELF_V1_1");
+	TEST_CASE("binary archives are read correctly") {
+		auto in = phoenix::reader::from("./samples/binary.zen");
+		auto reader = phoenix::archive_reader::open(in);
+		CHECK(reader->read_string() == "DT_BOOKSHELF_V1_1");
 
-	phoenix::archive_object obj;
-	REQUIRE(reader->read_object_begin(obj));
+		phoenix::archive_object obj;
+		CHECK(reader->read_object_begin(obj));
 
-	REQUIRE(obj.object_name == "%");
-	REQUIRE(obj.class_name == "zCMaterial");
-	REQUIRE(obj.version == 17408);
-	REQUIRE(obj.index == 0);
+		CHECK(obj.object_name == "%");
+		CHECK(obj.class_name == "zCMaterial");
+		CHECK(obj.version == 17408);
+		CHECK(obj.index == 0);
 
-	REQUIRE(reader->read_string() == "DT_BOOKSHELF_V1_1");
-	REQUIRE(reader->read_byte() == 0);
+		CHECK(reader->read_string() == "DT_BOOKSHELF_V1_1");
+		CHECK(reader->read_byte() == 0);
 
-	auto color = reader->read_color();
-	REQUIRE(color.r == 0x19);
-	REQUIRE(color.g == 0x23);
-	REQUIRE(color.b == 0x2A);
-	REQUIRE(color.a == 0xFF);
+		auto color = reader->read_color();
+		CHECK(color.r == 0x19);
+		CHECK(color.g == 0x23);
+		CHECK(color.b == 0x2A);
+		CHECK(color.a == 0xFF);
 
-	REQUIRE(reader->read_float() == 60.0f);
-	REQUIRE(reader->read_string() == "MODIBOOKS01.TGA");
-	REQUIRE(reader->read_string() == "256 256");
-	REQUIRE(reader->read_float() == 0.0f);
-}
+		CHECK(reader->read_float() == 60.0f);
+		CHECK(reader->read_string() == "MODIBOOKS01.TGA");
+		CHECK(reader->read_string() == "256 256");
+		CHECK(reader->read_float() == 0.0f);
+	}
 
-TEST_CASE("binsafe archives are read correctly", "[archive]") {
-	// FIXME: Stub
+	TEST_CASE("binsafe archives are read correctly") {
+		// FIXME: Stub
+	}
 }

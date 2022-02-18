@@ -48,7 +48,6 @@ set(PX_SOURCES
 		source/daedalus/interpreter.cc)
 
 set(PX_TESTS
-		tests/test_runner.cc
 		tests/test_stream.cc
 		tests/test_compat.cc
 		tests/test_archive.cc
@@ -82,7 +81,7 @@ if (PX_BUILD_TESTS)
 	enable_testing()
 
 	add_executable(phoenix-tests ${PX_TESTS})
-	target_link_libraries(phoenix-tests PRIVATE phoenix)
+	target_link_libraries(phoenix-tests PRIVATE phoenix doctest_with_main)
 
 	add_test(NAME phoenix-test COMMAND $<TARGET_FILE:phoenix-tests> --check WORKING_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 endif ()
