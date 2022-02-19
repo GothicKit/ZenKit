@@ -38,6 +38,7 @@ set(PX_SOURCES
 		source/model_hierarchy.cc
 		source/softskin_mesh.cc
 		source/model_mesh.cc
+		source/model.cc
 
 		source/world.cc
 		source/world/bsp_tree.cc
@@ -62,7 +63,8 @@ set(PX_TESTS
 		tests/test_messages.cc
 		tests/test_morph_mesh.cc
 		tests/test_model_hierarchy.cc
-		tests/test_model_mesh.cc)
+		tests/test_model_mesh.cc
+		tests/test_model.cc)
 
 add_library(phoenix ${PX_SOURCES})
 target_include_directories(phoenix PUBLIC include)
