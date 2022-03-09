@@ -307,7 +307,7 @@ namespace phoenix {
 		} else if (std::holds_alternative<s32>(v.value)) {
 			// std::cerr << "WARN: Popping int and reinterpreting as float\n";
 			auto k = std::get<s32>(v.value);
-			return reinterpret_cast<float&>(k);
+			return std::bit_cast<float>(k);
 		} else {
 			throw std::runtime_error {"Tried to pop_float but frame does not contain an float."};
 		}
