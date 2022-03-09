@@ -6,14 +6,6 @@
 #include <fmt/format.h>
 
 namespace phoenix {
-	template <typename SELF>
-	std::string base_reader<SELF>::read_string(u64 size) {
-		std::string tmp;
-		tmp.resize(size);
-		read(tmp.data(), size);
-		return tmp;
-	}
-
 	// TODO: Clean this up. Use another base class for reading from iterators?
 
 	reader::reader(std::shared_ptr<mio::mmap_source> source)

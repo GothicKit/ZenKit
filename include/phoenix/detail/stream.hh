@@ -82,7 +82,12 @@ namespace phoenix {
 		 * @return The string read
 		 * @throws io_error if reading a string of @p size chars would be out-of-range.
 		 */
-		std::string read_string(u64 size);
+		inline std::string read_string(u64 size) {
+			std::string tmp;
+			tmp.resize(size);
+			read(tmp.data(), size);
+			return tmp;
+		}
 
 		/**
 		 * @brief Reads a line from the internal buffer.
