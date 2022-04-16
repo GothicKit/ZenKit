@@ -323,7 +323,7 @@ namespace phoenix {
 		 * @see base_reader::data
 		 */
 		[[nodiscard]] inline const char* data() const noexcept override {
-			return _m_source->data();
+			return _m_begin;
 		}
 
 	private:
