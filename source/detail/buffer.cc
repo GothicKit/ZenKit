@@ -200,6 +200,13 @@ namespace phoenix {
 		return *this;
 	}
 
+	buffer& buffer::skip(std::uint64_t count) {
+		if (remaining() < count)
+			throw buffer_underflow_error {};
+		_m_position += count;
+		return *this;
+	}
+
 	buffer buffer::slice() const {
 		return buffer {_m_backing, _m_backing_begin + _m_position, _m_backing_end};
 	}

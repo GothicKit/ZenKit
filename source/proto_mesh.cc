@@ -26,7 +26,7 @@ namespace phoenix {
 				auto version = in.get_ushort();
 				auto content_size = in.get_uint();
 				auto content = in.slice(in.position(), content_size);
-				in.position(in.position() + content_size);
+				in.skip(content_size);
 
 				auto submesh_count = in.get();
 				auto vertices_index = in.get_uint();
@@ -91,7 +91,7 @@ namespace phoenix {
 				msh._m_obbox = obb::parse(in);
 
 				// TODO: this might be a vec4 though the values don't make any sense.
-				in.position(in.position() + 0x10);
+				in.skip(0x10);
 				break;
 			}
 			case proto_chunk::end:

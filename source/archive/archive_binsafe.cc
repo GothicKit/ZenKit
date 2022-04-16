@@ -83,7 +83,7 @@ namespace phoenix {
 		    (type == bs_string || type == bs_raw || type == bs_raw_float) ? input.get_ushort() : type_sizes[type];
 
 		if (type != tp) {
-			input.position(input.position() + size);
+			input.skip(size);
 			throw parser_error(fmt::format("archive_reader_binsafe: type mismatch: expected {}, got: {}", tp, type));
 		}
 
@@ -168,7 +168,7 @@ namespace phoenix {
 		auto c = input.get_vec2();
 
 		// There might be more bytes in this. We'll ignore them.
-		input.position(input.position() + unused);
+		input.skip(unused);
 		skip_optional_hash();
 		return c;
 	}
@@ -180,7 +180,7 @@ namespace phoenix {
 		case bs_string:
 		case bs_raw:
 		case bs_raw_float:
-			input.position(input.position() + input.get_ushort());
+			input.skip(input.get_ushort());
 			break;
 		case bs_enum:
 		case bs_hash:
@@ -217,7 +217,7 @@ namespace phoenix {
 		auto c = std::make_tuple(input.get_vec3(), input.get_vec3());
 
 		// There might be more bytes in this. We'll ignore them.
-		input.position(input.position() + unused);
+		input.skip(unused);
 		skip_optional_hash();
 		return c;
 	}
@@ -235,7 +235,7 @@ namespace phoenix {
 		v[1] = input.get_vec3();
 		v[2] = input.get_vec3();
 
-		input.position(input.position() + unused);
+		input.skip(unused);
 		skip_optional_hash();
 		return v;
 	}

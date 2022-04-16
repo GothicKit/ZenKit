@@ -44,7 +44,7 @@ namespace phoenix {
 			}
 			case hierarchy_chunk::stats:
 				// maybe a date?
-				in.position(in.position() + 16);
+				in.skip(16);
 				(void) /* path? = */ in.get_line(false);
 				break;
 			case hierarchy_chunk::end:

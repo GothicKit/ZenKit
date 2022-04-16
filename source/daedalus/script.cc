@@ -90,7 +90,7 @@ namespace phoenix {
 		scr._m_symbols.reserve(symbol_count + 1);
 		scr._m_symbols_by_name.reserve(symbol_count + 1);
 		scr._m_symbols_by_address.reserve(symbol_count);
-		in.position(in.position() + symbol_count * sizeof(std::uint32_t)); // Sort table
+		in.skip(symbol_count * sizeof(std::uint32_t)); // Sort table
 		// The sort table is a list of indexes into the symbol table sorted lexicographically by symbol name!
 
 		for (std::uint32_t i = 0; i < symbol_count; ++i) {

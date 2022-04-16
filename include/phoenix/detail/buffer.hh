@@ -162,6 +162,13 @@ namespace phoenix {
 		}
 
 		/**
+		 * @brief Skips `count` bytes in the buffer.
+		 * @param count The number of bytes to skip.
+		 * @return This buffer.
+		 */
+		buffer& skip(std::uint64_t count);
+
+		/**
 		 * @return The number of elements remaining in this buffer
 		 */
 		[[nodiscard]] inline std::uint64_t remaining() const noexcept {
