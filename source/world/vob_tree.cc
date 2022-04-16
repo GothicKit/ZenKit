@@ -362,12 +362,18 @@ namespace phoenix {
 
 			archive_object frame_obj {};
 			while (in->read_object_begin(frame_obj)) {
+				if (frame_obj.class_name != "zCCamTrj_KeyFrame:zCVob") {
+					fmt::print(stderr, "error: unexpected '{}' in 'zCCSCamera:zCVob'\n", frame_obj.class_name);
+					in->skip_object(true);
+					continue;
+				}
+
 				camera_trj_frame frame {};
 				camera_trj_frame::parse(frame, in, version);
 				vob.frames.push_back(frame);
 
 				if (!in->read_object_end()) {
-					fmt::print(stderr, "warning: not all data consumed of 'zCCamTrj_KeyFrame'");
+					fmt::print(stderr, "warning: not all data consumed of 'zCCamTrj_KeyFrame'\n");
 					in->skip_object(true);
 				}
 			}
