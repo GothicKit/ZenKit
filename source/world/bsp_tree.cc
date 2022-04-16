@@ -43,7 +43,7 @@ namespace phoenix {
 			node.plane.y = in.read_f32();
 			node.plane.z = in.read_f32();
 
-			if (version == 0 /*G1*/) {
+			if (version == 34144256 /*G1*/) {
 				in.ignore(1); // "lod-flag"
 			}
 
@@ -59,7 +59,7 @@ namespace phoenix {
 		}
 	};
 
-	bsp_tree bsp_tree::parse(reader& in) {
+	bsp_tree bsp_tree::parse(reader& in, u32 version) {
 		bsp_tree bsp;
 
 		bool finished = false;
@@ -91,7 +91,7 @@ namespace phoenix {
 				bsp._m_nodes.reserve(node_count);
 				bsp._m_leaf_node_indices.reserve(leaf_count);
 
-				_parse_bsp_nodes(in, bsp._m_nodes, bsp._m_leaf_node_indices, 0, -1);
+				_parse_bsp_nodes(in, bsp._m_nodes, bsp._m_leaf_node_indices, version, -1);
 
 				assert(node_count == bsp._m_nodes.size());
 				assert(leaf_count == bsp._m_leaf_node_indices.size());

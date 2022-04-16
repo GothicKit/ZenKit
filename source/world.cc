@@ -24,12 +24,12 @@ namespace phoenix {
 			archive->read_object_begin(chnk);
 
 			if (chnk.object_name == "MeshAndBsp") {
-				/* auto version = */ (void) in.read_u32();
+				auto bsp_version = in.read_u32();
 				auto size = in.read_u32();
 
 				auto content = in.fork(size);
 				wld._m_mesh = mesh::parse(content);
-				wld._m_tree = bsp_tree::parse(content);
+				wld._m_tree = bsp_tree::parse(content, bsp_version);
 			} else if (chnk.object_name == "VobTree") {
 				auto count = archive->read_int();
 				wld._m_root_vobs.reserve(count);

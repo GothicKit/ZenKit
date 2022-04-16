@@ -53,7 +53,7 @@ namespace phoenix {
 		 * @param in The reader to read from.
 		 * @return The tree parsed.
 		 */
-		[[nodiscard]] static bsp_tree parse(reader& in);
+		[[nodiscard]] static bsp_tree parse(reader& in, u32 version);
 
 		/**
 		 * @return The mode of the tree (either indoor or outdoor).
