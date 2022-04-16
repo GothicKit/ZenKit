@@ -426,6 +426,19 @@ namespace phoenix {
 
 			static void parse(trigger_mover& vob, archive_reader_ref& in, game_version version);
 		};
+
+		struct earthquake : public base {
+			float field1;
+			float field2;
+			glm::vec3 field3;
+
+			static void parse(earthquake& vob, archive_reader_ref& in, game_version version) {
+				base::parse(vob, in, version);
+				vob.field1 = in->read_float();
+				vob.field2 = in->read_float();
+				vob.field3 = in->read_vec3();
+			}
+		};
 	} // namespace vob
 
 	/**
@@ -486,7 +499,8 @@ namespace phoenix {
 		             vob::trigger_mover,
 		             vob::animate,
 		             vob::zone_fog,
-		             vob::zone_far_plane>
+		             vob::zone_far_plane,
+		             vob::earthquake>
 		    _m_content;
 
 		vob_type _m_type;

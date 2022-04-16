@@ -343,7 +343,6 @@ namespace phoenix {
 		case vob_type::zCVobLevelCompo:
 		case vob_type::zCVobStartpoint:
 		case vob_type::zCVobScreenFX:
-		case vob_type::zCEarthquake:
 		case vob_type::zCCSCamera:
 		case vob_type::zCVobStair:
 		case vob_type::zCVobSpot:
@@ -455,6 +454,10 @@ namespace phoenix {
 		case vob_type::zCTriggerUntouch:
 			vob._m_content = vob::trigger_untouch {};
 			vob::trigger_untouch::parse(std::get<vob::trigger_untouch>(vob._m_content), in, version);
+			break;
+		case vob_type::zCEarthquake:
+			vob._m_content = vob::earthquake {};
+			vob::earthquake::parse(std::get<vob::earthquake>(vob._m_content), in, version);
 			break;
 		case vob_type::zCMoverController:
 			vob._m_content = vob::mover_controller {};
