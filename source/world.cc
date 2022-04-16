@@ -26,11 +26,10 @@ namespace phoenix {
 
 			if (chnk.object_name == "MeshAndBsp") {
 				auto bsp_version = in.get_uint();
-				auto size = in.get_uint();
+				(void) /* size = */ in.get_uint();
 
-				auto content = in.slice(in.position(), size);
-				wld._m_mesh = mesh::parse(content);
-				wld._m_tree = bsp_tree::parse(content, bsp_version);
+				wld._m_mesh = mesh::parse(in);
+				wld._m_tree = bsp_tree::parse(in, bsp_version);
 			} else if (chnk.object_name == "VobTree") {
 				auto count = archive->read_int();
 				wld._m_root_vobs.reserve(count);
