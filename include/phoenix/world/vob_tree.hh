@@ -214,14 +214,14 @@ namespace phoenix {
 
 		struct message_filter : public base {
 			std::string target;
-			u8 on_trigger;
-			u8 on_untrigger;
+			u32 on_trigger;
+			u32 on_untrigger;
 
 			static void parse(message_filter& vob, archive_reader_ref& in, game_version version) {
 				base::parse(vob, in, version);
 				vob.target = in->read_string();
-				vob.on_trigger = in->read_byte();
-				vob.on_untrigger = in->read_byte();
+				vob.on_trigger = in->read_enum();
+				vob.on_untrigger = in->read_enum();
 			}
 		};
 
