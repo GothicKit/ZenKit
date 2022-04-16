@@ -51,7 +51,7 @@ namespace phoenix {
 	    {"zCVobScreenFX:zCVob", vob_type::zCVobScreenFX},
 	    {"zCVobStair:zCVob", vob_type::zCVobStair},
 	    {"oCCSTrigger:zCTrigger:zCVob", vob_type::oCCSTrigger},
-	    {"\xA7", vob_type::unknown},  // some sort of padding object, probably. seems to be always empty
+	    {"\xA7", vob_type::unknown}, // some sort of padding object, probably. seems to be always empty
 	};
 
 	namespace vob {
@@ -326,17 +326,17 @@ namespace phoenix {
 		void camera_trj_frame::parse(camera_trj_frame& vob, archive_reader_ref& in, game_version version) {
 			base::parse(vob, in, version);
 			vob.field1 = in->read_float();
-		    vob.field2 = in->read_float();
-		    vob.field3 = in->read_float();
-		    vob.field4 = in->read_enum();
-		    vob.field5 = in->read_enum();
-		    vob.field6 = in->read_enum();
-		    vob.field7 = in->read_enum();
-		    vob.field8 = in->read_float();
-		    vob.field9 = in->read_float();
-		    vob.field10 = in->read_float();
-		    vob.field11 = in->read_float();
-		    vob.field12 = in->read_bool();
+			vob.field2 = in->read_float();
+			vob.field3 = in->read_float();
+			vob.field4 = in->read_enum();
+			vob.field5 = in->read_enum();
+			vob.field6 = in->read_enum();
+			vob.field7 = in->read_enum();
+			vob.field8 = in->read_float();
+			vob.field9 = in->read_float();
+			vob.field10 = in->read_float();
+			vob.field11 = in->read_float();
+			vob.field12 = in->read_bool();
 
 			vob.blob = in->read_raw_bytes();
 		}
