@@ -322,6 +322,56 @@ namespace phoenix {
 			vob.sfx_unlock = in->read_string();
 			vob.sfx_use_locked = in->read_string();
 		}
+
+		void camera_trj_frame::parse(camera_trj_frame& vob, archive_reader_ref& in, game_version version) {
+			base::parse(vob, in, version);
+			vob.field1 = in->read_float();
+		    vob.field2 = in->read_float();
+		    vob.field3 = in->read_float();
+		    vob.field4 = in->read_enum();
+		    vob.field5 = in->read_enum();
+		    vob.field6 = in->read_enum();
+		    vob.field7 = in->read_enum();
+		    vob.field8 = in->read_float();
+		    vob.field9 = in->read_float();
+		    vob.field10 = in->read_float();
+		    vob.field11 = in->read_float();
+		    vob.field12 = in->read_bool();
+
+			vob.blob = in->read_raw_bytes();
+		}
+
+		void cs_camera::parse(cs_camera& vob, archive_reader_ref& in, game_version version) {
+			base::parse(vob, in, version);
+			vob.field1 = in->read_enum();
+			vob.field2 = in->read_enum();
+			vob.field3 = in->read_enum();
+			vob.field4 = in->read_enum();
+			vob.field5 = in->read_bool();
+			vob.field6 = in->read_bool();
+			vob.field7 = in->read_bool();
+			vob.field8 = in->read_bool();
+			vob.field9 = in->read_bool();
+			vob.field10 = in->read_float();
+			vob.field11 = in->read_string();
+			vob.field12 = in->read_bool();
+			vob.field13 = in->read_bool();
+			vob.field14 = in->read_float();
+			vob.field15 = in->read_int();
+			vob.field16 = in->read_int();
+
+			archive_object frame_obj {};
+			while (in->read_object_begin(frame_obj)) {
+				camera_trj_frame frame {};
+				camera_trj_frame::parse(frame, in, version);
+				vob.frames.push_back(frame);
+
+				if (!in->read_object_end()) {
+					fmt::print(stderr, "warning: not all data consumed of 'zCCamTrj_KeyFrame'");
+					in->skip_object(true);
+				}
+			}
+		}
 	} // namespace vob
 
 	vob_tree vob_tree::parse(archive_reader_ref& in, game_version version) {
@@ -343,12 +393,15 @@ namespace phoenix {
 		case vob_type::zCVobLevelCompo:
 		case vob_type::zCVobStartpoint:
 		case vob_type::zCVobScreenFX:
-		case vob_type::zCCSCamera:
 		case vob_type::zCVobStair:
 		case vob_type::zCVobSpot:
 		case vob_type::zCVob:
 			vob._m_content = vob::base {};
 			vob::base::parse(std::get<vob::base>(vob._m_content), in, version);
+			break;
+		case vob_type::zCCSCamera:
+			vob._m_content = vob::cs_camera {};
+			vob::cs_camera::parse(std::get<vob::cs_camera>(vob._m_content), in, version);
 			break;
 		case vob_type::zCVobAnimate:
 			vob._m_content = vob::animate {};

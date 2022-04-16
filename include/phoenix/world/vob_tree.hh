@@ -439,6 +439,48 @@ namespace phoenix {
 				vob.field3 = in->read_vec3();
 			}
 		};
+
+		struct camera_trj_frame : public base {
+			float field1;
+			float field2;
+			float field3;
+			u32 field4;
+			u32 field5;
+			u32 field6;
+			u32 field7;
+			float field8;
+			float field9;
+			float field10;
+			float field11;
+			bool field12;
+
+			std::vector<u8> blob;
+
+			static void parse(camera_trj_frame& vob, archive_reader_ref& in, game_version version);
+		};
+
+		struct cs_camera : public base {
+			u32 field1;
+			u32 field2;
+			u32 field3;
+			u32 field4;
+			bool field5;
+			bool field6;
+			bool field7;
+			bool field8;
+			bool field9;
+			float field10;
+			std::string field11;
+			bool field12;
+			bool field13;
+			float field14;
+			s32 field15;
+			s32 field16;
+
+			std::vector<camera_trj_frame> frames;
+
+			static void parse(cs_camera& vob, archive_reader_ref& in, game_version version);
+		};
 	} // namespace vob
 
 	/**
@@ -500,7 +542,8 @@ namespace phoenix {
 		             vob::animate,
 		             vob::zone_fog,
 		             vob::zone_far_plane,
-		             vob::earthquake>
+		             vob::earthquake,
+		             vob::cs_camera>
 		    _m_content;
 
 		vob_type _m_type;
