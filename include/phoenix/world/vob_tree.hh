@@ -329,7 +329,7 @@ namespace phoenix {
 
 			float repeat_delay_sec;
 			float volume_scale;
-			s32 damage_type;
+			u32 damage_type;
 
 			static void parse(touch_damage& vob, archive_reader_ref& in, game_version version);
 		};

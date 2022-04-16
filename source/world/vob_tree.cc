@@ -252,7 +252,7 @@ namespace phoenix {
 			vob.fall = in->read_bool();
 			vob.repeat_delay_sec = in->read_float();
 			vob.volume_scale = in->read_float();
-			vob.damage_type = in->read_int();
+			vob.damage_type = in->read_enum();
 		}
 
 		void mob::parse(mob& vob, archive_reader_ref& in, game_version version) {
