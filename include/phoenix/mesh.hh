@@ -10,6 +10,21 @@
 
 namespace phoenix {
 	struct date {
+		/**
+		 * @brief Parses a date from a buffer.
+		 * @param buf The buffer to read from
+		 * @return The date.
+		 */
+		static date parse(buffer& buf) {
+			auto dt = date {buf.get_uint(),
+			                buf.get_ushort(),
+			                buf.get_ushort(),
+			                buf.get_ushort(),
+			                buf.get_ushort(),
+			                buf.get_ushort()};
+			return dt;
+		}
+
 		std::uint32_t year;
 		std::uint16_t month;
 		std::uint16_t day;

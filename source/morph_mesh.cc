@@ -25,19 +25,8 @@ namespace phoenix {
 				msh._m_sources.resize(count);
 
 				for (int i = 0; i < count; ++i) {
-					// this is actually a date though it is 4 bytes aligned
-					msh._m_sources[i].file_date = {
-					    in.get_uint(),
-					    in.get_ushort(),
-					    in.get_ushort(),
-					    in.get_ushort(),
-					    in.get_ushort(),
-					    in.get_ushort(),
-					};
-
-					// discard alignment bytes
-					(void) in.get_ushort();
-
+					msh._m_sources[i].file_date = date::parse(in);
+					(void) in.get_ushort(); // padding
 					msh._m_sources[i].file_name = in.get_line();
 				}
 

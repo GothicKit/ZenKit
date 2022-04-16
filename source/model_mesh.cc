@@ -34,19 +34,8 @@ namespace phoenix {
 				break;
 			case model_mesh_chunk::source: {
 				// supposedly a date? weird values
-				date file_date = {
-				    in.get_uint(),
-				    in.get_ushort(),
-				    in.get_ushort(),
-				    in.get_ushort(),
-				    in.get_ushort(),
-				    in.get_ushort(),
-				};
-
-				// discard alignment bytes
-				(void) in.get_ushort();
-
-				(void) file_date;
+				(void) /* date = */ date::parse(in);
+				(void) in.get_ushort(); // padding
 				(void) /* source file = */ in.get_line(false);
 				break;
 			}
