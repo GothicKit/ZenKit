@@ -196,12 +196,19 @@ namespace phoenix {
 			float field1;
 			float field2;
 			color field3;
+			bool field4 {false};
+			bool field5 {false};
 
 			static void parse(zone_fog& vob, archive_reader_ref& in, game_version version) {
 				base::parse(vob, in, version);
 				vob.field1 = in->read_float();
 				vob.field2 = in->read_float();
 				vob.field3 = in->read_color();
+
+				if (version == game_version::gothic_2) {
+					vob.field4 = in->read_bool();
+					vob.field5 = in->read_bool();
+				}
 			}
 		};
 
