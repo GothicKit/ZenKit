@@ -6,7 +6,7 @@
 TEST_SUITE("model meshes") {
 	// TODO: find a mesh with multiple attachments
 	TEST_CASE("model meshes and their attachments are read correctly") {
-		auto in = phoenix::reader::from("./samples/secretdoor.mdm");
+		auto in = phoenix::buffer::open("./samples/secretdoor.mdm");
 		auto mesh = phoenix::model_mesh::parse(in);
 
 		CHECK(mesh.attachments().size() == 1);
@@ -16,7 +16,7 @@ TEST_SUITE("model meshes") {
 
 	// TODO: find a mesh which has actual vertex weights
 	TEST_CASE("model meshes and their softskins are correctly") {
-		auto in = phoenix::reader::from("./samples/smoke_waterpipe.mdm");
+		auto in = phoenix::buffer::open("./samples/smoke_waterpipe.mdm");
 		auto mesh = phoenix::model_mesh::parse(in);
 
 		auto& meshes = mesh.meshes();

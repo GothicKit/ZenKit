@@ -1,13 +1,12 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #include <phoenix/detail/compat.hh>
-#include <phoenix/detail/types.hh>
 
 #include <algorithm>
 #include <cctype>
 
 namespace phoenix {
-	std::time_t dos_to_unix_time(u32 dos) noexcept {
+	std::time_t dos_to_unix_time(std::uint32_t dos) noexcept {
 		struct tm t {};
 
 		t.tm_year = ((int) ((dos >> 25) & 0x7F)) + 80;
@@ -20,9 +19,9 @@ namespace phoenix {
 		return timegm(&t);
 	}
 
-	u32 unix_time_to_dos(std::time_t nix) noexcept {
+	std::uint32_t unix_time_to_dos(std::time_t nix) noexcept {
 		struct std::tm* t {std::gmtime(&nix)};
-		u32 dos {0};
+		std::uint32_t dos {0};
 
 		dos |= (t->tm_year - 80) << 25;
 		dos |= (t->tm_mon + 1) << 21;

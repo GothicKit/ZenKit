@@ -15,60 +15,60 @@ namespace phoenix {
 		end = 0xD120
 	};
 
-	model_mesh model_mesh::parse(reader& in) {
+	model_mesh model_mesh::parse(buffer& in) {
 		model_mesh msh;
 
 		model_mesh_chunk chunk = model_mesh_chunk::unknown;
-		u32 end = 0;
+		std::uint32_t end = 0;
 		bool end_mesh = false;
 
 		do {
-			chunk = static_cast<model_mesh_chunk>(in.read_u16());
+			chunk = static_cast<model_mesh_chunk>(in.get_ushort());
 
-			auto length = in.read_u32();
-			end = length + in.tell();
+			auto length = in.get_uint();
+			end = length + in.position();
 
 			switch (chunk) {
 			case model_mesh_chunk::header:
-				(void) /* version = */ in.read_u32();
+				(void) /* version = */ in.get_uint();
 				break;
 			case model_mesh_chunk::source: {
 				// supposedly a date? weird values
 				date file_date = {
-				    in.read_u32(),
-				    in.read_u16(),
-				    in.read_u16(),
-				    in.read_u16(),
-				    in.read_u16(),
-				    in.read_u16(),
+				    in.get_uint(),
+				    in.get_ushort(),
+				    in.get_ushort(),
+				    in.get_ushort(),
+				    in.get_ushort(),
+				    in.get_ushort(),
 				};
 
 				// discard alignment bytes
-				in.ignore(2);
+				(void) in.get_ushort();
 
 				(void) file_date;
-				(void) /* source file = */ in.read_line(false);
+				(void) /* source file = */ in.get_line(false);
 				break;
 			}
 			case model_mesh_chunk::nodes: {
-				auto node_count = in.read_u16();
+				auto node_count = in.get_ushort();
 				std::vector<std::string> names {};
 
-				for (u32 i = 0; i < node_count; ++i) {
-					names.push_back(in.read_line());
+				for (std::uint32_t i = 0; i < node_count; ++i) {
+					names.push_back(in.get_line());
 				}
 
-				for (u32 i = 0; i < node_count; ++i) {
+				for (std::uint32_t i = 0; i < node_count; ++i) {
 					msh._m_attachments[names[i]] = proto_mesh::parse(in);
 				}
 
 				// hacky bypass for warnings
-				end = in.tell();
+				end = in.position();
 				break;
 			}
 			case model_mesh_chunk::softskins: {
-				(void) /* checksum = */ in.read_u32();
-				auto count = in.read_u16();
+				(void) /* checksum = */ in.get_uint();
+				auto count = in.get_ushort();
 				msh._m_meshes.reserve(count);
 
 				for (int i = 0; i < count; ++i) {
@@ -76,7 +76,7 @@ namespace phoenix {
 				}
 
 				// hacky bypass for warnings
-				end = in.tell();
+				end = in.position();
 				break;
 			}
 			case model_mesh_chunk::end:
@@ -86,14 +86,14 @@ namespace phoenix {
 				break;
 			}
 
-			if (in.tell() != end) {
+			if (in.position() != end) {
 				fmt::print(stderr,
 				           "warning: model mesh: not all data or too much data consumed from section 0x{:X}\n",
 				           chunk);
 			}
 
-			in.seek(end);
-		} while (!end_mesh && in.tell() < in.size() - 6);
+			in.position(end);
+		} while (!end_mesh && in.position() < in.limit() - 6);
 
 		return msh;
 	}

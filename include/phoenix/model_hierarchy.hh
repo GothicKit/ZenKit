@@ -1,7 +1,7 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
-#include <phoenix/detail/stream.hh>
+#include <phoenix/detail/buffer.hh>
 
 #include <glm/mat4x4.hpp>
 
@@ -10,14 +10,14 @@
 
 namespace phoenix {
 	struct model_hierarchy_node {
-		s16 parent_index;
+		std::int16_t parent_index;
 		std::string name;
 		glm::mat4x4 transform;
 	};
 
 	class model_hierachy {
 	public:
-		static model_hierachy parse(reader& in);
+		static model_hierachy parse(buffer& in);
 
 		[[nodiscard]] const std::vector<model_hierarchy_node>& nodes() const noexcept {
 			return _m_nodes;

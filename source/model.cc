@@ -5,7 +5,7 @@
 namespace phoenix {
 	model model::parse(const std::string& path) {
 		model tmp {};
-		auto in = reader::from(path);
+		auto in = buffer::open(path);
 
 		tmp._m_hierarchy = model_hierachy::parse(in);
 		tmp._m_mesh = model_mesh::parse(in);

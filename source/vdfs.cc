@@ -7,17 +7,17 @@ namespace phoenix {
 	vdf_header::vdf_header(std::string_view comment, std::time_t timestamp)
 	    : _m_comment(comment), _m_timestamp(timestamp) {}
 
-	vdf_header vdf_header::read(reader& in) {
+	vdf_header vdf_header::read(buffer& in) {
 		vdf_header header {};
 
-		header._m_comment = in.read_string(VDF_COMMENT_LENGTH);
-		header._m_signature = in.read_string(VDF_SIGNATURE_LENGTH);
-		header._m_entry_count = in.read_u32();
-		header._m_file_count = in.read_u32();
-		header._m_timestamp = dos_to_unix_time(in.read_u32());
-		header._m_size = in.read_u32();
-		header._m_catalog_offset = in.read_u32();
-		header._m_version = in.read_u32();
+		header._m_comment = in.get_string(VDF_COMMENT_LENGTH);
+		header._m_signature = in.get_string(VDF_SIGNATURE_LENGTH);
+		header._m_entry_count = in.get_uint();
+		header._m_file_count = in.get_uint();
+		header._m_timestamp = dos_to_unix_time(in.get_uint());
+		header._m_size = in.get_uint();
+		header._m_catalog_offset = in.get_uint();
+		header._m_version = in.get_uint();
 
 		if (auto it = header._m_comment.find('\x1A'); it != std::string::npos) {
 			header._m_comment.resize(it);
@@ -26,7 +26,7 @@ namespace phoenix {
 		return header;
 	}
 
-	vdf_entry::vdf_entry(std::string_view name, u32 attributes)
+	vdf_entry::vdf_entry(std::string_view name, std::uint32_t attributes)
 	    : _m_name(name), _m_type(VDF_MASK_DIRECTORY), _m_attributes(attributes) {}
 
 	const vdf_entry* vdf_entry::resolve_path(std::string_view path) const {
@@ -70,31 +70,31 @@ namespace phoenix {
 		return nullptr;
 	}
 
-	vdf_entry vdf_entry::read(reader& in, u32 catalog_offset) {
+	vdf_entry vdf_entry::read(buffer& in, std::uint32_t catalog_offset) {
 		vdf_entry entry {};
 
-		entry._m_name = in.read_string(VDF_ENTRY_NAME_LENGTH);
-		entry._m_offset = in.read_u32();
-		entry._m_size = in.read_u32();
-		entry._m_type = in.read_u32();
-		entry._m_attributes = in.read_u32();
+		entry._m_name = in.get_string(VDF_ENTRY_NAME_LENGTH);
+		entry._m_offset = in.get_uint();
+		entry._m_size = in.get_uint();
+		entry._m_type = in.get_uint();
+		entry._m_attributes = in.get_uint();
 
 		if (auto it = entry._m_name.find('\x20'); it != std::string::npos) {
 			entry._m_name.resize(it);
 		}
 
 		if (entry.is_directory()) {
-			auto self_offset = in.tell();
-			in.seek(catalog_offset + entry.offset() * vdf_entry::packed_size);
+			auto self_offset = in.position();
+			in.position(catalog_offset + entry.offset() * vdf_entry::packed_size);
 
 			vdf_entry* child = nullptr;
 			do {
 				child = &entry._m_children.emplace_back(read(in, catalog_offset));
 			} while (!child->is_last());
 
-			in.seek(self_offset);
+			in.position(self_offset);
 		} else {
-			entry._m_data = in.fork(entry._m_size, entry._m_offset);
+			entry._m_data = in.slice(entry._m_offset, entry._m_size);
 		}
 
 		return entry;
@@ -144,11 +144,11 @@ namespace phoenix {
 	}
 
 	vdf_file vdf_file::open(const std::string& path) {
-		auto in = reader::from(path);
+		auto in = buffer::open(path);
 		vdf_file vdf {};
 
 		vdf._m_header = vdf_header::read(in);
-		in.seek(vdf._m_header._m_catalog_offset);
+		in.position(vdf._m_header._m_catalog_offset);
 
 		vdf_entry* entry = nullptr;
 		do {

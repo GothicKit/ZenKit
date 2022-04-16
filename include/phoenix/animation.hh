@@ -1,8 +1,7 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
-#include <phoenix/detail/stream.hh>
-#include <phoenix/detail/types.hh>
+#include <phoenix/detail/buffer.hh>
 #include <phoenix/mesh.hh>
 
 #include <glm/vec3.hpp>
@@ -23,7 +22,7 @@ namespace phoenix {
 	/**
 	 * @brief Types of animation events.
 	 */
-	enum class animation_event_type : u32 {
+	enum class animation_event_type : std::uint32_t {
 		tag = 0,
 		sound = 1,
 		sound_ground = 2,
@@ -45,7 +44,7 @@ namespace phoenix {
 		static constexpr const auto vmax = 4;
 
 		animation_event_type type;
-		u32 no;
+		std::uint32_t no;
 		std::string tag;
 		std::string content[vmax];
 		float values[vmax];
@@ -73,7 +72,7 @@ namespace phoenix {
 		 * @param in The reader to read from.
 		 * @return The animation pared.
 		 */
-		static animation parse(reader& in);
+		static animation parse(buffer& in);
 
 		/**
 		 * @return The name of the animation
@@ -86,11 +85,11 @@ namespace phoenix {
 			return _m_next;
 		}
 
-		[[nodiscard]] inline u32 layer() const noexcept {
+		[[nodiscard]] inline std::uint32_t layer() const noexcept {
 			return _m_layer;
 		}
 
-		[[nodiscard]] inline u32 frames() const noexcept {
+		[[nodiscard]] inline std::uint32_t frames() const noexcept {
 			return _m_frame_count;
 		}
 
@@ -109,7 +108,7 @@ namespace phoenix {
 			return std::make_tuple(_m_bbox[0], _m_bbox[1]);
 		}
 
-		[[nodiscard]] inline u32 checksum() const noexcept {
+		[[nodiscard]] inline std::uint32_t checksum() const noexcept {
 			return _m_checksum;
 		}
 
@@ -121,7 +120,7 @@ namespace phoenix {
 			return _m_events;
 		}
 
-		[[nodiscard]] inline const std::vector<u32>& node_indices() const noexcept {
+		[[nodiscard]] inline const std::vector<std::uint32_t>& node_indices() const noexcept {
 			return _m_node_indices;
 		}
 
@@ -139,15 +138,15 @@ namespace phoenix {
 	private:
 		std::string _m_name;
 		std::string _m_next;
-		u32 _m_layer {};
-		u32 _m_frame_count {};
-		u32 _m_node_count {};
+		std::uint32_t _m_layer {};
+		std::uint32_t _m_frame_count {};
+		std::uint32_t _m_node_count {};
 		float _m_fps {};
 		float _m_fps_source {};
 		float _m_sample_position_range_min {};
 		float _m_sample_position_scalar {};
 		glm::vec3 _m_bbox[2] {};
-		u32 _m_checksum {};
+		std::uint32_t _m_checksum {};
 
 		date _m_source_file_date;
 		std::string _m_source_path;
@@ -155,7 +154,7 @@ namespace phoenix {
 
 		std::vector<animation_sample> _m_samples;
 		std::vector<animation_event> _m_events;
-		std::vector<u32> _m_node_indices;
+		std::vector<std::uint32_t> _m_node_indices;
 	};
 
 } // namespace phoenix

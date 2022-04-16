@@ -12,13 +12,13 @@ namespace phoenix {
 	                                 sym.name(),
 	                                 sym.type())) {}
 
-	illegal_index_access::illegal_index_access(const symbol& sym, u8 index)
+	illegal_index_access::illegal_index_access(const symbol& sym, std::uint8_t index)
 	    : illegal_access(fmt::format("illegal access of out-of-bounds index {} while reading {}", index, sym.name())) {}
 
 	illegal_const_access::illegal_const_access(const symbol& sym)
 	    : illegal_access(fmt::format("illegal mutable access of const symbol {}", sym.name())) {}
 
-	illegal_instance_access::illegal_instance_access(const symbol& sym, u32 expected_parent)
+	illegal_instance_access::illegal_instance_access(const symbol& sym, std::uint32_t expected_parent)
 	    : illegal_access(fmt::format("illegal access of member {} which does not have the same parent "
 	                                 "class as the context instance ({} != {})",
 	                                 sym.name(),
@@ -45,33 +45,33 @@ namespace phoenix {
 	                                "wrong datatype: provided '" + given + "' expected " +
 	                                    DAEDALUS_DATA_TYPE_NAMES[sym.type()]) {}
 
-	instruction instruction::decode(reader& in) {
+	instruction instruction::decode(buffer& in) {
 		instruction s {};
-		s.op = static_cast<opcode>(in.read_u8());
+		s.op = static_cast<opcode>(in.get());
 		s.size = 1;
 
 		switch (s.op) {
 		case op_call:
 		case op_jump_if_zero:
 		case op_jump:
-			s.address = in.read_u32();
-			s.size += sizeof(u32);
+			s.address = in.get_uint();
+			s.size += sizeof(std::uint32_t);
 			break;
 		case op_push_int:
-			s.immediate = in.read_s32();
-			s.size += sizeof(u32);
+			s.immediate = in.get_int();
+			s.size += sizeof(std::uint32_t);
 			break;
 		case op_call_external:
 		case op_push_var:
 		case op_push_instance:
 		case op_set_instance:
-			s.symbol = in.read_u32();
-			s.size += sizeof(u32);
+			s.symbol = in.get_uint();
+			s.size += sizeof(std::uint32_t);
 			break;
 		case op_push_array_var:
-			s.symbol = in.read_u32();
-			s.index = in.read_u8();
-			s.size += sizeof(u32) + sizeof(u8);
+			s.symbol = in.get_uint();
+			s.index = in.get();
+			s.size += sizeof(std::uint32_t) + sizeof(std::uint8_t);
 			break;
 		default:
 			break;
@@ -82,18 +82,18 @@ namespace phoenix {
 
 	script script::parse(const std::string& path) {
 		script scr {};
-		auto in = reader::from(path);
+		auto in = buffer::open(path);
 
-		scr._m_version = in.read_u8();
-		auto symbol_count = in.read_u32();
+		scr._m_version = in.get();
+		auto symbol_count = in.get_uint();
 
 		scr._m_symbols.reserve(symbol_count + 1);
 		scr._m_symbols_by_name.reserve(symbol_count + 1);
 		scr._m_symbols_by_address.reserve(symbol_count);
-		in.ignore(symbol_count * sizeof(u32)); // Sort table
+		in.position(in.position() + symbol_count * sizeof(std::uint32_t)); // Sort table
 		// The sort table is a list of indexes into the symbol table sorted lexicographically by symbol name!
 
-		for (u32 i = 0; i < symbol_count; ++i) {
+		for (std::uint32_t i = 0; i < symbol_count; ++i) {
 			auto* sym = &scr._m_symbols.emplace_back(symbol::parse(in));
 			scr._m_symbols_by_name[sym->name()] = sym;
 			sym->_m_index = i;
@@ -116,17 +116,17 @@ namespace phoenix {
 		scr._m_dynamic_strings = &scr._m_symbols.emplace_back(std::move(sym));
 		scr._m_symbols_by_name[scr._m_dynamic_strings->name()] = scr._m_dynamic_strings;
 
-		u32 text_size = in.read_u32();
-		scr._m_text = in.fork(text_size);
+		std::uint32_t text_size = in.get_uint();
+		scr._m_text = in.slice(in.position(), text_size);
 		return scr;
 	}
 
-	instruction script::instruction_at(u32 address) const {
-		_m_text.seek(address);
+	instruction script::instruction_at(std::uint32_t address) const {
+		_m_text.position(address);
 		return instruction::decode(_m_text);
 	}
 
-	const symbol* script::find_symbol_by_index(u32 index) const {
+	const symbol* script::find_symbol_by_index(std::uint32_t index) const {
 		if (index > _m_symbols.size()) {
 			return nullptr;
 		}
@@ -141,7 +141,7 @@ namespace phoenix {
 		return nullptr;
 	}
 
-	const symbol* script::find_symbol_by_address(u32 address) const {
+	const symbol* script::find_symbol_by_address(std::uint32_t address) const {
 		if (auto it = _m_symbols_by_address.find(address); it != _m_symbols_by_address.end()) {
 			return it->second;
 		}
@@ -149,7 +149,7 @@ namespace phoenix {
 		return nullptr;
 	}
 
-	symbol* script::find_symbol_by_index(u32 index) {
+	symbol* script::find_symbol_by_index(std::uint32_t index) {
 		if (index > _m_symbols.size()) {
 			return nullptr;
 		}
@@ -164,7 +164,7 @@ namespace phoenix {
 		return nullptr;
 	}
 
-	symbol* script::find_symbol_by_address(u32 address) {
+	symbol* script::find_symbol_by_address(std::uint32_t address) {
 		if (auto it = _m_symbols_by_address.find(address); it != _m_symbols_by_address.end()) {
 			return it->second;
 		}
@@ -196,11 +196,11 @@ namespace phoenix {
 		return syms;
 	}
 
-	symbol symbol::parse(reader& in) {
+	symbol symbol::parse(buffer& in) {
 		symbol sym {};
 
-		if (in.read_u32() != 0) {
-			sym._m_name = in.read_line(false);
+		if (in.get_uint() != 0) {
+			sym._m_name = in.get_line(false);
 
 			// If the name starts with \xFF, this symbol was automatically generated by the compiler
 			if (sym._m_name[0] == '\xFF') {
@@ -209,8 +209,8 @@ namespace phoenix {
 			}
 		}
 
-		auto vary = in.read_u32();
-		auto properties = in.read_u32();
+		auto vary = in.get_uint();
+		auto properties = in.get_uint();
 
 		sym._m_count = (properties >> 0U) & 0xFFFU;                      // 12 bits
 		sym._m_type = static_cast<datatype>((properties >> 12U) & 0xFU); // 4 bits
@@ -224,54 +224,54 @@ namespace phoenix {
 			sym._m_return_type = static_cast<datatype>(vary);
 		}
 
-		sym._m_file_index = in.read_u32() & 0x7FFFFU;  // 19 bits
-		sym._m_line_start = in.read_u32() & 0x7FFFFU;  // 19 bits
-		sym._m_line_count = in.read_u32() & 0x7FFFFU;  // 19 bits
-		sym._m_char_start = in.read_u32() & 0xFFFFFFU; // 24 bits
-		sym._m_char_count = in.read_u32() & 0xFFFFFFU; // 24 bits
+		sym._m_file_index = in.get_uint() & 0x7FFFFU;  // 19 bits
+		sym._m_line_start = in.get_uint() & 0x7FFFFU;  // 19 bits
+		sym._m_line_count = in.get_uint() & 0x7FFFFU;  // 19 bits
+		sym._m_char_start = in.get_uint() & 0xFFFFFFU; // 24 bits
+		sym._m_char_count = in.get_uint() & 0xFFFFFFU; // 24 bits
 
 		if (!sym.is_member()) {
 			switch (sym._m_type) {
 			case dt_float: {
 				std::unique_ptr<float[]> value {new float[sym._m_count]};
-				in.read(value.get(), sym._m_count * sizeof(float));
+				in.get({(std::uint8_t*) value.get(), sym._m_count * sizeof(float)});
 				sym._m_value = std::move(value);
 				break;
 			}
 			case dt_integer: {
-				std::unique_ptr<s32[]> value {new s32[sym._m_count]};
-				in.read(value.get(), sym._m_count * sizeof(s32));
+				std::unique_ptr<std::int32_t[]> value {new std::int32_t[sym._m_count]};
+				in.get({(std::uint8_t*) value.get(), sym._m_count * sizeof(std::uint32_t)});
 				sym._m_value = std::move(value);
 				break;
 			}
 			case dt_string: {
 				std::unique_ptr<std::string[]> value {new std::string[sym._m_count]};
-				for (u32 i = 0; i < sym._m_count; ++i) {
-					value[i] = in.read_line(false);
+				for (std::uint32_t i = 0; i < sym._m_count; ++i) {
+					value[i] = in.get_line(false);
 				}
 				sym._m_value = std::move(value);
 				break;
 			}
 			case dt_class:
-				sym._m_class_offset = in.read_s32();
+				sym._m_class_offset = in.get_int();
 				break;
 			case dt_instance:
 				sym._m_value = std::shared_ptr<instance> {nullptr};
 				[[fallthrough]];
 			case dt_function:
 			case dt_prototype:
-				sym._m_address = in.read_s32();
+				sym._m_address = in.get_int();
 				break;
 			default:
 				break;
 			}
 		}
 
-		sym._m_parent = in.read_s32();
+		sym._m_parent = in.get_int();
 		return sym;
 	}
 
-	const std::string& symbol::get_string(u8 index, const std::shared_ptr<instance>& context) const {
+	const std::string& symbol::get_string(std::uint8_t index, const std::shared_ptr<instance>& context) const {
 		if (type() != dt_string) {
 			throw illegal_type_access(*this, dt_string);
 		}
@@ -289,7 +289,7 @@ namespace phoenix {
 		}
 	}
 
-	float symbol::get_float(u8 index, const std::shared_ptr<instance>& context) const {
+	float symbol::get_float(std::uint8_t index, const std::shared_ptr<instance>& context) const {
 		if (type() != dt_float) {
 			throw illegal_type_access(*this, dt_float);
 		}
@@ -307,7 +307,7 @@ namespace phoenix {
 		}
 	}
 
-	s32 symbol::get_int(u8 index, const std::shared_ptr<instance>& context) const {
+	std::int32_t symbol::get_int(std::uint8_t index, const std::shared_ptr<instance>& context) const {
 		if (type() != dt_integer && type() != dt_function) {
 			throw illegal_type_access(*this, dt_integer);
 		}
@@ -319,13 +319,13 @@ namespace phoenix {
 			if (context == nullptr) {
 				throw no_context(*this);
 			}
-			return *get_member_ptr<s32>(index, context);
+			return *get_member_ptr<std::int32_t>(index, context);
 		} else {
-			return std::get<std::unique_ptr<s32[]>>(_m_value)[index];
+			return std::get<std::unique_ptr<std::int32_t[]>>(_m_value)[index];
 		}
 	}
 
-	void symbol::set_string(const std::string& value, u8 index, const std::shared_ptr<instance>& context) {
+	void symbol::set_string(const std::string& value, std::uint8_t index, const std::shared_ptr<instance>& context) {
 		if (is_const()) {
 			throw illegal_const_access(*this);
 		}
@@ -346,7 +346,7 @@ namespace phoenix {
 		}
 	}
 
-	void symbol::set_float(float value, u8 index, const std::shared_ptr<instance>& context) {
+	void symbol::set_float(float value, std::uint8_t index, const std::shared_ptr<instance>& context) {
 		if (is_const()) {
 			throw illegal_const_access(*this);
 		}
@@ -367,7 +367,7 @@ namespace phoenix {
 		}
 	}
 
-	void symbol::set_int(s32 value, u8 index, const std::shared_ptr<instance>& context) {
+	void symbol::set_int(std::int32_t value, std::uint8_t index, const std::shared_ptr<instance>& context) {
 		if (is_const()) {
 			throw illegal_const_access(*this);
 		}
@@ -382,9 +382,9 @@ namespace phoenix {
 			if (context == nullptr) {
 				throw no_context(*this);
 			}
-			*get_member_ptr<s32>(index, context) = value;
+			*get_member_ptr<std::int32_t>(index, context) = value;
 		} else {
-			std::get<std::unique_ptr<s32[]>>(_m_value)[index] = value;
+			std::get<std::unique_ptr<std::int32_t[]>>(_m_value)[index] = value;
 		}
 	}
 

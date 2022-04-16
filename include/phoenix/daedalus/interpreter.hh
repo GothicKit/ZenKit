@@ -31,7 +31,7 @@ namespace phoenix {
 
 	class illegal_external_param : public illegal_external {
 	public:
-		illegal_external_param(const symbol* sym, std::string_view provided, u8 i);
+		illegal_external_param(const symbol* sym, std::string_view provided, std::uint8_t i);
 	};
 
 	struct daedalus_stack_frame {
@@ -42,7 +42,7 @@ namespace phoenix {
 
 	struct daedalus_call_stack_frame {
 		const symbol* function;
-		u32 program_counter;
+		std::uint32_t program_counter;
 		std::shared_ptr<instance> context;
 	};
 
@@ -120,17 +120,17 @@ namespace phoenix {
 			return inst;
 		}
 
-		void push_int(s32 value);
-		void push_float(f32 value);
+		void push_int(std::int32_t value);
+		void push_float(float value);
 		void push_instance(std::shared_ptr<instance> value);
-		void push_reference(symbol* value, u8 index = 0);
+		void push_reference(symbol* value, std::uint8_t index = 0);
 		void push_string(const std::string& value);
 
-		[[nodiscard]] s32 pop_int();
-		[[nodiscard]] f32 pop_float();
+		[[nodiscard]] std::int32_t pop_int();
+		[[nodiscard]] float pop_float();
 		[[nodiscard]] std::shared_ptr<instance> pop_instance();
 		[[nodiscard]] const std::string& pop_string();
-		[[nodiscard]] std::tuple<symbol*, u8> pop_reference();
+		[[nodiscard]] std::tuple<symbol*, std::uint8_t> pop_reference();
 
 		/**
 		 * @brief Registers a Daedalus external function.
@@ -307,7 +307,7 @@ namespace phoenix {
 		 * @brief Validates the given address and jumps to it (sets the program counter).
 		 * @param address The address to jump to.-
 		 */
-		void jump(u32 address);
+		void jump(std::uint32_t address);
 
 		/**
 		 * @brief Pushes a call stack frame onto the call stack.
@@ -374,7 +374,7 @@ namespace phoenix {
 		 * @return The value popped.
 		 */
 		template <typename T> // clang-format off
-		requires (is_instance_ptr<T>::value || std::same_as<float, T> || std::same_as<s32, T> ||
+		requires (is_instance_ptr<T>::value || std::same_as<float, T> || std::same_as<std::int32_t, T> ||
 		          std::same_as<std::string_view, T> || std::same_as<symbol*, T>)
 		inline T pop_value_for_external() { // clang-format on
 			if constexpr (is_instance_ptr<T>::value) {
@@ -397,7 +397,7 @@ namespace phoenix {
 				return std::static_pointer_cast<typename is_instance_ptr<T>::instance_type>(r);
 			} else if constexpr (std::same_as<float, T>) {
 				return pop_float();
-			} else if constexpr (std::same_as<s32, T>) {
+			} else if constexpr (std::same_as<std::int32_t, T>) {
 				return pop_int();
 			} else if constexpr (std::same_as<std::string_view, T>) {
 				return pop_string();
@@ -418,15 +418,15 @@ namespace phoenix {
 		 * @param v The value to push.
 		 */
 		template <typename T> // clang-format off
-		requires (std::floating_point<T> || std::convertible_to<s32, T> || std::convertible_to<std::string, T> ||
+		requires (std::floating_point<T> || std::convertible_to<std::int32_t, T> || std::convertible_to<std::string, T> ||
 		          is_instance_ptr<T>::value)
 		void push_value_from_external(T v) { // clang-format on
 			if constexpr (is_instance_ptr<T>::value) {
 				push_instance(std::static_pointer_cast<instance>(v));
 			} else if constexpr (std::floating_point<T>) {
 				push_float(static_cast<float>(v));
-			} else if constexpr (std::convertible_to<s32, T>) {
-				push_int(static_cast<s32>(v));
+			} else if constexpr (std::convertible_to<std::int32_t, T>) {
+				push_int(static_cast<std::int32_t>(v));
 			} else if constexpr (std::convertible_to<std::string, T>) {
 				push_string(v);
 			} else {
@@ -465,7 +465,7 @@ namespace phoenix {
 
 		symbol* _m_self_sym;
 		std::shared_ptr<instance> _m_instance;
-		u32 _m_pc {0};
+		std::uint32_t _m_pc {0};
 
 		void print_stack_trace();
 	};

@@ -1,7 +1,7 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
-#include <phoenix/detail/stream.hh>
+#include <phoenix/detail/buffer.hh>
 #include <phoenix/math/obb.hh>
 #include <phoenix/proto_mesh.hh>
 
@@ -9,13 +9,13 @@ namespace phoenix {
 
 	struct wedge_normal {
 		glm::vec3 normal;
-		u32 index;
+		std::uint32_t index;
 	};
 
 	struct weight_entry {
 		float weight;
 		glm::vec3 position;
-		u8 node_index;
+		std::uint8_t node_index;
 	};
 
 	/**
@@ -33,7 +33,7 @@ namespace phoenix {
 	 */
 	class softskin_mesh {
 	public:
-		static softskin_mesh parse(reader& in);
+		static softskin_mesh parse(buffer& in);
 
 		/**
 		 * @return The embedded proto-mesh.
@@ -66,7 +66,7 @@ namespace phoenix {
 		/**
 		 * @return Nodes.
 		 */
-		[[nodiscard]] const std::vector<s32>& nodes() const noexcept {
+		[[nodiscard]] const std::vector<std::int32_t>& nodes() const noexcept {
 			return _m_nodes;
 		}
 
@@ -75,7 +75,7 @@ namespace phoenix {
 		std::vector<obb> _m_bboxes;
 		std::vector<wedge_normal> _m_wedge_normals;
 		std::vector<weight_entry> _m_weights;
-		std::vector<s32> _m_nodes;
+		std::vector<std::int32_t> _m_nodes;
 	};
 
 } // namespace phoenix

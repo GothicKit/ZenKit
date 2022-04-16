@@ -12,21 +12,21 @@
 namespace phoenix {
 	void archive_reader_ascii::read_header() {
 		{
-			std::string objects = input.read_line();
+			std::string objects = input.get_line();
 			if (!objects.starts_with("objects ")) {
 				throw parser_error("not an archive: objects missing");
 			}
 			_m_objects = std::stoi(objects.substr(objects.find(' ') + 1));
 		}
 
-		if (input.read_line() != "END") {
+		if (input.get_line() != "END") {
 			throw parser_error("not an archive: END(2) missing");
 		}
 	}
 
 	bool archive_reader_ascii::read_object_begin(archive_object& obj) {
-		return peek_input([&](reader& in) {
-			auto v = in.read_line();
+		return peek_input([&](buffer& in) {
+			auto v = in.get_line();
 
 			if (!v.starts_with('[') || !v.ends_with(']')) {
 				return false;
@@ -42,8 +42,8 @@ namespace phoenix {
 	}
 
 	bool archive_reader_ascii::read_object_end() {
-		return peek_input([&](reader& in) {
-			auto v = in.read_line();
+		return peek_input([&](buffer& in) {
+			auto v = in.get_line();
 			if (v == "[]") {
 				return true;
 			}
@@ -53,7 +53,7 @@ namespace phoenix {
 	}
 
 	std::string archive_reader_ascii::read_entry(std::string_view type) {
-		auto line = input.read_line();
+		auto line = input.get_line();
 		line = line.substr(line.find('=') + 1);
 		auto colon = line.find(':');
 
@@ -70,7 +70,7 @@ namespace phoenix {
 		return read_entry("string");
 	}
 
-	s32 archive_reader_ascii::read_int() {
+	std::int32_t archive_reader_ascii::read_int() {
 		return std::stoi(read_entry("int"));
 	}
 
@@ -78,15 +78,15 @@ namespace phoenix {
 		return std::stof(read_entry("float"));
 	}
 
-	u8 archive_reader_ascii::read_byte() {
+	std::uint8_t archive_reader_ascii::read_byte() {
 		return std::stoul(read_entry("byte")) & 0xFF;
 	}
 
-	u16 archive_reader_ascii::read_word() {
+	std::uint16_t archive_reader_ascii::read_word() {
 		return std::stoul(read_entry("word")) & 0xFF'FF;
 	}
 
-	u32 archive_reader_ascii::read_enum() {
+	std::uint32_t archive_reader_ascii::read_enum() {
 		return std::stoul(read_entry("enum")) & 0xFFFF'FFFF;
 	}
 
@@ -94,12 +94,12 @@ namespace phoenix {
 		return std::stoul(read_entry("bool")) == 1;
 	}
 
-	color archive_reader_ascii::read_color() {
+	glm::u8vec4 archive_reader_ascii::read_color() {
 		std::stringstream in {read_entry("color")};
 
-		u16 r, g, b, a;
+		std::uint16_t r, g, b, a;
 		in >> r >> g >> b >> a;
-		return color {(u8) r, (u8) g, (u8) b, (u8) a};
+		return glm::u8vec4 {(std::uint8_t) r, (std::uint8_t) g, (std::uint8_t) b, (std::uint8_t) a};
 	}
 
 	glm::vec3 archive_reader_ascii::read_vec3() {
@@ -119,7 +119,7 @@ namespace phoenix {
 	}
 
 	void archive_reader_ascii::skip_entry() {
-		(void) input.read_line();
+		(void) input.get_line();
 	}
 
 	std::tuple<glm::vec3, glm::vec3> archive_reader_ascii::read_bbox() {
@@ -141,7 +141,7 @@ namespace phoenix {
 		auto beg_it = in.begin().base();
 
 		glm::mat3x3 v {};
-		u8 tmp[4];
+		std::uint8_t tmp[4];
 
 		for (int i = 0; i < 9; ++i) {
 			std::from_chars(beg_it + 0, beg_it + 2, tmp[0], 16);
@@ -156,14 +156,14 @@ namespace phoenix {
 		return v;
 	}
 
-	std::vector<u8> archive_reader_ascii::read_raw_bytes() {
+	std::vector<std::uint8_t> archive_reader_ascii::read_raw_bytes() {
 		auto in = read_entry("raw");
-		std::vector<u8> out {};
+		std::vector<std::uint8_t> out {};
 		out.resize(in.length() / 2);
 
 		auto beg_it = in.begin().base();
 
-		for (u8& i : out) {
+		for (std::uint8_t& i : out) {
 			std::from_chars(beg_it + 0, beg_it + 2, i, 16);
 			beg_it += 2;
 		}

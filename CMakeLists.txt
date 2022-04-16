@@ -18,8 +18,8 @@ if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
 endif()
 
 set(PX_SOURCES
-		source/detail/stream.cc
 		source/detail/compat.cc
+		source/detail/buffer.cc
 
 		source/archive/archive_ascii.cc
 		source/archive/archive_binary.cc
@@ -49,8 +49,8 @@ set(PX_SOURCES
 		source/daedalus/interpreter.cc)
 
 set(PX_TESTS
-		tests/test_stream.cc
 		tests/test_compat.cc
+		tests/test_buffer.cc
 		tests/test_archive.cc
 		tests/test_material.cc
 		tests/test_vdfs.cc

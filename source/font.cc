@@ -6,33 +6,33 @@
 #include <fmt/format.h>
 
 namespace phoenix {
-	font font::parse(reader& in) {
+	font font::parse(buffer& in) {
 		font fnt {};
 
-		auto version = in.read_line();
+		auto version = in.get_line();
 		if (version != "1") {
 			throw parser_error(
 			    fmt::format("font: cannot parse font due to version mismatch: expected version '1', got '{}'",
 			                version));
 		}
 
-		fnt._m_name = in.read_line(false);
-		fnt._m_height = in.read_u32();
+		fnt._m_name = in.get_line(false);
+		fnt._m_height = in.get_uint();
 
 		// ZenLib says this is a magic number 0xFF however that is equal to FONT_MAX_GLYPHS so it
 		// might be the number of glyphs stored in the font.
-		(void) in.read_u32();
+		(void) in.get_uint();
 
 		for (auto& _m_glyph : fnt._m_glyphs) {
-			_m_glyph.width = in.read_u8();
+			_m_glyph.width = in.get();
 		}
 
 		for (auto& _m_glyph : fnt._m_glyphs) {
-			_m_glyph.uv[0] = in.read_vec2();
+			_m_glyph.uv[0] = in.get_vec2();
 		}
 
 		for (auto& _m_glyph : fnt._m_glyphs) {
-			_m_glyph.uv[1] = in.read_vec2();
+			_m_glyph.uv[1] = in.get_vec2();
 		}
 
 		return fnt;

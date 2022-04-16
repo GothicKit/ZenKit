@@ -10,22 +10,22 @@
 #include <fmt/format.h>
 
 namespace phoenix {
-	archive_header archive_header::parse(reader& in) {
+	archive_header archive_header::parse(buffer& in) {
 		archive_header header {};
 
-		if (in.read_line() != "ZenGin Archive") {
+		if (in.get_line() != "ZenGin Archive") {
 			throw parser_error("not an archive: magic missing");
 		}
 
-		std::string version = in.read_line();
+		std::string version = in.get_line();
 		if (!version.starts_with("ver ")) {
 			throw parser_error("not an archive: ver missing");
 		}
 		header.version = std::stoi(version.substr(version.find(' ') + 1));
 
-		header.archiver = in.read_line();
+		header.archiver = in.get_line();
 
-		auto format = in.read_line();
+		auto format = in.get_line();
 		if (format == "ASCII") {
 			header.format = archive_format::ascii;
 		} else if (format == "BINARY") {
@@ -34,21 +34,21 @@ namespace phoenix {
 			header.format = archive_format::binsafe;
 		}
 
-		std::string save_game = in.read_line();
+		std::string save_game = in.get_line();
 		if (!save_game.starts_with("saveGame ")) {
 			throw parser_error("not an archive: saveGame missing");
 		}
 		header.save = std::stoi(save_game.substr(save_game.find(' ') + 1)) != 0;
 
-		std::string optional = in.read_line();
+		std::string optional = in.get_line();
 		if (optional.starts_with("date ")) {
 			header.date = optional.substr(optional.find(' ') + 1);
-			optional = in.read_line();
+			optional = in.get_line();
 		}
 
 		if (optional.starts_with("user ")) {
 			header.user = optional.substr(optional.find(' ') + 1);
-			optional = in.read_line();
+			optional = in.get_line();
 		}
 
 		if (optional != "END") {
@@ -58,7 +58,7 @@ namespace phoenix {
 		return header;
 	}
 
-	std::unique_ptr<archive_reader> archive_reader::open(reader& in) {
+	std::unique_ptr<archive_reader> archive_reader::open(buffer& in) {
 		auto header = archive_header::parse(in);
 		std::unique_ptr<archive_reader> reader;
 
@@ -76,11 +76,11 @@ namespace phoenix {
 		return reader;
 	}
 
-	bool archive_reader::peek_input(const std::function<bool(reader&)>& fnc) {
-		auto before = input.tell();
+	bool archive_reader::peek_input(const std::function<bool(buffer&)>& fnc) {
+		auto before = input.position();
 
 		if (!fnc(input)) {
-			input.seek(before);
+			input.position(before);
 			return false;
 		}
 

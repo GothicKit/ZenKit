@@ -21,11 +21,11 @@ static constexpr const auto HELP_MESSAGE = "Usage: pxtex [--version]\n"
 										   "phoenix pxtex v{}\n"
 										   "Convert ZenGin textures from the ZTEX to TGA format.\n";
 
-static void write_tga(const std::string& file, const std::vector<u8>& data, u32 width, u32 height) {
+static void write_tga(const std::string& file, const std::vector<std::uint8_t>& data, std::uint32_t width, std::uint32_t height) {
 	if (file.empty()) {
-		stbi_write_tga("pxtex.tga", (s32) width, (s32) height, 4, data.data());
+		stbi_write_tga("pxtex.tga", (std::int32_t) width, (std::int32_t) height, 4, data.data());
 	} else {
-		stbi_write_tga(file.c_str(), (s32) width, (s32) height, 4, data.data());
+		stbi_write_tga(file.c_str(), (std::int32_t) width, (std::int32_t) height, 4, data.data());
 	}
 }
 
@@ -53,7 +53,7 @@ int main(int argc, const char** argv) {
 		output = "";
 	}
 
-	u32 level = 0;
+	std::uint32_t level = 0;
 	if (!(args({"-m", "--mipmap"}) >> level)) {
 		level = 0;
 	}
@@ -68,7 +68,7 @@ int main(int argc, const char** argv) {
 	}
 
 	try {
-		phoenix::reader in {};
+		phoenix::buffer in = phoenix::buffer::empty();
 
 		if (input_vdf) {
 			auto vdf = phoenix::vdf_file::open(vdf_in);
@@ -80,7 +80,7 @@ int main(int argc, const char** argv) {
 				return EXIT_FAILURE;
 			}
 		} else {
-			in = phoenix::reader::from(file);
+			in = phoenix::buffer::open(file);
 		}
 
 		auto texture = phoenix::texture::parse(in);
@@ -90,7 +90,7 @@ int main(int argc, const char** argv) {
 				output = "{}.tga";
 			}
 
-			for (u32 i = 0; i < texture.mipmaps(); ++i) {
+			for (std::uint32_t i = 0; i < texture.mipmaps(); ++i) {
 				write_tga(fmt::format(output, i), texture.as_rgba8(i), texture.mipmap_width(i), texture.mipmap_height(i));
 			}
 		} else {

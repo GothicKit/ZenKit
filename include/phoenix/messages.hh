@@ -2,7 +2,6 @@
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
 #include <phoenix/archive.hh>
-#include <phoenix/detail/stream.hh>
 
 #include <string>
 #include <unordered_map>

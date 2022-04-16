@@ -1,8 +1,7 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
-#include <phoenix/detail/stream.hh>
-#include <phoenix/detail/types.hh>
+#include <phoenix/detail/buffer.hh>
 
 #include <glm/mat3x3.hpp>
 #include <glm/vec2.hpp>
@@ -28,14 +27,14 @@ namespace phoenix {
 		 * @param in The reader to read from.
 		 * @return The header read.
 		 */
-		static archive_header parse(reader& in);
+		static archive_header parse(buffer& in);
 	};
 
 	struct archive_object {
 		std::string object_name;
 		std::string class_name;
-		u16 version;
-		u32 index;
+		std::uint16_t version;
+		std::uint32_t index;
 	};
 
 	/**
@@ -58,7 +57,7 @@ namespace phoenix {
 		 * @param in The reader to read from
 		 * @param header The header of the archive.
 		 */
-		inline archive_reader(reader& in, archive_header&& header) : header(std::move(header)), input(in) {}
+		inline archive_reader(buffer& in, archive_header&& header) : header(std::move(header)), input(in) {}
 		virtual ~archive_reader() = default;
 
 		/**
@@ -68,7 +67,7 @@ namespace phoenix {
 		 * @throws phoenix::io_error
 		 * @throws phoenix::parser_error
 		 */
-		static std::unique_ptr<archive_reader> open(reader& in);
+		static std::unique_ptr<archive_reader> open(buffer& in);
 
 		/**
 		 * @brief Tries to read the begin of a new object from the archive.
@@ -103,7 +102,7 @@ namespace phoenix {
 		 * @return The value read.
 		 * @throws parser_error if the value actually present is not an integer
 		 */
-		virtual s32 read_int() = 0;
+		virtual std::int32_t read_int() = 0;
 
 		/**
 		 * @brief Reads a float value from the reader.
@@ -117,21 +116,21 @@ namespace phoenix {
 		 * @return The value read.
 		 * @throws parser_error if the value actually present is not a byte
 		 */
-		virtual u8 read_byte() = 0;
+		virtual std::uint8_t read_byte() = 0;
 
 		/**
 		 * @brief Reads a word (`uint16_t`) value from the reader.
 		 * @return The value read.
 		 * @throws parser_error if the value actually present is not a word
 		 */
-		virtual u16 read_word() = 0;
+		virtual std::uint16_t read_word() = 0;
 
 		/**
 		 * @brief Reads a enum (`uint32_t`) value from the reader.
 		 * @return The value read.
 		 * @throws parser_error if the value actually present is not a enum
 		 */
-		virtual u32 read_enum() = 0;
+		virtual std::uint32_t read_enum() = 0;
 
 		/**
 		 * @brief Reads a bool value from the reader.
@@ -141,11 +140,11 @@ namespace phoenix {
 		virtual bool read_bool() = 0;
 
 		/**
-		 * @brief Reads a color value from the reader.
+		 * @brief Reads a glm::u8vec4 value from the reader.
 		 * @return The value read.
 		 * @throws parser_error if the value actually present is not a color
 		 */
-		virtual color read_color() = 0;
+		virtual glm::u8vec4 read_color() = 0;
 
 		/**
 		 * @brief Reads a vec3 value from the reader.
@@ -179,7 +178,7 @@ namespace phoenix {
 		 * @return A vector containing the raw bytes of the entry.
 		 * @throws parser_error if the value actually present is not raw
 		 */
-		virtual std::vector<u8> read_raw_bytes() = 0;
+		virtual std::vector<std::uint8_t> read_raw_bytes() = 0;
 
 		/**
 		 * @brief Skips the next object in the reader and all it's children
@@ -212,11 +211,11 @@ namespace phoenix {
 		 * @param fnc The function to execute.
 		 * @return The return value of @p fnc.
 		 */
-		bool peek_input(const std::function<bool(reader&)>& fnc);
+		bool peek_input(const std::function<bool(buffer&)>& fnc); // FIXME: Use slicing!
 
 	protected:
 		archive_header header;
-		reader& input;
+		buffer& input;
 	};
 
 	using archive_reader_ref = std::unique_ptr<archive_reader>;

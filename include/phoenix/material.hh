@@ -6,7 +6,7 @@
 #include <string>
 
 namespace phoenix {
-	enum class material_group : u8 {
+	enum class material_group : std::uint8_t {
 		undef = 0,
 		metal = 1,
 		stone = 2,
@@ -55,9 +55,9 @@ namespace phoenix {
 		}
 
 		/**
-		 * @return The color of the material.
+		 * @return The glm::u8vec4 of the material.
 		 */
-		[[nodiscard]] ::color color() const noexcept {
+		[[nodiscard]] glm::u8vec4 color() const noexcept {
 			return _m_color;
 		}
 
@@ -92,7 +92,7 @@ namespace phoenix {
 		/**
 		 * @return The mode of the animation.
 		 */
-		[[nodiscard]] u8 texture_anim_map_mode() const noexcept {
+		[[nodiscard]] std::uint8_t texture_anim_map_mode() const noexcept {
 			return _m_texture_anim_map_mode;
 		}
 
@@ -120,7 +120,7 @@ namespace phoenix {
 		/**
 		 * @return
 		 */
-		[[nodiscard]] u8 dont_collapse() const noexcept {
+		[[nodiscard]] std::uint8_t dont_collapse() const noexcept {
 			return _m_dont_collapse;
 		}
 
@@ -141,14 +141,14 @@ namespace phoenix {
 		/**
 		 * @return
 		 */
-		[[nodiscard]] u8 force_occluder() const noexcept {
+		[[nodiscard]] std::uint8_t force_occluder() const noexcept {
 			return _m_force_occluder;
 		}
 
 		/**
 		 * @return
 		 */
-		[[nodiscard]] u8 environment_mapping() const noexcept {
+		[[nodiscard]] std::uint8_t environment_mapping() const noexcept {
 			return _m_environment_mapping;
 		}
 
@@ -162,14 +162,14 @@ namespace phoenix {
 		/**
 		 * @return
 		 */
-		[[nodiscard]] u8 wave_mode() const noexcept {
+		[[nodiscard]] std::uint8_t wave_mode() const noexcept {
 			return _m_wave_mode;
 		}
 
 		/**
 		 * @return
 		 */
-		[[nodiscard]] u8 wave_speed() const noexcept {
+		[[nodiscard]] std::uint8_t wave_speed() const noexcept {
 			return _m_wave_speed;
 		}
 
@@ -190,14 +190,14 @@ namespace phoenix {
 		/**
 		 * @return
 		 */
-		[[nodiscard]] u8 ignore_sun() const noexcept {
+		[[nodiscard]] std::uint8_t ignore_sun() const noexcept {
 			return _m_ignore_sun;
 		}
 
 		/**
 		 * @return
 		 */
-		[[nodiscard]] u8 alpha_func() const noexcept {
+		[[nodiscard]] std::uint8_t alpha_func() const noexcept {
 			return _m_alpha_func;
 		}
 
@@ -211,27 +211,27 @@ namespace phoenix {
 	private:
 		std::string _m_name;
 		material_group _m_group;
-		::color _m_color {0, 0, 0, 0};
+		glm::u8vec4 _m_color {0, 0, 0, 0};
 		float _m_smooth_angle {0.0f};
 		std::string _m_texture;
 		glm::vec2 _m_texture_scale;
 		float _m_texture_anim_fps {0.0f};
-		u8 _m_texture_anim_map_mode {0};
+		std::uint8_t _m_texture_anim_map_mode {0};
 		glm::vec2 _m_texture_anim_map_dir;
 		bool _m_disable_collision {false};
 		bool _m_disable_lightmap {false};
-		u8 _m_dont_collapse {0};
+		std::uint8_t _m_dont_collapse {0};
 		std::string _m_detail_object;
 		float _m_detail_texture_scale {0.0f};
-		u8 _m_force_occluder {0};
-		u8 _m_environment_mapping {0};
+		std::uint8_t _m_force_occluder {0};
+		std::uint8_t _m_environment_mapping {0};
 		float _m_environment_mapping_strength {0.0f};
-		u8 _m_wave_mode {0};
-		u8 _m_wave_speed {0};
+		std::uint8_t _m_wave_mode {0};
+		std::uint8_t _m_wave_speed {0};
 		float _m_wave_max_amplitude {0.0f};
 		float _m_wave_grid_size {0.0f};
-		u8 _m_ignore_sun {0};
-		u8 _m_alpha_func {0};
+		std::uint8_t _m_ignore_sun {0};
+		std::uint8_t _m_alpha_func {0};
 		glm::vec2 _m_default_mapping {};
 	};
 

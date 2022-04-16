@@ -1,8 +1,7 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
-#include <phoenix/detail/stream.hh>
-#include <phoenix/detail/types.hh>
+#include <phoenix/detail/buffer.hh>
 
 #include <memory>
 #include <optional>
@@ -17,7 +16,7 @@ namespace phoenix {
 	/**
 	 * @brief Types of symbols
 	 */
-	enum datatype : u32 {
+	enum datatype : std::uint32_t {
 		dt_void = 0U,
 		dt_float = 1U,
 		dt_integer = 2U,
@@ -34,7 +33,7 @@ namespace phoenix {
 	/**
 	 * @brief Flags set on symbols.
 	 */
-	enum flag : u32 {
+	enum flag : std::uint32_t {
 		sf_const = 1U << 0U,
 		sf_return = 1U << 1U,
 		sf_member = 1U << 2U,
@@ -45,7 +44,7 @@ namespace phoenix {
 	/**
 	 * @brief All opcodes supported by the daedalus interpreter
 	 */
-	enum opcode : u8 {
+	enum opcode : std::uint8_t {
 		op_add = 0,               // a + b
 		op_subtract = 1,          // a - b
 		op_multiply = 2,          // a * b
@@ -146,7 +145,7 @@ namespace phoenix {
 	 * @brief An exception thrown when an out-of-bounds index is accessed.
 	 */
 	struct illegal_index_access final : public illegal_access {
-		illegal_index_access(const symbol& sym, u8 index);
+		illegal_index_access(const symbol& sym, std::uint8_t index);
 	};
 
 	/**
@@ -160,7 +159,7 @@ namespace phoenix {
 	 * @brief An exception thrown when the parent class of a member does not match the class of an instance.
 	 */
 	struct illegal_instance_access final : public illegal_access {
-		illegal_instance_access(const symbol& sym, u32 expected_parent);
+		illegal_instance_access(const symbol& sym, std::uint32_t expected_parent);
 	};
 
 	/**
@@ -191,7 +190,7 @@ namespace phoenix {
 		 * @param[in,out] in The reader to read the symbol from.
 		 * @return The symbol parsed.
 		 */
-		[[nodiscard]] static symbol parse(reader& in);
+		[[nodiscard]] static symbol parse(buffer& in);
 
 		/**
 		 * @brief Validates that the symbol is a string and retrieves it's value in the given context.
@@ -199,7 +198,7 @@ namespace phoenix {
 		 * @param context An instance to use as context for getting member variables.
 		 * @return The string associated with the symbol.
 		 */
-		[[nodiscard]] const std::string& get_string(u8 index = 0,
+		[[nodiscard]] const std::string& get_string(std::uint8_t index = 0,
 		                                            const std::shared_ptr<instance>& context = nullptr) const;
 
 		/**
@@ -208,7 +207,7 @@ namespace phoenix {
 		 * @param context An instance to use as context for getting member variables.
 		 * @return The float value associated with the symbol.
 		 */
-		[[nodiscard]] float get_float(u8 index = 0, const std::shared_ptr<instance>& context = nullptr) const;
+		[[nodiscard]] float get_float(std::uint8_t index = 0, const std::shared_ptr<instance>& context = nullptr) const;
 
 		/**
 		 * @brief Validates that the symbol is an int and retrieves it's value in the given context.
@@ -216,7 +215,8 @@ namespace phoenix {
 		 * @param context An instance to use as context for getting member variables.
 		 * @return The int value associated with the symbol.
 		 */
-		[[nodiscard]] s32 get_int(u8 index = 0, const std::shared_ptr<instance>& context = nullptr) const;
+		[[nodiscard]] std::int32_t get_int(std::uint8_t index = 0,
+		                                   const std::shared_ptr<instance>& context = nullptr) const;
 
 		/**
 		 * @brief Validates that the symbol is an instance and retrieves it's value
@@ -232,7 +232,9 @@ namespace phoenix {
 		 * @param index The index of the value to set
 		 * @param context An instance to use as context for setting member variables.
 		 */
-		void set_string(const std::string& value, u8 index = 0, const std::shared_ptr<instance>& context = nullptr);
+		void set_string(const std::string& value,
+		                std::uint8_t index = 0,
+		                const std::shared_ptr<instance>& context = nullptr);
 
 		/**
 		 * @brief Validates that the symbol is a float and not constant and sets it's value in the given context.
@@ -240,7 +242,7 @@ namespace phoenix {
 		 * @param index The index of the value to set
 		 * @param context An instance to use as context for setting member variables.
 		 */
-		void set_float(float value, u8 index = 0, const std::shared_ptr<instance>& context = nullptr);
+		void set_float(float value, std::uint8_t index = 0, const std::shared_ptr<instance>& context = nullptr);
 
 		/**
 		 * @brief Validates that the symbol is an int and not constant and sets it's value in the given context.
@@ -248,7 +250,7 @@ namespace phoenix {
 		 * @param index The index of the value to set
 		 * @param context An instance to use as context for setting member variables.
 		 */
-		void set_int(s32 value, u8 index = 0, const std::shared_ptr<instance>& context = nullptr);
+		void set_int(std::int32_t value, std::uint8_t index = 0, const std::shared_ptr<instance>& context = nullptr);
 
 		/**
 		 * @brief Validates that the symbol is an instance and sets it's value
@@ -314,21 +316,21 @@ namespace phoenix {
 		/**
 		 * @return The address of the symbol.
 		 */
-		[[nodiscard]] inline u32 address() const noexcept {
+		[[nodiscard]] inline std::uint32_t address() const noexcept {
 			return _m_address;
 		}
 
 		/**
 		 * @return The index of the parent symbol or unset if the symbol does not have a parent.
 		 */
-		[[nodiscard]] inline u32 parent() const noexcept {
+		[[nodiscard]] inline std::uint32_t parent() const noexcept {
 			return _m_parent;
 		}
 
 		/**
 		 * @return The count of values stored in the symbol.
 		 */
-		[[nodiscard]] inline u32 count() const noexcept {
+		[[nodiscard]] inline std::uint32_t count() const noexcept {
 			return _m_count;
 		}
 
@@ -342,7 +344,7 @@ namespace phoenix {
 		/**
 		 * @return The index of the symbol.
 		 */
-		[[nodiscard]] inline u32 index() const noexcept {
+		[[nodiscard]] inline std::uint32_t index() const noexcept {
 			return _m_index;
 		}
 
@@ -356,30 +358,30 @@ namespace phoenix {
 		/**
 		 * @return The index of the file the symbol was in.
 		 */
-		[[nodiscard]] inline u32 file_index() const noexcept {
+		[[nodiscard]] inline std::uint32_t file_index() const noexcept {
 			return _m_file_index;
 		}
 
 		/**
 		 * @return The offset in bytes of a member from the start of the instance.
 		 */
-		[[nodiscard]] inline u32 offset_as_member() const noexcept {
+		[[nodiscard]] inline std::uint32_t offset_as_member() const noexcept {
 			return _m_member_offset;
 		}
 
-		[[nodiscard]] inline u32 line_start() const noexcept {
+		[[nodiscard]] inline std::uint32_t line_start() const noexcept {
 			return _m_line_start;
 		}
-		[[nodiscard]] inline u32 line_count() const noexcept {
+		[[nodiscard]] inline std::uint32_t line_count() const noexcept {
 			return _m_line_count;
 		}
-		[[nodiscard]] inline u32 char_start() const noexcept {
+		[[nodiscard]] inline std::uint32_t char_start() const noexcept {
 			return _m_char_start;
 		}
-		[[nodiscard]] inline u32 char_count() const noexcept {
+		[[nodiscard]] inline std::uint32_t char_count() const noexcept {
 			return _m_char_count;
 		}
-		[[nodiscard]] inline u32 class_size() const noexcept {
+		[[nodiscard]] inline std::uint32_t class_size() const noexcept {
 			return _m_class_size;
 		}
 
@@ -391,54 +393,54 @@ namespace phoenix {
 		symbol() = default;
 
 		template <typename T>
-		const T* get_member_ptr(u8 index, const std::shared_ptr<instance>& context) const {
+		const T* get_member_ptr(std::uint8_t index, const std::shared_ptr<instance>& context) const {
 			if (!_m_registered_to)
 				throw unbound_member_access(*this);
 			if (*_m_registered_to != *context->_m_type)
 				throw illegal_context_type {*this, *context->_m_type};
 
-			u32 target_offset = offset_as_member() + index * sizeof(T);
+			std::uint32_t target_offset = offset_as_member() + index * sizeof(T);
 			return reinterpret_cast<const T*>(reinterpret_cast<const char*>(context.get()) + target_offset);
 		}
 
 		template <typename T>
-		T* get_member_ptr(u8 index, const std::shared_ptr<instance>& context) {
+		T* get_member_ptr(std::uint8_t index, const std::shared_ptr<instance>& context) {
 			if (!_m_registered_to)
 				throw unbound_member_access(*this);
 			if (*_m_registered_to != *context->_m_type)
 				throw illegal_context_type {*this, *context->_m_type};
 
-			u32 target_offset = offset_as_member() + index * sizeof(T);
+			std::uint32_t target_offset = offset_as_member() + index * sizeof(T);
 			return reinterpret_cast<T*>(reinterpret_cast<char*>(context.get()) + target_offset);
 		}
 
 	private:
 		friend class script;
 		std::string _m_name;
-		std::variant<std::unique_ptr<s32[]>,
+		std::variant<std::unique_ptr<std::int32_t[]>,
 		             std::unique_ptr<float[]>,
 		             std::unique_ptr<std::string[]>,
 		             std::shared_ptr<instance>>
 		    _m_value;
 
-		u32 _m_address {unset};
-		u32 _m_parent {unset};
-		u32 _m_class_offset {unset};
-		u32 _m_count {0};
+		std::uint32_t _m_address {unset};
+		std::uint32_t _m_parent {unset};
+		std::uint32_t _m_class_offset {unset};
+		std::uint32_t _m_count {0};
 		datatype _m_type {0};
 		flag _m_flags {0};
 		bool _m_generated {false};
 
-		u32 _m_file_index {0};
-		u32 _m_line_start {0};
-		u32 _m_line_count {0};
-		u32 _m_char_start {0};
-		u32 _m_char_count {0};
+		std::uint32_t _m_file_index {0};
+		std::uint32_t _m_line_start {0};
+		std::uint32_t _m_line_count {0};
+		std::uint32_t _m_char_start {0};
+		std::uint32_t _m_char_count {0};
 
-		u32 _m_member_offset {unset};
-		u32 _m_class_size {unset};
+		std::uint32_t _m_member_offset {unset};
+		std::uint32_t _m_class_size {unset};
 		datatype _m_return_type {dt_void};
-		u32 _m_index {unset};
+		std::uint32_t _m_index {unset};
 		const std::type_info* _m_registered_to {nullptr};
 	};
 
@@ -447,18 +449,18 @@ namespace phoenix {
 	 */
 	struct instruction {
 		opcode op {op_noop};
-		u32 address {0};
-		u32 symbol {0};
-		s32 immediate {0};
-		u8 index {0};
-		u8 size {1};
+		std::uint32_t address {0};
+		std::uint32_t symbol {0};
+		std::int32_t immediate {0};
+		std::uint8_t index {0};
+		std::uint8_t size {1};
 
 		/**
 		 * @brief Reads an instruction from a reader.
 		 * @param[in,out] in The reader to read from
 		 * @return The instruction read.
 		 */
-		static instruction decode(reader& in);
+		static instruction decode(buffer& in);
 	};
 
 	/**
@@ -486,7 +488,7 @@ namespace phoenix {
 
 			_class* base = 0;
 			auto member = &(base->*field);
-			sym->_m_member_offset = (u64) member;
+			sym->_m_member_offset = (std::uint64_t) member;
 			sym->_m_registered_to = type;
 		}
 
@@ -503,7 +505,7 @@ namespace phoenix {
 
 			_class* base = 0;
 			auto member = &(base->*field);
-			sym->_m_member_offset = (u64) member;
+			sym->_m_member_offset = (std::uint64_t) member;
 			sym->_m_registered_to = type;
 		}
 
@@ -519,7 +521,7 @@ namespace phoenix {
 		 * @param index The index of the symbol to get
 		 * @return The symbol or `nullptr` if the index was out-of-range.
 		 */
-		[[nodiscard]] const symbol* find_symbol_by_index(u32 index) const;
+		[[nodiscard]] const symbol* find_symbol_by_index(std::uint32_t index) const;
 
 		/**
 		 * @brief Looks for parameters of the given function symbol. Only works for external functions.
@@ -533,7 +535,7 @@ namespace phoenix {
 		 * @param index The address of the symbol to get
 		 * @return The symbol or `nullptr` if no symbol with that address was found.
 		 */
-		[[nodiscard]] const symbol* find_symbol_by_address(u32 address) const;
+		[[nodiscard]] const symbol* find_symbol_by_address(std::uint32_t address) const;
 
 		/**
 		 * @brief Retrieves the symbol with the given \p name.
@@ -547,14 +549,14 @@ namespace phoenix {
 		 * @param index The index of the symbol to get
 		 * @return The symbol or `nullptr` if the index was out-of-range.
 		 */
-		[[nodiscard]] symbol* find_symbol_by_index(u32 index);
+		[[nodiscard]] symbol* find_symbol_by_index(std::uint32_t index);
 
 		/**
 		 * @brief Retrieves the symbol with the given \p address set
 		 * @param index The address of the symbol to get
 		 * @return The symbol or `nullptr` if no symbol with that address was found.
 		 */
-		[[nodiscard]] symbol* find_symbol_by_address(u32 address);
+		[[nodiscard]] symbol* find_symbol_by_address(std::uint32_t address);
 
 		/**
 		 * @brief Looks for parameters of the given function symbol. Only works for external functions.
@@ -575,13 +577,13 @@ namespace phoenix {
 		 * @param address The address of the instruction to decode
 		 * @return The instruction.
 		 */
-		[[nodiscard]] instruction instruction_at(u32 address) const;
+		[[nodiscard]] instruction instruction_at(std::uint32_t address) const;
 
 		/**
 		 * @return The total size of the script.
 		 */
-		[[nodiscard]] u32 size() const noexcept {
-			return _m_text.size();
+		[[nodiscard]] std::uint32_t size() const noexcept {
+			return _m_text.limit();
 		}
 
 		/**
@@ -640,12 +642,12 @@ namespace phoenix {
 	private:
 		std::vector<symbol> _m_symbols;
 		std::unordered_map<std::string, symbol*> _m_symbols_by_name;
-		std::unordered_map<u32, symbol*> _m_symbols_by_address;
+		std::unordered_map<std::uint32_t, symbol*> _m_symbols_by_address;
 
 		symbol* _m_dynamic_strings {nullptr};
 
-		mutable reader _m_text {};
-		u8 _m_version {0};
+		mutable buffer _m_text = buffer::empty();
+		std::uint8_t _m_version {0};
 	};
 
 } // namespace phoenix

@@ -34,7 +34,7 @@ static void do_extract(const fs::path& base, const fs::path& self, const std::ve
 			auto content = entry.open();
 
 			std::ofstream out {output};
-			out.write(content.data(), (s64) content.size());
+			out.write((const char*) content.array().data(), content.limit());
 			out.close();
 		}
 	}
@@ -106,10 +106,10 @@ int main(int argc, const char** argv) {
 			auto in = entry->open();
 
 			if (output == ".") {
-				std::cout.write(in.data(), (s64) in.size());
+				std::cout.write((const char *) in.array().data(), in.limit());
 			} else {
 				std::ofstream out {output};
-				out.write(in.data(), (s64) in.size());
+				out.write((const char *) in.array().data(), in.limit());
 				out.close();
 			}
 		} else {

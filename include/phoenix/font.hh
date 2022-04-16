@@ -1,8 +1,7 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
-#include <phoenix/detail/stream.hh>
-#include <phoenix/detail/types.hh>
+#include <phoenix/detail/buffer.hh>
 
 #include <glm/vec2.hpp>
 
@@ -13,7 +12,7 @@ namespace phoenix {
 	 * @brief Represents one glyph.
 	 */
 	struct glyph {
-		u8 width;
+		std::uint8_t width;
 		glm::vec2 uv[2];
 	};
 
@@ -38,7 +37,7 @@ namespace phoenix {
 		 * @param in The reader to read from
 		 * @return The font parsed.
 		 */
-		static font parse(reader& in);
+		static font parse(buffer& in);
 
 		/**
 		 * @return The name of the font
@@ -50,7 +49,7 @@ namespace phoenix {
 		/**
 		 * @return The height of the font
 		 */
-		[[nodiscard]] inline u32 height() const noexcept {
+		[[nodiscard]] inline std::uint32_t height() const noexcept {
 			return _m_height;
 		}
 
@@ -66,7 +65,7 @@ namespace phoenix {
 
 	private:
 		std::string _m_name;
-		u32 _m_height;
+		std::uint32_t _m_height;
 		glyph _m_glyphs[FONT_MAX_GLYPHS];
 	};
 

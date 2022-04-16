@@ -1,7 +1,7 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
-#include <phoenix/detail/stream.hh>
+#include <phoenix/detail/buffer.hh>
 #include <phoenix/mesh.hh>
 #include <phoenix/proto_mesh.hh>
 
@@ -11,16 +11,16 @@ namespace phoenix {
 	 */
 	struct morph_animation {
 		std::string name;
-		s32 layer;
+		std::int32_t layer;
 		float blend_in;
 		float blend_out;
 		float duration;
 		float speed;
-		u8 flags;
+		std::uint8_t flags;
 
-		u32 frame_count;
+		std::uint32_t frame_count;
 
-		std::vector<u32> vertices;
+		std::vector<std::uint32_t> vertices;
 		std::vector<glm::vec3> samples;
 	};
 
@@ -49,7 +49,7 @@ namespace phoenix {
 		 * @param in The reader to read from.
 		 * @return The mesh parsed.
 		 */
-		static morph_mesh parse(reader& in);
+		static morph_mesh parse(buffer& in);
 
 		/**
 		 * @return All animations associated with the mesh

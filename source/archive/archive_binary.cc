@@ -8,24 +8,24 @@
 namespace phoenix {
 	void archive_reader_binary::read_header() {
 		{
-			std::string objects = input.read_line();
+			std::string objects = input.get_line();
 			if (!objects.starts_with("objects ")) {
 				throw parser_error("not an archive: objects missing");
 			}
 			_m_objects = std::stoi(objects.substr(objects.find(' ') + 1));
 		}
 
-		if (input.read_line(true) != "END") {
+		if (input.get_line() != "END") {
 			throw parser_error("not an archive: END(2) missing");
 		}
 	}
 
 	bool archive_reader_binary::read_object_begin(archive_object& obj) {
-		(void) input.read_u32(); // chunksize including itself
-		obj.version = input.read_u16();
-		obj.index = input.read_u32();
-		obj.object_name = input.read_line(true);
-		obj.class_name = input.read_line(true);
+		(void) input.get_uint(); // chunksize including itself
+		obj.version = input.get_ushort();
+		obj.index = input.get_uint();
+		obj.object_name = input.get_line();
+		obj.class_name = input.get_line();
 		return true;
 	}
 
@@ -34,43 +34,43 @@ namespace phoenix {
 	}
 
 	std::string archive_reader_binary::read_string() {
-		return input.read_line(false);
+		return input.get_line(false);
 	}
 
-	s32 archive_reader_binary::read_int() {
-		return input.read_s32();
+	std::int32_t archive_reader_binary::read_int() {
+		return input.get_int();
 	}
 
 	float archive_reader_binary::read_float() {
-		return input.read_f32();
+		return input.get_float();
 	}
 
-	u8 archive_reader_binary::read_byte() {
-		return input.read_u8();
+	std::uint8_t archive_reader_binary::read_byte() {
+		return input.get();
 	}
 
-	u16 archive_reader_binary::read_word() {
-		return input.read_u16();
+	std::uint16_t archive_reader_binary::read_word() {
+		return input.get_ushort();
 	}
 
-	u32 archive_reader_binary::read_enum() {
-		return input.read_u32();
+	std::uint32_t archive_reader_binary::read_enum() {
+		return input.get_uint();
 	}
 
 	bool archive_reader_binary::read_bool() {
-		return input.read_u8() == 1;
+		return input.get() == 1;
 	}
 
-	color archive_reader_binary::read_color() {
-		return color {input.read_u8(), input.read_u8(), input.read_u8(), input.read_u8()};
+	glm::u8vec4 archive_reader_binary::read_color() {
+		return glm::u8vec4 {input.get(), input.get(), input.get(), input.get()};
 	}
 
 	glm::vec3 archive_reader_binary::read_vec3() {
-		return input.read_vec3();
+		return input.get_vec3();
 	}
 
 	glm::vec2 archive_reader_binary::read_vec2() {
-		return input.read_vec2();
+		return input.get_vec2();
 	}
 
 	void archive_reader_binary::skip_entry() {}
@@ -78,23 +78,23 @@ namespace phoenix {
 	void archive_reader_binary::skip_object(bool skip_current) {
 		// FIXME: skip_current is ignored here
 		(void) skip_current;
-		input.ignore(input.read_u32());
+		input.position(input.position() + input.get_uint());
 	}
 
 	std::tuple<glm::vec3, glm::vec3> archive_reader_binary::read_bbox() {
-		return std::make_tuple(input.read_vec3(), input.read_vec3());
+		return std::make_tuple(input.get_vec3(), input.get_vec3());
 	}
 
 	glm::mat3x3 archive_reader_binary::read_mat3x3() {
 		glm::mat3x3 v {};
-		v[0] = input.read_vec3();
-		v[1] = input.read_vec3();
-		v[2] = input.read_vec3();
+		v[0] = input.get_vec3();
+		v[1] = input.get_vec3();
+		v[2] = input.get_vec3();
 
 		return v;
 	}
 
-	std::vector<u8> archive_reader_binary::read_raw_bytes() {
+	std::vector<std::uint8_t> archive_reader_binary::read_raw_bytes() {
 		throw parser_error("archive_reader_binary: getting raw bytes from a binary archive is not supported");
 	}
 } // namespace phoenix

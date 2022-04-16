@@ -10,7 +10,7 @@
 namespace phoenix {
 	static const float SAMPLE_ROT_BITS = float(1 << 16) - 1.0f;
 	static const float SAMPLE_QUAT_SCALAR = (1.0f / SAMPLE_ROT_BITS) * 2.1f;
-	static const u16 SAMPLE_QUAT_MIDDLE = (1 << 15) - 1;
+	static const std::uint16_t SAMPLE_QUAT_MIDDLE = (1 << 15) - 1;
 
 	enum class animation_chunk {
 		animation = 0xa000u,
@@ -26,11 +26,11 @@ namespace phoenix {
 	 * (https://github.com/ataulien/ZenLib/blob/e1a5e1b12e71690a5470f3be2aa3d0d6419f5191/zenload/zCModelAni.cpp#L43).
 	 * Thanks to Andre Taulien and Alexander Stillich!
 	 */
-	static glm::vec3 read_sample_position(reader& in, float sample_pos_s, float sample_pos_range_min) {
+	static glm::vec3 read_sample_position(buffer& in, float sample_pos_s, float sample_pos_range_min) {
 		glm::vec3 v {};
-		v.x = (float) in.read_u16() * sample_pos_s + sample_pos_range_min;
-		v.y = (float) in.read_u16() * sample_pos_s + sample_pos_range_min;
-		v.z = (float) in.read_u16() * sample_pos_s + sample_pos_range_min;
+		v.x = (float) in.get_ushort() * sample_pos_s + sample_pos_range_min;
+		v.y = (float) in.get_ushort() * sample_pos_s + sample_pos_range_min;
+		v.z = (float) in.get_ushort() * sample_pos_s + sample_pos_range_min;
 		return v;
 	}
 
@@ -39,11 +39,11 @@ namespace phoenix {
 	 * (https://github.com/ataulien/ZenLib/blob/e1a5e1b12e71690a5470f3be2aa3d0d6419f5191/zenload/zCModelAni.cpp#L50).
 	 * Thanks to Andre Taulien and Alexander Stillich!
 	 */
-	static glm::vec4 read_sample_quaternion(reader& in) {
+	static glm::vec4 read_sample_quaternion(buffer& in) {
 		glm::vec4 v {};
-		v.x = ((float) in.read_u16() - SAMPLE_QUAT_MIDDLE) * SAMPLE_QUAT_SCALAR;
-		v.y = ((float) in.read_u16() - SAMPLE_QUAT_MIDDLE) * SAMPLE_QUAT_SCALAR;
-		v.z = ((float) in.read_u16() - SAMPLE_QUAT_MIDDLE) * SAMPLE_QUAT_SCALAR;
+		v.x = ((float) in.get_ushort() - SAMPLE_QUAT_MIDDLE) * SAMPLE_QUAT_SCALAR;
+		v.y = ((float) in.get_ushort() - SAMPLE_QUAT_MIDDLE) * SAMPLE_QUAT_SCALAR;
+		v.z = ((float) in.get_ushort() - SAMPLE_QUAT_MIDDLE) * SAMPLE_QUAT_SCALAR;
 
 		float len_q = v.x * v.x + v.y * v.y + v.z * v.z;
 
@@ -60,60 +60,60 @@ namespace phoenix {
 		return v;
 	}
 
-	animation animation::parse(reader& in) {
+	animation animation::parse(buffer& in) {
 		animation anim {};
 
 		animation_chunk chunk = animation_chunk::unknown;
-		u32 end = 0;
+		std::uint32_t end = 0;
 
 		do {
-			chunk = static_cast<animation_chunk>(in.read_u16());
+			chunk = static_cast<animation_chunk>(in.get_ushort());
 
-			auto length = in.read_u32();
-			end = length + in.tell();
+			auto length = in.get_uint();
+			end = length + in.position();
 
 			switch (chunk) {
 			case animation_chunk::header:
-				(void) /* version = */ in.read_u16();
-				anim._m_name = in.read_line();
-				anim._m_layer = in.read_u32();
-				anim._m_frame_count = in.read_u32();
-				anim._m_node_count = in.read_u32();
-				anim._m_fps = in.read_f32();
-				anim._m_fps_source = in.read_f32();
-				anim._m_sample_position_range_min = in.read_f32();
-				anim._m_sample_position_scalar = in.read_f32();
-				anim._m_bbox[0] = in.read_vec3();
-				anim._m_bbox[1] = in.read_vec3();
-				anim._m_next = in.read_line();
+				(void) /* version = */ in.get_ushort();
+				anim._m_name = in.get_line();
+				anim._m_layer = in.get_uint();
+				anim._m_frame_count = in.get_uint();
+				anim._m_node_count = in.get_uint();
+				anim._m_fps = in.get_float();
+				anim._m_fps_source = in.get_float();
+				anim._m_sample_position_range_min = in.get_float();
+				anim._m_sample_position_scalar = in.get_float();
+				anim._m_bbox[0] = in.get_vec3();
+				anim._m_bbox[1] = in.get_vec3();
+				anim._m_next = in.get_line();
 				break;
 			case animation_chunk::events:
-				anim._m_events.reserve(in.read_u32());
+				anim._m_events.reserve(in.get_uint());
 
-				for (u32 i = 0; i < anim._m_events.size(); ++i) {
+				for (std::uint32_t i = 0; i < anim._m_events.size(); ++i) {
 					auto& event = anim._m_events.emplace_back();
-					event.type = static_cast<animation_event_type>(in.read_u32());
-					event.no = in.read_u32();
-					event.tag = in.read_line();
+					event.type = static_cast<animation_event_type>(in.get_uint());
+					event.no = in.get_uint();
+					event.tag = in.get_line();
 
 					for (auto& j : event.content) {
-						j = in.read_line();
+						j = in.get_line();
 					}
 
 					for (float& value : event.values) {
-						value = in.read_f32();
+						value = in.get_float();
 					}
 
-					event.probability = in.read_f32();
+					event.probability = in.get_float();
 				}
 
 				break;
 			case animation_chunk::data:
-				anim._m_checksum = in.read_u32();
+				anim._m_checksum = in.get_uint();
 				anim._m_node_indices.resize(anim._m_node_count);
 
-				for (u32 i = 0; i < anim._m_node_count; ++i) {
-					anim._m_node_indices[i] = in.read_u32();
+				for (std::uint32_t i = 0; i < anim._m_node_count; ++i) {
+					anim._m_node_indices[i] = in.get_uint();
 				}
 
 				anim._m_samples.resize(anim._m_node_count * anim._m_frame_count);
@@ -130,19 +130,19 @@ namespace phoenix {
 			case animation_chunk::source:
 				// this is actually a date though it is 4 bytes aligned
 				anim._m_source_file_date = {
-				    in.read_u32(),
-				    in.read_u16(),
-				    in.read_u16(),
-				    in.read_u16(),
-				    in.read_u16(),
-				    in.read_u16(),
+				    in.get_uint(),
+				    in.get_ushort(),
+				    in.get_ushort(),
+				    in.get_ushort(),
+				    in.get_ushort(),
+				    in.get_ushort(),
 				};
 
 				// discard alignment bytes
-				in.ignore(2);
+				(void) in.get_ushort();
 
-				anim._m_source_path = in.read_line(false);
-				anim._m_mds_source = in.read_line(false);
+				anim._m_source_path = in.get_line(false);
+				anim._m_mds_source = in.get_line(false);
 				break;
 			case animation_chunk::animation:
 				break;
@@ -150,14 +150,14 @@ namespace phoenix {
 				break;
 			}
 
-			if (in.tell() != end) {
+			if (in.position() != end) {
 				fmt::print(stderr,
 				           "warning: animation: not all data or too much data consumed from section 0x{:X}\n",
 				           chunk);
 			}
 
-			in.seek(end);
-		} while (in.tell() < in.size());
+			in.position(end);
+		} while (in.position() < in.limit());
 
 		return anim;
 	}

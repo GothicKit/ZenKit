@@ -9,7 +9,7 @@ namespace phoenix {
 	messages messages::parse(const std::string& path) {
 		messages msgs {};
 
-		auto in = reader::from(path);
+		auto in = buffer::open(path);
 		auto archive = archive_reader::open(in);
 
 		archive_object obj;
@@ -65,7 +65,7 @@ namespace phoenix {
 			}
 		}
 
-		if (in.tell() < in.size()) {
+		if (in.position() < in.limit()) {
 			fmt::print(stderr, "warning: animation: not all data consumed from message database\n");
 		}
 

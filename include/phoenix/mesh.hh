@@ -1,7 +1,7 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
-#include <phoenix/detail/stream.hh>
+#include <phoenix/detail/buffer.hh>
 #include <phoenix/material.hh>
 #include <phoenix/math/light_map.hh>
 #include <phoenix/math/obb.hh>
@@ -10,12 +10,12 @@
 
 namespace phoenix {
 	struct date {
-		u32 year;
-		u16 month;
-		u16 day;
-		u16 hour;
-		u16 minute;
-		u16 second;
+		std::uint32_t year;
+		std::uint16_t month;
+		std::uint16_t day;
+		std::uint16_t hour;
+		std::uint16_t minute;
+		std::uint16_t second;
 	};
 
 	/**
@@ -28,14 +28,14 @@ namespace phoenix {
 	};
 
 	struct polygon_flags {
-		u8 is_portal : 2;
-		u8 is_occluder : 1;
-		u8 is_sector : 1;
-		u8 should_relight : 1;
-		u8 is_outdoor : 1;
-		u8 is_ghost_occluder : 1;
-		u8 is_dynamically_lit : 1;
-		u16 sector_index : 16;
+		std::uint8_t is_portal : 2;
+		std::uint8_t is_occluder : 1;
+		std::uint8_t is_sector : 1;
+		std::uint8_t should_relight : 1;
+		std::uint8_t is_outdoor : 1;
+		std::uint8_t is_ghost_occluder : 1;
+		std::uint8_t is_dynamically_lit : 1;
+		std::uint16_t sector_index : 16;
 
 		uint8_t is_lod : 1;
 		uint8_t normal_axis : 2;
@@ -50,13 +50,13 @@ namespace phoenix {
 	 * @brief Represents a polygon.
 	 */
 	struct polygon {
-		u16 material_index;
-		u16 lightmap_index;
+		std::uint16_t material_index;
+		std::uint16_t lightmap_index;
 		plane polygon_plane;
 
 		polygon_flags flags;
 
-		u8 vertex_count;
+		std::uint8_t vertex_count;
 		polygon_index indices[255]; // ZenLib uses 255 here. not sure why
 	};
 
@@ -81,7 +81,7 @@ namespace phoenix {
 		 * @param in The reader to read from.
 		 * @return The mesh parsed.
 		 */
-		[[nodiscard]] static mesh parse(reader& in);
+		[[nodiscard]] static mesh parse(buffer& in);
 
 		/**
 		 * @return The creation date of the mesh.

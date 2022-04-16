@@ -43,7 +43,7 @@ namespace phoenix {
 	bool daedalus_interpreter::exec() {
 		auto instr = _m_script.instruction_at(_m_pc);
 
-		s32 a {}, b {};
+		std::int32_t a {}, b {};
 		symbol* sym {};
 
 		try {
@@ -252,11 +252,11 @@ namespace phoenix {
 		_m_call_stack.pop();
 	}
 
-	void daedalus_interpreter::push_int(s32 value) {
+	void daedalus_interpreter::push_int(std::int32_t value) {
 		_m_stack.push({false, value});
 	}
 
-	void daedalus_interpreter::push_reference(symbol* value, u8 index) {
+	void daedalus_interpreter::push_reference(symbol* value, std::uint8_t index) {
 		_m_stack.push({true, value, index});
 	}
 
@@ -266,7 +266,7 @@ namespace phoenix {
 		push_reference(&sym);
 	}
 
-	void daedalus_interpreter::push_float(f32 value) {
+	void daedalus_interpreter::push_float(float value) {
 		_m_stack.push({false, value});
 	}
 
@@ -274,7 +274,7 @@ namespace phoenix {
 		_m_stack.push({false, value});
 	}
 
-	s32 daedalus_interpreter::pop_int() {
+	std::int32_t daedalus_interpreter::pop_int() {
 		if (_m_stack.empty()) {
 			// std::cerr << "WARN: popping 0 from empty stack!\n";
 			return 0;
@@ -292,7 +292,7 @@ namespace phoenix {
 		}
 	}
 
-	f32 daedalus_interpreter::pop_float() {
+	float daedalus_interpreter::pop_float() {
 		if (_m_stack.empty()) {
 			throw std::runtime_error {"Popping from empty stack!"};
 		}
@@ -304,16 +304,16 @@ namespace phoenix {
 			return std::get<symbol*>(v.value)->get_float(v.index, _m_instance);
 		} else if (std::holds_alternative<float>(v.value)) {
 			return std::get<float>(v.value);
-		} else if (std::holds_alternative<s32>(v.value)) {
+		} else if (std::holds_alternative<std::int32_t>(v.value)) {
 			// std::cerr << "WARN: Popping int and reinterpreting as float\n";
-			auto k = std::get<s32>(v.value);
+			auto k = std::get<std::int32_t>(v.value);
 			return std::bit_cast<float>(k);
 		} else {
 			throw std::runtime_error {"Tried to pop_float but frame does not contain an float."};
 		}
 	}
 
-	std::tuple<symbol*, u8> daedalus_interpreter::pop_reference() {
+	std::tuple<symbol*, std::uint8_t> daedalus_interpreter::pop_reference() {
 		if (_m_stack.empty()) {
 			throw std::runtime_error {"Popping from empty stack!"};
 		}
@@ -350,7 +350,7 @@ namespace phoenix {
 		return s->get_string(i, _m_instance);
 	}
 
-	void daedalus_interpreter::jump(u32 address) {
+	void daedalus_interpreter::jump(std::uint32_t address) {
 		if (address == 0 || address > _m_script.size()) {
 			throw std::runtime_error {"Cannot jump to " + std::to_string(address) + ": illegal address"};
 		}
@@ -434,7 +434,7 @@ namespace phoenix {
 	    : illegal_external("external " + sym->name() + " has illegal return type '" + provided.data() +
 	                       "', expected '" + DAEDALUS_DATA_TYPE_NAMES[sym->rtype()] + "'") {}
 
-	illegal_external_param::illegal_external_param(const symbol* sym, std::string_view provided, u8 i)
+	illegal_external_param::illegal_external_param(const symbol* sym, std::string_view provided, std::uint8_t i)
 	    : illegal_external("external " + sym->name() + " has illegal parameter type '" + provided.data() + "' (no. " +
 	                       std::to_string(i) + "), expected '" + DAEDALUS_DATA_TYPE_NAMES[sym->type()] + "'") {}
 } // namespace phoenix

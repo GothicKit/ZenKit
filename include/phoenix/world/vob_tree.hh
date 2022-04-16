@@ -3,6 +3,7 @@
 #pragma once
 #include <phoenix/animation.hh>
 #include <phoenix/archive.hh>
+#include <phoenix/detail/compat.hh>
 
 #include <glm/mat3x3.hpp>
 
@@ -69,14 +70,14 @@ namespace phoenix {
 			glm::vec3 position;
 			glm::mat3x3 rotation;
 			bool show_visual;
-			u8 camera_alignment;
+			std::uint8_t camera_alignment;
 			bool cd_static;
 			bool cd_dynamic;
 			bool vob_static;
 			bool dynamic_shadows;
 			bool physics_enabled;
-			u8 animation_mode;
-			s32 bias;
+			std::uint8_t animation_mode;
+			std::int32_t bias;
 			bool ambient;
 			float animation_strength;
 			float far_clip_scale;
@@ -121,12 +122,12 @@ namespace phoenix {
 
 		struct light : public base {
 			std::string preset;
-			u32 type;
+			std::uint32_t type;
 			float range;
-			color colour;
+			glm::u8vec4 colour;
 			float cone_angle;
 			bool is_static;
-			u32 quality;
+			std::uint32_t quality;
 			std::string lensflare_fx;
 
 			bool on;
@@ -143,14 +144,14 @@ namespace phoenix {
 
 		struct sound : public base {
 			float volume;
-			u32 mode;
+			std::uint32_t mode;
 			float random_delay;
 			float random_delay_var;
 			bool initially_playing;
 			bool ambient3d;
 			bool obstruction;
 			float cone_angle;
-			u32 volume_type;
+			std::uint32_t volume_type;
 			float radius;
 			std::string name;
 
@@ -172,7 +173,7 @@ namespace phoenix {
 
 		struct zone_music : public base {
 			bool enabled;
-			s32 priority;
+			std::int32_t priority;
 			bool ellipsoid;
 			float reverb;
 			float volume;
@@ -195,7 +196,7 @@ namespace phoenix {
 		struct zone_fog : public base {
 			float field1;
 			float field2;
-			color field3;
+			glm::u8vec4 field3;
 			bool field4 {false};
 			bool field5 {false};
 
@@ -214,8 +215,8 @@ namespace phoenix {
 
 		struct message_filter : public base {
 			std::string target;
-			u32 on_trigger;
-			u32 on_untrigger;
+			std::uint32_t on_trigger;
+			std::uint32_t on_untrigger;
 
 			static void parse(message_filter& vob, archive_reader_ref& in, game_version version) {
 				base::parse(vob, in, version);
@@ -238,10 +239,10 @@ namespace phoenix {
 
 		struct trigger : public base {
 			std::string target;
-			u8 flags;
-			u8 filter_flags;
+			std::uint8_t flags;
+			std::uint8_t filter_flags;
 			std::string vob_target;
-			s32 max_activation_count;
+			std::int32_t max_activation_count;
 			float retrigger_delay_sec;
 			float damage_threshold;
 			float fire_delay_sec;
@@ -255,7 +256,7 @@ namespace phoenix {
 				float delay;
 			};
 
-			u32 list_process;
+			std::uint32_t list_process;
 			std::vector<target> targets;
 
 			static void parse(trigger_list& vob, archive_reader_ref& in, game_version version) {
@@ -311,8 +312,8 @@ namespace phoenix {
 
 		struct mover_controller : public base {
 			std::string target;
-			u8 message;
-			s32 key;
+			std::uint8_t message;
+			std::int32_t key;
 
 			static void parse(mover_controller& vob, archive_reader_ref& in, game_version version) {
 				base::parse(vob, in, version);
@@ -336,19 +337,19 @@ namespace phoenix {
 
 			float repeat_delay_sec;
 			float volume_scale;
-			u32 damage_type;
+			std::uint32_t damage_type;
 
 			static void parse(touch_damage& vob, archive_reader_ref& in, game_version version);
 		};
 
 		struct mob : public base {
 			std::string name;
-			s32 hp;
-			s32 damage;
+			std::int32_t hp;
+			std::int32_t damage;
 			bool movable;
 			bool takable;
 			bool focus_override;
-			u32 material;
+			std::uint32_t material;
 			std::string visual_destroyed;
 			std::string owner;
 			std::string owner_guild;
@@ -358,7 +359,7 @@ namespace phoenix {
 		};
 
 		struct mob_inter : public mob {
-			s32 state;
+			std::int32_t state;
 			std::string target;
 			std::string item;
 			std::string condition_function;
@@ -402,7 +403,7 @@ namespace phoenix {
 		};
 
 		struct trigger_mover : public trigger {
-			u32 behavior;
+			std::uint32_t behavior;
 			float touch_blocker_damage;
 			float stay_open_time_sec;
 			bool locked;
@@ -410,8 +411,8 @@ namespace phoenix {
 			bool auto_rotate;
 
 			float speed;
-			u32 lerp_mode;
-			u32 speed_mode;
+			std::uint32_t lerp_mode;
+			std::uint32_t speed_mode;
 
 			std::vector<animation_sample> keyframes;
 
@@ -444,26 +445,26 @@ namespace phoenix {
 			float field1;
 			float field2;
 			float field3;
-			u32 field4;
-			u32 field5;
-			u32 field6;
-			u32 field7;
+			std::uint32_t field4;
+			std::uint32_t field5;
+			std::uint32_t field6;
+			std::uint32_t field7;
 			float field8;
 			float field9;
 			float field10;
 			float field11;
 			bool field12;
 
-			std::vector<u8> blob;
+			std::vector<std::uint8_t> blob;
 
 			static void parse(camera_trj_frame& vob, archive_reader_ref& in, game_version version);
 		};
 
 		struct cs_camera : public base {
-			u32 field1;
-			u32 field2;
-			u32 field3;
-			u32 field4;
+			std::uint32_t field1;
+			std::uint32_t field2;
+			std::uint32_t field3;
+			std::uint32_t field4;
 			bool field5;
 			bool field6;
 			bool field7;
@@ -474,8 +475,8 @@ namespace phoenix {
 			bool field12;
 			bool field13;
 			float field14;
-			s32 field15;
-			s32 field16;
+			std::int32_t field15;
+			std::int32_t field16;
 
 			std::vector<camera_trj_frame> frames;
 

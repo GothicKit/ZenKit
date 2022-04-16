@@ -1,13 +1,13 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
-#include <phoenix/detail/stream.hh>
+#include <phoenix/detail/buffer.hh>
 
 #include <vector>
 
 namespace phoenix {
 	constexpr const std::string_view ZTEX_SIGNATURE = "ZTEX";
-	constexpr const u16 ZTEX_PALETTE_ENTRIES = 0x100;
+	constexpr const std::uint16_t ZTEX_PALETTE_ENTRIES = 0x100;
 
 	/**
 	 * @brief Texture formats used by the ZenGin.
@@ -20,10 +20,11 @@ namespace phoenix {
 		tex_B8G8R8,   /* 4, 24-bit RGB pixel format with 8 bits per channel */
 		tex_R8G8B8,   /* 5, 24-bit RGB pixel format with 8 bits per channel */
 		tex_A4R4G4B4, /* 6, 16-bit ARGB pixel format with 4 bits for each channel */
-		tex_A1R5G5B5, /* 7, 16-bit pixel format where 5 bits are reserved for each color and 1 bit is reserved for alpha
+		tex_A1R5G5B5, /* 7, 16-bit pixel format where 5 bits are reserved for each glm::u8vec4 and 1 bit is reserved for
+		               * alpha
 		               */
 		tex_R5G6B5,   /* 8, 16-bit RGB pixel format with 5 bits for red, 6 bits for green, and 5 bits for blue */
-		tex_p8,       /* 9, 8-bit color indexed */
+		tex_p8,       /* 9, 8-bit glm::u8vec4 indexed */
 		tex_dxt1,     /* A, DXT1 compression texture format */
 		tex_dxt2,     /* B, DXT2 compression texture format */
 		tex_dxt3,     /* C, DXT3 compression texture format */
@@ -35,7 +36,7 @@ namespace phoenix {
 	 * @brief Simple ARGB quad.
 	 */
 	struct argb {
-		u8 a, r, g, b;
+		std::uint8_t a, r, g, b;
 	};
 
 	/**
@@ -62,7 +63,7 @@ namespace phoenix {
 		 * @param in The reader to read from
 		 * @return The texture.
 		 */
-		static texture parse(reader& in);
+		static texture parse(buffer& in);
 
 		/**
 		 * @brief Parses a texture from the given file.
@@ -82,14 +83,14 @@ namespace phoenix {
 		/**
 		 * @return The width in pixels of the first mipmap level.
 		 */
-		[[nodiscard]] inline u32 width() const noexcept {
+		[[nodiscard]] inline std::uint32_t width() const noexcept {
 			return _m_width;
 		}
 
 		/**
 		 * @return The height in pixels of the first mipmap level.
 		 */
-		[[nodiscard]] inline u32 height() const noexcept {
+		[[nodiscard]] inline std::uint32_t height() const noexcept {
 			return _m_height;
 		}
 
@@ -97,7 +98,7 @@ namespace phoenix {
 		 * @param level The mipmap level to use (beginning from 0).
 		 * @return The width in pixels of the given mipmap level.
 		 */
-		[[nodiscard]] inline u32 mipmap_width(u32 level) const noexcept {
+		[[nodiscard]] inline std::uint32_t mipmap_width(std::uint32_t level) const noexcept {
 			return _m_width >> level;
 		}
 
@@ -105,33 +106,33 @@ namespace phoenix {
 		 * @param level The mipmap level to use (beginning from 0).
 		 * @return The height in pixels of the given mipmap level.
 		 */
-		[[nodiscard]] inline u32 mipmap_height(u32 level) const noexcept {
+		[[nodiscard]] inline std::uint32_t mipmap_height(std::uint32_t level) const noexcept {
 			return _m_height >> level;
 		}
 
 		/**
 		 * @return The width of the texture in-engine.
 		 */
-		[[nodiscard]] inline u32 ref_width() const noexcept {
+		[[nodiscard]] inline std::uint32_t ref_width() const noexcept {
 			return _m_reference_width;
 		}
 
 		/**
 		 * @return The height of the texture in-engine.
 		 */
-		[[nodiscard]] inline u32 ref_height() const noexcept {
+		[[nodiscard]] inline std::uint32_t ref_height() const noexcept {
 			return _m_reference_height;
 		}
 
 		/**
 		 * @return The number of mipmaps of the texture.
 		 */
-		[[nodiscard]] inline u32 mipmaps() const noexcept {
+		[[nodiscard]] inline std::uint32_t mipmaps() const noexcept {
 			return _m_mipmap_count;
 		}
 
 		/**
-		 * @return The average color of the texture.
+		 * @return The average glm::u8vec4 of the texture.
 		 */
 		[[nodiscard]] inline argb average_color() const noexcept {
 			return _m_average_color;
@@ -141,7 +142,7 @@ namespace phoenix {
 		 * @param mipmap_level The mipmap level to get.
 		 * @return The texture data at the given mipmap level.
 		 */
-		[[nodiscard]] inline const std::vector<u8>& data(u32 mipmap_level = 0) const noexcept {
+		[[nodiscard]] inline const std::vector<std::uint8_t>& data(std::uint32_t mipmap_level = 0) const noexcept {
 			return _m_textures.at(_m_mipmap_count - 1 - mipmap_level);
 		}
 
@@ -151,7 +152,7 @@ namespace phoenix {
 		 * @return The converted texture data.
 		 * @attention This method is very expensive as it allocates a new buffer and copies the internal data into it.
 		 */
-		[[nodiscard]] std::vector<u8> as_rgba8(u32 mipmap_level = 0) const;
+		[[nodiscard]] std::vector<std::uint8_t> as_rgba8(std::uint32_t mipmap_level = 0) const;
 
 	private:
 		texture() = default;
@@ -159,14 +160,14 @@ namespace phoenix {
 	private:
 		texture_format _m_format {};
 		argb _m_palette[ZTEX_PALETTE_ENTRIES] {};
-		u32 _m_width {};
-		u32 _m_height {};
-		u32 _m_reference_width {};
-		u32 _m_reference_height {};
-		u32 _m_mipmap_count {};
+		std::uint32_t _m_width {};
+		std::uint32_t _m_height {};
+		std::uint32_t _m_reference_width {};
+		std::uint32_t _m_reference_height {};
+		std::uint32_t _m_mipmap_count {};
 		argb _m_average_color {};
 
 		// Quirk: largest mipmap (level 0) stored at the end of the vector
-		std::vector<std::vector<u8>> _m_textures;
+		std::vector<std::vector<std::uint8_t>> _m_textures;
 	};
 } // namespace phoenix

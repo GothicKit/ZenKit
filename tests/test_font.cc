@@ -8,7 +8,7 @@ using namespace phoenix;
 
 TEST_SUITE("font") {
 	TEST_CASE("fonts are read correctly") {
-		auto in = reader::from("./samples/font.fnt");
+		auto in = buffer::open("./samples/font.fnt");
 		auto fnt = font::parse(in);
 
 		CHECK(fnt.name() == "FONT_OLD_10_WHITE_HI.TGA");
@@ -21,9 +21,9 @@ TEST_SUITE("font") {
 		auto f2 = fnt.glyphs()[middle];
 		auto f3 = fnt.glyphs()[middle + 1];
 
-		CHECK((u16) f1.width == 9);
-		CHECK((u16) f2.width == 8);
-		CHECK((u16) f3.width == 0);
+		CHECK((std::uint16_t) f1.width == 9);
+		CHECK((std::uint16_t) f2.width == 8);
+		CHECK((std::uint16_t) f3.width == 0);
 
 		CHECK(f1.uv[0] == glm::vec2 {0.36132812f, 0.23828125f});
 		CHECK(f2.uv[0] == glm::vec2 {0.3984375f, 0.23828125f});

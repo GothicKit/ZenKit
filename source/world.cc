@@ -1,13 +1,14 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #include <phoenix/archive.hh>
+#include <phoenix/detail/compat.hh>
 #include <phoenix/detail/error.hh>
 #include <phoenix/world.hh>
 
 #include <fmt/format.h>
 
 namespace phoenix {
-	world world::parse(reader& in, game_version version) {
+	world world::parse(buffer& in, game_version version) {
 		world wld;
 
 		auto archive = archive_reader::open(in);
@@ -24,10 +25,10 @@ namespace phoenix {
 			archive->read_object_begin(chnk);
 
 			if (chnk.object_name == "MeshAndBsp") {
-				auto bsp_version = in.read_u32();
-				auto size = in.read_u32();
+				auto bsp_version = in.get_uint();
+				auto size = in.get_uint();
 
-				auto content = in.fork(size);
+				auto content = in.slice(in.position(), size);
 				wld._m_mesh = mesh::parse(content);
 				wld._m_tree = bsp_tree::parse(content, bsp_version);
 			} else if (chnk.object_name == "VobTree") {

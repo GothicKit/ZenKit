@@ -1,12 +1,13 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #include "doctest/doctest.h"
+#include <phoenix/detail/compat.hh>
 #include <phoenix/world.hh>
 
 TEST_SUITE("world") {
 	TEST_CASE("world meshes are read correctly") {
-		auto in = phoenix::reader::from("./samples/world.proprietary.zen");
-		auto wld = phoenix::world::parse(in, game_version::gothic_1);
+		auto in = phoenix::buffer::open("./samples/world.proprietary.zen");
+		auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_1);
 
 		auto& mesh = wld.world_mesh();
 		CHECK(mesh.vertices().size() == 55439);
@@ -61,8 +62,8 @@ TEST_SUITE("world") {
 	}
 
 	TEST_CASE("the bsp-tree is read correctly") {
-		auto in = phoenix::reader::from("./samples/world.proprietary.zen");
-		auto wld = phoenix::world::parse(in, game_version::gothic_1);
+		auto in = phoenix::buffer::open("./samples/world.proprietary.zen");
+		auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_1);
 		auto& tree = wld.tree();
 
 		CHECK(tree.mode() == phoenix::bsp_tree_mode::outdoor);
@@ -136,8 +137,8 @@ TEST_SUITE("world") {
 	}
 
 	TEST_CASE("the vob-tree is read correctly") {
-		auto in = phoenix::reader::from("./samples/world.proprietary.zen");
-		auto wld = phoenix::world::parse(in, game_version::gothic_1);
+		auto in = phoenix::buffer::open("./samples/world.proprietary.zen");
+		auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_1);
 		auto& vobs = wld.vobs();
 
 		CHECK(vobs.size() == 14);
@@ -267,8 +268,8 @@ TEST_SUITE("world") {
 	}
 
 	TEST_CASE("the way-net is read correctly") {
-		auto in = phoenix::reader::from("./samples/world.proprietary.zen");
-		auto wld = phoenix::world::parse(in, game_version::gothic_1);
+		auto in = phoenix::buffer::open("./samples/world.proprietary.zen");
+		auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_1);
 		auto& waynet = wld.waynet();
 
 		CHECK(waynet.waypoints().size() == 2784);

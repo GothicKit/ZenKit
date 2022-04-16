@@ -28,7 +28,7 @@ namespace phoenix {
 		auto count = in->read_int();
 		net._m_waypoints.reserve(count);
 
-		std::unordered_map<u32, u32> obj_id_to_wp {};
+		std::unordered_map<std::uint32_t, std::uint32_t> obj_id_to_wp {};
 
 		for (int i = 0; i < count; ++i) {
 			if (!in->read_object_begin(obj) || obj.class_name != "zCWaypoint") {
@@ -59,7 +59,7 @@ namespace phoenix {
 					throw parser_error(fmt::format("way net: failed to read edge #{}", i));
 				}
 
-				u32 wp;
+				std::uint32_t wp;
 
 				if (obj.class_name == "\xA7" /* zReference */) {
 					wp = obj_id_to_wp[obj.index];

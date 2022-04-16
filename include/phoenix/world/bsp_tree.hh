@@ -1,11 +1,15 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
-#include <phoenix/detail/stream.hh>
+#include <phoenix/detail/buffer.hh>
+
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+
 #include <vector>
 
 namespace phoenix {
-	enum class bsp_tree_mode : u32 {
+	enum class bsp_tree_mode : std::uint32_t {
 		indoor = 0,
 		outdoor = 1,
 	};
@@ -13,12 +17,12 @@ namespace phoenix {
 	struct bsp_node {
 		glm::vec4 plane;
 		glm::vec3 bbox[2];
-		u32 polygon_index;
-		u32 polygon_count;
+		std::uint32_t polygon_index;
+		std::uint32_t polygon_count;
 
-		s32 front_index {-1};
-		s32 back_index {-1};
-		s32 parent_index {-1};
+		std::int32_t front_index {-1};
+		std::int32_t back_index {-1};
+		std::int32_t parent_index {-1};
 
 		inline bool is_leaf() const noexcept {
 			return front_index == -1 && back_index == -1;
@@ -27,8 +31,8 @@ namespace phoenix {
 
 	struct bsp_sector {
 		std::string name;
-		std::vector<u32> node_indices;
-		std::vector<u32> portal_polygon_indices;
+		std::vector<std::uint32_t> node_indices;
+		std::vector<std::uint32_t> portal_polygon_indices;
 	};
 
 	/**
@@ -53,7 +57,7 @@ namespace phoenix {
 		 * @param in The reader to read from.
 		 * @return The tree parsed.
 		 */
-		[[nodiscard]] static bsp_tree parse(reader& in, u32 version);
+		[[nodiscard]] static bsp_tree parse(buffer& in, std::uint32_t version);
 
 		/**
 		 * @return The mode of the tree (either indoor or outdoor).
@@ -65,7 +69,7 @@ namespace phoenix {
 		/**
 		 * @return A list of polygon indices.
 		 */
-		[[nodiscard]] const std::vector<u32>& polygon_indices() const noexcept {
+		[[nodiscard]] const std::vector<std::uint32_t>& polygon_indices() const noexcept {
 			return _m_polygon_indices;
 		}
 
@@ -79,7 +83,7 @@ namespace phoenix {
 		/**
 		 * @return All BSP leaf node indices.
 		 */
-		[[nodiscard]] const std::vector<u32>& leaf_node_indices() const noexcept {
+		[[nodiscard]] const std::vector<std::uint32_t>& leaf_node_indices() const noexcept {
 			return _m_leaf_node_indices;
 		}
 
@@ -93,7 +97,7 @@ namespace phoenix {
 		/**
 		 * @return Polygon indices of portals.
 		 */
-		[[nodiscard]] const std::vector<u32>& portal_polygon_indices() const noexcept {
+		[[nodiscard]] const std::vector<std::uint32_t>& portal_polygon_indices() const noexcept {
 			return _m_portal_polygon_indices;
 		}
 
@@ -103,13 +107,13 @@ namespace phoenix {
 
 	private:
 		bsp_tree_mode _m_mode;
-		std::vector<u32> _m_polygon_indices;
+		std::vector<std::uint32_t> _m_polygon_indices;
 		std::vector<glm::vec3> _m_light_points;
 
 		std::vector<bsp_sector> _m_sectors;
-		std::vector<u32> _m_portal_polygon_indices;
+		std::vector<std::uint32_t> _m_portal_polygon_indices;
 
 		std::vector<bsp_node> _m_nodes;
-		std::vector<u32> _m_leaf_node_indices;
+		std::vector<std::uint32_t> _m_leaf_node_indices;
 	};
 } // namespace phoenix

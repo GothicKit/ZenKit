@@ -1,7 +1,7 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
-#include <phoenix/detail/stream.hh>
+#include <phoenix/detail/buffer.hh>
 #include <phoenix/mesh.hh>
 #include <phoenix/world/bsp_tree.hh>
 #include <phoenix/world/vob_tree.hh>
@@ -32,7 +32,7 @@ namespace phoenix {
 		 * @param in The reader to read from.
 		 * @return The world parsed.
 		 */
-		[[nodiscard]] static world parse(reader& in, game_version version);
+		[[nodiscard]] static world parse(buffer& in, game_version version);
 
 		/**
 		 * @return All root VOBs of the world.

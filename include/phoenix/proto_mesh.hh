@@ -1,28 +1,27 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
-#include <phoenix/detail/stream.hh>
-#include <phoenix/detail/types.hh>
+#include <phoenix/detail/buffer.hh>
 #include <phoenix/material.hh>
 #include <phoenix/math/obb.hh>
 
 namespace phoenix {
 	struct triangle {
-		u16 wedges[3];
+		std::uint16_t wedges[3];
 	};
 
 	struct triangle_edge {
-		u16 edges[3];
+		std::uint16_t edges[3];
 	};
 
 	struct edge {
-		u16 edges[2];
+		std::uint16_t edges[2];
 	};
 
 	struct wedge {
 		glm::vec3 normal;
 		glm::vec2 texture;
-		u16 index;
+		std::uint16_t index;
 	};
 
 	struct plane {
@@ -31,8 +30,8 @@ namespace phoenix {
 	};
 
 	struct mesh_section {
-		u32 offset;
-		u32 size;
+		std::uint32_t offset;
+		std::uint32_t size;
 	};
 
 	struct sub_mesh_section {
@@ -56,12 +55,12 @@ namespace phoenix {
 		std::vector<triangle> triangles;
 		std::vector<wedge> wedges;
 		std::vector<float> colors;
-		std::vector<u16> triangle_plane_indices;
+		std::vector<std::uint16_t> triangle_plane_indices;
 		std::vector<plane> triangle_planes;
 		std::vector<triangle_edge> triangle_edges;
 		std::vector<edge> edges;
 		std::vector<float> edge_scores;
-		std::vector<u16> wedge_map;
+		std::vector<std::uint16_t> wedge_map;
 
 		/**
 		 * @brief Reads sub-mesh data from a reader.
@@ -69,7 +68,7 @@ namespace phoenix {
 		 * @param map A a section map for the sub-mesh.
 		 * @return The sub-mesh read.
 		 */
-		static sub_mesh parse(reader& in, const sub_mesh_section& map);
+		static sub_mesh parse(buffer& in, const sub_mesh_section& map);
 	};
 
 	/**
@@ -92,7 +91,7 @@ namespace phoenix {
 		 * @param in The reader to read from.
 		 * @return The mesh read.
 		 */
-		static proto_mesh parse(reader& in);
+		static proto_mesh parse(buffer& in);
 
 		/**
 		 * @return The vertex positions associated with the mesh.
@@ -142,7 +141,7 @@ namespace phoenix {
 		std::vector<glm::vec3> _m_normals;
 		std::vector<sub_mesh> _m_sub_meshes;
 		std::vector<material> _m_materials;
-		u8 _m_has_alpha_test {true};
+		std::uint8_t _m_has_alpha_test {true};
 		glm::vec3 _m_bbox[2];
 		obb _m_obbox;
 	};

@@ -11,7 +11,7 @@ namespace phoenix {
 	 */
 	struct way_point {
 		std::string name;
-		s32 water_depth;
+		std::int32_t water_depth;
 		bool under_water;
 		glm::vec3 position;
 		glm::vec3 direction;
@@ -23,8 +23,8 @@ namespace phoenix {
 	 * @brief Represents an edge between two waypoints.
 	 */
 	struct way_edge {
-		u32 a;
-		u32 b;
+		std::uint32_t a;
+		std::uint32_t b;
 	};
 
 	/**

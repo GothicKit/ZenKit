@@ -8,37 +8,37 @@
 
 namespace phoenix {
 	void archive_reader_binsafe::read_header() {
-		_m_bs_version = input.read_u32();
-		_m_object_count = input.read_u32();
-		auto hash_table_offset = input.read_u32();
+		_m_bs_version = input.get_uint();
+		_m_object_count = input.get_uint();
+		auto hash_table_offset = input.get_uint();
 
 		// TODO: Understand and implement hashes
-		auto revert = input.tell();
+		auto revert = input.position();
 
 		{
-			input.seek(hash_table_offset);
-			auto hash_table_size = input.read_u32();
+			input.position(hash_table_offset);
+			auto hash_table_size = input.get_uint();
 			_m_hash_table_entries.resize(hash_table_size);
 
-			for (u32 i = 0; i < hash_table_size; ++i) {
-				auto key_length = input.read_u16();
-				auto insertion_index = input.read_u16();
-				auto hash_value = input.read_u32();
+			for (std::uint32_t i = 0; i < hash_table_size; ++i) {
+				auto key_length = input.get_ushort();
+				auto insertion_index = input.get_ushort();
+				auto hash_value = input.get_uint();
 
-				_m_hash_table_entries[insertion_index] = hash_table_entry {input.read_string(key_length), hash_value};
+				_m_hash_table_entries[insertion_index] = hash_table_entry {input.get_string(key_length), hash_value};
 			}
 		}
 
-		input.seek(revert);
+		input.position(revert);
 	}
 
 	bool archive_reader_binsafe::read_object_begin(archive_object& obj) {
-		return peek_input([&](reader& in) {
-			if (in.read_u8() != bs_string) {
+		return peek_input([&](buffer& in) {
+			if (in.get() != bs_string) {
 				return false;
 			}
 
-			auto line = in.read_string(in.read_u16());
+			auto line = in.get_string(in.get_ushort());
 			if (!line.starts_with('[') || !line.ends_with(']')) {
 				return false;
 			}
@@ -55,14 +55,14 @@ namespace phoenix {
 	}
 
 	bool archive_reader_binsafe::read_object_end() {
-		return peek_input([&](reader& in) {
-			if (in.read_u8() != bs_string) {
+		return peek_input([&](buffer& in) {
+			if (in.get() != bs_string) {
 				return false;
 			}
-			if (in.read_u16() != 2) {
+			if (in.get_ushort() != 2) {
 				return false;
 			}
-			if (in.read_string(2) != "[]") {
+			if (in.get_string(2) != "[]") {
 				return false;
 			}
 			skip_optional_hash();
@@ -72,17 +72,18 @@ namespace phoenix {
 	}
 
 	void archive_reader_binsafe::skip_optional_hash() {
-		if (peek_input([](reader& in) { return in.read_u8() == bs_hash; })) {
-			input.ignore(sizeof(u32));
+		if (peek_input([](buffer& in) { return in.get() == bs_hash; })) {
+			(void) input.get_uint();
 		}
 	}
 
-	u16 archive_reader_binsafe::assure_entry(archive_binsafe_type tp) {
-		auto type = input.read_u8();
-		auto size = (type == bs_string || type == bs_raw || type == bs_raw_float) ? input.read_u16() : type_sizes[type];
+	std::uint16_t archive_reader_binsafe::assure_entry(archive_binsafe_type tp) {
+		auto type = input.get();
+		auto size =
+		    (type == bs_string || type == bs_raw || type == bs_raw_float) ? input.get_ushort() : type_sizes[type];
 
 		if (type != tp) {
-			input.ignore(size);
+			input.position(input.position() + size);
 			throw parser_error(fmt::format("archive_reader_binsafe: type mismatch: expected {}, got: {}", tp, type));
 		}
 
@@ -90,60 +91,60 @@ namespace phoenix {
 	}
 
 	std::string archive_reader_binsafe::read_string() {
-		auto rv = input.read_string(assure_entry(bs_string));
+		auto rv = input.get_string(assure_entry(bs_string));
 		skip_optional_hash();
 		return rv;
 	}
 
-	s32 archive_reader_binsafe::read_int() {
+	std::int32_t archive_reader_binsafe::read_int() {
 		assure_entry(bs_int);
-		auto rv = input.read_s32();
+		auto rv = input.get_int();
 		skip_optional_hash();
 		return rv;
 	}
 
 	float archive_reader_binsafe::read_float() {
 		assure_entry(bs_float);
-		auto rv = input.read_f32();
+		auto rv = input.get_float();
 		skip_optional_hash();
 		return rv;
 	}
 
-	u8 archive_reader_binsafe::read_byte() {
+	std::uint8_t archive_reader_binsafe::read_byte() {
 		assure_entry(bs_byte);
-		auto rv = input.read_u8();
+		auto rv = input.get();
 		skip_optional_hash();
 		return rv;
 	}
 
-	u16 archive_reader_binsafe::read_word() {
+	std::uint16_t archive_reader_binsafe::read_word() {
 		assure_entry(bs_word);
-		auto rv = input.read_u16();
+		auto rv = input.get_ushort();
 		skip_optional_hash();
 		return rv;
 	}
 
-	u32 archive_reader_binsafe::read_enum() {
+	std::uint32_t archive_reader_binsafe::read_enum() {
 		assure_entry(bs_enum);
-		auto rv = input.read_u32();
+		auto rv = input.get_uint();
 		skip_optional_hash();
 		return rv;
 	}
 
 	bool archive_reader_binsafe::read_bool() {
 		assure_entry(bs_bool);
-		auto rv = input.read_u32(); // TODO: Check if this actually applies
+		auto rv = input.get_uint(); // TODO: Check if this actually applies
 		skip_optional_hash();
 		return rv == 1;
 	}
 
-	color archive_reader_binsafe::read_color() {
+	glm::u8vec4 archive_reader_binsafe::read_color() {
 		assure_entry(bs_color);
-		color c {
-		    input.read_u8(),
-		    input.read_u8(),
-		    input.read_u8(),
-		    input.read_u8(),
+		glm::u8vec4 c {
+		    input.get(),
+		    input.get(),
+		    input.get(),
+		    input.get(),
 		};
 		skip_optional_hash();
 		return c;
@@ -151,35 +152,35 @@ namespace phoenix {
 
 	glm::vec3 archive_reader_binsafe::read_vec3() {
 		assure_entry(bs_vec3);
-		auto c = input.read_vec3();
+		auto c = input.get_vec3();
 		skip_optional_hash();
 		return c;
 	}
 
 	glm::vec2 archive_reader_binsafe::read_vec2() {
-		auto unused = static_cast<s32>(assure_entry(bs_raw_float) - 2 * sizeof(float));
+		auto unused = static_cast<std::int32_t>(assure_entry(bs_raw_float) - 2 * sizeof(float));
 
 		if (unused < 0) {
 			throw parser_error(
 			    "archive_reader_binsafe: cannot read vec2 (2 * float): not enough space in rawFloat entry.");
 		}
 
-		auto c = input.read_vec2();
+		auto c = input.get_vec2();
 
 		// There might be more bytes in this. We'll ignore them.
-		input.ignore(unused);
+		input.position(input.position() + unused);
 		skip_optional_hash();
 		return c;
 	}
 
 	void archive_reader_binsafe::skip_entry() {
-		auto type = static_cast<archive_binsafe_type>(input.read_u8());
+		auto type = static_cast<archive_binsafe_type>(input.get());
 
 		switch (type) {
 		case bs_string:
 		case bs_raw:
 		case bs_raw_float:
-			input.ignore(input.read_u16());
+			input.position(input.position() + input.get_ushort());
 			break;
 		case bs_enum:
 		case bs_hash:
@@ -187,16 +188,18 @@ namespace phoenix {
 		case bs_float:
 		case bs_bool:
 		case bs_color:
-			input.ignore(sizeof(u32));
+			(void) input.get_uint();
 			break;
 		case bs_byte:
-			input.ignore(sizeof(u8));
+			(void) input.get();
 			break;
 		case bs_word:
-			input.ignore(sizeof(u16));
+			(void) input.get_ushort();
 			break;
 		case bs_vec3:
-			input.ignore(sizeof(float) * 3);
+			(void) input.get_float();
+			(void) input.get_float();
+			(void) input.get_float();
 			break;
 		}
 
@@ -204,45 +207,45 @@ namespace phoenix {
 	}
 
 	std::tuple<glm::vec3, glm::vec3> archive_reader_binsafe::read_bbox() {
-		auto unused = static_cast<s32>(assure_entry(bs_raw_float) - 3 * 2 * sizeof(float));
+		auto unused = static_cast<std::int32_t>(assure_entry(bs_raw_float) - 3 * 2 * sizeof(float));
 
 		if (unused < 0) {
 			throw parser_error(
 			    "archive_reader_binsafe: cannot read bbox (6 * float): not enough space in rawFloat entry.");
 		}
 
-		auto c = std::make_tuple(input.read_vec3(), input.read_vec3());
+		auto c = std::make_tuple(input.get_vec3(), input.get_vec3());
 
 		// There might be more bytes in this. We'll ignore them.
-		input.ignore(unused);
+		input.position(input.position() + unused);
 		skip_optional_hash();
 		return c;
 	}
 
 	glm::mat3x3 archive_reader_binsafe::read_mat3x3() {
-		auto unused = static_cast<s32>(assure_entry(bs_raw) -
-		                               3 * 3 * sizeof(float)); // TODO: Check that this is actually a raw field
+		auto unused = static_cast<std::int32_t>(assure_entry(bs_raw) -
+		                                        3 * 3 * sizeof(float)); // TODO: Check that this is actually a raw field
 
 		if (unused < 0) {
 			throw parser_error("archive_reader_binsafe: cannot read bbox (9 * float): not enough space in raw entry.");
 		}
 
 		glm::mat3x3 v {};
-		v[0] = input.read_vec3();
-		v[1] = input.read_vec3();
-		v[2] = input.read_vec3();
+		v[0] = input.get_vec3();
+		v[1] = input.get_vec3();
+		v[2] = input.get_vec3();
 
-		input.ignore(unused);
+		input.position(input.position() + unused);
 		skip_optional_hash();
 		return v;
 	}
 
-	std::vector<u8> archive_reader_binsafe::read_raw_bytes() {
+	std::vector<std::uint8_t> archive_reader_binsafe::read_raw_bytes() {
 		auto length = assure_entry(bs_raw);
 
-		std::vector<u8> out {};
+		std::vector<std::uint8_t> out {};
 		out.resize(length);
-		input.read(out.data(), length);
+		input.get(out);
 
 		skip_optional_hash();
 		return out;

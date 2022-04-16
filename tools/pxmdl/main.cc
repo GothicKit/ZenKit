@@ -157,7 +157,7 @@ int main(int argc, const char** argv) {
 	}
 
 	try {
-		phoenix::reader in {};
+		phoenix::buffer in = phoenix::buffer::empty();
 
 		if (input_vdf) {
 			auto vdf = phoenix::vdf_file::open(vdf_in);
@@ -169,7 +169,7 @@ int main(int argc, const char** argv) {
 				return EXIT_FAILURE;
 			}
 		} else {
-			in = phoenix::reader::from(file);
+			in = phoenix::buffer::open(file);
 		}
 
 		output = output.empty() ? (file.substr(file.rfind('/') + 1, file.rfind('.') - file.rfind('/') - 1) + ".obj") : output;
@@ -184,7 +184,7 @@ int main(int argc, const char** argv) {
 			out.close();
 
 		} else if (phoenix::iequals(extension, "ZEN")) {
-			auto wld = phoenix::world::parse(in, game_version::gothic_1);// FIXME: implement algorithm of detecting the actual version of Gothic!
+			auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_2);// FIXME: implement algorithm of detecting the actual version of Gothic!
 
 			dump_wavefront(out, output, wld.world_mesh());
 			out.close();

@@ -59,22 +59,22 @@ namespace phoenix {
 			auto packed = in->read_int() != 0;
 
 			if (packed) {
-				vector_reader bin {in->read_raw_bytes()};
+				buffer bin = buffer::wrap(in->read_raw_bytes());
 
-				vob.bbox[0] = bin.read_vec3();
-				vob.bbox[1] = bin.read_vec3();
-				vob.position = bin.read_vec3();
-				vob.rotation[0] = bin.read_vec3();
-				vob.rotation[1] = bin.read_vec3();
-				vob.rotation[2] = bin.read_vec3();
+				vob.bbox[0] = bin.get_vec3();
+				vob.bbox[1] = bin.get_vec3();
+				vob.position = bin.get_vec3();
+				vob.rotation[0] = bin.get_vec3();
+				vob.rotation[1] = bin.get_vec3();
+				vob.rotation[2] = bin.get_vec3();
 
-				u8 bit0 = bin.read_u8();
-				u16 bit1;
+				std::uint8_t bit0 = bin.get();
+				std::uint16_t bit1;
 
 				if (version == game_version::gothic_1) {
-					bit1 = bin.read_u8();
+					bit1 = bin.get();
 				} else {
-					bit1 = bin.read_u16();
+					bit1 = bin.get_ushort();
 				}
 
 				vob.show_visual = static_cast<bool>((bit0 & 0b00000001) >> 0);
@@ -94,11 +94,11 @@ namespace phoenix {
 
 				if (version == game_version::gothic_2) {
 					vob.animation_mode = (bit1 & 0b000000110000000u >> 7u);
-					vob.bias = static_cast<s32>((bit1 & 0b011111000000000u) >> 9u);
+					vob.bias = static_cast<std::int32_t>((bit1 & 0b011111000000000u) >> 9u);
 					vob.ambient = static_cast<bool>((bit1 & 0b100000000000000u) >> 14u);
 
-					vob.animation_strength = bin.read_f32();
-					vob.far_clip_scale = bin.read_f32();
+					vob.animation_strength = bin.get_float();
+					vob.far_clip_scale = bin.get_float();
 				}
 
 				if (has_preset_name) {
@@ -306,10 +306,10 @@ namespace phoenix {
 				vob.lerp_mode = in->read_enum();
 				vob.speed_mode = in->read_enum();
 
-				vector_reader sample_reader {in->read_raw_bytes()};
+				buffer sample_reader = buffer::wrap(in->read_raw_bytes());
 
 				for (int i = 0; i < keyframe_count; ++i) {
-					vob.keyframes.push_back(animation_sample {sample_reader.read_vec3(), sample_reader.read_vec4()});
+					vob.keyframes.push_back(animation_sample {sample_reader.get_vec3(), sample_reader.get_vec4()});
 				}
 			}
 
