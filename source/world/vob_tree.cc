@@ -51,6 +51,7 @@ namespace phoenix {
 	    {"zCVobScreenFX:zCVob", vob_type::zCVobScreenFX},
 	    {"zCVobStair:zCVob", vob_type::zCVobStair},
 	    {"oCCSTrigger:zCTrigger:zCVob", vob_type::oCCSTrigger},
+	    {"\xA7", vob_type::unknown},  // some sort of padding object, probably. seems to be always empty
 	};
 
 	namespace vob {
@@ -458,6 +459,8 @@ namespace phoenix {
 		case vob_type::zCMoverController:
 			vob._m_content = vob::mover_controller {};
 			vob::mover_controller::parse(std::get<vob::mover_controller>(vob._m_content), in, version);
+			break;
+		case vob_type::unknown:
 			break;
 		}
 

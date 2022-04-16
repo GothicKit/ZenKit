@@ -60,6 +60,7 @@ namespace phoenix {
 		oCTouchDamage,
 		zCTriggerUntouch,
 		zCEarthquake,
+		unknown,
 	};
 
 	namespace vob {
