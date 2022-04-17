@@ -158,13 +158,13 @@ TEST_SUITE("world") {
 
 			auto mat = vob0_data.rotation;
 			CHECK(mat[0][0] == 1.0f);
-			CHECK(mat[0][1] == 0.0f);
-			CHECK(mat[0][2] == 0.0f);
 			CHECK(mat[1][0] == 0.0f);
-			CHECK(mat[1][1] == 1.0f);
-			CHECK(mat[1][2] == 0.0f);
 			CHECK(mat[2][0] == 0.0f);
+			CHECK(mat[0][1] == 0.0f);
+			CHECK(mat[1][1] == 1.0f);
 			CHECK(mat[2][1] == 0.0f);
+			CHECK(mat[0][2] == 0.0f);
+			CHECK(mat[1][2] == 0.0f);
 			CHECK(mat[2][2] == 1.0f);
 
 			CHECK(vob0_data.vob_name == "LEVEL-VOB");
@@ -198,13 +198,13 @@ TEST_SUITE("world") {
 
 				auto matc = child1_data.rotation;
 				CHECK(matc[0][0] == -0.779196978f);
-				CHECK(matc[0][1] == 0.0f);
-				CHECK(matc[0][2] == 0.626779079f);
 				CHECK(matc[1][0] == 0.0f);
+				CHECK(matc[2][0] == 0.626779079f);
+				CHECK(matc[0][1] == 0.0f);
 				CHECK(matc[1][1] == 1.0f);
-				CHECK(matc[1][2] == 0.0f);
-				CHECK(matc[2][0] == -0.626779079f);
 				CHECK(matc[2][1] == 0.0f);
+				CHECK(matc[0][2] == -0.626779079f);
+				CHECK(matc[1][2] == 0.0f);
 				CHECK(matc[2][2] == -0.779196978f);
 
 				CHECK(child1_data.vob_name == "FP_CAMPFIRE_PATH_BANDITOS2_03_02");
@@ -236,13 +236,13 @@ TEST_SUITE("world") {
 
 			auto mat = vob13_data.rotation;
 			CHECK(mat[0][0] == 1.0f);
-			CHECK(mat[0][1] == 0.0f);
-			CHECK(mat[0][2] == 0.0f);
 			CHECK(mat[1][0] == 0.0f);
-			CHECK(mat[1][1] == 1.0f);
-			CHECK(mat[1][2] == 0.0f);
 			CHECK(mat[2][0] == 0.0f);
+			CHECK(mat[0][1] == 0.0f);
+			CHECK(mat[1][1] == 1.0f);
 			CHECK(mat[2][1] == 0.0f);
+			CHECK(mat[0][2] == 0.0f);
+			CHECK(mat[1][2] == 0.0f);
 			CHECK(mat[2][2] == 1.0f);
 
 			CHECK(vob13_data.vob_name == "LEVEL-VOB");

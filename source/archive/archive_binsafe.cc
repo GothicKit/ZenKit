@@ -237,7 +237,7 @@ namespace phoenix {
 
 		input.skip(unused);
 		skip_optional_hash();
-		return v;
+		return glm::transpose(v);
 	}
 
 	std::vector<std::uint8_t> archive_reader_binsafe::read_raw_bytes() {

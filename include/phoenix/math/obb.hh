@@ -23,7 +23,7 @@ namespace phoenix {
 		static obb parse(buffer& in) {
 			obb bbox {};
 			bbox.center = in.get_vec3();
-			bbox.rotation = glm::mat3x3 {in.get_vec3(), in.get_vec3(), in.get_vec3()};
+			bbox.rotation = glm::transpose(glm::mat3x3 {in.get_vec3(), in.get_vec3(), in.get_vec3()});
 			bbox.half_width = in.get_vec3();
 
 			auto child_count = in.get_ushort();

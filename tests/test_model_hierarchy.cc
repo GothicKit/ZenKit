@@ -15,7 +15,7 @@ TEST_SUITE("model hierarchies") {
 
 		CHECK(mesh.nodes()[1].name == "BIP01 NABE");
 		CHECK(mesh.nodes()[1].parent_index == 0);
-		CHECK(mesh.nodes()[1].transform == glm::mat4x4 {1, 0, 0, 0, 0, 1, 0, 0, 0, -0, 1, -394.040466, 0, 0, 0, 1});
+		CHECK(mesh.nodes()[1].transform == glm::mat4x4 {1, 0, 0, 0, 0, 1, -0, 0, 0, 0, 1, 0, 0, 0, -394.040466, 1});
 
 		auto box0 = mesh.bbox();
 		auto min0 = std::get<0>(box0), max0 = std::get<1>(box0);

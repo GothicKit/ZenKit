@@ -91,7 +91,7 @@ namespace phoenix {
 		v[1] = input.get_vec3();
 		v[2] = input.get_vec3();
 
-		return v;
+		return glm::transpose(v);
 	}
 
 	std::vector<std::uint8_t> archive_reader_binary::read_raw_bytes() {

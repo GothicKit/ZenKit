@@ -153,7 +153,7 @@ namespace phoenix {
 			memcpy(&v[i / 3][i % 3], tmp, sizeof(float));
 		}
 
-		return v;
+		return glm::transpose(v);
 	}
 
 	std::vector<std::uint8_t> archive_reader_ascii::read_raw_bytes() {

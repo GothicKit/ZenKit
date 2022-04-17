@@ -61,13 +61,13 @@ TEST_SUITE("archive") {
 
 		auto mat3 = reader->read_mat3x3();
 		CHECK(mat3[0][0] == 0.994702816f);
-		CHECK(mat3[0][1] == 0.0f);
-		CHECK(mat3[0][2] == 0.102792539f);
 		CHECK(mat3[1][0] == 0.0f);
+		CHECK(mat3[2][0] == 0.102792539f);
+		CHECK(mat3[0][1] == 0.0f);
 		CHECK(mat3[1][1] == 1.0f);
-		CHECK(mat3[1][2] == 0.0f);
-		CHECK(mat3[2][0] == -0.102792539f);
 		CHECK(mat3[2][1] == 0.0f);
+		CHECK(mat3[0][2] == -0.102792539f);
+		CHECK(mat3[1][2] == 0.0f);
 		CHECK(mat3[2][2] == 0.994702816f);
 
 		auto raw = reader->read_raw_bytes();
