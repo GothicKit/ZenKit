@@ -24,13 +24,16 @@ namespace phoenix {
 			case hierarchy_chunk::hierarchy: {
 				(void) /* version = */ in.get_uint();
 				auto node_count = in.get_ushort();
-				hierarchy._m_nodes.resize(node_count);
 
 				for (int i = 0; i < node_count; ++i) {
-					auto& node = hierarchy._m_nodes[i];
+					auto& node = hierarchy._m_nodes.emplace_back();
 					node.name = in.get_line(false);
+
 					node.parent_index = in.get_short();
-					node.transform = glm::mat4 {in.get_vec4(), in.get_vec4(), in.get_vec4(), in.get_vec4()};
+					node.parent = node.parent_index != -1 ? nullptr : &hierarchy._m_nodes[node.parent_index];
+
+					// NOTE: ZENGIN matrices are ROW MAJOR while GLM matrices are COLUMN MAJOR
+					node.transform = glm::transpose(glm::mat4 {in.get_vec4(), in.get_vec4(), in.get_vec4(), in.get_vec4()});
 				}
 
 				hierarchy._m_bbox[0] = in.get_vec3();

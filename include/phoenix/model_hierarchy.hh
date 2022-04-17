@@ -10,6 +10,7 @@
 
 namespace phoenix {
 	struct model_hierarchy_node {
+		model_hierarchy_node* parent;
 		std::int16_t parent_index;
 		std::string name;
 		glm::mat4x4 transform;
