@@ -19,4 +19,4 @@ File formats currently supported are:
 * `.MDL` __-__ combined `MDH` and `MDM`
 
 File formats currently __NOT__ supported:
-* `.MDS` __-__ _"model script"_ files containing mesh/animation components, transitions and sound effects
+* `.MDS`/`.MSB` __-__ _"model script"_ files containing mesh/animation components, transitions and sound effects
