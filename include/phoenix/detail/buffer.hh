@@ -245,7 +245,7 @@ namespace phoenix {
 		 * @return A read-only view into the raw contents of this buffer.
 		 */
 		[[nodiscard]] inline std::span<const std::uint8_t> array() const {
-			return _m_backing->array(_m_backing_begin, _m_backing_end);
+			return _m_backing->array(_m_backing_begin, _m_backing_end - _m_backing_begin);
 		}
 
 		/**
