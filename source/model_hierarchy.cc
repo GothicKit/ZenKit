@@ -31,9 +31,7 @@ namespace phoenix {
 					node.parent_index = chunk.get_short();
 					node.parent = node.parent_index == -1 ? nullptr : &hierarchy._m_nodes[node.parent_index];
 
-					// NOTE: ZENGIN matrices are ROW MAJOR while GLM matrices are COLUMN MAJOR
-					node.transform = glm::transpose(
-					    glm::mat4 {chunk.get_vec4(), chunk.get_vec4(), chunk.get_vec4(), chunk.get_vec4()});
+					node.transform = chunk.get_mat4x4();
 				}
 
 				hierarchy._m_bbox = bounding_box::parse(chunk);

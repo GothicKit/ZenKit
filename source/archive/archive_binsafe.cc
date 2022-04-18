@@ -228,21 +228,17 @@ namespace phoenix {
 	}
 
 	glm::mat3x3 archive_reader_binsafe::read_mat3x3() {
-		auto unused = static_cast<std::int32_t>(assure_entry(bs_raw) -
-		                                        3 * 3 * sizeof(float)); // TODO: Check that this is actually a raw field
+		auto unused = static_cast<std::int32_t>(assure_entry(bs_raw) - 3 * 3 * sizeof(float));
 
 		if (unused < 0) {
 			throw parser_error("archive_reader_binsafe: cannot read bbox (9 * float): not enough space in raw entry.");
 		}
 
-		glm::mat3x3 v {};
-		v[0] = input.get_vec3();
-		v[1] = input.get_vec3();
-		v[2] = input.get_vec3();
+		glm::mat3x3 v = input.get_mat3x3();
 
 		input.skip(unused);
 		skip_optional_hash();
-		return glm::transpose(v);
+		return v;
 	}
 
 	buffer archive_reader_binsafe::read_raw_bytes() {

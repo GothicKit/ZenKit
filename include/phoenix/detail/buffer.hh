@@ -4,6 +4,8 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
+#include <glm/mat3x3.hpp>
+#include <glm/mat4x4.hpp>
 
 #include <cstdint>
 #include <functional>
@@ -505,6 +507,22 @@ namespace phoenix {
 		 */
 		[[nodiscard]] inline glm::vec3 get_vec3() {
 			return {get_float(), get_float(), get_float()};
+		}
+
+		/**
+		 * @brief Get a 3x3 row-major matrix from the buffer.
+		 * @return The vector just read
+		 */
+		[[nodiscard]] inline glm::mat3x3 get_mat3x3() {
+			return glm::transpose(glm::mat3x3 {get_vec3(), get_vec3(), get_vec3()});
+		}
+
+		/**
+		 * @brief Get a 4x4 row-major matrix from the buffer.
+		 * @return The vector just read
+		 */
+		inline glm::mat4x4 get_mat4x4() {
+			return glm::transpose(glm::mat4x4 {get_vec4(), get_vec4(), get_vec4(), get_vec4()});
 		}
 
 		/**

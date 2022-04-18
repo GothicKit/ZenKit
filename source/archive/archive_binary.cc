@@ -86,12 +86,7 @@ namespace phoenix {
 	}
 
 	glm::mat3x3 archive_reader_binary::read_mat3x3() {
-		glm::mat3x3 v {};
-		v[0] = input.get_vec3();
-		v[1] = input.get_vec3();
-		v[2] = input.get_vec3();
-
-		return glm::transpose(v);
+		return input.get_mat3x3();
 	}
 
 	buffer archive_reader_binary::read_raw_bytes() {
