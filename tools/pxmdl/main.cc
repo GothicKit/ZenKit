@@ -3,6 +3,7 @@
 #include <phoenix/detail/compat.hh>
 #include <phoenix/morph_mesh.hh>
 #include <phoenix/proto_mesh.hh>
+#include <phoenix/model.hh>
 #include <phoenix/vdfs.hh>
 #include <phoenix/world.hh>
 
@@ -195,6 +196,10 @@ int main(int argc, const char** argv) {
 		} else if (phoenix::iequals(extension, "MMB")) {
 			auto msh = phoenix::morph_mesh::parse(in);
 			dump_wavefront(out, output, msh.mesh());
+			out.close();
+		} else if (phoenix::iequals(extension, "MDL")) {
+			auto msh = phoenix::model::parse(in);
+			dump_wavefront(out, output, msh.mesh().meshes()[0].mesh()); // FIXME: support dumping multiple meshes
 			out.close();
 		} else {
 			fmt::print(stderr, "format not supported: {}", extension);
