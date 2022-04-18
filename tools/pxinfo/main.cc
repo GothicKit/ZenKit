@@ -1,6 +1,7 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
 #include <phoenix/animation.hh>
+#include <phoenix/messages.hh>
 #include <phoenix/model_hierarchy.hh>
 #include <phoenix/texture.hh>
 #include <phoenix/vdfs.hh>
@@ -21,6 +22,7 @@ static constexpr const auto HELP_MESSAGE = "Usage: pxinfo [--version]\n"
 
 void print_hierarchy(const phoenix::model_hierachy& hierachy);
 void print_animation(const phoenix::animation& animation);
+void print_messages(const phoenix::messages& messages);
 
 int main(int argc, const char** argv) {
 	argh::parser args {argc, argv, argh::parser::PREFER_PARAM_FOR_UNREG_OPTION};
@@ -69,6 +71,9 @@ int main(int argc, const char** argv) {
 		}
 		if (file.ends_with(".MAN")) {
 			print_animation(phoenix::animation::parse(in));
+		}
+		if (file.ends_with(".BIN") || file.ends_with(".CSL") || file.ends_with(".DAT") || file.ends_with(".LSC")) {
+			print_messages(phoenix::messages::parse(in));
 		} else {
 			fmt::print(stderr, "format not supported: {}", file.substr(file.rfind('.') + 1));
 			return EXIT_FAILURE;
@@ -79,6 +84,20 @@ int main(int argc, const char** argv) {
 	}
 
 	return 0;
+}
+
+void print_messages(const phoenix::messages& messages) {
+	fmt::print("Type: Message Database\n");
+	fmt::print("Block Count: {}\n", messages.blocks().size());
+	fmt::print("Blocks:\n");
+
+	for (const auto& block : messages.blocks()) {
+		fmt::print("- Name: {}\n", block.name);
+		fmt::print("  Message: type={}, name={}, text={}\n",
+		           block.message.type,
+		           block.message.name,
+		           block.message.text);
+	}
 }
 
 void print_animation(const phoenix::animation& animation) {
