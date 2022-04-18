@@ -242,6 +242,21 @@ namespace phoenix {
 		[[nodiscard]] buffer slice(std::uint64_t index, std::uint64_t size) const;
 
 		/**
+		 * @brief Creates a new buffer which shares a subsequence of this buffer.
+		 *
+		 * Slices off a buffer like `slice(position(), size)` and advances the
+		 * position of the original buffer by `size` bytes (like `skip(size)`).
+		 *
+		 * @param size The number of bytes to extract.
+		 * @return The newly created buffer.
+		 */
+		[[nodiscard]] buffer extract(std::uint64_t size) {
+			auto sl = slice(position(), size);
+			skip(size);
+			return sl;
+		}
+
+		/**
 		 * @return A read-only view into the raw contents of this buffer.
 		 */
 		[[nodiscard]] inline std::span<const std::uint8_t> array() const {

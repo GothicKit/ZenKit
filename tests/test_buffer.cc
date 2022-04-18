@@ -141,6 +141,19 @@ TEST_SUITE("buffer") {
 		}
 	}
 
+	TEST_CASE("extract()") {
+		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {'a', 'b', 'c', 'd'});
+
+		auto slice = buf.extract(2);
+		CHECK(slice.limit() == 2);
+		CHECK(slice.position() == 0);
+		CHECK(buf.position() == 2);
+		CHECK(buf.remaining() == 2);
+
+		CHECK(slice.get_char() == 'a');
+		CHECK(buf.get_char() == 'c');
+	}
+
 	TEST_CASE("array()") {
 		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {'a', 'b', 'c', 'd'});
 		buf.limit(3);
