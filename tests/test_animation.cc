@@ -23,9 +23,8 @@ TEST_SUITE("animation") {
 		    "\t\t\tANI\t\t\t(\"S_BRUSH_S0\"\t\t\t1\t\"S_BRUSH_S0\"\t0.0\t0.0\tM.\t\"BAB_SWEEP_M01.ASC\"\t\t\tF\t3\t3)");
 
 		auto box0 = anim.bbox();
-		auto min0 = std::get<0>(box0), max0 = std::get<1>(box0);
-		CHECK(min0 == glm::vec3 {-42.741993, -86.539772, -29.5238342});
-		CHECK(max0 == glm::vec3 {32.7615509, 55.5912437, 39.3346939});
+		CHECK(box0.min == glm::vec3 {-42.741993, -86.539772, -29.5238342});
+		CHECK(box0.max == glm::vec3 {32.7615509, 55.5912437, 39.3346939});
 
 		CHECK(anim.events().empty());
 		CHECK(anim.samples().size() == 27);

@@ -60,104 +60,88 @@ namespace phoenix {
 		return v;
 	}
 
-	animation animation::parse(buffer& in) {
+	animation animation::parse(buffer& buf) {
 		animation anim {};
-
-		animation_chunk chunk = animation_chunk::unknown;
-		std::uint32_t end = 0;
+		animation_chunk type = animation_chunk::unknown;
 
 		do {
-			chunk = static_cast<animation_chunk>(in.get_ushort());
+			type = static_cast<animation_chunk>(buf.get_ushort());
+			auto chunk = buf.extract(buf.get_uint());
 
-			auto length = in.get_uint();
-			end = length + in.position();
-
-			switch (chunk) {
+			switch (type) {
 			case animation_chunk::header:
-				(void) /* version = */ in.get_ushort();
-				anim._m_name = in.get_line();
-				anim._m_layer = in.get_uint();
-				anim._m_frame_count = in.get_uint();
-				anim._m_node_count = in.get_uint();
-				anim._m_fps = in.get_float();
-				anim._m_fps_source = in.get_float();
-				anim._m_sample_position_range_min = in.get_float();
-				anim._m_sample_position_scalar = in.get_float();
-				anim._m_bbox[0] = in.get_vec3();
-				anim._m_bbox[1] = in.get_vec3();
-				anim._m_next = in.get_line();
+				(void) /* version = */ chunk.get_ushort();
+				anim._m_name = chunk.get_line();
+				anim._m_layer = chunk.get_uint();
+				anim._m_frame_count = chunk.get_uint();
+				anim._m_node_count = chunk.get_uint();
+				anim._m_fps = chunk.get_float();
+				anim._m_fps_source = chunk.get_float();
+				anim._m_sample_position_range_min = chunk.get_float();
+				anim._m_sample_position_scalar = chunk.get_float();
+				anim._m_bbox = bounding_box::parse(chunk);
+				anim._m_next = chunk.get_line();
 				break;
 			case animation_chunk::events:
-				anim._m_events.reserve(in.get_uint());
+				anim._m_events.reserve(chunk.get_uint());
 
 				for (std::uint32_t i = 0; i < anim._m_events.size(); ++i) {
 					auto& event = anim._m_events.emplace_back();
-					event.type = static_cast<animation_event_type>(in.get_uint());
-					event.no = in.get_uint();
-					event.tag = in.get_line();
+					event.type = static_cast<animation_event_type>(chunk.get_uint());
+					event.no = chunk.get_uint();
+					event.tag = chunk.get_line();
 
 					for (auto& j : event.content) {
-						j = in.get_line();
+						j = chunk.get_line();
 					}
 
 					for (float& value : event.values) {
-						value = in.get_float();
+						value = chunk.get_float();
 					}
 
-					event.probability = in.get_float();
+					event.probability = chunk.get_float();
 				}
 
 				break;
 			case animation_chunk::data:
-				anim._m_checksum = in.get_uint();
+				anim._m_checksum = chunk.get_uint();
 				anim._m_node_indices.resize(anim._m_node_count);
 
 				for (std::uint32_t i = 0; i < anim._m_node_count; ++i) {
-					anim._m_node_indices[i] = in.get_uint();
+					anim._m_node_indices[i] = chunk.get_uint();
 				}
 
 				anim._m_samples.resize(anim._m_node_count * anim._m_frame_count);
 
 				for (std::size_t i = 0; i < anim._m_samples.size(); ++i) {
-					// first rotation, then position. values seem more reasonable the other way around tho.
-					// TODO: investigate in opengothic!
-					anim._m_samples[i].rotation = read_sample_quaternion(in);
+					// FIXME: first rotation, then position. values seem more reasonable the other way around tho.
+					anim._m_samples[i].rotation = read_sample_quaternion(chunk);
 					anim._m_samples[i].position =
-					    read_sample_position(in, anim._m_sample_position_scalar, anim._m_sample_position_range_min);
+					    read_sample_position(chunk, anim._m_sample_position_scalar, anim._m_sample_position_range_min);
 				}
 
 				break;
 			case animation_chunk::source:
 				// this is actually a date though it is 4 bytes aligned
-				anim._m_source_file_date = {
-				    in.get_uint(),
-				    in.get_ushort(),
-				    in.get_ushort(),
-				    in.get_ushort(),
-				    in.get_ushort(),
-				    in.get_ushort(),
-				};
+				anim._m_source_file_date = date::parse(chunk);
 
 				// discard alignment bytes
-				(void) in.get_ushort();
+				(void) chunk.get_ushort();
 
-				anim._m_source_path = in.get_line(false);
-				anim._m_mds_source = in.get_line(false);
+				anim._m_source_path = chunk.get_line(false);
+				anim._m_mds_source = chunk.get_line(false);
 				break;
 			case animation_chunk::animation:
+				// TODO: Reverse engineer this!
 				break;
 			default:
 				break;
 			}
 
-			if (in.position() != end) {
-				fmt::print(stderr,
-				           "warning: animation: not all data or too much data consumed from section 0x{:X}\n",
-				           chunk);
+			if (chunk.remaining() > 0) {
+				fmt::print(stderr, "warning: animation: not all data consumed from section 0x{:X}\n", type);
 			}
-
-			in.position(end);
-		} while (in.position() < in.limit());
+		} while (buf.remaining() != 0);
 
 		return anim;
 	}

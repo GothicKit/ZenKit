@@ -2,6 +2,7 @@
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
 #include <phoenix/detail/buffer.hh>
+#include <phoenix/math/bbox.hh>
 #include <phoenix/mesh.hh>
 
 #include <glm/vec3.hpp>
@@ -104,8 +105,8 @@ namespace phoenix {
 		/**
 		 * @return The bounding box of the animation (mesh) as a (min, max) tuple.
 		 */
-		[[nodiscard]] inline std::tuple<glm::vec3, glm::vec3> bbox() const noexcept {
-			return std::make_tuple(_m_bbox[0], _m_bbox[1]);
+		[[nodiscard]] inline bounding_box bbox() const noexcept {
+			return _m_bbox;
 		}
 
 		[[nodiscard]] inline std::uint32_t checksum() const noexcept {
@@ -145,10 +146,10 @@ namespace phoenix {
 		float _m_fps_source {};
 		float _m_sample_position_range_min {};
 		float _m_sample_position_scalar {};
-		glm::vec3 _m_bbox[2] {};
+		bounding_box _m_bbox {};
 		std::uint32_t _m_checksum {};
 
-		date _m_source_file_date;
+		date _m_source_file_date {};
 		std::string _m_source_path;
 		std::string _m_mds_source;
 
