@@ -71,8 +71,7 @@ int main(int argc, const char** argv) {
 		}
 		if (file.ends_with(".MAN")) {
 			print_animation(phoenix::animation::parse(in));
-		}
-		if (file.ends_with(".BIN") || file.ends_with(".CSL") || file.ends_with(".DAT") || file.ends_with(".LSC")) {
+		} else if (file.ends_with(".BIN") || file.ends_with(".CSL") || file.ends_with(".DAT") || file.ends_with(".LSC")) {
 			print_messages(phoenix::messages::parse(in));
 		} else {
 			fmt::print(stderr, "format not supported: {}", file.substr(file.rfind('.') + 1));
