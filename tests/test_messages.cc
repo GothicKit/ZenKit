@@ -5,7 +5,8 @@
 
 TEST_SUITE("messages") {
 	TEST_CASE("message databases are read correctly") {
-		auto msgs = phoenix::messages::parse("./samples/ou.proprietary.bin");
+		auto buf = phoenix::buffer::open("./samples/ou.proprietary.bin");
+		auto msgs = phoenix::messages::parse(buf);
 
 		CHECK(msgs.blocks().size() == 7360);
 
