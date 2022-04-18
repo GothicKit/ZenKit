@@ -1,5 +1,6 @@
 // Copyright © 2021 Luis Michaelis
 // Licensed under MIT (https://mit-license.org/).
+#include <phoenix/animation.hh>
 #include <phoenix/model_hierarchy.hh>
 #include <phoenix/texture.hh>
 #include <phoenix/vdfs.hh>
@@ -19,6 +20,8 @@ static constexpr const auto HELP_MESSAGE = "Usage: pxinfo [--version]\n"
                                            "Display information about files found in Gothic installations.\n";
 
 void print_hierarchy(const phoenix::model_hierachy& hierachy);
+void print_animation(const phoenix::animation& animation);
+
 int main(int argc, const char** argv) {
 	argh::parser args {argc, argv, argh::parser::PREFER_PARAM_FOR_UNREG_OPTION};
 
@@ -63,6 +66,9 @@ int main(int argc, const char** argv) {
 
 		if (file.ends_with(".MDH")) {
 			print_hierarchy(phoenix::model_hierachy::parse(in));
+		}
+		if (file.ends_with(".MAN")) {
+			print_animation(phoenix::animation::parse(in));
 		} else {
 			fmt::print(stderr, "format not supported: {}", file.substr(file.rfind('.') + 1));
 			return EXIT_FAILURE;
@@ -73,6 +79,46 @@ int main(int argc, const char** argv) {
 	}
 
 	return 0;
+}
+
+void print_animation(const phoenix::animation& animation) {
+	fmt::print("Type: Animation\n");
+	fmt::print("Name: {}\n", animation.name());
+	fmt::print("Next: {}\n", animation.next());
+	fmt::print("Layer: {}\n", animation.layer());
+	fmt::print("Frames: {}\n", animation.frames());
+	fmt::print("FPS: {}\n", animation.frames_per_second());
+	fmt::print("FPS alt: {}\n", animation.frames_per_second_alt());
+	fmt::print("Source Path: {}\n", animation.source_path());
+	fmt::print("Source Script:\n  {}\n", animation.source_script());
+	fmt::print("Checksum: {}\n", animation.checksum());
+
+	auto bbox = animation.bbox();
+	fmt::print("Bounding Box: min=vec3(x={}, y={}, z={}), max=vec3(x={}, y={}, z={})\n",
+	           bbox.min.x,
+	           bbox.min.y,
+	           bbox.min.z,
+	           bbox.max.x,
+	           bbox.max.y,
+	           bbox.max.z);
+
+	fmt::print("Events:");
+	for (const auto& event : animation.events()) {
+		fmt::print("\n- Tag: {}\n", event.tag);
+		fmt::print("  Type: {}\n", event.type);
+		fmt::print("  Number: {}\n", event.no);
+		fmt::print("  Probability: {}\n", event.probability);
+
+		fmt::print("  Content: ");
+		for (auto& v : event.content)
+			fmt::print("{} ", v);
+
+		fmt::print("\n  Values:");
+		for (auto v : event.values)
+			fmt::print("{} ", v);
+	}
+
+	fmt::print("\nSamples: {}\n", animation.samples().size());
 }
 
 void print_hierarchy(const phoenix::model_hierachy& hierachy) {
