@@ -2,6 +2,7 @@
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
 #include <phoenix/detail/buffer.hh>
+#include <phoenix/math/bbox.hh>
 
 #include <glm/mat3x3.hpp>
 #include <glm/vec2.hpp>
@@ -165,7 +166,7 @@ namespace phoenix {
 		 * @return The value read.
 		 * @throws parser_error if the value actually present is not a bounding box
 		 */
-		virtual std::tuple<glm::vec3, glm::vec3> read_bbox() = 0;
+		virtual bounding_box read_bbox() = 0;
 
 		/**
 		 * @brief Reads a 3-by-3 matrix from the reader.

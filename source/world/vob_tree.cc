@@ -61,8 +61,8 @@ namespace phoenix {
 			if (packed) {
 				auto bin = in->read_raw_bytes();
 
-				vob.bbox[0] = bin.get_vec3();
-				vob.bbox[1] = bin.get_vec3();
+				vob.bbox.min = bin.get_vec3();
+				vob.bbox.max = bin.get_vec3();
 				vob.position = bin.get_vec3();
 				vob.rotation[0] = bin.get_vec3();
 				vob.rotation[1] = bin.get_vec3();
@@ -122,10 +122,7 @@ namespace phoenix {
 				}
 			} else {
 				vob.preset_name = in->read_string();
-
-				auto [min, max] = in->read_bbox();
-				vob.bbox[0] = min;
-				vob.bbox[1] = max;
+				vob.bbox = in->read_bbox();
 
 				vob.rotation = in->read_mat3x3();
 				vob.position = in->read_vec3();

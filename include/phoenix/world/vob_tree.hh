@@ -66,7 +66,7 @@ namespace phoenix {
 
 	namespace vob {
 		struct base {
-			glm::vec3 bbox[2];
+			bounding_box bbox;
 			glm::vec3 position;
 			glm::mat3x3 rotation;
 			bool show_visual;

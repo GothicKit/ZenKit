@@ -151,9 +151,8 @@ TEST_SUITE("world") {
 
 		{
 			auto box0 = vob0_data.bbox;
-			auto min0 = box0[0], max0 = box0[1];
-			CHECK(min0 == glm::vec3 {-71919.9609, -13091.8232, -59900});
-			CHECK(max0 == glm::vec3 {108999.992, 20014.0352, 67399.9921});
+			CHECK(box0.min == glm::vec3 {-71919.9609, -13091.8232, -59900});
+			CHECK(box0.max == glm::vec3 {108999.992, 20014.0352, 67399.9921});
 
 			auto mat = vob0_data.rotation;
 			CHECK(mat[0][0] == 1.0f);
@@ -191,9 +190,8 @@ TEST_SUITE("world") {
 
 			{
 				auto box1 = child1_data.bbox;
-				auto min1 = box1[0], max1 = box1[1];
-				CHECK(min1 == glm::vec3 {-18596.9004, -161.17189, 4091.1333});
-				CHECK(max1 == glm::vec3 {-18492.0723, -111.171906, 4191.26221});
+				CHECK(box1.min == glm::vec3 {-18596.9004, -161.17189, 4091.1333});
+				CHECK(box1.max == glm::vec3 {-18492.0723, -111.171906, 4191.26221});
 
 				auto matc = child1_data.rotation;
 				CHECK(matc[0][0] == -0.779196978f);
@@ -229,9 +227,8 @@ TEST_SUITE("world") {
 
 		{
 			auto box2 = vob13_data.bbox;
-			auto min2 = box2[0], max2 = box2[1];
-			CHECK(min2 == glm::vec3 {-9999.40234, -10000.0039, -9200});
-			CHECK(max2 == glm::vec3 {9060.59765, 5909.90039, 7537.47461});
+			CHECK(box2.min == glm::vec3 {-9999.40234, -10000.0039, -9200});
+			CHECK(box2.max == glm::vec3 {9060.59765, 5909.90039, 7537.47461});
 
 			auto mat = vob13_data.rotation;
 			CHECK(mat[0][0] == 1.0f);

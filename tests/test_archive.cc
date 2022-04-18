@@ -51,13 +51,12 @@ TEST_SUITE("archive") {
 		CHECK(vec2.y == -12.99f);
 
 		auto box0 = reader->read_bbox();
-		auto min0 = std::get<0>(box0), max0 = std::get<1>(box0);
-		CHECK(min0.x == 12.0f);
-		CHECK(min0.y == 34.0f);
-		CHECK(min0.z == 56.0f);
-		CHECK(max0.x == 78.0f);
-		CHECK(max0.y == 89.0f);
-		CHECK(max0.z == 0.0f);
+		CHECK(box0.min.x == 12.0f);
+		CHECK(box0.min.y == 34.0f);
+		CHECK(box0.min.z == 56.0f);
+		CHECK(box0.max.x == 78.0f);
+		CHECK(box0.max.y == 89.0f);
+		CHECK(box0.max.z == 0.0f);
 
 		auto mat3 = reader->read_mat3x3();
 		CHECK(mat3[0][0] == 0.994702816f);

@@ -64,7 +64,7 @@ namespace phoenix {
 		glm::u8vec4 read_color() override;
 		glm::vec3 read_vec3() override;
 		glm::vec2 read_vec2() override;
-		std::tuple<glm::vec3, glm::vec3> read_bbox() override;
+		bounding_box read_bbox() override;
 		glm::mat3x3 read_mat3x3() override;
 		buffer read_raw_bytes() override;
 

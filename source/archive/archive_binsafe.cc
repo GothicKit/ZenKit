@@ -211,7 +211,7 @@ namespace phoenix {
 		skip_optional_hash();
 	}
 
-	std::tuple<glm::vec3, glm::vec3> archive_reader_binsafe::read_bbox() {
+	bounding_box archive_reader_binsafe::read_bbox() {
 		auto unused = static_cast<std::int32_t>(assure_entry(bs_raw_float) - 3 * 2 * sizeof(float));
 
 		if (unused < 0) {
@@ -219,7 +219,7 @@ namespace phoenix {
 			    "archive_reader_binsafe: cannot read bbox (6 * float): not enough space in rawFloat entry.");
 		}
 
-		auto c = std::make_tuple(input.get_vec3(), input.get_vec3());
+		auto c = bounding_box::parse(input);
 
 		// There might be more bytes in this. We'll ignore them.
 		input.skip(unused);

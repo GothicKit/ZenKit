@@ -120,13 +120,12 @@ namespace phoenix {
 		(void) input.get_line();
 	}
 
-	std::tuple<glm::vec3, glm::vec3> archive_reader_ascii::read_bbox() {
+    bounding_box archive_reader_ascii::read_bbox() {
 		std::stringstream in {read_entry("rawFloat")};
-		glm::vec3 min {};
-		glm::vec3 max {};
+	    bounding_box box {};
 
-		in >> min.x >> min.y >> min.z >> max.x >> max.y >> max.z;
-		return std::make_tuple(min, max);
+		in >> box.min.x >> box.min.y >> box.min.z >> box.max.x >> box.max.y >> box.max.z;
+		return box;
 	}
 
 	glm::mat3x3 archive_reader_ascii::read_mat3x3() {
