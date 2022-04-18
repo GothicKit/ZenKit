@@ -132,8 +132,8 @@ namespace phoenix {
 		/**
 		 * @return The bounding box of the mesh as a (min, max) tuple.
 		 */
-		[[nodiscard]] inline std::tuple<glm::vec3, glm::vec3> bbox() const noexcept {
-			return std::make_tuple(_m_bbox[0], _m_bbox[1]);
+		[[nodiscard]] inline bounding_box bbox() const noexcept {
+			return _m_bbox;
 		}
 
 		/**
@@ -152,7 +152,7 @@ namespace phoenix {
 		std::vector<sub_mesh> _m_sub_meshes;
 		std::vector<material> _m_materials;
 		std::uint8_t _m_has_alpha_test {true};
-		glm::vec3 _m_bbox[2];
+		bounding_box _m_bbox;
 		obb _m_obbox;
 	};
 } // namespace phoenix

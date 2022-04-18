@@ -36,10 +36,8 @@ namespace phoenix {
 					    glm::mat4 {chunk.get_vec4(), chunk.get_vec4(), chunk.get_vec4(), chunk.get_vec4()});
 				}
 
-				hierarchy._m_bbox[0] = chunk.get_vec3();
-				hierarchy._m_bbox[1] = chunk.get_vec3();
-				hierarchy._m_collision_bbox[0] = chunk.get_vec3();
-				hierarchy._m_collision_bbox[1] = chunk.get_vec3();
+				hierarchy._m_bbox = bounding_box::parse(chunk);
+				hierarchy._m_collision_bbox = bounding_box::parse(chunk);
 				hierarchy._m_root_translation = chunk.get_vec3();
 
 				(void) /* checksum = */ chunk.get_uint();

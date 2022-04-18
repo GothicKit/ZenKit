@@ -25,10 +25,7 @@ namespace phoenix {
 
 		auto& node = nodes.emplace_back();
 		node.parent_index = parent_index;
-
-		node.bbox.min = in.get_vec3();
-		node.bbox.max = in.get_vec3();
-
+		node.bbox = bounding_box::parse(in);
 		node.polygon_index = in.get_uint();
 		node.polygon_count = in.get_uint();
 

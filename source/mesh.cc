@@ -39,8 +39,7 @@ namespace phoenix {
 				break;
 			case world_mesh_chunk::bbox:
 				// first, we find a basic AABB bounding box
-				msh._m_bbox.min = chunk.get_vec3();
-				msh._m_bbox.max = chunk.get_vec3();
+				msh._m_bbox = bounding_box::parse(chunk);
 
 				// but second, we find a list of OOBBs with one acting as a parent
 				msh._m_obb = obb::parse(chunk);

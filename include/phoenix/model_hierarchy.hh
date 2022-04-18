@@ -2,6 +2,7 @@
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
 #include <phoenix/detail/buffer.hh>
+#include <phoenix/math/bbox.hh>
 
 #include <glm/mat4x4.hpp>
 
@@ -24,12 +25,12 @@ namespace phoenix {
 			return _m_nodes;
 		}
 
-		[[nodiscard]] std::tuple<glm::vec3, glm::vec3> bbox() const noexcept {
-			return {_m_bbox[0], _m_bbox[1]};
+		[[nodiscard]] bounding_box bbox() const noexcept {
+			return _m_bbox;
 		}
 
-		[[nodiscard]] std::tuple<glm::vec3, glm::vec3> collision_bbox() const noexcept {
-			return {_m_collision_bbox[0], _m_collision_bbox[1]};
+		[[nodiscard]] bounding_box collision_bbox() const noexcept {
+			return _m_collision_bbox;
 		}
 
 		[[nodiscard]] glm::vec3 root_translation() const noexcept {
@@ -38,8 +39,8 @@ namespace phoenix {
 
 	private:
 		std::vector<model_hierarchy_node> _m_nodes;
-		glm::vec3 _m_bbox[2];
-		glm::vec3 _m_collision_bbox[2];
+		bounding_box _m_bbox;
+		bounding_box _m_collision_bbox;
 		glm::vec3 _m_root_translation;
 	};
 

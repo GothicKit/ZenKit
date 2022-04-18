@@ -61,8 +61,7 @@ namespace phoenix {
 			if (packed) {
 				auto bin = in->read_raw_bytes();
 
-				vob.bbox.min = bin.get_vec3();
-				vob.bbox.max = bin.get_vec3();
+				vob.bbox = bounding_box::parse(bin);
 				vob.position = bin.get_vec3();
 				vob.rotation[0] = bin.get_vec3();
 				vob.rotation[1] = bin.get_vec3();

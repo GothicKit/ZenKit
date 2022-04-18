@@ -78,8 +78,7 @@ namespace phoenix {
 			msh._m_has_alpha_test = chunk.get() != 0;
 		}
 
-		msh._m_bbox[0] = chunk.get_vec3();
-		msh._m_bbox[1] = chunk.get_vec3();
+		msh._m_bbox = bounding_box::parse(chunk);
 
 		// read positions and normals
 		msh._m_vertices.resize(vertices_size);

@@ -30,9 +30,8 @@ TEST_SUITE("mesh") {
 		CHECK(mesh.alpha_test());
 
 		auto box0 = mesh.bbox();
-		auto min0 = std::get<0>(box0), max0 = std::get<1>(box0);
-		CHECK(min0 == glm::vec3 {-200, 0, -200});
-		CHECK(max0 == glm::vec3 {200, 398.503906, 200});
+		CHECK(box0.min == glm::vec3 {-200, 0, -200});
+		CHECK(box0.max == glm::vec3 {200, 398.503906, 200});
 
 		const auto& submeshes = mesh.submeshes();
 		CHECK(submeshes.size() == 1);
