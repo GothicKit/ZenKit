@@ -19,8 +19,8 @@ namespace phoenix {
 		fnt._m_name = in.get_line(false);
 		fnt._m_height = in.get_uint();
 
-		// ZenLib says this is a magic number 0xFF however that is equal to FONT_MAX_GLYPHS so it
-		// might be the number of glyphs stored in the font.
+		// TODO: ZenLib says this is a magic number 0xFF however that is equal to FONT_MAX_GLYPHS so it
+		//       might be the number of glyphs stored in the font.
 		(void) in.get_uint();
 
 		for (auto& _m_glyph : fnt._m_glyphs) {
