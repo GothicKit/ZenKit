@@ -2,6 +2,7 @@
 // Licensed under MIT (https://mit-license.org/).
 #pragma once
 #include <phoenix/detail/buffer.hh>
+#include <phoenix/math/bbox.hh>
 
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
@@ -16,7 +17,7 @@ namespace phoenix {
 
 	struct bsp_node {
 		glm::vec4 plane;
-		glm::vec3 bbox[2];
+		bounding_box bbox;
 		std::uint32_t polygon_index;
 		std::uint32_t polygon_count;
 
@@ -105,6 +106,8 @@ namespace phoenix {
 			return _m_light_points;
 		}
 
+		static constexpr auto version_g1 = 0x2090000;
+		static constexpr auto version_g2 = 0x4090000;
 	private:
 		bsp_tree_mode _m_mode;
 		std::vector<std::uint32_t> _m_polygon_indices;

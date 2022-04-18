@@ -84,8 +84,8 @@ TEST_SUITE("world") {
 		CHECK(nodes[0].back_index == 1599);
 		CHECK(nodes[0].polygon_index == 0);
 		CHECK(nodes[0].polygon_count == 0);
-		CHECK(nodes[0].bbox[0] == glm::vec3 {-71919.9609f, -12000, -59900});
-		CHECK(nodes[0].bbox[1] == glm::vec3 {108999.992f, 20014.0371f, 67399.9921f});
+		CHECK(nodes[0].bbox.min == glm::vec3 {-71919.9609f, -12000, -59900});
+		CHECK(nodes[0].bbox.max == glm::vec3 {108999.992f, 20014.0371f, 67399.9921f});
 		CHECK(!nodes[0].is_leaf());
 
 		CHECK(nodes[1].plane == glm::vec4 {0, 0, 1, 3749.99609f});
@@ -94,8 +94,8 @@ TEST_SUITE("world") {
 		CHECK(nodes[1].back_index == 445);
 		CHECK(nodes[1].polygon_index == 0);
 		CHECK(nodes[1].polygon_count == 0);
-		CHECK(nodes[1].bbox[0] == glm::vec3 {15499.999f, -12000, -59900});
-		CHECK(nodes[1].bbox[1] == glm::vec3 {108999.992f, 19502.1973f, 67399.9921f});
+		CHECK(nodes[1].bbox.min == glm::vec3 {15499.999f, -12000, -59900});
+		CHECK(nodes[1].bbox.max == glm::vec3 {108999.992f, 19502.1973f, 67399.9921f});
 		CHECK(!nodes[1].is_leaf());
 
 		auto& leaves = tree.leaf_node_indices();
@@ -107,15 +107,15 @@ TEST_SUITE("world") {
 		CHECK(nodes[5].parent_index == 4);
 		CHECK(nodes[5].polygon_index == 0);
 		CHECK(nodes[5].polygon_count == 22);
-		CHECK(nodes[5].bbox[0] == glm::vec3 {81900, -4029.99976f, 28500.0039f});
-		CHECK(nodes[5].bbox[1] == glm::vec3 {100000, -4026.60083f, 53899.9922f});
+		CHECK(nodes[5].bbox.min == glm::vec3 {81900, -4029.99976f, 28500.0039f});
+		CHECK(nodes[5].bbox.max == glm::vec3 {100000, -4026.60083f, 53899.9922f});
 
 		CHECK(nodes[26].is_leaf());
 		CHECK(nodes[26].parent_index == 25);
 		CHECK(nodes[26].polygon_index == 446);
 		CHECK(nodes[26].polygon_count == 24);
-		CHECK(nodes[26].bbox[0] == glm::vec3 {48899.9961f, -4029.99976f, 47400});
-		CHECK(nodes[26].bbox[1] == glm::vec3 {67900, -4026.59961f, 67399.9921f});
+		CHECK(nodes[26].bbox.min == glm::vec3 {48899.9961f, -4029.99976f, 47400});
+		CHECK(nodes[26].bbox.max == glm::vec3 {67900, -4026.59961f, 67399.9921f});
 
 		auto& sectors = tree.sectors();
 		CHECK(sectors.size() == 299);
