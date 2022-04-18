@@ -75,9 +75,7 @@ namespace phoenix {
 
 	void archive_reader_binary::skip_entry() {}
 
-	void archive_reader_binary::skip_object(bool skip_current) {
-		// FIXME: skip_current is ignored here
-		(void) skip_current;
+	void archive_reader_binary::skip_object(bool) {
 		input.skip(input.get_uint());
 	}
 
