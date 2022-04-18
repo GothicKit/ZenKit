@@ -94,7 +94,7 @@ namespace phoenix {
 		return glm::transpose(v);
 	}
 
-	std::vector<std::uint8_t> archive_reader_binary::read_raw_bytes() {
-		throw parser_error("archive_reader_binary: getting raw bytes from a binary archive is not supported");
+	buffer archive_reader_binary::read_raw_bytes() {
+		return input.slice();
 	}
 } // namespace phoenix

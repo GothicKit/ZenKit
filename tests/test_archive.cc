@@ -71,10 +71,10 @@ TEST_SUITE("archive") {
 		CHECK(mat3[2][2] == 0.994702816f);
 
 		auto raw = reader->read_raw_bytes();
-		CHECK(raw[0] == 0xf2);
-		CHECK(raw[1] == 0x42);
-		CHECK(raw[2] == 0xa7);
-		CHECK(raw[3] == 0x10);
+		CHECK(raw.get() == 0xf2);
+		CHECK(raw.get() == 0x42);
+		CHECK(raw.get() == 0xa7);
+		CHECK(raw.get() == 0x10);
 
 		CHECK(reader->read_object_begin(obj));
 		CHECK(!reader->read_object_begin(obj));

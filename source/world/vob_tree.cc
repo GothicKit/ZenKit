@@ -59,7 +59,7 @@ namespace phoenix {
 			auto packed = in->read_int() != 0;
 
 			if (packed) {
-				buffer bin = buffer::wrap(in->read_raw_bytes());
+				auto bin = in->read_raw_bytes();
 
 				vob.bbox[0] = bin.get_vec3();
 				vob.bbox[1] = bin.get_vec3();
@@ -230,8 +230,8 @@ namespace phoenix {
 		void trigger::parse(trigger& vob, archive_reader_ref& in, game_version version) {
 			base::parse(vob, in, version);
 			vob.target = in->read_string();
-			vob.flags = in->read_raw_bytes()[0];
-			vob.filter_flags = in->read_raw_bytes()[0];
+			vob.flags = in->read_raw_bytes().get();
+			vob.filter_flags = in->read_raw_bytes().get();
 			vob.vob_target = in->read_string();
 			vob.max_activation_count = in->read_int();
 			vob.retrigger_delay_sec = in->read_float();
@@ -306,7 +306,7 @@ namespace phoenix {
 				vob.lerp_mode = in->read_enum();
 				vob.speed_mode = in->read_enum();
 
-				buffer sample_reader = buffer::wrap(in->read_raw_bytes());
+				auto sample_reader = in->read_raw_bytes();
 
 				for (int i = 0; i < keyframe_count; ++i) {
 					vob.keyframes.push_back(animation_sample {sample_reader.get_vec3(), sample_reader.get_vec4()});

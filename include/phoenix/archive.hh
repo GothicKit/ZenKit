@@ -178,7 +178,7 @@ namespace phoenix {
 		 * @return A vector containing the raw bytes of the entry.
 		 * @throws parser_error if the value actually present is not raw
 		 */
-		virtual std::vector<std::uint8_t> read_raw_bytes() = 0;
+		virtual buffer read_raw_bytes() = 0;
 
 		/**
 		 * @brief Skips the next object in the reader and all it's children

@@ -455,7 +455,7 @@ namespace phoenix {
 			float field11;
 			bool field12;
 
-			std::vector<std::uint8_t> blob;
+			buffer blob = buffer::empty();
 
 			static void parse(camera_trj_frame& vob, archive_reader_ref& in, game_version version);
 		};

@@ -154,7 +154,7 @@ namespace phoenix {
 		return glm::transpose(v);
 	}
 
-	std::vector<std::uint8_t> archive_reader_ascii::read_raw_bytes() {
+	buffer archive_reader_ascii::read_raw_bytes() {
 		auto in = read_entry("raw");
 		std::vector<std::uint8_t> out {};
 		out.resize(in.length() / 2);
@@ -166,6 +166,6 @@ namespace phoenix {
 			beg_it += 2;
 		}
 
-		return out;
+		return buffer::wrap(std::move(out));
 	}
 } // namespace phoenix
