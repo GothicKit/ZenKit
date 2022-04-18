@@ -88,7 +88,9 @@ namespace phoenix {
 		       std::uint64_t begin,
 		       std::uint64_t end,
 		       std::uint64_t capacity,
-		       std::uint64_t position);
+		       std::uint64_t position,
+		       bool mark_set,
+		       std::uint64_t mark);
 
 		template <typename T>
 		[[nodiscard]] T _get_t() {
@@ -158,6 +160,7 @@ namespace phoenix {
 		 * @return This buffer.
 		 */
 		inline buffer& rewind() noexcept {
+			_m_mark_set = false;
 			return position(0);
 		}
 
@@ -681,6 +684,28 @@ namespace phoenix {
 		buffer& put_line(std::string_view str);
 
 		/**
+		 * @brief Sets this buffer's mark at its position.
+		 * @return This buffer.
+		 */
+		inline buffer& mark() {
+			_m_mark_set = true;
+			_m_mark = position();
+			return *this;
+		}
+
+		/**
+		 * @brief Resets this buffer's position to the previously-marked position.
+		 * @return This buffer.
+		 */
+		inline buffer& reset() {
+			if (_m_mark_set) {
+				return position(_m_mark);
+			}
+
+			return *this;
+		}
+
+		/**
 		 * @brief Allocates a new buffer with the given size.
 		 *
 		 * The allocated buffer will be backed by a vector and thus it will reside on the heap. This backing
@@ -730,5 +755,8 @@ namespace phoenix {
 		std::uint64_t _m_backing_begin, _m_backing_end;
 		std::uint64_t _m_capacity;
 		std::uint64_t _m_position;
+
+		bool _m_mark_set {false};
+		std::uint64_t _m_mark;
 	};
 } // namespace phoenix

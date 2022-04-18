@@ -138,9 +138,11 @@ namespace phoenix {
 	               std::uint64_t begin,
 	               std::uint64_t end,
 	               std::uint64_t capacity,
-	               std::uint64_t position)
+	               std::uint64_t position,
+	               bool mark_set,
+	               std::uint64_t mark)
 	    : _m_backing(std::move(backing)), _m_backing_begin(begin), _m_backing_end(end), _m_capacity(capacity),
-	      _m_position(position) {}
+	      _m_position(position), _m_mark_set(mark_set), _m_mark(mark) {}
 
 	buffer buffer::allocate(std::uint64_t size) {
 		return buffer {std::make_shared<detail::heap_backing>(size)};
@@ -170,16 +172,18 @@ namespace phoenix {
 	buffer& buffer::clear() noexcept {
 		_m_position = 0;
 		_m_backing_end = _m_backing_begin + _m_capacity;
+		_m_mark_set = false;
 		return *this;
 	}
 
 	buffer buffer::duplicate() const {
-		return buffer {_m_backing, _m_backing_begin, _m_backing_end, _m_capacity, _m_position};
+		return buffer {_m_backing, _m_backing_begin, _m_backing_end, _m_capacity, _m_position, _m_mark_set, _m_mark};
 	}
 
 	buffer& buffer::flip() noexcept {
 		_m_backing_end = _m_backing_begin + _m_position;
 		_m_position = 0;
+		_m_mark_set = false;
 		return *this;
 	}
 
@@ -189,12 +193,19 @@ namespace phoenix {
 
 		_m_position = std::min(new_limit, _m_position);
 		_m_backing_end = _m_backing_begin + new_limit;
+
+		if (_m_mark_set && _m_mark > new_limit)
+			_m_mark_set = false;
+
 		return *this;
 	}
 
 	buffer& buffer::position(std::uint64_t new_position) {
 		if (new_position > limit())
 			throw buffer_underflow_error {};
+
+		if (_m_mark_set && _m_mark > new_position)
+			_m_mark_set = false;
 
 		_m_position = new_position;
 		return *this;

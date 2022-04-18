@@ -141,6 +141,66 @@ TEST_SUITE("buffer") {
 		}
 	}
 
+	TEST_CASE("mark()") {
+		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'});
+
+		SUBCASE("basic") {
+			buf.position(1).mark().position(5);
+			CHECK(buf.position() == 5);
+			CHECK(buf.capacity() == 8);
+			CHECK(buf.limit() == 8);
+			CHECK(buf.remaining() == 3);
+
+			buf.reset();
+			CHECK(buf.position() == 1);
+			CHECK(buf.capacity() == 8);
+			CHECK(buf.limit() == 8);
+			CHECK(buf.remaining() == 7);
+		}
+
+		SUBCASE("underflow") {
+			buf.position(3).mark().position(5);
+			CHECK(buf.position() == 5);
+			CHECK(buf.capacity() == 8);
+			CHECK(buf.limit() == 8);
+			CHECK(buf.remaining() == 3);
+
+			buf.limit(2).reset();
+			CHECK(buf.position() == 2);
+			CHECK(buf.capacity() == 8);
+			CHECK(buf.limit() == 2);
+			CHECK(buf.remaining() == 0);
+		}
+
+		SUBCASE("positioned") {
+			buf.position(3).mark().position(2);
+			CHECK(buf.position() == 2);
+			CHECK(buf.capacity() == 8);
+			CHECK(buf.limit() == 8);
+			CHECK(buf.remaining() == 6);
+
+			buf.reset();
+			CHECK(buf.position() == 2);
+			CHECK(buf.capacity() == 8);
+			CHECK(buf.limit() == 8);
+			CHECK(buf.remaining() == 6);
+		}
+
+		SUBCASE("sliced") {
+			buf.position(1).mark().position(5);
+			CHECK(buf.position() == 5);
+			CHECK(buf.capacity() == 8);
+			CHECK(buf.limit() == 8);
+			CHECK(buf.remaining() == 3);
+
+			auto slice = buf.slice().reset();
+			CHECK(slice.position() == 0);
+			CHECK(slice.capacity() == 3);
+			CHECK(slice.limit() == 3);
+			CHECK(slice.remaining() == 3);
+		}
+	}
+
 	TEST_CASE("extract()") {
 		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {'a', 'b', 'c', 'd'});
 
