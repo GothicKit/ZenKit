@@ -6,11 +6,9 @@
 #include <fmt/format.h>
 
 namespace phoenix {
-	messages messages::parse(const std::string& path) {
+	messages messages::parse(buffer& buf) {
+		auto archive = archive_reader::open(buf);
 		messages msgs {};
-
-		auto in = buffer::open(path);
-		auto archive = archive_reader::open(in);
 
 		archive_object obj;
 		if (!archive->read_object_begin(obj)) {
@@ -31,8 +29,8 @@ namespace phoenix {
 
 			auto& itm = msgs._m_blocks.emplace_back();
 			itm.name = archive->read_string();
-			(void) archive->read_int();   /* function unknown at this time */
-			(void) archive->read_float(); /* function unknown at this time */
+			(void) archive->read_int();   /* TODO: function unknown at this time */
+			(void) archive->read_float(); /* TODO: function unknown at this time */
 
 			if (!archive->read_object_begin(obj)) {
 				throw parser_error("messages: failed to read message database: expected atomic block - not found");
@@ -48,6 +46,7 @@ namespace phoenix {
 			} else {
 				itm.message.type = archive->read_enum();
 			}
+
 			itm.message.text = archive->read_string();
 			itm.message.name = archive->read_string();
 			msgs._m_blocks_by_name[itm.name] = &itm;
@@ -65,8 +64,8 @@ namespace phoenix {
 			}
 		}
 
-		if (in.position() < in.limit()) {
-			fmt::print(stderr, "warning: animation: not all data consumed from message database\n");
+		if (!archive->read_object_end()) {
+			fmt::print(stderr, "warning: messages: not all data consumed from database\n");
 		}
 
 		return msgs;

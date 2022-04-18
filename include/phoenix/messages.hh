@@ -27,7 +27,7 @@ namespace phoenix {
 		 * @param path The path of the file to read from
 		 * @return A proxy to the message database.
 		 */
-		static messages parse(const std::string& path);
+		static messages parse(buffer& path);
 
 		/**
 		 * @return All message blocks in the database.
