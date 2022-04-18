@@ -14,7 +14,7 @@ namespace phoenix {
 		 * @param path The path of the file to read from
 		 * @return The model just read.
 		 */
-		static model parse(const std::string& path);
+		static model parse(buffer& path);
 
 		[[nodiscard]] const model_hierachy& hierachy() const noexcept {
 			return _m_hierarchy;

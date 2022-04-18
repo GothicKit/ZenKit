@@ -3,13 +3,11 @@
 #include <phoenix/model.hh>
 
 namespace phoenix {
-	model model::parse(const std::string& path) {
+	model model::parse(buffer& buf) {
 		model tmp {};
-		auto in = buffer::open(path);
 
-		tmp._m_hierarchy = model_hierachy::parse(in);
-		tmp._m_mesh = model_mesh::parse(in);
-
+		tmp._m_hierarchy = model_hierachy::parse(buf);
+		tmp._m_mesh = model_mesh::parse(buf);
 		return tmp;
 	}
 } // namespace phoenix
