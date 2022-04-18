@@ -16,9 +16,8 @@ TEST_SUITE("world") {
 		CHECK(mesh.name() == "");
 
 		auto box0 = mesh.bbox();
-		auto min0 = std::get<0>(box0), max0 = std::get<1>(box0);
-		CHECK(min0 == glm::vec3 {0, 0, 0});
-		CHECK(max0 == glm::vec3 {0, 0, 0});
+		CHECK(box0.min == glm::vec3 {0, 0, 0});
+		CHECK(box0.max == glm::vec3 {0, 0, 0});
 
 		auto obb = mesh.oriented_bbox();
 		CHECK(obb.center == glm::vec3 {0, 0, 0});

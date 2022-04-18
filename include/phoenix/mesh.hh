@@ -4,6 +4,7 @@
 #include <phoenix/detail/buffer.hh>
 #include <phoenix/material.hh>
 #include <phoenix/math/light_map.hh>
+#include <phoenix/math/bbox.hh>
 #include <phoenix/math/obb.hh>
 #include <phoenix/proto_mesh.hh>
 #include <phoenix/texture.hh>
@@ -115,8 +116,8 @@ namespace phoenix {
 		/**
 		 * @return The bounding box of the mesh as a (min, max) tuple.
 		 */
-		[[nodiscard]] inline std::tuple<glm::vec3, glm::vec3> bbox() const noexcept {
-			return std::make_tuple(_m_bbox[0], _m_bbox[1]);
+		[[nodiscard]] inline bounding_box bbox() const noexcept {
+			return _m_bbox;
 		}
 
 		/**
@@ -161,10 +162,13 @@ namespace phoenix {
 			return _m_lightmaps;
 		}
 
+		static constexpr auto version_g1 = 9;
+		static constexpr auto version_g2 = 265;
+
 	private:
 		phoenix::date _m_date;
 		std::string _m_name;
-		glm::vec3 _m_bbox[2];
+		bounding_box _m_bbox;
 		obb _m_obb;
 		std::vector<material> _m_materials;
 		std::vector<glm::vec3> _m_vertices;
