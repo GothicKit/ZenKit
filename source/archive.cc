@@ -76,17 +76,6 @@ namespace phoenix {
 		return reader;
 	}
 
-	bool archive_reader::peek_input(const std::function<bool(buffer&)>& fnc) {
-		auto before = input.position();
-
-		if (!fnc(input)) {
-			input.position(before);
-			return false;
-		}
-
-		return true;
-	}
-
 	void archive_reader::skip_object(bool skip_current) {
 		archive_object tmp;
 		int level = skip_current ? 1 : 0;

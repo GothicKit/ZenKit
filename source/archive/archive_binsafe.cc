@@ -33,48 +33,53 @@ namespace phoenix {
 	}
 
 	bool archive_reader_binsafe::read_object_begin(archive_object& obj) {
-		return peek_input([&](buffer& in) {
-			if (in.get() != bs_string) {
-				return false;
-			}
+		input.mark();
 
-			auto line = in.get_string(in.get_ushort());
-			if (!line.starts_with('[') || !line.ends_with(']')) {
-				return false;
-			}
-			if (line.length() <= 2) {
-				return false;
-			}
+		if (input.get() != bs_string) {
+			input.reset();
+			return false;
+		}
 
-			std::stringstream ss {line.substr(1, line.size() - 2)};
-			ss >> obj.object_name >> obj.class_name >> obj.version >> obj.index;
+		auto line = input.get_string(input.get_ushort());
+		if (!line.starts_with('[') || !line.ends_with(']') || line.length() <= 2) {
+			input.reset();
+			return false;
+		}
 
-			skip_optional_hash();
-			return true;
-		});
+		std::stringstream ss {line.substr(1, line.size() - 2)};
+		ss >> obj.object_name >> obj.class_name >> obj.version >> obj.index;
+
+		skip_optional_hash();
+		return true;
 	}
 
 	bool archive_reader_binsafe::read_object_end() {
-		return peek_input([&](buffer& in) {
-			if (in.get() != bs_string) {
-				return false;
-			}
-			if (in.get_ushort() != 2) {
-				return false;
-			}
-			if (in.get_string(2) != "[]") {
-				return false;
-			}
-			skip_optional_hash();
+		input.mark();
 
-			return true;
-		});
+		if (input.get() != bs_string) {
+			input.reset();
+			return false;
+		}
+
+		if (input.get_ushort() != 2) {
+			input.reset();
+			return false;
+		}
+
+		if (input.get_string(2) != "[]") {
+			input.reset();
+			return false;
+		}
+
+		skip_optional_hash();
+		return true;
 	}
 
 	void archive_reader_binsafe::skip_optional_hash() {
-		if (peek_input([](buffer& in) { return in.get() == bs_hash; })) {
-			(void) input.get_uint();
-		}
+		if (input.get(input.position()) != bs_hash)
+			return;
+
+		(void) input.skip(1).get_uint();
 	}
 
 	std::uint16_t archive_reader_binsafe::assure_entry(archive_binsafe_type tp) {

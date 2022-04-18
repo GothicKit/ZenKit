@@ -205,14 +205,6 @@ namespace phoenix {
 		 */
 		virtual void skip_entry() = 0;
 
-		/**
-		 * @brief Saves the current read offset of the reader and calls @p fnc. If @p fnc returns `false` the reader is
-		 * reverted back to the saved state.
-		 * @param fnc The function to execute.
-		 * @return The return value of @p fnc.
-		 */
-		bool peek_input(const std::function<bool(buffer&)>& fnc); // FIXME: Use slicing!
-
 	protected:
 		archive_header header;
 		buffer& input;

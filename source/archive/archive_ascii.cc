@@ -25,31 +25,29 @@ namespace phoenix {
 	}
 
 	bool archive_reader_ascii::read_object_begin(archive_object& obj) {
-		return peek_input([&](buffer& in) {
-			auto v = in.get_line();
+		input.mark();
+		auto line = input.get_line();
 
-			if (!v.starts_with('[') || !v.ends_with(']')) {
-				return false;
-			}
-			if (v.length() <= 2) {
-				return false;
-			}
+		if (!line.starts_with('[') || !line.ends_with(']') || line.length() <= 2) {
+			input.reset();
+			return false;
+		}
 
-			std::stringstream ss {v.substr(1, v.size() - 2)};
-			ss >> obj.object_name >> obj.class_name >> obj.version >> obj.index;
-			return true;
-		});
+		std::stringstream ss {line.substr(1, line.size() - 2)};
+		ss >> obj.object_name >> obj.class_name >> obj.version >> obj.index;
+		return true;
 	}
 
 	bool archive_reader_ascii::read_object_end() {
-		return peek_input([&](buffer& in) {
-			auto v = in.get_line();
-			if (v == "[]") {
-				return true;
-			}
+		input.mark();
+		auto line = input.get_line();
 
+		if (line != "[]") {
+			input.reset();
 			return false;
-		});
+		}
+
+		return true;
 	}
 
 	std::string archive_reader_ascii::read_entry(std::string_view type) {
