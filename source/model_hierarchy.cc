@@ -30,7 +30,7 @@ namespace phoenix {
 					node.name = in.get_line(false);
 
 					node.parent_index = in.get_short();
-					node.parent = node.parent_index != -1 ? nullptr : &hierarchy._m_nodes[node.parent_index];
+					node.parent = node.parent_index == -1 ? nullptr : &hierarchy._m_nodes[node.parent_index];
 
 					// NOTE: ZENGIN matrices are ROW MAJOR while GLM matrices are COLUMN MAJOR
 					node.transform = glm::transpose(glm::mat4 {in.get_vec4(), in.get_vec4(), in.get_vec4(), in.get_vec4()});
