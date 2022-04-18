@@ -1,5 +1,5 @@
-// Copyright © 2022 Luis Michaelis
-// Licensed under MIT (https://mit-license.org/).
+// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// SPDX-License-Identifier: MIT
 #include <phoenix/model.hh>
 
 namespace phoenix {
