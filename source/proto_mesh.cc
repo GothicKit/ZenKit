@@ -9,91 +9,19 @@ namespace phoenix {
 
 	proto_mesh proto_mesh::parse(buffer& in) {
 		proto_mesh msh {};
-
-		proto_chunk chunk = proto_chunk::unknown;
-		std::uint32_t end = 0;
-
+		proto_chunk type = proto_chunk::unknown;
 		bool end_mesh = false;
 
 		do {
-			chunk = static_cast<proto_chunk>(in.get_ushort());
+			type = static_cast<proto_chunk>(in.get_ushort());
 
 			auto length = in.get_uint();
-			end = length + in.position();
+			auto chunk = in.extract(length);
 
-			switch (chunk) {
-			case proto_chunk::mesh: {
-				auto version = in.get_ushort();
-				auto content_size = in.get_uint();
-				auto content = in.slice(in.position(), content_size);
-				in.skip(content_size);
-
-				auto submesh_count = in.get();
-				auto vertices_index = in.get_uint();
-				auto vertices_size = in.get_uint();
-				auto normals_index = in.get_uint();
-				auto normals_size = in.get_uint();
-
-				std::vector<sub_mesh_section> submesh_sections;
-				submesh_sections.resize(submesh_count);
-
-				for (int i = 0; i < submesh_count; ++i) {
-					submesh_sections[i] = {
-					    {in.get_uint(), in.get_uint()},
-					    {in.get_uint(), in.get_uint()},
-					    {in.get_uint(), in.get_uint()},
-					    {in.get_uint(), in.get_uint()},
-					    {in.get_uint(), in.get_uint()},
-					    {in.get_uint(), in.get_uint()},
-					    {in.get_uint(), in.get_uint()},
-					    {in.get_uint(), in.get_uint()},
-					    {in.get_uint(), in.get_uint()},
-					    {in.get_uint(), in.get_uint()},
-					};
-				}
-
-				// read all materials
-				auto mats = archive_reader::open(in);
-				for (int i = 0; i < submesh_count; ++i) {
-					msh._m_materials.emplace_back(material::parse(mats));
-				}
-
-				if (version == 0x0905 /*G2*/) {
-					msh._m_has_alpha_test = in.get() != 0;
-				}
-
-				msh._m_bbox[0] = in.get_vec3();
-				msh._m_bbox[1] = in.get_vec3();
-
-				// read positions and normals
-				msh._m_vertices.resize(vertices_size);
-				auto vertices = content.slice(vertices_index, vertices_size * sizeof(float) * 3);
-
-				for (std::uint32_t i = 0; i < vertices_size; ++i) {
-					msh._m_vertices[i] = vertices.get_vec3();
-				}
-
-				msh._m_normals.resize(normals_size);
-				auto normals = content.slice(normals_index, normals_size * sizeof(float) * 3);
-
-				for (std::uint32_t i = 0; i < normals_size; ++i) {
-					msh._m_normals[i] = normals.get_vec3();
-				}
-
-				// read submeshes
-				msh._m_sub_meshes.reserve(submesh_count);
-
-				for (int i = 0; i < submesh_count; ++i) {
-					auto& mesh = msh._m_sub_meshes.emplace_back(sub_mesh::parse(content, submesh_sections[i]));
-					mesh.mat = msh._m_materials[i];
-				}
-
-				msh._m_obbox = obb::parse(in);
-
-				// TODO: this might be a vec4 though the values don't make any sense.
-				in.skip(0x10);
+			switch (type) {
+			case proto_chunk::mesh:
+				msh = parse_from_section(chunk);
 				break;
-			}
 			case proto_chunk::end:
 				end_mesh = true;
 				break;
@@ -101,18 +29,85 @@ namespace phoenix {
 				break;
 			}
 
-			// quirk: we don't skip to the end if this is the last section
-			if (!end_mesh) {
-				if (in.position() != end) {
-					fmt::print(stderr,
-					           "warning: proto mesh: not all data or too much data consumed from section 0x{:X}\n",
-					           chunk);
-				}
-
-				in.position(end);
+			if (chunk.remaining() != 0) {
+				fmt::print(stderr, "warning: proto mesh: not all data consumed from section 0x{:X}\n", type);
 			}
 		} while (!end_mesh);
 
+		return msh;
+	}
+
+	proto_mesh proto_mesh::parse_from_section(buffer& chunk) {
+		proto_mesh msh {};
+
+		auto version = chunk.get_ushort();
+		auto content_size = chunk.get_uint();
+		auto content = chunk.extract(content_size);
+
+		auto submesh_count = chunk.get();
+		auto vertices_index = chunk.get_uint();
+		auto vertices_size = chunk.get_uint();
+		auto normals_index = chunk.get_uint();
+		auto normals_size = chunk.get_uint();
+
+		std::vector<sub_mesh_section> submesh_sections;
+		submesh_sections.resize(submesh_count);
+
+		for (int i = 0; i < submesh_count; ++i) {
+			submesh_sections[i] = {
+			    {chunk.get_uint(), chunk.get_uint()},
+			    {chunk.get_uint(), chunk.get_uint()},
+			    {chunk.get_uint(), chunk.get_uint()},
+			    {chunk.get_uint(), chunk.get_uint()},
+			    {chunk.get_uint(), chunk.get_uint()},
+			    {chunk.get_uint(), chunk.get_uint()},
+			    {chunk.get_uint(), chunk.get_uint()},
+			    {chunk.get_uint(), chunk.get_uint()},
+			    {chunk.get_uint(), chunk.get_uint()},
+			    {chunk.get_uint(), chunk.get_uint()},
+			};
+		}
+
+		// read all materials
+		auto mats = archive_reader::open(chunk);
+		for (int i = 0; i < submesh_count; ++i) {
+			msh._m_materials.emplace_back(material::parse(mats));
+		}
+
+		if (version == version_g2) {
+			msh._m_has_alpha_test = chunk.get() != 0;
+		}
+
+		msh._m_bbox[0] = chunk.get_vec3();
+		msh._m_bbox[1] = chunk.get_vec3();
+
+		// read positions and normals
+		msh._m_vertices.resize(vertices_size);
+		auto vertices = content.slice(vertices_index, vertices_size * sizeof(float) * 3);
+
+		for (std::uint32_t i = 0; i < vertices_size; ++i) {
+			msh._m_vertices[i] = vertices.get_vec3();
+		}
+
+		msh._m_normals.resize(normals_size);
+		auto normals = content.slice(normals_index, normals_size * sizeof(float) * 3);
+
+		for (std::uint32_t i = 0; i < normals_size; ++i) {
+			msh._m_normals[i] = normals.get_vec3();
+		}
+
+		// read submeshes
+		msh._m_sub_meshes.reserve(submesh_count);
+
+		for (int i = 0; i < submesh_count; ++i) {
+			auto& mesh = msh._m_sub_meshes.emplace_back(sub_mesh::parse(content, submesh_sections[i]));
+			mesh.mat = msh._m_materials[i];
+		}
+
+		msh._m_obbox = obb::parse(chunk);
+
+		// TODO: this might be a vec4 though the values don't make any sense.
+		chunk.skip(0x10);
 		return msh;
 	}
 

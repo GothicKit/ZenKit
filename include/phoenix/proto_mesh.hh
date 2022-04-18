@@ -94,6 +94,13 @@ namespace phoenix {
 		static proto_mesh parse(buffer& in);
 
 		/**
+		 * @brief Reads a proto mesh directly from a section.
+		 * @param in The section to read from.
+		 * @return The mesh just read.
+		 */
+		static proto_mesh parse_from_section(buffer& in);
+
+		/**
 		 * @return The vertex positions associated with the mesh.
 		 */
 		[[nodiscard]] inline const std::vector<glm::vec3>& positions() const noexcept {
@@ -135,6 +142,9 @@ namespace phoenix {
 		[[nodiscard]] inline bool alpha_test() const noexcept {
 			return _m_has_alpha_test;
 		}
+
+		static constexpr auto version_g1 = 0x305;
+		static constexpr auto version_g2 = 0x905;
 
 	private:
 		std::vector<glm::vec3> _m_vertices;
