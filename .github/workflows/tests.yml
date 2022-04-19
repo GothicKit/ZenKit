@@ -1,0 +1,31 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'docs/**'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: setup
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+    - name: make
+      run: make
+    - name: test
+      run: |
+        cd ../test
+        ./../build/phoenix-tests -tse=messages,script,world -r=junit -o=report.xml
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v3
+      if: always()
+      with:
+        report_paths: 'tests/report.xml'
