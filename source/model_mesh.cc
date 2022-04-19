@@ -78,7 +78,7 @@ namespace phoenix {
 			if (in.position() != end) {
 				fmt::print(stderr,
 				           "warning: model mesh: not all data or too much data consumed from section 0x{:X}\n",
-				           chunk);
+				           std::uint32_t(chunk));
 			}
 
 			in.position(end);

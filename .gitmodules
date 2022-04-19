@@ -9,7 +9,7 @@
 	url = https://github.com/adishavit/argh
 [submodule "vendor/stb"]
 	path = vendor/stb
-	url = https://gitlab.com/lmichaelis/phoenix-stb
+	url = https://github.com/nothings/stb
 [submodule "vendor/doctest"]
 	path = vendor/doctest
 	url = https://github.com/doctest/doctest

@@ -166,7 +166,7 @@ namespace phoenix {
 			}
 
 			if (chunk.remaining() != 0)
-				fmt::print(stderr, "warning: world mesh: not all data consumed from section 0x{:X}\n", type);
+				fmt::print(stderr, "warning: world mesh: not all data consumed from section 0x{:X}\n", std::uint16_t(type));
 		} while (!finished);
 
 		return msh;
