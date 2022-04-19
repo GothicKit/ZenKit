@@ -100,6 +100,33 @@ namespace phoenix {
 		return entry;
 	}
 
+	void vdf_entry::merge(const vdf_entry& itm, bool override_existing) {
+		for (auto it = _m_children.begin(); it != _m_children.end(); ++it) {
+			if (it->name() == itm.name()) {
+				if (itm.is_file() || it->is_file()) {
+					if (!override_existing) {
+						return;
+					}
+
+					// If an entry with the same name is found and either is a file,
+					// replace the entry with the new one.
+					_m_children.erase(it);
+					_m_children.push_back(itm);
+				} else {
+					// Otherwise, the entry is a directory, so we just continue the merge.
+					for (const auto& child : itm.children()) {
+						it->merge(child);
+					}
+				}
+				return;
+			}
+		}
+
+		// If no matching entry was found, this is a new one.
+		// Just add it to the children of this entry.
+		_m_children.push_back(itm);
+	}
+
 	vdf_file::vdf_file(std::string_view comment, std::time_t timestamp) : _m_header(comment, timestamp) {}
 
 	const vdf_entry* vdf_file::find_entry(std::string_view name) const {
@@ -156,6 +183,32 @@ namespace phoenix {
 		} while (!entry->is_last());
 
 		return vdf;
+	}
+
+	void vdf_file::merge(const vdf_file& file, bool override_existing) {
+		for (const auto& child : file.entries()) {
+			for (auto it = _m_entries.begin(); it != _m_entries.end(); ++it) {
+				if (it->name() == child.name()) {
+					if (child.is_file() || it->is_file()) {
+						// If an entry with the same name is found and either is a file,
+						// replace the entry with the new one.
+						if (override_existing) {
+							_m_entries.erase(it);
+							_m_entries.push_back(child);
+						}
+					} else {
+						// Otherwise, the entry is a directory, so we just continue the merge.
+						for (const auto& sub_child : child.children()) {
+							it->merge(sub_child);
+						}
+					}
+					goto child_processed;
+				}
+			}
+
+			_m_entries.push_back(child);
+		child_processed:;
+		}
 	}
 
 } // namespace phoenix

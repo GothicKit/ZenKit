@@ -158,6 +158,13 @@ namespace phoenix {
 		 */
 		vdf_entry* find_child(std::string_view name);
 
+		/**
+		 * @brief Merges the given VDF entry into this one.
+		 * @param itm The entry to merge.
+		 * @param override_existing Whether to replace existing files with the new ones.
+		 */
+		void merge(const vdf_entry& itm, bool override_existing = true);
+
 		// < getters >
 
 		/**
@@ -292,6 +299,13 @@ namespace phoenix {
 		 * @return The entry with the give name or `nullptr` if no entry was found.
 		 */
 		vdf_entry* find_entry(std::string_view name);
+
+		/**
+		 * @brief Merges the given VDF file into this one.
+		 * @param itm The file to merge.
+		 * @param override_existing Whether to replace existing files with the new ones.
+		 */
+		void merge(const vdf_file& file, bool override_existing = true);
 
 		// < getters >
 
