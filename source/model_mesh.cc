@@ -12,60 +12,55 @@ namespace phoenix {
 		source = 0xD010,
 		nodes = 0xD020,
 		softskins = 0xD030,
-		end = 0xD120
+		end = 0xD040,
+		proto = 0xB100,
 	};
 
 	model_mesh model_mesh::parse(buffer& in) {
 		model_mesh msh;
-
-		model_mesh_chunk chunk = model_mesh_chunk::unknown;
-		std::uint32_t end = 0;
+		model_mesh_chunk type = model_mesh_chunk::unknown;
 		bool end_mesh = false;
 
+		std::vector<std::string> attachment_names {};
+
 		do {
-			chunk = static_cast<model_mesh_chunk>(in.get_ushort());
+			type = static_cast<model_mesh_chunk>(in.get_ushort());
 
 			auto length = in.get_uint();
-			end = length + in.position();
+			auto chunk = in.extract(length);
 
-			switch (chunk) {
+			switch (type) {
 			case model_mesh_chunk::header:
-				(void) /* version = */ in.get_uint();
+				(void) /* version = */ chunk.get_uint();
 				break;
 			case model_mesh_chunk::source: {
 				// supposedly a date? weird values
-				(void) /* date = */ date::parse(in);
-				(void) in.get_ushort(); // padding
-				(void) /* source file = */ in.get_line(false);
+				(void) /* date = */ date::parse(chunk);
+				(void) chunk.get_ushort(); // padding
+				(void) /* source file = */ chunk.get_line(false);
 				break;
 			}
 			case model_mesh_chunk::nodes: {
-				auto node_count = in.get_ushort();
-				std::vector<std::string> names {};
+				auto node_count = chunk.get_ushort();
 
 				for (std::uint32_t i = 0; i < node_count; ++i) {
-					names.push_back(in.get_line());
+					attachment_names.push_back(chunk.get_line());
 				}
-
-				for (std::uint32_t i = 0; i < node_count; ++i) {
-					msh._m_attachments[names[i]] = proto_mesh::parse(in);
-				}
-
-				// hacky bypass for warnings
-				end = in.position();
 				break;
 			}
+			case model_mesh_chunk::proto:
+				msh._m_attachments[attachment_names[msh._m_attachments.size()]] = proto_mesh::parse_from_section(chunk);
+				break;
 			case model_mesh_chunk::softskins: {
-				(void) /* checksum = */ in.get_uint();
-				auto count = in.get_ushort();
+				(void) /* checksum = */ chunk.get_uint();
+				auto count = chunk.get_ushort();
 				msh._m_meshes.reserve(count);
 
+				// Quirk: the meshes are not embedded within the chunk (as in: the stored length does not contain
+				//        the size of these meshes) so they have to be read directly from `in`.
 				for (int i = 0; i < count; ++i) {
 					msh._m_meshes.push_back(softskin_mesh::parse(in));
 				}
-
-				// hacky bypass for warnings
-				end = in.position();
 				break;
 			}
 			case model_mesh_chunk::end:
@@ -75,14 +70,12 @@ namespace phoenix {
 				break;
 			}
 
-			if (in.position() != end) {
+			if (chunk.remaining() != 0) {
 				fmt::print(stderr,
-				           "warning: model mesh: not all data or too much data consumed from section 0x{:X}\n",
-				           std::uint32_t(chunk));
+				           "warning: model mesh: not all data consumed from section 0x{:X}\n",
+				           std::uint32_t(type));
 			}
-
-			in.position(end);
-		} while (!end_mesh && in.position() < in.limit() - 6);
+		} while (!end_mesh);
 
 		return msh;
 	}
