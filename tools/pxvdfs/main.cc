@@ -15,9 +15,9 @@ namespace fs = std::filesystem;
 
 static constexpr const auto HELP_MESSAGE = "Usage: pxvdfs [--version]\n"
 										   "       pxvdfs [-h|--help]\n"
-										   "       pxvdfs <FILE> [-o|--output <DIR>]\n"
-										   "       pxvdfs <FILE> [-x|--extract <NAME_OR_PATH>] [-o|--output <FILE>]\n"
-										   "       pxvdfs <FILE> [-l|--list]\n"
+										   "       pxvdfs <FILE> [FILES...] [-o|--output <DIR>]\n"
+										   "       pxvdfs <FILE> [FILES...] [-x|--extract <NAME_OR_PATH>] [-o|--output <FILE>]\n"
+										   "       pxvdfs <FILE> [FILES...] [-l|--list]\n"
 										   "\n"
 										   "phoenix pxvdfs v{}\n"
 										   "Extract contents of VDF files.\n";
@@ -64,9 +64,9 @@ int main(int argc, const char** argv) {
 		return EXIT_SUCCESS;
 	}
 
-	std::string file;
-	if (!(args(1) >> file)) {
-		fmt::print(stderr, "please provide an input file.\n");
+	auto& files = args.pos_args();
+	if (files.size() < 2) {
+		fmt::print(stderr, "please provide at least one input file.\n");
 		return EXIT_FAILURE;
 	}
 
@@ -85,7 +85,11 @@ int main(int argc, const char** argv) {
 	}
 
 	try {
-		auto vdf = phoenix::vdf_file::open(file);
+		auto vdf = phoenix::vdf_file::open(files[1]);
+
+		for (auto it = files.begin() + 2; it != files.end(); ++it) {
+			vdf.merge(phoenix::vdf_file::open(*it));
+		}
 
 		if (list) {
 			do_list("", vdf.entries());
@@ -99,7 +103,7 @@ int main(int argc, const char** argv) {
 			}
 
 			if (entry == nullptr) {
-				fmt::print(stderr, "cannot extract entry {} from {}: not found\n", extract, file);
+				fmt::print(stderr, "cannot extract entry {}: not found\n", extract);
 				return EXIT_FAILURE;
 			}
 
