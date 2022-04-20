@@ -18,7 +18,7 @@ namespace phoenix {
 		end = 0xB060
 	};
 
-	mesh mesh::parse(buffer& buf) {
+	mesh mesh::parse(buffer& buf, const std::vector<std::uint32_t>& leaf_polygons) {
 		mesh msh;
 
 		std::uint16_t version {};
@@ -83,6 +83,8 @@ namespace phoenix {
 				msh._m_polygons.vertex_indices.reserve(poly_count * 3);
 				msh._m_polygons.flags.reserve(poly_count * 3);
 
+				auto leaf_poly_it = leaf_polygons.begin();
+
 				for (std::uint32_t i = 0; i < poly_count; ++i) {
 
 					auto material_index = chunk.get_short();
@@ -116,10 +118,14 @@ namespace phoenix {
 					}
 
 					auto vertex_count = chunk.get();
-					if (vertex_count == 0 || pflags.is_portal || pflags.is_ghost_occluder) {
-						// There is no actual geometry associated with this vertex; ignore it.
+
+					if (*leaf_poly_it != i) {
+						// If the current polygon is not a leaf polygon, skip it.
 						chunk.skip((version == version_g2 ? 8 : 6) * vertex_count);
 						continue;
+					} else if (vertex_count == 0 || pflags.is_portal || pflags.is_ghost_occluder || pflags.is_outdoor) {
+						// There is no actual geometry associated with this vertex; ignore it.
+						chunk.skip((version == version_g2 ? 8 : 6) * vertex_count);
 					} else if (vertex_count == 3) {
 						// If we have 3 vertices, we are sure that this is already a triangle,
 						// so we can just read it in
@@ -161,6 +167,8 @@ namespace phoenix {
 							feature_index_a = feature_index_b;
 						}
 					}
+
+					++leaf_poly_it;
 				}
 
 				break;

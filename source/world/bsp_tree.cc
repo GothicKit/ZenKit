@@ -88,6 +88,20 @@ namespace phoenix {
 
 				_parse_bsp_nodes(chunk, bsp._m_nodes, bsp._m_leaf_node_indices, version, -1);
 
+				// A set should be the preferred datastructure for this. For some reason though, std::set maxes out
+				// at 255 values :|
+				for (auto idx : bsp._m_leaf_node_indices) {
+					auto& node = bsp._m_nodes[idx];
+
+					for (unsigned i = 0; i < node.polygon_count; ++i) {
+						bsp._m_leaf_polygons.push_back(bsp._m_polygon_indices[node.polygon_index + i]);
+					}
+				}
+
+				std::sort(bsp._m_leaf_polygons.begin(), bsp._m_leaf_polygons.end());
+				bsp._m_leaf_polygons.erase(std::unique(bsp._m_leaf_polygons.begin(), bsp._m_leaf_polygons.end()),
+				                           bsp._m_leaf_polygons.end());
+
 				assert(node_count == bsp._m_nodes.size());
 				assert(leaf_count == bsp._m_leaf_node_indices.size());
 				break;
@@ -141,7 +155,9 @@ namespace phoenix {
 			}
 
 			if (chunk.remaining() != 0) {
-				fmt::print(stderr, "warning: bsp tree: not all data consumed from section 0x{:X}\n", std::uint16_t(type));
+				fmt::print(stderr,
+				           "warning: bsp tree: not all data consumed from section 0x{:X}\n",
+				           std::uint16_t(type));
 			}
 		} while (!finished);
 

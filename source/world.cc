@@ -28,8 +28,18 @@ namespace phoenix {
 				auto bsp_version = in.get_uint();
 				(void) /* size = */ in.get_uint();
 
-				wld._m_mesh = mesh::parse(in);
+
+				std::uint16_t chunk_type = 0;
+				auto mesh_data = in.slice();
+
+				do {
+					chunk_type = in.get_ushort();
+					in.skip(in.get_uint());
+				}  while (chunk_type != 0xB060);
+
+
 				wld._m_tree = bsp_tree::parse(in, bsp_version);
+				wld._m_mesh = mesh::parse(mesh_data, wld._m_tree.leaf_polygons());
 			} else if (chnk.object_name == "VobTree") {
 				auto count = archive->read_int();
 				wld._m_root_vobs.reserve(count);

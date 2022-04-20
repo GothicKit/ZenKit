@@ -3,8 +3,8 @@
 #pragma once
 #include <phoenix/detail/buffer.hh>
 #include <phoenix/material.hh>
-#include <phoenix/math/light_map.hh>
 #include <phoenix/math/bbox.hh>
+#include <phoenix/math/light_map.hh>
 #include <phoenix/math/obb.hh>
 #include <phoenix/proto_mesh.hh>
 #include <phoenix/texture.hh>
@@ -86,7 +86,7 @@ namespace phoenix {
 		 * @param in The reader to read from.
 		 * @return The mesh parsed.
 		 */
-		[[nodiscard]] static mesh parse(buffer& in);
+		[[nodiscard]] static mesh parse(buffer& in, const std::vector<std::uint32_t>& leaf_polygons);
 
 		/**
 		 * @return The creation date of the mesh.
@@ -134,6 +134,10 @@ namespace phoenix {
 		 * @return A list of polygons of the mesh.
 		 */
 		[[nodiscard]] inline const polygon_list& polygons() const noexcept {
+			return _m_polygons;
+		}
+
+		[[nodiscard]] inline polygon_list& polygons() noexcept {
 			return _m_polygons;
 		}
 

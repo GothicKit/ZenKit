@@ -189,7 +189,7 @@ int main(int argc, const char** argv) {
 			dump_wavefront(out, output, wld.world_mesh());
 			out.close();
 		} else if (phoenix::iequals(extension, "MSH")) {
-			auto msh = phoenix::mesh::parse(in);
+			auto msh = phoenix::mesh::parse(in, {});
 			dump_wavefront(out, output, msh);
 			out.close();
 		} else if (phoenix::iequals(extension, "MMB")) {

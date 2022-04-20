@@ -88,6 +88,10 @@ namespace phoenix {
 			return _m_leaf_node_indices;
 		}
 
+		[[nodiscard]] const std::vector<std::uint32_t>& leaf_polygons() const noexcept {
+			return _m_leaf_polygons;
+		}
+
 		/**
 		 * @return All BSP sectors.
 		 */
@@ -111,6 +115,7 @@ namespace phoenix {
 	private:
 		bsp_tree_mode _m_mode;
 		std::vector<std::uint32_t> _m_polygon_indices;
+		std::vector<std::uint32_t> _m_leaf_polygons;
 		std::vector<glm::vec3> _m_light_points;
 
 		std::vector<bsp_sector> _m_sectors;
