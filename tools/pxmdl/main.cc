@@ -1,9 +1,9 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #include <phoenix/detail/compat.hh>
+#include <phoenix/model.hh>
 #include <phoenix/morph_mesh.hh>
 #include <phoenix/proto_mesh.hh>
-#include <phoenix/model.hh>
 #include <phoenix/vdfs.hh>
 #include <phoenix/world.hh>
 
@@ -16,12 +16,12 @@
 #include "config.hh"
 
 static constexpr const auto HELP_MESSAGE = "Usage: pxmdl [--version]\n"
-										   "       pxmdl [-h|--help]\n"
-										   "       pxmdl <FILE> [-o|--output <OUT>] [-v|--vdf <VDF>]"
-										   "       "
-										   "\n"
-										   "phoenix pxmdl v{}\n"
-										   "Convert ZenGin models to Wavefront (.obj) models.\n";
+                                           "       pxmdl [-h|--help]\n"
+                                           "       pxmdl <FILE> [-o|--output <OUT>] [-v|--vdf <VDF>]"
+                                           "       "
+                                           "\n"
+                                           "phoenix pxmdl v{}\n"
+                                           "Convert ZenGin models to Wavefront (.obj) models.\n";
 
 static void dump_material(const std::string& name, const std::vector<phoenix::material>& materials) {
 	std::ofstream mtl {name + ".mtl"};
@@ -39,8 +39,8 @@ static void dump_material(const std::string& name, const std::vector<phoenix::ma
 
 static void dump_wavefront(std::ostream& out, const std::string& name, const phoenix::proto_mesh& mesh) {
 	out << "# pxmdl exported mesh\n"
-		<< "mtllib " << name << ".mtl\n\n"
-		<< "# vertices\n";
+	    << "mtllib " << name << ".mtl\n\n"
+	    << "# vertices\n";
 
 	for (const auto& item : mesh.positions()) {
 		out << "v " << item.x << " " << item.y << " " << item.z << "\n";
@@ -54,7 +54,7 @@ static void dump_wavefront(std::ostream& out, const std::string& name, const pho
 	int i = 0;
 	for (const auto& msh : mesh.submeshes()) {
 		out << "g sub" << ++i << "\n"
-			<< "\tusemtl " << msh.mat.name() << "\n";
+		    << "\tusemtl " << msh.mat.name() << "\n";
 
 		for (const auto& item : msh.wedges) {
 			out << "\tvn " << item.normal.x << " " << item.normal.y << " " << item.normal.z << "\n";
@@ -69,10 +69,9 @@ static void dump_wavefront(std::ostream& out, const std::string& name, const pho
 			auto wedge1 = msh.wedges[item.wedges[1]];
 			auto wedge2 = msh.wedges[item.wedges[2]];
 
-			out << "\tf "
-				<< wedge0.index + 1 << "/" << item.wedges[0] + 1 << "/" << item.wedges[0] + 1 << " "
-				<< wedge1.index + 1 << "/" << item.wedges[1] + 1 << "/" << item.wedges[1] + 1 << " "
-				<< wedge2.index + 1 << "/" << item.wedges[2] + 1 << "/" << item.wedges[2] + 1 << "\n";
+			out << "\tf " << wedge0.index + 1 << "/" << item.wedges[0] + 1 << "/" << item.wedges[0] + 1 << " "
+			    << wedge1.index + 1 << "/" << item.wedges[1] + 1 << "/" << item.wedges[1] + 1 << " " << wedge2.index + 1
+			    << "/" << item.wedges[2] + 1 << "/" << item.wedges[2] + 1 << "\n";
 		}
 	}
 
@@ -81,8 +80,9 @@ static void dump_wavefront(std::ostream& out, const std::string& name, const pho
 
 static void dump_wavefront(std::ostream& out, const std::string& name, const phoenix::mesh& mesh) {
 	out << "# pxmdl exported mesh\n"
-		<< "mtllib " << name << ".mtl\n\n"
-		<< "# vertices\n";
+	    << "mtllib " << name << ".mtl\n\n"
+	    << "o " << name << "\n"
+	    << "# vertices\n";
 
 	for (const auto& item : mesh.vertices()) {
 		out << "v " << item.x << " " << item.y << " " << item.z << "\n";
@@ -93,38 +93,41 @@ static void dump_wavefront(std::ostream& out, const std::string& name, const pho
 
 	out << "\n# normals\n";
 	for (const auto& feat : feats) {
-		out << "vn " << feat.normal[0] << " " << feat.normal[1] << " " << feat.normal[2] << "\n";
+		out << "vn " << feat.normal.x << " " << feat.normal.y << " " << feat.normal.z << "\n";
 	}
 
 	out << "\n# textures\n";
 	for (const auto& feat : feats) {
-		out << "vt " << feat.texture[0] << " " << feat.texture[1] << "\n";
+		out << "vt " << feat.texture.x << " " << feat.texture.y << "\n";
 	}
 
-	int i = 0;
-	for (const auto& poly : mesh.polygons()) {
-		if (poly.vertex_count != 0) {
-			auto& mat = mats[poly.material_index];
-			out << "usemtl " << mat.name() << "\n";
+	long old_material = -1;
+	auto& polys = mesh.polygons();
+	for (unsigned i = 0; i < polys.vertex_indices.size() / 3; ++i) {
+		auto material = polys.material_indices[i];
 
-			if (poly.vertex_count == 3) {
-				out << "f " << poly.indices[0].vertex + 1 << "/" << poly.indices[0].feature + 1 << "/" << poly.indices[0].feature + 1 << " "
-					<< poly.indices[1].vertex + 1 << "/" << poly.indices[1].feature + 1 << "/" << poly.indices[1].feature + 1 << " "
-					<< poly.indices[2].vertex + 1 << "/" << poly.indices[2].feature + 1 << "/" << poly.indices[2].feature + 1 << "\n";
-			} else {
-				// Calculate triangle fans
-				for (int j = 1; j < poly.vertex_count - 1; ++j) {
-					out << "f " << poly.indices[0].vertex + 1 << "/" << poly.indices[0].feature + 1 << "/" << poly.indices[0].feature + 1 << " "
-						<< poly.indices[i].vertex + 1 << "/" << poly.indices[i].feature + 1 << "/" << poly.indices[i].feature + 1 << " "
-						<< poly.indices[i + 1].vertex + 1 << "/" << poly.indices[i + 1].feature + 1 << "/" << poly.indices[i + 1].feature + 1 << "\n";
-				}
+		if (old_material != material) {
+			auto& mat = mats[material];
+			out << "usemtl " << mat.name() << "\n";
+			out << "g " << mat.name() << "\n";
+			old_material = material;
+		}
+
+		out << "f ";
+		for (unsigned v = 0; v < 3; ++v) {
+			auto feature = polys.feature_indices[i * 3 + v] + 1;
+			out << polys.vertex_indices[i * 3 + v] + 1 << "/" << feature << "/" << feature;
+
+			if (v != 2) {
+				out << " ";
 			}
 		}
+
+		out << "\n";
 	}
 
 	dump_material(name, mats);
 }
-
 
 int main(int argc, const char** argv) {
 	argh::parser args {argc, argv, argh::parser::PREFER_PARAM_FOR_UNREG_OPTION};
