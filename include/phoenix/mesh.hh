@@ -57,23 +57,12 @@ namespace phoenix {
 		uint8_t normal_axis : 2;
 	};
 
-	struct polygon_index {
-		uint32_t vertex;
-		uint32_t feature;
-	};
-
-	/**
-	 * @brief Represents a polygon.
-	 */
-	struct polygon {
-		std::uint16_t material_index;
-		std::uint16_t lightmap_index;
-		plane polygon_plane;
-
-		polygon_flags flags;
-
-		std::uint8_t vertex_count;
-		polygon_index indices[255]; // ZenLib uses 255 here. not sure why
+	struct polygon_list {
+		std::vector<uint32_t> material_indices {};
+		std::vector<uint32_t> lightmap_indices {};
+		std::vector<uint32_t> feature_indices {};
+		std::vector<uint32_t> vertex_indices {};
+		std::vector<polygon_flags> flags {};
 	};
 
 	/**
@@ -144,7 +133,7 @@ namespace phoenix {
 		/**
 		 * @return A list of polygons of the mesh.
 		 */
-		[[nodiscard]] inline const std::vector<polygon>& polygons() const noexcept {
+		[[nodiscard]] inline const polygon_list& polygons() const noexcept {
 			return _m_polygons;
 		}
 
@@ -170,10 +159,12 @@ namespace phoenix {
 		std::string _m_name;
 		bounding_box _m_bbox;
 		obb _m_obb;
+
 		std::vector<material> _m_materials;
 		std::vector<glm::vec3> _m_vertices;
 		std::vector<vertex_feature> _m_features;
-		std::vector<polygon> _m_polygons;
 		std::vector<light_map> _m_lightmaps;
+
+		polygon_list _m_polygons {};
 	};
 } // namespace phoenix

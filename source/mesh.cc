@@ -76,44 +76,90 @@ namespace phoenix {
 				break;
 			case world_mesh_chunk::polygons: {
 				auto poly_count = chunk.get_uint();
-				msh._m_polygons.resize(poly_count);
+
+				msh._m_polygons.material_indices.reserve(poly_count);
+				msh._m_polygons.lightmap_indices.reserve(poly_count);
+				msh._m_polygons.feature_indices.reserve(poly_count * 3);
+				msh._m_polygons.vertex_indices.reserve(poly_count * 3);
+				msh._m_polygons.flags.reserve(poly_count * 3);
 
 				for (std::uint32_t i = 0; i < poly_count; ++i) {
-					polygon& p = msh._m_polygons[i];
 
-					p.material_index = chunk.get_ushort();
-					p.lightmap_index = chunk.get_ushort();
-					p.polygon_plane = {chunk.get_float(), chunk.get_vec3()};
+					auto material_index = chunk.get_short();
+					auto lightmap_index = chunk.get_short();
+
+					[[maybe_unused]] plane polygon_plane = {chunk.get_float(), chunk.get_vec3()};
+					polygon_flags pflags {};
 
 					if (version == version_g2) {
 						std::uint8_t flags = chunk.get();
-						p.flags.is_portal = (flags & 0b00000011) >> 0;
-						p.flags.is_occluder = (flags & 0b00000100) >> 2;
-						p.flags.is_sector = (flags & 0b00001000) >> 3;
-						p.flags.should_relight = (flags & 0b00010000) >> 4;
-						p.flags.is_outdoor = (flags & 0b00100000) >> 5;
-						p.flags.is_ghost_occluder = (flags & 0b01000000) >> 6;
-						p.flags.is_dynamically_lit = (flags & 0b10000000) >> 7;
-						p.flags.sector_index = chunk.get_ushort();
+						pflags.is_portal = (flags & 0b00000011) >> 0;
+						pflags.is_occluder = (flags & 0b00000100) >> 2;
+						pflags.is_sector = (flags & 0b00001000) >> 3;
+						pflags.should_relight = (flags & 0b00010000) >> 4;
+						pflags.is_outdoor = (flags & 0b00100000) >> 5;
+						pflags.is_ghost_occluder = (flags & 0b01000000) >> 6;
+						pflags.is_dynamically_lit = (flags & 0b10000000) >> 7;
+						pflags.sector_index = chunk.get_ushort();
 					} else {
 						std::uint8_t flags1 = chunk.get();
 						std::uint8_t flags2 = chunk.get();
 
-						p.flags.is_portal = (flags1 & 0b00000011) >> 0;
-						p.flags.is_occluder = (flags1 & 0b00000100) >> 2;
-						p.flags.is_sector = (flags1 & 0b00001000) >> 3;
-						p.flags.is_lod = (flags1 & 0b00010000) >> 4;
-						p.flags.is_outdoor = (flags1 & 0b00100000) >> 5;
-						p.flags.is_ghost_occluder = (flags1 & 0b01000000) >> 6;
-						p.flags.normal_axis = ((flags1 & 0b10000000) >> 7) | (flags2 & 0b00000001);
-						p.flags.sector_index = chunk.get_ushort();
+						pflags.is_portal = (flags1 & 0b00000011) >> 0;
+						pflags.is_occluder = (flags1 & 0b00000100) >> 2;
+						pflags.is_sector = (flags1 & 0b00001000) >> 3;
+						pflags.is_lod = (flags1 & 0b00010000) >> 4;
+						pflags.is_outdoor = (flags1 & 0b00100000) >> 5;
+						pflags.is_ghost_occluder = (flags1 & 0b01000000) >> 6;
+						pflags.normal_axis = ((flags1 & 0b10000000) >> 7) | (flags2 & 0b00000001);
+						pflags.sector_index = chunk.get_ushort();
 					}
 
-					p.vertex_count = chunk.get();
+					auto vertex_count = chunk.get();
+					if (vertex_count == 0 || pflags.is_portal || pflags.is_ghost_occluder) {
+						// There is no actual geometry associated with this vertex; ignore it.
+						chunk.skip((version == version_g2 ? 8 : 6) * vertex_count);
+						continue;
+					} else if (vertex_count == 3) {
+						// If we have 3 vertices, we are sure that this is already a triangle,
+						// so we can just read it in
+						for (int j = 0; j < vertex_count; ++j) {
+							msh._m_polygons.vertex_indices.push_back(version == version_g2 ? chunk.get_uint()
+							                                                               : chunk.get_ushort());
 
-					for (int j = 0; j < p.vertex_count; ++j) {
-						p.indices[j] = {version == version_g2 ? chunk.get_uint() : chunk.get_ushort(),
-						                chunk.get_uint()};
+							msh._m_polygons.feature_indices.push_back(chunk.get_uint());
+						}
+
+						msh._m_polygons.material_indices.push_back(material_index);
+						msh._m_polygons.lightmap_indices.push_back(lightmap_index);
+						msh._m_polygons.flags.push_back(pflags);
+					} else {
+						// If we don't have 3 vertices, we need to calculate a triangle fan.
+
+						auto vertex_index_root = version == version_g2 ? chunk.get_uint() : chunk.get_ushort();
+						auto feature_index_root = chunk.get_uint();
+
+						auto vertex_index_a = version == version_g2 ? chunk.get_uint() : chunk.get_ushort();
+						auto feature_index_a = chunk.get_uint();
+
+						for (int j = 0; j < vertex_count - 2; ++j) {
+							auto vertex_index_b = version == version_g2 ? chunk.get_uint() : chunk.get_ushort();
+							auto feature_index_b = chunk.get_uint();
+
+							msh._m_polygons.vertex_indices.push_back(vertex_index_root);
+							msh._m_polygons.vertex_indices.push_back(vertex_index_a);
+							msh._m_polygons.vertex_indices.push_back(vertex_index_b);
+							msh._m_polygons.feature_indices.push_back(feature_index_root);
+							msh._m_polygons.feature_indices.push_back(feature_index_a);
+							msh._m_polygons.feature_indices.push_back(feature_index_b);
+
+							msh._m_polygons.material_indices.push_back(material_index);
+							msh._m_polygons.lightmap_indices.push_back(lightmap_index);
+							msh._m_polygons.flags.push_back(pflags);
+
+							vertex_index_a = vertex_index_b;
+							feature_index_a = feature_index_b;
+						}
 					}
 				}
 
@@ -166,7 +212,9 @@ namespace phoenix {
 			}
 
 			if (chunk.remaining() != 0)
-				fmt::print(stderr, "warning: world mesh: not all data consumed from section 0x{:X}\n", std::uint16_t(type));
+				fmt::print(stderr,
+				           "warning: world mesh: not all data consumed from section 0x{:X}\n",
+				           std::uint16_t(type));
 		} while (!finished);
 
 		return msh;
