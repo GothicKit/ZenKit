@@ -200,6 +200,10 @@ int main(int argc, const char** argv) {
 			auto msh = phoenix::model::parse(in);
 			dump_wavefront(out, output, msh.mesh().meshes()[0].mesh()); // FIXME: support dumping multiple meshes
 			out.close();
+		} else if (phoenix::iequals(extension, "MDM")) {
+			auto msh = phoenix::model_mesh::parse(in);
+			dump_wavefront(out, output, msh.meshes()[0].mesh()); // FIXME: support dumping multiple meshes
+			out.close();
 		} else {
 			fmt::print(stderr, "format not supported: {}", extension);
 			return EXIT_FAILURE;
