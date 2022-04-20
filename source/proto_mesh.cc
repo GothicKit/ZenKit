@@ -127,6 +127,7 @@ namespace phoenix {
 
 		for (std::uint32_t i = 0; i < map.wedges.size; ++i) {
 			subm.wedges[i] = {in.get_vec3(), in.get_vec2(), in.get_ushort()};
+			subm.wedges[i].texture.y = -subm.wedges[i].texture.y;
 
 			// and this is why you don't just dump raw binary data
 			(void) in.get_ushort();
