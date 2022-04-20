@@ -46,33 +46,29 @@ static void dump_wavefront(std::ostream& out, const std::string& name, const pho
 		out << "v " << item.x << " " << item.y << " " << item.z << "\n";
 	}
 
-	// Not sure what these normals are for
-	for (const auto& item : mesh.normals()) {
-		out << "vn " << item.x << " " << item.y << " " << item.z << "\n";
-	}
-
+	unsigned wedge_offset = 0;
 	int i = 0;
 	for (const auto& msh : mesh.submeshes()) {
 		out << "g sub" << ++i << "\n"
-		    << "\tusemtl " << msh.mat.name() << "\n";
+		    << "usemtl " << msh.mat.name() << "\n";
 
 		for (const auto& item : msh.wedges) {
-			out << "\tvn " << item.normal.x << " " << item.normal.y << " " << item.normal.z << "\n";
-		}
-		for (const auto& item : msh.wedges) {
-			out << "\tvt " << item.texture.x << " " << item.texture.y << "\n";
+			out << "vn " << item.normal.x << " " << item.normal.y << " " << item.normal.z << "\n";
+			out << "vt " << item.texture.x << " " << item.texture.y << "\n";
 		}
 
 		for (const auto& item : msh.triangles) {
+			auto wedge0 = msh.wedges[wedge_offset + item.wedges[0]];
+			auto wedge1 = msh.wedges[wedge_offset + item.wedges[1]];
+			auto wedge2 = msh.wedges[wedge_offset + item.wedges[2]];
 
-			auto wedge0 = msh.wedges[item.wedges[0]];
-			auto wedge1 = msh.wedges[item.wedges[1]];
-			auto wedge2 = msh.wedges[item.wedges[2]];
-
-			out << "\tf " << wedge0.index + 1 << "/" << item.wedges[0] + 1 << "/" << item.wedges[0] + 1 << " "
-			    << wedge1.index + 1 << "/" << item.wedges[1] + 1 << "/" << item.wedges[1] + 1 << " " << wedge2.index + 1
-			    << "/" << item.wedges[2] + 1 << "/" << item.wedges[2] + 1 << "\n";
+			out << "f "
+			    << wedge0.index + 1 << "/" << wedge_offset + item.wedges[0] + 1 << "/" << wedge_offset + item.wedges[0] + 1 << " "
+			    << wedge1.index + 1 << "/" << wedge_offset + item.wedges[1] + 1 << "/" << wedge_offset + item.wedges[1] + 1 << " "
+			    << wedge2.index + 1 << "/" << wedge_offset + item.wedges[2] + 1 << "/" << wedge_offset + item.wedges[2] + 1 << "\n";
 		}
+
+		wedge_offset += msh.wedges.size();
 	}
 
 	dump_material(name, mesh.materials());
