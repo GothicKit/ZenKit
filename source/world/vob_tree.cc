@@ -63,9 +63,7 @@ namespace phoenix {
 
 				vob.bbox = bounding_box::parse(bin);
 				vob.position = bin.get_vec3();
-				vob.rotation[0] = bin.get_vec3();
-				vob.rotation[1] = bin.get_vec3();
-				vob.rotation[2] = bin.get_vec3();
+				vob.rotation = bin.get_mat3x3();
 
 				std::uint8_t bit0 = bin.get();
 				std::uint16_t bit1;
