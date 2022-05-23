@@ -326,9 +326,15 @@ namespace phoenix {
 
 			static void parse(mover_controller& vob, archive_reader_ref& in, game_version version) {
 				base::parse(vob, in, version);
-				vob.target = in->read_string();
-				vob.message = in->read_byte();
-				vob.key = in->read_int();
+				vob.target = in->read_string(); // triggerTarget
+
+				if (version == game_version::gothic_1) {
+					vob.message = in->read_enum(); // moverMessage
+				} else {
+					vob.message = in->read_byte(); // moverMessage
+				}
+
+				vob.key = in->read_int(); // gotoFixedKey
 			}
 		};
 
