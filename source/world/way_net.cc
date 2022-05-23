@@ -8,11 +8,11 @@
 namespace phoenix {
 
 	static void read_waypoint_data(way_point& wp, archive_reader_ref& in) {
-		wp.name = in->read_string();
-		wp.water_depth = in->read_int();
-		wp.under_water = in->read_bool();
-		wp.position = in->read_vec3();
-		wp.direction = in->read_vec3();
+		wp.name = in->read_string(); // wpName
+		wp.water_depth = in->read_int(); // waterDepth
+		wp.under_water = in->read_bool(); // underWater
+		wp.position = in->read_vec3(); // position
+		wp.direction = in->read_vec3(); // direction
 		wp.free_point = true;
 	}
 
@@ -24,8 +24,8 @@ namespace phoenix {
 			throw parser_error("way net: header object missing => invalid or corrupted file");
 		}
 
-		(void) in->read_int();
-		auto count = in->read_int();
+		(void) /* auto version = */ in->read_int(); // waynetVersion
+		auto count = in->read_int(); // numWaypoints
 		net._m_waypoints.reserve(count);
 
 		std::unordered_map<std::uint32_t, std::uint32_t> obj_id_to_wp {};
@@ -49,7 +49,7 @@ namespace phoenix {
 			}
 		}
 
-		auto edge_count = in->read_int();
+		auto edge_count = in->read_int(); // numWays
 
 		for (int i = 0; i < edge_count; ++i) {
 			auto& edge = net._m_edges.emplace_back();
