@@ -90,11 +90,11 @@ namespace phoenix {
 		};
 
 		struct animate : public base {
-			bool field1;
+			bool start_on;
 
 			static void parse(animate& vob, archive_reader_ref& in, game_version version) {
 				base::parse(vob, in, version);
-				vob.field1 = in->read_bool();
+				vob.start_on = in->read_bool(); // startOn
 			}
 		};
 
@@ -103,7 +103,7 @@ namespace phoenix {
 
 			static void parse(item& vob, archive_reader_ref& in, game_version version) {
 				base::parse(vob, in, version);
-				vob.instance = in->read_string();
+				vob.instance = in->read_string(); // itemInstance
 			}
 		};
 
@@ -123,9 +123,9 @@ namespace phoenix {
 
 			static void parse(pfx_controller& vob, archive_reader_ref& in, game_version version) {
 				base::parse(vob, in, version);
-				vob.name = in->read_string();
-				vob.kill_when_done = in->read_bool();
-				vob.initially_running = in->read_bool();
+				vob.name = in->read_string();            // pfxName
+				vob.kill_when_done = in->read_bool();    // killVobWhenDone
+				vob.initially_running = in->read_bool(); // pfxStartOn
 			}
 		};
 
@@ -133,7 +133,7 @@ namespace phoenix {
 			std::string preset;
 			std::uint32_t type;
 			float range;
-			glm::u8vec4 colour;
+			glm::u8vec4 color;
 			float cone_angle;
 			bool is_static;
 			std::uint32_t quality;
@@ -174,9 +174,9 @@ namespace phoenix {
 
 			static void parse(sound_daytime& vob, archive_reader_ref& in, game_version version) {
 				sound::parse(vob, in, version);
-				vob.start_time = in->read_float();
-				vob.end_time = in->read_float();
-				vob.name2 = in->read_string();
+				vob.start_time = in->read_float(); // sndStartTime
+				vob.end_time = in->read_float();   // sndEndTime
+				vob.name2 = in->read_string();     // sndName2
 			}
 		};
 
@@ -229,9 +229,9 @@ namespace phoenix {
 
 			static void parse(message_filter& vob, archive_reader_ref& in, game_version version) {
 				base::parse(vob, in, version);
-				vob.target = in->read_string();
-				vob.on_trigger = in->read_enum();
-				vob.on_untrigger = in->read_enum();
+				vob.target = in->read_string();     // triggerTarget
+				vob.on_trigger = in->read_enum();   // onTrigger
+				vob.on_untrigger = in->read_enum(); // onUntrigger
 			}
 		};
 
@@ -270,11 +270,14 @@ namespace phoenix {
 
 			static void parse(trigger_list& vob, archive_reader_ref& in, game_version version) {
 				trigger::parse(vob, in, version);
-				vob.list_process = in->read_enum();
+				vob.list_process = in->read_enum(); // listProcess
 
-				auto target_count = in->read_byte();
+				auto target_count = in->read_byte(); // numTarget
 				for (int i = 0; i < target_count; ++i) {
-					vob.targets.emplace_back(target {in->read_string(), in->read_float()});
+					vob.targets.emplace_back(target {
+					    in->read_string(), // triggerTarget[i]
+					    in->read_float()   // fireDelay[i]
+					});
 				}
 			}
 		};
@@ -284,7 +287,7 @@ namespace phoenix {
 
 			static void parse(trigger_script& vob, archive_reader_ref& in, game_version version) {
 				trigger::parse(vob, in, version);
-				vob.function = in->read_string();
+				vob.function = in->read_string(); // scriptFunc
 			}
 		};
 
@@ -294,8 +297,8 @@ namespace phoenix {
 
 			static void parse(trigger_change_level& vob, archive_reader_ref& in, game_version version) {
 				trigger::parse(vob, in, version);
-				vob.level_name = in->read_string();
-				vob.start_vob = in->read_string();
+				vob.level_name = in->read_string(); // levelName
+				vob.start_vob = in->read_string();  // startVobName
 			}
 		};
 
@@ -305,8 +308,8 @@ namespace phoenix {
 
 			static void parse(trigger_world_start& vob, archive_reader_ref& in, game_version version) {
 				base::parse(vob, in, version);
-				vob.target = in->read_string();
-				vob.fire_once = in->read_bool();
+				vob.target = in->read_string();  // triggerTarget
+				vob.fire_once = in->read_bool(); // fireOnlyFirstTime
 			}
 		};
 
@@ -315,7 +318,7 @@ namespace phoenix {
 
 			static void parse(trigger_untouch& vob, archive_reader_ref& in, game_version version) {
 				base::parse(vob, in, version);
-				vob.target = in->read_string();
+				vob.target = in->read_string(); // triggerTarget
 			}
 		};
 
@@ -390,8 +393,8 @@ namespace phoenix {
 
 			static void parse(mob_fire& vob, archive_reader_ref& in, game_version version) {
 				mob_inter::parse(vob, in, version);
-				vob.slot = in->read_string();
-				vob.vob_tree = in->read_string();
+				vob.slot = in->read_string();     // fireSlot
+				vob.vob_tree = in->read_string(); // fireVobtreeName
 			}
 		};
 
@@ -411,9 +414,9 @@ namespace phoenix {
 
 			static void parse(mob_door& vob, archive_reader_ref& in, game_version version) {
 				mob_inter::parse(vob, in, version);
-				vob.locked = in->read_bool();
-				vob.key = in->read_string();
-				vob.pick_string = in->read_string();
+				vob.locked = in->read_bool(); // locked
+				vob.key = in->read_string(); // keyInstance
+				vob.pick_string = in->read_string(); // pickLockStr
 			}
 		};
 
