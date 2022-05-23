@@ -319,40 +319,41 @@ namespace phoenix {
 
 		void camera_trj_frame::parse(camera_trj_frame& vob, archive_reader_ref& in, game_version version) {
 			base::parse(vob, in, version);
-			vob.field1 = in->read_float();
-			vob.field2 = in->read_float();
-			vob.field3 = in->read_float();
-			vob.field4 = in->read_enum();
-			vob.field5 = in->read_enum();
-			vob.field6 = in->read_enum();
-			vob.field7 = in->read_enum();
-			vob.field8 = in->read_float();
-			vob.field9 = in->read_float();
-			vob.field10 = in->read_float();
-			vob.field11 = in->read_float();
-			vob.field12 = in->read_bool();
+			vob.time = in->read_float();                  // time
+			vob.roll_angle = in->read_float();            // angleRollDeg
+			vob.fov_scale = in->read_float();             // camFOVScale
+			vob.motion_type = in->read_enum();            // motionType
+			vob.motion_type_fov = in->read_enum();        // motionTypeFOV
+			vob.motion_type_roll = in->read_enum();       // motionTypeRoll
+			vob.motion_type_time_scale = in->read_enum(); // motionTypeTimeScale
+			vob.tension = in->read_float();               // tension
+			vob.cam_bias = in->read_float();              // bias
+			vob.continuity = in->read_float();            // continuity
+			vob.time_scale = in->read_float();            // timeScale
+			vob.time_fixed = in->read_bool();             // timeIsFixed
 
-			vob.blob = in->read_raw_bytes();
+			auto buf = in->read_raw_bytes();
+			vob.original_pose = buf.get_mat4x4(); // originalPose
 		}
 
 		void cs_camera::parse(cs_camera& vob, archive_reader_ref& in, game_version version) {
 			base::parse(vob, in, version);
-			vob.field1 = in->read_enum();
-			vob.field2 = in->read_enum();
-			vob.field3 = in->read_enum();
-			vob.field4 = in->read_enum();
-			vob.field5 = in->read_bool();
-			vob.field6 = in->read_bool();
-			vob.field7 = in->read_bool();
-			vob.field8 = in->read_bool();
-			vob.field9 = in->read_bool();
-			vob.field10 = in->read_float();
-			vob.field11 = in->read_string();
-			vob.field12 = in->read_bool();
-			vob.field13 = in->read_bool();
-			vob.field14 = in->read_float();
-			vob.field15 = in->read_int();
-			vob.field16 = in->read_int();
+			vob.trajectory_for = in->read_enum();                 // camTrjFOR
+			vob.target_trajectory_for = in->read_enum();          // targetTrjFOR
+			vob.loop_mode = in->read_enum();                      // loopMode
+			vob.lerp_mode = in->read_enum();                      // splLerpMode
+			vob.ignore_for_vob_rotation = in->read_bool();        // ignoreFORVobRotCam
+			vob.ignore_for_vob_rotation_target = in->read_bool(); // ignoreFORVobRotTarget
+			vob.adapt = in->read_bool();                          // adaptToSurroundings
+			vob.ease_first = in->read_bool();                     // easeToFirstKey
+			vob.ease_last = in->read_bool();                      // easeFromLastKey
+			vob.total_duration = in->read_float();                // totalTime
+			vob.auto_focus_vob = in->read_string();               // autoCamFocusVobName
+			vob.auto_player_movable = in->read_bool();            // autoCamPlayerMovable
+			vob.auto_untrigger_last = in->read_bool();            // autoCamUntriggerOnLastKey
+			vob.auto_untrigger_last_delay = in->read_float();     // autoCamUntriggerOnLastKeyDelay
+			vob.position_count = in->read_int();                  // numPos
+			vob.target_count = in->read_int();                    // numTargets
 
 			archive_object frame_obj {};
 			while (in->read_object_begin(frame_obj)) {

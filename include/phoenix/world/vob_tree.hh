@@ -192,32 +192,32 @@ namespace phoenix {
 		};
 
 		struct zone_far_plane : public base {
-			float field1;
-			float field2;
+			float vob_far_plane_z;
+			float inner_range_percentage;
 
 			static void parse(zone_far_plane& vob, archive_reader_ref& in, game_version version) {
 				base::parse(vob, in, version);
-				vob.field1 = in->read_float();
-				vob.field2 = in->read_float();
+				vob.vob_far_plane_z = in->read_float();        // vobFarPlaneZ
+				vob.inner_range_percentage = in->read_float(); // innerRangePerc
 			}
 		};
 
 		struct zone_fog : public base {
-			float field1;
-			float field2;
-			glm::u8vec4 field3;
-			bool field4 {false};
-			bool field5 {false};
+			float range_center;
+			float inner_range_percentage;
+			glm::u8vec4 color;
+			bool fade_out_sky {false};
+			bool override_color {false};
 
 			static void parse(zone_fog& vob, archive_reader_ref& in, game_version version) {
 				base::parse(vob, in, version);
-				vob.field1 = in->read_float();
-				vob.field2 = in->read_float();
-				vob.field3 = in->read_color();
+				vob.range_center = in->read_float();           // fogRangeCenter
+				vob.inner_range_percentage = in->read_float(); // innerRangePerc
+				vob.color = in->read_color();                  // fogColor
 
 				if (version == game_version::gothic_2) {
-					vob.field4 = in->read_bool();
-					vob.field5 = in->read_bool();
+					vob.fade_out_sky = in->read_bool();   // fadeOutSky
+					vob.override_color = in->read_bool(); // overrideColor
 				}
 			}
 		};
@@ -438,54 +438,53 @@ namespace phoenix {
 		};
 
 		struct earthquake : public base {
-			float field1;
-			float field2;
-			glm::vec3 field3;
+			float radius;
+			float duration;
+			glm::vec3 amplitude;
 
 			static void parse(earthquake& vob, archive_reader_ref& in, game_version version) {
 				base::parse(vob, in, version);
-				vob.field1 = in->read_float();
-				vob.field2 = in->read_float();
-				vob.field3 = in->read_vec3();
+				vob.radius = in->read_float();   // radius
+				vob.duration = in->read_float(); // timeSec
+				vob.amplitude = in->read_vec3(); // amplitudeCM
 			}
 		};
 
 		struct camera_trj_frame : public base {
-			float field1;
-			float field2;
-			float field3;
-			std::uint32_t field4;
-			std::uint32_t field5;
-			std::uint32_t field6;
-			std::uint32_t field7;
-			float field8;
-			float field9;
-			float field10;
-			float field11;
-			bool field12;
-
-			buffer blob = buffer::empty();
+			float time;
+			float roll_angle;
+			float fov_scale;
+			std::uint32_t motion_type;
+			std::uint32_t motion_type_fov;
+			std::uint32_t motion_type_roll;
+			std::uint32_t motion_type_time_scale;
+			float tension;
+			float cam_bias;
+			float continuity;
+			float time_scale;
+			bool time_fixed;
+			glm::mat4x4 original_pose;
 
 			static void parse(camera_trj_frame& vob, archive_reader_ref& in, game_version version);
 		};
 
 		struct cs_camera : public base {
-			std::uint32_t field1;
-			std::uint32_t field2;
-			std::uint32_t field3;
-			std::uint32_t field4;
-			bool field5;
-			bool field6;
-			bool field7;
-			bool field8;
-			bool field9;
-			float field10;
-			std::string field11;
-			bool field12;
-			bool field13;
-			float field14;
-			std::int32_t field15;
-			std::int32_t field16;
+			std::uint32_t trajectory_for;
+			std::uint32_t target_trajectory_for;
+			std::uint32_t loop_mode;
+			std::uint32_t lerp_mode;
+			bool ignore_for_vob_rotation;
+			bool ignore_for_vob_rotation_target;
+			bool adapt;
+			bool ease_first;
+			bool ease_last;
+			float total_duration;
+			std::string auto_focus_vob;
+			bool auto_player_movable;
+			bool auto_untrigger_last;
+			float auto_untrigger_last_delay;
+			std::int32_t position_count;
+			std::int32_t target_count;
 
 			std::vector<camera_trj_frame> frames;
 
