@@ -45,7 +45,7 @@ namespace phoenix {
 
 	struct hash_table_entry {
 		std::string key;
-		std::uint32_t hash;
+		std::uint32_t hash; // TODO: I don't know what this is.
 	};
 
 	class archive_reader_binsafe final : public archive_reader {
@@ -74,8 +74,8 @@ namespace phoenix {
 	protected:
 		void read_header() override;
 
-		void skip_optional_hash();
-		std::uint16_t assure_entry(archive_binsafe_type tp);
+		const std::string& get_entry_key();
+		std::uint16_t ensure_entry_meta(archive_binsafe_type tp);
 
 	private:
 		std::uint32_t _m_object_count {0};
