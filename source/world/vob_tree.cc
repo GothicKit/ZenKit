@@ -419,8 +419,11 @@ namespace phoenix {
 			vob._m_content = vob::zone_fog {};
 			vob::zone_fog::parse(std::get<vob::zone_fog>(vob._m_content), in, version);
 			break;
-		case vob_type::oCItem:
 		case vob_type::zCVobLensFlare:
+			vob._m_content = vob::lens_flare {};
+			vob::lens_flare::parse(std::get<vob::lens_flare>(vob._m_content), in, version);
+			break;
+		case vob_type::oCItem:
 			vob._m_content = vob::item {};
 			vob::item::parse(std::get<vob::item>(vob._m_content), in, version);
 			break;

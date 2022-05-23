@@ -107,6 +107,15 @@ namespace phoenix {
 			}
 		};
 
+		struct lens_flare : public base {
+			std::string fx;
+
+			static void parse(lens_flare& vob, archive_reader_ref& in, game_version version) {
+				base::parse(vob, in, version);
+				vob.fx = in->read_string(); // lensflareFX
+			}
+		};
+
 		struct pfx_controller : public base {
 			std::string name;
 			bool kill_when_done;
@@ -544,7 +553,8 @@ namespace phoenix {
 		             vob::zone_fog,
 		             vob::zone_far_plane,
 		             vob::earthquake,
-		             vob::cs_camera>
+		             vob::cs_camera,
+		             vob::lens_flare>
 		    _m_content;
 
 		vob_type _m_type;
