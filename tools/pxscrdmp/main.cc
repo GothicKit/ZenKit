@@ -190,14 +190,14 @@ void print_symbol_value(const symbol& symbol, int index = -1) {
 	if (index >= 0) {
 		print_value(index);
 	} else {
-		if (symbol.count() > 1) { fmt::print("{"); }
+		if (symbol.count() > 1) { fmt::print("{{"); }
 
 		for (unsigned i = 0; i < symbol.count(); ++i) {
 			if (i > 0) { fmt::print(", "); }
 			print_value(i);
 		}
 
-		if (symbol.count() > 1) { fmt::print("}"); }
+		if (symbol.count() > 1) { fmt::print("}}"); }
 	}
 }
 
@@ -208,7 +208,7 @@ void print_symbol_value(const symbol& symbol, int index = -1) {
 /// \param indent A custom indentation to prepend
 void print_definition(const script& scr, const symbol& sym, const symbol* parent, std::string_view indent = "") {
 	if (sym.is_member()) { return; }
-	fmt::print(indent);
+	fmt::print("{}", indent);
 	if (sym.is_external()) { fmt::print("extern "); }
 
 	if (sym.type() == dt_instance) {
@@ -249,7 +249,7 @@ void print_definition(const script& scr, const symbol& sym, const symbol* parent
 					fmt::print("var {} ", get_type_name(param.type()));
 				}
 
-				fmt::print(name);
+				fmt::print("{}", name);
 				count++;
 			}
 		}
