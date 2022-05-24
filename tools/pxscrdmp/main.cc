@@ -571,16 +571,27 @@ constexpr std::string_view get_opcode_name(opcode code) {
 void print_instruction_bytes(const instruction& i) {
 	fmt::print("{:0>2x} ", i.op);
 
-	if (i.size > 1) {
-		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x} ", (i.address >> 24U) & 0xFFU, (i.address >> 16U) & 0xFFU, (i.address >> 8U) & 0xFFU, i.address & 0xFFU);
-	} else {
-		fmt::print("            ");
-	}
-
-	if (i.size > 5) {
-		fmt::print("{:0>2x} ", i.index);
-	} else {
-		fmt::print("   ");
+	switch (i.op) {
+	case op_call:
+	case op_jump_if_zero:
+	case op_jump:
+		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x}    ", i.address & 0xFFU, (i.address >> 8U) & 0xFFU, (i.address >> 16U) & 0xFFU, (i.address >> 24U) & 0xFFU);
+		break;
+	case op_push_int:
+		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x}    ", i.immediate & 0xFFU, (i.immediate >> 8U) & 0xFFU, (i.immediate >> 16U) & 0xFFU, (i.immediate >> 24U) & 0xFFU);
+		break;
+	case op_call_external:
+	case op_push_var:
+	case op_push_instance:
+	case op_set_instance:
+		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x}    ", i.symbol & 0xFFU, (i.symbol >> 8U) & 0xFFU, (i.symbol >> 16U) & 0xFFU, (i.symbol >> 24U) & 0xFFU);
+		break;
+	case op_push_array_var:
+		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x} {:0>2x} ", i.symbol & 0xFFU, (i.symbol >> 8U) & 0xFFU, (i.symbol >> 16U) & 0xFFU, (i.symbol >> 24U) & 0xFFU, i.index);
+		break;
+	default:
+		fmt::print("               ");
+		break;
 	}
 }
 
