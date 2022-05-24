@@ -117,7 +117,7 @@ namespace phoenix {
 		scr._m_symbols_by_name[scr._m_dynamic_strings->name()] = scr._m_dynamic_strings;
 
 		std::uint32_t text_size = in.get_uint();
-		scr._m_text = in.slice(in.position(), text_size);
+		scr._m_text = in.extract(text_size);
 		return scr;
 	}
 
