@@ -12,9 +12,8 @@ namespace phoenix {
 		_m_object_count = input.get_uint();
 		auto hash_table_offset = input.get_uint();
 
-		auto revert = input.position();
-
 		{
+			input.mark();
 			input.position(hash_table_offset);
 			auto hash_table_size = input.get_uint();
 			_m_hash_table_entries.resize(hash_table_size);
@@ -27,9 +26,9 @@ namespace phoenix {
 
 				_m_hash_table_entries[insertion_index] = hash_table_entry {key, hash_value};
 			}
-		}
 
-		input.position(revert);
+			input.reset();
+		}
 	}
 
 	bool archive_reader_binsafe::read_object_begin(archive_object& obj) {
