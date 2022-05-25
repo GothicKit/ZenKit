@@ -34,6 +34,7 @@ namespace phoenix {
 		void read_header() override;
 
 	private:
+		uint64_t _m_next_object {0};
 		int _m_objects {0};
 	};
 } // namespace phoenix

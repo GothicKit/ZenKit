@@ -21,7 +21,9 @@ namespace phoenix {
 	}
 
 	bool archive_reader_binary::read_object_begin(archive_object& obj) {
-		(void) input.get_uint(); // chunksize including itself
+		_m_next_object = input.position();
+		_m_next_object += input.get_uint(); // object size including itself
+
 		obj.version = input.get_ushort();
 		obj.index = input.get_uint();
 		obj.object_name = input.get_line();
@@ -30,7 +32,7 @@ namespace phoenix {
 	}
 
 	bool archive_reader_binary::read_object_end() {
-		return true;
+		return input.position() == _m_next_object;
 	}
 
 	std::string archive_reader_binary::read_string() {
@@ -75,8 +77,12 @@ namespace phoenix {
 
 	void archive_reader_binary::skip_entry() {}
 
-	void archive_reader_binary::skip_object(bool) {
-		input.skip(input.get_uint());
+	void archive_reader_binary::skip_object(bool skip_current) {
+		if (skip_current) {
+			input.position(_m_next_object);
+		} else {
+			input.skip(input.get_uint());
+		}
 	}
 
 	bounding_box archive_reader_binary::read_bbox() {

@@ -3,6 +3,8 @@
 #include <phoenix/detail/error.hh>
 #include <phoenix/material.hh>
 
+#include <fmt/format.h>
+
 #include <sstream>
 
 namespace phoenix {
@@ -82,7 +84,8 @@ namespace phoenix {
 		}
 
 		if (!in->read_object_end()) {
-			throw parser_error("expected end of archive object which was not found.");
+			fmt::print(stderr, "warning: not all data consumed of materal '{}'\n", mat._m_name);
+			in->skip_object(true);
 		}
 
 		return mat;
