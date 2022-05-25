@@ -5,6 +5,7 @@
 #include <phoenix/model_hierarchy.hh>
 #include <phoenix/texture.hh>
 #include <phoenix/vdfs.hh>
+#include <phoenix/font.hh>
 
 #include <argh.h>
 #include <fmt/format.h>
@@ -23,6 +24,7 @@ static constexpr const auto HELP_MESSAGE = "Usage: pxinfo [--version]\n"
 void print_hierarchy(const phoenix::model_hierachy& hierachy);
 void print_animation(const phoenix::animation& animation);
 void print_messages(const phoenix::messages& messages);
+void print_font(const phoenix::font& fnt);
 
 int main(int argc, const char** argv) {
 	argh::parser args {argc, argv, argh::parser::PREFER_PARAM_FOR_UNREG_OPTION};
@@ -73,6 +75,8 @@ int main(int argc, const char** argv) {
 			print_animation(phoenix::animation::parse(in));
 		} else if (file.ends_with(".BIN") || file.ends_with(".CSL") || file.ends_with(".DAT") || file.ends_with(".LSC")) {
 			print_messages(phoenix::messages::parse(in));
+		} else if (file.ends_with(".FNT")) {
+			print_font(phoenix::font::parse(in));
 		} else {
 			fmt::print(stderr, "format not supported: {}", file.substr(file.rfind('.') + 1));
 			return EXIT_FAILURE;
@@ -83,6 +87,19 @@ int main(int argc, const char** argv) {
 	}
 
 	return 0;
+}
+
+void print_font(const phoenix::font& fnt) {
+	fmt::print("Type: Font\n");
+	fmt::print("Name: {}\n", fnt.name());
+	fmt::print("Glyph Count: {}\n", fnt.glyphs().size());
+	fmt::print("Glyph Height: {}\n", fnt.height());
+	fmt::print("Glyphs:\n");
+
+	for (unsigned i = 0; i < fnt.glyphs().size(); ++i) {
+		auto& glyph = fnt.glyphs()[i];
+		fmt::print("  {:0>2x}: u=({}, {}), v=({}, {}), w={}\n", i, glyph.uv[0].x, glyph.uv[0].y, glyph.uv[1].x, glyph.uv[1].y, glyph.width);
+	}
 }
 
 void print_messages(const phoenix::messages& messages) {
