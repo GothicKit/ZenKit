@@ -123,7 +123,7 @@ void print_animation(const phoenix::animation& animation) {
 	fmt::print("Events:");
 	for (const auto& event : animation.events()) {
 		fmt::print("\n- Tag: {}\n", event.tag);
-		fmt::print("  Type: {}\n", event.type);
+		fmt::print("  Type: {}\n", (unsigned) event.type);
 		fmt::print("  Number: {}\n", event.no);
 		fmt::print("  Probability: {}\n", event.probability);
 
