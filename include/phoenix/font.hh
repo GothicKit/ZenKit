@@ -5,9 +5,9 @@
 
 #include <glm/vec2.hpp>
 
-namespace phoenix {
-	static const int FONT_MAX_GLYPHS = 256;
+#include <vector>
 
+namespace phoenix {
 	/**
 	 * @brief Represents one glyph.
 	 */
@@ -56,7 +56,7 @@ namespace phoenix {
 		/**
 		 * @return The glyphs in the font (length of FONT_MAX_GLYPHS)
 		 */
-		[[nodiscard]] inline const glyph* glyphs() const noexcept {
+		[[nodiscard]] inline const std::vector<glyph>& glyphs() const noexcept {
 			return _m_glyphs;
 		}
 
@@ -66,7 +66,7 @@ namespace phoenix {
 	private:
 		std::string _m_name;
 		std::uint32_t _m_height;
-		glyph _m_glyphs[FONT_MAX_GLYPHS];
+		std::vector<glyph> _m_glyphs;
 	};
 
 } // namespace phoenix

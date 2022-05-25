@@ -15,7 +15,7 @@ TEST_SUITE("font") {
 		CHECK(fnt.height() == 17);
 
 		// We'll look at the three glyphs in the middle
-		auto middle = (FONT_MAX_GLYPHS / 2) - 1;
+		auto middle = (fnt.glyphs().size() / 2) - 1;
 
 		auto f1 = fnt.glyphs()[middle - 1];
 		auto f2 = fnt.glyphs()[middle];
