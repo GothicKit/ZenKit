@@ -19,6 +19,7 @@ TEST_SUITE("texture") {
 		CHECK(texture.mipmap_height(1) == 64);
 		CHECK(texture.mipmap_width(2) == 32);
 		CHECK(texture.mipmap_height(2) == 32);
+		CHECK(texture.average_color() == 0xff443a3c);
 
 		CHECK(texture.ref_height() == 128);
 		CHECK(texture.ref_width() == 128);
