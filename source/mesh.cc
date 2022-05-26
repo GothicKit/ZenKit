@@ -119,7 +119,7 @@ namespace phoenix {
 
 					auto vertex_count = chunk.get();
 
-					if (*leaf_poly_it != i) {
+					if (leaf_poly_it != leaf_polygons.end() && *leaf_poly_it != i) {
 						// If the current polygon is not a leaf polygon, skip it.
 						chunk.skip((version == version_g2 ? 8 : 6) * vertex_count);
 						continue;
@@ -168,7 +168,8 @@ namespace phoenix {
 						}
 					}
 
-					++leaf_poly_it;
+					if (leaf_poly_it != leaf_polygons.end())
+						++leaf_poly_it;
 				}
 
 				break;
