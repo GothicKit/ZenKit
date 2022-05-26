@@ -20,11 +20,11 @@ namespace phoenix {
 		tex_B8G8R8,   /* 4, 24-bit RGB pixel format with 8 bits per channel */
 		tex_R8G8B8,   /* 5, 24-bit RGB pixel format with 8 bits per channel */
 		tex_A4R4G4B4, /* 6, 16-bit ARGB pixel format with 4 bits for each channel */
-		tex_A1R5G5B5, /* 7, 16-bit pixel format where 5 bits are reserved for each glm::u8vec4 and 1 bit is reserved for
+		tex_A1R5G5B5, /* 7, 16-bit pixel format where 5 bits are reserved for each color and 1 bit is reserved for
 		               * alpha
 		               */
 		tex_R5G6B5,   /* 8, 16-bit RGB pixel format with 5 bits for red, 6 bits for green, and 5 bits for blue */
-		tex_p8,       /* 9, 8-bit glm::u8vec4 indexed */
+		tex_p8,       /* 9, 8-bit color indexed */
 		tex_dxt1,     /* A, DXT1 compression texture format */
 		tex_dxt2,     /* B, DXT2 compression texture format */
 		tex_dxt3,     /* C, DXT3 compression texture format */
@@ -134,7 +134,7 @@ namespace phoenix {
 		/**
 		 * @return The average glm::u8vec4 of the texture.
 		 */
-		[[nodiscard]] inline argb average_color() const noexcept {
+		[[nodiscard]] inline std::uint32_t average_color() const noexcept {
 			return _m_average_color;
 		}
 
@@ -165,7 +165,7 @@ namespace phoenix {
 		std::uint32_t _m_reference_width {};
 		std::uint32_t _m_reference_height {};
 		std::uint32_t _m_mipmap_count {};
-		argb _m_average_color {};
+		std::uint32_t _m_average_color {};
 
 		// Quirk: largest mipmap (level 0) stored at the end of the vector
 		std::vector<std::vector<std::uint8_t>> _m_textures;

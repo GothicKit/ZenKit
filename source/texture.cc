@@ -73,7 +73,7 @@ namespace phoenix {
 		tex._m_mipmap_count = std::max(1u, in.get_uint());
 		tex._m_reference_width = in.get_uint();
 		tex._m_reference_height = in.get_uint();
-		tex._m_average_color = {in.get(), in.get(), in.get(), in.get()};
+		tex._m_average_color = in.get_uint();
 
 		if (tex._m_format == tex_p8) {
 			for (int i = 0; i < ZTEX_PALETTE_ENTRIES; ++i) {
