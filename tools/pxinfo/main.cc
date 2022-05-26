@@ -21,10 +21,29 @@ static constexpr const auto HELP_MESSAGE = "Usage: pxinfo [--version]\n"
                                            "phoenix pxinfo v{}\n"
                                            "Display information about files found in Gothic installations.\n";
 
+static constexpr const char* TEXTURE_FORMAT_NAMES[] = {
+    "B8G8R8A8",
+    "R8G8B8A8",
+    "A8B8G8R8",
+    "A8R8G8B8",
+    "B8G8R8",
+    "R8G8B8",
+    "A4R4G4B4",
+    "A1R5G5B5",
+    "R5G6B5",
+    "PAL8",
+    "DXT1",
+    "DXT2",
+    "DXT3",
+    "DXT4",
+    "DXT5",
+};
+
 void print_hierarchy(const phoenix::model_hierachy& hierachy);
 void print_animation(const phoenix::animation& animation);
 void print_messages(const phoenix::messages& messages);
 void print_font(const phoenix::font& fnt);
+void print_texture(const phoenix::texture& tex);
 
 int main(int argc, const char** argv) {
 	argh::parser args {argc, argv, argh::parser::PREFER_PARAM_FOR_UNREG_OPTION};
@@ -77,6 +96,8 @@ int main(int argc, const char** argv) {
 			print_messages(phoenix::messages::parse(in));
 		} else if (file.ends_with(".FNT")) {
 			print_font(phoenix::font::parse(in));
+		} else if (file.ends_with(".TEX")) {
+			print_texture(phoenix::texture::parse(in));
 		} else {
 			fmt::print(stderr, "format not supported: {}", file.substr(file.rfind('.') + 1));
 			return EXIT_FAILURE;
@@ -87,6 +108,17 @@ int main(int argc, const char** argv) {
 	}
 
 	return 0;
+}
+
+void print_texture(const phoenix::texture& tex) {
+	fmt::print("Type: Texture\n");
+	fmt::print("Format: {}\n", TEXTURE_FORMAT_NAMES[tex.format()]);
+	fmt::print("Width: {}\n", tex.width());
+	fmt::print("Height: {}\n", tex.height());
+	fmt::print("Reference Width: {}\n", tex.ref_width());
+	fmt::print("Reference Height: {}\n", tex.ref_height());
+	fmt::print("Mipmap Count: {}\n", tex.mipmaps());
+	fmt::print("Average Color (ARGB): #{:0>6x}\n", tex.average_color());
 }
 
 void print_font(const phoenix::font& fnt) {
