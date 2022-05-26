@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/animation.hh>
 #include <phoenix/font.hh>
+#include <phoenix/mesh.hh>
 #include <phoenix/messages.hh>
 #include <phoenix/model_hierarchy.hh>
 #include <phoenix/texture.hh>
@@ -44,6 +45,7 @@ void print_animation(const phoenix::animation& animation);
 void print_messages(const phoenix::messages& messages);
 void print_font(const phoenix::font& fnt);
 void print_texture(const phoenix::texture& tex);
+void print_mesh(const phoenix::mesh& msh);
 
 int main(int argc, const char** argv) {
 	argh::parser args {argc, argv, argh::parser::PREFER_PARAM_FOR_UNREG_OPTION};
@@ -97,6 +99,8 @@ int main(int argc, const char** argv) {
 			print_messages(phoenix::messages::parse(in));
 		} else if (file.ends_with(".FNT")) {
 			print_font(phoenix::font::parse(in));
+		} else if (file.ends_with(".MSH")) {
+			print_mesh(phoenix::mesh::parse(in, {}));
 		} else if (file.ends_with(".TEX")) {
 			print_texture(phoenix::texture::parse(in));
 		} else {
@@ -120,6 +124,46 @@ void print_texture(const phoenix::texture& tex) {
 	fmt::print("Reference Height: {}\n", tex.ref_height());
 	fmt::print("Mipmap Count: {}\n", tex.mipmaps());
 	fmt::print("Average Color (ARGB): #{:0>6x}\n", tex.average_color());
+}
+
+void print_mesh(const phoenix::mesh& msh) {
+	fmt::print("Type: Mesh\n");
+	fmt::print("Source File: {}\n", msh.name());
+
+	auto date = msh.date();
+	fmt::print("Date: {}-{}-{}T{}:{}:{}\n", date.year, date.month, date.day, date.hour, date.minute, date.second);
+
+	auto bbox = msh.bbox();
+	fmt::print("Bounding Box: min=vec3(x={}, y={}, z={}), max=vec3(x={}, y={}, z={})\n",
+	           bbox.min.x,
+	           bbox.min.y,
+	           bbox.min.z,
+	           bbox.max.x,
+	           bbox.max.y,
+	           bbox.max.z);
+
+	fmt::print("Vertex Count: {}\n", msh.vertices().size());
+	fmt::print("Polygon Count: {}\n", msh.polygons().feature_indices.size());
+	fmt::print("Feature Count: {}\n", msh.features().size());
+	fmt::print("Lightmaps:\n");
+
+	for (auto& lightmap : msh.lightmaps()) {
+		fmt::print("  - Name: {}\n", TEXTURE_FORMAT_NAMES[lightmap.image->format()]);
+		fmt::print("    Origin: vec3(x={}, y={}, z={})\n", lightmap.origin.x, lightmap.origin.y, lightmap.origin.z);
+		fmt::print("    Normals: a=vec3(x={}, y={}, z={}) b=vec3(x={}, y={}, z={})\n",
+		           lightmap.normals[0].x,
+		           lightmap.normals[0].y,
+		           lightmap.normals[0].z,
+		           lightmap.normals[1].x,
+		           lightmap.normals[1].y,
+		           lightmap.normals[1].z);
+	}
+
+	fmt::print("Materials:\n");
+	for (auto& material : msh.materials()) {
+		fmt::print("  - Name: {}\n", material.name());
+		fmt::print("    Texture: {}\n", material.texture());
+	}
 }
 
 void print_font(const phoenix::font& fnt) {
