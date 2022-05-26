@@ -36,7 +36,6 @@ namespace phoenix {
 			case model_mesh_chunk::source: {
 				// supposedly a date? weird values
 				(void) /* date = */ date::parse(chunk);
-				(void) chunk.get_ushort(); // padding
 				(void) /* source file = */ chunk.get_line(false);
 				break;
 			}

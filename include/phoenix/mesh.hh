@@ -23,6 +23,7 @@ namespace phoenix {
 			                buf.get_ushort(),
 			                buf.get_ushort(),
 			                buf.get_ushort()};
+			(void) buf.get_ushort(); // padding
 			return dt;
 		}
 

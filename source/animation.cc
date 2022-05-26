@@ -122,12 +122,7 @@ namespace phoenix {
 
 				break;
 			case animation_chunk::source:
-				// this is actually a date though it is 4 bytes aligned
 				anim._m_source_file_date = date::parse(chunk);
-
-				// discard alignment bytes
-				(void) chunk.get_ushort();
-
 				anim._m_source_path = chunk.get_line(false);
 				anim._m_mds_source = chunk.get_line(false);
 				break;

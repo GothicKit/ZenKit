@@ -33,7 +33,7 @@ namespace phoenix {
 
 			switch (type) {
 			case world_mesh_chunk::mesh:
-				version = chunk.get_uint();
+				version = chunk.get_ushort();
 				msh._m_date = date::parse(chunk);
 				msh._m_name = chunk.get_line(false);
 				break;

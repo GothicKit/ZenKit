@@ -31,7 +31,6 @@ namespace phoenix {
 
 				for (int i = 0; i < count; ++i) {
 					msh._m_sources[i].file_date = date::parse(chunk);
-					(void) chunk.get_ushort(); // padding
 					msh._m_sources[i].file_name = chunk.get_line();
 				}
 
