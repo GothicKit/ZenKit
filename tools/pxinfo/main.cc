@@ -1,11 +1,11 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #include <phoenix/animation.hh>
+#include <phoenix/font.hh>
 #include <phoenix/messages.hh>
 #include <phoenix/model_hierarchy.hh>
 #include <phoenix/texture.hh>
 #include <phoenix/vdfs.hh>
-#include <phoenix/font.hh>
 
 #include <argh.h>
 #include <fmt/format.h>
@@ -92,7 +92,8 @@ int main(int argc, const char** argv) {
 		}
 		if (file.ends_with(".MAN")) {
 			print_animation(phoenix::animation::parse(in));
-		} else if (file.ends_with(".BIN") || file.ends_with(".CSL") || file.ends_with(".DAT") || file.ends_with(".LSC")) {
+		} else if (file.ends_with(".BIN") || file.ends_with(".CSL") || file.ends_with(".DAT") ||
+		           file.ends_with(".LSC")) {
 			print_messages(phoenix::messages::parse(in));
 		} else if (file.ends_with(".FNT")) {
 			print_font(phoenix::font::parse(in));
@@ -130,7 +131,13 @@ void print_font(const phoenix::font& fnt) {
 
 	for (unsigned i = 0; i < fnt.glyphs().size(); ++i) {
 		auto& glyph = fnt.glyphs()[i];
-		fmt::print("  {:0>2x}: u=({}, {}), v=({}, {}), w={}\n", i, glyph.uv[0].x, glyph.uv[0].y, glyph.uv[1].x, glyph.uv[1].y, glyph.width);
+		fmt::print("  {:0>2x}: u=({}, {}), v=({}, {}), w={}\n",
+		           i,
+		           glyph.uv[0].x,
+		           glyph.uv[0].y,
+		           glyph.uv[1].x,
+		           glyph.uv[1].y,
+		           glyph.width);
 	}
 }
 
