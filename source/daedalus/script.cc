@@ -174,11 +174,9 @@ namespace phoenix {
 
 	std::vector<symbol*> script::find_parameters_for_function(const symbol* parent) {
 		std::vector<symbol*> syms {};
-		auto search = parent->name() + ".";
 
-		for (auto& sym : _m_symbols) {
-			if (sym.name().starts_with(search))
-				syms.push_back(&sym);
+		for (unsigned i = 0; i < parent->count(); ++i) {
+			syms.push_back(find_symbol_by_index(parent->index() + i + 1));
 		}
 
 		return syms;
@@ -186,11 +184,9 @@ namespace phoenix {
 
 	std::vector<const symbol*> script::find_parameters_for_function(const symbol* parent) const {
 		std::vector<const symbol*> syms {};
-		auto search = parent->name() + ".";
 
-		for (auto& sym : _m_symbols) {
-			if (sym.name().starts_with(search))
-				syms.push_back(&sym);
+		for (unsigned i = 0; i < parent->count(); ++i) {
+			syms.push_back(find_symbol_by_index(parent->index() + i + 1));
 		}
 
 		return syms;

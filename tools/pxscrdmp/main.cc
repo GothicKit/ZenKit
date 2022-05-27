@@ -231,27 +231,25 @@ void print_definition(const script& scr, const symbol& sym, const symbol* parent
 	} else if (sym.type() == dt_function) {
 		fmt::print("func {} {}(", get_type_name(sym.rtype()), sym.name());
 
+		auto params = scr.find_parameters_for_function(&sym);
 		unsigned count = 0;
-		for (const auto& param : scr.symbols()) {
-			if (!param.is_member() && param.name().find(sym.name() + ".") == 0 && param.index() != sym.index()) {
-				if (count > 0) { fmt::print(", "); }
-				auto name = param.name().substr(param.name().find('.') + 1);
+		for (const auto& param : params) {
+			if (count > 0) { fmt::print(", "); }
 
-				if (param.type() == dt_instance) {
-					const auto* dt = scr.find_symbol_by_index(param.parent());
+			if (param->type() == dt_instance) {
+				const auto* dt = scr.find_symbol_by_index(param->parent());
 
-					if (dt == nullptr) {
-						fmt::print("var instance ");
-					} else {
-						fmt::print("var {} ", dt->name());
-					}
+				if (dt == nullptr) {
+					fmt::print("var instance ");
 				} else {
-					fmt::print("var {} ", get_type_name(param.type()));
+					fmt::print("var {} ", dt->name());
 				}
-
-				fmt::print("{}", name);
-				count++;
+			} else {
+				fmt::print("var {} ", get_type_name(param->type()));
 			}
+
+			fmt::print("{}", param->name());
+			count++;
 		}
 
 		fmt::print(") {{ /* ... */ }};");
