@@ -81,7 +81,7 @@ namespace phoenix {
 		    glm::vec2 dimension;
 			glm::vec2 offset;
             bool two_sided;
-            std::uint32_t alpha_func;
+			alpha_function alpha_func;
             float texture_anim_fps;
 			std::uint8_t alpha_weight;
 		    bool ignore_daylight;
@@ -91,7 +91,7 @@ namespace phoenix {
 				vob.dimension = in->read_vec2(); // decalDim
 				vob.offset = in->read_vec2(); // decalOffset
 				vob.two_sided = in->read_bool(); // decal2Sided
-				vob.alpha_func = in->read_enum(); // decalAlphaFunc
+				vob.alpha_func = alpha_function_from_byte(in->read_enum()); // decalAlphaFunc
 				vob.texture_anim_fps = in->read_float(); // decalTexAniFPS
 
 				if (version == game_version::gothic_2) {

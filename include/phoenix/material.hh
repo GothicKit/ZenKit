@@ -6,6 +6,15 @@
 #include <string>
 
 namespace phoenix {
+	enum class alpha_function {
+		test,
+		transparent,
+		additive,
+		multiply,
+	};
+
+	alpha_function alpha_function_from_byte(std::uint8_t b);
+
 	enum class material_group : std::uint8_t {
 		undef = 0,
 		metal = 1,
@@ -197,7 +206,7 @@ namespace phoenix {
 		/**
 		 * @return
 		 */
-		[[nodiscard]] std::uint8_t alpha_func() const noexcept {
+		[[nodiscard]] alpha_function alpha_func() const noexcept {
 			return _m_alpha_func;
 		}
 
@@ -231,7 +240,7 @@ namespace phoenix {
 		float _m_wave_max_amplitude {0.0f};
 		float _m_wave_grid_size {0.0f};
 		std::uint8_t _m_ignore_sun {0};
-		std::uint8_t _m_alpha_func {0};
+		alpha_function _m_alpha_func {0};
 		glm::vec2 _m_default_mapping {};
 	};
 

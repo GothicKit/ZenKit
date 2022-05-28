@@ -46,6 +46,7 @@ namespace phoenix {
 			mat._m_dont_collapse = in->read_byte();
 			mat._m_detail_object = in->read_string();
 			mat._m_default_mapping = in->read_vec2();
+			mat._m_alpha_func = alpha_function::test;
 		} else {
 			mat._m_name = in->read_string();
 			mat._m_group = static_cast<material_group>(in->read_byte()); // Quirk: This is not an enum
@@ -77,7 +78,7 @@ namespace phoenix {
 			mat._m_wave_max_amplitude = in->read_float();
 			mat._m_wave_grid_size = in->read_float();
 			mat._m_ignore_sun = in->read_byte();
-			mat._m_alpha_func = in->read_byte();
+			mat._m_alpha_func = alpha_function_from_byte(in->read_byte());
 
 			// The mapping comes last :)
 			mat._m_default_mapping = in->read_vec2();
@@ -89,5 +90,19 @@ namespace phoenix {
 		}
 
 		return mat;
+	}
+
+	alpha_function alpha_function_from_byte(std::uint8_t b) {
+		switch (b) {
+		case 2:
+			return alpha_function::transparent;
+		case 3:
+			return alpha_function::additive;
+		case 4:
+		case 5:
+			return alpha_function::multiply;
+		default:
+			return alpha_function::test;
+		}
 	}
 } // namespace phoenix
