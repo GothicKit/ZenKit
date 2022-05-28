@@ -23,12 +23,12 @@ namespace phoenix {
 		struct std::tm* t {std::gmtime(&nix)};
 		std::uint32_t dos {0};
 
-		dos |= (t->tm_year - 80) << 25;
-		dos |= (t->tm_mon + 1) << 21;
-		dos |= t->tm_mday << 16;
-		dos |= t->tm_hour << 11;
-		dos |= t->tm_min << 5;
-		dos |= (t->tm_sec / 2) << 0;
+		dos |= static_cast<std::uint32_t>((t->tm_year - 80) << 25);
+		dos |= static_cast<std::uint32_t>((t->tm_mon + 1) << 21);
+		dos |= static_cast<std::uint32_t>(t->tm_mday << 16);
+		dos |= static_cast<std::uint32_t>(t->tm_hour << 11);
+		dos |= static_cast<std::uint32_t>(t->tm_min << 5);
+		dos |= static_cast<std::uint32_t>((t->tm_sec / 2) << 0);
 
 		return dos;
 	}

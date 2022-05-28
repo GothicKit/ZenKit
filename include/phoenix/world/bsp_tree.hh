@@ -84,7 +84,7 @@ namespace phoenix {
 		/**
 		 * @return All BSP leaf node indices.
 		 */
-		[[nodiscard]] const std::vector<std::uint32_t>& leaf_node_indices() const noexcept {
+		[[nodiscard]] const std::vector<std::uint64_t>& leaf_node_indices() const noexcept {
 			return _m_leaf_node_indices;
 		}
 
@@ -122,6 +122,6 @@ namespace phoenix {
 		std::vector<std::uint32_t> _m_portal_polygon_indices;
 
 		std::vector<bsp_node> _m_nodes;
-		std::vector<std::uint32_t> _m_leaf_node_indices;
+		std::vector<std::uint64_t> _m_leaf_node_indices;
 	};
 } // namespace phoenix

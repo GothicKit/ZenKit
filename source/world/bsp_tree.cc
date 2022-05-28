@@ -17,11 +17,11 @@ namespace phoenix {
 
 	static void _parse_bsp_nodes(buffer& in,
 	                             std::vector<bsp_node>& nodes,
-	                             std::vector<std::uint32_t>& indices,
+	                             std::vector<std::uint64_t>& indices,
 	                             std::uint32_t version,
 	                             std::int32_t parent_index,
 	                             bool leaf = false) {
-		std::uint32_t self_index = nodes.size();
+		std::uint64_t self_index = nodes.size();
 
 		auto& node = nodes.emplace_back();
 		node.parent_index = parent_index;

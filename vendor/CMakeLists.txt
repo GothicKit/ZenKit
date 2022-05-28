@@ -6,6 +6,8 @@ add_subdirectory(argh)
 add_subdirectory(doctest)
 add_subdirectory(mio)
 
+target_compile_options(mio INTERFACE -Wno-conversion)
+
 FetchContent_Declare(
 		libsquish
 		URL       https://downloads.sourceforge.net/project/libsquish/libsquish-1.15.tgz

@@ -78,7 +78,7 @@ namespace phoenix {
 			mat._m_wave_max_amplitude = in->read_float();
 			mat._m_wave_grid_size = in->read_float();
 			mat._m_ignore_sun = in->read_byte();
-			mat._m_alpha_func = alpha_function_from_byte(in->read_byte());
+			mat._m_alpha_func = alpha_function_from_int(in->read_byte());
 
 			// The mapping comes last :)
 			mat._m_default_mapping = in->read_vec2();
@@ -92,7 +92,7 @@ namespace phoenix {
 		return mat;
 	}
 
-	alpha_function alpha_function_from_byte(std::uint8_t b) {
+	alpha_function alpha_function_from_int(std::uint32_t b) {
 		switch (b) {
 		case 2:
 			return alpha_function::transparent;

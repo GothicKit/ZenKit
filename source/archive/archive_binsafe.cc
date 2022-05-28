@@ -83,7 +83,7 @@ namespace phoenix {
 	std::uint16_t archive_reader_binsafe::ensure_entry_meta(archive_binsafe_type tp) {
 		(void) get_entry_key();
 		auto type = input.get();
-		auto size =
+		uint16_t size =
 		    (type == bs_string || type == bs_raw || type == bs_raw_float) ? input.get_ushort() : type_sizes[type];
 
 		if (type != tp) {

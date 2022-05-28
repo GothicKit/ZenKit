@@ -91,7 +91,7 @@ namespace phoenix {
 				vob.dimension = in->read_vec2(); // decalDim
 				vob.offset = in->read_vec2(); // decalOffset
 				vob.two_sided = in->read_bool(); // decal2Sided
-				vob.alpha_func = alpha_function_from_byte(in->read_enum()); // decalAlphaFunc
+				vob.alpha_func = alpha_function_from_int(in->read_enum()); // decalAlphaFunc
 				vob.texture_anim_fps = in->read_float(); // decalTexAniFPS
 
 				if (version == game_version::gothic_2) {
@@ -363,7 +363,7 @@ namespace phoenix {
 
 		struct mover_controller : public base {
 			std::string target;
-			std::uint8_t message;
+			std::uint32_t message;
 			std::int32_t key;
 
 			static void parse(mover_controller& vob, archive_reader_ref& in, game_version version) {

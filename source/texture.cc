@@ -16,11 +16,11 @@ namespace phoenix {
 	 * @return The size in bytes of the texture at the given mipmap level.
 	 */
 	static std::uint32_t
-	_ztex_mipmap_size(texture_format format, unsigned long width, unsigned long height, int level) {
-		unsigned long x = std::max(1ul, width);
-		unsigned long y = std::max(1ul, height);
+	_ztex_mipmap_size(texture_format format, std::uint32_t width, std::uint32_t height, unsigned level) {
+		std::uint32_t x = std::max(1u, width);
+		std::uint32_t y = std::max(1u, height);
 
-		for (int i = 0; i < level; i++) {
+		for (unsigned i = 0; i < level; i++) {
 			if (x > 1)
 				x >>= 1;
 			if (y > 1)
@@ -43,12 +43,12 @@ namespace phoenix {
 		case tex_p8:
 			return x * y;
 		case tex_dxt1:
-			return std::max(1ul, x / 4) * std::max(1ul, y / 4) * 8;
+			return std::max(1u, x / 4) * std::max(1u, y / 4) * 8;
 		case tex_dxt2:
 		case tex_dxt3:
 		case tex_dxt4:
 		case tex_dxt5:
-			return std::max(1ul, x / 4) * std::max(1ul, y / 4) * 16;
+			return std::max(1u, x / 4) * std::max(1u, y / 4) * 16;
 		default:
 			return 0;
 		}
@@ -87,7 +87,7 @@ namespace phoenix {
 		bool dxt_decompressed = false;
 
 		// Lowest mipmap-level first
-		for (int level = (int) tex._m_mipmap_count - 1; level >= 0; --level) {
+		for (std::int64_t level = tex._m_mipmap_count - 1; level >= 0; --level) {
 			auto size = _ztex_mipmap_size(tex._m_format, tex._m_width, tex._m_height, level);
 
 			std::vector<std::uint8_t> mipmap;
@@ -106,7 +106,7 @@ namespace phoenix {
 				auto flag = tex._m_format == tex_dxt1 ? squish::kDxt1
 				                                      : (tex._m_format == tex_dxt3 ? squish::kDxt3 : squish::kDxt5);
 
-				squish::DecompressImage(v.data(), w, h, mipmap.data(), flag);
+				squish::DecompressImage(v.data(), static_cast<int>(w),  static_cast<int>(h), mipmap.data(), flag);
 				tex._m_textures.emplace_back(std::move(v));
 				dxt_decompressed = true;
 				break;

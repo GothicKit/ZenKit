@@ -13,7 +13,7 @@ namespace phoenix {
 		multiply,
 	};
 
-	alpha_function alpha_function_from_byte(std::uint8_t b);
+	alpha_function alpha_function_from_int(std::uint32_t b);
 
 	enum class material_group : std::uint8_t {
 		undef = 0,

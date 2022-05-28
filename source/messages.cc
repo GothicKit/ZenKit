@@ -20,7 +20,7 @@ namespace phoenix {
 		}
 
 		auto item_count = archive->read_int();
-		msgs._m_blocks.reserve(item_count);
+		msgs._m_blocks.reserve(static_cast<std::uint64_t>(item_count));
 
 		for (int i = 0; i < item_count; ++i) {
 			if (!archive->read_object_begin(obj) || obj.class_name != "zCCSBlock") {

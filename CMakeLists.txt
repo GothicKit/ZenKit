@@ -6,7 +6,7 @@ option(PX_BUILD_TOOLS "Build phoenix tool executables" ON)
 option(PX_BUILD_TESTS "Build core library tests" ON)
 
 set(CMAKE_CXX_STANDARD 20)
-set(PX_CXX_FLAGS -Wall -Wextra -Werror)
+set(PX_CXX_FLAGS -Wall -Wextra -Werror -Wconversion)
 
 if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
 	set(PX_CXX_FLAGS ${PX_CXX_FLAGS} -fsanitize=address -fsanitize=undefined -fsanitize=leak)
