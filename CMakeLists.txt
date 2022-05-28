@@ -3,17 +3,16 @@ include(CheckIncludeFiles)
 project(phoenix)
 
 option(PX_BUILD_TOOLS "Build phoenix tool executables" ON)
-option(PX_BUILD_ENGINE "Build the phoenix engine library" ON)
 option(PX_BUILD_TESTS "Build core library tests" ON)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
+set(PX_CXX_FLAGS -Wall -Wextra -Werror)
 
 if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
-	set(CMAKE_CXX_FLAGS "-fsanitize=address -fsanitize=undefined -fsanitize=leak ${CMAKE_CXX_FLAGS}")
+	set(PX_CXX_FLAGS ${PX_CXX_FLAGS} -fsanitize=address -fsanitize=undefined -fsanitize=leak)
 
 	if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstandalone-debug")
+		set(PX_CXX_FLAGS ${PX_CXX_FLAGS} -fstandalone-debug)
 	endif()
 endif()
 
@@ -69,12 +68,16 @@ set(PX_TESTS
 add_library(phoenix ${PX_SOURCES})
 target_include_directories(phoenix PUBLIC include)
 target_link_libraries(phoenix PUBLIC glm fmt squish mio)
+target_compile_options(phoenix PRIVATE ${PX_CXX_FLAGS})
+target_link_options(phoenix PUBLIC ${PX_CXX_FLAGS})
 
 if (PX_BUILD_TESTS)
 	enable_testing()
 
 	add_executable(phoenix-tests ${PX_TESTS})
 	target_link_libraries(phoenix-tests PRIVATE phoenix doctest_with_main)
+	target_compile_options(phoenix-tests PRIVATE ${PX_CXX_FLAGS})
+	target_link_options(phoenix-tests PRIVATE ${PX_CXX_FLAGS})
 
 	add_test(NAME phoenix-test COMMAND $<TARGET_FILE:phoenix-tests> --check WORKING_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 endif ()

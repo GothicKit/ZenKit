@@ -1,7 +1,5 @@
 include(FetchContent)
 
-set(CMAKE_CXX_FLAGS -Wno-error)
-
 add_subdirectory(glm)
 add_subdirectory(fmt)
 add_subdirectory(argh)
