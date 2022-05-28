@@ -14,6 +14,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <filesystem>
 
 namespace phoenix {
 	struct buffer_underflow_error : public std::runtime_error {
@@ -757,7 +758,7 @@ namespace phoenix {
 		 * @param readonly Set to `false` to be able to write to the buffer.
 		 * @return The newly created buffer.
 		 */
-		static buffer open(const std::string& path, bool readonly = true);
+		static buffer open(const std::filesystem::path& path, bool readonly = true);
 
 		/**
 		 * @brief Returns a duplicate of the empty buffer.

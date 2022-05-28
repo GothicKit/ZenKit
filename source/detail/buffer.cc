@@ -78,7 +78,7 @@ namespace phoenix {
 			 * @brief Creates a new memory-mapped buffer backing by mapping the file at the given path into memory
 			 * @param file The path of the file to map
 			 */
-			explicit mmap_backing(const std::string& file) : _m_data(file) {}
+			explicit mmap_backing(const std::filesystem::path& file) : _m_data(file.c_str()) {}
 
 			[[nodiscard]] bool direct() const noexcept override {
 				return true;
@@ -152,7 +152,7 @@ namespace phoenix {
 		return buffer {std::make_shared<detail::heap_backing>(std::forward<std::vector<std::uint8_t>>(buf), readonly)};
 	}
 
-	buffer buffer::open(const std::string& path, bool readonly) {
+	buffer buffer::open(const std::filesystem::path& path, bool readonly) {
 		if (readonly) {
 			return buffer {std::make_shared<detail::mmap_backing<mio::access_mode::read>>(path)};
 		}

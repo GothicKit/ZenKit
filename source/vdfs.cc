@@ -170,7 +170,7 @@ namespace phoenix {
 		return nullptr;
 	}
 
-	vdf_file vdf_file::open(const std::string& path) {
+	vdf_file vdf_file::open(const std::filesystem::path& path) {
 		auto in = buffer::open(path);
 		vdf_file vdf {};
 

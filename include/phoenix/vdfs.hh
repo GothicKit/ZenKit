@@ -275,7 +275,7 @@ namespace phoenix {
 		 * @param path The path of the file to read from.
 		 * @return The vdf_file.
 		 */
-		static vdf_file open(const std::string& path);
+		static vdf_file open(const std::filesystem::path& path);
 
 		/**
 		 * @brief Searches the VDF file for the first entry with the given name.
