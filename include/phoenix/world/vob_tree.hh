@@ -122,7 +122,7 @@ namespace phoenix {
 			std::string vob_name;
 			std::string visual_name;
 
-			visual_type visual_type;
+			visual_type associated_visual_type;
 			decal visual_decal;
 
 			static void parse(base& vob, archive_reader_ref& in, game_version version);

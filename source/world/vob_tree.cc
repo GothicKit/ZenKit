@@ -154,9 +154,9 @@ namespace phoenix {
 			if (has_visual_object) {
 				archive_object visual {};
 				in->read_object_begin(visual);
-				vob.visual_type = _visual_type_map[visual.class_name];
+				vob.associated_visual_type = _visual_type_map[visual.class_name];
 
-				if (vob.visual_type == visual_type::zCDecal) {
+				if (vob.associated_visual_type == visual_type::zCDecal) {
 					decal::parse(vob.visual_decal, in, version);
 				}
 
