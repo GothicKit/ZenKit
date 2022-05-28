@@ -54,9 +54,21 @@ namespace phoenix {
 	    {"\xA7", vob_type::unknown}, // some sort of padding object, probably. seems to be always empty
 	};
 
+	static std::unordered_map<std::string, visual_type> _visual_type_map = {
+	    {"zCDecal", visual_type::zCDecal},
+	    {"zCMesh", visual_type::zCMesh},
+	    {"zCProgMeshProto", visual_type::zCProgMeshProto},
+	    {"zCParticleFX", visual_type::zCParticleFX},
+	    {"zCModel", visual_type::zCModel},
+	    {"zCMorphMesh", visual_type::zCMorphMesh},
+	    {"\xA7", visual_type::unknown},
+	};
+
 	namespace vob {
 		void base::parse(vob::base& vob, archive_reader_ref& in, game_version version) {
 			auto packed = in->read_int() != 0; // pack
+			bool has_visual_object = true;
+		    bool has_ai_object = true;
 
 			if (packed) {
 				auto bin = in->read_raw_bytes(); // dataRaw
@@ -84,8 +96,8 @@ namespace phoenix {
 				bool has_preset_name = static_cast<bool>((bit1 & 0b000000000000001u) >> 0u);
 				bool has_vob_name = static_cast<bool>((bit1 & 0b000000000000010u) >> 1u);
 				bool has_visual_name = static_cast<bool>((bit1 & 0b000000000000100u) >> 2u);
-				bool has_visual_object = static_cast<bool>((bit1 & 0b000000000001000u) >> 3u);
-				bool has_ai_object = static_cast<bool>((bit1 & 0b000000000010000u) >> 4u);
+				has_visual_object = static_cast<bool>((bit1 & 0b000000000001000u) >> 3u);
+				has_ai_object = static_cast<bool>((bit1 & 0b000000000010000u) >> 4u);
 				// bool has_event_man_object = static_cast<bool>((bit1 & 0b000000000100000u) >> 5u);
 				vob.physics_enabled = static_cast<bool>((bit1 & 0b000000001000000u) >> 6u);
 
@@ -108,14 +120,6 @@ namespace phoenix {
 
 				if (has_visual_name) {
 					vob.visual_name = in->read_string(); // visual
-				}
-
-				if (has_visual_object) {
-					in->skip_object(false);
-				}
-
-				if (has_ai_object) {
-					in->skip_object(false);
 				}
 			} else {
 				vob.preset_name = in->read_string();
@@ -145,11 +149,24 @@ namespace phoenix {
 					vob.bias = in->read_int();                 // zbias
 					vob.ambient = in->read_bool();             // isAmbient
 				}
+			}
 
-				// visual
-				in->skip_object(false);
+			if (has_visual_object) {
+				archive_object visual {};
+				in->read_object_begin(visual);
+				vob.visual_type = _visual_type_map[visual.class_name];
 
-				// ai
+				if (vob.visual_type == visual_type::zCDecal) {
+					decal::parse(vob.visual_decal, in, version);
+				}
+
+				if (!in->read_object_end()) {
+					fmt::print(stderr, "warning: vob_tree: visual \"{}\" not fully parsed\n", visual.class_name);
+					in->skip_object(true);
+				}
+			}
+
+			if (has_ai_object) {
 				in->skip_object(false);
 			}
 		}

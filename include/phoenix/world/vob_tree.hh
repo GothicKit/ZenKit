@@ -64,7 +64,43 @@ namespace phoenix {
 		unknown,
 	};
 
+	enum class visual_type {
+		zCDecal,
+		zCMesh,
+		zCProgMeshProto,
+		zCParticleFX,
+		zCAICamera,
+		zCModel,
+		zCMorphMesh,
+		unknown
+	};
+
 	namespace vob {
+		struct decal {
+			std::string name;
+		    glm::vec2 dimension;
+			glm::vec2 offset;
+            bool two_sided;
+            std::uint32_t alpha_func;
+            float texture_anim_fps;
+			std::uint8_t alpha_weight;
+		    bool ignore_daylight;
+
+			static void parse(decal& vob, archive_reader_ref& in, game_version version) {
+				vob.name = in->read_string(); // name
+				vob.dimension = in->read_vec2(); // decalDim
+				vob.offset = in->read_vec2(); // decalOffset
+				vob.two_sided = in->read_bool(); // decal2Sided
+				vob.alpha_func = in->read_enum(); // decalAlphaFunc
+				vob.texture_anim_fps = in->read_float(); // decalTexAniFPS
+
+				if (version == game_version::gothic_2) {
+					vob.alpha_weight = in->read_byte(); // decalAlphaWeight
+					vob.ignore_daylight = in->read_bool(); // ignoreDayLight
+				}
+			}
+		};
+
 		struct base {
 			bounding_box bbox;
 			glm::vec3 position;
@@ -85,6 +121,9 @@ namespace phoenix {
 			std::string preset_name;
 			std::string vob_name;
 			std::string visual_name;
+
+			visual_type visual_type;
+			decal visual_decal;
 
 			static void parse(base& vob, archive_reader_ref& in, game_version version);
 		};
