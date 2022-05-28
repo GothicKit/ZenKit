@@ -488,7 +488,7 @@ namespace phoenix {
 
 			_class* base = 0;
 			auto member = &(base->*field);
-			sym->_m_member_offset = (std::uint64_t) member;
+			sym->_m_member_offset = std::uint64_t(member) & 0xFFFFFFFF;
 			sym->_m_registered_to = type;
 		}
 
@@ -505,7 +505,7 @@ namespace phoenix {
 
 			_class* base = 0;
 			auto member = &(base->*field);
-			sym->_m_member_offset = (std::uint64_t) member;
+			sym->_m_member_offset = std::uint64_t(member) & 0xFFFFFFFF;
 			sym->_m_registered_to = type;
 		}
 
@@ -583,7 +583,7 @@ namespace phoenix {
 		 * @return The total size of the script.
 		 */
 		[[nodiscard]] std::uint32_t size() const noexcept {
-			return _m_text.limit();
+			return _m_text.limit() & 0xFFFFFF;
 		}
 
 		/**
