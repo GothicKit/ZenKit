@@ -179,7 +179,7 @@ namespace phoenix {
 			std::string lensflare_fx;
 
 			bool on;
-			std::string range_animation_scale;
+			std::vector<float> range_animation_scale;
 			float range_animation_fps;
 			bool range_animation_smooth;
 			std::string color_animation_list;

@@ -184,13 +184,20 @@ namespace phoenix {
 			vob.lensflare_fx = in->read_string(); // lensflareFX
 
 			if (!vob.is_static) {
-				vob.on = in->read_bool();                      // turnedOn
-				vob.range_animation_scale = in->read_string(); // rangeAniScale
-				vob.range_animation_fps = in->read_float();    // rangeAniFPS
-				vob.range_animation_smooth = in->read_bool();  // rangeAniSmooth
-				vob.color_animation_list = in->read_string();  // colorAniList
-				vob.color_animation_fps = in->read_float();    // colorAniFPS
-				vob.color_animation_smooth = in->read_bool();  // colorAniSmooth
+				vob.on = in->read_bool();                     // turnedOn
+				auto range_ani_scale = in->read_string();     // rangeAniScale
+				vob.range_animation_fps = in->read_float();   // rangeAniFPS
+				vob.range_animation_smooth = in->read_bool(); // rangeAniSmooth
+				vob.color_animation_list = in->read_string(); // colorAniList
+				vob.color_animation_fps = in->read_float();   // colorAniFPS
+				vob.color_animation_smooth = in->read_bool(); // colorAniSmooth
+
+				std::istringstream ranges {range_ani_scale};
+				float value;
+				while (!ranges.eof()) {
+					ranges >> value;
+					vob.range_animation_scale.push_back(value);
+				}
 
 				if (version == game_version::gothic_2) {
 					vob.can_move = in->read_bool(); // canMove
@@ -556,7 +563,7 @@ namespace phoenix {
 
 		return vob;
 	}
-	
+
 	const vob::base& vob_tree::as_base() const {
 		switch (_m_type) {
 		case vob_type::zCCamTrj_KeyFrame:
