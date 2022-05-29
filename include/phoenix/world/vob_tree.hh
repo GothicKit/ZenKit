@@ -182,7 +182,7 @@ namespace phoenix {
 			std::vector<float> range_animation_scale;
 			float range_animation_fps;
 			bool range_animation_smooth;
-			std::string color_animation_list;
+			std::vector<glm::u8vec4> color_animation_list;
 			float color_animation_fps;
 			bool color_animation_smooth;
 			bool can_move;
