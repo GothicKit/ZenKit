@@ -75,27 +75,89 @@ namespace phoenix {
 		unknown
 	};
 
+	enum class animation_mode : uint8_t {
+		none = 0,
+		wind = 1,
+		wind2 = 2,
+	};
+
+	enum class sound_mode : uint32_t {
+		loop = 0,
+		once = 1,
+		random = 2,
+	};
+
+	enum class sound_volume_type : uint32_t {
+		spherical = 0,
+		ellipsoidal = 1,
+	};
+
+	enum class message_filter_action : uint32_t {
+		none = 0,
+		trigger = 1,
+		untrigger = 2,
+		enable = 3,
+		disable = 4,
+		toggle = 5,
+	};
+
+	enum class mover_behavior : uint32_t {
+		toggle = 0,
+		trigger_control = 1,
+		open_timed = 2,
+		loop = 3,
+		single_keys = 4,
+	};
+
+	enum class mover_lerp_mode : uint32_t {
+		curve = 0,
+		linear = 1,
+	};
+
+	enum class mover_speed_mode : uint32_t {
+		seg_constant = 0,
+		slow_start_end = 1,
+		slow_start = 2,
+		slow_end = 3,
+		seg_slow_start_end = 4,
+		seg_slow_start = 5,
+		seg_slow_end = 6,
+	};
+
+	enum class mover_message_type : uint32_t {
+		fixed_direct = 0,
+		fixed_order = 1,
+		next = 2,
+		previous = 3,
+	};
+
+	enum class trigger_list_process_type {
+		all = 0,
+		next = 1,
+		random = 2,
+	};
+
 	namespace vob {
 		struct decal {
 			std::string name;
-		    glm::vec2 dimension;
+			glm::vec2 dimension;
 			glm::vec2 offset;
-            bool two_sided;
+			bool two_sided;
 			alpha_function alpha_func;
-            float texture_anim_fps;
+			float texture_anim_fps;
 			std::uint8_t alpha_weight;
-		    bool ignore_daylight;
+			bool ignore_daylight;
 
 			static void parse(decal& vob, archive_reader_ref& in, game_version version) {
-				vob.name = in->read_string(); // name
-				vob.dimension = in->read_vec2(); // decalDim
-				vob.offset = in->read_vec2(); // decalOffset
-				vob.two_sided = in->read_bool(); // decal2Sided
+				vob.name = in->read_string();                              // name
+				vob.dimension = in->read_vec2();                           // decalDim
+				vob.offset = in->read_vec2();                              // decalOffset
+				vob.two_sided = in->read_bool();                           // decal2Sided
 				vob.alpha_func = alpha_function_from_int(in->read_enum()); // decalAlphaFunc
-				vob.texture_anim_fps = in->read_float(); // decalTexAniFPS
+				vob.texture_anim_fps = in->read_float();                   // decalTexAniFPS
 
 				if (version == game_version::gothic_2) {
-					vob.alpha_weight = in->read_byte(); // decalAlphaWeight
+					vob.alpha_weight = in->read_byte();    // decalAlphaWeight
 					vob.ignore_daylight = in->read_bool(); // ignoreDayLight
 				}
 			}
@@ -112,10 +174,10 @@ namespace phoenix {
 			bool vob_static {};
 			bool dynamic_shadows {};
 			bool physics_enabled {};
-			std::uint8_t animation_mode {};
+			animation_mode anim_mode {};
 			std::int32_t bias {};
 			bool ambient {};
-			float animation_strength {};
+			float anim_strength {};
 			float far_clip_scale {};
 
 			std::string preset_name {};
@@ -192,14 +254,14 @@ namespace phoenix {
 
 		struct sound : public base {
 			float volume;
-			std::uint32_t mode;
+			sound_mode mode;
 			float random_delay;
 			float random_delay_var;
 			bool initially_playing;
 			bool ambient3d;
 			bool obstruction;
 			float cone_angle;
-			std::uint32_t volume_type;
+			sound_volume_type volume_type;
 			float radius;
 			std::string name;
 
@@ -263,14 +325,14 @@ namespace phoenix {
 
 		struct message_filter : public base {
 			std::string target;
-			std::uint32_t on_trigger;
-			std::uint32_t on_untrigger;
+			message_filter_action on_trigger;
+			message_filter_action on_untrigger;
 
 			static void parse(message_filter& vob, archive_reader_ref& in, game_version version) {
 				base::parse(vob, in, version);
-				vob.target = in->read_string();     // triggerTarget
-				vob.on_trigger = in->read_enum();   // onTrigger
-				vob.on_untrigger = in->read_enum(); // onUntrigger
+				vob.target = in->read_string();                                         // triggerTarget
+				vob.on_trigger = static_cast<message_filter_action>(in->read_enum());   // onTrigger
+				vob.on_untrigger = static_cast<message_filter_action>(in->read_enum()); // onUntrigger
 			}
 		};
 
@@ -304,12 +366,12 @@ namespace phoenix {
 				float delay;
 			};
 
-			std::uint32_t list_process;
+			trigger_list_process_type list_process;
 			std::vector<target> targets;
 
 			static void parse(trigger_list& vob, archive_reader_ref& in, game_version version) {
 				trigger::parse(vob, in, version);
-				vob.list_process = in->read_enum(); // listProcess
+				vob.list_process = static_cast<trigger_list_process_type>(in->read_enum()); // listProcess
 
 				auto target_count = in->read_byte(); // numTarget
 				for (int i = 0; i < target_count; ++i) {
@@ -363,7 +425,7 @@ namespace phoenix {
 
 		struct mover_controller : public base {
 			std::string target;
-			std::uint32_t message;
+			mover_message_type message;
 			std::int32_t key;
 
 			static void parse(mover_controller& vob, archive_reader_ref& in, game_version version) {
@@ -371,9 +433,9 @@ namespace phoenix {
 				vob.target = in->read_string(); // triggerTarget
 
 				if (version == game_version::gothic_1) {
-					vob.message = in->read_enum(); // moverMessage
+					vob.message = static_cast<mover_message_type>(in->read_enum()); // moverMessage
 				} else {
-					vob.message = in->read_byte(); // moverMessage
+					vob.message = static_cast<mover_message_type>(in->read_byte()); // moverMessage
 				}
 
 				vob.key = in->read_int(); // gotoFixedKey
@@ -453,14 +515,14 @@ namespace phoenix {
 
 			static void parse(mob_door& vob, archive_reader_ref& in, game_version version) {
 				mob_inter::parse(vob, in, version);
-				vob.locked = in->read_bool(); // locked
-				vob.key = in->read_string(); // keyInstance
+				vob.locked = in->read_bool();        // locked
+				vob.key = in->read_string();         // keyInstance
 				vob.pick_string = in->read_string(); // pickLockStr
 			}
 		};
 
 		struct trigger_mover : public trigger {
-			std::uint32_t behavior;
+			mover_behavior behavior;
 			float touch_blocker_damage;
 			float stay_open_time_sec;
 			bool locked;
@@ -468,8 +530,8 @@ namespace phoenix {
 			bool auto_rotate;
 
 			float speed;
-			std::uint32_t lerp_mode;
-			std::uint32_t speed_mode;
+			mover_lerp_mode lerp_mode;
+			mover_speed_mode speed_mode;
 
 			std::vector<animation_sample> keyframes;
 
@@ -604,8 +666,7 @@ namespace phoenix {
 
 		vob_tree() = default;
 
-		explicit vob_tree(vob::base&& base) : _m_content(std::move(base)), _m_type(vob_type::zCVob), _m_object_id(0) {
-		}
+		explicit vob_tree(vob::base&& base) : _m_content(std::move(base)), _m_type(vob_type::zCVob), _m_object_id(0) {}
 
 		std::vector<vob_tree> _m_children {};
 		std::variant<vob::base,

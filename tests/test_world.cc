@@ -173,8 +173,8 @@ TEST_SUITE("world") {
 			CHECK(vob0_data.position == glm::vec3 {0, 0, 0});
 			CHECK(!vob0_data.show_visual);
 			CHECK(vob0_data.camera_alignment == 0);
-			CHECK(vob0_data.animation_mode == 0);
-			CHECK(vob0_data.animation_strength == 0.0f);
+			CHECK(vob0_data.anim_mode == phoenix::animation_mode::none);
+			CHECK(vob0_data.anim_strength == 0.0f);
 			CHECK(vob0_data.far_clip_scale == 0);
 			CHECK(vob0_data.cd_static);
 			CHECK(!vob0_data.cd_dynamic);
@@ -212,8 +212,8 @@ TEST_SUITE("world") {
 				CHECK(child1_data.position == glm::vec3 {-18544.4863, -136.171906, 4141.19727});
 				CHECK(!child1_data.show_visual);
 				CHECK(child1_data.camera_alignment == 0);
-				CHECK(child1_data.animation_mode == 0);
-				CHECK(child1_data.animation_strength == 0.0f);
+				CHECK(child1_data.anim_mode == phoenix::animation_mode::none);
+				CHECK(child1_data.anim_strength == 0.0f);
 				CHECK(child1_data.far_clip_scale == 0);
 				CHECK(!child1_data.cd_static);
 				CHECK(!child1_data.cd_dynamic);
@@ -249,8 +249,8 @@ TEST_SUITE("world") {
 			CHECK(vob13_data.position == glm::vec3 {0, 0, 0});
 			CHECK(!vob13_data.show_visual);
 			CHECK(vob13_data.camera_alignment == 0);
-			CHECK(vob13_data.animation_mode == 0);
-			CHECK(vob13_data.animation_strength == 0.0f);
+			CHECK(vob13_data.anim_mode == phoenix::animation_mode::none);
+			CHECK(vob13_data.anim_strength == 0.0f);
 			CHECK(vob13_data.far_clip_scale == 0);
 			CHECK(!vob13_data.cd_static);
 			CHECK(!vob13_data.cd_dynamic);

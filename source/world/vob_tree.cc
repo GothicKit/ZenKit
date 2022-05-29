@@ -68,7 +68,7 @@ namespace phoenix {
 		void base::parse(vob::base& vob, archive_reader_ref& in, game_version version) {
 			auto packed = in->read_int() != 0; // pack
 			bool has_visual_object = true;
-		    bool has_ai_object = true;
+			bool has_ai_object = true;
 
 			if (packed) {
 				auto bin = in->read_raw_bytes(); // dataRaw
@@ -102,11 +102,11 @@ namespace phoenix {
 				vob.physics_enabled = static_cast<bool>((bit1 & 0b000000001000000u) >> 6u);
 
 				if (version == game_version::gothic_2) {
-					vob.animation_mode = (bit1 & 0b000000110000000u >> 7u);
+					vob.anim_mode = static_cast<animation_mode>(bit1 & 0b000000110000000u >> 7u);
 					vob.bias = static_cast<std::int32_t>((bit1 & 0b011111000000000u) >> 9u);
 					vob.ambient = static_cast<bool>((bit1 & 0b100000000000000u) >> 14u);
 
-					vob.animation_strength = bin.get_float();
+					vob.anim_strength = bin.get_float();
 					vob.far_clip_scale = bin.get_float();
 				}
 
@@ -139,15 +139,15 @@ namespace phoenix {
 					vob.vob_static = in->read_bool();      // staticVob
 					vob.dynamic_shadows = in->read_enum(); // dynShadow
 				} else {
-					vob.animation_mode = in->read_enum();      // visualAniMode
-					vob.animation_strength = in->read_float(); // visualAniModeStrength
-					vob.far_clip_scale = in->read_float();     // vobFarClipZScale
-					vob.cd_static = in->read_bool();           // cdStatic
-					vob.cd_dynamic = in->read_bool();          // cdDyn
-					vob.vob_static = in->read_bool();          // staticVob
-					vob.dynamic_shadows = in->read_enum();     // dynShadow
-					vob.bias = in->read_int();                 // zbias
-					vob.ambient = in->read_bool();             // isAmbient
+					vob.anim_mode = static_cast<animation_mode>(in->read_enum()); // visualAniMode
+					vob.anim_strength = in->read_float();                         // visualAniModeStrength
+					vob.far_clip_scale = in->read_float();                        // vobFarClipZScale
+					vob.cd_static = in->read_bool();                              // cdStatic
+					vob.cd_dynamic = in->read_bool();                             // cdDyn
+					vob.vob_static = in->read_bool();                             // staticVob
+					vob.dynamic_shadows = in->read_enum();                        // dynShadow
+					vob.bias = in->read_int();                                    // zbias
+					vob.ambient = in->read_bool();                                // isAmbient
 				}
 			}
 
@@ -217,17 +217,17 @@ namespace phoenix {
 
 		void sound::parse(sound& vob, archive_reader_ref& in, game_version version) {
 			base::parse(vob, in, version);
-			vob.volume = in->read_float();           // sndVolume
-			vob.mode = in->read_enum();              // sndMode
-			vob.random_delay = in->read_float();     // sndRandDelay
-			vob.random_delay_var = in->read_float(); // sndRandDelayVar
-			vob.initially_playing = in->read_bool(); // sndStartOn
-			vob.ambient3d = in->read_bool();         // sndAmbient3D
-			vob.obstruction = in->read_bool();       // sndObstruction
-			vob.cone_angle = in->read_float();       // sndConeAngle
-			vob.volume_type = in->read_enum();       // sndVolType
-			vob.radius = in->read_float();           // sndRadius
-			vob.name = in->read_string();            // sndName
+			vob.volume = in->read_float();                                     // sndVolume
+			vob.mode = static_cast<sound_mode>(in->read_enum());               // sndMode
+			vob.random_delay = in->read_float();                               // sndRandDelay
+			vob.random_delay_var = in->read_float();                           // sndRandDelayVar
+			vob.initially_playing = in->read_bool();                           // sndStartOn
+			vob.ambient3d = in->read_bool();                                   // sndAmbient3D
+			vob.obstruction = in->read_bool();                                 // sndObstruction
+			vob.cone_angle = in->read_float();                                 // sndConeAngle
+			vob.volume_type = static_cast<sound_volume_type>(in->read_enum()); // sndVolType
+			vob.radius = in->read_float();                                     // sndRadius
+			vob.name = in->read_string();                                      // sndName
 		}
 
 		void zone_music::parse(zone_music& vob, archive_reader_ref& in, game_version version) {
@@ -317,11 +317,11 @@ namespace phoenix {
 
 		void trigger_mover::parse(trigger_mover& vob, archive_reader_ref& in, game_version version) {
 			trigger::parse(vob, in, version);
-			vob.behavior = in->read_enum();              // moverBehavior
-			vob.touch_blocker_damage = in->read_float(); // touchBlockerDamage
-			vob.stay_open_time_sec = in->read_float();   // stayOpenTimeSec
-			vob.locked = in->read_bool();                // moverLocked
-			vob.auto_link = in->read_bool();             // autoLinkEnabled
+			vob.behavior = static_cast<mover_behavior>(in->read_enum()); // moverBehavior
+			vob.touch_blocker_damage = in->read_float();                 // touchBlockerDamage
+			vob.stay_open_time_sec = in->read_float();                   // stayOpenTimeSec
+			vob.locked = in->read_bool();                                // moverLocked
+			vob.auto_link = in->read_bool();                             // autoLinkEnabled
 
 			if (version == game_version::gothic_2) {
 				vob.auto_rotate = in->read_bool(); // autoRotate
@@ -329,9 +329,9 @@ namespace phoenix {
 
 			auto keyframe_count = in->read_word(); // numKeyframes
 			if (keyframe_count > 0) {
-				vob.speed = in->read_float();     // moveSpeed
-				vob.lerp_mode = in->read_enum();  // posLerpType
-				vob.speed_mode = in->read_enum(); // speedType
+				vob.speed = in->read_float();                                    // moveSpeed
+				vob.lerp_mode = static_cast<mover_lerp_mode>(in->read_enum());   // posLerpType
+				vob.speed_mode = static_cast<mover_speed_mode>(in->read_enum()); // speedType
 
 				auto sample_reader = in->read_raw_bytes(); // keyframes
 
