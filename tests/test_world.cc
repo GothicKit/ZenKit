@@ -21,7 +21,9 @@ TEST_SUITE("world") {
 
 		auto obb = mesh.oriented_bbox();
 		CHECK(obb.center == glm::vec3 {0, 0, 0});
-		CHECK(obb.rotation == glm::mat3x3 {0, 0, 0, 0, 0, 0, 0, 0, 0});
+		CHECK(obb.axes[0] == glm::vec3 {0, 0, 0});
+		CHECK(obb.axes[1] == glm::vec3 {0, 0, 0});
+		CHECK(obb.axes[2] == glm::vec3 {0, 0, 0});
 		CHECK(obb.half_width == glm::vec3 {0, 0, 0});
 
 		auto& verts = mesh.vertices();

@@ -38,8 +38,9 @@ TEST_SUITE("model meshes") {
 		CHECK(sk.bboxes().size() == 6);
 		CHECK(sk.bboxes()[0].center == glm::vec3 {0.612892151, 41.7827187, 0.705307007});
 		CHECK(sk.bboxes()[0].half_width == glm::vec3 {15.2073612, 33.4261742, 14.8513918});
-		CHECK(sk.bboxes()[0].rotation ==
-		      glm::mat3x3 {0.777145922, 0, 0.629320442, 0, 1, 0, -0.629320442, 0, 0.777145922});
+		CHECK(sk.bboxes()[0].axes[0] == glm::vec3 {0.777145922, 0, -0.629320442});
+		CHECK(sk.bboxes()[0].axes[1] == glm::vec3 {0, 1, 0});
+		CHECK(sk.bboxes()[0].axes[2] == glm::vec3 {0.629320442, 0, 0.777145922});
 
 		CHECK(sk.bboxes()[0].children.size() == 0);
 	}
