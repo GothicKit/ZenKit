@@ -59,7 +59,7 @@ namespace phoenix {
 		/**
 		 * @return Node weights.
 		 */
-		[[nodiscard]] const std::vector<weight_entry>& weights() const noexcept {
+		[[nodiscard]] const std::vector<std::vector<weight_entry>>& weights() const noexcept {
 			return _m_weights;
 		}
 
@@ -74,7 +74,7 @@ namespace phoenix {
 		proto_mesh _m_mesh;
 		std::vector<obb> _m_bboxes;
 		std::vector<wedge_normal> _m_wedge_normals;
-		std::vector<weight_entry> _m_weights;
+		std::vector<std::vector<weight_entry>> _m_weights;
 		std::vector<std::int32_t> _m_nodes;
 	};
 

@@ -28,7 +28,7 @@ TEST_SUITE("model meshes") {
 		CHECK(sk.mesh().materials().size() == 1);
 		CHECK(sk.mesh().submeshes().size() == 1);
 
-		CHECK(sk.weights().size() == 0);
+		CHECK(sk.weights().size() == 115);
 		CHECK(sk.wedge_normals().size() == 0);
 		CHECK(sk.nodes().size() == 6);
 		CHECK(sk.nodes()[0] == 0);

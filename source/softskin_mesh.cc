@@ -30,20 +30,23 @@ namespace phoenix {
 				auto weight_buffer_size = chunk.get_uint();
 				auto weight_buffer_end = chunk.position() + weight_buffer_size;
 
-				msh._m_weights.reserve(chunk.get_uint());
+				msh._m_weights.resize(msh._m_mesh.positions().size());
+				for (unsigned i = 0; i < msh._m_mesh.positions().size(); ++i) {
+					auto count = chunk.get_uint();
+					msh._m_weights[i].reserve(count);
 
-				if (weight_buffer_size / (sizeof(float) * 4 + sizeof(std::uint8_t)) == msh._m_weights.size()) {
+					for (std::uint32_t j = 0; j < count; ++j) {
+						auto& weight = msh._m_weights[i].emplace_back();
+						weight.weight = chunk.get_float();
+						weight.position = chunk.get_vec3();
+						weight.node_index = chunk.get();
+					}
+				}
+
+				if (chunk.position() != weight_buffer_end) {
 					fmt::print(stderr, "warning: softskin mesh: not all data from weight section\n");
+					chunk.position(weight_buffer_end);
 				}
-
-				for (std::uint32_t i = 0; i < msh._m_weights.size(); ++i) {
-					auto& weight = msh._m_weights.emplace_back();
-					weight.weight = chunk.get_float();
-					weight.position = chunk.get_vec3();
-					weight.node_index = chunk.get();
-				}
-
-				chunk.position(weight_buffer_end);
 
 				// wedge normals
 				msh._m_wedge_normals.reserve(chunk.get_uint());
