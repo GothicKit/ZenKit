@@ -51,13 +51,13 @@ TEST_SUITE("world") {
 		auto& mat0 = mats[0];
 		auto& mat500 = mats[500];
 
-		CHECK(mat0.name() == "OWODWATSTOP");
-		CHECK(mat0.group() == phoenix::material_group::water);
-		CHECK(mat0.texture() == "OWODSEA_A0.TGA");
+		CHECK(mat0.name == "OWODWATSTOP");
+		CHECK(mat0.group == phoenix::material_group::water);
+		CHECK(mat0.texture == "OWODSEA_A0.TGA");
 
-		CHECK(mat500.name() == "OMWABROWNGREEN01");
-		CHECK(mat500.group() == phoenix::material_group::stone);
-		CHECK(mat500.texture() == "OMWABROWNGREEN01.TGA");
+		CHECK(mat500.name == "OMWABROWNGREEN01");
+		CHECK(mat500.group == phoenix::material_group::stone);
+		CHECK(mat500.texture == "OMWABROWNGREEN01.TGA");
 	}
 
 	TEST_CASE("the bsp-tree is read correctly") {

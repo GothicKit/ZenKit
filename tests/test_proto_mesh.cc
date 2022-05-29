@@ -37,8 +37,8 @@ TEST_SUITE("mesh") {
 		CHECK(submeshes.size() == 1);
 
 		const auto& submesh = submeshes[0];
-		CHECK(submesh.mat.name() == "EVT_TPL_GITTERKAEFIG_01");
-		CHECK(submesh.mat.texture() == "OCODFLGATELI.TGA");
+		CHECK(submesh.mat.name == "EVT_TPL_GITTERKAEFIG_01");
+		CHECK(submesh.mat.texture == "OCODFLGATELI.TGA");
 
 		CHECK(submesh.colors.empty());
 		CHECK(submesh.triangle_edges.empty());

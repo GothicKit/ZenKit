@@ -26,66 +26,66 @@ namespace phoenix {
 		}
 
 		if (obj.version == MATERIAL_VERSION_G1_V108k) {
-			mat._m_name = in->read_string();
-			mat._m_group = static_cast<material_group>(in->read_byte()); // Quirk: This is not an enum
-			mat._m_color = in->read_color();                             // Quirk: This is not a color
-			mat._m_smooth_angle = in->read_float();
-			mat._m_texture = in->read_string();
+			mat.name = in->read_string();
+			mat.group = static_cast<material_group>(in->read_byte()); // Quirk: This is not an enum
+			mat.color = in->read_color();                             // Quirk: This is not a color
+			mat.smooth_angle = in->read_float();
+			mat.texture = in->read_string();
 
 			std::istringstream texture_scale {in->read_string()};
-			texture_scale >> mat._m_texture_scale.x >> mat._m_texture_scale.y;
+			texture_scale >> mat.texture_scale.x >> mat.texture_scale.y;
 
-			mat._m_texture_anim_fps = in->read_float();
-			mat._m_texture_anim_map_mode = in->read_byte();
+			mat.texture_anim_fps = in->read_float();
+			mat.texture_anim_map_mode = in->read_byte();
 
 			std::istringstream anim_map_dir {in->read_string()};
-			anim_map_dir >> mat._m_texture_anim_map_dir.x >> mat._m_texture_anim_map_dir.y;
+			anim_map_dir >> mat.texture_anim_map_dir.x >> mat.texture_anim_map_dir.y;
 
-			mat._m_disable_collision = in->read_bool();
-			mat._m_disable_lightmap = in->read_bool();
-			mat._m_dont_collapse = in->read_byte();
-			mat._m_detail_object = in->read_string();
-			mat._m_default_mapping = in->read_vec2();
-			mat._m_alpha_func = alpha_function::test;
+			mat.disable_collision = in->read_bool();
+			mat.disable_lightmap = in->read_bool();
+			mat.dont_collapse = in->read_byte();
+			mat.detail_object = in->read_string();
+			mat.default_mapping = in->read_vec2();
+			mat.alpha_func = alpha_function::test;
 		} else {
-			mat._m_name = in->read_string();
-			mat._m_group = static_cast<material_group>(in->read_byte()); // Quirk: This is not an enum
-			mat._m_color = in->read_color();                             // Quirk: This is not a color
-			mat._m_smooth_angle = in->read_float();
-			mat._m_texture = in->read_string();
+			mat.name = in->read_string();
+			mat.group = static_cast<material_group>(in->read_byte()); // Quirk: This is not an enum
+			mat.color = in->read_color();                             // Quirk: This is not a color
+			mat.smooth_angle = in->read_float();
+			mat.texture = in->read_string();
 
 			std::istringstream texture_scale {in->read_string()};
-			texture_scale >> mat._m_texture_scale.x >> mat._m_texture_scale.y;
+			texture_scale >> mat.texture_scale.x >> mat.texture_scale.y;
 
-			mat._m_texture_anim_fps = in->read_float();
-			mat._m_texture_anim_map_mode = in->read_byte();
+			mat.texture_anim_fps = in->read_float();
+			mat.texture_anim_map_mode = in->read_byte();
 
 			std::istringstream anim_map_dir {in->read_string()};
-			anim_map_dir >> mat._m_texture_anim_map_dir.x >> mat._m_texture_anim_map_dir.y;
+			anim_map_dir >> mat.texture_anim_map_dir.x >> mat.texture_anim_map_dir.y;
 
-			mat._m_disable_collision = in->read_bool();
-			mat._m_disable_lightmap = in->read_bool();
-			mat._m_dont_collapse = in->read_byte();
-			mat._m_detail_object = in->read_string();
+			mat.disable_collision = in->read_bool();
+			mat.disable_lightmap = in->read_bool();
+			mat.dont_collapse = in->read_byte();
+			mat.detail_object = in->read_string();
 
 			// This section is specific to G2
-			mat._m_detail_texture_scale = in->read_float();
-			mat._m_force_occluder = in->read_byte();
-			mat._m_environment_mapping = in->read_byte();
-			mat._m_environment_mapping_strength = in->read_float();
-			mat._m_wave_mode = in->read_byte();
-			mat._m_wave_speed = in->read_byte();
-			mat._m_wave_max_amplitude = in->read_float();
-			mat._m_wave_grid_size = in->read_float();
-			mat._m_ignore_sun = in->read_byte();
-			mat._m_alpha_func = alpha_function_from_int(in->read_byte());
+			mat.detail_texture_scale = in->read_float();
+			mat.force_occluder = in->read_byte();
+			mat.environment_mapping = in->read_byte();
+			mat.environment_mapping_strength = in->read_float();
+			mat.wave_mode = in->read_byte();
+			mat.wave_speed = in->read_byte();
+			mat.wave_max_amplitude = in->read_float();
+			mat.wave_grid_size = in->read_float();
+			mat.ignore_sun = in->read_byte();
+			mat.alpha_func = alpha_function_from_int(in->read_byte());
 
 			// The mapping comes last :)
-			mat._m_default_mapping = in->read_vec2();
+			mat.default_mapping = in->read_vec2();
 		}
 
 		if (!in->read_object_end()) {
-			fmt::print(stderr, "warning: not all data consumed of materal '{}'\n", mat._m_name);
+			fmt::print(stderr, "warning: not all data consumed of materal '{}'\n", mat.name);
 			in->skip_object(true);
 		}
 
