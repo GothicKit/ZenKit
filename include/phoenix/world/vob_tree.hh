@@ -572,6 +572,13 @@ namespace phoenix {
 		}
 
 		/**
+		 * @return The object index of this VOb
+		 */
+		[[nodiscard]] inline uint32_t object_id() const noexcept {
+			return _m_object_id;
+		}
+
+		/**
 		 * @return A list of child VOBs.
 		 */
 		[[nodiscard]] inline const std::vector<vob_tree>& children() const noexcept {
@@ -612,6 +619,7 @@ namespace phoenix {
 		    _m_content;
 
 		vob_type _m_type;
+		uint32_t _m_object_id;
 	};
 
 } // namespace phoenix

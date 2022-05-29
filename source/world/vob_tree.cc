@@ -399,6 +399,8 @@ namespace phoenix {
 			throw parser_error("vob_tree: expected object where there was none");
 		}
 
+		vob._m_object_id = obj.index;
+
 		if (const auto& it = _vob_type_map.find(obj.class_name); it != _vob_type_map.end()) {
 			vob._m_type = it->second;
 		} else {
