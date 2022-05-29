@@ -102,28 +102,28 @@ namespace phoenix {
 		};
 
 		struct base {
-			bounding_box bbox;
-			glm::vec3 position;
-			glm::mat3x3 rotation;
-			bool show_visual;
-			std::uint8_t camera_alignment;
-			bool cd_static;
-			bool cd_dynamic;
-			bool vob_static;
-			bool dynamic_shadows;
-			bool physics_enabled;
-			std::uint8_t animation_mode;
-			std::int32_t bias;
-			bool ambient;
-			float animation_strength;
-			float far_clip_scale;
+			bounding_box bbox {};
+			glm::vec3 position {};
+			glm::mat3x3 rotation {};
+			bool show_visual {};
+			std::uint8_t camera_alignment {};
+			bool cd_static {};
+			bool cd_dynamic {};
+			bool vob_static {};
+			bool dynamic_shadows {};
+			bool physics_enabled {};
+			std::uint8_t animation_mode {};
+			std::int32_t bias {};
+			bool ambient {};
+			float animation_strength {};
+			float far_clip_scale {};
 
-			std::string preset_name;
-			std::string vob_name;
-			std::string visual_name;
+			std::string preset_name {};
+			std::string vob_name {};
+			std::string visual_name {};
 
-			visual_type associated_visual_type;
-			decal visual_decal;
+			visual_type associated_visual_type {};
+			decal visual_decal {};
 
 			static void parse(base& vob, archive_reader_ref& in, game_version version);
 		};
@@ -555,6 +555,14 @@ namespace phoenix {
 		static vob_tree parse(archive_reader_ref& in, game_version version);
 
 		/**
+		 * @brief Retrieves a reference to the empty VOb.
+		 * @return The empty VOb
+		 */
+		inline static const vob_tree& empty() {
+			return _m_empty;
+		}
+
+		/**
 		 * @brief Retrieves the extra content associated with the VOB.
 		 * @tparam T The type of data to get.
 		 * @return The data.
@@ -592,7 +600,14 @@ namespace phoenix {
 		}
 
 	private:
-		std::vector<vob_tree> _m_children;
+		static vob_tree _m_empty;
+
+		vob_tree() = default;
+
+		explicit vob_tree(vob::base&& base) : _m_content(std::move(base)), _m_type(vob_type::zCVob), _m_object_id(0) {
+		}
+
+		std::vector<vob_tree> _m_children {};
 		std::variant<vob::base,
 		             vob::item,
 		             vob::pfx_controller,

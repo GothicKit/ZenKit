@@ -408,6 +408,8 @@ namespace phoenix {
 		}
 	} // namespace vob
 
+	vob_tree vob_tree::_m_empty = vob_tree {vob::base {}};
+
 	vob_tree vob_tree::parse(archive_reader_ref& in, game_version version) {
 		vob_tree vob {};
 
