@@ -565,6 +565,13 @@ namespace phoenix {
 		}
 
 		/**
+		 * @return The type of this VOb
+		 */
+		[[nodiscard]] inline vob_type type() const noexcept {
+			return _m_type;
+		}
+
+		/**
 		 * @return A list of child VOBs.
 		 */
 		[[nodiscard]] inline const std::vector<vob_tree>& children() const noexcept {
