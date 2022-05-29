@@ -216,7 +216,7 @@ namespace phoenix {
 		void light::parse(light& vob, archive_reader_ref& in, game_version version) {
 			base::parse(vob, in, version);
 
-			vob.preset_name = in->read_string();  // lightPresetInUse
+			vob.preset = in->read_string();       // lightPresetInUse
 			vob.type = in->read_enum();           // lightType
 			vob.range = in->read_float();         // range
 			vob.color = in->read_color();         // color
