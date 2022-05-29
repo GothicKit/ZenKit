@@ -171,6 +171,48 @@ namespace phoenix {
 			}
 		}
 
+		void light_preset::parse(light_preset& vob, archive_reader_ref& in, game_version version) {
+			vob.preset = in->read_string();       // lightPresetInUse
+			vob.type = in->read_enum();           // lightType
+			vob.range = in->read_float();         // range
+			vob.color = in->read_color();         // color
+			vob.cone_angle = in->read_float();    // spotConeAngle
+			vob.is_static = in->read_bool();      // lightStatic
+			vob.quality = in->read_enum();        // lightQuality
+			vob.lensflare_fx = in->read_string(); // lensflareFX
+
+			if (!vob.is_static) {
+				vob.on = in->read_bool();                      // turnedOn
+				auto range_ani_scale = in->read_string();      // rangeAniScale
+				vob.range_animation_fps = in->read_float();    // rangeAniFPS
+				vob.range_animation_smooth = in->read_bool();  // rangeAniSmooth
+				auto color_animation_list = in->read_string(); // colorAniList
+				vob.color_animation_fps = in->read_float();    // colorAniFPS
+				vob.color_animation_smooth = in->read_bool();  // colorAniSmooth
+
+				std::istringstream ranges {range_ani_scale};
+				float value;
+				while (!ranges.eof()) {
+					ranges >> value;
+					vob.range_animation_scale.push_back(value);
+				}
+
+				std::istringstream colors {color_animation_list};
+				colors.setf(std::ios::skipws);
+
+				uint8_t r, g, b;
+				char br = ' ';
+				while (!colors.eof()) {
+					colors >> br >> r >> g >> b >> br;
+					vob.color_animation_list.emplace_back(r, g, b, 0);
+				}
+
+				if (version == game_version::gothic_2) {
+					vob.can_move = in->read_bool(); // canMove
+				}
+			}
+		}
+
 		void light::parse(light& vob, archive_reader_ref& in, game_version version) {
 			base::parse(vob, in, version);
 

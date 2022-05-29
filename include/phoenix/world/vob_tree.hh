@@ -163,6 +163,28 @@ namespace phoenix {
 			}
 		};
 
+		struct light_preset {
+			std::string preset;
+			std::uint32_t type;
+			float range;
+			glm::u8vec4 color;
+			float cone_angle;
+			bool is_static;
+			std::uint32_t quality;
+			std::string lensflare_fx;
+
+			bool on;
+			std::vector<float> range_animation_scale;
+			float range_animation_fps;
+			bool range_animation_smooth;
+			std::vector<glm::u8vec4> color_animation_list;
+			float color_animation_fps;
+			bool color_animation_smooth;
+			bool can_move;
+
+			static void parse(light_preset& vob, archive_reader_ref& in, game_version version);
+		};
+
 		struct base {
 			bounding_box bbox {};
 			glm::vec3 position {};
