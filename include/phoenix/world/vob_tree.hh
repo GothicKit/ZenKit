@@ -565,6 +565,12 @@ namespace phoenix {
 		}
 
 		/**
+		 * @brief Retrieves the data associated with this VOb as a `vob::base`.
+		 * @return The data.
+		 */
+		[[nodiscard]] const vob::base& as_base() const;
+
+		/**
 		 * @return The type of this VOb
 		 */
 		[[nodiscard]] inline vob_type type() const noexcept {

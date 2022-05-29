@@ -556,4 +556,83 @@ namespace phoenix {
 
 		return vob;
 	}
+	
+	const vob::base& vob_tree::as_base() const {
+		switch (_m_type) {
+		case vob_type::zCCamTrj_KeyFrame:
+		case vob_type::zCVobLevelCompo:
+		case vob_type::zCVobStartpoint:
+		case vob_type::zCVobScreenFX:
+		case vob_type::zCVobStair:
+		case vob_type::zCVobSpot:
+		case vob_type::zCVob:
+			return get<vob::base>();
+		case vob_type::zCCSCamera:
+			return get<vob::cs_camera>();
+		case vob_type::zCVobAnimate:
+			return get<vob::animate>();
+		case vob_type::zCZoneVobFarPlane:
+		case vob_type::zCZoneVobFarPlaneDefault:
+			return get<vob::zone_far_plane>();
+		case vob_type::zCZoneZFogDefault:
+		case vob_type::zCZoneZFog:
+			return get<vob::zone_fog>();
+		case vob_type::zCVobLensFlare:
+			return get<vob::lens_flare>();
+		case vob_type::oCItem:
+			return get<vob::item>();
+		case vob_type::zCTrigger:
+		case vob_type::oCCSTrigger:
+			return get<vob::trigger>();
+		case vob_type::oCMOB:
+			return get<vob::mob>();
+		case vob_type::oCMobInter:
+		case vob_type::oCMobLadder:
+		case vob_type::oCMobSwitch:
+		case vob_type::oCMobWheel:
+		case vob_type::oCMobBed:
+			return get<vob::mob_inter>();
+		case vob_type::oCMobFire:
+			return get<vob::mob_fire>();
+		case vob_type::oCMobContainer:
+			return get<vob::mob_container>();
+		case vob_type::oCMobDoor:
+			return get<vob::mob_door>();
+		case vob_type::zCPFXController:
+			return get<vob::pfx_controller>();
+		case vob_type::zCVobLight:
+			return get<vob::light>();
+		case vob_type::zCVobSound:
+			return get<vob::sound>();
+		case vob_type::zCVobSoundDaytime:
+			return get<vob::sound_daytime>();
+		case vob_type::oCZoneMusic:
+		case vob_type::oCZoneMusicDefault:
+			return get<vob::zone_music>();
+		case vob_type::zCMessageFilter:
+			return get<vob::message_filter>();
+		case vob_type::zCCodeMaster:
+			return get<vob::code_master>();
+		case vob_type::zCTriggerList:
+			return get<vob::trigger_list>();
+		case vob_type::oCTriggerScript:
+			return get<vob::trigger_script>();
+		case vob_type::zCMover:
+			return get<vob::trigger_mover>();
+		case vob_type::oCTriggerChangeLevel:
+			return get<vob::trigger_change_level>();
+		case vob_type::zCTriggerWorldStart:
+			return get<vob::trigger_world_start>();
+		case vob_type::oCTouchDamage:
+			return get<vob::touch_damage>();
+		case vob_type::zCTriggerUntouch:
+			return get<vob::trigger_untouch>();
+		case vob_type::zCEarthquake:
+			return get<vob::earthquake>();
+		case vob_type::zCMoverController:
+			return get<vob::mover_controller>();
+		default:
+			throw std::runtime_error {"cannot retrieve VOb data of unknown VOb"};
+		}
+	}
 } // namespace phoenix
