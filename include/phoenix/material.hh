@@ -23,6 +23,7 @@ namespace phoenix {
 		earth = 4,
 		water = 5,
 		snow = 6,
+		none = 7,
 	};
 
 	/**
