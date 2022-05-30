@@ -71,7 +71,7 @@ namespace phoenix {
 		return msgs;
 	}
 
-	const message_block* messages::block_by_name(const std::string& name) {
+	const message_block* messages::block_by_name(const std::string& name) const {
 		if (auto it = _m_blocks_by_name.find(name); it != _m_blocks_by_name.end()) {
 			return it->second;
 		}

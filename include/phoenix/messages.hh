@@ -41,7 +41,7 @@ namespace phoenix {
 		 * @param name The name of the block to get
 		 * @return A pointer to the block or `nullptr` if the block was not found.
 		 */
-		const message_block* block_by_name(const std::string& name);
+		const message_block* block_by_name(const std::string& name) const;
 
 	private:
 		std::vector<message_block> _m_blocks;
