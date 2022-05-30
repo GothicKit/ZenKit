@@ -53,16 +53,22 @@ namespace phoenix {
 				push_int(pop_int() + pop_int());
 				break;
 			case op_subtract:
-				push_int(pop_int() - pop_int());
+				a = pop_int();
+				b = pop_int();
+				push_int(a - b);
 				break;
 			case op_multiply:
 				push_int(pop_int() * pop_int());
 				break;
 			case op_divide:
-				push_int(pop_int() / pop_int());
+				a = pop_int();
+				b = pop_int();
+				push_int(a / b);
 				break;
 			case op_modulo:
-				push_int(pop_int() % pop_int());
+				a = pop_int();
+				b = pop_int();
+				push_int(a % b);
 				break;
 			case op_bitor:
 				push_int(pop_int() | pop_int());
@@ -71,19 +77,29 @@ namespace phoenix {
 				push_int(pop_int() & pop_int());
 				break;
 			case op_less:
-				push_int(pop_int() < pop_int());
+				a = pop_int();
+				b = pop_int();
+				push_int(a < b);
 				break;
 			case op_greater:
-				push_int(pop_int() > pop_int());
+				a = pop_int();
+				b = pop_int();
+				push_int(a > b);
 				break;
 			case op_shift_left:
-				push_int(pop_int() << pop_int());
+				a = pop_int();
+				b = pop_int();
+				push_int(a << b);
 				break;
 			case op_shift_right:
-				push_int(pop_int() >> pop_int());
+				a = pop_int();
+				b = pop_int();
+				push_int(a >> b);
 				break;
 			case op_less_or_equal:
-				push_int(pop_int() <= pop_int());
+				a = pop_int();
+				b = pop_int();
+				push_int(a <= b);
 				break;
 			case op_equal:
 				push_int(pop_int() == pop_int());
@@ -92,7 +108,9 @@ namespace phoenix {
 				push_int(pop_int() != pop_int());
 				break;
 			case op_greater_or_equal:
-				push_int(pop_int() >= pop_int());
+				a = pop_int();
+				b = pop_int();
+				push_int(a >= b);
 				break;
 			case op_plus:
 				push_int(+pop_int());
