@@ -39,8 +39,8 @@ namespace phoenix {
 	 * (https://github.com/ataulien/ZenLib/blob/e1a5e1b12e71690a5470f3be2aa3d0d6419f5191/zenload/zCModelAni.cpp#L50).
 	 * Thanks to Andre Taulien and Alexander Stillich!
 	 */
-	static glm::vec4 read_sample_quaternion(buffer& in) {
-		glm::vec4 v {};
+	static glm::quat read_sample_quaternion(buffer& in) {
+		glm::quat v {};
 		v.x = ((float) in.get_ushort() - SAMPLE_QUAT_MIDDLE) * SAMPLE_QUAT_SCALAR;
 		v.y = ((float) in.get_ushort() - SAMPLE_QUAT_MIDDLE) * SAMPLE_QUAT_SCALAR;
 		v.z = ((float) in.get_ushort() - SAMPLE_QUAT_MIDDLE) * SAMPLE_QUAT_SCALAR;

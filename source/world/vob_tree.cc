@@ -381,7 +381,7 @@ namespace phoenix {
 				auto sample_reader = in->read_raw_bytes(); // keyframes
 
 				for (int i = 0; i < keyframe_count; ++i) {
-					vob->keyframes.push_back(animation_sample {sample_reader.get_vec3(), sample_reader.get_vec4()});
+					vob->keyframes.push_back(animation_sample {sample_reader.get_vec3(), glm::quat {sample_reader.get_vec4()}});
 				}
 			}
 

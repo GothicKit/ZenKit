@@ -17,7 +17,7 @@ namespace phoenix {
 	 */
 	struct animation_sample {
 		glm::vec3 position;
-		glm::vec4 rotation;
+		glm::quat rotation;
 	};
 
 	/**

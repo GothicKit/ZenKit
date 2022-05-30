@@ -34,9 +34,9 @@ TEST_SUITE("animation") {
 		auto& sample1 = anim.samples().back();
 
 		CHECK(sample0.position == glm::vec3 {-1.11763525f, 85.9253082f, -2.8696866f});
-		CHECK(sample0.rotation == glm::vec4 {-0.0477454737f, 0.687823235f, 0.0753993988f, 0.720371067f});
+		CHECK(sample0.rotation == glm::quat {0.720371067f, -0.0477454737f, 0.687823235f, 0.0753993988f});
 
 		CHECK(sample1.position == glm::vec3 {12.0363817f, -0.0012588501f, 16.447361f});
-		CHECK(sample1.rotation == glm::vec4 {0.0f, 0.707081676f, 0.0f, 0.707131922f});
+		CHECK(sample1.rotation == glm::quat {0.707131922f, 0.0f, 0.707081676f, 0.0f});
 	}
 }
