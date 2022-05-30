@@ -52,9 +52,9 @@ TEST_SUITE("mesh") {
 		CHECK(compare_triangle(submesh.triangles[15], {28, 20, 3}));
 
 		CHECK(submesh.wedges.size() == 32);
-		CHECK(compare_wedge(submesh.wedges[0], {{0, 0, -1}, {-1.50000048, 1.49251938}, 4}));
-		CHECK(compare_wedge(submesh.wedges[1], {{-1, 0, 0}, {2.49999952, 1.49251938}, 4}));
-		CHECK(compare_wedge(submesh.wedges[31], {{0, 0, -1}, {-1.50000048, -2.49251938}, 7}));
+		CHECK(compare_wedge(submesh.wedges[0], {{0, 0, -1}, {-1.50000048, -1.49251938}, 4}));
+		CHECK(compare_wedge(submesh.wedges[1], {{-1, 0, 0}, {2.49999952, -1.49251938}, 4}));
+		CHECK(compare_wedge(submesh.wedges[31], {{0, 0, -1}, {-1.50000048, 2.49251938}, 7}));
 
 		CHECK(submesh.triangle_plane_indices.size() == 16);
 		CHECK(submesh.triangle_plane_indices[0] == 0);
