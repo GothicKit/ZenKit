@@ -7,6 +7,7 @@
 #include <phoenix/world/vob_tree.hh>
 #include <phoenix/world/way_net.hh>
 
+#include <memory>
 #include <vector>
 
 namespace phoenix {
@@ -34,40 +35,9 @@ namespace phoenix {
 		 */
 		[[nodiscard]] static world parse(buffer& in, game_version version);
 
-		/**
-		 * @return All root VOBs of the world.
-		 */
-		[[nodiscard]] inline const std::vector<vob_tree>& vobs() const noexcept {
-			return _m_root_vobs;
-		}
-
-		/**
-		 * @return The world's mesh.
-		 */
-		[[nodiscard]] inline const mesh& world_mesh() const noexcept {
-			return _m_mesh;
-		}
-
-		/**
-		 * @return The world's BSP-tree.
-		 * @see https://en.wikipedia.org/wiki/Binary_space_partitioning
-		 */
-		[[nodiscard]] inline const bsp_tree& tree() const noexcept {
-			return _m_tree;
-		}
-
-		/**
-		 * @return The world's way-net.
-		 */
-		[[nodiscard]] inline const way_net& waynet() const noexcept {
-			return _m_way_net;
-		}
-
-	private:
-		std::vector<vob_tree> _m_root_vobs;
-		mesh _m_mesh;
-		bsp_tree _m_tree;
-		way_net _m_way_net;
+		std::vector<std::unique_ptr<vob::vob>> world_vobs;
+		mesh world_mesh;
+		bsp_tree world_bsp_tree;
+		way_net world_way_net;
 	};
-
 } // namespace phoenix

@@ -38,17 +38,17 @@ namespace phoenix {
 				}  while (chunk_type != 0xB060);
 
 
-				wld._m_tree = bsp_tree::parse(in, bsp_version);
-				wld._m_mesh = mesh::parse(mesh_data, wld._m_tree.leaf_polygons());
+				wld.world_bsp_tree = bsp_tree::parse(in, bsp_version);
+				wld.world_mesh = mesh::parse(mesh_data, wld.world_bsp_tree.leaf_polygons());
 			} else if (chnk.object_name == "VobTree") {
 				auto count = archive->read_int();
-				wld._m_root_vobs.reserve(count);
+				wld.world_vobs.reserve(count);
 
 				for (int i = 0; i < count; ++i) {
-					wld._m_root_vobs.emplace_back(vob_tree::parse(archive, version));
+					wld.world_vobs.push_back(parse_vob_tree(archive, version));
 				}
 			} else if (chnk.object_name == "WayNet") {
-				wld._m_way_net = way_net::parse(archive);
+				wld.world_way_net = way_net::parse(archive);
 			}
 
 			if (!archive->read_object_end()) {

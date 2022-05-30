@@ -9,7 +9,7 @@ TEST_SUITE("world") {
 		auto in = phoenix::buffer::open("./samples/world.proprietary.zen");
 		auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_1);
 
-		auto& mesh = wld.world_mesh();
+		auto& mesh = wld.world_mesh;
 		CHECK(mesh.vertices().size() == 55439);
 		CHECK(mesh.features().size() == 419936);
 		CHECK(mesh.materials().size() == 2263);
@@ -65,7 +65,7 @@ TEST_SUITE("world") {
 	TEST_CASE("the bsp-tree is read correctly") {
 		auto in = phoenix::buffer::open("./samples/world.proprietary.zen");
 		auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_1);
-		auto& tree = wld.tree();
+		auto& tree = wld.world_bsp_tree;
 
 		CHECK(tree.mode() == phoenix::bsp_tree_mode::outdoor);
 
@@ -140,23 +140,20 @@ TEST_SUITE("world") {
 	TEST_CASE("the vob-tree is read correctly") {
 		auto in = phoenix::buffer::open("./samples/world.proprietary.zen");
 		auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_1);
-		auto& vobs = wld.vobs();
+		auto& vobs = wld.world_vobs;
 
 		CHECK(vobs.size() == 14);
 
 		// FIXME: Test all kinds of VOBs
 		auto& vob0 = vobs[0];
-		auto& vob0_data = vob0.get<phoenix::vob::base>();
-
 		auto& vob13 = vobs[13];
-		auto& vob13_data = vob13.get<phoenix::vob::base>();
 
 		{
-			auto box0 = vob0_data.bbox;
+			auto box0 = vob0->bbox;
 			CHECK(box0.min == glm::vec3 {-71919.9609, -13091.8232, -59900});
 			CHECK(box0.max == glm::vec3 {108999.992, 20014.0352, 67399.9921});
 
-			auto mat = vob0_data.rotation;
+			auto mat = vob0->rotation;
 			CHECK(mat[0][0] == 1.0f);
 			CHECK(mat[1][0] == 0.0f);
 			CHECK(mat[2][0] == 0.0f);
@@ -167,35 +164,34 @@ TEST_SUITE("world") {
 			CHECK(mat[1][2] == 0.0f);
 			CHECK(mat[2][2] == 1.0f);
 
-			CHECK(vob0_data.vob_name == "LEVEL-VOB");
-			CHECK(vob0_data.visual_name == "SURFACE.3DS");
-			CHECK(vob0_data.preset_name.empty());
-			CHECK(vob0_data.position == glm::vec3 {0, 0, 0});
-			CHECK(!vob0_data.show_visual);
-			CHECK(vob0_data.camera_alignment == 0);
-			CHECK(vob0_data.anim_mode == phoenix::animation_mode::none);
-			CHECK(vob0_data.anim_strength == 0.0f);
-			CHECK(vob0_data.far_clip_scale == 0);
-			CHECK(vob0_data.cd_static);
-			CHECK(!vob0_data.cd_dynamic);
-			CHECK(!vob0_data.vob_static);
-			CHECK(vob0_data.dynamic_shadows == 0);
-			CHECK(vob0_data.bias == 0);
-			CHECK(!vob0_data.ambient);
-			CHECK(!vob0_data.physics_enabled);
+			CHECK(vob0->vob_name == "LEVEL-VOB");
+			CHECK(vob0->visual_name == "SURFACE.3DS");
+			CHECK(vob0->preset_name.empty());
+			CHECK(vob0->position == glm::vec3 {0, 0, 0});
+			CHECK(!vob0->show_visual);
+			CHECK(vob0->camera_alignment == 0);
+			CHECK(vob0->anim_mode == phoenix::animation_mode::none);
+			CHECK(vob0->anim_strength == 0.0f);
+			CHECK(vob0->far_clip_scale == 0);
+			CHECK(vob0->cd_static);
+			CHECK(!vob0->cd_dynamic);
+			CHECK(!vob0->vob_static);
+			CHECK(vob0->dynamic_shadows == 0);
+			CHECK(vob0->bias == 0);
+			CHECK(!vob0->ambient);
+			CHECK(!vob0->physics_enabled);
 
-			auto& children = vob0.children();
+			auto& children = vob0->children;
 			CHECK(children.size() == 7496);
 
 			auto& child1 = children[0];
-			auto& child1_data = child1.get<phoenix::vob::base>();
 
 			{
-				auto box1 = child1_data.bbox;
+				auto box1 = child1->bbox;
 				CHECK(box1.min == glm::vec3 {-18596.9004, -161.17189, 4091.1333});
 				CHECK(box1.max == glm::vec3 {-18492.0723, -111.171906, 4191.26221});
 
-				auto matc = child1_data.rotation;
+				auto matc = child1->rotation;
 				CHECK(matc[0][0] == -0.779196978f);
 				CHECK(matc[1][0] == 0.0f);
 				CHECK(matc[2][0] == 0.626779079f);
@@ -206,33 +202,33 @@ TEST_SUITE("world") {
 				CHECK(matc[1][2] == 0.0f);
 				CHECK(matc[2][2] == -0.779196978f);
 
-				CHECK(child1_data.vob_name == "FP_CAMPFIRE_PATH_BANDITOS2_03_02");
-				CHECK(child1_data.visual_name.empty());
-				CHECK(child1_data.preset_name.empty());
-				CHECK(child1_data.position == glm::vec3 {-18544.4863, -136.171906, 4141.19727});
-				CHECK(!child1_data.show_visual);
-				CHECK(child1_data.camera_alignment == 0);
-				CHECK(child1_data.anim_mode == phoenix::animation_mode::none);
-				CHECK(child1_data.anim_strength == 0.0f);
-				CHECK(child1_data.far_clip_scale == 0);
-				CHECK(!child1_data.cd_static);
-				CHECK(!child1_data.cd_dynamic);
-				CHECK(!child1_data.vob_static);
-				CHECK(child1_data.dynamic_shadows == 0);
-				CHECK(child1_data.bias == 0);
-				CHECK(!child1_data.ambient);
-				CHECK(!child1_data.physics_enabled);
+				CHECK(child1->vob_name == "FP_CAMPFIRE_PATH_BANDITOS2_03_02");
+				CHECK(child1->visual_name.empty());
+				CHECK(child1->preset_name.empty());
+				CHECK(child1->position == glm::vec3 {-18544.4863, -136.171906, 4141.19727});
+				CHECK(!child1->show_visual);
+				CHECK(child1->camera_alignment == 0);
+				CHECK(child1->anim_mode == phoenix::animation_mode::none);
+				CHECK(child1->anim_strength == 0.0f);
+				CHECK(child1->far_clip_scale == 0);
+				CHECK(!child1->cd_static);
+				CHECK(!child1->cd_dynamic);
+				CHECK(!child1->vob_static);
+				CHECK(child1->dynamic_shadows == 0);
+				CHECK(child1->bias == 0);
+				CHECK(!child1->ambient);
+				CHECK(!child1->physics_enabled);
 
-				CHECK(child1.children().empty());
+				CHECK(child1->children.empty());
 			}
 		}
 
 		{
-			auto box2 = vob13_data.bbox;
+			auto box2 = vob13->bbox;
 			CHECK(box2.min == glm::vec3 {-9999.40234, -10000.0039, -9200});
 			CHECK(box2.max == glm::vec3 {9060.59765, 5909.90039, 7537.47461});
 
-			auto mat = vob13_data.rotation;
+			auto mat = vob13->rotation;
 			CHECK(mat[0][0] == 1.0f);
 			CHECK(mat[1][0] == 0.0f);
 			CHECK(mat[2][0] == 0.0f);
@@ -243,24 +239,24 @@ TEST_SUITE("world") {
 			CHECK(mat[1][2] == 0.0f);
 			CHECK(mat[2][2] == 1.0f);
 
-			CHECK(vob13_data.vob_name == "LEVEL-VOB");
-			CHECK(vob13_data.visual_name == "OLDCAMP.3DS");
-			CHECK(vob13_data.preset_name.empty());
-			CHECK(vob13_data.position == glm::vec3 {0, 0, 0});
-			CHECK(!vob13_data.show_visual);
-			CHECK(vob13_data.camera_alignment == 0);
-			CHECK(vob13_data.anim_mode == phoenix::animation_mode::none);
-			CHECK(vob13_data.anim_strength == 0.0f);
-			CHECK(vob13_data.far_clip_scale == 0);
-			CHECK(!vob13_data.cd_static);
-			CHECK(!vob13_data.cd_dynamic);
-			CHECK(!vob13_data.vob_static);
-			CHECK(vob13_data.dynamic_shadows == 0);
-			CHECK(vob13_data.bias == 0);
-			CHECK(!vob13_data.ambient);
-			CHECK(!vob13_data.physics_enabled);
+			CHECK(vob13->vob_name == "LEVEL-VOB");
+			CHECK(vob13->visual_name == "OLDCAMP.3DS");
+			CHECK(vob13->preset_name.empty());
+			CHECK(vob13->position == glm::vec3 {0, 0, 0});
+			CHECK(!vob13->show_visual);
+			CHECK(vob13->camera_alignment == 0);
+			CHECK(vob13->anim_mode == phoenix::animation_mode::none);
+			CHECK(vob13->anim_strength == 0.0f);
+			CHECK(vob13->far_clip_scale == 0);
+			CHECK(!vob13->cd_static);
+			CHECK(!vob13->cd_dynamic);
+			CHECK(!vob13->vob_static);
+			CHECK(vob13->dynamic_shadows == 0);
+			CHECK(vob13->bias == 0);
+			CHECK(!vob13->ambient);
+			CHECK(!vob13->physics_enabled);
 
-			auto& children = vob13.children();
+			auto& children = vob13->children;
 			CHECK(children.size() == 3250);
 		}
 	}
@@ -268,7 +264,7 @@ TEST_SUITE("world") {
 	TEST_CASE("the way-net is read correctly") {
 		auto in = phoenix::buffer::open("./samples/world.proprietary.zen");
 		auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_1);
-		auto& waynet = wld.waynet();
+		auto& waynet = wld.world_way_net;
 
 		CHECK(waynet.waypoints().size() == 2784);
 		CHECK(waynet.edges().size() == 3500);
