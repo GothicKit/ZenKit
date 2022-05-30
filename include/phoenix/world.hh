@@ -35,7 +35,7 @@ namespace phoenix {
 		 */
 		[[nodiscard]] static world parse(buffer& in, game_version version);
 
-		std::vector<std::unique_ptr<vob::vob>> world_vobs;
+		std::vector<std::unique_ptr<vobs::vob>> world_vobs;
 		mesh world_mesh;
 		bsp_tree world_bsp_tree;
 		way_net world_way_net;

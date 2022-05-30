@@ -137,7 +137,7 @@ namespace phoenix {
 		random = 2,
 	};
 
-	namespace vob {
+	namespace vobs {
 		struct decal {
 			std::string name;
 			glm::vec2 dimension;
@@ -639,5 +639,5 @@ namespace phoenix {
 	 * @param version The version of Gothic being used.
 	 * @return The tree parsed.
 	 */
-	std::unique_ptr<vob::vob> parse_vob_tree(archive_reader_ref& in, game_version version);
+	std::unique_ptr<vobs::vob> parse_vob_tree(archive_reader_ref& in, game_version version);
 } // namespace phoenix

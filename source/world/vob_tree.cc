@@ -64,7 +64,7 @@ namespace phoenix {
 	    {"\xA7", visual_type::unknown},
 	};
 
-	namespace vob {
+	namespace vobs {
 		void vob::parse(vob* vob, archive_reader_ref& in, game_version version) {
 			auto packed = in->read_int() != 0; // pack
 			bool has_visual_object = true;
@@ -454,8 +454,8 @@ namespace phoenix {
 		}
 	} // namespace vob
 
-	std::unique_ptr<vob::vob> parse_vob_tree(archive_reader_ref& in, game_version version) {
-		std::vector<std::unique_ptr<vob::vob>> vobs {};
+	std::unique_ptr<vobs::vob> parse_vob_tree(archive_reader_ref& in, game_version version) {
+		std::vector<std::unique_ptr<vobs::vob>> vobs {};
 
 		archive_object obj;
 		if (!in->read_object_begin(obj)) {
@@ -470,7 +470,7 @@ namespace phoenix {
 			throw parser_error(fmt::format("vob_tree: expected a '*:zCVob' object but got '{}'", obj.class_name));
 		}
 
-		std::unique_ptr<vob::vob> vob;
+		std::unique_ptr<vobs::vob> vob;
 
 		switch (type) {
 		case vob_type::zCCamTrj_KeyFrame:
@@ -480,128 +480,128 @@ namespace phoenix {
 		case vob_type::zCVobStair:
 		case vob_type::zCVobSpot:
 		case vob_type::zCVob:
-			vob = std::make_unique<vob::vob>();
-			vob::vob::parse(vob.get(), in, version);
+			vob = std::make_unique<vobs::vob>();
+			vobs::vob::parse(vob.get(), in, version);
 			break;
 		case vob_type::zCCSCamera:
-			vob = std::make_unique<vob::cs_camera>();
-			vob::cs_camera::parse((vob::cs_camera*) vob.get(), in, version);
+			vob = std::make_unique<vobs::cs_camera>();
+			vobs::cs_camera::parse((vobs::cs_camera*) vob.get(), in, version);
 			break;
 		case vob_type::zCVobAnimate:
-			vob = std::make_unique<vob::animate>();
-			vob::animate::parse((vob::animate*) vob.get(), in, version);
+			vob = std::make_unique<vobs::animate>();
+			vobs::animate::parse((vobs::animate*) vob.get(), in, version);
 			break;
 		case vob_type::zCZoneVobFarPlane:
 		case vob_type::zCZoneVobFarPlaneDefault:
-			vob = std::make_unique<vob::zone_far_plane>();
-			vob::zone_far_plane::parse((vob::zone_far_plane*) vob.get(), in, version);
+			vob = std::make_unique<vobs::zone_far_plane>();
+			vobs::zone_far_plane::parse((vobs::zone_far_plane*) vob.get(), in, version);
 			break;
 		case vob_type::zCZoneZFogDefault:
 		case vob_type::zCZoneZFog:
-			vob = std::make_unique<vob::zone_fog>();
-			vob::zone_fog::parse((vob::zone_fog*) vob.get(), in, version);
+			vob = std::make_unique<vobs::zone_fog>();
+			vobs::zone_fog::parse((vobs::zone_fog*) vob.get(), in, version);
 			break;
 		case vob_type::zCVobLensFlare:
-			vob = std::make_unique<vob::lens_flare>();
-			vob::lens_flare::parse((vob::lens_flare*) vob.get(), in, version);
+			vob = std::make_unique<vobs::lens_flare>();
+			vobs::lens_flare::parse((vobs::lens_flare*) vob.get(), in, version);
 			break;
 		case vob_type::oCItem:
-			vob = std::make_unique<vob::item>();
-			vob::item::parse((vob::item*) vob.get(), in, version);
+			vob = std::make_unique<vobs::item>();
+			vobs::item::parse((vobs::item*) vob.get(), in, version);
 			break;
 		case vob_type::zCTrigger:
 		case vob_type::oCCSTrigger:
-			vob = std::make_unique<vob::trigger>();
-			vob::trigger::parse((vob::trigger*) vob.get(), in, version);
+			vob = std::make_unique<vobs::trigger>();
+			vobs::trigger::parse((vobs::trigger*) vob.get(), in, version);
 			break;
 		case vob_type::oCMOB:
-			vob = std::make_unique<vob::mob>();
-			vob::mob::parse((vob::mob*) vob.get(), in, version);
+			vob = std::make_unique<vobs::mob>();
+			vobs::mob::parse((vobs::mob*) vob.get(), in, version);
 			break;
 		case vob_type::oCMobInter:
 		case vob_type::oCMobLadder:
 		case vob_type::oCMobSwitch:
 		case vob_type::oCMobWheel:
 		case vob_type::oCMobBed:
-			vob = std::make_unique<vob::mob_inter>();
-			vob::mob_inter::parse((vob::mob_inter*) vob.get(), in, version);
+			vob = std::make_unique<vobs::mob_inter>();
+			vobs::mob_inter::parse((vobs::mob_inter*) vob.get(), in, version);
 			break;
 		case vob_type::oCMobFire:
-			vob = std::make_unique<vob::mob_fire>();
-			vob::mob_fire::parse((vob::mob_fire*) vob.get(), in, version);
+			vob = std::make_unique<vobs::mob_fire>();
+			vobs::mob_fire::parse((vobs::mob_fire*) vob.get(), in, version);
 			break;
 		case vob_type::oCMobContainer:
-			vob = std::make_unique<vob::mob_container>();
-			vob::mob_container::parse((vob::mob_container*) vob.get(), in, version);
+			vob = std::make_unique<vobs::mob_container>();
+			vobs::mob_container::parse((vobs::mob_container*) vob.get(), in, version);
 			break;
 		case vob_type::oCMobDoor:
-			vob = std::make_unique<vob::mob_door>();
-			vob::mob_door::parse((vob::mob_door*) vob.get(), in, version);
+			vob = std::make_unique<vobs::mob_door>();
+			vobs::mob_door::parse((vobs::mob_door*) vob.get(), in, version);
 			break;
 		case vob_type::zCPFXController:
-			vob = std::make_unique<vob::pfx_controller>();
-			vob::pfx_controller::parse((vob::pfx_controller*) vob.get(), in, version);
+			vob = std::make_unique<vobs::pfx_controller>();
+			vobs::pfx_controller::parse((vobs::pfx_controller*) vob.get(), in, version);
 			break;
 		case vob_type::zCVobLight:
-			vob = std::make_unique<vob::light>();
-			vob::light::parse((vob::light*) vob.get(), in, version);
+			vob = std::make_unique<vobs::light>();
+			vobs::light::parse((vobs::light*) vob.get(), in, version);
 			break;
 		case vob_type::zCVobSound:
-			vob = std::make_unique<vob::sound>();
-			vob::sound::parse((vob::sound*) vob.get(), in, version);
+			vob = std::make_unique<vobs::sound>();
+			vobs::sound::parse((vobs::sound*) vob.get(), in, version);
 			break;
 		case vob_type::zCVobSoundDaytime:
-			vob = std::make_unique<vob::sound_daytime>();
-			vob::sound_daytime::parse((vob::sound_daytime*) vob.get(), in, version);
+			vob = std::make_unique<vobs::sound_daytime>();
+			vobs::sound_daytime::parse((vobs::sound_daytime*) vob.get(), in, version);
 			break;
 		case vob_type::oCZoneMusic:
 		case vob_type::oCZoneMusicDefault:
-			vob = std::make_unique<vob::zone_music>();
-			vob::zone_music::parse((vob::zone_music*) vob.get(), in, version);
+			vob = std::make_unique<vobs::zone_music>();
+			vobs::zone_music::parse((vobs::zone_music*) vob.get(), in, version);
 			break;
 		case vob_type::zCMessageFilter:
-			vob = std::make_unique<vob::message_filter>();
-			vob::message_filter::parse((vob::message_filter*) vob.get(), in, version);
+			vob = std::make_unique<vobs::message_filter>();
+			vobs::message_filter::parse((vobs::message_filter*) vob.get(), in, version);
 			break;
 		case vob_type::zCCodeMaster:
-			vob = std::make_unique<vob::code_master>();
-			vob::code_master::parse((vob::code_master*) vob.get(), in, version);
+			vob = std::make_unique<vobs::code_master>();
+			vobs::code_master::parse((vobs::code_master*) vob.get(), in, version);
 			break;
 		case vob_type::zCTriggerList:
-			vob = std::make_unique<vob::trigger_list>();
-			vob::trigger_list::parse((vob::trigger_list*) vob.get(), in, version);
+			vob = std::make_unique<vobs::trigger_list>();
+			vobs::trigger_list::parse((vobs::trigger_list*) vob.get(), in, version);
 			break;
 		case vob_type::oCTriggerScript:
-			vob = std::make_unique<vob::trigger_script>();
-			vob::trigger_script::parse((vob::trigger_script*) vob.get(), in, version);
+			vob = std::make_unique<vobs::trigger_script>();
+			vobs::trigger_script::parse((vobs::trigger_script*) vob.get(), in, version);
 			break;
 		case vob_type::zCMover:
-			vob = std::make_unique<vob::trigger_mover>();
-			vob::trigger_mover::parse((vob::trigger_mover*) vob.get(), in, version);
+			vob = std::make_unique<vobs::trigger_mover>();
+			vobs::trigger_mover::parse((vobs::trigger_mover*) vob.get(), in, version);
 			break;
 		case vob_type::oCTriggerChangeLevel:
-			vob = std::make_unique<vob::trigger_change_level>();
-			vob::trigger_change_level::parse((vob::trigger_change_level*) vob.get(), in, version);
+			vob = std::make_unique<vobs::trigger_change_level>();
+			vobs::trigger_change_level::parse((vobs::trigger_change_level*) vob.get(), in, version);
 			break;
 		case vob_type::zCTriggerWorldStart:
-			vob = std::make_unique<vob::trigger_world_start>();
-			vob::trigger_world_start::parse((vob::trigger_world_start*) vob.get(), in, version);
+			vob = std::make_unique<vobs::trigger_world_start>();
+			vobs::trigger_world_start::parse((vobs::trigger_world_start*) vob.get(), in, version);
 			break;
 		case vob_type::oCTouchDamage:
-			vob = std::make_unique<vob::touch_damage>();
-			vob::touch_damage::parse((vob::touch_damage*) vob.get(), in, version);
+			vob = std::make_unique<vobs::touch_damage>();
+			vobs::touch_damage::parse((vobs::touch_damage*) vob.get(), in, version);
 			break;
 		case vob_type::zCTriggerUntouch:
-			vob = std::make_unique<vob::trigger_untouch>();
-			vob::trigger_untouch::parse((vob::trigger_untouch*) vob.get(), in, version);
+			vob = std::make_unique<vobs::trigger_untouch>();
+			vobs::trigger_untouch::parse((vobs::trigger_untouch*) vob.get(), in, version);
 			break;
 		case vob_type::zCEarthquake:
-			vob = std::make_unique<vob::earthquake>();
-			vob::earthquake::parse((vob::earthquake*) vob.get(), in, version);
+			vob = std::make_unique<vobs::earthquake>();
+			vobs::earthquake::parse((vobs::earthquake*) vob.get(), in, version);
 			break;
 		case vob_type::zCMoverController:
-			vob = std::make_unique<vob::mover_controller>();
-			vob::mover_controller::parse((vob::mover_controller*) vob.get(), in, version);
+			vob = std::make_unique<vobs::mover_controller>();
+			vobs::mover_controller::parse((vobs::mover_controller*) vob.get(), in, version);
 			break;
 		case vob_type::unknown:
 			break;
