@@ -282,6 +282,99 @@ namespace phoenix {
 			register_external(name, std::function {cb});
 		}
 
+		/**
+		 * @brief Overrides a function in Daedalus code with an external definition.
+		 *
+		 * Whenever the function with the given name would be called from within Daedalus code, redirect the call
+		 * to the given external callback handler instead. Further documentation on these callback handlers can be
+		 * found in the documentation for #register_external.
+		 *
+		 * @tparam R The return type of the external.
+		 * @tparam P The parameters types of the external.
+		 * @param name The name of the function to override.
+		 * @param callback The C++ function to register as the external.
+		 * @see #register_external(const std::string&, std::function)
+		 * @todo Deduplicate source code!
+		 */
+		template <typename R, typename... P>
+		void override_function(const std::string& name, const std::function<R(P...)>& callback) {
+			auto* sym = _m_script.find_symbol_by_name(name);
+			if (sym == nullptr)
+				throw std::runtime_error {"symbol not found"};
+			if (sym->is_external())
+				throw std::runtime_error {"symbol is already an external"};
+
+			if constexpr (!std::same_as<void, R>) {
+				if (!sym->has_return())
+					throw illegal_external_rtype(sym, "<non-void>");
+				if constexpr (is_instance_ptr<R>::value) {
+					if (sym->rtype() != dt_instance)
+						throw illegal_external_rtype(sym, "instance");
+				} else if constexpr (std::floating_point<R>) {
+					if (sym->rtype() != dt_float)
+						throw illegal_external_rtype(sym, "float");
+				} else if constexpr (std::convertible_to<int32_t, R>) {
+					if (sym->rtype() != dt_integer)
+						throw illegal_external_rtype(sym, "int");
+				} else if constexpr (std::convertible_to<std::string, R>) {
+					if (sym->rtype() != dt_string)
+						throw illegal_external_rtype(sym, "string");
+				} else {
+					throw std::runtime_error {"unsupported return type"};
+				}
+			} else {
+				if (sym->has_return())
+					throw illegal_external_rtype(sym, "void");
+			}
+
+			std::vector<symbol*> params = _m_script.find_parameters_for_function(sym);
+			if (params.size() < sizeof...(P))
+				throw illegal_external {"too many arguments declared for function override " + sym->name() + ": declared " +
+				                        std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
+
+			if (params.size() > sizeof...(P))
+				throw illegal_external {"not enough arguments declared for function override " + sym->name() + ": declared " +
+				                        std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
+
+			if constexpr (sizeof...(P) > 0) {
+				check_external_params<0, P...>(params);
+			}
+
+			// *evil template hacking ensues*
+			_m_function_overrides[sym->address()] = [callback](daedalus_interpreter& vm) {
+				if constexpr (std::same_as<void, R>) {
+					if constexpr (sizeof...(P) > 0) {
+						auto v = vm.pop_values_for_external<P...>();
+						std::apply(callback, v);
+					} else {
+						callback();
+					}
+				} else {
+					if constexpr (sizeof...(P) > 0) {
+						vm.push_value_from_external(std::apply(callback, vm.pop_values_for_external<P...>()));
+					} else {
+						vm.push_value_from_external(callback());
+					}
+				}
+			};
+		}
+
+		/**
+		 * @brief Overrides a function in Daedalus code with an external definition.
+		 *
+		 * Same as #override_function(const std::string&, std::function). This method is here to bypass a template
+		 * deduction failure when passing lambdas directly.
+		 *
+		 * @tparam T The type of external function to register.
+		 * @param name The name of the function to override.
+		 * @param cb The callback function to register.
+		 * @see #override_function(const std::string&, std::function)
+		 */
+		template <typename T>
+		void override_function(const std::string& name, const T& cb) {
+			override_function(name, std::function {cb});
+		}
+
 		script& loaded_script() const noexcept {
 			return _m_script;
 		}
@@ -462,6 +555,7 @@ namespace phoenix {
 		std::stack<daedalus_stack_frame> _m_stack;
 		std::stack<daedalus_call_stack_frame> _m_call_stack;
 		std::unordered_map<symbol*, std::function<void(daedalus_interpreter&)>> _m_externals;
+		std::unordered_map<uint32_t, std::function<void(daedalus_interpreter&)>> _m_function_overrides;
 
 		symbol* _m_self_sym;
 		std::shared_ptr<instance> _m_instance;

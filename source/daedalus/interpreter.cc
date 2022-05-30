@@ -121,14 +121,25 @@ namespace phoenix {
 				break;
 			case op_return:
 				return false;
-			case op_call:
-				sym = _m_script.find_symbol_by_address(instr.address);
-				if (sym == nullptr) {
-					throw std::runtime_error {"op_call: no symbol found for address " + std::to_string(instr.address)};
+			case op_call: {
+				// Check if the function is overridden and if it is, call the resulting external.
+				auto cb = _m_function_overrides.find(instr.address);
+				if (cb != _m_function_overrides.end()) {
+					push_call(sym);
+					cb->second(*this);
+					pop_call();
+				} else {
+					sym = _m_script.find_symbol_by_address(instr.address);
+					if (sym == nullptr) {
+						throw std::runtime_error {"op_call: no symbol found for address " +
+						                          std::to_string(instr.address)};
+					}
+
+					call(sym);
 				}
 
-				call(sym);
 				break;
+			}
 			case op_call_external: {
 				sym = _m_script.find_symbol_by_index(instr.symbol);
 				if (sym == nullptr) {
