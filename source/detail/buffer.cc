@@ -284,8 +284,14 @@ namespace phoenix {
 		auto tmp = get_string(lf);
 		(void) get_char(); // ignore the <LF> character itself
 
-		if (skip_whitespace)
-			position(position() + std::max(0L, mismatch([](char chr) { return !std::isspace(chr); })));
+		if (skip_whitespace) {
+			auto count = mismatch([](char chr) { return !std::isspace(chr); });
+			if (count == -1) {
+				position(limit()); // the end of the buffer has been reached
+			} else {
+				position(position() + count);
+			}
+		}
 
 		return tmp;
 	}
