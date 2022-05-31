@@ -511,19 +511,19 @@ namespace phoenix {
 		}
 
 		/**
-		 * @brief Get a 3x3 row-major matrix from the buffer.
+		 * @brief Get a 3x3 column-major matrix from the buffer.
 		 * @return The vector just read
 		 */
 		[[nodiscard]] inline glm::mat3x3 get_mat3x3() {
-			return glm::transpose(glm::mat3x3 {get_vec3(), get_vec3(), get_vec3()});
+			return glm::mat3x3 {get_vec3(), get_vec3(), get_vec3()};
 		}
 
 		/**
-		 * @brief Get a 4x4 row-major matrix from the buffer.
+		 * @brief Get a 4x4 column-major matrix from the buffer.
 		 * @return The vector just read
 		 */
 		inline glm::mat4x4 get_mat4x4() {
-			return glm::transpose(glm::mat4x4 {get_vec4(), get_vec4(), get_vec4(), get_vec4()});
+			return glm::mat4x4 {get_vec4(), get_vec4(), get_vec4(), get_vec4()};
 		}
 
 		/**

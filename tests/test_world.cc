@@ -194,11 +194,11 @@ TEST_SUITE("world") {
 				auto matc = child1->rotation;
 				CHECK(matc[0][0] == -0.779196978f);
 				CHECK(matc[1][0] == 0.0f);
-				CHECK(matc[2][0] == 0.626779079f);
+				CHECK(matc[2][0] == -0.626779079f);
 				CHECK(matc[0][1] == 0.0f);
 				CHECK(matc[1][1] == 1.0f);
 				CHECK(matc[2][1] == 0.0f);
-				CHECK(matc[0][2] == -0.626779079f);
+				CHECK(matc[0][2] == 0.626779079f);
 				CHECK(matc[1][2] == 0.0f);
 				CHECK(matc[2][2] == -0.779196978f);
 
