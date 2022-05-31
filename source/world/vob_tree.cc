@@ -613,12 +613,31 @@ namespace phoenix {
 		}
 
 		auto child_count = in->read_int();
+		if (vob == nullptr) {
+			std::function<void(int)> skip;
+			skip = [&skip, &in](int count) {
+				for (int i = 0; i < count; ++i) {
+					in->skip_object(false);
+
+					auto child_count = in->read_int();
+					skip(child_count);
+				}
+			};
+
+			skip(child_count);
+			return nullptr;
+		}
+
 		vob->children.reserve(child_count);
 		vob->id = obj.version;
 		vob->type = type;
 
 		for (int i = 0; i < child_count; ++i) {
-			vob->children.push_back(parse_vob_tree(in, version));
+			auto child = parse_vob_tree(in, version);
+			if (child == nullptr)
+				continue;
+
+			vob->children.push_back(std::move(child));
 		}
 
 		return vob;
