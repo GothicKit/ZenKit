@@ -8,8 +8,8 @@ TEST_SUITE("model script") {
 		auto buf = phoenix::buffer::open("./samples/waran.msb");
 		auto script = phoenix::model_script::parse_binary(buf);
 
-		CHECK(script.mesh_and_tree.disable_mesh == true);
-		CHECK(script.mesh_and_tree.name == "WAR_BODY");
+		CHECK(script.skeleton.disable_mesh == true);
+		CHECK(script.skeleton.name == "WAR_BODY");
 
 		CHECK(script.animations.size() == 62);
 		CHECK(script.animations[0].name == "T_FISTRUN_2_FISTRUNL");
@@ -17,9 +17,9 @@ TEST_SUITE("model script") {
 		CHECK(script.animations[0].next == "S_FISTRUNL");
 		CHECK(script.animations[0].blend_in == 0);
 		CHECK(script.animations[0].blend_out == 0);
-		CHECK(script.animations[0].flags == phoenix::model_script_animation_flags::move);
+		CHECK(script.animations[0].flags == phoenix::mds::af_move);
 		CHECK(script.animations[0].model == "WARAN_RUN_KM01.ASC");
-		CHECK(script.animations[0].direction == phoenix::model_script_animation_direction::forward);
+		CHECK(script.animations[0].direction == phoenix::mds::animation_direction::forward);
 		CHECK(script.animations[0].first_frame == 1);
 		CHECK(script.animations[0].last_frame == 8);
 		CHECK(script.animations[0].fps == 25);
@@ -32,9 +32,9 @@ TEST_SUITE("model script") {
 		CHECK(script.aliases[0].next == "S_FISTRUN");
 		CHECK(script.aliases[0].blend_in == 0);
 		CHECK(script.aliases[0].blend_out == 0);
-		CHECK(script.aliases[0].flags == (phoenix::model_script_animation_flags::move | phoenix::model_script_animation_flags::idle));
+		CHECK(script.aliases[0].flags == (phoenix::mds::af_move | phoenix::mds::af_idle));
 		CHECK(script.aliases[0].alias == "S_FISTWALK");
-		CHECK(script.aliases[0].direction == phoenix::model_script_animation_direction::forward);
+		CHECK(script.aliases[0].direction == phoenix::mds::animation_direction::forward);
 
 		CHECK(script.blends.size() == 17);
 		CHECK(script.blends[0].name == "T_FISTRUNR_2_FISTRUN");
@@ -48,7 +48,7 @@ TEST_SUITE("model script") {
 		CHECK(script.combinations[0].next == "T_LOOK");
 		CHECK(script.combinations[0].blend_in == 0.3f);
 		CHECK(script.combinations[0].blend_out == 0.3f);
-		CHECK(script.combinations[0].flags == phoenix::model_script_animation_flags::move);
+		CHECK(script.combinations[0].flags == phoenix::mds::af_move);
 		CHECK(script.combinations[0].model == "C_LOOK_");
 		CHECK(script.combinations[0].last_frame == 9);
 
@@ -64,8 +64,15 @@ TEST_SUITE("model script") {
 
 		CHECK(script.animations[0].pfx.size() == 0);
 		CHECK(script.animations[0].pfx_stop.size() == 0);
-		CHECK(script.animations[0].morph_animations.size() == 0);
-		CHECK(script.animations[0].event_tags.size() == 0);
-		CHECK(script.disable.size() == 0);
+		CHECK(script.animations[0].morph.size() == 0);
+		CHECK(script.animations[0].events.size() == 0);
+		CHECK(script.disabled_animations.size() == 0);
+
+		CHECK(script.animations[47].events.size() == 4);
+		CHECK(script.animations[47].events[3].frame == 0);
+		CHECK(script.animations[47].events[3].type == phoenix::mds::event_tag_type::window);
+		CHECK(script.animations[47].events[3].frames.size() == 2);
+		CHECK(script.animations[47].events[3].frames[0] == 8);
+		CHECK(script.animations[47].events[3].frames[1] == 15);
 	}
 }

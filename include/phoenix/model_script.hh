@@ -3,165 +3,224 @@
 #pragma once
 #include <phoenix/detail/buffer.hh>
 
-#include <optional>
-
 namespace phoenix {
-	enum class model_script_animation_flags : uint8_t {
-		none = 0,
-		move = 1,
-		rotate = 2,
-		queue = 4,
-		fly = 8,
-		idle = 16,
-	};
+	namespace mds {
+		enum class event_tag_type {
+			none,
+			create_item,
+			insert_item,
+			remove_item,
+			destroy_item,
+			place_item,
+			exchange_item,
+			fight_mode,
+			place_munition,
+			remove_munition,
+			draw_sound,
+			undraw_sound,
+			swap_mesh,
+			draw_torch,
+			inventory_torch,
+			drop_torch,
+			hit_limb,
+			hit_direction,
+			dam_multiply,
+			par_frame,
+			opt_frame,
+			hit_end,
+			window,
+		};
 
-	inline model_script_animation_flags operator|(model_script_animation_flags a, model_script_animation_flags b) {
-		return static_cast<model_script_animation_flags>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
-	}
+		enum class event_fight_mode {
+			fist,
+			one_handed,
+			two_handed,
+			bow,
+			crossbow,
+			magic,
+			none,
+		};
 
-	inline model_script_animation_flags operator&(model_script_animation_flags a, model_script_animation_flags b) {
-		return static_cast<model_script_animation_flags>(static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
-	}
+		enum animation_flags : uint8_t {
+			af_none = 0,
+			af_move = 1,
+			af_rotate = 2,
+			af_queue = 4,
+			af_fly = 8,
+			af_idle = 16,
+		};
 
-	enum class model_script_animation_direction : uint8_t {
-		forward,
-		backward,
-	};
+		enum class animation_direction : uint8_t {
+			forward = 0,
+			backward = 1,
+		};
 
-	enum class model_script_event_type {
-		none,
-		create_item,
-		insert_item,
-		remove_item,
-		destroy_item,
-		place_item,
-		exchange_item,
-		fight_mode,
-		place_munition,
-		remove_munition,
-		draw_sound,
-		undraw_sound,
-		swap_mesh,
-		draw_torch,
-		inventory_torch,
-		drop_torch,
-		hit_limb,
-		hit_direction,
-		dam_multiply,
-		par_frame,
-		opt_frame,
-		hit_end,
-		window
-	};
+		/**
+		 * @brief The `meshAndTree` tag
+		 * @remark MDS syntax: `meshAndTree(<string> [DONT_USE_MESH])`
+		 */
+		struct skeleton {
+			std::string name;
+			bool disable_mesh {false};
+		};
 
-	enum class model_script_fight_mode {
-		fist,
-		one_handed,
-		two_handed,
-		bow,
-		crossbow,
-		magic,
-		none
-	};
+		/**
+		 * @brief The `modelTag` tag
+		 * @remark MDS syntax: `modelTag(<string> <string>)`
+		 */
+		struct model_tag {
+			std::string bone;
+		};
 
-	struct model_script_sound_effect {
-		std::int32_t frame;
-		std::string name;
-		float range;
-		bool empty_slot;
-	};
+		/**
+		 * @brief The `*eventTag` tag
+		 * @remark MDS syntax: `*eventTag(<int> <string> [<string>] [<string>] [ATTACH])`
+		 */
+		struct event_tag {
+			std::int32_t frame;
+			event_tag_type type;
+			std::string slot {};
+			std::string slot2 {};
+			std::string item {};
+			std::vector<int32_t> frames {};
+			event_fight_mode fight_mode {event_fight_mode::none};
+			bool attached {false};
+		};
 
-	struct model_script_particle_effect {
-		std::int32_t frame;
-		std::int32_t index;
-		std::string name;
-		std::string position;
-		bool attached;
-	};
+		/**
+		 * @brief The `*eventPFX` tag
+		 * @remark MDS syntax: `*eventPFX(<int> [<int>] <string> <string> [ATTACH])`
+		 */
+		struct event_pfx {
+			std::int32_t frame;
+			std::int32_t index {0};
+			std::string name;
+			std::string position;
+			bool attached {false};
+		};
 
-	struct model_script_particle_effect_stop {
-		std::int32_t frame;
-		std::int32_t index;
-	};
+		/**
+		 * @brief The `*eventPFXStop` tag
+		 * @remark MDS syntax: `*eventPFXStop(<int> <int>)`
+		 */
+		struct event_pfx_stop {
+			std::int32_t frame;
+			std::int32_t index;
+		};
 
-	struct model_script_morph_animation {
-		std::int32_t frame;
-		std::string animation;
-		std::string node;
-	};
+		/**
+		 * @brief The `*eventSFX` tag
+		 * @remark MDS syntax: `*eventSFX(<int> <string> [R:<float>] [EMPTY_SLOT])`
+		 */
+		struct event_sfx {
+			std::int32_t frame;
+			std::string name;
+			float range {1000.0f};
+			bool empty_slot {false};
+		};
 
-	struct model_script_event {
-		std::int32_t frame;
-		model_script_event_type type;
-		std::string slot;
-		std::string slot2;
-		std::string item;
-		std::vector<int32_t> frames;
-		model_script_fight_mode fight_mode {model_script_fight_mode::none};
-	};
+		/**
+		 * @brief The `*eventMMStartAni` tag
+		 * @remark MDS syntax: `*eventMMStartAni(<int> <string> [<string>])`
+		 */
+		struct event_morph_animate {
+			std::int32_t frame;
+			std::string animation;
+			std::string node {};
+		};
 
-	struct model_script_animation {
-		std::string name;
-		std::uint32_t layer;
-		std::string next;
-		float blend_in;
-		float blend_out;
-		model_script_animation_flags flags;
-		std::string model;
-		model_script_animation_direction direction;
-		std::int32_t first_frame;
-		std::int32_t last_frame;
-		float fps;
-		float speed;
-		float collision_volume_scale;
+		/**
+		 * @brief The `aniAlias` tag
+		 * @remark MDS syntax: `ani(<string> <int> <string> <float> <float> <flags> <string> <F|R> <int> <int>
+		 *         [FPS:<float>] [CVS:<float>])`
+		 */
+		struct animation {
+			std::string name;
+			std::uint32_t layer;
+			std::string next;
+			float blend_in;
+			float blend_out;
+			animation_flags flags;
+			std::string model;
+			animation_direction direction;
+			std::int32_t first_frame;
+			std::int32_t last_frame;
+			float fps;
+			float speed;
+			float collision_volume_scale;
 
-		std::vector<model_script_sound_effect> sfx;
-		std::vector<model_script_particle_effect> pfx;
-		std::vector<model_script_particle_effect_stop> pfx_stop;
-		std::vector<model_script_morph_animation> morph_animations;
-		std::vector<model_script_event> event_tags;
+			std::vector<event_tag> events {};
+			std::vector<event_pfx> pfx {};
+			std::vector<event_pfx_stop> pfx_stop {};
+			std::vector<event_sfx> sfx {};
+			std::vector<event_morph_animate> morph {};
+		};
 
-	};
+		/**
+		 * @brief The `aniAlias` tag
+		 * @remark MDS syntax: `aniAlias(<string> <int> <string> <float> <float> <flags> <string> <F|R>)`
+		 */
+		struct animation_alias {
+			std::string name;
+			std::uint32_t layer;
+			std::string next;
+			float blend_in;
+			float blend_out;
+			animation_flags flags;
+			std::string alias;
+			animation_direction direction;
+		};
 
-	struct model_script_animation_alias {
-		std::string name;
-		std::uint32_t layer;
-		std::string next;
-		float blend_in;
-		float blend_out;
-		model_script_animation_flags flags;
-		std::string alias;
-		model_script_animation_direction direction;
-	};
+		/**
+		 * @brief The `aniBlend` tag
+		 * @remark MDS syntax: `aniBlend(<string> [<int>] <string> [<float> <float>])`
+		 */
+		struct animation_blending {
+			std::string name;
+			std::string next;
+			float blend_in {0};
+			float blend_out {0};
+		};
 
-	struct model_script_animation_blend {
-		std::string name;
-		std::string next;
-		float blend_in;
-		float blend_out;
-	};
+		/**
+		 * @brief The `aniComb` tag
+		 * @remark MDS syntax: `aniComb(<string> <int> <string> <float> <float> <flags> <string> <int>)`
+		 */
+		struct animation_combination {
+			std::string name;
+			std::uint32_t layer;
+			std::string next;
+			float blend_in;
+			float blend_out;
+			animation_flags flags;
+			std::string model;
+			std::int32_t last_frame;
+		};
 
-	struct model_script_animation_combination {
-		std::string name;
-		std::uint32_t layer;
-		std::string next;
-		float blend_in;
-		float blend_out;
-		model_script_animation_flags flags;
-		std::string model;
-		std::int32_t last_frame;
-	};
+		animation_flags animation_flags_from_string(std::string_view str);
+	} // namespace mds
 
-	struct model_script_mesh_and_tree {
-		std::string name;
-		bool disable_mesh;
-	};
-
-	model_script_animation_flags animation_flags_from_string(std::string_view str);
-	model_script_event_type event_type_from_string(const std::string& str);
-
+	/**
+	 * @brief Represents a model script containing animation settings.
+	 *
+	 * Parses ZenGin model scripts. The reference implementation can be found on GitHub:
+	 * https://github.com/Try/ZenLib/blob/master/zenload/modelScriptParser.cpp
+	 *
+	 * Thanks to the original author, Andre Taulien, nigleb, noahndertaler and ousnius as well
+	 * as Try for additional work on their ZenLib fork!
+	 *
+	 * @see https://github.com/ataulien/ZenLib
+	 * @see https://github.com/Try/ZenLib
+	 */
 	class model_script {
 	public:
+		/**
+		 * @brief Parses a model script (MDS) file from the given buffer.
+		 * @param buf A buffer to parse from.
+		 * @return The parsed model script.
+		 */
+		static model_script parse(buffer& buf);
+
 		/**
 		 * @brief Parses a binary model script (MSB) file from the given buffer.
 		 * @param buf A buffer to parse from.
@@ -169,15 +228,14 @@ namespace phoenix {
 		 */
 		static model_script parse_binary(buffer& buf);
 
-		model_script_mesh_and_tree mesh_and_tree {};
+	public:
+		mds::skeleton skeleton;
 		std::vector<std::string> meshes;
-		std::vector<model_script_event> model_tags;
-		std::vector<model_script_animation> animations;
-
-		std::vector<model_script_animation_alias> aliases;
-		std::vector<model_script_animation_blend> blends;
-		std::vector<model_script_animation_combination> combinations;
-		std::vector<std::string> disable;
+		std::vector<std::string> disabled_animations;
+		std::vector<mds::animation_combination> combinations;
+		std::vector<mds::animation_blending> blends;
+		std::vector<mds::animation_alias> aliases;
+		std::vector<mds::model_tag> model_tags;
+		std::vector<mds::animation> animations;
 	};
-
-}
+} // namespace phoenix
