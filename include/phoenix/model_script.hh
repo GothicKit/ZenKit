@@ -28,82 +28,6 @@ namespace phoenix {
 		backward,
 	};
 
-	struct model_script_animation {
-		std::string name;
-		std::uint32_t layer;
-		std::string next;
-		float blend_in;
-		float blend_out;
-		model_script_animation_flags flags;
-		std::string model;
-		model_script_animation_direction direction;
-		std::int32_t first_frame;
-		std::int32_t last_frame;
-		float fps;
-		float speed;
-		float collision_volume_scale;
-	};
-
-	struct model_script_animation_alias {
-		std::string name;
-		std::uint32_t layer;
-		std::string next;
-		float blend_in;
-		float blend_out;
-		model_script_animation_flags flags;
-		std::string alias;
-		model_script_animation_direction direction;
-	};
-
-	struct model_script_animation_blend {
-		std::string name;
-		std::string next;
-		float blend_in;
-		float blend_out;
-	};
-
-	struct model_script_animation_combination {
-		std::string name;
-		std::uint32_t layer;
-		std::string next;
-		float blend_in;
-		float blend_out;
-		model_script_animation_flags flags;
-		std::string model;
-		std::int32_t last_frame;
-	};
-
-	struct model_script_mesh_and_tree {
-		std::string name;
-		bool disable;
-	};
-
-	struct model_script_sound_effect {
-		std::int32_t frame;
-		std::string name;
-		float range;
-		bool empty_slot;
-	};
-
-	struct model_script_particle_effect {
-		std::int32_t frame;
-		std::int32_t index;
-		std::string name;
-		std::string position;
-		bool attached;
-	};
-
-	struct model_script_particle_effect_stop {
-		std::int32_t frame;
-		std::int32_t index;
-	};
-
-	struct model_script_morph_animation {
-		std::int32_t frame;
-		std::string animation;
-		std::string node;
-	};
-
 	enum class model_script_event_type {
 		none,
 		create_item,
@@ -140,6 +64,32 @@ namespace phoenix {
 		none
 	};
 
+	struct model_script_sound_effect {
+		std::int32_t frame;
+		std::string name;
+		float range;
+		bool empty_slot;
+	};
+
+	struct model_script_particle_effect {
+		std::int32_t frame;
+		std::int32_t index;
+		std::string name;
+		std::string position;
+		bool attached;
+	};
+
+	struct model_script_particle_effect_stop {
+		std::int32_t frame;
+		std::int32_t index;
+	};
+
+	struct model_script_morph_animation {
+		std::int32_t frame;
+		std::string animation;
+		std::string node;
+	};
+
 	struct model_script_event {
 		std::int32_t frame;
 		model_script_event_type type;
@@ -150,6 +100,66 @@ namespace phoenix {
 		model_script_fight_mode fight_mode {model_script_fight_mode::none};
 	};
 
+	struct model_script_animation {
+		std::string name;
+		std::uint32_t layer;
+		std::string next;
+		float blend_in;
+		float blend_out;
+		model_script_animation_flags flags;
+		std::string model;
+		model_script_animation_direction direction;
+		std::int32_t first_frame;
+		std::int32_t last_frame;
+		float fps;
+		float speed;
+		float collision_volume_scale;
+
+		std::vector<model_script_sound_effect> sfx;
+		std::vector<model_script_particle_effect> pfx;
+		std::vector<model_script_particle_effect_stop> pfx_stop;
+		std::vector<model_script_morph_animation> morph_animations;
+		std::vector<model_script_event> event_tags;
+
+	};
+
+	struct model_script_animation_alias {
+		std::string name;
+		std::uint32_t layer;
+		std::string next;
+		float blend_in;
+		float blend_out;
+		model_script_animation_flags flags;
+		std::string alias;
+		model_script_animation_direction direction;
+	};
+
+	struct model_script_animation_blend {
+		std::string name;
+		std::string next;
+		float blend_in;
+		float blend_out;
+	};
+
+	struct model_script_animation_combination {
+		std::string name;
+		std::uint32_t layer;
+		std::string next;
+		float blend_in;
+		float blend_out;
+		model_script_animation_flags flags;
+		std::string model;
+		std::int32_t last_frame;
+	};
+
+	struct model_script_mesh_and_tree {
+		std::string name;
+		bool disable_mesh;
+	};
+
+	model_script_animation_flags animation_flags_from_string(std::string_view str);
+	model_script_event_type event_type_from_string(const std::string& str);
+
 	class model_script {
 	public:
 		/**
@@ -159,19 +169,15 @@ namespace phoenix {
 		 */
 		static model_script parse_binary(buffer& buf);
 
-		std::optional<model_script_animation> animation;
-		std::optional<model_script_animation_alias> alias;
-		std::optional<model_script_animation_blend> blend;
-		std::optional<model_script_animation_combination> combination;
-		std::optional<model_script_mesh_and_tree> mesh_and_tree;
+		model_script_mesh_and_tree mesh_and_tree {};
 		std::vector<std::string> meshes;
-		std::vector<model_script_sound_effect> sfx;
-		std::vector<model_script_particle_effect> pfx;
-		std::vector<model_script_particle_effect_stop> pfx_stop;
-		std::vector<model_script_morph_animation> morph_animations;
-		std::vector<model_script_event> model_tag;
-		std::vector<model_script_event> event_tag;
-		std::optional<std::string> disable;
+		std::vector<model_script_event> model_tags;
+		std::vector<model_script_animation> animations;
+
+		std::vector<model_script_animation_alias> aliases;
+		std::vector<model_script_animation_blend> blends;
+		std::vector<model_script_animation_combination> combinations;
+		std::vector<std::string> disable;
 	};
 
 }

@@ -1,7 +1,9 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
-#include <phoenix/model_script.hh>
+#include <phoenix/detail/compat.hh>
+#include <phoenix/detail/error.hh>
 #include <phoenix/mesh.hh>
+#include <phoenix/model_script.hh>
 
 #include <fmt/format.h>
 
@@ -19,7 +21,7 @@ namespace phoenix {
 		mesh_and_tree = 0xF300,
 		register_mesh = 0xF400,
 		animation_enum = 0xF500,
-		animation_enum_end          = 0xF5FF,
+		animation_enum_end = 0xF5FF,
 		// CHUNK_ANI_MAX_FPS           = 0xF510,
 		animation = 0xF520,
 		animation_alias = 0xF530,
@@ -30,7 +32,7 @@ namespace phoenix {
 		animation_disable = 0xF580,
 		model_tag = 0xF590,
 		animation_events = 0xF5A0,
-		animation_events_end        = 0xF5AF,
+		animation_events_end = 0xF5AF,
 		event_sfx = 0xF5A1,
 		event_sfx_ground = 0xF5A2,
 		event_tag = 0xF5A3,
@@ -43,6 +45,23 @@ namespace phoenix {
 		// CHUNK_EVENT_CAMTREMOR       = 0xF5AA
 		unknown,
 	};
+
+
+	enum class parser_state : uint32_t {
+		root = 0,
+		model = 1,
+		animation_list = 2,
+		animation = 3,
+		animation_events = 4,
+	};
+
+	parser_state operator++(parser_state a) {
+		return static_cast<parser_state>(static_cast<uint32_t>(a) + 1);
+	}
+
+	parser_state operator--(parser_state a) {
+		return static_cast<parser_state>(static_cast<uint32_t>(a) - 1);
+	}
 
 	static const std::unordered_map<std::string, model_script_event_type> event_types {
 	    {"DEF_CREATE_ITEM", model_script_event_type::create_item},
@@ -70,7 +89,7 @@ namespace phoenix {
 	    {"DEF_WINDOW", model_script_event_type::window},
 	};
 
-	static model_script_animation_flags animation_flags_from_string(std::string_view str) {
+	model_script_animation_flags animation_flags_from_string(std::string_view str) {
 		model_script_animation_flags flags = model_script_animation_flags::none;
 
 		for (char c : str) {
@@ -98,9 +117,20 @@ namespace phoenix {
 		return flags;
 	}
 
+	model_script_event_type event_type_from_string(const std::string& str) {
+		return event_types.at(str);
+	}
+
+	model_script model_script::parse(buffer&) {
+		model_script script {};
+		return script;
+	}
+
 	model_script model_script::parse_binary(buffer& buf) {
 		model_script script {};
 		model_script_chunk type = model_script_chunk::unknown;
+		parser_state state = parser_state::root;
+		int32_t animation_index = -1;
 
 		do {
 			type = static_cast<model_script_chunk>(buf.get_ushort());
@@ -109,16 +139,75 @@ namespace phoenix {
 			auto chunk = buf.extract(length);
 
 			switch (type) {
+			case model_script_chunk::model_script:
+				(void) chunk.get_uint();      // bool
+				(void) chunk.get_line(false); // path
+				break;
+			case model_script_chunk::source:
+				(void) date::parse(chunk);    // date
+				(void) chunk.get_line(false); // path
+				break;
+			case model_script_chunk::model:
+				++state;
+				break;
 			case model_script_chunk::mesh_and_tree: {
-				model_script_mesh_and_tree mat {};
-				mat.disable = chunk.get_uint() != 0;
-				mat.name = chunk.get_line(false);
-				script.mesh_and_tree = mat;
+				script.mesh_and_tree.disable_mesh = chunk.get_uint() != 0;
+				script.mesh_and_tree.name = chunk.get_line(false);
 				break;
 			}
 			case model_script_chunk::register_mesh:
 				script.meshes.push_back(chunk.get_line());
 				break;
+			case model_script_chunk::animation_enum:
+				++state;
+				break;
+			case model_script_chunk::animation_alias: {
+				model_script_animation_alias alias {};
+				alias.name = chunk.get_line(false);
+				alias.layer = chunk.get_uint();
+				alias.next = chunk.get_line(false);
+				alias.blend_in = chunk.get_float();
+				alias.blend_out = chunk.get_float();
+				alias.flags = animation_flags_from_string(chunk.get_line(false));
+				alias.alias = chunk.get_line(false);
+				alias.direction = chunk.get_line(false).starts_with('R') ? model_script_animation_direction::backward
+				                                                         : model_script_animation_direction::forward;
+				script.aliases.push_back(std::move(alias));
+				break;
+			}
+			case model_script_chunk::animation_blend: {
+				model_script_animation_blend blend {};
+				blend.name = chunk.get_line(false);
+				blend.next = chunk.get_line(false);
+				blend.blend_in = chunk.get_float();
+				blend.blend_out = chunk.get_float();
+				script.blends.push_back(std::move(blend));
+				break;
+			}
+			case model_script_chunk::animation_combination: {
+				model_script_animation_combination combo {};
+				combo.name = chunk.get_line(false);
+				combo.layer = chunk.get_uint();
+				combo.next = chunk.get_line(false);
+				combo.blend_in = chunk.get_float();
+				combo.blend_out = chunk.get_float();
+				combo.flags = animation_flags_from_string(chunk.get_line(false));
+				combo.model = chunk.get_line(false);
+				combo.last_frame = chunk.get_int();
+				script.combinations.push_back(std::move(combo));
+				break;
+			}
+			case model_script_chunk::animation_disable:
+				script.disable.push_back(chunk.get_line(false));
+				break;
+			case model_script_chunk::model_tag: {
+				model_script_event event {};
+				event.frame = chunk.get_int();
+				event.type = event_types.at(chunk.get_line(false));
+				(void) chunk.get_line(true);
+				script.model_tags.push_back(std::move(event));
+				break;
+			}
 			case model_script_chunk::animation: {
 				model_script_animation anim {};
 				anim.name = chunk.get_line(false);
@@ -135,49 +224,14 @@ namespace phoenix {
 				anim.fps = chunk.get_float();
 				anim.speed = chunk.get_float();
 				anim.collision_volume_scale = chunk.get_float();
-				script.animation = std::move(anim);
+				script.animations.push_back(std::move(anim));
+				++animation_index;
 				break;
 			}
-			case model_script_chunk::animation_alias: {
-				model_script_animation_alias alias {};
-				alias.name = chunk.get_line(false);
-				alias.layer = chunk.get_uint();
-				alias.next = chunk.get_line(false);
-				alias.blend_in = chunk.get_float();
-				alias.blend_out = chunk.get_float();
-				alias.flags = animation_flags_from_string(chunk.get_line(false));
-				alias.alias = chunk.get_line(false);
-				alias.direction = chunk.get_line(false).starts_with('R') ? model_script_animation_direction::backward
-				                                                        : model_script_animation_direction::forward;
-				script.alias = std::move(alias);
+			case model_script_chunk::animation_events:
+				(void) chunk.get_uint(); // bool?
+				++state;
 				break;
-			}
-			case model_script_chunk::animation_blend: {
-				model_script_animation_blend blend {};
-				blend.name = chunk.get_line(false);
-				blend.next = chunk.get_line(false);
-				blend.blend_in = chunk.get_float();
-				blend.blend_out = chunk.get_float();
-				script.blend = std::move(blend);
-				break;
-			}
-			case model_script_chunk::animation_combination: {
-				model_script_animation_combination combo {};
-				combo.name = chunk.get_line(false);
-				combo.layer = chunk.get_uint();
-				combo.next = chunk.get_line(false);
-				combo.blend_in = chunk.get_float();
-				combo.blend_out = chunk.get_float();
-				combo.flags = animation_flags_from_string(chunk.get_line(false));
-				combo.model = chunk.get_line(false);
-				combo.last_frame = chunk.get_int();
-				script.combination = std::move(combo);
-				break;
-			}
-			case model_script_chunk::animation_disable:
-				script.disable = chunk.get_line(false);
-				break;
-
 			case model_script_chunk::event_sfx:
 			case model_script_chunk::event_sfx_ground: {
 				model_script_sound_effect effect {};
@@ -185,10 +239,34 @@ namespace phoenix {
 				effect.name = chunk.get_line(false);
 				effect.range = chunk.get_float();
 				effect.empty_slot = chunk.get_uint() != 0;
-				script.sfx.push_back(std::move(effect));
+				script.animations[animation_index].sfx.push_back(std::move(effect));
 				break;
 			}
-			case model_script_chunk::model_tag:
+			case model_script_chunk::event_pfx: {
+				model_script_particle_effect effect {};
+				effect.frame = chunk.get_int();
+				effect.index = chunk.get_int();
+				effect.name = chunk.get_line(false);
+				effect.position = chunk.get_line(false);
+				effect.attached = chunk.get_uint() != 0;
+				script.animations[animation_index].pfx.push_back(std::move(effect));
+				break;
+			}
+			case model_script_chunk::event_pfx_stop: {
+				model_script_particle_effect_stop effect {};
+				effect.frame = chunk.get_int();
+				effect.index = chunk.get_int();
+				script.animations[animation_index].pfx_stop.push_back(std::move(effect));
+				break;
+			}
+			case model_script_chunk::event_morph_mesh_animation: {
+				model_script_morph_animation anim {};
+				anim.frame = chunk.get_int();
+				anim.animation = chunk.get_line(false);
+				anim.node = chunk.get_line(false);
+				script.animations[animation_index].morph_animations.push_back(std::move(anim));
+				break;
+			}
 			case model_script_chunk::event_tag: {
 				model_script_event event {};
 				event.frame = chunk.get_int();
@@ -230,7 +308,7 @@ namespace phoenix {
 					break;
 				case model_script_event_type::hit_limb:
 					(void) chunk.get_line(true);
-					break ;
+					break;
 				case model_script_event_type::dam_multiply:
 				case model_script_event_type::par_frame:
 				case model_script_event_type::opt_frame:
@@ -242,7 +320,8 @@ namespace phoenix {
 					int frame = 0;
 					while (!stream.eof()) {
 						stream >> frame;
-						if (stream.eof()) break;
+						if (stream.eof())
+							break;
 						event.frames.push_back(frame);
 					}
 					break;
@@ -251,61 +330,22 @@ namespace phoenix {
 					break;
 				}
 
-				if (type == model_script_chunk::model_tag) {
-					script.model_tag.push_back(std::move(event));
-				} else {
-					script.event_tag.push_back(std::move(event));
-				}
+				script.animations[animation_index].event_tags.push_back(std::move(event));
+				break;
+			}
 
-				break;
-			}
-			case model_script_chunk::event_pfx: {
-				model_script_particle_effect effect {};
-				effect.frame = chunk.get_int();
-				effect.index = chunk.get_int();
-				effect.name = chunk.get_line(false);
-				effect.position = chunk.get_line(false);
-				effect.attached = chunk.get_uint() != 0;
-				script.pfx.push_back(std::move(effect));
-				break;
-			}
-			case model_script_chunk::event_pfx_stop: {
-				model_script_particle_effect_stop effect {};
-				effect.frame = chunk.get_int();
-				effect.index = chunk.get_int();
-				script.pfx_stop.push_back(std::move(effect));
-				break;
-			}
-			case model_script_chunk::event_morph_mesh_animation:{
-				model_script_morph_animation anim {};
-				anim.frame = chunk.get_int();
-				anim.animation = chunk.get_line(false);
-				anim.node = chunk.get_line(false);
-				script.morph_animations.push_back(std::move(anim));
-				break;
-			}
-			case model_script_chunk::model_script:
-				(void) chunk.get_uint(); // bool
-				(void) chunk.get_line(false); // path
-				break;
-			case model_script_chunk::source: {
-				(void) date::parse(chunk); // date
-				(void) chunk.get_line(false); // path
-				break;
-			}
-			case model_script_chunk::model:
-			case model_script_chunk::animation_enum:
 			case model_script_chunk::animation_events_end:
+				--state;
+				break;
 			case model_script_chunk::animation_enum_end:
+				--state;
+				break;
 			case model_script_chunk::model_end:
+				--state;
+				break;
 			case model_script_chunk::model_script_end:
-				// empty
+				--state;
 				break;
-			case model_script_chunk::animation_events:
-				(void) chunk.get_uint(); // bool
-				break;
-			case model_script_chunk::model_mesh:
-			case model_script_chunk::unknown:
 			default:
 				break;
 			}
