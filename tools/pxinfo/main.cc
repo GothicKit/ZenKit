@@ -5,6 +5,7 @@
 #include <phoenix/mesh.hh>
 #include <phoenix/messages.hh>
 #include <phoenix/model_hierarchy.hh>
+#include <phoenix/model_script.hh>
 #include <phoenix/texture.hh>
 #include <phoenix/vdfs.hh>
 
@@ -46,6 +47,7 @@ void print_messages(const phoenix::messages& messages);
 void print_font(const phoenix::font& fnt);
 void print_texture(const phoenix::texture& tex);
 void print_mesh(const phoenix::mesh& msh);
+void print_mds(const phoenix::model_script& msh);
 
 int main(int argc, const char** argv) {
 	argh::parser args {argc, argv, argh::parser::PREFER_PARAM_FOR_UNREG_OPTION};
@@ -103,6 +105,10 @@ int main(int argc, const char** argv) {
 			print_mesh(phoenix::mesh::parse(in, {}));
 		} else if (file.ends_with(".TEX")) {
 			print_texture(phoenix::texture::parse(in));
+		} else if (file.ends_with(".MDS")) {
+			print_mds(phoenix::model_script::parse(in));
+		} else if (file.ends_with(".MSB")) {
+			print_mds(phoenix::model_script::parse_binary(in));
 		} else {
 			fmt::print(stderr, "format not supported: {}", file.substr(file.rfind('.') + 1));
 			return EXIT_FAILURE;
@@ -113,6 +119,52 @@ int main(int argc, const char** argv) {
 	}
 
 	return 0;
+}
+
+void print_mds(const phoenix::model_script& msh) {
+	fmt::print("Type: Model Script\n");
+	fmt::print("Skeleton: {} {}\n", msh.skeleton.name, msh.skeleton.disable_mesh ? "(without mesh)" : "(with mesh)");
+	fmt::print("Model Tags ({}):\n", msh.model_tags.size());
+
+	for (auto& tag : msh.model_tags) {
+		fmt::print("  - DEF_HIT_LIMB: {}\n", tag.bone);
+	}
+
+	fmt::print("Meshes ({}):\n", msh.meshes.size());
+
+	for (auto& mesh : msh.meshes) {
+		fmt::print("  - {}\n", mesh);
+	}
+
+	fmt::print("Animations ({}):\n", msh.animations.size());
+
+	for (auto& ani : msh.animations) {
+		fmt::print("  - {}, next={} (layer={})\n", ani.name, ani.next, ani.layer);
+	}
+
+	fmt::print("Animation Combinations ({}):\n", msh.combinations.size());
+
+	for (auto& ani : msh.combinations) {
+		fmt::print("  - {}, next={} (layer={})\n", ani.name, ani.next, ani.layer);
+	}
+
+	fmt::print("Animation Blends ({}):\n", msh.blends.size());
+
+	for (auto& ani : msh.blends) {
+		fmt::print("  - {}, next={}\n", ani.name, ani.next);
+	}
+
+	fmt::print("Animation Aliases ({}):\n", msh.aliases.size());
+
+	for (auto& ani : msh.aliases) {
+		fmt::print("  - {}, alias={}\n", ani.name, ani.alias);
+	}
+
+	fmt::print("Disabled Animations ({}):\n", msh.disabled_animations.size());
+
+	for (auto& ani : msh.disabled_animations) {
+		fmt::print("  - {}\n", ani);
+	}
 }
 
 void print_texture(const phoenix::texture& tex) {
