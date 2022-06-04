@@ -15,8 +15,7 @@ namespace phoenix {
 	 *
 	 * @return The size in bytes of the texture at the given mipmap level.
 	 */
-	static std::uint32_t
-	_ztex_mipmap_size(texture_format format, std::uint32_t width, std::uint32_t height, unsigned level) {
+	std::uint32_t _ztex_mipmap_size(texture_format format, std::uint32_t width, std::uint32_t height, unsigned level) {
 		std::uint32_t x = std::max(1u, width);
 		std::uint32_t y = std::max(1u, height);
 
@@ -84,8 +83,6 @@ namespace phoenix {
 			}
 		}
 
-		bool dxt_decompressed = false;
-
 		// Lowest mipmap-level first
 		for (std::int64_t level = tex._m_mipmap_count - 1; level >= 0; --level) {
 			auto size = _ztex_mipmap_size(tex._m_format, tex._m_width, tex._m_height, level);
@@ -94,31 +91,7 @@ namespace phoenix {
 			mipmap.resize(size);
 			in.get(mipmap);
 
-			switch (tex._m_format) {
-			case tex_dxt1:
-			case tex_dxt3:
-			case tex_dxt5: {
-				std::vector<std::uint8_t> v;
-				auto w = tex.mipmap_width(level);
-				auto h = tex.mipmap_height(level);
-				v.resize(w * h * 4);
-
-				auto flag = tex._m_format == tex_dxt1 ? squish::kDxt1
-				                                      : (tex._m_format == tex_dxt3 ? squish::kDxt3 : squish::kDxt5);
-
-				squish::DecompressImage(v.data(), static_cast<int>(w),  static_cast<int>(h), mipmap.data(), flag);
-				tex._m_textures.emplace_back(std::move(v));
-				dxt_decompressed = true;
-				break;
-			}
-			default:
-				tex._m_textures.emplace_back(std::move(mipmap));
-				break;
-			}
-		}
-
-		if (dxt_decompressed) {
-			tex._m_format = tex_R8G8B8A8;
+			tex._m_textures.emplace_back(std::move(mipmap));
 		}
 
 		return tex;
@@ -143,6 +116,19 @@ namespace phoenix {
 		std::vector<std::uint8_t> conv;
 
 		switch (_m_format) {
+		case tex_dxt1:
+		case tex_dxt3:
+		case tex_dxt5: {
+			const auto& map = data(mipmap_level);
+			auto w = mipmap_width(mipmap_level);
+			auto h = mipmap_height(mipmap_level);
+			conv.resize(w * h * 4);
+
+			auto flag = _m_format == tex_dxt1 ? squish::kDxt1 : (_m_format == tex_dxt3 ? squish::kDxt3 : squish::kDxt5);
+
+			squish::DecompressImage(conv.data(), static_cast<int>(w), static_cast<int>(h), map.data(), flag);
+			return conv;
+		}
 		case tex_B8G8R8A8: {
 			const auto& map = data(mipmap_level);
 			conv.resize(map.size());

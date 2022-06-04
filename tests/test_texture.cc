@@ -25,23 +25,7 @@ TEST_SUITE("texture") {
 		CHECK(texture.ref_width() == 128);
 
 		CHECK(texture.mipmaps() == 5);
-		CHECK(texture.format() == tex_R8G8B8A8);
-
-		// we only test mipmap 0 (full size) here
-		const auto& data = texture.as_rgba8(0);
-		auto expected = buffer::open("./samples/erz.expected.0.bin");
-
-		for (std::uint32_t i = 0; i < data.size(); i += 4) {
-			std::uint8_t r = data[i];
-			std::uint8_t g = data[i + 1];
-			std::uint8_t b = data[i + 2];
-			std::uint8_t a = data[i + 3];
-
-			CHECK(r == expected.get());
-			CHECK(g == expected.get());
-			CHECK(b == expected.get());
-			CHECK(a == expected.get());
-		}
+		CHECK(texture.format() == phoenix::tex_dxt1);
 	}
 }
 

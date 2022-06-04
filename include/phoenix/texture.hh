@@ -132,10 +132,17 @@ namespace phoenix {
 		}
 
 		/**
-		 * @return The average glm::u8vec4 of the texture.
+		 * @return The average color of the texture.
 		 */
 		[[nodiscard]] inline std::uint32_t average_color() const noexcept {
 			return _m_average_color;
+		}
+
+		/**
+		 * @return The palette of the texture.
+		 */
+		[[nodiscard]] inline argb* palette() const noexcept {
+			return (argb*) _m_palette;
 		}
 
 		/**
