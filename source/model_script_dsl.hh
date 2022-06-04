@@ -344,7 +344,8 @@ namespace phoenix::mds {
 			                      .pfx_stop = std::move(_enum.pfx_stop),
 			                      .sfx = std::move(_enum.sfx),
 			                      .sfx_ground = std::move(_enum.sfx_ground),
-			                      .morph = std::move(_enum.morph)};
+			                      .morph = std::move(_enum.morph),
+			                      .tremors = std::move(_enum.tremors)};
 		    },
 		    [](std::string&& name,
 		       int32_t layer,
