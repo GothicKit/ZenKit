@@ -70,7 +70,7 @@ namespace phoenix {
 		    {"DEF_HIT_LIMB", event_tag_type::hit_limb},
 		    {"HIT_LIMB", event_tag_type::hit_limb},
 		    {"DEF_HIT_DIR", event_tag_type::hit_direction},
-		    {"DEF_DIR", event_tag_type::unknown}, // TODO: Validate this!
+		    {"DEF_DIR", event_tag_type::hit_direction}, // TODO: Validate this!
 		    {"DEF_DAM_MULTIPLY", event_tag_type::dam_multiply},
 		    {"DEF_PAR_FRAME", event_tag_type::par_frame},
 		    {"DEF_OPT_FRAME", event_tag_type::opt_frame},
@@ -89,7 +89,7 @@ namespace phoenix {
 			auto tp = event_types.find(type);
 			if (tp == event_types.end()) {
 				evt.type = mds::event_tag_type::unknown;
-				fmt::print(stderr, "warning: model_script: unknown event_tag_type: {}", type);
+				fmt::print(stderr, "warning: model_script: unknown event_tag_type: {}\n", type);
 			} else {
 				evt.type = tp->second;
 			}
@@ -304,7 +304,19 @@ namespace phoenix {
 				script.animations[ani_index].sfx_ground.push_back(std::move(effect));
 				break;
 			}
-			// TODO: case mds::parser_chunk::model_tag:
+			case mds::parser_chunk::model_tag: {
+				mds::model_tag tag {};
+				(void) chunk.get_int();
+
+				auto event_type = chunk.get_line(false);
+				if (event_type != "DEF_HIT_LIMB" && event_type != "HIT_LIMB") {
+					fmt::print(stderr, "warning: model_script: unexpected type for modelTag: {}\n", event_type);
+				}
+
+				tag.bone = chunk.get_line(true);
+				script.model_tags.push_back(std::move(tag));
+				break;
+			}
 			case mds::parser_chunk::event_tag: {
 				mds::event_tag event {};
 				event.frame = chunk.get_int();
@@ -313,7 +325,7 @@ namespace phoenix {
 				auto tp = mds::event_types.find(event_type);
 				if (tp == mds::event_types.end()) {
 					event.type = mds::event_tag_type::unknown;
-					fmt::print(stderr, "warning: model_script: unknown event_tag_type: {}", event_type);
+					fmt::print(stderr, "warning: model_script: unknown event_tag_type: {}\n", event_type);
 				} else {
 					event.type = tp->second;
 				}
@@ -321,15 +333,15 @@ namespace phoenix {
 				switch (event.type) {
 				case mds::event_tag_type::create_item:
 				case mds::event_tag_type::exchange_item:
-					event.slot = chunk.get_line(false);
-					event.item = chunk.get_line(false);
+					event.slot = chunk.get_line(true);
+					event.item = chunk.get_line(true);
 					break;
 				case mds::event_tag_type::insert_item:
 				case mds::event_tag_type::place_munition:
-					event.slot = chunk.get_line(false);
+					event.slot = chunk.get_line(true);
 					break;
 				case mds::event_tag_type::fight_mode: {
-					auto mode = chunk.get_line(false);
+					auto mode = chunk.get_line(true);
 
 					if (mode == "FIST") {
 						event.fight_mode = mds::event_fight_mode::fist;
@@ -349,11 +361,22 @@ namespace phoenix {
 					break;
 				}
 				case mds::event_tag_type::swap_mesh:
-					event.slot = chunk.get_line(false);
-					event.slot2 = chunk.get_line(false);
+					event.slot = chunk.get_line(true);
+					event.slot2 = chunk.get_line(true);
 					break;
 				case mds::event_tag_type::hit_limb:
-					(void) chunk.get_line(true);
+					(void) chunk.get_line(true); // TODO
+					break;
+				case mds::event_tag_type::hit_direction:
+					(void) chunk.get_line(true); // TODO
+					break;
+				case mds::event_tag_type::draw_sound:
+				case mds::event_tag_type::undraw_sound:
+				case mds::event_tag_type::remove_munition:
+				case mds::event_tag_type::destroy_item:
+				case mds::event_tag_type::inventory_torch:
+				case mds::event_tag_type::remove_item:
+					(void) chunk.get_line(true); // TODO
 					break;
 				case mds::event_tag_type::dam_multiply:
 				case mds::event_tag_type::par_frame:
@@ -372,6 +395,10 @@ namespace phoenix {
 				}
 				default:
 					break;
+				}
+
+				if (chunk.remaining() != 0) {
+					fmt::print(stderr, "Remaining: {} bytes for {}\n", chunk.remaining(), event_type);
 				}
 
 				script.animations[ani_index].events.push_back(std::move(event));
@@ -399,6 +426,8 @@ namespace phoenix {
 				anim.frame = chunk.get_int();
 				anim.animation = chunk.get_line(false);
 				anim.node = chunk.get_line(false);
+				(void) chunk.get_float();
+				(void) chunk.get_float();
 				script.animations[ani_index].morph.push_back(std::move(anim));
 				break;
 			}
