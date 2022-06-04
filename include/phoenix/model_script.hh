@@ -138,6 +138,8 @@ namespace phoenix {
 		struct event_sfx_ground {
 			std::int32_t frame;
 			std::string name;
+			float range {1000.0f};
+			bool empty_slot {false};
 		};
 
 		/**

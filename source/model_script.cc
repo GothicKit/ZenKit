@@ -299,8 +299,8 @@ namespace phoenix {
 				mds::event_sfx_ground effect {};
 				effect.frame = chunk.get_int();
 				effect.name = chunk.get_line(false);
-				(void) chunk.get_float();
-				(void) chunk.get_uint();
+				effect.range = chunk.get_float();
+				effect.empty_slot = chunk.get_uint() != 0;
 				script.animations[ani_index].sfx_ground.push_back(std::move(effect));
 				break;
 			}
