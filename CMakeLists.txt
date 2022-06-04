@@ -69,7 +69,7 @@ set(PX_TESTS
 
 add_library(phoenix ${PX_SOURCES})
 target_include_directories(phoenix PUBLIC include)
-target_link_libraries(phoenix PUBLIC glm fmt squish mio)
+target_link_libraries(phoenix PUBLIC glm fmt squish mio lexy)
 target_compile_options(phoenix PRIVATE ${PX_CXX_FLAGS})
 target_link_options(phoenix PUBLIC ${PX_CXX_FLAGS})
 

@@ -16,3 +16,6 @@
 [submodule "vendor/mio"]
 	path = vendor/mio
 	url = https://github.com/mandreyel/mio
+[submodule "vendor/lexy"]
+	path = vendor/lexy
+	url = https://github.com/foonathan/lexy

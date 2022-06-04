@@ -5,6 +5,7 @@ add_subdirectory(fmt)
 add_subdirectory(argh)
 add_subdirectory(doctest)
 add_subdirectory(mio)
+add_subdirectory(lexy)
 
 target_compile_options(mio INTERFACE -Wno-conversion)
 

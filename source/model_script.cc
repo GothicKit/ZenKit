@@ -1,14 +1,17 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
-#include <phoenix/detail/compat.hh>
-#include <phoenix/detail/error.hh>
 #include <phoenix/mesh.hh>
 #include <phoenix/model_script.hh>
 
-#include <fmt/format.h>
+#include <phoenix/detail/compat.hh>
+#include <phoenix/detail/error.hh>
 
-#include <sstream>
-#include <unordered_map>
+#include "model_script_dsl.hh"
+
+#include <fmt/format.h>
+#include <lexy/action/parse.hpp>
+#include <lexy/input/buffer.hpp>
+#include <lexy_ext/report_error.hpp>
 
 namespace phoenix {
 	namespace mds {
@@ -181,13 +184,15 @@ namespace phoenix {
 		}
 	} // namespace mds
 
-	mds::event_type event_type_from_string(const std::string& str) {
-		return event_types.at(str);
-	}
+	model_script model_script::parse(buffer& buf) {
+		lexy::buffer<lexy::ascii_encoding> b {(char*) buf.array().data(), buf.remaining()};
+		auto result = lexy::parse<mds::d_script>(b, lexy_ext::report_error);
 
-	model_script model_script::parse(buffer&) {
-		model_script script {};
-		return script;
+		if (!result.has_value()) {
+			throw parser_error {"syntax error"};
+		}
+
+		return result.value();
 	}
 
 	model_script model_script::parse_binary(buffer& buf) {
