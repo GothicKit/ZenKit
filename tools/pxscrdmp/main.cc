@@ -10,7 +10,7 @@
 
 #include "config.hh"
 
-using namespace phoenix;
+using namespace phoenix::daedalus;
 
 static constexpr const auto HELP_MESSAGE = "Usage: pxscrdmp [--version]\n"
 										   "       pxscrdmp [-h|--help]\n"

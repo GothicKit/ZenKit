@@ -5,16 +5,16 @@
 #include <iostream>
 #include <utility>
 
-namespace phoenix {
-	daedalus_interpreter::daedalus_interpreter(script& scr) : _m_script(scr) {
+namespace phoenix::daedalus {
+	vm::vm(script& scr) : _m_script(scr) {
 		_m_self_sym = scr.find_symbol_by_name("SELF");
 	}
 
-	void daedalus_interpreter::call_function(const std::string& name) {
+	void vm::call_function(const std::string& name) {
 		call_function(_m_script.find_symbol_by_name(name));
 	}
 
-	void daedalus_interpreter::call_function(const symbol* sym) {
+	void vm::call_function(const symbol* sym) {
 		if (sym == nullptr) {
 			throw std::runtime_error {"Cannot call function: not found"};
 		}
@@ -29,7 +29,7 @@ namespace phoenix {
 		}
 	}
 
-	void daedalus_interpreter::call(const symbol* sym) {
+	void vm::call(const symbol* sym) {
 		push_call(sym);
 		jump(sym->address());
 
@@ -40,7 +40,7 @@ namespace phoenix {
 		pop_call();
 	}
 
-	bool daedalus_interpreter::exec() {
+	bool vm::exec() {
 		auto instr = _m_script.instruction_at(_m_pc);
 
 		std::int32_t a {}, b {};
@@ -270,40 +270,40 @@ namespace phoenix {
 		return true;
 	}
 
-	void daedalus_interpreter::push_call(const symbol* sym) {
+	void vm::push_call(const symbol* sym) {
 		_m_call_stack.push({sym, _m_pc, _m_instance});
 	}
 
-	void daedalus_interpreter::pop_call() {
+	void vm::pop_call() {
 		const auto& call = _m_call_stack.top();
 		_m_pc = call.program_counter;
 		_m_instance = call.context;
 		_m_call_stack.pop();
 	}
 
-	void daedalus_interpreter::push_int(std::int32_t value) {
+	void vm::push_int(std::int32_t value) {
 		_m_stack.push({false, value});
 	}
 
-	void daedalus_interpreter::push_reference(symbol* value, std::uint8_t index) {
+	void vm::push_reference(symbol* value, std::uint8_t index) {
 		_m_stack.push({true, value, index});
 	}
 
-	void daedalus_interpreter::push_string(const std::string& value) {
+	void vm::push_string(const std::string& value) {
 		auto& sym = _m_script.dynamic_string();
 		sym.set_string(value);
 		push_reference(&sym);
 	}
 
-	void daedalus_interpreter::push_float(float value) {
+	void vm::push_float(float value) {
 		_m_stack.push({false, value});
 	}
 
-	void daedalus_interpreter::push_instance(std::shared_ptr<instance> value) {
+	void vm::push_instance(std::shared_ptr<instance> value) {
 		_m_stack.push({false, value});
 	}
 
-	std::int32_t daedalus_interpreter::pop_int() {
+	std::int32_t vm::pop_int() {
 		if (_m_stack.empty()) {
 			// std::cerr << "WARN: popping 0 from empty stack!\n";
 			return 0;
@@ -321,7 +321,7 @@ namespace phoenix {
 		}
 	}
 
-	float daedalus_interpreter::pop_float() {
+	float vm::pop_float() {
 		if (_m_stack.empty()) {
 			throw std::runtime_error {"Popping from empty stack!"};
 		}
@@ -342,7 +342,7 @@ namespace phoenix {
 		}
 	}
 
-	std::tuple<symbol*, std::uint8_t> daedalus_interpreter::pop_reference() {
+	std::tuple<symbol*, std::uint8_t> vm::pop_reference() {
 		if (_m_stack.empty()) {
 			throw std::runtime_error {"Popping from empty stack!"};
 		}
@@ -357,7 +357,7 @@ namespace phoenix {
 		return {std::get<symbol*>(v.value), v.index};
 	}
 
-	std::shared_ptr<instance> daedalus_interpreter::pop_instance() {
+	std::shared_ptr<instance> vm::pop_instance() {
 		if (_m_stack.empty()) {
 			throw std::runtime_error {"Popping from empty stack!"};
 		}
@@ -374,19 +374,19 @@ namespace phoenix {
 		}
 	}
 
-	const std::string& daedalus_interpreter::pop_string() {
+	const std::string& vm::pop_string() {
 		auto [s, i] = pop_reference();
 		return s->get_string(i, _m_instance);
 	}
 
-	void daedalus_interpreter::jump(std::uint32_t address) {
+	void vm::jump(std::uint32_t address) {
 		if (address == 0 || address > _m_script.size()) {
 			throw std::runtime_error {"Cannot jump to " + std::to_string(address) + ": illegal address"};
 		}
 		_m_pc = address;
 	}
 
-	void daedalus_interpreter::print_stack_trace() {
+	void vm::print_stack_trace() {
 		auto last_pc = _m_pc;
 
 		std::cerr << "\n"

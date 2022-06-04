@@ -5,7 +5,7 @@
 #include <fmt/format.h>
 #include <string>
 
-namespace phoenix {
+namespace phoenix::daedalus {
 	illegal_type_access::illegal_type_access(const symbol& sym, datatype expected)
 	    : illegal_access(fmt::format("illegal access of type {} on symbol {} which is another type ({})",
 	                                 expected,

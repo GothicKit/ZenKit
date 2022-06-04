@@ -12,7 +12,7 @@
 
 #define unset 0xFF'FF'FF'FFU
 
-namespace phoenix {
+namespace phoenix::daedalus {
 	/**
 	 * @brief Types of symbols
 	 */
@@ -109,7 +109,7 @@ namespace phoenix {
 
 	private:
 		friend class symbol;
-		friend class daedalus_interpreter;
+		friend class vm;
 
 		const symbol* _m_symbol {nullptr};
 		const std::type_info* _m_type {nullptr};
@@ -649,5 +649,4 @@ namespace phoenix {
 		mutable buffer _m_text = buffer::empty();
 		std::uint8_t _m_version {0};
 	};
-
-} // namespace phoenix
+} // namespace phoenix::daedalus

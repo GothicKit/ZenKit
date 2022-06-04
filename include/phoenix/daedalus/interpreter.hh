@@ -10,7 +10,7 @@
 #include <typeinfo>
 #include <variant>
 
-namespace phoenix {
+namespace phoenix::daedalus {
 	template <typename T>
 	struct is_instance_ptr : std::false_type {};
 
@@ -46,13 +46,13 @@ namespace phoenix {
 		std::shared_ptr<instance> context;
 	};
 
-	class daedalus_interpreter {
+	class vm {
 	public:
 		/**
 		 * @brief Creates a DaedalusVM instance for the given script.
 		 * @param[in, out] scr The script to load into the VM.
 		 */
-		explicit daedalus_interpreter(script& scr);
+		explicit vm(script& scr);
 
 		/**
 		 * @brief Calls a function by it's name.
@@ -248,7 +248,7 @@ namespace phoenix {
 			}
 
 			// *evil template hacking ensues*
-			_m_externals[sym] = [callback](daedalus_interpreter& vm) {
+			_m_externals[sym] = [callback](vm& vm) {
 				if constexpr (std::same_as<void, R>) {
 					if constexpr (sizeof...(P) > 0) {
 						auto v = vm.pop_values_for_external<P...>();
@@ -341,7 +341,7 @@ namespace phoenix {
 			}
 
 			// *evil template hacking ensues*
-			_m_function_overrides[sym->address()] = [callback](daedalus_interpreter& vm) {
+			_m_function_overrides[sym->address()] = [callback](vm& vm) {
 				if constexpr (std::same_as<void, R>) {
 					if constexpr (sizeof...(P) > 0) {
 						auto v = vm.pop_values_for_external<P...>();
@@ -554,8 +554,8 @@ namespace phoenix {
 		script& _m_script;
 		std::stack<daedalus_stack_frame> _m_stack;
 		std::stack<daedalus_call_stack_frame> _m_call_stack;
-		std::unordered_map<symbol*, std::function<void(daedalus_interpreter&)>> _m_externals;
-		std::unordered_map<uint32_t, std::function<void(daedalus_interpreter&)>> _m_function_overrides;
+		std::unordered_map<symbol*, std::function<void(vm&)>> _m_externals;
+		std::unordered_map<uint32_t, std::function<void(vm&)>> _m_function_overrides;
 
 		symbol* _m_self_sym;
 		std::shared_ptr<instance> _m_instance;
