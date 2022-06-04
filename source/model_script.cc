@@ -91,7 +91,7 @@ namespace phoenix {
 				evt.type = mds::event_tag_type::unknown;
 				fmt::print(stderr, "warning: model_script: unknown event_tag_type: {}", type);
 			} else {
-				evt.type = event_types.at(type);
+				evt.type = tp->second;
 			}
 
 
@@ -308,7 +308,15 @@ namespace phoenix {
 			case mds::parser_chunk::event_tag: {
 				mds::event_tag event {};
 				event.frame = chunk.get_int();
-				event.type = mds::event_types.at(chunk.get_line(false));
+
+				auto event_type = chunk.get_line(false);
+				auto tp = mds::event_types.find(event_type);
+				if (tp == mds::event_types.end()) {
+					event.type = mds::event_tag_type::unknown;
+					fmt::print(stderr, "warning: model_script: unknown event_tag_type: {}", event_type);
+				} else {
+					event.type = tp->second;
+				}
 
 				switch (event.type) {
 				case mds::event_tag_type::create_item:
