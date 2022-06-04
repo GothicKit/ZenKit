@@ -87,11 +87,11 @@ int main(int argc, const char** argv) {
 
 		if (all_levels) {
 			if (output.empty()) {
-				output = "{}.tga";
+				output = fmt::format("{}.tga", file);
 			}
 
 			for (std::uint32_t i = 0; i < texture.mipmaps(); ++i) {
-				write_tga(fmt::format(output, i), texture.as_rgba8(i), texture.mipmap_width(i), texture.mipmap_height(i));
+				write_tga(fmt::format("mip{}_{}", i, output), texture.as_rgba8(i), texture.mipmap_width(i), texture.mipmap_height(i));
 			}
 		} else {
 			if (level > texture.mipmaps() - 1) {
