@@ -132,6 +132,15 @@ namespace phoenix {
 		};
 
 		/**
+		 * @brief The `*eventSFXGrnd` tag
+		 * @remark MDS syntax: `*eventSFXGrnd(<int> <string>)`
+		 */
+		struct event_sfx_ground {
+			std::int32_t frame;
+			std::string name;
+		};
+
+		/**
 		 * @brief The `*eventMMStartAni` tag
 		 * @remark MDS syntax: `*eventMMStartAni(<int> <string> [<string>])`
 		 */
@@ -165,6 +174,7 @@ namespace phoenix {
 			std::vector<event_pfx> pfx {};
 			std::vector<event_pfx_stop> pfx_stop {};
 			std::vector<event_sfx> sfx {};
+			std::vector<event_sfx_ground> sfx_ground {};
 			std::vector<event_morph_animate> morph {};
 			std::vector<event_camera_tremor> tremors {};
 		};

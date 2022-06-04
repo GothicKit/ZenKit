@@ -56,12 +56,11 @@ TEST_SUITE("model script") {
 		CHECK(script.meshes[0] == "War_Body.ASC");
 		CHECK(script.meshes[1] == "War_Fire_Body.ASC");
 
-		CHECK(script.animations[0].sfx.size() == 1);
-		CHECK(script.animations[0].sfx[0].frame == 5);
-		CHECK(script.animations[0].sfx[0].name == "Sneak");
-		CHECK(script.animations[0].sfx[0].range == 1000);
-		CHECK(script.animations[0].sfx[0].empty_slot == false);
+		CHECK(script.animations[0].sfx_ground.size() == 1);
+		CHECK(script.animations[0].sfx_ground[0].frame == 5);
+		CHECK(script.animations[0].sfx_ground[0].name == "Sneak");
 
+		CHECK(script.animations[0].sfx.size() == 0);
 		CHECK(script.animations[0].pfx.size() == 0);
 		CHECK(script.animations[0].pfx_stop.size() == 0);
 		CHECK(script.animations[0].morph.size() == 0);
@@ -129,12 +128,11 @@ TEST_SUITE("model script") {
 		CHECK(script.meshes[0] == "WAR_BODY.ASC");
 		CHECK(script.meshes[1] == "WAR_FIRE_BODY.ASC");
 
-		CHECK(script.animations[0].sfx.size() == 1);
-		CHECK(script.animations[0].sfx[0].frame == 5);
-		CHECK(script.animations[0].sfx[0].name == "SNEAK");
-		CHECK(script.animations[0].sfx[0].range == 1000);
-		CHECK(script.animations[0].sfx[0].empty_slot == true);
+		CHECK(script.animations[0].sfx_ground.size() == 1);
+		CHECK(script.animations[0].sfx_ground[0].frame == 5);
+		CHECK(script.animations[0].sfx_ground[0].name == "SNEAK");
 
+		CHECK(script.animations[0].sfx.size() == 0);
 		CHECK(script.animations[0].pfx.size() == 0);
 		CHECK(script.animations[0].pfx_stop.size() == 0);
 		CHECK(script.animations[0].morph.size() == 0);

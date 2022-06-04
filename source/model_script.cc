@@ -286,14 +286,22 @@ namespace phoenix {
 				script.animations[ani_index].tremors.push_back(std::move(trem));
 				break;
 			}
-			case mds::parser_chunk::event_sfx:
-			case mds::parser_chunk::event_sfx_ground: {
+			case mds::parser_chunk::event_sfx: {
 				mds::event_sfx effect {};
 				effect.frame = chunk.get_int();
 				effect.name = chunk.get_line(false);
 				effect.range = chunk.get_float();
 				effect.empty_slot = chunk.get_uint() != 0;
 				script.animations[ani_index].sfx.push_back(std::move(effect));
+				break;
+			}
+			case mds::parser_chunk::event_sfx_ground: {
+				mds::event_sfx_ground effect {};
+				effect.frame = chunk.get_int();
+				effect.name = chunk.get_line(false);
+				(void) chunk.get_float();
+				(void) chunk.get_uint();
+				script.animations[ani_index].sfx_ground.push_back(std::move(effect));
 				break;
 			}
 			// TODO: case mds::parser_chunk::model_tag:

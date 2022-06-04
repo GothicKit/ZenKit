@@ -136,6 +136,10 @@ namespace phoenix::mds {
 					_result.sfx.push_back(a);
 				}
 
+				void operator()(event_sfx_ground&& a) {
+					_result.sfx_ground.push_back(a);
+				}
+
 				void operator()(event_pfx&& a) {
 					_result.pfx.push_back(a);
 				}
@@ -254,8 +258,8 @@ namespace phoenix::mds {
 	struct dsl_event_sfx_grnd {
 		static constexpr auto whitespace = ws;
 		static constexpr auto rule = dsl::round_bracketed(dsl::p<dsl_integer> + dsl::p<dsl_string>);
-		static constexpr auto value = lexy::callback<event_sfx>(
-		    [](int32_t frame, std::string&& name) { return event_sfx {.frame = frame, .name = name}; });
+		static constexpr auto value = lexy::callback<event_sfx_ground>(
+		    [](int32_t frame, std::string&& name) { return event_sfx_ground {.frame = frame, .name = name}; });
 	};
 
 	struct dsl_event_sfx {
@@ -339,6 +343,7 @@ namespace phoenix::mds {
 			                      .pfx = std::move(_enum.pfx),
 			                      .pfx_stop = std::move(_enum.pfx_stop),
 			                      .sfx = std::move(_enum.sfx),
+			                      .sfx_ground = std::move(_enum.sfx_ground),
 			                      .morph = std::move(_enum.morph)};
 		    },
 		    [](std::string&& name,
