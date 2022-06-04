@@ -27,10 +27,10 @@ static void dump_material(const std::string& name, const std::vector<phoenix::ma
 	std::ofstream mtl {name + ".mtl"};
 
 	for (const auto& mat : materials) {
-		if (!mat.texture().empty()) {
-			mtl << "newmtl " << mat.name() << "\n";
+		if (!mat.texture.empty()) {
+			mtl << "newmtl " << mat.name << "\n";
 			mtl << "Kd 1.00 1.00 1.00\n";
-			mtl << "map_Kd " << mat.texture() << "\n";
+			mtl << "map_Kd " << mat.texture << "\n";
 		}
 	}
 
@@ -50,7 +50,7 @@ static void dump_wavefront(std::ostream& out, const std::string& name, const pho
 	int i = 0;
 	for (const auto& msh : mesh.submeshes()) {
 		out << "g sub" << ++i << "\n"
-		    << "usemtl " << msh.mat.name() << "\n";
+		    << "usemtl " << msh.mat.name << "\n";
 
 		for (const auto& item : msh.wedges) {
 			out << "vn " << item.normal.x << " " << item.normal.y << " " << item.normal.z << "\n";
@@ -104,8 +104,8 @@ static void dump_wavefront(std::ostream& out, const std::string& name, const pho
 
 		if (old_material != material) {
 			auto& mat = mats[material];
-			out << "usemtl " << mat.name() << "\n";
-			out << "g " << mat.name() << "\n";
+			out << "usemtl " << mat.name << "\n";
+			out << "g " << mat.name << "\n";
 			old_material = material;
 		}
 
@@ -172,7 +172,8 @@ int main(int argc, const char** argv) {
 			in = phoenix::buffer::open(file);
 		}
 
-		output = output.empty() ? (file.substr(file.rfind('/') + 1, file.rfind('.') - file.rfind('/') - 1) + ".obj") : output;
+		output = output.empty() ? (file.substr(file.rfind('/') + 1, file.rfind('.') - file.rfind('/') - 1) + ".obj")
+		                        : output;
 
 		auto extension = file.substr(file.find('.') + 1);
 		std::ofstream out {output};
@@ -186,7 +187,7 @@ int main(int argc, const char** argv) {
 		} else if (phoenix::iequals(extension, "ZEN")) {
 			auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_2);// FIXME: implement algorithm of detecting the actual version of Gothic!
 
-			dump_wavefront(out, output, wld.world_mesh());
+			dump_wavefront(out, output, wld.world_mesh);
 			out.close();
 		} else if (phoenix::iequals(extension, "MSH")) {
 			auto msh = phoenix::mesh::parse(in, {});
