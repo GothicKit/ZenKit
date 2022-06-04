@@ -100,6 +100,18 @@ namespace phoenix {
 		};
 
 		/**
+		 * @brief The `*eventCamTremor` tag
+		 * @remark MDS syntax: `*eventCamTremor(<int> <int> <int> <int> <int>)`
+		 */
+		struct event_camera_tremor {
+			std::int32_t frame {0};
+			std::int32_t field1 {0};
+			std::int32_t field2 {0};
+			std::int32_t field3 {0};
+			std::int32_t field4 {0};
+		};
+
+		/**
 		 * @brief The `*eventPFXStop` tag
 		 * @remark MDS syntax: `*eventPFXStop(<int> <int>)`
 		 */
@@ -154,11 +166,12 @@ namespace phoenix {
 			std::vector<event_pfx_stop> pfx_stop {};
 			std::vector<event_sfx> sfx {};
 			std::vector<event_morph_animate> morph {};
+			std::vector<event_camera_tremor> tremors {};
 		};
 
 		/**
 		 * @brief The `aniAlias` tag
-		 * @remark MDS syntax: `aniAlias(<string> <int> <string> <float> <float> <flags> <string> <F|R>)`
+		 * @remark MDS syntax: `aniAlias(<string> <int> <string> <float> <float> <flags> <string> [<F|R>])`
 		 */
 		struct animation_alias {
 			std::string name;

@@ -66,6 +66,7 @@ TEST_SUITE("model script") {
 		CHECK(script.animations[0].pfx_stop.size() == 0);
 		CHECK(script.animations[0].morph.size() == 0);
 		CHECK(script.animations[0].events.size() == 0);
+		CHECK(script.animations[0].tremors.size() == 0);
 		CHECK(script.disabled_animations.size() == 0);
 
 		CHECK(script.animations[47].events.size() == 4);

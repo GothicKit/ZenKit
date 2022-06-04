@@ -43,7 +43,7 @@ namespace phoenix {
 			// CHUNK_EVENT_SET_MESH        = 0xF5A7,
 			// CHUNK_EVENT_SWAP_MESH       = 0xF5A8,
 			event_morph_mesh_animation = 0xF5A9,
-			// CHUNK_EVENT_CAMTREMOR       = 0xF5AA
+			event_camera_tremor = 0xF5AA,
 			error,
 			unknown,
 		};
@@ -262,7 +262,16 @@ namespace phoenix {
 			case mds::parser_chunk::animation_disable:
 				script.disabled_animations.push_back(chunk.get_line(false));
 				break;
-
+			case mds::parser_chunk::event_camera_tremor: {
+				mds::event_camera_tremor trem {};
+				trem.frame = chunk.get_int();
+				trem.field1 = chunk.get_int();
+				trem.field2 = chunk.get_int();
+				trem.field3 = chunk.get_int();
+				trem.field4 = chunk.get_int();
+				script.animations[ani_index].tremors.push_back(std::move(trem));
+				break;
+			}
 			case mds::parser_chunk::event_sfx:
 			case mds::parser_chunk::event_sfx_ground: {
 				mds::event_sfx effect {};
