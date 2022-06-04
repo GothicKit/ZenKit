@@ -71,7 +71,7 @@ namespace phoenix {
 			switch (type) {
 			case animation_chunk::header:
 				(void) /* version = */ chunk.get_ushort();
-				anim._m_name = chunk.get_line();
+				anim._m_name = chunk.get_line(false);
 				anim._m_layer = chunk.get_uint();
 				anim._m_frame_count = chunk.get_uint();
 				anim._m_node_count = chunk.get_uint();
@@ -80,7 +80,7 @@ namespace phoenix {
 				anim._m_sample_position_range_min = chunk.get_float();
 				anim._m_sample_position_scalar = chunk.get_float();
 				anim._m_bbox = bounding_box::parse(chunk);
-				anim._m_next = chunk.get_line();
+				anim._m_next = chunk.get_line(false);
 				break;
 			case animation_chunk::events:
 				anim._m_events.reserve(chunk.get_uint());
