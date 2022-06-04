@@ -161,8 +161,8 @@ void print_mesh(const phoenix::mesh& msh) {
 
 	fmt::print("Materials:\n");
 	for (auto& material : msh.materials()) {
-		fmt::print("  - Name: {}\n", material.name());
-		fmt::print("    Texture: {}\n", material.texture());
+		fmt::print("  - Name: {}\n", material.name);
+		fmt::print("    Texture: {}\n", material.texture);
 	}
 }
 
