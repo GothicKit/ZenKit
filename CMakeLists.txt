@@ -46,7 +46,9 @@ set(PX_SOURCES
 		source/world/way_net.cc
 
 		source/daedalus/script.cc
-		source/daedalus/interpreter.cc)
+		source/daedalus/interpreter.cc
+
+		source/ext/dds_convert.cc)
 
 set(PX_TESTS
 		tests/test_compat.cc
