@@ -195,7 +195,7 @@ namespace phoenix {
 				float value;
 				while (!ranges.eof()) {
 					ranges >> value;
-					if (ranges.eof()) break;
+					if (ranges.eof() && value == 0) break;
 					vob->range_animation_scale.push_back(value);
 				}
 
@@ -206,7 +206,7 @@ namespace phoenix {
 				char br = ' ';
 				while (!colors.eof()) {
 					colors >> br >> r >> g >> b >> br;
-					if (colors.eof()) break;
+					if (colors.eof() && r == 0 && g == 0 && b == 0) break;
 					vob->color_animation_list.emplace_back(r, g, b, 0);
 				}
 
@@ -243,7 +243,6 @@ namespace phoenix {
 				float value;
 				while (!ranges.eof()) {
 					ranges >> value;
-					if (ranges.eof()) break;
 					vob->range_animation_scale.push_back(value);
 				}
 
@@ -254,7 +253,6 @@ namespace phoenix {
 				char br = ' ';
 				while (!colors.eof()) {
 					colors >> br >> r >> g >> b >> br;
-					if (colors.eof()) break;
 					vob->color_animation_list.emplace_back(r, g, b, 0);
 				}
 
