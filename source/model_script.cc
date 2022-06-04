@@ -67,6 +67,7 @@ namespace phoenix {
 		    {"DEF_HIT_LIMB", event_tag_type::hit_limb},
 		    {"HIT_LIMB", event_tag_type::hit_limb},
 		    {"DEF_HIT_DIR", event_tag_type::hit_direction},
+		    {"DEF_DIR", event_tag_type::unknown}, // TODO: Validate this!
 		    {"DEF_DAM_MULTIPLY", event_tag_type::dam_multiply},
 		    {"DEF_PAR_FRAME", event_tag_type::par_frame},
 		    {"DEF_OPT_FRAME", event_tag_type::opt_frame},
@@ -81,7 +82,15 @@ namespace phoenix {
 		                         bool attached) {
 			event_tag evt {};
 			evt.frame = frame;
-			evt.type = event_types.at(type);
+
+			auto tp = event_types.find(type);
+			if (tp == event_types.end()) {
+				evt.type = mds::event_tag_type::unknown;
+				fmt::print(stderr, "warning: model_script: unknown event_tag_type: {}", type);
+			} else {
+				evt.type = event_types.at(type);
+			}
+
 
 			switch (evt.type) {
 			case mds::event_tag_type::create_item:

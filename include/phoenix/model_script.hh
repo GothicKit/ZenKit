@@ -6,7 +6,7 @@
 namespace phoenix {
 	namespace mds {
 		enum class event_tag_type {
-			none,
+			unknown,
 			create_item,
 			insert_item,
 			remove_item,
