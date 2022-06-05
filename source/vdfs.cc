@@ -115,7 +115,7 @@ namespace phoenix {
 				} else {
 					// Otherwise, the entry is a directory, so we just continue the merge.
 					for (const auto& child : itm.children()) {
-						it->merge(child);
+						it->merge(child, override_existing);
 					}
 				}
 				return;
@@ -201,7 +201,7 @@ namespace phoenix {
 					} else {
 						// Otherwise, the entry is a directory, so we just continue the merge.
 						for (const auto& sub_child : child.children()) {
-							it->merge(sub_child);
+							it->merge(sub_child, override_existing);
 						}
 					}
 
