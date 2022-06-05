@@ -102,7 +102,7 @@ namespace phoenix {
 
 	void vdf_entry::merge(const vdf_entry& itm, bool override_existing) {
 		for (auto it = _m_children.begin(); it != _m_children.end(); ++it) {
-			if (it->name() == itm.name()) {
+			if (phoenix::iequals(it->name(), itm.name())) {
 				if (itm.is_file() || it->is_file()) {
 					if (!override_existing) {
 						return;
@@ -187,8 +187,10 @@ namespace phoenix {
 
 	void vdf_file::merge(const vdf_file& file, bool override_existing) {
 		for (const auto& child : file.entries()) {
+			bool child_found = false;
+
 			for (auto it = _m_entries.begin(); it != _m_entries.end(); ++it) {
-				if (it->name() == child.name()) {
+				if (phoenix::iequals(it->name(), child.name())) {
 					if (child.is_file() || it->is_file()) {
 						// If an entry with the same name is found and either is a file,
 						// replace the entry with the new one.
@@ -202,12 +204,14 @@ namespace phoenix {
 							it->merge(sub_child);
 						}
 					}
-					goto child_processed;
+
+					child_found = true;
 				}
 			}
 
-			_m_entries.push_back(child);
-		child_processed:;
+			if (!child_found) {
+				_m_entries.push_back(child);
+			}
 		}
 	}
 
