@@ -631,7 +631,7 @@ namespace phoenix {
 		}
 
 		vob->children.reserve(child_count);
-		vob->id = obj.version;
+		vob->id = obj.index;
 		vob->type = type;
 
 		for (int i = 0; i < child_count; ++i) {
