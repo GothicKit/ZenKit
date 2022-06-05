@@ -271,14 +271,14 @@ namespace phoenix {
 			std::uint32_t quality;
 			std::string lensflare_fx;
 
-			bool on;
+			bool on {false};
 			std::vector<float> range_animation_scale;
-			float range_animation_fps;
-			bool range_animation_smooth;
+			float range_animation_fps {0};
+			bool range_animation_smooth {true};
 			std::vector<glm::u8vec4> color_animation_list;
-			float color_animation_fps;
-			bool color_animation_smooth;
-			bool can_move;
+			float color_animation_fps {0};
+			bool color_animation_smooth {true};
+			bool can_move {true};
 
 			static void parse(light* vob, archive_reader_ref& in, game_version version);
 		};

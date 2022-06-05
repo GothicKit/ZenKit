@@ -193,20 +193,16 @@ namespace phoenix {
 
 				std::istringstream ranges {range_ani_scale};
 				float value;
-				while (!ranges.eof()) {
-					ranges >> value;
-					if (ranges.eof() && value == 0) break;
+				while (ranges >> value) {
 					vob->range_animation_scale.push_back(value);
 				}
 
 				std::istringstream colors {color_animation_list};
 				colors.setf(std::ios::skipws);
 
-				uint8_t r, g, b;
+				uint32_t r, g, b;
 				char br = ' ';
-				while (!colors.eof()) {
-					colors >> br >> r >> g >> b >> br;
-					if (colors.eof() && r == 0 && g == 0 && b == 0) break;
+				while (colors >> br >> r >> g >> b >> br) {
 					vob->color_animation_list.emplace_back(r, g, b, 0);
 				}
 
@@ -241,18 +237,16 @@ namespace phoenix {
 
 				std::istringstream ranges {range_ani_scale};
 				float value;
-				while (!ranges.eof()) {
-					ranges >> value;
+				while (ranges >> value) {
 					vob->range_animation_scale.push_back(value);
 				}
 
 				std::istringstream colors {color_animation_list};
 				colors.setf(std::ios::skipws);
 
-				uint8_t r, g, b;
+				uint32_t r, g, b;
 				char br = ' ';
-				while (!colors.eof()) {
-					colors >> br >> r >> g >> b >> br;
+				while (colors >> br >> r >> g >> b >> br) {
 					vob->color_animation_list.emplace_back(r, g, b, 0);
 				}
 
