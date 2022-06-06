@@ -476,6 +476,13 @@ namespace phoenix::daedalus {
 		[[nodiscard]] static script parse(const std::string& path);
 
 		/**
+		 * @brief Parses in a compiled daedalus script.
+		 * @param buf A buffer containing the script data.
+		 * @return The script parsed
+		 */
+		[[nodiscard]] static script parse(phoenix::buffer& buf);
+
+		/**
 		 * @brief Registers a member offset
 		 * @param name The name of the member in the script
 		 * @param field The field to register

@@ -80,9 +80,13 @@ namespace phoenix::daedalus {
 		return s;
 	}
 
-	script script::parse(const std::string& path) {
+	script script::parse(const std::string& file) {
+		auto in = buffer::open(file);
+		return parse(in);
+	}
+
+	script script::parse(phoenix::buffer& in) {
 		script scr {};
-		auto in = buffer::open(path);
 
 		scr._m_version = in.get();
 		auto symbol_count = in.get_uint();
