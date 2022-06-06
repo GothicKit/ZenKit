@@ -108,12 +108,20 @@ namespace phoenix {
 		std::uint8_t g : 5;
 		std::uint8_t b : 5;
 	};
+
+	struct r5g6b5 {
+		std::uint8_t r : 5;
+		std::uint8_t g : 6;
+		std::uint8_t b : 5;
+	};
 #pragma pack(pop)
 
 	static_assert(sizeof(r5g5b5) == 2);
 
 	std::vector<std::uint8_t> texture::as_rgba8(std::uint32_t mipmap_level) const {
 		std::vector<std::uint8_t> conv;
+
+		// TODO: fix color conversions!
 
 		switch (_m_format) {
 		case tex_dxt1:
@@ -202,10 +210,10 @@ namespace phoenix {
 
 			std::uint32_t idx = 0;
 			for (std::uint32_t i = 0; i < map.size(); i += 2) {
-				r5g5b5* rgb = (r5g5b5*) &map[i];
-				conv[idx++] = rgb->r;
-				conv[idx++] = rgb->g;
-				conv[idx++] = rgb->b;
+				r5g6b5* rgb = (r5g6b5*) &map[i];
+				conv[idx++] = static_cast<uint8_t>(static_cast<float>(rgb->b) * 8.225806452f);
+				conv[idx++] = static_cast<uint8_t>(static_cast<float>(rgb->g) * 4.047619048f);
+				conv[idx++] = static_cast<uint8_t>(static_cast<float>(rgb->r) * 8.225806452f);
 				conv[idx++] = 0xff;
 			}
 
