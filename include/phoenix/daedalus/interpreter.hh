@@ -50,9 +50,9 @@ namespace phoenix::daedalus {
 	public:
 		/**
 		 * @brief Creates a DaedalusVM instance for the given script.
-		 * @param[in, out] scr The script to load into the VM.
+		 * @param scr The script to load into the VM.
 		 */
-		explicit vm(script& scr);
+		explicit vm(script&& scr);
 
 		/**
 		 * @brief Calls a function by it's name.
@@ -551,7 +551,7 @@ namespace phoenix::daedalus {
 		}
 
 	private:
-		script& _m_script;
+		script _m_script;
 		std::stack<daedalus_stack_frame> _m_stack;
 		std::stack<daedalus_call_stack_frame> _m_call_stack;
 		std::unordered_map<symbol*, std::function<void(vm&)>> _m_externals;

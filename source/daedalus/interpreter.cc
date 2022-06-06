@@ -6,7 +6,7 @@
 #include <utility>
 
 namespace phoenix::daedalus {
-	vm::vm(script& scr) : _m_script(scr) {
+	vm::vm(script&& scr) : _m_script(std::move(scr)) {
 		_m_self_sym = scr.find_symbol_by_name("SELF");
 	}
 
