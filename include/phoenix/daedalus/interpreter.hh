@@ -375,7 +375,11 @@ namespace phoenix::daedalus {
 			override_function(name, std::function {cb});
 		}
 
-		script& loaded_script() const noexcept {
+		const script& loaded_script() const noexcept {
+			return _m_script;
+		}
+
+		script& loaded_script() noexcept {
 			return _m_script;
 		}
 
