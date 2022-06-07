@@ -8,7 +8,7 @@
 #define func int
 
 namespace phoenix::daedalus {
-	struct c_gil_values {
+	struct c_gil_values : public instance {
 		var int water_depth_knee[66];
 		var int water_depth_chest[66];
 		var int jumpup_height[66];
@@ -80,7 +80,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_npc {
+	struct c_npc : public instance {
 		var int id;
 		var string name[5];
 		var string slot;
@@ -154,7 +154,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_mission {
+	struct c_mission : public instance {
 		var string name;
 		var string description;
 		var int duration;
@@ -186,7 +186,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_item {
+	struct c_item : public instance {
 		var int id;
 		var string name;
 		var string name_id;
@@ -284,7 +284,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_focus {
+	struct c_focus : public instance {
 		var float npc_longrange;
 		var float npc_range1;
 		var float npc_range2;
@@ -328,7 +328,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_info {
+	struct c_info : public instance {
 		var int npc;
 		var int nr;
 		var int important;
@@ -350,7 +350,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_item_react {
+	struct c_item_react : public instance {
 		var int npc;
 		var int trade_item;
 		var int trade_amount;
@@ -370,7 +370,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_spell {
+	struct c_spell : public instance {
 		var float time_per_mana;
 		var int damage_per_level;
 		var int damage_type;
@@ -400,7 +400,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_svm {
+	struct c_svm : public instance {
 		var string MILGREETINGS;
 		var string PALGREETINGS;
 		var string WEATHER;
@@ -881,7 +881,7 @@ namespace phoenix::daedalus {
 
 #undef REG_IF_SYM_EXIST
 
-	struct c_menu {
+	struct c_menu : public instance {
 		var string back_pic;
 		var string back_world;
 		var int pos_x;
@@ -913,7 +913,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_menu_item {
+	struct c_menu_item : public instance {
 		var string fontname;
 		var string text[10];
 		var string backpic;
@@ -975,7 +975,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_camera {
+	struct c_camera : public instance {
 		var float best_range;
 		var float min_range;
 		var float max_range;
@@ -1027,7 +1027,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_music_system {
+	struct c_music_system : public instance {
 		var float volume;
 		var int bit_resolution;
 		var int global_reverb_enabled;
@@ -1045,7 +1045,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_music_theme {
+	struct c_music_theme : public instance {
 		var string file;
 		var float vol;
 		var int loop;
@@ -1065,7 +1065,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_music_jingle {
+	struct c_music_jingle : public instance {
 		var string name;
 		var int loop;
 		var float vol;
@@ -1079,7 +1079,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_particle_fx {
+	struct c_particle_fx : public instance {
 		var float pps_value;
 		var string pps_scale_keys_s;
 		var int pps_is_looping;
@@ -1203,7 +1203,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_fx_base {
+	struct c_fx_base : public instance {
 		var string vis_name_s;
 		var string vis_size_s;
 		var float vis_alpha;
@@ -1304,7 +1304,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_particle_fx_emit_key {
+	struct c_particle_fx_emit_key : public instance {
 		var string vis_name_s;
 		var float vis_size_scale;
 		var float scale_duration;
@@ -1374,7 +1374,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_fight_api {
+	struct c_fight_api : public instance {
 		var int move[6];
 
 		static void register_(script& s) {
@@ -1382,7 +1382,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_sfx {
+	struct c_sfx : public instance {
 		var string file;
 		var int pitch_off;
 		var int pitch_var;
@@ -1406,7 +1406,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_sound_system {
+	struct c_sound_system : public instance {
 		var float volume;
 		var int bit_resolution;
 		var int sample_rate;
