@@ -1427,10 +1427,34 @@ namespace phoenix::daedalus {
 		}
 	};
 
+#define IF_SYM_EXIST(sym, d) do {if (s.find_symbol_by_name(sym) != nullptr) {d;}} while (false)
+
 	void register_all_script_classes(script& s) {
-		// TODO
+		IF_SYM_EXIST("C_GILVALUES", C_GILVALUES::register_(s));
+		IF_SYM_EXIST("C_NPC", C_NPC::register_(s));
+		IF_SYM_EXIST("C_MISSION", C_MISSION::register_(s));
+		IF_SYM_EXIST("C_ITEM", C_ITEM::register_(s));
+		IF_SYM_EXIST("C_FOCUS", C_FOCUS::register_(s));
+		IF_SYM_EXIST("C_INFO", C_INFO::register_(s));
+		IF_SYM_EXIST("C_ITEMREACT", C_ITEMREACT::register_(s));
+		IF_SYM_EXIST("C_SPELL", C_SPELL::register_(s));
+		IF_SYM_EXIST("C_SVM", C_SVM::register_(s));
+		IF_SYM_EXIST("C_MENU", C_MENU::register_(s));
+		IF_SYM_EXIST("C_MENU_ITEM", C_MENU_ITEM::register_(s));
+		IF_SYM_EXIST("CCAMSYS", CCAMSYS::register_(s));
+		IF_SYM_EXIST("C_MUSICSYS_CFG", C_MUSICSYS_CFG::register_(s));
+		IF_SYM_EXIST("C_MUSICTHEME", C_MUSICTHEME::register_(s));
+		IF_SYM_EXIST("C_MUSICJINGLE", C_MUSICJINGLE::register_(s));
+		IF_SYM_EXIST("C_PARTICLEFX", C_PARTICLEFX::register_(s));
+		IF_SYM_EXIST("CFX_BASE", CFX_BASE::register_(s));
+		IF_SYM_EXIST("C_PARTICLEFXEMITKEY", C_PARTICLEFXEMITKEY::register_(s));
+		IF_SYM_EXIST("C_FIGHTAI", C_FIGHTAI::register_(s));
+		IF_SYM_EXIST("C_SFX", C_SFX::register_(s));
+		IF_SYM_EXIST("C_SNDSYS_CFG", C_SNDSYS_CFG::register_(s));
 	}
-}
+
+#undef IF_SYM_EXIST
+} // namespace phoenix::daedalus
 
 #undef var
 #undef string
