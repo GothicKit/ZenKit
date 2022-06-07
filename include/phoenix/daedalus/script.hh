@@ -611,7 +611,7 @@ namespace phoenix::daedalus {
 				throw symbol_not_found {name};
 			if (!sym->is_member())
 				throw member_registration_error {*sym, "not a member"};
-			if (sym->count() != N)
+			if (sym->count() > N)
 				throw member_registration_error {*sym,
 				                                 "incorrect number of elements: given " + std::to_string(N) +
 				                                     " expected " + std::to_string(sym->count())};
