@@ -1374,11 +1374,11 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	struct c_fight_api : public instance {
+	struct c_fight_ai : public instance {
 		var int move[6];
 
 		static void register_(script& s) {
-			s.register_member("C_FIGHTAI.MOVE", &c_fight_api::move);
+			s.register_member("C_FIGHTAI.MOVE", &c_fight_ai::move);
 		}
 	};
 
@@ -1445,7 +1445,7 @@ namespace phoenix::daedalus {
 		IF_SYM_EXIST("C_PARTICLEFX", c_particle_fx::register_(s));
 		IF_SYM_EXIST("CFX_BASE", c_fx_base::register_(s));
 		IF_SYM_EXIST("C_PARTICLEFXEMITKEY", c_particle_fx_emit_key::register_(s));
-		IF_SYM_EXIST("C_FIGHTAI", c_fight_api::register_(s));
+		IF_SYM_EXIST("C_FIGHTAI", c_fight_ai::register_(s));
 		IF_SYM_EXIST("C_SFX", c_sfx::register_(s));
 		IF_SYM_EXIST("C_SNDSYS_CFG", c_sound_system::register_(s));
 	}
