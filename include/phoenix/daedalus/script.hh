@@ -524,6 +524,13 @@ namespace phoenix::daedalus {
 		}
 
 		/**
+		 * @return All symbols in the script
+		 */
+		[[nodiscard]] inline std::vector<symbol>& symbols() noexcept {
+			return _m_symbols;
+		}
+
+		/**
 		 * @brief Retrieves the symbol with the given \p index
 		 * @param index The index of the symbol to get
 		 * @return The symbol or `nullptr` if the index was out-of-range.
