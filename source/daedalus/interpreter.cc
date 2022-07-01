@@ -380,7 +380,7 @@ namespace phoenix::daedalus {
 	}
 
 	void vm::jump(std::uint32_t address) {
-		if (address == 0 || address > _m_script.size()) {
+		if (address > _m_script.size()) {
 			throw std::runtime_error {"Cannot jump to " + std::to_string(address) + ": illegal address"};
 		}
 		_m_pc = address;
