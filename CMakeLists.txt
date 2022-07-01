@@ -48,7 +48,8 @@ set(PX_SOURCES
 		source/daedalus/script.cc
 		source/daedalus/interpreter.cc
 
-		source/ext/dds_convert.cc)
+		source/ext/dds_convert.cc
+		source/ext/daedalus_classes.cc)
 
 set(PX_TESTS
 		tests/test_compat.cc
