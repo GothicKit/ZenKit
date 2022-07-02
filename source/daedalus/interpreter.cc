@@ -250,8 +250,9 @@ namespace phoenix::daedalus {
 			case op_jump_if_zero:
 				if (pop_int() == 0) {
 					jump(instr.address);
+					return true;
 				}
-				return true;
+				break;
 			case op_set_instance: {
 				sym = find_symbol_by_index(instr.symbol);
 				if (sym == nullptr) {
