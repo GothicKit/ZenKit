@@ -254,6 +254,17 @@ namespace phoenix::daedalus {
 		void set_instance(const std::shared_ptr<instance>& inst);
 
 		/**
+		 * @brief Tests whether this symbol holds an instance of the given type.
+		 * @tparam T The type of instance to check for.
+		 * @return <tt>true</tt> if the symbol contains an instance of the given type, <tt>false</tt> if not.
+		 */
+		template <typename T> // clang-format off
+		requires (std::derived_from<T, instance>)
+		bool is_instance_of() { // clang-format on
+			return type() == dt_instance && get_instance() != nullptr && get_instance()->_m_type == &typeid(T);
+		}
+
+		/**
 		 * @brief Tests whether the symbol is a constant.
 		 * @return `true` if the symbol is a constant, `false` if not.
 		 */
