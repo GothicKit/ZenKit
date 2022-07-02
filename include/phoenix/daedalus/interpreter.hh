@@ -137,7 +137,8 @@ namespace phoenix::daedalus {
 		 *
 		 * <p>External functions are a way for Daedalus scripts to execute more complicated code in the C++ world rather
 		 * than in the interpreter. These external functions need to be registered with the interpreter in order to be
-		 * able to be called from within a script. This is what this function does.</p>
+		 * able to be called from within a script. This is what this function does. If the symbol with the give name
+		 * does not exist in the script, this function does nothing.</p>
 		 *
 		 * <p>External functions are passed in as std::function objects and are rigorously checked to match their
 		 * definition in the script. They also have to meet strict criteria for argument and return types. Here's how
@@ -207,7 +208,7 @@ namespace phoenix::daedalus {
 		void register_external(const std::string& name, const std::function<R(P...)>& callback) {
 			auto* sym = _m_script.find_symbol_by_name(name);
 			if (sym == nullptr)
-				throw std::runtime_error {"symbol not found"};
+				return;
 			if (!sym->is_external())
 				throw std::runtime_error {"symbol is not external"};
 
