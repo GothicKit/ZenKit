@@ -179,6 +179,22 @@ namespace phoenix::daedalus {
 		return nullptr;
 	}
 
+	void script::enumerate_instances_by_class_name(const std::string& name,
+	                                               const std::function<void(symbol&)>& callback) {
+		auto* cls = find_symbol_by_name(name);
+		if (cls == nullptr)
+			return;
+
+		std::vector<uint32_t> prototypes {};
+		for (auto& sym : _m_symbols) {
+			if (sym.type() == dt_prototype && sym.parent() == cls->index()) {
+				prototypes.push_back(sym.index());
+			} else if (sym.type() == dt_instance && std::find(prototypes.begin(), prototypes.end(), sym.parent()) != prototypes.end()) {
+				callback(sym);
+			}
+		}
+	}
+
 	std::vector<symbol*> script::find_parameters_for_function(const symbol* parent) {
 		std::vector<symbol*> syms {};
 
@@ -404,4 +420,4 @@ namespace phoenix::daedalus {
 		}
 		std::get<std::shared_ptr<instance>>(_m_value) = inst;
 	}
-} // namespace phoenix
+} // namespace phoenix::daedalus

@@ -3,6 +3,7 @@
 #pragma once
 #include <phoenix/detail/buffer.hh>
 
+#include <functional>
 #include <memory>
 #include <optional>
 #include <string>
@@ -585,6 +586,14 @@ namespace phoenix::daedalus {
 		 * @return The symbol or `nullptr` if no symbol with that name was found.
 		 */
 		[[nodiscard]] symbol* find_symbol_by_name(const std::string& name);
+
+		/**
+		 * @brief Call the given callback function for every instance symbol which is a descendant of the class with
+		 *        the given name.
+		 * @param name The name of the parent class.
+		 * @param callback The function to call with each instance symbol.
+		 */
+		void enumerate_instances_by_class_name(const std::string& name, const std::function<void(symbol&)>& callback);
 
 		/**
 		 * @brief Decodes the instruction at \p address and returns it.
