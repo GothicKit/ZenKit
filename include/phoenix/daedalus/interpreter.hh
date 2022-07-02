@@ -11,6 +11,8 @@
 #include <variant>
 
 namespace phoenix::daedalus {
+	struct _ignore_return_value {};
+
 	template <typename T>
 	struct is_instance_ptr : std::false_type {};
 
@@ -56,15 +58,53 @@ namespace phoenix::daedalus {
 
 		/**
 		 * @brief Calls a function by it's name.
-		 * @param name The name of the function to call.
+		 * @tparam P The types for the argument values.
+		 * @param sym The name of the function to call.
+		 * @param args The arguments for the function call.
 		 */
-		void call_function(const std::string& name);
+		template <typename R = _ignore_return_value, typename ... P>
+		R call_function(const std::string& name, P... args) {
+			return call_function<R, P...>(find_symbol_by_name(name), args...);
+		}
 
 		/**
 		 * @brief Calls a function by it's symbol.
-		 * @param name The symbol of the function to call.
+		 * @tparam P The types for the argument values.
+		 * @param sym The symbol of the function to call.
+		 * @param args The arguments for the function call.
 		 */
-		void call_function(const symbol* sym);
+		template <typename R = _ignore_return_value, typename ... P>
+		R call_function(const symbol* sym, P... args) {
+			if (sym == nullptr)
+				throw std::runtime_error {"Cannot call function: not found"};
+			if (sym->type() != dt_function)
+				throw std::runtime_error {"Cannot call " + sym->name() + ": not a function"};
+
+			std::vector<symbol*> params = find_parameters_for_function(sym);
+			if (params.size() < sizeof...(P))
+				throw std::runtime_error {"too many arguments provided for " + sym->name() + ": given " +
+				                        std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
+
+			if (params.size() > sizeof...(P))
+				throw std::runtime_error {"not enough arguments provided for " + sym->name() + ": given " +
+				                        std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
+
+			if constexpr (!std::same_as<R, _ignore_return_value>)
+				check_call_return_type<R>(sym);
+
+			if constexpr (sizeof...(P) > 0)
+				push_call_parameters<0, P...>(params, args...);
+
+			call(sym);
+
+			if constexpr (std::same_as<R, _ignore_return_value>) {
+				if (sym->has_return())
+					_m_stack.pop(); // Ignore any potential return value.
+				return {};
+			} else {
+				return pop_call_return_value<R>();
+			}
+		}
 
 		/**
 		 * @brief Initializes an instance with the given type and name and returns it.
@@ -595,6 +635,88 @@ namespace phoenix::daedalus {
 				return std::tuple_cat(std::make_tuple(pop_value_for_external<P>()), std::move(v));
 			} else {
 				return {pop_value_for_external<P>()};
+			}
+		}
+
+		template <typename R>
+	    requires (is_instance_ptr<R>::value || std::same_as<float, R> || std::same_as<std::int32_t, R> ||
+	              std::same_as<std::string, R> || std::same_as<void, R>)
+		void check_call_return_type(const symbol* sym) {
+			if constexpr (is_instance_ptr<R>::value) {
+				if (sym->rtype() != dt_instance)
+					throw std::runtime_error {"invalid return type"};
+			} else if constexpr (std::same_as<float, R>) {
+				if (sym->rtype() != dt_float)
+					throw std::runtime_error {"invalid return type"};
+			} else if constexpr (std::same_as<int32_t, R>) {
+				if (sym->rtype() != dt_integer && sym->rtype() != dt_function)
+					throw std::runtime_error {"invalid return type"};
+			} else if constexpr (std::same_as<std::string, R>) {
+				if (sym->rtype() != dt_string)
+					throw std::runtime_error {"invalid return type"};
+			} else if constexpr (std::same_as<void, R>) {
+				if (sym->rtype() != dt_void)
+					throw std::runtime_error {"invalid return type"};
+			}
+		}
+
+		template <int i, typename P, typename... Px> // clang-format off
+	    requires (is_instance_ptr<P>::value || std::same_as<float, P> || std::same_as<std::int32_t, P> ||
+	             std::same_as<bool, P> || std::same_as<std::string_view, P> || std::same_as<symbol*, P>)
+		void push_call_parameters(const std::vector<symbol*>& defined, P value, Px... more) { // clang-format on
+			if constexpr (is_instance_ptr<P>::value || std::same_as<symbol*, P>) {
+				if (defined[i]->type() != dt_instance)
+					throw illegal_external_param(defined[i], "instance", i + 1);
+
+				push_instance(value);
+			} else if constexpr (std::same_as<float, P>) {
+				if (defined[i]->type() != dt_float)
+					throw illegal_external_param(defined[i], "float", i + 1);
+
+				push_float(value);
+			} else if constexpr (std::same_as<int32_t, P> || std::same_as<bool, P>) {
+				if (defined[i]->type() != dt_integer && defined[i]->type() != dt_function)
+					throw illegal_external_param(defined[i], "int", i + 1);
+
+				push_int(value);
+			} else if constexpr (std::same_as<std::string_view, P>) {
+				if (defined[i]->type() != dt_string)
+					throw illegal_external_param(defined[i], "string", i + 1);
+
+				push_string(value);
+			}
+
+			if constexpr (sizeof...(Px) > 0) {
+				push_call_parameters<i + 1, Px...>(defined, more...);
+			}
+		}
+
+		template <typename R>
+		R pop_call_return_value() {
+			if constexpr (is_instance_ptr<R>::value) {
+				auto r = pop_instance();
+
+				if (r != nullptr) {
+					auto& expected = typeid(typename is_instance_ptr<R>::instance_type);
+
+					if (!r->_m_type) {
+						throw std::runtime_error {"Popping instance of unregistered type: " +
+						                          std::string {r->_m_type->name()} + ", expected " + expected.name()};
+					}
+
+					if (*r->_m_type != expected) {
+						throw std::runtime_error {"Popping instance of wrong type: " +
+						                          std::string {r->_m_type->name()} + ", expected " + expected.name()};
+					}
+				}
+
+				return std::static_pointer_cast<typename is_instance_ptr<R>::instance_type>(r);
+			} else if constexpr (std::same_as<float, R>) {
+				return pop_float();
+			} else if constexpr (std::same_as<int32_t, R>) {
+				return pop_int();
+			} else if constexpr (std::same_as<std::string, R>) {
+				return pop_string();
 			}
 		}
 

@@ -15,25 +15,6 @@ namespace phoenix::daedalus {
 		_m_temporary_strings = add_temporary_strings_symbol();
 	}
 
-	void vm::call_function(const std::string& name) {
-		call_function(find_symbol_by_name(name));
-	}
-
-	void vm::call_function(const symbol* sym) {
-		if (sym == nullptr) {
-			throw std::runtime_error {"Cannot call function: not found"};
-		}
-		if (sym->type() != dt_function) {
-			throw std::runtime_error {"Cannot call " + sym->name() + ": not a function"};
-		}
-
-		call(sym);
-
-		if (sym->has_return()) {
-			_m_stack.pop();
-		}
-	}
-
 	void vm::call(const symbol* sym) {
 		push_call(sym);
 		jump(sym->address());
