@@ -6,12 +6,17 @@
 #include <utility>
 
 namespace phoenix::daedalus {
-	vm::vm(script&& scr) : _m_script(std::move(scr)) {
-		_m_self_sym = scr.find_symbol_by_name("SELF");
+	vm::vm(script&& scr) : script(std::move(scr)) {
+		_m_self_sym = find_symbol_by_name("SELF");
+		_m_other_sym = find_symbol_by_name("OTHER");
+		_m_victim_sym = find_symbol_by_name("VICTIM");
+		_m_hero_sym = find_symbol_by_name("HERO");
+		_m_item_sym = find_symbol_by_name("ITEM");
+		_m_temporary_strings = add_temporary_strings_symbol();
 	}
 
 	void vm::call_function(const std::string& name) {
-		call_function(_m_script.find_symbol_by_name(name));
+		call_function(find_symbol_by_name(name));
 	}
 
 	void vm::call_function(const symbol* sym) {
@@ -41,7 +46,7 @@ namespace phoenix::daedalus {
 	}
 
 	bool vm::exec() {
-		auto instr = _m_script.instruction_at(_m_pc);
+		auto instr = instruction_at(_m_pc);
 
 		std::int32_t a {}, b {};
 		symbol* sym {};
@@ -147,7 +152,7 @@ namespace phoenix::daedalus {
 					cb->second(*this);
 					pop_call();
 				} else {
-					sym = _m_script.find_symbol_by_address(instr.address);
+					sym = find_symbol_by_address(instr.address);
 					if (sym == nullptr) {
 						throw std::runtime_error {"op_call: no symbol found for address " +
 						                          std::to_string(instr.address)};
@@ -159,7 +164,7 @@ namespace phoenix::daedalus {
 				break;
 			}
 			case op_call_external: {
-				sym = _m_script.find_symbol_by_index(instr.symbol);
+				sym = find_symbol_by_index(instr.symbol);
 				if (sym == nullptr) {
 					throw std::runtime_error {"op_call_external: no external found for index " +
 					                          std::to_string(instr.symbol)};
@@ -185,7 +190,7 @@ namespace phoenix::daedalus {
 				break;
 			case op_push_instance:
 			case op_push_var:
-				sym = _m_script.find_symbol_by_index(instr.symbol);
+				sym = find_symbol_by_index(instr.symbol);
 				if (sym == nullptr) {
 					throw std::runtime_error {"op_push_var: no symbol found for index " + std::to_string(instr.symbol)};
 				}
@@ -248,7 +253,7 @@ namespace phoenix::daedalus {
 				}
 				return true;
 			case op_set_instance: {
-				sym = _m_script.find_symbol_by_index(instr.symbol);
+				sym = find_symbol_by_index(instr.symbol);
 				if (sym == nullptr) {
 					throw std::runtime_error {"op_set_instance: no symbol found for index " +
 					                          std::to_string(instr.symbol)};
@@ -257,7 +262,7 @@ namespace phoenix::daedalus {
 				break;
 			}
 			case op_push_array_var:
-				sym = _m_script.find_symbol_by_index(instr.symbol);
+				sym = find_symbol_by_index(instr.symbol);
 				if (sym == nullptr) {
 					throw std::runtime_error {"op_push_array_var: no symbol found for index " +
 					                          std::to_string(instr.symbol)};
@@ -295,9 +300,8 @@ namespace phoenix::daedalus {
 	}
 
 	void vm::push_string(const std::string& value) {
-		auto& sym = _m_script.dynamic_string();
-		sym.set_string(value);
-		push_reference(&sym);
+		_m_temporary_strings->set_string(value);
+		push_reference(_m_temporary_strings);
 	}
 
 	void vm::push_float(float value) {
@@ -385,7 +389,7 @@ namespace phoenix::daedalus {
 	}
 
 	void vm::jump(std::uint32_t address) {
-		if (address > _m_script.size()) {
+		if (address > size()) {
 			throw std::runtime_error {"Cannot jump to " + std::to_string(address) + ": illegal address"};
 		}
 		_m_pc = address;
@@ -394,7 +398,7 @@ namespace phoenix::daedalus {
 	void vm::register_default_external(const std::function<void(std::string_view)>& callback) {
 		_m_external_error_handler = [this, callback](vm& v, symbol& sym) {
 			// pop all parameters from the stack
-			auto params = _m_script.find_parameters_for_function(&sym);
+			auto params = find_parameters_for_function(&sym);
 			for (int i = params.size() - 1; i >= 0; --i) {
 				auto par = params[i];
 
@@ -463,7 +467,7 @@ namespace phoenix::daedalus {
 					break;
 				case dt_function: {
 					auto index = ref->get_int(v.index, _m_instance);
-					auto sym = _m_script.find_symbol_by_index(index);
+					auto sym = find_symbol_by_index(index);
 
 					std::cout << "(func) " << sym->name() << "\n";
 					break;

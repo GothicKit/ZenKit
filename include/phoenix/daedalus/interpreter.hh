@@ -46,7 +46,7 @@ namespace phoenix::daedalus {
 		std::shared_ptr<instance> context;
 	};
 
-	class vm {
+	class vm : public script {
 	public:
 		/**
 		 * @brief Creates a DaedalusVM instance for the given script.
@@ -79,7 +79,7 @@ namespace phoenix::daedalus {
 		template <class _instance_t> // clang-format off
 		requires (std::derived_from<_instance_t, instance>)
 		std::shared_ptr<_instance_t> init_instance(const std::string& name) { // clang-format on
-			return init_instance<_instance_t>(_m_script.find_symbol_by_name(name));
+			return init_instance<_instance_t>(find_symbol_by_name(name));
 		}
 
 		template <class _instance_t> // clang-format off
@@ -93,9 +93,9 @@ namespace phoenix::daedalus {
 			}
 
 			// check that the parent class is registered for the given instance type
-			auto* parent = _m_script.find_symbol_by_index(sym->parent());
+			auto* parent = find_symbol_by_index(sym->parent());
 			while (parent->type() != dt_class) {
-				parent = _m_script.find_symbol_by_index(parent->parent());
+				parent = find_symbol_by_index(parent->parent());
 			}
 
 			if (parent->registered_to() != typeid(_instance_t)) {
@@ -206,7 +206,7 @@ namespace phoenix::daedalus {
 		 */
 		template <typename R, typename... P>
 		void register_external(const std::string& name, const std::function<R(P...)>& callback) {
-			auto* sym = _m_script.find_symbol_by_name(name);
+			auto* sym = find_symbol_by_name(name);
 			if (sym == nullptr)
 				return;
 			if (!sym->is_external())
@@ -235,7 +235,7 @@ namespace phoenix::daedalus {
 					throw illegal_external_rtype(sym, "void");
 			}
 
-			std::vector<symbol*> params = _m_script.find_parameters_for_function(sym);
+			std::vector<symbol*> params = find_parameters_for_function(sym);
 			if (params.size() < sizeof...(P))
 				throw illegal_external {"too many arguments declared for external " + sym->name() + ": declared " +
 				                        std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
@@ -299,7 +299,7 @@ namespace phoenix::daedalus {
 		 */
 		template <typename R, typename... P>
 		void override_function(const std::string& name, const std::function<R(P...)>& callback) {
-			auto* sym = _m_script.find_symbol_by_name(name);
+			auto* sym = find_symbol_by_name(name);
 			if (sym == nullptr)
 				throw std::runtime_error {"symbol not found"};
 			if (sym->is_external())
@@ -328,14 +328,16 @@ namespace phoenix::daedalus {
 					throw illegal_external_rtype(sym, "void");
 			}
 
-			std::vector<symbol*> params = _m_script.find_parameters_for_function(sym);
+			std::vector<symbol*> params = find_parameters_for_function(sym);
 			if (params.size() < sizeof...(P))
-				throw illegal_external {"too many arguments declared for function override " + sym->name() + ": declared " +
-				                        std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
+				throw illegal_external {"too many arguments declared for function override " + sym->name() +
+				                        ": declared " + std::to_string(sizeof...(P)) + " expected " +
+				                        std::to_string(params.size())};
 
 			if (params.size() > sizeof...(P))
-				throw illegal_external {"not enough arguments declared for function override " + sym->name() + ": declared " +
-				                        std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
+				throw illegal_external {"not enough arguments declared for function override " + sym->name() +
+				                        ": declared " + std::to_string(sizeof...(P)) + " expected " +
+				                        std::to_string(params.size())};
 
 			if constexpr (sizeof...(P) > 0) {
 				check_external_params<0, P...>(params);
@@ -383,16 +385,44 @@ namespace phoenix::daedalus {
 		 * Before the callback is invoked, the VM makes sure that all parameters for the external are popped off the
 		 * stack and a default return value (if needed) is pushed onto the stack. This prevents stack underflows.
 		 *
-		 * @param callback The function to call. The one parameter of the function is the name of the unresolved external.
+		 * @param callback The function to call. The one parameter of the function is the name of the unresolved
+		 * external.
 		 */
 		void register_default_external(const std::function<void(std::string_view)>& callback);
 
-		const script& loaded_script() const noexcept {
-			return _m_script;
+		/**
+		 * @return the symbol referring to the global <tt>var C_NPC self</tt>.
+		 */
+		inline symbol* global_self() {
+			return _m_self_sym;
 		}
 
-		script& loaded_script() noexcept {
-			return _m_script;
+		/**
+		 * @return the symbol referring to the global <tt>var C_NPC other</tt>.
+		 */
+		inline symbol* global_other() {
+			return _m_other_sym;
+		}
+
+		/**
+		 * @return the symbol referring to the global <tt>var C_NPC victim</tt>.
+		 */
+		inline symbol* global_victim() {
+			return _m_victim_sym;
+		}
+
+		/**
+		 * @return the symbol referring to the global <tt>var C_NPC hero</tt>.
+		 */
+		inline symbol* global_hero() {
+			return _m_hero_sym;
+		}
+
+		/**
+		 * @return the symbol referring to the global <tt>var C_NPC item</tt>.
+		 */
+		inline symbol* global_item() {
+			return _m_item_sym;
 		}
 
 	protected:
@@ -569,7 +599,6 @@ namespace phoenix::daedalus {
 		}
 
 	private:
-		script _m_script;
 		std::stack<daedalus_stack_frame> _m_stack;
 		std::stack<daedalus_call_stack_frame> _m_call_stack;
 		std::unordered_map<symbol*, std::function<void(vm&)>> _m_externals;
@@ -577,9 +606,16 @@ namespace phoenix::daedalus {
 		std::optional<std::function<void(vm&, symbol&)>> _m_external_error_handler {std::nullopt};
 
 		symbol* _m_self_sym;
+		symbol* _m_other_sym;
+		symbol* _m_victim_sym;
+		symbol* _m_hero_sym;
+		symbol* _m_item_sym;
+
+		symbol* _m_temporary_strings;
+
 		std::shared_ptr<instance> _m_instance;
 		std::uint32_t _m_pc {0};
 
 		void print_stack_trace();
 	};
-} // namespace phoenix
+} // namespace phoenix::daedalus

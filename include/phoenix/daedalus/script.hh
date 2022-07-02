@@ -525,13 +525,6 @@ namespace phoenix::daedalus {
 		}
 
 		/**
-		 * @return All symbols in the script
-		 */
-		[[nodiscard]] inline std::vector<symbol>& symbols() noexcept {
-			return _m_symbols;
-		}
-
-		/**
 		 * @brief Retrieves the symbol with the given \p index
 		 * @param index The index of the symbol to get
 		 * @return The symbol or `nullptr` if the index was out-of-range.
@@ -609,15 +602,13 @@ namespace phoenix::daedalus {
 			return _m_text.limit() & 0xFFFFFF;
 		}
 
-		/**
-		 * @return The symbol used to store dynamic strings returned from functions.
-		 */
-		[[nodiscard]] symbol& dynamic_string() const noexcept {
-			return *_m_dynamic_strings;
-		}
-
 	protected:
 		script() = default;
+		script(const script& copy) = default;
+		script(script&& move) = default;
+
+		// TODO: When the script is destroyed, clear all references to symbols inside it from all instances already
+		//       initialized!
 
 		template <typename _class, typename _member, int N>
 		symbol* _check_member(const std::string& name, const std::type_info* type) {
@@ -662,12 +653,22 @@ namespace phoenix::daedalus {
 			return sym;
 		}
 
+		symbol* add_temporary_strings_symbol() {
+			symbol sym {};
+			sym._m_name = "$PHOENIX_FAKE_STRINGS";
+			sym._m_generated = true;
+			sym._m_type = dt_string;
+			sym._m_count = 1;
+			sym._m_value = std::unique_ptr<std::string[]> {new std::string[sym._m_count]};
+			sym._m_index = _m_symbols.size();
+
+			return &_m_symbols.emplace_back(std::move(sym));
+		}
+
 	private:
 		std::vector<symbol> _m_symbols;
 		std::unordered_map<std::string, symbol*> _m_symbols_by_name;
 		std::unordered_map<std::uint32_t, symbol*> _m_symbols_by_address;
-
-		symbol* _m_dynamic_strings {nullptr};
 
 		mutable buffer _m_text = buffer::empty();
 		std::uint8_t _m_version {0};

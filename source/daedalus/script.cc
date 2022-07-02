@@ -91,7 +91,7 @@ namespace phoenix::daedalus {
 		scr._m_version = in.get();
 		auto symbol_count = in.get_uint();
 
-		scr._m_symbols.reserve(symbol_count + 1);
+		scr._m_symbols.reserve(symbol_count + 1 /* account for temporary strings */);
 		scr._m_symbols_by_name.reserve(symbol_count + 1);
 		scr._m_symbols_by_address.reserve(symbol_count);
 		in.skip(symbol_count * sizeof(std::uint32_t)); // Sort table
@@ -107,18 +107,6 @@ namespace phoenix::daedalus {
 				scr._m_symbols_by_address[sym->address()] = sym;
 			}
 		}
-
-		// TODO: move this to a method
-		symbol sym {};
-		sym._m_name = "$PHOENIX_FAKE_STRINGS";
-		sym._m_generated = true;
-		sym._m_type = dt_string;
-		sym._m_count = 1;
-		sym._m_value = std::unique_ptr<std::string[]> {new std::string[sym._m_count]};
-		sym._m_index = scr._m_symbols.size();
-
-		scr._m_dynamic_strings = &scr._m_symbols.emplace_back(std::move(sym));
-		scr._m_symbols_by_name[scr._m_dynamic_strings->name()] = scr._m_dynamic_strings;
 
 		std::uint32_t text_size = in.get_uint();
 		scr._m_text = in.extract(text_size);
