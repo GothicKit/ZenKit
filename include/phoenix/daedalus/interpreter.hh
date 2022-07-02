@@ -375,6 +375,17 @@ namespace phoenix::daedalus {
 			override_function(name, std::function {cb});
 		}
 
+		/**
+		 * @brief Registers a function to be called when the script tries to call an external which has not been
+		 *        registered.
+		 *
+		 * Before the callback is invoked, the VM makes sure that all parameters for the external are popped off the
+		 * stack and a default return value (if needed) is pushed onto the stack. This prevents stack underflows.
+		 *
+		 * @param callback The function to call. The one parameter of the function is the name of the unresolved external.
+		 */
+		void register_default_external(const std::function<void(std::string_view)>& callback);
+
 		const script& loaded_script() const noexcept {
 			return _m_script;
 		}
@@ -560,6 +571,7 @@ namespace phoenix::daedalus {
 		std::stack<daedalus_call_stack_frame> _m_call_stack;
 		std::unordered_map<symbol*, std::function<void(vm&)>> _m_externals;
 		std::unordered_map<uint32_t, std::function<void(vm&)>> _m_function_overrides;
+		std::optional<std::function<void(vm&, symbol&)>> _m_external_error_handler {std::nullopt};
 
 		symbol* _m_self_sym;
 		std::shared_ptr<instance> _m_instance;

@@ -167,7 +167,12 @@ namespace phoenix::daedalus {
 
 				auto cb = _m_externals.find(sym);
 				if (cb == _m_externals.end()) {
-					throw std::runtime_error {"op_call_external: no external registered for " + sym->name()};
+					if (_m_external_error_handler.has_value()) {
+						(*_m_external_error_handler)(*this, *sym);
+						break;
+					} else {
+						throw std::runtime_error {"op_call_external: no external registered for " + sym->name()};
+					}
 				}
 
 				push_call(sym);
@@ -384,6 +389,38 @@ namespace phoenix::daedalus {
 			throw std::runtime_error {"Cannot jump to " + std::to_string(address) + ": illegal address"};
 		}
 		_m_pc = address;
+	}
+
+	void vm::register_default_external(const std::function<void(std::string_view)>& callback) {
+		_m_external_error_handler = [this, callback](vm& v, symbol& sym) {
+			// pop all parameters from the stack
+			auto params = _m_script.find_parameters_for_function(&sym);
+			for (int i = params.size() - 1; i >= 0; --i) {
+				auto par = params[i];
+
+				if (par->type() == dt_integer)
+					(void) v.pop_int();
+				else if (par->type() == dt_float)
+					(void) v.pop_float();
+				else if (par->type() == dt_instance || par->type() == dt_string)
+					(void) v.pop_reference();
+			}
+
+			if (sym.has_return()) {
+				if (sym.rtype() == dt_float)
+					v.push_float(0.0f);
+				else if (sym.rtype() == dt_integer)
+					v.push_int(0);
+				else if (sym.rtype() == dt_string)
+					v.push_string("");
+
+				// TODO: We can't really push an instance since we'd need to take the type into account. Sadly,
+				//       compiled scripts don't store the type of instance being returned so pushing one would
+				//       most likely just result in the VM panicking anyways.
+			}
+
+			callback(sym.name());
+		};
 	}
 
 	void vm::print_stack_trace() {
