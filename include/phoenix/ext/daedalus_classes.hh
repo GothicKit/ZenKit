@@ -637,7 +637,12 @@ namespace phoenix::daedalus {
 		var string ADDON_ANCIENTGHOST_NOTNEAR;
 		var string ADDON_GOLD_DESCRIPTION;
 
-#define REG_IF_SYM_EXIST(sym, ref) do {if (s.find_symbol_by_name(sym)) {s.register_member(sym, ref);}} while(false)
+#define REG_IF_SYM_EXIST(sym, ref)                                                                                     \
+	do {                                                                                                               \
+		if (s.find_symbol_by_name(sym)) {                                                                              \
+			s.register_member(sym, ref);                                                                               \
+		}                                                                                                              \
+	} while (false)
 
 		static void register_(script& s) {
 			// TODO: Fix Gothic 1
@@ -1344,19 +1349,24 @@ namespace phoenix::daedalus {
 			s.register_member("C_PARTICLEFXEMITKEY.SCALEDURATION", &c_particle_fx_emit_key::scale_duration);
 			s.register_member("C_PARTICLEFXEMITKEY.PFX_PPSVALUE", &c_particle_fx_emit_key::pfx_pps_value);
 			s.register_member("C_PARTICLEFXEMITKEY.PFX_PPSISSMOOTHCHG", &c_particle_fx_emit_key::pfx_pps_is_smooth_chg);
-			s.register_member("C_PARTICLEFXEMITKEY.PFX_PPSISLOOPINGCHG", &c_particle_fx_emit_key::pfx_pps_is_looping_chg);
+			s.register_member("C_PARTICLEFXEMITKEY.PFX_PPSISLOOPINGCHG",
+			                  &c_particle_fx_emit_key::pfx_pps_is_looping_chg);
 			s.register_member("C_PARTICLEFXEMITKEY.PFX_SCTIME", &c_particle_fx_emit_key::pfx_sc_time);
 			s.register_member("C_PARTICLEFXEMITKEY.PFX_FLYGRAVITY_S", &c_particle_fx_emit_key::pfx_fly_gravity_s);
 			s.register_member("C_PARTICLEFXEMITKEY.PFX_SHPDIM_S", &c_particle_fx_emit_key::pfx_shp_dim_s);
 			s.register_member("C_PARTICLEFXEMITKEY.PFX_SHPISVOLUMECHG", &c_particle_fx_emit_key::pfx_shp_is_volume_chg);
 			s.register_member("C_PARTICLEFXEMITKEY.PFX_SHPSCALEFPS", &c_particle_fx_emit_key::pfx_shp_scale_fps);
-			s.register_member("C_PARTICLEFXEMITKEY.PFX_SHPDISTRIBWALKSPEED", &c_particle_fx_emit_key::pfx_shp_distrib_walks_peed);
+			s.register_member("C_PARTICLEFXEMITKEY.PFX_SHPDISTRIBWALKSPEED",
+			                  &c_particle_fx_emit_key::pfx_shp_distrib_walks_peed);
 			s.register_member("C_PARTICLEFXEMITKEY.PFX_SHPOFFSETVEC_S", &c_particle_fx_emit_key::pfx_shp_offset_vec_s);
-			s.register_member("C_PARTICLEFXEMITKEY.PFX_SHPDISTRIBTYPE_S", &c_particle_fx_emit_key::pfx_shp_distrib_type_s);
+			s.register_member("C_PARTICLEFXEMITKEY.PFX_SHPDISTRIBTYPE_S",
+			                  &c_particle_fx_emit_key::pfx_shp_distrib_type_s);
 			s.register_member("C_PARTICLEFXEMITKEY.PFX_DIRMODE_S", &c_particle_fx_emit_key::pfx_dir_mode_s);
 			s.register_member("C_PARTICLEFXEMITKEY.PFX_DIRFOR_S", &c_particle_fx_emit_key::pfx_dir_for_s);
-			s.register_member("C_PARTICLEFXEMITKEY.PFX_DIRMODETARGETFOR_S", &c_particle_fx_emit_key::pfx_dir_mode_target_for_s);
-			s.register_member("C_PARTICLEFXEMITKEY.PFX_DIRMODETARGETPOS_S", &c_particle_fx_emit_key::pfx_dir_mode_target_pos_s);
+			s.register_member("C_PARTICLEFXEMITKEY.PFX_DIRMODETARGETFOR_S",
+			                  &c_particle_fx_emit_key::pfx_dir_mode_target_for_s);
+			s.register_member("C_PARTICLEFXEMITKEY.PFX_DIRMODETARGETPOS_S",
+			                  &c_particle_fx_emit_key::pfx_dir_mode_target_pos_s);
 			s.register_member("C_PARTICLEFXEMITKEY.PFX_VELAVG", &c_particle_fx_emit_key::pfx_vel_avg);
 			s.register_member("C_PARTICLEFXEMITKEY.PFX_LSPPARTAVG", &c_particle_fx_emit_key::pfx_lsp_part_avg);
 			s.register_member("C_PARTICLEFXEMITKEY.PFX_VISALPHASTART", &c_particle_fx_emit_key::pfx_vis_alpha_start);
@@ -1374,8 +1384,30 @@ namespace phoenix::daedalus {
 		}
 	};
 
+	enum class c_fight_ai_move : int32_t {
+		run = 1,
+		run_back = 2,
+		jump_back = 3,
+		turn = 4,
+		strafe = 5,
+		attack = 6,
+		attack_side = 7,
+		attack_front = 8,
+		attack_triple = 9,
+		attack_whirl = 10,
+		attack_master = 11,
+		turn_to_hit = 15,
+		parry = 17,
+		stand_up = 18,
+		wait = 19,
+		wait_longer = 23,
+		wait_ext = 24,
+	};
+
+	static constexpr uint8_t C_FIGHT_AI_MOVE_COUNT = 6;
+
 	struct c_fight_ai : public instance {
-		var int move[6];
+		var int move[C_FIGHT_AI_MOVE_COUNT];
 
 		static void register_(script& s) {
 			s.register_member("C_FIGHTAI.MOVE", &c_fight_ai::move);
