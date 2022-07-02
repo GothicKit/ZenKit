@@ -101,18 +101,12 @@ namespace phoenix::daedalus {
 	public:
 		virtual ~instance() = default;
 
-		/**
-		 * @return The symbol used to create the instance. This is of cour
-		 */
-		[[nodiscard]] const symbol* get_symbol() const noexcept {
-			return _m_symbol;
-		}
-
 	private:
 		friend class symbol;
+		friend class script;
 		friend class vm;
 
-		const symbol* _m_symbol {nullptr};
+		uint32_t _m_symbol_index {unset};
 		const std::type_info* _m_type {nullptr};
 	};
 
@@ -600,6 +594,50 @@ namespace phoenix::daedalus {
 		 */
 		[[nodiscard]] std::uint32_t size() const noexcept {
 			return _m_text.limit() & 0xFFFFFF;
+		}
+
+		/**
+		 * @brief Finds the symbol the given instance is currently bound to.
+		 * @param inst The instance to get the symbol for.
+		 * @return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
+		 *         with any instance.
+		 */
+		inline const symbol* find_symbol_by_instance(const instance& inst) const {
+			return find_symbol_by_index(inst._m_symbol_index);
+		}
+
+		/**
+		 * @brief Finds the symbol the given instance is currently bound to.
+		 * @param inst The instance to get the symbol for.
+		 * @return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
+		 *         with any instance.
+		 */
+		inline symbol* find_symbol_by_instance(const instance& inst) {
+			return find_symbol_by_index(inst._m_symbol_index);
+		}
+
+		/**
+		 * @brief Finds the symbol the given instance is currently bound to.
+		 * @param inst The instance to get the symbol for.
+		 * @return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
+		 *         with any instance.
+		 */
+		template <typename T> // clang-format off
+		requires(std::derived_from<T, instance>)
+		inline const symbol* find_symbol_by_instance(const std::shared_ptr<T>& inst) const { // clang-format on
+			return find_symbol_by_index(inst->_m_symbol_index);
+		}
+
+		/**
+		 * @brief Finds the symbol the given instance is currently bound to.
+		 * @param inst The instance to get the symbol for.
+		 * @return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
+		 *         with any instance.
+		 */
+		template <typename T> // clang-format off
+	    requires(std::derived_from<T, instance>)
+		inline symbol* find_symbol_by_instance(const std::shared_ptr<T>& inst) {
+			return find_symbol_by_index(inst->_m_symbol_index);
 		}
 
 	protected:

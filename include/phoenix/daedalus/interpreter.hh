@@ -106,7 +106,7 @@ namespace phoenix::daedalus {
 
 			// create the instance
 			auto inst = std::make_shared<_instance_t>();
-			inst->_m_symbol = sym;
+			inst->_m_symbol_index = sym->index();
 			inst->_m_type = &typeid(_instance_t);
 
 			// set the proper instances
