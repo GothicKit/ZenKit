@@ -886,6 +886,18 @@ namespace phoenix::daedalus {
 
 #undef REG_IF_SYM_EXIST
 
+	static constexpr uint8_t C_MENU_ITEMS_COUNT = 150;
+
+	namespace c_menu_flags {
+		static constexpr uint8_t overtop = 1 << 0;
+		static constexpr uint8_t exclusive = 1 << 1;
+		static constexpr uint8_t no_animation = 1 << 2;
+		static constexpr uint8_t dont_scale_dimension = 1 << 3;
+		static constexpr uint8_t dont_scale_position = 1 << 4;
+		static constexpr uint8_t align_center = 1 << 5;
+		static constexpr uint8_t show_info = 1 << 6;
+	} // namespace c_menu_flags
+
 	struct c_menu : public instance {
 		var string back_pic;
 		var string back_world;
@@ -896,7 +908,7 @@ namespace phoenix::daedalus {
 		var int alpha;
 		var string music_theme;
 		var int event_timer_msec;
-		var string items[150];
+		var string items[C_MENU_ITEMS_COUNT];
 		var int flags;
 		var int default_outgame;
 		var int default_ingame;
@@ -918,18 +930,74 @@ namespace phoenix::daedalus {
 		}
 	};
 
+	namespace c_menu_item_flags {
+		static constexpr uint16_t chromakeyed = 1 << 0;
+		static constexpr uint16_t transparent = 1 << 1;
+		static constexpr uint16_t selectable = 1 << 2;
+		static constexpr uint16_t movable = 1 << 3;
+		static constexpr uint16_t centered = 1 << 4;
+		static constexpr uint16_t disabled = 1 << 5;
+		static constexpr uint16_t fade = 1 << 6;
+		static constexpr uint16_t effects = 1 << 7;
+		static constexpr uint16_t only_outgame = 1 << 8;
+		static constexpr uint16_t only_ingame = 1 << 9;
+		static constexpr uint16_t perf_option = 1 << 10;
+		static constexpr uint16_t multiline = 1 << 11;
+		static constexpr uint16_t needs_apply = 1 << 12;
+		static constexpr uint16_t needs_restart = 1 << 13;
+		static constexpr uint16_t extended_menu = 1 << 14;
+	} // namespace c_menu_item_flags
+
+	enum class c_menu_item_type : uint8_t {
+		unknown = 0,
+		text = 1,
+		slider = 2,
+		input = 3,
+		cursor = 4,
+		choicebox = 5,
+		button = 6,
+		listbox = 7,
+	};
+
+	enum class c_menu_item_select_event : uint8_t {
+		execute = 1,
+		changed = 2,
+		leave = 3,
+		timer = 4,
+		close = 5,
+		init = 6,
+		select_previous = 7,
+		select_next = 8,
+	};
+
+	enum class c_menu_item_select_action : uint8_t {
+		unknown = 0,
+		back = 1,
+		start_menu = 2,
+		start_item = 3,
+		close = 4,
+		con_commands = 5,
+		play_sound = 6,
+		execute_commands = 7,
+	};
+
+	static constexpr int C_MENU_ITEM_TEXT_COUNT = 10;
+	static constexpr int C_MENU_ITEM_SELECT_ACTION_COUNT = 5;
+	static constexpr int C_MENU_ITEM_EVENT_ACTION_COUNT = 10;
+	static constexpr int C_MENU_ITEM_USER_ITEM_COUNT = 4;
+
 	struct c_menu_item : public instance {
 		var string fontname;
-		var string text[10];
+		var string text[C_MENU_ITEM_TEXT_COUNT];
 		var string backpic;
 		var string alphamode;
 		var int alpha;
 		var int type;
-		var int on_sel_action[5];
-		var string on_sel_action_s[5];
+		var int on_sel_action[C_MENU_ITEM_SELECT_ACTION_COUNT];
+		var string on_sel_action_s[C_MENU_ITEM_SELECT_ACTION_COUNT];
 		var string on_chg_set_option;
 		var string on_chg_set_option_section;
-		var func on_event_action[10];
+		var func on_event_action[C_MENU_ITEM_EVENT_ACTION_COUNT];
 		var int pos_x;
 		var int pos_y;
 		var int dim_x;
@@ -938,8 +1006,8 @@ namespace phoenix::daedalus {
 		var int flags;
 		var float open_delay_time;
 		var float open_duration;
-		var float user_float[4];
-		var string user_string[4];
+		var float user_float[C_MENU_ITEM_USER_ITEM_COUNT];
+		var string user_string[C_MENU_ITEM_USER_ITEM_COUNT];
 		var int frame_sizex;
 		var int frame_sizey;
 		var string hide_if_option_section_set;
