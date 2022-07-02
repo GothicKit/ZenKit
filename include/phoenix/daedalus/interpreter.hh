@@ -151,7 +151,7 @@ namespace phoenix::daedalus {
 		 * 	 <th>Comment</th>
 		 * 	</thead>
 		 * 	<tbody>
-		 * 		<tr><td>int</td><td><tt>int32_t</tt></td><td></td></tr>
+		 * 		<tr><td>int</td><td><tt>int32_t|bool</tt></td><td></td></tr>
 		 * 		<tr><td>func</td><td><tt>int32_t</tt></td><td>The value passed is the index of the function</td></tr>
 		 * 		<tr><td>float</td><td><tt>float</tt></td><td></td></tr>
 		 * 		<tr><td>string</td><td><tt>std::string_view</tt></td><td>Until I can find a way of properly passing
@@ -459,7 +459,7 @@ namespace phoenix::daedalus {
 			} else if constexpr (std::same_as<float, P>) {
 				if (defined[i]->type() != dt_float)
 					throw illegal_external_param(defined[i], "float", i + 1);
-			} else if constexpr (std::same_as<int32_t, P>) {
+			} else if constexpr (std::same_as<int32_t, P> || std::same_as<bool, P>) {
 				if (defined[i]->type() != dt_integer && defined[i]->type() != dt_function)
 					throw illegal_external_param(defined[i], "int", i + 1);
 			} else if constexpr (std::same_as<std::string_view, P>) {
@@ -484,7 +484,7 @@ namespace phoenix::daedalus {
 		 */
 		template <typename T> // clang-format off
 		requires (is_instance_ptr<T>::value || std::same_as<float, T> || std::same_as<std::int32_t, T> ||
-		          std::same_as<std::string_view, T> || std::same_as<symbol*, T>)
+		          std::same_as<bool, T> || std::same_as<std::string_view, T> || std::same_as<symbol*, T>)
 		inline T pop_value_for_external() { // clang-format on
 			if constexpr (is_instance_ptr<T>::value) {
 				auto r = pop_instance();
@@ -508,6 +508,8 @@ namespace phoenix::daedalus {
 				return pop_float();
 			} else if constexpr (std::same_as<std::int32_t, T>) {
 				return pop_int();
+			} else if constexpr (std::same_as<bool, T>) {
+				return pop_int() != 0;
 			} else if constexpr (std::same_as<std::string_view, T>) {
 				return pop_string();
 			} else if constexpr (std::same_as<symbol*, T>) {
