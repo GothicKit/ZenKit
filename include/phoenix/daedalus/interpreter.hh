@@ -62,7 +62,7 @@ namespace phoenix::daedalus {
 		 * @param sym The name of the function to call.
 		 * @param args The arguments for the function call.
 		 */
-		template <typename R = _ignore_return_value, typename ... P>
+		template <typename R = _ignore_return_value, typename... P>
 		R call_function(const std::string& name, P... args) {
 			return call_function<R, P...>(find_symbol_by_name(name), args...);
 		}
@@ -73,7 +73,7 @@ namespace phoenix::daedalus {
 		 * @param sym The symbol of the function to call.
 		 * @param args The arguments for the function call.
 		 */
-		template <typename R = _ignore_return_value, typename ... P>
+		template <typename R = _ignore_return_value, typename... P>
 		R call_function(const symbol* sym, P... args) {
 			if (sym == nullptr)
 				throw std::runtime_error {"Cannot call function: not found"};
@@ -83,11 +83,11 @@ namespace phoenix::daedalus {
 			std::vector<symbol*> params = find_parameters_for_function(sym);
 			if (params.size() < sizeof...(P))
 				throw std::runtime_error {"too many arguments provided for " + sym->name() + ": given " +
-				                        std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
+				                          std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
 
 			if (params.size() > sizeof...(P))
 				throw std::runtime_error {"not enough arguments provided for " + sym->name() + ": given " +
-				                        std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
+				                          std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
 
 			if constexpr (!std::same_as<R, _ignore_return_value>)
 				check_call_return_type<R>(sym);
@@ -118,13 +118,28 @@ namespace phoenix::daedalus {
 		 */
 		template <class _instance_t> // clang-format off
 		requires (std::derived_from<_instance_t, instance>)
-		std::shared_ptr<_instance_t> init_instance(const std::string& name, void* user_ptr = nullptr) { // clang-format on
-			return init_instance<_instance_t>(find_symbol_by_name(name), user_ptr);
+		std::shared_ptr<_instance_t> init_instance(const std::string& name) { // clang-format on
+			return init_instance<_instance_t>(find_symbol_by_name(name));
 		}
 
 		template <class _instance_t> // clang-format off
 		requires (std::derived_from<_instance_t, instance>)
-		std::shared_ptr<_instance_t> init_instance(symbol* sym, void* user_ptr = nullptr) { // clang-format on
+		void init_instance(const std::shared_ptr<_instance_t>& instance, const std::string& name) { // clang-format on
+			return init_instance<_instance_t>(instance, find_symbol_by_name(name));
+		}
+
+		template <class _instance_t> // clang-format off
+		requires (std::derived_from<_instance_t, instance>)
+		std::shared_ptr<_instance_t> init_instance(symbol* sym) { // clang-format on
+			// create the instance
+			auto inst = std::make_shared<_instance_t>();
+			init_instance(inst, sym);
+			return inst;
+		}
+
+		template <class _instance_t> // clang-format off
+		requires (std::derived_from<_instance_t, instance>)
+		void init_instance(const std::shared_ptr<_instance_t>& instance, symbol* sym) { // clang-format on
 			if (sym == nullptr) {
 				throw std::runtime_error {"Cannot init instance: not found"};
 			}
@@ -144,21 +159,17 @@ namespace phoenix::daedalus {
 				                          "registered to a different instance class"};
 			}
 
-			// create the instance
-			auto inst = std::make_shared<_instance_t>();
-			inst->user_ptr = user_ptr;
-			inst->_m_symbol_index = sym->index();
-			inst->_m_type = &typeid(_instance_t);
+			instance->_m_symbol_index = sym->index();
+			instance->_m_type = &typeid(_instance_t);
 
 			// set the proper instances
-			_m_instance = inst;
+			_m_instance = instance;
 			sym->set_instance(_m_instance);
 
 			if (_m_self_sym)
 				_m_self_sym->set_instance(_m_instance);
 
 			call(sym);
-			return inst;
 		}
 
 		void push_int(std::int32_t value);
@@ -645,8 +656,8 @@ namespace phoenix::daedalus {
 		}
 
 		template <typename R>
-	    requires (is_instance_ptr<R>::value || std::same_as<float, R> || std::same_as<std::int32_t, R> ||
-	              std::same_as<std::string, R> || std::same_as<void, R>)
+		    requires(is_instance_ptr<R>::value || std::same_as<float, R> || std::same_as<std::int32_t, R> ||
+		             std::same_as<std::string, R> || std::same_as<void, R>)
 		void check_call_return_type(const symbol* sym) {
 			if constexpr (is_instance_ptr<R>::value) {
 				if (sym->rtype() != dt_instance)
