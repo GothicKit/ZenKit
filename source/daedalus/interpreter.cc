@@ -254,6 +254,7 @@ namespace phoenix::daedalus {
 				break;
 			}
 		} catch (const std::runtime_error& err) {
+			std::cerr << "+++ Error while executing script: " << err.what() << "+++\n\n";
 			print_stack_trace();
 			throw std::domain_error {std::string {err.what()}};
 		}
