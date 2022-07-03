@@ -24,6 +24,11 @@ namespace phoenix::daedalus {
 			;
 
 		pop_call();
+
+		// if we're about to exit the interpreter, clear the stack to get rid of
+		// any unused return values.
+		if (_m_call_stack.empty())
+			_m_stack = std::stack<daedalus_stack_frame> {};
 	}
 
 	bool vm::exec() {
