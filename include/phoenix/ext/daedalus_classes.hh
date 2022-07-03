@@ -328,6 +328,11 @@ namespace phoenix::daedalus {
 		}
 	};
 
+	struct c_info_choice {
+		var string text;
+		var int function = 0;
+	};
+
 	struct c_info : public instance {
 		var int npc;
 		var int nr;
@@ -337,6 +342,16 @@ namespace phoenix::daedalus {
 		var string description;
 		var int trade;
 		var int permanent;
+
+		std::vector<c_info_choice> choices {};
+
+		void add_choice(const c_info_choice& ch) {
+			choices.insert(choices.begin(), ch);
+		}
+
+		void removeChoice(std::size_t index) {
+			choices.erase(choices.begin() + index);
+		}
 
 		static void register_(script& s) {
 			s.register_member("C_INFO.NPC", &c_info::npc);
