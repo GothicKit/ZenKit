@@ -101,6 +101,13 @@ namespace phoenix::daedalus {
 	public:
 		virtual ~instance() = default;
 
+		/**
+		 * @return The index of the symbol this instance is bound to.
+		 */
+		inline uint32_t symbol_index() const {
+			return _m_symbol_index;
+		}
+
 	private:
 		friend class symbol;
 		friend class script;
