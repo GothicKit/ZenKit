@@ -37,6 +37,7 @@ namespace phoenix::daedalus {
 	};
 
 	struct daedalus_stack_frame {
+		std::shared_ptr<instance> context;
 		bool reference;
 		std::variant<int32_t, float, symbol*, std::shared_ptr<instance>> value;
 		uint16_t index {0};
@@ -189,7 +190,7 @@ namespace phoenix::daedalus {
 		[[nodiscard]] float pop_float();
 		[[nodiscard]] std::shared_ptr<instance> pop_instance();
 		[[nodiscard]] const std::string& pop_string();
-		[[nodiscard]] std::tuple<symbol*, std::uint8_t> pop_reference();
+		[[nodiscard]] std::tuple<symbol*, std::uint8_t, std::shared_ptr<instance>> pop_reference();
 
 		/**
 		 * @brief Registers a Daedalus external function.

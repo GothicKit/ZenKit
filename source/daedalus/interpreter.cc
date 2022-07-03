@@ -184,49 +184,49 @@ namespace phoenix::daedalus {
 				break;
 			case op_assign_int:
 			case op_assign_func: {
-				auto [ref, idx] = pop_reference();
-				ref->set_int(pop_int(), idx, _m_instance);
+				auto [ref, idx, context] = pop_reference();
+				ref->set_int(pop_int(), idx, context);
 				break;
 			}
 			case op_assign_float: {
-				auto [ref, idx] = pop_reference();
-				ref->set_float(pop_float(), idx, _m_instance);
+				auto [ref, idx, context] = pop_reference();
+				ref->set_float(pop_float(), idx, context);
 				break;
 			}
 			case op_assign_string: {
-				auto [target, target_idx] = pop_reference();
+				auto [target, target_idx, context] = pop_reference();
 				auto source = pop_string();
-				target->set_string(source, target_idx, _m_instance);
+				target->set_string(source, target_idx, context);
 				break;
 			}
 			case op_assign_stringref:
 				throw std::runtime_error {"not implemented: op_assign_stringref"};
 			case op_assign_add: {
-				auto [ref, idx] = pop_reference();
-				auto result = ref->get_int(idx, _m_instance) + pop_int();
-				ref->set_int(result, idx, _m_instance);
+				auto [ref, idx, context] = pop_reference();
+				auto result = ref->get_int(idx, context) + pop_int();
+				ref->set_int(result, idx, context);
 				break;
 			}
 			case op_assign_subtract: {
-				auto [ref, idx] = pop_reference();
-				auto result = ref->get_int(idx, _m_instance) - pop_int();
-				ref->set_int(result, idx, _m_instance);
+				auto [ref, idx, context] = pop_reference();
+				auto result = ref->get_int(idx, context) - pop_int();
+				ref->set_int(result, idx, context);
 				break;
 			}
 			case op_assign_multiply: {
-				auto [ref, idx] = pop_reference();
-				auto result = ref->get_int(idx, _m_instance) * pop_int();
-				ref->set_int(result, idx, _m_instance);
+				auto [ref, idx, context] = pop_reference();
+				auto result = ref->get_int(idx, context) * pop_int();
+				ref->set_int(result, idx, context);
 				break;
 			}
 			case op_assign_divide: {
-				auto [ref, idx] = pop_reference();
-				auto result = ref->get_int(idx, _m_instance) / pop_int();
-				ref->set_int(result, idx, _m_instance);
+				auto [ref, idx, context] = pop_reference();
+				auto result = ref->get_int(idx, context) / pop_int();
+				ref->set_int(result, idx, context);
 				break;
 			}
 			case op_assign_instance: {
-				auto [target, target_idx] = pop_reference();
+				auto [target, target_idx, _] = pop_reference();
 				target->set_instance(pop_instance());
 				break;
 			}
@@ -280,11 +280,11 @@ namespace phoenix::daedalus {
 	}
 
 	void vm::push_int(std::int32_t value) {
-		_m_stack.push({false, value});
+		_m_stack.push({nullptr, false, value});
 	}
 
 	void vm::push_reference(symbol* value, std::uint8_t index) {
-		_m_stack.push({true, value, index});
+		_m_stack.push({_m_instance, true, value, index});
 	}
 
 	void vm::push_string(const std::string& value) {
@@ -293,11 +293,11 @@ namespace phoenix::daedalus {
 	}
 
 	void vm::push_float(float value) {
-		_m_stack.push({false, value});
+		_m_stack.push({nullptr, false, value});
 	}
 
 	void vm::push_instance(std::shared_ptr<instance> value) {
-		_m_stack.push({false, value});
+		_m_stack.push({nullptr, false, value});
 	}
 
 	std::int32_t vm::pop_int() {
@@ -310,7 +310,7 @@ namespace phoenix::daedalus {
 		_m_stack.pop();
 
 		if (v.reference) {
-			return std::get<symbol*>(v.value)->get_int(v.index, _m_instance);
+			return std::get<symbol*>(v.value)->get_int(v.index, v.context);
 		} else if (std::holds_alternative<int32_t>(v.value)) {
 			return std::get<int32_t>(v.value);
 		} else {
@@ -327,7 +327,7 @@ namespace phoenix::daedalus {
 		_m_stack.pop();
 
 		if (v.reference) {
-			return std::get<symbol*>(v.value)->get_float(v.index, _m_instance);
+			return std::get<symbol*>(v.value)->get_float(v.index, v.context);
 		} else if (std::holds_alternative<float>(v.value)) {
 			return std::get<float>(v.value);
 		} else if (std::holds_alternative<std::int32_t>(v.value)) {
@@ -339,7 +339,7 @@ namespace phoenix::daedalus {
 		}
 	}
 
-	std::tuple<symbol*, std::uint8_t> vm::pop_reference() {
+	std::tuple<symbol*, std::uint8_t, std::shared_ptr<instance>> vm::pop_reference() {
 		if (_m_stack.empty()) {
 			throw std::runtime_error {"Popping from empty stack!"};
 		}
@@ -351,7 +351,7 @@ namespace phoenix::daedalus {
 			throw std::runtime_error {"Tried to pop_reference but frame does not contain a reference."};
 		}
 
-		return {std::get<symbol*>(v.value), v.index};
+		return {std::get<symbol*>(v.value), v.index, v.context};
 	}
 
 	std::shared_ptr<instance> vm::pop_instance() {
@@ -372,8 +372,8 @@ namespace phoenix::daedalus {
 	}
 
 	const std::string& vm::pop_string() {
-		auto [s, i] = pop_reference();
-		return s->get_string(i, _m_instance);
+		auto [s, i, context] = pop_reference();
+		return s->get_string(i, context);
 	}
 
 	void vm::jump(std::uint32_t address) {
