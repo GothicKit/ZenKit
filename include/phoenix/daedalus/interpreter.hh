@@ -465,6 +465,11 @@ namespace phoenix::daedalus {
 			return _m_item_sym;
 		}
 
+		/**
+		 * @brief Prints the contents of the function call stack and the VMs stack to stderr.
+		 */
+		void print_stack_trace() const;
+
 	protected:
 		/**
 		 * @brief Calls the given symbol as a function.
@@ -737,7 +742,5 @@ namespace phoenix::daedalus {
 
 		std::shared_ptr<instance> _m_instance;
 		std::uint32_t _m_pc {0};
-
-		void print_stack_trace();
 	};
 } // namespace phoenix::daedalus

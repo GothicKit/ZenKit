@@ -409,19 +409,21 @@ namespace phoenix::daedalus {
 		};
 	}
 
-	void vm::print_stack_trace() {
+	void vm::print_stack_trace() const {
 		auto last_pc = _m_pc;
+		std::stack<daedalus_call_stack_frame> callstack {_m_call_stack};
+		std::stack<daedalus_stack_frame> stack {_m_stack};
 
 		std::cerr << "\n"
 		          << "------- CALL STACK (MOST RECENT CALL FIRST) -------"
 		          << "\n";
 
-		while (!_m_call_stack.empty()) {
-			auto v = _m_call_stack.top();
+		while (!callstack.empty()) {
+			auto v = callstack.top();
 			std::cerr << "in " << v.function->name() << " at 0x" << std::hex << last_pc << std::dec << "\n";
 
 			last_pc = v.program_counter;
-			_m_call_stack.pop();
+			callstack.pop();
 		}
 
 		std::cerr << "\n"
@@ -429,13 +431,12 @@ namespace phoenix::daedalus {
 		          << "\n";
 
 		int i = 0;
-		while (!_m_stack.empty()) {
-			auto v = _m_stack.top();
+		while (!stack.empty()) {
+			auto v = stack.top();
 
 			if (v.reference) {
 				auto ref = std::get<symbol*>(v.value);
-				std::cerr << i << ":  "
-				          << "[REFERENCE] " << ref->name() << "[" << (int) v.index << "] = ";
+				std::cerr << i << ": [REFERENCE] " << ref->name() << "[" << (int) v.index << "] = ";
 
 				switch (ref->type()) {
 				case dt_float:
@@ -451,32 +452,39 @@ namespace phoenix::daedalus {
 					auto index = ref->get_int(v.index, _m_instance);
 					auto sym = find_symbol_by_index(index);
 
-					std::cout << "(func) " << sym->name() << "\n";
+					std::cout << "&" << sym->name() << "\n";
 					break;
 				}
 				case dt_instance: {
-					// auto inst = v.reference_value->get_instance();
-					std::cerr << "(instance)\n";
+					auto& inst = ref->get_instance();
+					if (inst != nullptr) {
+						std::cerr << "<instance of '" << inst->_m_type->name() << "'>\n";
+					} else {
+						std::cerr << "NULL\n";
+					}
 					break;
 				}
 				default:
-					std::cerr << "<UNKNOWN>\n";
+					std::cerr << "<invalid stack frame>\n";
 				}
 			} else {
 				if (std::holds_alternative<float>(v.value)) {
-					std::cerr << i << ":  "
-					          << "[IMMEDIATE FLOAT] " << std::get<float>(v.value) << "\n";
+					std::cerr << i << ": [IMMEDIATE FLOAT] = " << std::get<float>(v.value) << "\n";
 				} else if (std::holds_alternative<int32_t>(v.value)) {
-					std::cerr << i << ":  "
-					          << "[IMMEDIATE INT] " << std::get<int32_t>(v.value) << "\n";
+					std::cerr << i << ": [IMMEDIATE INT] = " << std::get<int32_t>(v.value) << "\n";
 				} else if (std::holds_alternative<std::shared_ptr<instance>>(v.value)) {
-					std::cerr << i << ":  "
-					          << "[IMMEDIATE INSTANCE] " << std::get<std::shared_ptr<instance>>(v.value).get() << "\n";
+					auto& inst = std::get<std::shared_ptr<instance>>(v.value);
+					std::cerr << i << ": [IMMEDIATE INSTANCE] = ";
+					if (inst == nullptr) {
+						std::cerr << "NULL\n";
+					} else {
+						std::cerr << "<instance of '" << inst->_m_type->name() << "'>\n";
+					}
 				}
 			}
 
 			i += 1;
-			_m_stack.pop();
+			stack.pop();
 		}
 
 		std::cerr << "\n";
@@ -489,4 +497,4 @@ namespace phoenix::daedalus {
 	illegal_external_param::illegal_external_param(const symbol* sym, std::string_view provided, std::uint8_t i)
 	    : illegal_external("external " + sym->name() + " has illegal parameter type '" + provided.data() + "' (no. " +
 	                       std::to_string(i) + "), expected '" + DAEDALUS_DATA_TYPE_NAMES[sym->type()] + "'") {}
-} // namespace phoenix
+} // namespace phoenix::daedalus
