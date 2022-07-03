@@ -118,13 +118,13 @@ namespace phoenix::daedalus {
 		 */
 		template <class _instance_t> // clang-format off
 		requires (std::derived_from<_instance_t, instance>)
-		std::shared_ptr<_instance_t> init_instance(const std::string& name) { // clang-format on
-			return init_instance<_instance_t>(find_symbol_by_name(name));
+		std::shared_ptr<_instance_t> init_instance(const std::string& name, void* user_ptr = nullptr) { // clang-format on
+			return init_instance<_instance_t>(find_symbol_by_name(name), user_ptr);
 		}
 
 		template <class _instance_t> // clang-format off
 		requires (std::derived_from<_instance_t, instance>)
-		std::shared_ptr<_instance_t> init_instance(symbol* sym) { // clang-format on
+		std::shared_ptr<_instance_t> init_instance(symbol* sym, void* user_ptr = nullptr) { // clang-format on
 			if (sym == nullptr) {
 				throw std::runtime_error {"Cannot init instance: not found"};
 			}
@@ -146,6 +146,7 @@ namespace phoenix::daedalus {
 
 			// create the instance
 			auto inst = std::make_shared<_instance_t>();
+			inst->user_ptr = user_ptr;
 			inst->_m_symbol_index = sym->index();
 			inst->_m_type = &typeid(_instance_t);
 
