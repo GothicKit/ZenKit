@@ -163,6 +163,8 @@ namespace phoenix::daedalus {
 			instance->_m_type = &typeid(_instance_t);
 
 			// set the proper instances
+			auto old_instance = _m_instance;
+			auto old_self_instance = _m_self_sym != nullptr ? _m_self_sym->get_instance() : nullptr;
 			_m_instance = instance;
 			sym->set_instance(_m_instance);
 
@@ -170,6 +172,11 @@ namespace phoenix::daedalus {
 				_m_self_sym->set_instance(_m_instance);
 
 			call(sym);
+
+			// reset the VM state
+			_m_instance = old_instance;
+			if (_m_self_sym)
+				_m_self_sym->set_instance(old_self_instance);
 		}
 
 		void push_int(std::int32_t value);
@@ -661,19 +668,19 @@ namespace phoenix::daedalus {
 		void check_call_return_type(const symbol* sym) {
 			if constexpr (is_instance_ptr<R>::value) {
 				if (sym->rtype() != dt_instance)
-					throw std::runtime_error {"invalid return type"};
+					throw std::runtime_error {"invalid return type for function " + sym->name()};
 			} else if constexpr (std::same_as<float, R>) {
 				if (sym->rtype() != dt_float)
-					throw std::runtime_error {"invalid return type"};
+					throw std::runtime_error {"invalid return type for function " + sym->name()};
 			} else if constexpr (std::same_as<int32_t, R>) {
 				if (sym->rtype() != dt_integer && sym->rtype() != dt_function)
-					throw std::runtime_error {"invalid return type"};
+					throw std::runtime_error {"invalid return type for function " + sym->name()};
 			} else if constexpr (std::same_as<std::string, R>) {
 				if (sym->rtype() != dt_string)
-					throw std::runtime_error {"invalid return type"};
+					throw std::runtime_error {"invalid return type for function " + sym->name()};
 			} else if constexpr (std::same_as<void, R>) {
 				if (sym->rtype() != dt_void)
-					throw std::runtime_error {"invalid return type"};
+					throw std::runtime_error {"invalid return type for function " + sym->name()};
 			}
 		}
 
