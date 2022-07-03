@@ -583,7 +583,7 @@ namespace phoenix::daedalus {
 			if constexpr (is_instance_ptr<T>::value) {
 				auto r = pop_instance();
 
-				if (r != nullptr) {
+				if (r != nullptr && !std::same_as<T, std::shared_ptr<phoenix::daedalus::instance>>) {
 					auto& expected = typeid(typename is_instance_ptr<T>::instance_type);
 
 					if (!r->_m_type) {
