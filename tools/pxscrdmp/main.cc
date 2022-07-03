@@ -17,6 +17,7 @@ static constexpr const auto HELP_MESSAGE = "Usage: pxscrdmp [--version]\n"
 										   "       pxscrdmp <FILE> [-t|--symbolize] [-I|--include <IFLAGS>] [-E|--exclude <EFLAGS>]\n"
 										   "                       [-f|--search <TERM>] [-s|--symbol <NAME>] [-p|--parent <PARENT-NAME>]\n"
 										   "       pxscrdmp <FILE> [-d|--disassemble] [-s|--symbol <NAME>]\n"
+                                           "       pxscrdmp <FILE> [-u|--usages] [-s|--symbol <NAME>]\n"
 										   "\n"
 										   "phoenix pxscrdmp v{}\n"
 										   "View contents of compiled Daedalus script files.\n"
@@ -54,6 +55,8 @@ void print_assembly(const script& scr);
 void print_symbol_detailed(const script& scr, const symbol& sym);
 void print_symbol_list(const script& scr, std::string_view include_filter, std::string_view exclude_filter, std::string_view search, const symbol* parent);
 
+void find_usages(const script& scr, const symbol& sym);
+
 int main(int argc, char** argv) {
 	argh::parser cmdl {argc, argv, argh::parser::PREFER_PARAM_FOR_UNREG_OPTION};
 	std::string input {};
@@ -65,6 +68,7 @@ int main(int argc, char** argv) {
 	bool action_symbolize = false;
 	bool action_disassemble = false;
 	bool action_help = false;
+	bool action_usages = false;
 
 	bool specific = false;
 
@@ -82,6 +86,7 @@ int main(int argc, char** argv) {
 
 	action_symbolize = cmdl[{"-t", "--symbolize"}];
 	action_disassemble = cmdl[{"-d", "--disassemble"}];
+	action_usages = cmdl[{"-u", "--usages"}];
 	action_help = cmdl[{"-h", "--help"}];
 
 	cmdl({"-f", "--search"}) >> search;
@@ -132,6 +137,19 @@ int main(int argc, char** argv) {
 			} else {
 				print_assembly(scr);
 			}
+		} else if (action_usages) {
+			if (!specific) {
+				fmt::print(stderr, "Please provide a symbol of which to find usages.");
+				return EXIT_FAILURE;
+			}
+
+			sym = scr.find_symbol_by_name(symbol_name);
+			if (sym == nullptr) {
+				fmt::print("symbol with name {} not found\n", symbol_name);
+				return EXIT_FAILURE;
+			}
+
+			find_usages(scr, *sym);
 		}
 	}
 
@@ -596,15 +614,18 @@ void print_instruction_bytes(const instruction& i) {
 /// \brief Prints the given instruction
 /// \param scr The script to reference
 /// \param i The instruction to print
-void print_instruction(const script& scr, const instruction& i) {
-	print_instruction_bytes(i);
+void print_instruction(const script& scr, const instruction& i, bool instruction_only = false) {
+	if (!instruction_only) {
+		print_instruction_bytes(i);
+		fmt::print(" ");
+	}
 
-	fmt::print(" {}", get_opcode_name(i.op));
+	fmt::print("{}", get_opcode_name(i.op));
 
 	switch (i.op) {
 		case opcode::op_call:
 			fmt::print(" {:0>8x}", i.address);
-			if (const auto* s = scr.find_symbol_by_address(i.address); s != nullptr) {
+			if (const auto* s = scr.find_symbol_by_address(i.address); s != nullptr && !instruction_only) {
 				fmt::print(" ; <{}>", s->name());
 			}
 			break;
@@ -618,7 +639,7 @@ void print_instruction(const script& scr, const instruction& i) {
 		case opcode::op_set_instance:
 			fmt::print(" {:0>8x}", i.symbol);
 
-			if (const auto* s = scr.find_symbol_by_index(i.symbol); s != nullptr) {
+			if (const auto* s = scr.find_symbol_by_index(i.symbol); s != nullptr && !instruction_only) {
 				fmt::print(" ; <{}>", s->name());
 
 				if (has_constant_value(*s)) {
@@ -633,7 +654,7 @@ void print_instruction(const script& scr, const instruction& i) {
 		case opcode::op_push_array_var:
 			fmt::print(" {:0>8x} + {}", i.address, i.index);
 
-			if (const auto* s = scr.find_symbol_by_index(i.symbol); s != nullptr) {
+			if (const auto* s = scr.find_symbol_by_index(i.symbol); s != nullptr && !instruction_only) {
 				fmt::print(" ; <{}+{}>", s->name(), i.index);
 
 				if (has_constant_value(*s)) {
@@ -680,4 +701,48 @@ void print_assembly(const script& scr) {
 			print_assembly_of_symbol(scr, sym);
 		}
 	}
+}
+
+void find_usages(const script& scr, const symbol& sym) {
+	uint32_t pc = 0;
+	const symbol* current_function;
+
+	while (pc < scr.size()) {
+		auto inst = scr.instruction_at(pc);
+		auto func_sym = scr.find_symbol_by_address(pc);
+
+		if (func_sym != nullptr) {
+			fmt::print("\r{: <100}", func_sym->name());
+			current_function = func_sym;
+		}
+
+		switch (inst.op) {
+		case op_assign_add:
+		case op_assign_subtract:
+		case op_assign_multiply:
+		case op_assign_divide:
+		case op_call:
+		case op_call_external:
+		case op_push_var:
+		case op_push_instance:
+		case op_assign_int:
+		case op_assign_string:
+		case op_assign_func:
+		case op_assign_float:
+		case op_assign_instance:
+		case op_push_array_var:
+			if (inst.symbol == sym.index() || (inst.op == op_call && sym.address() == inst.address)) {
+				fmt::print("\r[");
+				print_instruction(scr, inst, true);
+				fmt::print("] at {:0>8x} in {}\n", pc, current_function->name());
+			}
+			break;
+		default:
+			break;
+		}
+
+		pc += inst.size;
+	}
+
+	fmt::print("\r{: <100}\r", "");
 }
