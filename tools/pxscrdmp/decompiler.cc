@@ -127,31 +127,22 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 	case op_assign_subtract:
 	case op_assign_multiply:
 	case op_assign_divide: {
+		stack_frame ref_instr {phoenix::daedalus::op_push_int, 0, 0, 0, 0, 0};
+		if (!stack.empty()) {
+			ref_instr = stack.back();
+			stack.pop_back();
+		}
+
+		auto ref = decompile_statement(script, ref_instr, stack);
+
 		stack_frame a_instr {phoenix::daedalus::op_push_int, 0, 0, 0, 0, 0};
 		if (!stack.empty()) {
 			a_instr = stack.back();
 			stack.pop_back();
 		}
+
 		auto a = decompile_statement(script, a_instr, stack);
-
-		auto sym = script.find_symbol_by_index(stmt.instr.symbol);
-		std::string sym_name;
-
-		if (sym->is_member() &&
-		    !(current_symbol->type() == phoenix::daedalus::dt_instance &&
-		      current_instance == current_symbol->index())) {
-			auto inst_sym = script.find_symbol_by_index(stmt.instance);
-			if (inst_sym == nullptr) {
-				sym_name = "???" + sym->name().substr(sym->name().find('.'));
-			} else {
-				sym_name = inst_sym->name() + sym->name().substr(sym->name().find('.'));
-			}
-		} else {
-			auto dot = sym->name().find('.');
-			sym_name = dot == std::string::npos ? sym->name() : sym_name.substr(dot + 1);
-		}
-
-		return fmt::format("{} {} {}", sym_name, OPCODE_STR[stmt.instr.op], a);
+		return fmt::format("{} {} {}", ref, OPCODE_STR[stmt.instr.op], a);
 	}
 	case op_plus:
 	case op_minus:
