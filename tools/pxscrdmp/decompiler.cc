@@ -362,6 +362,14 @@ std::pair<std::string, std::uint32_t> decompile_block(const script& script,
 			return {code, stmt.instr.address};
 		} else {
 			auto s = decompile_statement(script, stmt, stack);
+
+			if (!stack.empty()) {
+				auto unused_return = stack.back();
+				stack.pop_back();
+
+				code += fmt::format("{: >{}}{};\n", "", indent, decompile_statement(script, unused_return, stack));
+			}
+
 			if (!s.empty()) {
 				code += fmt::format("{: >{}}{};\n", "", indent, s);
 			}
