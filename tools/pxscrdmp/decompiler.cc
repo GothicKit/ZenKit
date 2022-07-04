@@ -142,7 +142,9 @@ std::string decompile_statement(const script& script,
 		auto sym = script.find_symbol_by_index(stmt.instr.symbol);
 		std::string sym_name;
 
-		if (sym->is_member()) {
+		if (sym->is_member() &&
+		    !(current_symbol->type() == phoenix::daedalus::dt_instance &&
+		      current_instance == current_symbol->index())) {
 			auto inst_sym = script.find_symbol_by_index(stmt.instance);
 			if (inst_sym == nullptr) {
 				sym_name = "???" + sym->name().substr(sym->name().find('.'));
@@ -241,7 +243,9 @@ std::string decompile_statement(const script& script,
 		}
 
 		std::string sym_name;
-		if (sym->is_member()) {
+		if (sym->is_member() &&
+		    !(current_symbol->type() == phoenix::daedalus::dt_instance &&
+		      current_instance == current_symbol->index())) {
 			auto inst_sym = script.find_symbol_by_index(stmt.instance);
 			if (inst_sym == nullptr) {
 				sym_name = "???" + sym->name().substr(sym->name().find('.'));
@@ -259,7 +263,9 @@ std::string decompile_statement(const script& script,
 		auto sym = script.find_symbol_by_index(stmt.instr.symbol);
 		std::string sym_name;
 
-		if (sym->is_member()) {
+		if (sym->is_member() &&
+		    !(current_symbol->type() == phoenix::daedalus::dt_instance &&
+		      current_instance == current_symbol->index())) {
 			auto inst_sym = script.find_symbol_by_index(stmt.instance);
 			if (inst_sym == nullptr) {
 				sym_name = "???" + sym->name().substr(sym->name().find('.'));
