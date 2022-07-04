@@ -43,11 +43,11 @@ bool is_terminating_instruction(const script& script, const instruction& i) {
 	}
 }
 
-stack_frame extract_statement(const script& script, uint32_t& pointer, std::vector<stack_frame>& stack) {
+stack_frame extract_statement(const script& script, uint32_t& pointer, uint32_t end_ptr, std::vector<stack_frame>& stack) {
 	instruction instr = script.instruction_at(pointer);
 	pointer += instr.size;
 
-	while (!is_terminating_instruction(script, instr)) {
+	while (!is_terminating_instruction(script, instr) && pointer < end_ptr) {
 		if (instr.op != op_noop && instr.op != op_set_instance) {
 			stack.push_back({instr, current_instance});
 		}
@@ -313,7 +313,7 @@ std::pair<std::string, std::uint32_t> decompile_block(const script& script,
 	stack_frame stmt {};
 
 	do {
-		stmt = extract_statement(script, pointer, stack);
+		stmt = extract_statement(script, pointer, end_ptr, stack);
 
 		if (stmt.instr.op == op_jump_if_zero) {
 			stack_frame real_stmt {phoenix::daedalus::op_push_int, 0, 0, 0, 0, 0};
@@ -329,7 +329,7 @@ std::pair<std::string, std::uint32_t> decompile_block(const script& script,
 			code += if_block + fmt::format("{: >{}}}}", "", indent);
 
 			while (next_branch > stmt.instr.address && pointer <= end_ptr) {
-				auto new_stmt = extract_statement(script, pointer, stack);
+				auto new_stmt = extract_statement(script, pointer, end_ptr, stack);
 
 				if (new_stmt.instr.op == op_jump_if_zero) {
 					// else-if block
