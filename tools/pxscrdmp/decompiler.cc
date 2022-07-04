@@ -236,7 +236,11 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 			if (inst_sym == nullptr) {
 				sym_name = "???" + sym->name().substr(sym->name().find('.'));
 			} else {
-				sym_name = inst_sym->name() + sym->name().substr(sym->name().find('.'));
+				if (inst_sym->name().find(current_symbol->name()) == 0) {
+					sym_name = inst_sym->name().substr(inst_sym->name().find('.') + 1) + sym->name().substr(sym->name().find('.'));
+				} else {
+					sym_name = inst_sym->name() + sym->name().substr(sym->name().find('.'));
+				}
 			}
 		} else {
 			auto dot = sym->name().find('.');
@@ -260,7 +264,11 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 			if (inst_sym == nullptr) {
 				sym_name = "???" + sym->name().substr(sym->name().find('.'));
 			} else {
-				sym_name = inst_sym->name() + sym->name().substr(sym->name().find('.'));
+				if (inst_sym->name().find(current_symbol->name()) == 0) {
+					sym_name = inst_sym->name().substr(inst_sym->name().find('.') + 1) + sym->name().substr(sym->name().find('.'));
+				} else {
+					sym_name = inst_sym->name() + sym->name().substr(sym->name().find('.'));
+				}
 			}
 		} else {
 			auto dot = sym->name().find('.');
