@@ -366,7 +366,7 @@ std::pair<std::string, std::uint32_t> decompile_block(const script& script,
 				}
 			}
 
-			code += "\n";
+			code += ";\n";
 		} else if (stmt.instr.op == op_jump) {
 			return {code, stmt.instr.address};
 		} else {
