@@ -390,5 +390,12 @@ std::string decompile(const phoenix::daedalus::script& script, const phoenix::da
 	std::vector<stack_frame> stack {};
 	auto params = script.find_parameters_for_function(&sym);
 
-	return decompile_block(script, indent, sym.address() + 6 * params.size(), -1, stack).first;
+	auto result = decompile_block(script, indent, sym.address() + 6 * params.size(), -1, stack).first;
+
+	// If the function does not return anything, remove the last return
+	if (!sym.has_return()) {
+		result.erase(result.rfind("return")).erase(result.rfind('\n') + 1);
+	}
+
+	return result;
 }
