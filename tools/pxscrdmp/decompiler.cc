@@ -10,12 +10,10 @@ using namespace phoenix::daedalus;
 static uint32_t current_instance = -1;
 static const symbol* current_symbol = nullptr;
 
-
 struct stack_frame {
 	instruction instr;
 	uint32_t instance;
 };
-
 
 bool is_terminating_instruction(const script& script, const instruction& i) {
 	switch (i.op) {
@@ -45,8 +43,7 @@ bool is_terminating_instruction(const script& script, const instruction& i) {
 	}
 }
 
-stack_frame
-extract_statement(const script& script, uint32_t& pointer, std::vector<stack_frame>& stack) {
+stack_frame extract_statement(const script& script, uint32_t& pointer, std::vector<stack_frame>& stack) {
 	instruction instr = script.instruction_at(pointer);
 	pointer += instr.size;
 
@@ -90,9 +87,7 @@ static std::unordered_map<opcode, std::string> OPCODE_STR {
     {op_assign_divide, "/="},
 };
 
-std::string decompile_statement(const script& script,
-                                const stack_frame& stmt,
-                                std::vector<stack_frame>& stack) {
+std::string decompile_statement(const script& script, const stack_frame& stmt, std::vector<stack_frame>& stack) {
 	switch (stmt.instr.op) {
 	case op_add:
 	case op_subtract:
@@ -257,6 +252,10 @@ std::string decompile_statement(const script& script,
 			sym_name = dot == std::string::npos ? sym->name() : sym->name().substr(dot + 1);
 		}
 
+		if (sym->count() > 1) {
+			return fmt::format("{}[0]", sym_name);
+		}
+
 		return sym_name;
 	}
 	case op_push_array_var: {
@@ -314,7 +313,11 @@ std::string decompile_statement(const script& script,
 	}
 }
 
-std::pair<std::string, std::uint32_t> decompile_block(const script& script, int indent, uint32_t pointer, int64_t end_ptr = -1, std::vector<stack_frame> stack = {}) {
+std::pair<std::string, std::uint32_t> decompile_block(const script& script,
+                                                      int indent,
+                                                      uint32_t pointer,
+                                                      int64_t end_ptr = -1,
+                                                      std::vector<stack_frame> stack = {}) {
 	std::string code {};
 	stack_frame stmt {};
 
@@ -345,7 +348,8 @@ std::pair<std::string, std::uint32_t> decompile_block(const script& script, int 
 					}
 
 					code += fmt::format(" else if ({}) {{\n", decompile_statement(script, real_stmt, stack));
-					auto [else_if_block, else_if_next_branch] = decompile_block(script, indent + 4, pointer, new_stmt.instr.address);
+					auto [else_if_block, else_if_next_branch] =
+					    decompile_block(script, indent + 4, pointer, new_stmt.instr.address);
 					next_branch = else_if_next_branch;
 					pointer = new_stmt.instr.address;
 
