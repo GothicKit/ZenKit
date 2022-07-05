@@ -4,6 +4,7 @@ project(phoenix)
 
 option(PX_BUILD_TOOLS "Build phoenix tool executables" ON)
 option(PX_BUILD_TESTS "Build core library tests" ON)
+option(PX_BUILD_EXAMPLES "Build example code" OFF)
 
 set(CMAKE_CXX_STANDARD 20)
 set(PX_CXX_FLAGS -Wall -Wextra -Werror -Wconversion)
@@ -94,6 +95,9 @@ if (PX_BUILD_TESTS)
 	add_test(NAME phoenix-test COMMAND $<TARGET_FILE:phoenix-tests> --check WORKING_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 endif ()
 
+if (PX_BUILD_EXAMPLES)
+	add_subdirectory(examples)
+endif()
 
 add_subdirectory(tools)
 add_subdirectory(vendor)
