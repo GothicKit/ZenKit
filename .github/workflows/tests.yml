@@ -7,55 +7,26 @@ on:
 
 jobs:
   test:
-    name: ${{ matrix.config.name }}
-    runs-on: ${{ matrix.config.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        config: 
-        - {
-            name: "Windows Latest MSVC",
-            os: windows-latest,
-            artifact: "windows_msvc.7z",
-            build_type: "Release",
-            cc: "cl",
-            cxx: "cl",
-            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-            archiver: "7z a",
-            generators: "Visual Studio 16 2019"
-          }
-        - {
-            name: "Ubuntu Latest GCC",
-            os: ubuntu-latest,
-            artifact: "ubuntu_gcc.7z",
-            build_type: "Release",
-            cc: "gcc",
-            cxx: "g++",
-            archiver: "7z a",
-            generators: "Ninja"
-          }
-
+    name: 'Test'
+    runs-on: 'ubuntu-latest'
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
         with:
           submodules: 'recursive'
-      - name: Setup (Windows)
-        if: startsWith(matrix.config.os, 'windows')
+      - name: Setup
         run: |
-          choco install ninja cmake
-          ninja --version
-          cmake --version
-      - name: Setup (Ubuntu)
-        if: startsWith(matrix.config.name, 'Ubuntu')
-        run: |
+          sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
           sudo apt-get update
-          sudo apt-get install ninja-build cmake
+          sudo apt-get install ninja-build cmake g++-11
           ninja --version
           cmake --version
-          gcc --version
+          gcc-11 --version
       - name: Configure
         shell: bash
+        env:
+          CC: '/usr/bin/gcc-11'
+          CXX: '/usr/bin/g++-11'
         run: |
           mkdir target
           cmake -B build \
