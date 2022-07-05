@@ -1,28 +1,78 @@
-name: Tests
+name: Test
 
-on:
+on: 
   push:
-    branches: [ main ]
   pull_request:
-    branches: [ main ]
+  release:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config: 
+        - {
+            name: "Windows Latest MSVC",
+            os: windows-latest,
+            artifact: "windows_msvc.7z",
+            build_type: "Release",
+            cc: "cl",
+            cxx: "cl",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            archiver: "7z a",
+            generators: "Visual Studio 16 2019"
+          }
+        - {
+            name: "Ubuntu Latest GCC",
+            os: ubuntu-latest,
+            artifact: "ubuntu_gcc.7z",
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            archiver: "7z a",
+            generators: "Ninja"
+          }
+
     steps:
-    - uses: actions/checkout@v3
-      with:
-        submodules: 'recursive'
-    - name: build
-      run: |
-        cmake -B build -DCMAKE_BUILD_TYPE=Debug -DPX_BUILD_TESTS=ON -DPX_BUILD_EXAMPLES=ON -DPX_BUILD_TOOLS=ON
-        cmake --build build
-    - name: test
-      run: |
-        cd test
-        ./../build/phoenix-tests -tse=messages,script,world -r=junit -o=report.xml
-    - name: Publish Test Report
-      uses: mikepenz/action-junit-report@v3
-      if: always()
-      with:
-        report_paths: 'tests/report.xml'
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+      - name: Setup (Windows)
+        if: startsWith(matrix.config.os, 'windows')
+        run: |
+          choco install ninja cmake
+          ninja --version
+          cmake --version
+      - name: Setup (Ubuntu)
+        if: startsWith(matrix.config.name, 'Ubuntu')
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build cmake
+          ninja --version
+          cmake --version
+          gcc --version
+      - name: Configure
+        shell: bash
+        run: |
+          mkdir target
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} \
+            -G "${{ matrix.config.generators }}" \
+            -DCMAKE_INSTALL_PREFIX:PATH=target \
+            -DPX_BUILD_EXAMPLES=ON
+      - name: Build
+        shell: bash
+        run: cmake --build build --config ${{ matrix.config.build_type }}
+      - name: Test
+        shell: bash
+        run: |
+          cd tests
+          ./../build/phoenix-tests -tse=messages,script,world -r=junit -o=report.xml
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          report_paths: 'tests/report.xml'
