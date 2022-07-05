@@ -230,7 +230,7 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 
 		std::string sym_name;
 		if (sym->is_member() &&
-		    !(current_symbol->type() == phoenix::daedalus::dt_instance &&
+		    !((current_symbol->type() == dt_instance || current_symbol->type() == dt_prototype) &&
 		      current_instance == current_symbol->index())) {
 			auto inst_sym = script.find_symbol_by_index(stmt.instance);
 			if (inst_sym == nullptr) {
@@ -258,7 +258,7 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 		std::string sym_name;
 
 		if (sym->is_member() &&
-		    !(current_symbol->type() == phoenix::daedalus::dt_instance &&
+		    !((current_symbol->type() == dt_instance || current_symbol->type() == dt_prototype) &&
 		      current_instance == current_symbol->index())) {
 			auto inst_sym = script.find_symbol_by_index(stmt.instance);
 			if (inst_sym == nullptr) {
@@ -338,7 +338,7 @@ std::pair<std::string, std::uint32_t> decompile_block(const script& script,
 
 			// if the `br` at the end of the `if`-statement jumps to after where the initial `brz` jumps,
 			// this is either an `else if`-statement or and `else`-statement
-			while (next_branch > stmt.instr.address) {
+			while (next_branch > stmt.instr.address && pointer <= end_ptr) {
 				auto new_stmt = extract_statement(script, pointer, end_ptr, stack);
 
 				if (new_stmt.instr.op == op_jump_if_zero) {
@@ -395,7 +395,7 @@ std::string decompile(const phoenix::daedalus::script& script, const phoenix::da
 	}
 
 	current_symbol = &sym;
-	current_instance = sym.type() == dt_instance ? sym.index() : unset;
+	current_instance = (sym.type() == dt_instance || sym.type() == dt_prototype) ? sym.index() : unset;
 	std::vector<stack_frame> stack {};
 	auto params = script.find_parameters_for_function(&sym);
 
