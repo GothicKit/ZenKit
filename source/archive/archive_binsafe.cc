@@ -32,6 +32,7 @@ namespace phoenix {
 	}
 
 	bool archive_reader_binsafe::read_object_begin(archive_object& obj) {
+		if (input.remaining() < 6) return false;
 		input.mark();
 
 		if (input.get() != bs_string) {
@@ -51,6 +52,7 @@ namespace phoenix {
 	}
 
 	bool archive_reader_binsafe::read_object_end() {
+		if (input.remaining() < 6) return false;
 		input.mark();
 
 		if (input.get() != bs_string) {

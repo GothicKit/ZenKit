@@ -25,6 +25,8 @@ namespace phoenix {
 	}
 
 	bool archive_reader_ascii::read_object_begin(archive_object& obj) {
+		if (input.remaining() < 3) return false;
+
 		input.mark();
 		auto line = input.get_line();
 
@@ -39,7 +41,7 @@ namespace phoenix {
 	}
 
 	bool archive_reader_ascii::read_object_end() {
-		input.mark();
+		if (input.remaining() < 3) return false;
 		auto line = input.get_line();
 
 		if (line != "[]") {

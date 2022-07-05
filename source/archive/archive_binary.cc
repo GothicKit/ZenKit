@@ -21,6 +21,7 @@ namespace phoenix {
 	}
 
 	bool archive_reader_binary::read_object_begin(archive_object& obj) {
+		if (input.remaining() < 12) return false;
 		_m_next_object = input.position();
 		_m_next_object += input.get_uint(); // object size including itself
 
