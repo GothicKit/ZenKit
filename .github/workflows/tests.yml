@@ -18,19 +18,16 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install ninja-build cmake libasan6
-
-          wget https://apt.llvm.org/llvm.sh
-          chmod +x llvm.sh
-          sudo ./llvm.sh 13
+          bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
           
           ninja --version
           cmake --version
-          clang++ --version
+          clang++-14 --version
       - name: Configure
         shell: bash
         env:
-          CC: '/usr/bin/clang'
-          CXX: '/usr/bin/clang++'
+          CC: '/usr/bin/clang-14'
+          CXX: '/usr/bin/clang++-14'
         run: |
           mkdir target
           cmake -B build \
