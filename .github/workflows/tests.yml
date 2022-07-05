@@ -18,7 +18,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install ninja-build cmake libasan6
-          bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+          sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
           
           ninja --version
           cmake --version
