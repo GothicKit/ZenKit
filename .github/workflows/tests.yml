@@ -3,8 +3,6 @@ name: Tests
 on:
   push:
     branches: [ main ]
-    paths-ignore:
-      - 'docs/**'
   pull_request:
     branches: [ main ]
 
@@ -13,16 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: setup
+      with:
+        submodules: 'recursive'
+    - name: build
       run: |
-        mkdir build
-        cd build
-        cmake ..
-    - name: make
-      run: make
+        cmake -B build -DCMAKE_BUILD_TYPE=Debug -DPX_BUILD_TESTS=ON -DPX_BUILD_EXAMPLES=ON -DPX_BUILD_TOOLS=ON
+        cmake --build build
     - name: test
       run: |
-        cd ../test
+        cd test
         ./../build/phoenix-tests -tse=messages,script,world -r=junit -o=report.xml
     - name: Publish Test Report
       uses: mikepenz/action-junit-report@v3
