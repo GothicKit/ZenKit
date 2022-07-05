@@ -33,7 +33,7 @@ jobs:
           cmake -B build \
             -DCMAKE_BUILD_TYPE=Debug \
             -G "Ninja" \
-            -DCMAKE_CXX_FLAGS=-stdlib=libc++
+            -DCMAKE_CXX_FLAGS=-stdlib=libc++ \
             -DCMAKE_INSTALL_PREFIX:PATH=target \
             -DPX_BUILD_EXAMPLES=ON
       - name: Build
