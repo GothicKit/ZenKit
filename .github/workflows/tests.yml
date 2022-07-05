@@ -18,7 +18,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install ninja-build cmake libasan6
-          sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+          sudo deb http://apt.llvm.org/focal/ llvm-toolchain-focal-13 main
+          sudo deb-src http://apt.llvm.org/focal/ llvm-toolchain-focal-13 main
           ninja --version
           cmake --version
           clang++ --version
