@@ -18,7 +18,7 @@ jobs:
         run: |
           sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
           sudo apt-get update
-          sudo apt-get install ninja-build cmake g++-11
+          sudo apt-get install ninja-build cmake g++-11 libasan
           ninja --version
           cmake --version
           gcc-11 --version
@@ -30,8 +30,8 @@ jobs:
         run: |
           mkdir target
           cmake -B build \
-            -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} \
-            -G "${{ matrix.config.generators }}" \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -G "Ninja" \
             -DCMAKE_INSTALL_PREFIX:PATH=target \
             -DPX_BUILD_EXAMPLES=ON
       - name: Build
