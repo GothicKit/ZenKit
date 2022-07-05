@@ -7,8 +7,10 @@
 
 #include <string>
 #include <string_view>
+#include <fstream>
 
 #include "config.hh"
+#include "decompiler.hh"
 
 using namespace phoenix::daedalus;
 
@@ -18,6 +20,7 @@ static constexpr const auto HELP_MESSAGE = "Usage: pxscrdmp [--version]\n"
 										   "                       [-f|--search <TERM>] [-s|--symbol <NAME>] [-p|--parent <PARENT-NAME>]\n"
 										   "       pxscrdmp <FILE> [-d|--disassemble] [-s|--symbol <NAME>]\n"
                                            "       pxscrdmp <FILE> [-u|--usages] [-s|--symbol <NAME>]\n"
+                                           "       pxscrdmp <FILE> [-k|--decompile] [-s|--symbol <NAME>]"
 										   "\n"
 										   "phoenix pxscrdmp v{}\n"
 										   "View contents of compiled Daedalus script files.\n"
@@ -55,6 +58,7 @@ void print_assembly(const script& scr);
 void print_symbol_detailed(const script& scr, const symbol& sym);
 void print_symbol_list(const script& scr, std::string_view include_filter, std::string_view exclude_filter, std::string_view search, const symbol* parent);
 
+std::string print_definition(const script& scr, const symbol& sym, const symbol* parent, std::string_view indent = "");
 void find_usages(const script& scr, const symbol& sym);
 
 int main(int argc, char** argv) {
@@ -69,6 +73,7 @@ int main(int argc, char** argv) {
 	bool action_disassemble = false;
 	bool action_help = false;
 	bool action_usages = false;
+	bool action_decompile = false;
 
 	bool specific = false;
 
@@ -88,6 +93,7 @@ int main(int argc, char** argv) {
 	action_disassemble = cmdl[{"-d", "--disassemble"}];
 	action_usages = cmdl[{"-u", "--usages"}];
 	action_help = cmdl[{"-h", "--help"}];
+	action_decompile = cmdl[{"-k", "--decompile"}];
 
 	cmdl({"-f", "--search"}) >> search;
 	cmdl({"-I", "--include"}) >> include;
@@ -150,6 +156,54 @@ int main(int argc, char** argv) {
 			}
 
 			find_usages(scr, *sym);
+		} else if (action_decompile) {
+			if (specific) {
+				sym = scr.find_symbol_by_name(symbol_name);
+
+				if (sym == nullptr) {
+					fmt::print("symbol with name {} not found\n", symbol_name);
+					return EXIT_FAILURE;
+				}
+
+				fmt::print("{}", print_definition(scr, *sym, scr.find_symbol_by_index(sym->parent())));
+				fmt::print(" {{\n{}}}\n", decompile(scr, *sym, 4));
+			} else {
+				std::unordered_map<uint32_t, std::string> files;
+				uint32_t skip = 0;
+
+				for (auto& s : scr.symbols()) {
+					if (s.name() == "$INSTANCE_HELP" || s.is_generated())
+						continue;
+
+					if (skip > 0) {
+						skip--;
+						continue ;
+					}
+
+					if (files.find(s.file_index()) == files.end()) {
+						files[s.file_index()] = {};
+					}
+
+					std::string def = print_definition(scr, s, scr.find_symbol_by_index(s.parent()));
+
+					if (!s.is_member() && !s.is_external() && (s.type() == phoenix::daedalus::dt_prototype ||
+					    (s.type() == phoenix::daedalus::dt_function && s.is_const()) || (s.type() == phoenix::daedalus::dt_instance && s.is_const()))) {
+						def += fmt::format(" {{\n{}}}\n", decompile(scr, s, 4));
+					}
+
+					if (s.type() == dt_function) {
+						skip = s.count();
+					}
+
+					files[s.file_index()] += def + "\n";
+				}
+
+				for (auto& idx : files) {
+					std::ofstream out {std::to_string(idx.first) + ".d"};
+					out << idx.second;
+					out.close();
+				}
+			}
 		}
 	}
 
@@ -188,17 +242,18 @@ constexpr std::string_view get_type_name(datatype tp) {
 
 /// \brief Prints the value of a symbol
 /// \param symbol The symbol to print the value of
-void print_symbol_value(const symbol& symbol, int index = -1) {
+std::string print_symbol_value(const symbol& symbol, int index = -1) {
+	std::string val {};
 	auto print_value = [&](uint8_t index) {
 		switch (symbol.type()) {
 			case dt_float:
-				fmt::print("{}", symbol.get_float(index));
+			    val += fmt::format("{}", symbol.get_float(index));
 				break;
 			case dt_integer:
-				fmt::print("{}", symbol.get_int(index));
+			    val += fmt::format("{}", symbol.get_int(index));
 				break;
 			case dt_string:
-				fmt::print("\"{}\"", symbol.get_string(index));
+			    val += fmt::format("\"{}\"", symbol.get_string(index));
 				break;
 			default:
 				break;
@@ -208,15 +263,17 @@ void print_symbol_value(const symbol& symbol, int index = -1) {
 	if (index >= 0) {
 		print_value(index);
 	} else {
-		if (symbol.count() > 1) { fmt::print("{{"); }
+		if (symbol.count() > 1) val += "{";
 
 		for (unsigned i = 0; i < symbol.count(); ++i) {
-			if (i > 0) { fmt::print(", "); }
+			if (i > 0) val += ", ";
 			print_value(i);
 		}
 
-		if (symbol.count() > 1) { fmt::print("}}"); }
+		if (symbol.count() > 1) { val += "}"; }
 	}
+
+	return val;
 }
 
 /// \brief Generates a daedalus definition from the given symbol.
@@ -224,61 +281,61 @@ void print_symbol_value(const symbol& symbol, int index = -1) {
 /// \param sym The symbol to generate a definition of
 /// \param parent The parent of the symbol
 /// \param indent A custom indentation to prepend
-void print_definition(const script& scr, const symbol& sym, const symbol* parent, std::string_view indent = "") {
-	if (sym.is_member()) { return; }
-	fmt::print("{}", indent);
-	if (sym.is_external()) { fmt::print("extern "); }
+std::string print_definition(const script& scr, const symbol& sym, const symbol* parent, std::string_view indent) {
+	std::string def {};
+	if (sym.is_member()) return def;
+	def += indent;
+	if (sym.is_external()) def += "extern ";
 
 	if (sym.type() == dt_instance) {
-		fmt::print("instance {}({}) {{ /* ... */}}", sym.name(), (parent == nullptr ? "*ERR*" : parent->name()));
+		def += fmt::format("instance {}({})", sym.name(), (parent == nullptr ? "*ERR*" : parent->name()));
 	} else if (sym.type() == dt_prototype) {
-		fmt::print("prototype {}({}) {{ /* ... */ }}", sym.name(), (parent == nullptr ? "*ERR*" : parent->name()));
+		def += fmt::format("prototype {}({})", sym.name(), (parent == nullptr ? "*ERR*" : parent->name()));
 	} else if (sym.type() == dt_class) {
-		fmt::print("class {} {{\n", sym.name());
+		def += fmt::format("class {} {{\n", sym.name());
 
 		for (const auto& member : scr.symbols()) {
 			if (member.parent() == sym.index() && member.is_member()) {
 				auto name = member.name().substr(member.name().find('.') + 1);
-				fmt::print("{}\tvar {} {}", indent, get_type_name(member.type()), name);
-				if (member.count() > 1) { fmt::print("[{}]", member.count()); }
-				fmt::print(";\n");
+				def += fmt::format("{}\tvar {} {}", indent, get_type_name(member.type()), name);
+				if (member.count() > 1) def += fmt::format("[{}]", member.count());
+				def += ";\n";
 			}
 		}
 
-		fmt::print("{}}};", indent);
+		def += fmt::format("{}}};", indent);
 	} else if (sym.type() == dt_function) {
-		fmt::print("func {} {}(", get_type_name(sym.rtype()), sym.name());
+		def += fmt::format("func {} {}(", get_type_name(sym.rtype()), sym.name());
 
 		auto params = scr.find_parameters_for_function(&sym);
 		unsigned count = 0;
 		for (const auto& param : params) {
-			if (count > 0) { fmt::print(", "); }
+			if (count > 0) def += ", ";
 
 			if (param->type() == dt_instance) {
 				const auto* dt = scr.find_symbol_by_index(param->parent());
 
 				if (dt == nullptr) {
-					fmt::print("var instance ");
+					def += "var instance ";
 				} else {
-					fmt::print("var {} ", dt->name());
+					def += fmt::format("var {} ", dt->name());
 				}
 			} else {
-				fmt::print("var {} ", get_type_name(param->type()));
+				def += fmt::format("var {} ", get_type_name(param->type()));
 			}
 
-			fmt::print("{}", param->name());
+			def += param->name().substr(param->name().find('.') + 1);
 			count++;
 		}
 
-		fmt::print(") {{ /* ... */ }};");
+		def += ")";
 	} else {
-		fmt::print("const {} {}", get_type_name(sym.type()), sym.name());
-		if (sym.count() > 1) { fmt::print("[{}]", sym.count()); }
-
-		fmt::print(" = ");
-		print_symbol_value(sym);
-		fmt::print(";");
+		def += fmt::format("const {} {}", get_type_name(sym.type()), sym.name());
+		if (sym.count() > 1) def += fmt::format("[{}]", sym.count());
+		def += " = " + print_symbol_value(sym) + ";";
 	}
+
+	return def;
 }
 
 /// \brief Print detailed information about a symbol
@@ -322,9 +379,7 @@ void print_symbol_detailed(const script& scr, const symbol& sym) {
 	}
 
 	if (!sym.is_member()) {
-		fmt::print("\tDefinition:\n");
-		print_definition(scr, sym, parent, "\t\t");
-		fmt::print("\n");
+		fmt::print("\tDefinition:\n{}\n", print_definition(scr, sym, parent, "\t\t"));
 	}
 }
 
@@ -643,8 +698,7 @@ void print_instruction(const script& scr, const instruction& i, bool instruction
 				fmt::print(" ; <{}>", s->name());
 
 				if (has_constant_value(*s)) {
-					fmt::print(" = ");
-					print_symbol_value(*s);
+					fmt::print(" = {}", print_symbol_value(*s));
 				}
 			}
 			break;
@@ -658,8 +712,7 @@ void print_instruction(const script& scr, const instruction& i, bool instruction
 				fmt::print(" ; <{}+{}>", s->name(), i.index);
 
 				if (has_constant_value(*s)) {
-					fmt::print(" = ");
-					print_symbol_value(*s, i.index);
+					fmt::print(" = {}", print_symbol_value(*s, i.index));
 				}
 			}
 			break;

@@ -38,11 +38,9 @@ tools currently available:
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `pxinfo`    | Dump information about various files.                                                                                                                    |
 | `pxmdl`     | Convert `MRM`, `MSH`, `MMB`, `MDL` and `MDM` files as well as world meshes into the [Wavefront](https://en.wikipedia.org/wiki/Wavefront_.obj_file) model |
-| `pxscrdump` | Display, disassemble and decompile[^1] compiled _Daedalus_ scripts (similar to `objdump`).                                                               |
+| `pxscrdump` | Display, disassemble and decompile  compiled _Daedalus_ scripts (similar to `objdump`).                                                                  |
 | `pxtex`     | Convert `TEX` files to `TGA`                                                                                                                             |
 | `pxvdfs`    | Extract and list contents of `VDF` files.                                                                                                                |
-
-[^1]: Decompilation is currently only supported on the `feature/daedalus-decompiler` branch.
 
 ## building
 _phoenix_ is currently only tested on Linux and while Windows _should_ be supported you might run into issues. If so,
