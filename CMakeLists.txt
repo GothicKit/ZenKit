@@ -76,6 +76,13 @@ target_link_libraries(phoenix PUBLIC glm fmt squish mio lexy)
 target_compile_options(phoenix PRIVATE ${PX_CXX_FLAGS})
 target_link_options(phoenix PUBLIC ${PX_CXX_FLAGS})
 
+set_target_properties(phoenix
+		PROPERTIES
+		ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+		)
+
 if (PX_BUILD_TESTS)
 	enable_testing()
 

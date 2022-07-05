@@ -14,3 +14,10 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.hh.in ${CMAKE_CURRENT_BINARY_D
 add_executable(pxinfo main.cc)
 target_link_libraries(pxinfo PRIVATE phoenix argh stb)
 target_include_directories(pxinfo PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+
+set_target_properties(pxinfo
+		PROPERTIES
+		ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+		)
