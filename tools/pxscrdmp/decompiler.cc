@@ -336,7 +336,9 @@ std::pair<std::string, std::uint32_t> decompile_block(const script& script,
 
 			code += if_block + fmt::format("{: >{}}}}", "", indent);
 
-			while (next_branch > stmt.instr.address && pointer <= end_ptr) {
+			// if the `br` at the end of the `if`-statement jumps to after where the initial `brz` jumps,
+			// this is either an `else if`-statement or and `else`-statement
+			while (next_branch > stmt.instr.address) {
 				auto new_stmt = extract_statement(script, pointer, end_ptr, stack);
 
 				if (new_stmt.instr.op == op_jump_if_zero) {
