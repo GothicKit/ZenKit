@@ -18,15 +18,15 @@ jobs:
         run: |
           sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
           sudo apt-get update
-          sudo apt-get install ninja-build cmake g++-12 libasan6
+          sudo apt-get install ninja-build cmake g++-11 libasan6
           ninja --version
           cmake --version
-          g++-12 --version
+          g++-11 --version
       - name: Configure
         shell: bash
         env:
-          CC: '/usr/bin/gcc-12'
-          CXX: '/usr/bin/g++-12'
+          CC: '/usr/bin/gcc-11'
+          CXX: '/usr/bin/g++-11'
         run: |
           mkdir target
           cmake -B build \
