@@ -43,7 +43,8 @@ bool is_terminating_instruction(const script& script, const instruction& i) {
 	}
 }
 
-stack_frame extract_statement(const script& script, uint32_t& pointer, uint32_t end_ptr, std::vector<stack_frame>& stack) {
+stack_frame
+extract_statement(const script& script, uint32_t& pointer, uint32_t end_ptr, std::vector<stack_frame>& stack) {
 	instruction instr = script.instruction_at(pointer);
 	pointer += instr.size;
 
@@ -237,7 +238,8 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 				sym_name = "???" + sym->name().substr(sym->name().find('.'));
 			} else {
 				if (inst_sym->name().find(current_symbol->name()) == 0) {
-					sym_name = inst_sym->name().substr(inst_sym->name().find('.') + 1) + sym->name().substr(sym->name().find('.'));
+					sym_name = inst_sym->name().substr(inst_sym->name().find('.') + 1) +
+					    sym->name().substr(sym->name().find('.'));
 				} else {
 					sym_name = inst_sym->name() + sym->name().substr(sym->name().find('.'));
 				}
@@ -265,7 +267,8 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 				sym_name = "???" + sym->name().substr(sym->name().find('.'));
 			} else {
 				if (inst_sym->name().find(current_symbol->name()) == 0) {
-					sym_name = inst_sym->name().substr(inst_sym->name().find('.') + 1) + sym->name().substr(sym->name().find('.'));
+					sym_name = inst_sym->name().substr(inst_sym->name().find('.') + 1) +
+					    sym->name().substr(sym->name().find('.'));
 				} else {
 					sym_name = inst_sym->name() + sym->name().substr(sym->name().find('.'));
 				}

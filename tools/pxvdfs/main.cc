@@ -13,14 +13,15 @@
 
 namespace fs = std::filesystem;
 
-static constexpr const auto HELP_MESSAGE = "Usage: pxvdfs [--version]\n"
-										   "       pxvdfs [-h|--help]\n"
-										   "       pxvdfs <FILE> [FILES...] [-o|--output <DIR>]\n"
-										   "       pxvdfs <FILE> [FILES...] [-x|--extract <NAME_OR_PATH>] [-o|--output <FILE>]\n"
-										   "       pxvdfs <FILE> [FILES...] [-l|--list]\n"
-										   "\n"
-										   "phoenix pxvdfs v{}\n"
-										   "Extract contents of VDF files.\n";
+static constexpr const auto HELP_MESSAGE =
+    "Usage: pxvdfs [--version]\n"
+    "       pxvdfs [-h|--help]\n"
+    "       pxvdfs <FILE> [FILES...] [-o|--output <DIR>]\n"
+    "       pxvdfs <FILE> [FILES...] [-x|--extract <NAME_OR_PATH>] [-o|--output <FILE>]\n"
+    "       pxvdfs <FILE> [FILES...] [-l|--list]\n"
+    "\n"
+    "phoenix pxvdfs v{}\n"
+    "Extract contents of VDF files.\n";
 
 static void do_extract(const fs::path& base, const fs::path& self, const std::vector<phoenix::vdf_entry>& entries) {
 	for (const auto& entry : entries) {
@@ -110,10 +111,10 @@ int main(int argc, const char** argv) {
 			auto in = entry->open();
 
 			if (output == ".") {
-				std::cout.write((const char *) in.array().data(), in.limit());
+				std::cout.write((const char*) in.array().data(), in.limit());
 			} else {
 				std::ofstream out {output};
-				out.write((const char *) in.array().data(), in.limit());
+				out.write((const char*) in.array().data(), in.limit());
 				out.close();
 			}
 		} else {

@@ -177,7 +177,8 @@ namespace phoenix::daedalus {
 		for (auto& sym : _m_symbols) {
 			if (sym.type() == dt_prototype && sym.parent() == cls->index()) {
 				prototypes.push_back(sym.index());
-			} else if (sym.type() == dt_instance && std::find(prototypes.begin(), prototypes.end(), sym.parent()) != prototypes.end()) {
+			} else if (sym.type() == dt_instance &&
+			           std::find(prototypes.begin(), prototypes.end(), sym.parent()) != prototypes.end()) {
 				callback(sym);
 			}
 		}

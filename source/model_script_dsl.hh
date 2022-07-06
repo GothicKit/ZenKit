@@ -40,7 +40,7 @@ namespace phoenix::mds {
 				void operator()(lexy::nullopt) {}
 
 				void operator()(model_script&& mesh, lexy::nullopt) {
-				    this->operator()(std::move(mesh));
+					this->operator()(std::move(mesh));
 				}
 
 				model_script&& finish() && {
@@ -483,10 +483,12 @@ namespace phoenix::mds {
 
 	struct dsl_ani_enum {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule = dsl::lit_c<'{'> + dsl::opt(
-		    dsl::list(LEXY_LIT("aniBlend") >> dsl::p<dsl_ani_blend> | LEXY_LIT("aniAlias") >> dsl::p<dsl_ani_alias> |
-		              LEXY_LIT("aniComb") >> dsl::p<dsl_ani_comb> | LEXY_LIT("aniDisable") >> dsl::p<dsl_ani_disable> |
-		              LEXY_LIT("ani") >> dsl::p<dsl_ani> | LEXY_LIT("modelTag") >> dsl::p<dsl_model_tag>)) + dsl::opt(dsl::lit_c<'}'>);
+		static constexpr auto rule = dsl::lit_c<'{'> +
+		    dsl::opt(dsl::list(
+		        LEXY_LIT("aniBlend") >> dsl::p<dsl_ani_blend> | LEXY_LIT("aniAlias") >> dsl::p<dsl_ani_alias> |
+		        LEXY_LIT("aniComb") >> dsl::p<dsl_ani_comb> | LEXY_LIT("aniDisable") >> dsl::p<dsl_ani_disable> |
+		        LEXY_LIT("ani") >> dsl::p<dsl_ani> | LEXY_LIT("modelTag") >> dsl::p<dsl_model_tag>)) +
+		    dsl::opt(dsl::lit_c<'}'>);
 		static constexpr auto value = sinks::dsl_ani_enum_sink {};
 	};
 
@@ -516,17 +518,19 @@ namespace phoenix::mds {
 
 	struct dsl_script_body {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule = dsl::lit_c<'{'> + dsl::opt(dsl::list(
-		    LEXY_LIT("meshAndTree") >> dsl::p<dsl_skeleton> | LEXY_LIT("MeshAndTree") >> dsl::p<dsl_skeleton> |
-		    LEXY_LIT("registerMesh") >> dsl::p<dsl_mesh> | LEXY_LIT("RegisterMesh") >> dsl::p<dsl_mesh> |
-		    LEXY_LIT("aniEnum") >> dsl::p<dsl_ani_enum>)) + dsl::opt(dsl::lit_c<'}'>);
+		static constexpr auto rule = dsl::lit_c<'{'> +
+		    dsl::opt(dsl::list(
+		        LEXY_LIT("meshAndTree") >> dsl::p<dsl_skeleton> | LEXY_LIT("MeshAndTree") >> dsl::p<dsl_skeleton> |
+		        LEXY_LIT("registerMesh") >> dsl::p<dsl_mesh> | LEXY_LIT("RegisterMesh") >> dsl::p<dsl_mesh> |
+		        LEXY_LIT("aniEnum") >> dsl::p<dsl_ani_enum>)) +
+		    dsl::opt(dsl::lit_c<'}'>);
 		static constexpr auto value = sinks::dsl_script_body_sink {};
 	};
 
 	struct d_script {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule = LEXY_LIT("Model") + dsl::round_bracketed(dsl::p<dsl_string>) +
-		    dsl::p<dsl_script_body>;
+		static constexpr auto rule =
+		    LEXY_LIT("Model") + dsl::round_bracketed(dsl::p<dsl_string>) + dsl::p<dsl_script_body>;
 
 		static constexpr auto value =
 		    lexy::callback<model_script>([](std::string&&, model_script&& script) { return script; });

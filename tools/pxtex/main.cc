@@ -13,15 +13,17 @@
 
 #include "config.hh"
 
-static constexpr const auto HELP_MESSAGE = "Usage: pxtex [--version]\n"
-										   "       pxtex [-h|--help]\n"
-										   "       pxtex <FILE> [-v|--vdf <VDF>] [-o|--output <OUT>] [-a|--all-mipmaps]\n"
-										   "       pxtex <FILE> [-v|--vdf <VDF>] [-o|--output <OUT>] [-m|--mipmap <NUM>]\n"
-										   "\n"
-										   "phoenix pxtex v{}\n"
-										   "Convert ZenGin textures from the ZTEX to TGA format.\n";
+static constexpr const auto HELP_MESSAGE =
+    "Usage: pxtex [--version]\n"
+    "       pxtex [-h|--help]\n"
+    "       pxtex <FILE> [-v|--vdf <VDF>] [-o|--output <OUT>] [-a|--all-mipmaps]\n"
+    "       pxtex <FILE> [-v|--vdf <VDF>] [-o|--output <OUT>] [-m|--mipmap <NUM>]\n"
+    "\n"
+    "phoenix pxtex v{}\n"
+    "Convert ZenGin textures from the ZTEX to TGA format.\n";
 
-static void write_tga(const std::string& file, const std::vector<std::uint8_t>& data, std::uint32_t width, std::uint32_t height) {
+static void
+write_tga(const std::string& file, const std::vector<std::uint8_t>& data, std::uint32_t width, std::uint32_t height) {
 	if (file.empty()) {
 		stbi_write_tga("pxtex.tga", (std::int32_t) width, (std::int32_t) height, 4, data.data());
 	} else {
@@ -91,11 +93,17 @@ int main(int argc, const char** argv) {
 			}
 
 			for (std::uint32_t i = 0; i < texture.mipmaps(); ++i) {
-				write_tga(fmt::format("mip{}_{}", i, output), texture.as_rgba8(i), texture.mipmap_width(i), texture.mipmap_height(i));
+				write_tga(fmt::format("mip{}_{}", i, output),
+				          texture.as_rgba8(i),
+				          texture.mipmap_width(i),
+				          texture.mipmap_height(i));
 			}
 		} else {
 			if (level > texture.mipmaps() - 1) {
-				fmt::print(stderr, "mipmap {} not available. mipmaps 0 to {} are available", level, texture.mipmaps() - 1);
+				fmt::print(stderr,
+				           "mipmap {} not available. mipmaps 0 to {} are available",
+				           level,
+				           texture.mipmaps() - 1);
 				return EXIT_FAILURE;
 			}
 

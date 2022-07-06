@@ -218,7 +218,7 @@ namespace phoenix {
 			vob::parse(vob, in, version);
 
 			vob->preset = in->read_string();       // lightPresetInUse
-			vob->light_type = in->read_enum();           // lightType
+			vob->light_type = in->read_enum();     // lightType
 			vob->range = in->read_float();         // range
 			vob->color = in->read_color();         // color
 			vob->cone_angle = in->read_float();    // spotConeAngle
@@ -268,7 +268,7 @@ namespace phoenix {
 			vob->cone_angle = in->read_float();                                 // sndConeAngle
 			vob->volume_type = static_cast<sound_volume_type>(in->read_enum()); // sndVolType
 			vob->radius = in->read_float();                                     // sndRadius
-			vob->sound_name = in->read_string();                                      // sndName
+			vob->sound_name = in->read_string();                                // sndName
 		}
 
 		void zone_music::parse(zone_music* vob, archive_reader_ref& in, game_version version) {
@@ -377,7 +377,8 @@ namespace phoenix {
 				auto sample_reader = in->read_raw_bytes(); // keyframes
 
 				for (int i = 0; i < keyframe_count; ++i) {
-					vob->keyframes.push_back(animation_sample {sample_reader.get_vec3(), glm::quat {sample_reader.get_vec4()}});
+					vob->keyframes.push_back(
+					    animation_sample {sample_reader.get_vec3(), glm::quat {sample_reader.get_vec4()}});
 				}
 			}
 
@@ -448,7 +449,7 @@ namespace phoenix {
 				}
 			}
 		}
-	} // namespace vob
+	} // namespace vobs
 
 	std::unique_ptr<vobs::vob> parse_vob_tree(archive_reader_ref& in, game_version version) {
 		std::vector<std::unique_ptr<vobs::vob>> vobs {};

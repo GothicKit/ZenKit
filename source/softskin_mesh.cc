@@ -21,7 +21,7 @@ namespace phoenix {
 			switch (type) {
 			case softmesh_chunk::header:
 				(void) /* version = */ chunk.get_uint();
-				break ;
+				break;
 			case softmesh_chunk::proto:
 				msh._m_mesh = proto_mesh::parse_from_section(chunk);
 				break;
@@ -78,7 +78,9 @@ namespace phoenix {
 			}
 
 			if (chunk.remaining() != 0) {
-				fmt::print(stderr, "warning: softskin mesh: not all data consumed from section 0x{:X}\n", std::uint16_t(type));
+				fmt::print(stderr,
+				           "warning: softskin mesh: not all data consumed from section 0x{:X}\n",
+				           std::uint16_t(type));
 			}
 		} while (!end_mesh);
 

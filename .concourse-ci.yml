@@ -3,11 +3,11 @@ resource_types:
   type: 'docker-image'
   source:
     repository: 'teliaoss/github-pr-resource'
-- name: cogito
-  type: registry-image
-  check_every: 24h
+- name: 'cogito'
+  type: 'registry-image'
+  check_every: '24h'
   source:
-    repository: pix4d/cogito
+    repository: 'pix4d/cogito'
 
 resources:
 - name: 'phoenix.main'
@@ -23,8 +23,14 @@ resources:
   type: 'registry-image'
   icon: 'docker'
   source:
-    repository: 'gcc' # could also be the full URL "docker.io/golang"
+    repository: 'gcc'
     tag: "12"
+- name: 'clang-14'
+  type: 'registry-image'
+  icon: 'docker'
+  source:
+    repository: 'silkeh/clang'
+    tag: "14"
 - name: 'phoenix.pr'
   type: 'pull-request'
   icon: 'github'
@@ -36,7 +42,7 @@ resources:
 - name: 'phoenix.commit'
   type: 'cogito'
   icon: 'github'
-  check_every: 24h
+  check_every: '24h'
   source:
     owner: 'lmichaelis'
     repo: 'phoenix'
@@ -50,9 +56,23 @@ jobs:
     resource: 'phoenix.main'
     trigger: true
   - get: 'gcc-12'
+  - get: 'clang-14'
   - put: 'phoenix.commit'
     inputs: ['repo']
     params: {state: 'pending'}
+  - task: 'style'
+    image: 'clang-14'
+    config:
+      platform: 'linux'
+      inputs:
+        - name: 'repo'
+      run: &run-style
+        path: 'sh'
+        args:
+          - '-c'
+          - |
+            cd repo
+            find include source tests tools examples -iname "*.hh" -or -iname "*.cc" | xargs clang-format --dry-run --style=file --Werror
   - task: 'test'
     image: 'gcc-12'
     privileged: true 
@@ -109,6 +129,14 @@ jobs:
       description: 'Waiting for tests to finish.'
       status: 'pending'
   - get: 'gcc-12'
+  - get: 'clang-14'
+  - task: 'style'
+    image: 'clang-14'
+    config:
+      platform: 'linux'
+      inputs:
+        - name: 'repo'
+      run: *run-style
   - task: 'build'
     image: 'gcc-12'
     config:

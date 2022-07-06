@@ -663,10 +663,10 @@ namespace phoenix::daedalus {
 			}
 		}
 
-		template <typename R>
-		    requires(is_instance_ptr<R>::value || std::same_as<float, R> || std::same_as<std::int32_t, R> ||
-		             std::same_as<std::string, R> || std::same_as<void, R>)
-		void check_call_return_type(const symbol* sym) {
+		template <typename R> // clang-format off
+	    requires(is_instance_ptr<R>::value || std::same_as<float, R> || std::same_as<std::int32_t, R> ||
+	             std::same_as<std::string, R> || std::same_as<void, R>)
+		void check_call_return_type(const symbol* sym) { // clang-format off
 			if constexpr (is_instance_ptr<R>::value) {
 				if (sym->rtype() != dt_instance)
 					throw std::runtime_error {"invalid return type for function " + sym->name()};

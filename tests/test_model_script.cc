@@ -180,8 +180,8 @@ TEST_SUITE("model script") {
 		CHECK(script.animations[0].first_frame == 1);
 		CHECK(script.animations[0].last_frame == 8);
 		CHECK(script.animations[0].fps == 25);
-		CHECK(script.animations[0].speed == 0); // default
-		CHECK(script.animations[0].collision_volume_scale == 1);// default
+		CHECK(script.animations[0].speed == 0);                  // default
+		CHECK(script.animations[0].collision_volume_scale == 1); // default
 
 		CHECK(script.aliases.size() == 38);
 		CHECK(script.aliases[0].name == "S_FISTRUN");

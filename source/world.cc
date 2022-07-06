@@ -28,15 +28,13 @@ namespace phoenix {
 				auto bsp_version = in.get_uint();
 				(void) /* size = */ in.get_uint();
 
-
 				std::uint16_t chunk_type = 0;
 				auto mesh_data = in.slice();
 
 				do {
 					chunk_type = in.get_ushort();
 					in.skip(in.get_uint());
-				}  while (chunk_type != 0xB060);
-
+				} while (chunk_type != 0xB060);
 
 				wld.world_bsp_tree = bsp_tree::parse(in, bsp_version);
 				wld.world_mesh = mesh::parse(mesh_data, wld.world_bsp_tree.leaf_polygons());

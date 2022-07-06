@@ -112,6 +112,7 @@ namespace phoenix {
 
 		static constexpr auto version_g1 = 0x2090000;
 		static constexpr auto version_g2 = 0x4090000;
+
 	private:
 		bsp_tree_mode _m_mode;
 		std::vector<std::uint32_t> _m_polygon_indices;

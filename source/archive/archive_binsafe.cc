@@ -32,7 +32,8 @@ namespace phoenix {
 	}
 
 	bool archive_reader_binsafe::read_object_begin(archive_object& obj) {
-		if (input.remaining() < 6) return false;
+		if (input.remaining() < 6)
+			return false;
 		input.mark();
 
 		if (input.get() != bs_string) {
@@ -52,7 +53,8 @@ namespace phoenix {
 	}
 
 	bool archive_reader_binsafe::read_object_end() {
-		if (input.remaining() < 6) return false;
+		if (input.remaining() < 6)
+			return false;
 		input.mark();
 
 		if (input.get() != bs_string) {
@@ -214,7 +216,8 @@ namespace phoenix {
 		auto unused = static_cast<std::int32_t>(ensure_entry_meta(bs_raw) - 3 * 3 * sizeof(float));
 
 		if (unused < 0) {
-			throw parser_error("archive_reader_binsafe: cannot read mat3x3 (9 * float): not enough space in raw entry.");
+			throw parser_error(
+			    "archive_reader_binsafe: cannot read mat3x3 (9 * float): not enough space in raw entry.");
 		}
 
 		auto v = input.get_mat3x3();

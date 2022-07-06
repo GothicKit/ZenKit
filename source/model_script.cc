@@ -94,7 +94,6 @@ namespace phoenix {
 				evt.type = tp->second;
 			}
 
-
 			switch (evt.type) {
 			case mds::event_tag_type::create_item:
 			case mds::event_tag_type::exchange_item:

@@ -255,7 +255,7 @@ namespace phoenix {
 
 			static void parse(pfx_controller* vob, archive_reader_ref& in, game_version version) {
 				vob::parse(vob, in, version);
-				vob->pfx_name = in->read_string();            // pfxName
+				vob->pfx_name = in->read_string();        // pfxName
 				vob->kill_when_done = in->read_bool();    // killVobWhenDone
 				vob->initially_running = in->read_bool(); // pfxStartOn
 			}
@@ -306,9 +306,9 @@ namespace phoenix {
 
 			static void parse(sound_daytime* vob, archive_reader_ref& in, game_version version) {
 				sound::parse(vob, in, version);
-				vob->start_time = in->read_float(); // sndStartTime
-				vob->end_time = in->read_float();   // sndEndTime
-				vob->sound_name2 = in->read_string();     // sndName2
+				vob->start_time = in->read_float();   // sndStartTime
+				vob->end_time = in->read_float();     // sndEndTime
+				vob->sound_name2 = in->read_string(); // sndName2
 			}
 		};
 
@@ -631,7 +631,7 @@ namespace phoenix {
 
 			static void parse(cs_camera* vob, archive_reader_ref& in, game_version version);
 		};
-	} // namespace vob
+	} // namespace vobs
 
 	/**
 	 * @brief Parses a VOB tree from the given reader.

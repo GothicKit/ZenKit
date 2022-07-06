@@ -25,7 +25,8 @@ namespace phoenix {
 	}
 
 	bool archive_reader_ascii::read_object_begin(archive_object& obj) {
-		if (input.remaining() < 3) return false;
+		if (input.remaining() < 3)
+			return false;
 
 		input.mark();
 		auto line = input.get_line();
@@ -41,7 +42,8 @@ namespace phoenix {
 	}
 
 	bool archive_reader_ascii::read_object_end() {
-		if (input.remaining() < 3) return false;
+		if (input.remaining() < 3)
+			return false;
 		auto line = input.get_line();
 
 		if (line != "[]") {
@@ -122,9 +124,9 @@ namespace phoenix {
 		(void) input.get_line();
 	}
 
-    bounding_box archive_reader_ascii::read_bbox() {
+	bounding_box archive_reader_ascii::read_bbox() {
 		std::stringstream in {read_entry("rawFloat")};
-	    bounding_box box {};
+		bounding_box box {};
 
 		in >> box.min.x >> box.min.y >> box.min.z >> box.max.x >> box.max.y >> box.max.z;
 		return box;

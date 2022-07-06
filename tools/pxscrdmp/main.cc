@@ -5,49 +5,49 @@
 #include <argh.h>
 #include <fmt/format.h>
 
+#include <fstream>
 #include <string>
 #include <string_view>
-#include <fstream>
 
 #include "config.hh"
 #include "decompiler.hh"
 
 using namespace phoenix::daedalus;
 
-static constexpr const auto HELP_MESSAGE = "Usage: pxscrdmp [--version]\n"
-										   "       pxscrdmp [-h|--help]\n"
-										   "       pxscrdmp <FILE> [-t|--symbolize] [-I|--include <IFLAGS>] [-E|--exclude <EFLAGS>]\n"
-										   "                       [-f|--search <TERM>] [-s|--symbol <NAME>] [-p|--parent <PARENT-NAME>]\n"
-										   "       pxscrdmp <FILE> [-d|--disassemble] [-s|--symbol <NAME>]\n"
-                                           "       pxscrdmp <FILE> [-u|--usages] [-s|--symbol <NAME>]\n"
-                                           "       pxscrdmp <FILE> [-k|--decompile] [-s|--symbol <NAME>]"
-										   "\n"
-										   "phoenix pxscrdmp v{}\n"
-										   "View contents of compiled Daedalus script files.\n"
-										   "\n"
-										   "\n"
-										   "Include and exclude flags:\n"
-										   "\tc - const symbols\n"
-										   "\tr - symbols that have a return value\n"
-										   "\tm - member symbol_name\n"
-										   "\te - extern symbols\n"
-										   "\tM - merged symbols\n"
-										   "\tg - generated symbols\n"
-										   "\tv - symbols of type void\n"
-										   "\tf - symbols of type float\n"
-										   "\ti - symbols of type int\n"
-										   "\ts - symbols of type string\n"
-										   "\tC - classes\n"
-										   "\tF - functions\n"
-										   "\tP - prototypes\n"
-										   "\tI - instances\n";
+static constexpr const auto HELP_MESSAGE =
+    "Usage: pxscrdmp [--version]\n"
+    "       pxscrdmp [-h|--help]\n"
+    "       pxscrdmp <FILE> [-t|--symbolize] [-I|--include <IFLAGS>] [-E|--exclude <EFLAGS>]\n"
+    "                       [-f|--search <TERM>] [-s|--symbol <NAME>] [-p|--parent <PARENT-NAME>]\n"
+    "       pxscrdmp <FILE> [-d|--disassemble] [-s|--symbol <NAME>]\n"
+    "       pxscrdmp <FILE> [-u|--usages] [-s|--symbol <NAME>]\n"
+    "       pxscrdmp <FILE> [-k|--decompile] [-s|--symbol <NAME>]"
+    "\n"
+    "phoenix pxscrdmp v{}\n"
+    "View contents of compiled Daedalus script files.\n"
+    "\n"
+    "\n"
+    "Include and exclude flags:\n"
+    "\tc - const symbols\n"
+    "\tr - symbols that have a return value\n"
+    "\tm - member symbol_name\n"
+    "\te - extern symbols\n"
+    "\tM - merged symbols\n"
+    "\tg - generated symbols\n"
+    "\tv - symbols of type void\n"
+    "\tf - symbols of type float\n"
+    "\ti - symbols of type int\n"
+    "\ts - symbols of type string\n"
+    "\tC - classes\n"
+    "\tF - functions\n"
+    "\tP - prototypes\n"
+    "\tI - instances\n";
 
-
-#define PRINT_FLAG(cond, flag)  \
-	if (cond) {                 \
-		fmt::print("{}", flag); \
-	} else {                    \
-		fmt::print(" ");        \
+#define PRINT_FLAG(cond, flag)                                                                                         \
+	if (cond) {                                                                                                        \
+		fmt::print("{}", flag);                                                                                        \
+	} else {                                                                                                           \
+		fmt::print(" ");                                                                                               \
 	}
 
 #define SV_CONTAINS(sv, chr) ((sv).find(chr) != std::string_view::npos)
@@ -56,7 +56,11 @@ void print_assembly_of_symbol(const script& scr, const symbol& sym);
 void print_assembly(const script& scr);
 
 void print_symbol_detailed(const script& scr, const symbol& sym);
-void print_symbol_list(const script& scr, std::string_view include_filter, std::string_view exclude_filter, std::string_view search, const symbol* parent);
+void print_symbol_list(const script& scr,
+                       std::string_view include_filter,
+                       std::string_view exclude_filter,
+                       std::string_view search,
+                       const symbol* parent);
 
 std::string print_definition(const script& scr, const symbol& sym, const symbol* parent, std::string_view indent = "");
 void find_usages(const script& scr, const symbol& sym);
@@ -177,7 +181,7 @@ int main(int argc, char** argv) {
 
 					if (skip > 0) {
 						skip--;
-						continue ;
+						continue;
 					}
 
 					if (files.find(s.file_index()) == files.end()) {
@@ -186,8 +190,10 @@ int main(int argc, char** argv) {
 
 					std::string def = print_definition(scr, s, scr.find_symbol_by_index(s.parent()));
 
-					if (!s.is_member() && !s.is_external() && (s.type() == phoenix::daedalus::dt_prototype ||
-					    (s.type() == phoenix::daedalus::dt_function && s.is_const()) || (s.type() == phoenix::daedalus::dt_instance && s.is_const()))) {
+					if (!s.is_member() && !s.is_external() &&
+					    (s.type() == phoenix::daedalus::dt_prototype ||
+					     (s.type() == phoenix::daedalus::dt_function && s.is_const()) ||
+					     (s.type() == phoenix::daedalus::dt_instance && s.is_const()))) {
 						def += fmt::format(" {{\n{}}}\n", decompile(scr, s, 4));
 					}
 
@@ -214,29 +220,30 @@ int main(int argc, char** argv) {
 /// \param symbol The symbol to test on
 /// \return `true` if the symbol has a value `false` otherwise.
 bool has_constant_value(const symbol& symbol) {
-	return symbol.is_const() && symbol.type() != dt_prototype && symbol.type() != dt_instance && symbol.type() != dt_function;
+	return symbol.is_const() && symbol.type() != dt_prototype && symbol.type() != dt_instance &&
+	    symbol.type() != dt_function;
 }
 
 constexpr std::string_view get_type_name(datatype tp) {
 	switch (tp) {
-		case dt_void:
-			return "void";
-		case dt_float:
-			return "float";
-		case dt_integer:
-			return "int";
-		case dt_string:
-			return "string";
-		case dt_class:
-			return "class";
-		case dt_function:
-			return "func";
-		case dt_prototype:
-			return "prototype";
-		case dt_instance:
-			return "instance";
-		default:
-			return "*ERR*";
+	case dt_void:
+		return "void";
+	case dt_float:
+		return "float";
+	case dt_integer:
+		return "int";
+	case dt_string:
+		return "string";
+	case dt_class:
+		return "class";
+	case dt_function:
+		return "func";
+	case dt_prototype:
+		return "prototype";
+	case dt_instance:
+		return "instance";
+	default:
+		return "*ERR*";
 	}
 }
 
@@ -246,31 +253,35 @@ std::string print_symbol_value(const symbol& symbol, int index = -1) {
 	std::string val {};
 	auto print_value = [&](uint8_t index) {
 		switch (symbol.type()) {
-			case dt_float:
-			    val += fmt::format("{}", symbol.get_float(index));
-				break;
-			case dt_integer:
-			    val += fmt::format("{}", symbol.get_int(index));
-				break;
-			case dt_string:
-			    val += fmt::format("\"{}\"", symbol.get_string(index));
-				break;
-			default:
-				break;
+		case dt_float:
+			val += fmt::format("{}", symbol.get_float(index));
+			break;
+		case dt_integer:
+			val += fmt::format("{}", symbol.get_int(index));
+			break;
+		case dt_string:
+			val += fmt::format("\"{}\"", symbol.get_string(index));
+			break;
+		default:
+			break;
 		}
 	};
 
 	if (index >= 0) {
 		print_value(index);
 	} else {
-		if (symbol.count() > 1) val += "{";
+		if (symbol.count() > 1)
+			val += "{";
 
 		for (unsigned i = 0; i < symbol.count(); ++i) {
-			if (i > 0) val += ", ";
+			if (i > 0)
+				val += ", ";
 			print_value(i);
 		}
 
-		if (symbol.count() > 1) { val += "}"; }
+		if (symbol.count() > 1) {
+			val += "}";
+		}
 	}
 
 	return val;
@@ -283,9 +294,11 @@ std::string print_symbol_value(const symbol& symbol, int index = -1) {
 /// \param indent A custom indentation to prepend
 std::string print_definition(const script& scr, const symbol& sym, const symbol* parent, std::string_view indent) {
 	std::string def {};
-	if (sym.is_member()) return def;
+	if (sym.is_member())
+		return def;
 	def += indent;
-	if (sym.is_external()) def += "extern ";
+	if (sym.is_external())
+		def += "extern ";
 
 	if (sym.type() == dt_instance) {
 		def += fmt::format("instance {}({})", sym.name(), (parent == nullptr ? "*ERR*" : parent->name()));
@@ -298,7 +311,8 @@ std::string print_definition(const script& scr, const symbol& sym, const symbol*
 			if (member.parent() == sym.index() && member.is_member()) {
 				auto name = member.name().substr(member.name().find('.') + 1);
 				def += fmt::format("{}\tvar {} {}", indent, get_type_name(member.type()), name);
-				if (member.count() > 1) def += fmt::format("[{}]", member.count());
+				if (member.count() > 1)
+					def += fmt::format("[{}]", member.count());
 				def += ";\n";
 			}
 		}
@@ -310,7 +324,8 @@ std::string print_definition(const script& scr, const symbol& sym, const symbol*
 		auto params = scr.find_parameters_for_function(&sym);
 		unsigned count = 0;
 		for (const auto& param : params) {
-			if (count > 0) def += ", ";
+			if (count > 0)
+				def += ", ";
 
 			if (param->type() == dt_instance) {
 				const auto* dt = scr.find_symbol_by_index(param->parent());
@@ -331,7 +346,8 @@ std::string print_definition(const script& scr, const symbol& sym, const symbol*
 		def += ")";
 	} else {
 		def += fmt::format("const {} {}", get_type_name(sym.type()), sym.name());
-		if (sym.count() > 1) def += fmt::format("[{}]", sym.count());
+		if (sym.count() > 1)
+			def += fmt::format("[{}]", sym.count());
 		def += " = " + print_symbol_value(sym) + ";";
 	}
 
@@ -388,22 +404,22 @@ void print_symbol_detailed(const script& scr, const symbol& sym) {
 /// \return The abbreviation
 constexpr char get_type_abbrev(datatype tp) {
 	switch (tp) {
-		case dt_void:
-			return 'v';
-		case dt_float:
-			return 'f';
-		case dt_integer:
-			return 'i';
-		case dt_string:
-			return 's';
-		case dt_class:
-			return 'C';
-		case dt_function:
-			return 'F';
-		case dt_prototype:
-			return 'P';
-		case dt_instance:
-			return 'I';
+	case dt_void:
+		return 'v';
+	case dt_float:
+		return 'f';
+	case dt_integer:
+		return 'i';
+	case dt_string:
+		return 's';
+	case dt_class:
+		return 'C';
+	case dt_function:
+		return 'F';
+	case dt_prototype:
+		return 'P';
+	case dt_instance:
+		return 'I';
 	}
 
 	return '?';
@@ -449,23 +465,20 @@ bool symbol_matches_filter(const symbol& sym, std::string_view include_filter, s
 	bool matches_exclude = false;
 
 	auto filter_matches = [&](std::string_view filter) {
-		if ((sym.is_const() && SV_CONTAINS(filter, 'c')) ||
-			(sym.has_return() && SV_CONTAINS(filter, 'r')) ||
-			(sym.is_member() && SV_CONTAINS(filter, 'm')) ||
-			(sym.is_external() && SV_CONTAINS(filter, 'e')) ||
-			(sym.is_merged() && SV_CONTAINS(filter, 'M')) ||
-			(sym.is_generated() && SV_CONTAINS(filter, 'g'))) {
+		if ((sym.is_const() && SV_CONTAINS(filter, 'c')) || (sym.has_return() && SV_CONTAINS(filter, 'r')) ||
+		    (sym.is_member() && SV_CONTAINS(filter, 'm')) || (sym.is_external() && SV_CONTAINS(filter, 'e')) ||
+		    (sym.is_merged() && SV_CONTAINS(filter, 'M')) || (sym.is_generated() && SV_CONTAINS(filter, 'g'))) {
 			return true;
 		}
 
 		if ((sym.type() == dt_void && SV_CONTAINS(filter, 'v')) ||
-			(sym.type() == dt_float && SV_CONTAINS(filter, 'f')) ||
-			(sym.type() == dt_integer && SV_CONTAINS(filter, 'i')) ||
-			(sym.type() == dt_string && SV_CONTAINS(filter, 's')) ||
-			(sym.type() == dt_class && SV_CONTAINS(filter, 'C')) ||
-			(sym.type() == dt_function && SV_CONTAINS(filter, 'F')) ||
-			(sym.type() == dt_prototype && SV_CONTAINS(filter, 'P')) ||
-			(sym.type() == dt_instance && SV_CONTAINS(filter, 'I'))) {
+		    (sym.type() == dt_float && SV_CONTAINS(filter, 'f')) ||
+		    (sym.type() == dt_integer && SV_CONTAINS(filter, 'i')) ||
+		    (sym.type() == dt_string && SV_CONTAINS(filter, 's')) ||
+		    (sym.type() == dt_class && SV_CONTAINS(filter, 'C')) ||
+		    (sym.type() == dt_function && SV_CONTAINS(filter, 'F')) ||
+		    (sym.type() == dt_prototype && SV_CONTAINS(filter, 'P')) ||
+		    (sym.type() == dt_instance && SV_CONTAINS(filter, 'I'))) {
 			return true;
 		}
 		return false;
@@ -486,11 +499,16 @@ bool symbol_matches_filter(const symbol& sym, std::string_view include_filter, s
 /// \param scr The script to print the symbols of
 /// \param include_filter Filter for symbols to include
 /// \param exclude_filter Filter for symbols to exclude
-void print_symbol_list(const script& scr, std::string_view include_filter, std::string_view exclude_filter, std::string_view search, const symbol* parent) {
+void print_symbol_list(const script& scr,
+                       std::string_view include_filter,
+                       std::string_view exclude_filter,
+                       std::string_view search,
+                       const symbol* parent) {
 	fmt::print("Index    Flags   Parent                    Address  R Name\n");
 
 	for (const auto& sym : scr.symbols()) {
-		if (!symbol_matches_filter(sym, include_filter, exclude_filter) || (!search.empty() && sym.name().find(search) == std::string_view::npos)) {
+		if (!symbol_matches_filter(sym, include_filter, exclude_filter) ||
+		    (!search.empty() && sym.name().find(search) == std::string_view::npos)) {
 			continue;
 		}
 
@@ -530,108 +548,108 @@ void print_symbol_list(const script& scr, std::string_view include_filter, std::
 
 constexpr std::string_view get_opcode_name(opcode code) {
 	switch (code) {
-		case op_noop:
-			return "nop";
+	case op_noop:
+		return "nop";
 
-			// Arithmetic operations
+		// Arithmetic operations
 
-		case op_add:
-			return "add";
-		case op_subtract:
-			return "sub";
-		case op_multiply:
-			return "mul";
-		case op_divide:
-			return "div";
-		case op_modulo:
-			return "mod";
-		case op_bitor:
-			return "bor";
-		case op_bitand:
-			return "band";
-		case op_shift_left:
-			return "shl";
-		case op_shift_right:
-			return "shr";
-		case op_plus:
-			return "pos";
-		case op_minus:
-			return "neg";
+	case op_add:
+		return "add";
+	case op_subtract:
+		return "sub";
+	case op_multiply:
+		return "mul";
+	case op_divide:
+		return "div";
+	case op_modulo:
+		return "mod";
+	case op_bitor:
+		return "bor";
+	case op_bitand:
+		return "band";
+	case op_shift_left:
+		return "shl";
+	case op_shift_right:
+		return "shr";
+	case op_plus:
+		return "pos";
+	case op_minus:
+		return "neg";
 
-			// Logical operations
+		// Logical operations
 
-		case op_less:
-			return "lt";
-		case op_greater:
-			return "gt";
-		case op_or:
-			return "or";
-		case op_and:
-			return "and";
-		case op_less_or_equal:
-			return "leq";
-		case op_equal:
-			return "eq";
-		case op_not_equal:
-			return "neq";
-		case op_greater_or_equal:
-			return "geq";
-		case op_not:
-			return "not";
-		case op_complement:
-			return "compl";
+	case op_less:
+		return "lt";
+	case op_greater:
+		return "gt";
+	case op_or:
+		return "or";
+	case op_and:
+		return "and";
+	case op_less_or_equal:
+		return "leq";
+	case op_equal:
+		return "eq";
+	case op_not_equal:
+		return "neq";
+	case op_greater_or_equal:
+		return "geq";
+	case op_not:
+		return "not";
+	case op_complement:
+		return "compl";
 
-			// Flow control operations
+		// Flow control operations
 
-		case op_return:
-			return "ret";
-		case op_call:
-			return "call";
-		case op_call_external:
-			return "callext";
-		case op_jump:
-			return "br";
-		case op_jump_if_zero:
-			return "brz";
+	case op_return:
+		return "ret";
+	case op_call:
+		return "call";
+	case op_call_external:
+		return "callext";
+	case op_jump:
+		return "br";
+	case op_jump_if_zero:
+		return "brz";
 
-			// variable manipulation
+		// variable manipulation
 
-		case op_assign_add:
-			return "addass";
-		case op_assign_subtract:
-			return "subass";
-		case op_assign_multiply:
-			return "mulass";
-		case op_assign_divide:
-			return "divass";
-		case op_assign_string:
-			return "asss";
-		case op_assign_stringref:
-			return "asssr";
-		case op_assign_func:
-			return "assfn";
-		case op_assign_float:
-			return "assf";
-		case op_assign_instance:
-			return "assinst";
-		case op_assign_int:
-			return "assi";
+	case op_assign_add:
+		return "addass";
+	case op_assign_subtract:
+		return "subass";
+	case op_assign_multiply:
+		return "mulass";
+	case op_assign_divide:
+		return "divass";
+	case op_assign_string:
+		return "asss";
+	case op_assign_stringref:
+		return "asssr";
+	case op_assign_func:
+		return "assfn";
+	case op_assign_float:
+		return "assf";
+	case op_assign_instance:
+		return "assinst";
+	case op_assign_int:
+		return "assi";
 
-			// stack manipulation
+		// stack manipulation
 
-		case op_push_int:
-			return "pushi";
-		case op_push_var:
-			return "pushv";
-		case op_push_instance:
-			return "pushinst";
-		case op_push_array_var:
-			return "pushva";
+	case op_push_int:
+		return "pushi";
+	case op_push_var:
+		return "pushv";
+	case op_push_instance:
+		return "pushinst";
+	case op_push_array_var:
+		return "pushva";
 
-			// special
+		// special
 
-		case op_set_instance:
-			return "setinst";
+	case op_set_instance:
+		return "setinst";
 	}
 
 	return "???";
@@ -646,19 +664,36 @@ void print_instruction_bytes(const instruction& i) {
 	case op_call:
 	case op_jump_if_zero:
 	case op_jump:
-		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x}    ", i.address & 0xFFU, (i.address >> 8U) & 0xFFU, (i.address >> 16U) & 0xFFU, (i.address >> 24U) & 0xFFU);
+		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x}    ",
+		           i.address & 0xFFU,
+		           (i.address >> 8U) & 0xFFU,
+		           (i.address >> 16U) & 0xFFU,
+		           (i.address >> 24U) & 0xFFU);
 		break;
 	case op_push_int:
-		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x}    ", i.immediate & 0xFFU, (i.immediate >> 8U) & 0xFFU, (i.immediate >> 16U) & 0xFFU, (i.immediate >> 24U) & 0xFFU);
+		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x}    ",
+		           i.immediate & 0xFFU,
+		           (i.immediate >> 8U) & 0xFFU,
+		           (i.immediate >> 16U) & 0xFFU,
+		           (i.immediate >> 24U) & 0xFFU);
 		break;
 	case op_call_external:
 	case op_push_var:
 	case op_push_instance:
 	case op_set_instance:
-		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x}    ", i.symbol & 0xFFU, (i.symbol >> 8U) & 0xFFU, (i.symbol >> 16U) & 0xFFU, (i.symbol >> 24U) & 0xFFU);
+		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x}    ",
+		           i.symbol & 0xFFU,
+		           (i.symbol >> 8U) & 0xFFU,
+		           (i.symbol >> 16U) & 0xFFU,
+		           (i.symbol >> 24U) & 0xFFU);
 		break;
 	case op_push_array_var:
-		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x} {:0>2x} ", i.symbol & 0xFFU, (i.symbol >> 8U) & 0xFFU, (i.symbol >> 16U) & 0xFFU, (i.symbol >> 24U) & 0xFFU, i.index);
+		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x} {:0>2x} ",
+		           i.symbol & 0xFFU,
+		           (i.symbol >> 8U) & 0xFFU,
+		           (i.symbol >> 16U) & 0xFFU,
+		           (i.symbol >> 24U) & 0xFFU,
+		           i.index);
 		break;
 	default:
 		fmt::print("               ");
@@ -678,46 +713,46 @@ void print_instruction(const script& scr, const instruction& i, bool instruction
 	fmt::print("{}", get_opcode_name(i.op));
 
 	switch (i.op) {
-		case opcode::op_call:
-			fmt::print(" {:0>8x}", i.address);
-			if (const auto* s = scr.find_symbol_by_address(i.address); s != nullptr && !instruction_only) {
-				fmt::print(" ; <{}>", s->name());
+	case opcode::op_call:
+		fmt::print(" {:0>8x}", i.address);
+		if (const auto* s = scr.find_symbol_by_address(i.address); s != nullptr && !instruction_only) {
+			fmt::print(" ; <{}>", s->name());
+		}
+		break;
+	case opcode::op_jump:
+	case opcode::op_jump_if_zero:
+		fmt::print(" {:0>8x}", i.address);
+		break;
+	case opcode::op_push_var:
+	case opcode::op_push_instance:
+	case opcode::op_call_external:
+	case opcode::op_set_instance:
+		fmt::print(" {:0>8x}", i.symbol);
+
+		if (const auto* s = scr.find_symbol_by_index(i.symbol); s != nullptr && !instruction_only) {
+			fmt::print(" ; <{}>", s->name());
+
+			if (has_constant_value(*s)) {
+				fmt::print(" = {}", print_symbol_value(*s));
 			}
-			break;
-		case opcode::op_jump:
-		case opcode::op_jump_if_zero:
-			fmt::print(" {:0>8x}", i.address);
-			break;
-		case opcode::op_push_var:
-		case opcode::op_push_instance:
-		case opcode::op_call_external:
-		case opcode::op_set_instance:
-			fmt::print(" {:0>8x}", i.symbol);
+		}
+		break;
+	case opcode::op_push_int:
+		fmt::print(" {}", i.immediate);
+		break;
+	case opcode::op_push_array_var:
+		fmt::print(" {:0>8x} + {}", i.address, i.index);
 
-			if (const auto* s = scr.find_symbol_by_index(i.symbol); s != nullptr && !instruction_only) {
-				fmt::print(" ; <{}>", s->name());
+		if (const auto* s = scr.find_symbol_by_index(i.symbol); s != nullptr && !instruction_only) {
+			fmt::print(" ; <{}+{}>", s->name(), i.index);
 
-				if (has_constant_value(*s)) {
-					fmt::print(" = {}", print_symbol_value(*s));
-				}
+			if (has_constant_value(*s)) {
+				fmt::print(" = {}", print_symbol_value(*s, i.index));
 			}
-			break;
-		case opcode::op_push_int:
-			fmt::print(" {}", i.immediate);
-			break;
-		case opcode::op_push_array_var:
-			fmt::print(" {:0>8x} + {}", i.address, i.index);
-
-			if (const auto* s = scr.find_symbol_by_index(i.symbol); s != nullptr && !instruction_only) {
-				fmt::print(" ; <{}+{}>", s->name(), i.index);
-
-				if (has_constant_value(*s)) {
-					fmt::print(" = {}", print_symbol_value(*s, i.index));
-				}
-			}
-			break;
-		default:
-			break;
+		}
+		break;
+	default:
+		break;
 	}
 }
 
@@ -750,7 +785,8 @@ void print_assembly_of_symbol(const script& scr, const symbol& sym) {
 /// \param scr The script to disassemble
 void print_assembly(const script& scr) {
 	for (const auto& sym : scr.symbols()) {
-		if (sym.type() == dt_prototype || sym.type() == dt_instance || (sym.type() == dt_function && !sym.is_external() && sym.is_const())) {
+		if (sym.type() == dt_prototype || sym.type() == dt_instance ||
+		    (sym.type() == dt_function && !sym.is_external() && sym.is_const())) {
 			print_assembly_of_symbol(scr, sym);
 		}
 	}

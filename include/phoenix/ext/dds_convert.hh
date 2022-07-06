@@ -11,4 +11,4 @@ namespace phoenix {
 	 * @return A buffer containing the DDS file.
 	 */
 	buffer texture_to_dds(const texture& tex);
-}
+} // namespace phoenix

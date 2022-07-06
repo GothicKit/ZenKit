@@ -2,7 +2,12 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/ext/daedalus_classes.hh>
 
-#define IF_SYM_EXIST(sym, d) do {if (s.find_symbol_by_name(sym) != nullptr) {d;}} while (false)
+#define IF_SYM_EXIST(sym, d)                                                                                           \
+	do {                                                                                                               \
+		if (s.find_symbol_by_name(sym) != nullptr) {                                                                   \
+			d;                                                                                                         \
+		}                                                                                                              \
+	} while (false)
 
 namespace phoenix::daedalus {
 	void register_all_script_classes(script& s) {
@@ -28,6 +33,6 @@ namespace phoenix::daedalus {
 		IF_SYM_EXIST("C_SFX", c_sfx::register_(s));
 		IF_SYM_EXIST("C_SNDSYS_CFG", c_sound_system::register_(s));
 	}
-}
+} // namespace phoenix::daedalus
 
 #undef IF_SYM_EXIST

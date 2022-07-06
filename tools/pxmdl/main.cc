@@ -62,10 +62,11 @@ static void dump_wavefront(std::ostream& out, const std::string& name, const pho
 			auto wedge1 = msh.wedges[wedge_offset + item.wedges[1]];
 			auto wedge2 = msh.wedges[wedge_offset + item.wedges[2]];
 
-			out << "f "
-			    << wedge0.index + 1 << "/" << wedge_offset + item.wedges[0] + 1 << "/" << wedge_offset + item.wedges[0] + 1 << " "
-			    << wedge1.index + 1 << "/" << wedge_offset + item.wedges[1] + 1 << "/" << wedge_offset + item.wedges[1] + 1 << " "
-			    << wedge2.index + 1 << "/" << wedge_offset + item.wedges[2] + 1 << "/" << wedge_offset + item.wedges[2] + 1 << "\n";
+			out << "f " << wedge0.index + 1 << "/" << wedge_offset + item.wedges[0] + 1 << "/"
+			    << wedge_offset + item.wedges[0] + 1 << " " << wedge1.index + 1 << "/"
+			    << wedge_offset + item.wedges[1] + 1 << "/" << wedge_offset + item.wedges[1] + 1 << " "
+			    << wedge2.index + 1 << "/" << wedge_offset + item.wedges[2] + 1 << "/"
+			    << wedge_offset + item.wedges[2] + 1 << "\n";
 		}
 
 		wedge_offset += msh.wedges.size();
@@ -185,7 +186,9 @@ int main(int argc, const char** argv) {
 			out.close();
 
 		} else if (phoenix::iequals(extension, "ZEN")) {
-			auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_2);// FIXME: implement algorithm of detecting the actual version of Gothic!
+			auto wld =
+			    phoenix::world::parse(in, phoenix::game_version::gothic_2); // FIXME: implement algorithm of detecting
+			                                                                // the actual version of Gothic!
 
 			dump_wavefront(out, output, wld.world_mesh);
 			out.close();

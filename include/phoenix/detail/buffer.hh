@@ -1,20 +1,20 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include <glm/mat3x3.hpp>
+#include <glm/mat4x4.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
-#include <glm/mat3x3.hpp>
-#include <glm/mat4x4.hpp>
 
 #include <cstdint>
+#include <filesystem>
 #include <functional>
 #include <memory>
 #include <span>
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <filesystem>
 
 namespace phoenix {
 	struct buffer_underflow_error : public std::runtime_error {

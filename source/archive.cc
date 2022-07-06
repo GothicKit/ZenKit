@@ -69,7 +69,8 @@ namespace phoenix {
 		} else if (header.format == archive_format::binsafe) {
 			reader = std::make_unique<archive_reader_binsafe>(in, std::move(header));
 		} else {
-			throw parser_error(fmt::format("cannot load archive: format '{}' is not supported", std::uint32_t(header.format)));
+			throw parser_error(
+			    fmt::format("cannot load archive: format '{}' is not supported", std::uint32_t(header.format)));
 		}
 
 		reader->read_header();

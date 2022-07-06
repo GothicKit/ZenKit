@@ -110,6 +110,7 @@ namespace phoenix::daedalus {
 
 		/// \brief A pointer which may be used by the user of this API
 		void* user_ptr = nullptr;
+
 	private:
 		friend class symbol;
 		friend class script;

@@ -14,7 +14,7 @@ void print_entries(const std::vector<phoenix::vdf_entry>& entries) {
 	}
 }
 
-int main(int argc,  char** argv) {
+int main(int argc, char** argv) {
 	if (argc != 2) {
 		std::cerr << "Please provide an input file.";
 		return -1;

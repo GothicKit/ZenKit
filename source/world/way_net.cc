@@ -8,11 +8,11 @@
 namespace phoenix {
 
 	static void read_waypoint_data(way_point& wp, archive_reader_ref& in) {
-		wp.name = in->read_string(); // wpName
-		wp.water_depth = in->read_int(); // waterDepth
+		wp.name = in->read_string();      // wpName
+		wp.water_depth = in->read_int();  // waterDepth
 		wp.under_water = in->read_bool(); // underWater
-		wp.position = in->read_vec3(); // position
-		wp.direction = in->read_vec3(); // direction
+		wp.position = in->read_vec3();    // position
+		wp.direction = in->read_vec3();   // direction
 		wp.free_point = true;
 	}
 
@@ -25,7 +25,7 @@ namespace phoenix {
 		}
 
 		(void) /* auto version = */ in->read_int(); // waynetVersion
-		auto count = in->read_int(); // numWaypoints
+		auto count = in->read_int();                // numWaypoints
 		net._m_waypoints.reserve(count);
 
 		std::unordered_map<std::uint32_t, std::uint32_t> obj_id_to_wp {};
