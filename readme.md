@@ -9,6 +9,9 @@ _phoenix_ includes **parsers and basic datastructures** for most file formats us
 designed to inspect and convert** these files. Additionally, it includes a type-safe **VM for _Daedalus_ scripts** and
 supporting infrastructure like _Gothic II_ class definitions.
 
+## contributing
+If you'd like to contribute, please read [contributing](contributing.md) first.
+
 ## supported file formats
 Currently, the following file formats are supported.
 
