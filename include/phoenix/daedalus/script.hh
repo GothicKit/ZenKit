@@ -726,8 +726,8 @@ namespace phoenix::daedalus {
 
 	private:
 		std::vector<symbol> _m_symbols;
-		std::unordered_map<std::string, symbol*> _m_symbols_by_name;
-		std::unordered_map<std::uint32_t, symbol*> _m_symbols_by_address;
+		std::unordered_map<std::string, uint32_t> _m_symbols_by_name;
+		std::unordered_map<std::uint32_t, uint32_t> _m_symbols_by_address;
 
 		mutable buffer _m_text = buffer::empty();
 		std::uint8_t _m_version {0};

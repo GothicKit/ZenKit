@@ -99,12 +99,12 @@ namespace phoenix::daedalus {
 
 		for (std::uint32_t i = 0; i < symbol_count; ++i) {
 			auto* sym = &scr._m_symbols.emplace_back(symbol::parse(in));
-			scr._m_symbols_by_name[sym->name()] = sym;
+			scr._m_symbols_by_name[sym->name()] = i;
 			sym->_m_index = i;
 
 			if (sym->type() == dt_prototype || sym->type() == dt_instance ||
 			    (sym->type() == dt_function && sym->is_const() && !sym->is_member())) {
-				scr._m_symbols_by_address[sym->address()] = sym;
+				scr._m_symbols_by_address[sym->address()] = i;
 			}
 		}
 
@@ -127,7 +127,7 @@ namespace phoenix::daedalus {
 
 	const symbol* script::find_symbol_by_name(const std::string& name) const {
 		if (auto it = _m_symbols_by_name.find(name); it != _m_symbols_by_name.end()) {
-			return it->second;
+			return find_symbol_by_index(it->second);
 		}
 
 		return nullptr;
@@ -135,7 +135,7 @@ namespace phoenix::daedalus {
 
 	const symbol* script::find_symbol_by_address(std::uint32_t address) const {
 		if (auto it = _m_symbols_by_address.find(address); it != _m_symbols_by_address.end()) {
-			return it->second;
+			return find_symbol_by_index(it->second);
 		}
 
 		return nullptr;
@@ -153,7 +153,7 @@ namespace phoenix::daedalus {
 		std::transform(up.begin(), up.end(), up.begin(), ::toupper);
 
 		if (auto it = _m_symbols_by_name.find(up); it != _m_symbols_by_name.end()) {
-			return it->second;
+			return find_symbol_by_index(it->second);
 		}
 
 		return nullptr;
@@ -161,7 +161,7 @@ namespace phoenix::daedalus {
 
 	symbol* script::find_symbol_by_address(std::uint32_t address) {
 		if (auto it = _m_symbols_by_address.find(address); it != _m_symbols_by_address.end()) {
-			return it->second;
+			return find_symbol_by_index(it->second);
 		}
 
 		return nullptr;
