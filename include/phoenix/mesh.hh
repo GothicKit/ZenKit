@@ -52,7 +52,7 @@ namespace phoenix {
 		std::uint8_t is_outdoor : 1;
 		std::uint8_t is_ghost_occluder : 1;
 		std::uint8_t is_dynamically_lit : 1;
-		std::uint16_t sector_index : 16;
+		std::int16_t sector_index : 16;
 
 		uint8_t is_lod : 1;
 		uint8_t normal_axis : 2;
@@ -60,7 +60,7 @@ namespace phoenix {
 
 	struct polygon_list {
 		std::vector<uint32_t> material_indices {};
-		std::vector<uint32_t> lightmap_indices {};
+		std::vector<int32_t> lightmap_indices {};
 		std::vector<uint32_t> feature_indices {};
 		std::vector<uint32_t> vertex_indices {};
 		std::vector<polygon_flags> flags {};
