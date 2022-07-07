@@ -27,10 +27,7 @@ namespace phoenix {
 				for (int i = 0; i < node_count; ++i) {
 					auto& node = hierarchy._m_nodes.emplace_back();
 					node.name = chunk.get_line(false);
-
 					node.parent_index = chunk.get_short();
-					node.parent = node.parent_index == -1 ? nullptr : &hierarchy._m_nodes[node.parent_index];
-
 					node.transform = chunk.get_mat4x4();
 				}
 
