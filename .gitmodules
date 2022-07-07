@@ -19,3 +19,6 @@
 [submodule "vendor/lexy"]
 	path = vendor/lexy
 	url = https://github.com/foonathan/lexy
+[submodule "vendor/flags"]
+	path = vendor/flags
+	url = https://github.com/sailormoon/flags.git

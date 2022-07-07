@@ -2,4 +2,5 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
-constexpr const auto PXINFO_VERSION = "@PROJECT_VERSION@+@GIT_HASH@";
+/// \brief The version ID for zdump
+constexpr const auto ZDUMP_VERSION = "@PROJECT_VERSION@+@GIT_HASH@";
