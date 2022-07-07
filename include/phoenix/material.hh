@@ -58,21 +58,21 @@ namespace phoenix {
 		std::string texture;
 		glm::vec2 texture_scale;
 		float texture_anim_fps {0.0f};
-		std::uint8_t texture_anim_map_mode {0};
+		std::uint8_t texture_anim_map_mode {0}; // TODO: this might be a bool or an enum
 		glm::vec2 texture_anim_map_dir;
 		bool disable_collision {false};
 		bool disable_lightmap {false};
-		std::uint8_t dont_collapse {0};
+		bool dont_collapse {false};
 		std::string detail_object;
 		float detail_texture_scale {0.0f};
-		std::uint8_t force_occluder {0};
-		std::uint8_t environment_mapping {0};
+		bool force_occluder {false};
+		std::uint8_t environment_mapping {0}; // TODO: this might be a bool or an enum
 		float environment_mapping_strength {0.0f};
-		std::uint8_t wave_mode {0};
+		std::uint8_t wave_mode {0}; // TODO: this might be a bool or an enum
 		std::uint8_t wave_speed {0};
 		float wave_max_amplitude {0.0f};
 		float wave_grid_size {0.0f};
-		std::uint8_t ignore_sun {0};
+		bool ignore_sun {false};
 		alpha_function alpha_func {0};
 		glm::vec2 default_mapping {};
 	};

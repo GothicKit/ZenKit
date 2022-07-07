@@ -43,7 +43,7 @@ namespace phoenix {
 
 			mat.disable_collision = in->read_bool();
 			mat.disable_lightmap = in->read_bool();
-			mat.dont_collapse = in->read_byte();
+			mat.dont_collapse = in->read_bool();
 			mat.detail_object = in->read_string();
 			mat.default_mapping = in->read_vec2();
 			mat.alpha_func = alpha_function::test;
@@ -70,14 +70,14 @@ namespace phoenix {
 
 			// This section is specific to G2
 			mat.detail_texture_scale = in->read_float();
-			mat.force_occluder = in->read_byte();
+			mat.force_occluder = in->read_bool();
 			mat.environment_mapping = in->read_byte();
 			mat.environment_mapping_strength = in->read_float();
 			mat.wave_mode = in->read_byte();
 			mat.wave_speed = in->read_byte();
 			mat.wave_max_amplitude = in->read_float();
 			mat.wave_grid_size = in->read_float();
-			mat.ignore_sun = in->read_byte();
+			mat.ignore_sun = in->read_bool();
 			mat.alpha_func = alpha_function_from_int(in->read_byte());
 
 			// The mapping comes last :)
