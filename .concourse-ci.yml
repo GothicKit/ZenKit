@@ -123,6 +123,8 @@ jobs:
     resource: 'phoenix.pr'
     trigger: true
     version: 'every'
+    params:
+      submodules: true
   - put: 'phoenix.pr'
     params:
       path: 'repo'
