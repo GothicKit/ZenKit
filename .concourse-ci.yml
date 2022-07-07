@@ -141,6 +141,7 @@ jobs:
       run: *run-style
   - task: 'build'
     image: 'gcc-12'
+    privileged: true
     config:
       platform: 'linux'
       inputs:
