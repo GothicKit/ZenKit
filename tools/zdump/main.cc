@@ -90,7 +90,7 @@ file_format detect_file_format(px::buffer&& buf) {
 		return file_format::man;
 	else if (buf.reset().get_ushort() == 0xB000)
 		return file_format::msh;
-	else if (buf.reset().get_ushort() == 0xF200)
+	else if (buf.reset().get_ushort() == 0xF000)
 		return file_format::msb;
 	else if (std::regex_search(buf.reset().get_line(),
 	                           std::regex(R"(\s*Model\s*\(\s*"[\w\d]+"\s*\))", std::regex::icase))) {
