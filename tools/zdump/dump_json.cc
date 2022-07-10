@@ -369,21 +369,20 @@ void dump_json<px::mesh>(const px::mesh& msh) {
 template <>
 void dump_json<px::model_script>(const px::model_script& obj) {
 	auto get_ani_flags = [](px::mds::animation_flags flag) {
-		std::vector<std::string> flags {};
+		std::string flags {};
 
 		if (flag & px::mds::af_move)
-			flags.emplace_back("move");
+			flags += "\"move\"";
 		if (flag & px::mds::af_rotate)
-			flags.emplace_back("rotate");
+			flags += flags.empty() ? "\"rotate\"" : ", \"rotate\"";
 		if (flag & px::mds::af_queue)
-			flags.emplace_back("queue");
+			flags += flags.empty() ? "\"queue\"" : ", \"queue\"";
 		if (flag & px::mds::af_fly)
-			flags.emplace_back("fly");
+			flags += flags.empty() ? "\"fly\"" : ", \"fly\"";
 		if (flag & px::mds::af_idle)
-			flags.emplace_back("idle");
+			flags += flags.empty() ? "\"idle\"" : ", \"idle\"";
 
-		return fmt::join(flags | std::views::transform([](const std::string& v) { return fmt::format("\"{}\"", v); }),
-		                 ",");
+		return flags;
 	};
 
 	fmt::print(
@@ -440,8 +439,8 @@ void dump_json<px::model_script>(const px::model_script& obj) {
 	    fmt::join(
 	        obj.animations | std::views::transform([&get_ani_flags](const px::mds::animation& cmb) {
 		        return fmt::format(
-		            R"({{"name": "{}", "layer": {}, "next": "{}", "blendIn": {}, "blendOut": {}, "flags": {}, )"
-		            R"("model": "{}", "direction": {}, "firstFrame": {}, "lastFrame": {}, "fps": {}, )"
+		            R"({{"name": "{}", "layer": {}, "next": "{}", "blendIn": {}, "blendOut": {}, "flags": [{}], )"
+		            R"("model": "{}", "direction": "{}", "firstFrame": {}, "lastFrame": {}, "fps": {}, )"
 		            R"("speed": {}, "collisionVolumeScale": {}, "events": [{}], "pfx": [{}], )"
 		            R"("pfxStop": [{}], "sfx": [{}], "sfxGround": [{}], "morph": [{}], "tremors": [{}]}})",
 		            cmb.name,
