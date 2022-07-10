@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/daedalus/script.hh>
 
-#include <argh.h>
+#include <flags.h>
 #include <fmt/format.h>
 
 #include <fstream>
@@ -15,33 +15,53 @@
 using namespace phoenix::daedalus;
 
 static constexpr const auto HELP_MESSAGE =
-    "Usage: pxscrdmp [--version]\n"
-    "       pxscrdmp [-h|--help]\n"
-    "       pxscrdmp <FILE> [-t|--symbolize] [-I|--include <IFLAGS>] [-E|--exclude <EFLAGS>]\n"
-    "                       [-f|--search <TERM>] [-s|--symbol <NAME>] [-p|--parent <PARENT-NAME>]\n"
-    "       pxscrdmp <FILE> [-d|--disassemble] [-s|--symbol <NAME>]\n"
-    "       pxscrdmp <FILE> [-u|--usages] [-s|--symbol <NAME>]\n"
-    "       pxscrdmp <FILE> [-k|--decompile] [-s|--symbol <NAME>]"
-    "\n"
-    "phoenix pxscrdmp v{}\n"
-    "View contents of compiled Daedalus script files.\n"
-    "\n"
-    "\n"
-    "Include and exclude flags:\n"
-    "\tc - const symbols\n"
-    "\tr - symbols that have a return value\n"
-    "\tm - member symbol_name\n"
-    "\te - extern symbols\n"
-    "\tM - merged symbols\n"
-    "\tg - generated symbols\n"
-    "\tv - symbols of type void\n"
-    "\tf - symbols of type float\n"
-    "\ti - symbols of type int\n"
-    "\ts - symbols of type string\n"
-    "\tC - classes\n"
-    "\tF - functions\n"
-    "\tP - prototypes\n"
-    "\tI - instances\n";
+    R"(USAGE
+    zscript -v
+    zscript -h
+    zscript -t [-f FILE] [-I FLAGS] [-E FLAGS] [-f TERM] [-s NAME]
+    zscript -d [-f FILE] [-s NAME]
+    zscript -u -s NAME [-f FILE]
+    zscript -k -s NAME [-f FILE]
+
+DESCRIPTION
+    Dumps symbols and bytecode from compiled Daedalus script files. Can also
+    decompile function, prototype and instance code.
+
+OPTIONS
+    -v, --version               Print the version of zdump
+    -h, --help                  Print this help message
+    -f FILE, --input FILE       If specified, reads the given file from disk instead of stdin
+                                (unless -e is specified).
+    -s NAME, --symbol NAME      Dump data only for the symbol with the given NAME
+    -I FLAGS, --include FLAGS   Only display symbols with any of these FLAGS
+    -E FLAGS, --exclude FLAGS   Only display symbols without any of these FLAGS
+    -c TERM, --find TERM        Only display symbols where the name contains TERM
+    -t, --symbols               Display a list of symbols filtered by the given parameters or
+                                information about the symbol passed via -s.
+    -d, --disassemble           Print a disassembly of the file or the symbol passed via -s.
+    -u, --usages                Print a list of all bytecode instructions referencing the symbol
+                                passed via -s.
+    -l, --decompile             Print a decompilation of the symbol passed via -s.
+
+
+FLAGS
+    c - const symbols
+    r - symbols that have a return value
+    m - member symbol_name
+    e - extern symbols
+    M - merged symbols
+    g - generated symbols
+    v - symbols of type void
+    f - symbols of type float
+    i - symbols of type int
+    s - symbols of type string
+    C - classes
+    F - functions
+    P - prototypes
+    I - instances
+
+VERSION
+    phoenix zscript v{})";
 
 #define PRINT_FLAG(cond, flag)                                                                                         \
 	if (cond) {                                                                                                        \
@@ -59,116 +79,93 @@ void print_symbol_detailed(const script& scr, const symbol& sym);
 void print_symbol_list(const script& scr,
                        std::string_view include_filter,
                        std::string_view exclude_filter,
-                       std::string_view search,
-                       const symbol* parent);
+                       std::string_view search);
 
 std::string print_definition(const script& scr, const symbol& sym, const symbol* parent, std::string_view indent = "");
 void find_usages(const script& scr, const symbol& sym);
 
 int main(int argc, char** argv) {
-	argh::parser cmdl {argc, argv, argh::parser::PREFER_PARAM_FOR_UNREG_OPTION};
-	std::string input {};
-	std::string symbol_name {};
-	std::string include {};
-	std::string exclude {};
-	std::string search {};
-	std::string parent {};
+	const flags::args args {argc, argv};
+	std::optional<std::string> input {};
+	std::optional<std::string> symbol_name {};
+	std::optional<std::string> include {};
+	std::optional<std::string> exclude {};
+	std::optional<std::string> search {};
 	bool action_symbolize = false;
 	bool action_disassemble = false;
-	bool action_help = false;
 	bool action_usages = false;
 	bool action_decompile = false;
 
-	bool specific = false;
+	action_symbolize = args.get<bool>("t") || args.get<bool>("symbols");
+	action_disassemble = args.get<bool>("d") || args.get<bool>("disassemble");
+	action_usages = args.get<bool>("u") || args.get<bool>("usages");
+	action_decompile = args.get<bool>("k") || args.get<bool>("decompile");
 
-	if (cmdl["--version"]) {
-		fmt::print("pxscrdmp v{}\n", PXSCRDMP_VERSION);
+	input = args.get<std::string>("f");
+	if (!input)
+		input = args.get<std::string>("file");
+
+	search = args.get<std::string>("c");
+	if (!search)
+		search = args.get<std::string>("find");
+
+	include = args.get<std::string>("I");
+	if (!include)
+		include = args.get<std::string>("include");
+
+	exclude = args.get<std::string>("E");
+	if (!exclude)
+		exclude = args.get<std::string>("exclude");
+
+	symbol_name = args.get<std::string>("s");
+	if (!symbol_name)
+		symbol_name = args.get<std::string>("symbol");
+
+	if (args.get<bool>("v") || args.get<bool>("version")) {
+		fmt::print("zscript v{}\n", ZSCRIPT_VERSION);
 		return EXIT_SUCCESS;
-	}
-
-	if (!cmdl(1)) {
-		fmt::print(stderr, "no input file specified.\n");
-		return EXIT_FAILURE;
-	}
-
-	input = cmdl(1).str();
-
-	action_symbolize = cmdl[{"-t", "--symbolize"}];
-	action_disassemble = cmdl[{"-d", "--disassemble"}];
-	action_usages = cmdl[{"-u", "--usages"}];
-	action_help = cmdl[{"-h", "--help"}];
-	action_decompile = cmdl[{"-k", "--decompile"}];
-
-	cmdl({"-f", "--search"}) >> search;
-	cmdl({"-I", "--include"}) >> include;
-	cmdl({"-E", "--exclude"}) >> exclude;
-	cmdl({"-p", "--parent"}) >> parent;
-
-	if (cmdl({"-s", "--symbol"}) >> symbol_name) {
-		specific = true;
-	}
-
-	if (action_help) {
-		fmt::print(HELP_MESSAGE, PXSCRDMP_VERSION);
+	} else if (args.get<bool>("h") || args.get<bool>("help")) {
+		fmt::print(HELP_MESSAGE, ZSCRIPT_VERSION);
 		return EXIT_SUCCESS;
 	} else {
-		auto scr = script::parse(input);
+		if (!input) {
+			fmt::print(stderr, "no input file given");
+			return EXIT_FAILURE;
+		}
+
+		auto scr = script::parse(*input);
 		const symbol* sym = nullptr;
 
-		if (specific) {
-			sym = scr.find_symbol_by_name(symbol_name);
+		if (symbol_name) {
+			sym = scr.find_symbol_by_name(*symbol_name);
 
 			if (sym == nullptr) {
-				fmt::print("symbol with name {} not found\n", symbol_name);
+				fmt::print("symbol with name {} not found\n", *symbol_name);
 				return EXIT_FAILURE;
 			}
 		}
 
 		if (action_symbolize) {
-			if (specific) {
+			if (symbol_name) {
 				print_symbol_detailed(scr, *sym);
 			} else {
-				const symbol* parent_symbol = nullptr;
-
-				if (!parent.empty()) {
-					parent_symbol = scr.find_symbol_by_name(std::string {parent});
-
-					if (parent_symbol == nullptr) {
-						fmt::print("parent with name {} not found\n", parent);
-						return EXIT_FAILURE;
-					}
-				}
-
-				print_symbol_list(scr, include, exclude, search, parent_symbol);
+				print_symbol_list(scr, include.value_or(""), exclude.value_or(""), search.value_or(""));
 			}
 		} else if (action_disassemble) {
-			if (specific) {
+			if (symbol_name) {
 				print_assembly_of_symbol(scr, *sym);
 			} else {
 				print_assembly(scr);
 			}
 		} else if (action_usages) {
-			if (!specific) {
+			if (!symbol_name) {
 				fmt::print(stderr, "Please provide a symbol of which to find usages.");
-				return EXIT_FAILURE;
-			}
-
-			sym = scr.find_symbol_by_name(symbol_name);
-			if (sym == nullptr) {
-				fmt::print("symbol with name {} not found\n", symbol_name);
 				return EXIT_FAILURE;
 			}
 
 			find_usages(scr, *sym);
 		} else if (action_decompile) {
-			if (specific) {
-				sym = scr.find_symbol_by_name(symbol_name);
-
-				if (sym == nullptr) {
-					fmt::print("symbol with name {} not found\n", symbol_name);
-					return EXIT_FAILURE;
-				}
-
+			if (symbol_name) {
 				fmt::print("{}", print_definition(scr, *sym, scr.find_symbol_by_index(sym->parent())));
 				fmt::print(" {{\n{}}}\n", decompile(scr, *sym, 4));
 			} else {
@@ -502,17 +499,12 @@ bool symbol_matches_filter(const symbol& sym, std::string_view include_filter, s
 void print_symbol_list(const script& scr,
                        std::string_view include_filter,
                        std::string_view exclude_filter,
-                       std::string_view search,
-                       const symbol* parent) {
+                       std::string_view search) {
 	fmt::print("Index    Flags   Parent                    Address  R Name\n");
 
 	for (const auto& sym : scr.symbols()) {
 		if (!symbol_matches_filter(sym, include_filter, exclude_filter) ||
 		    (!search.empty() && sym.name().find(search) == std::string_view::npos)) {
-			continue;
-		}
-
-		if (parent != nullptr && sym.parent() != parent->index()) {
 			continue;
 		}
 

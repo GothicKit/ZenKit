@@ -172,14 +172,18 @@ namespace phoenix {
 
 	vdf_file vdf_file::open(const std::filesystem::path& path) {
 		auto in = buffer::open(path);
+		return open(in);
+	}
+
+	vdf_file vdf_file::open(phoenix::buffer& buf) {
 		vdf_file vdf {};
 
-		vdf._m_header = vdf_header::read(in);
-		in.position(vdf._m_header._m_catalog_offset);
+		vdf._m_header = vdf_header::read(buf);
+		buf.position(vdf._m_header._m_catalog_offset);
 
 		vdf_entry* entry = nullptr;
 		do {
-			entry = &vdf._m_entries.emplace_back(vdf_entry::read(in, vdf._m_header._m_catalog_offset));
+			entry = &vdf._m_entries.emplace_back(vdf_entry::read(buf, vdf._m_header._m_catalog_offset));
 		} while (!entry->is_last());
 
 		return vdf;

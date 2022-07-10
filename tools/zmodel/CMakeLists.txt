@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(phoenix::tools::pxmdl VERSION 0.1.0)
+project(phoenix::tools::zmodel VERSION 0.1.0)
 
 
 execute_process(
@@ -11,11 +11,11 @@ execute_process(
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.hh.in ${CMAKE_CURRENT_BINARY_DIR}/config.hh @ONLY)
 
-add_executable(pxmdl main.cc)
-target_link_libraries(pxmdl PRIVATE phoenix argh stb)
-target_include_directories(pxmdl PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+add_executable(zmodel main.cc)
+target_link_libraries(zmodel PRIVATE phoenix flags)
+target_include_directories(zmodel PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
-set_target_properties(pxmdl
+set_target_properties(zmodel
 		PROPERTIES
 		ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
 		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
