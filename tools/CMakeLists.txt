@@ -1,5 +1,5 @@
 add_subdirectory(ztex)
 add_subdirectory(zvdfs)
 add_subdirectory(pxscrdmp)
-add_subdirectory(pxmdl)
+add_subdirectory(zmodel)
 add_subdirectory(zdump)
