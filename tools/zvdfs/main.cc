@@ -26,7 +26,7 @@ DESCRIPTION
     Extracts or lists files from VDF archives. For machine readable output, see zdump.
 
 OPTIONS
-    -v, --version                  Print the version of zdump
+    -v, --version                  Print the version of zvdfs
     -h, --help                     Print this help message
     -f, --file                     Read the VDF from FILE instead of stdin
     -l, --list                     Print a list of all files in the VDF.
