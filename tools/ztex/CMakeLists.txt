@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(phoenix::tools::pxtex VERSION 0.1.0)
+project(phoenix::tools::ztex VERSION 0.1.0)
 
 
 execute_process(
@@ -11,11 +11,11 @@ execute_process(
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.hh.in ${CMAKE_CURRENT_BINARY_DIR}/config.hh @ONLY)
 
-add_executable(pxtex main.cc)
-target_link_libraries(pxtex PRIVATE phoenix argh stb)
-target_include_directories(pxtex PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+add_executable(ztex main.cc)
+target_link_libraries(ztex PRIVATE phoenix flags stb)
+target_include_directories(ztex PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
-set_target_properties(pxtex
+set_target_properties(ztex
 		PROPERTIES
 		ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
 		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
