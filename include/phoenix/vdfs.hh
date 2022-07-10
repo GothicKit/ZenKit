@@ -278,6 +278,13 @@ namespace phoenix {
 		static vdf_file open(const std::filesystem::path& path);
 
 		/**
+		 * @brief Reads the header and catalog from a buffer and creates a vdf_file from it.
+		 * @param path The buffer to read from.
+		 * @return The vdf_file.
+		 */
+		static vdf_file open(phoenix::buffer& buf);
+
+		/**
 		 * @brief Searches the VDF file for the first entry with the given name.
 		 * @param name The name of the entry to search for.
 		 * @return The entry with the give name or `nullptr` if no entry was found.
