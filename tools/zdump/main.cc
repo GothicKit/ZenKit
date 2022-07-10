@@ -155,6 +155,8 @@ int main(int argc, char** argv) {
 					return EXIT_FAILURE;
 				}
 
+				// remove the EOF byte
+				data.pop_back();
 				in = phoenix::buffer::wrap(std::move(data));
 			}
 
