@@ -4,9 +4,6 @@
 [submodule "vendor/fmt"]
 	path = vendor/fmt
 	url = https://github.com/fmtlib/fmt
-[submodule "vendor/argh"]
-	path = vendor/argh
-	url = https://github.com/adishavit/argh
 [submodule "vendor/stb"]
 	path = vendor/stb
 	url = https://github.com/nothings/stb
