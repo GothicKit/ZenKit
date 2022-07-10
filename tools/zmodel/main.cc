@@ -189,72 +189,71 @@ int main(int argc, char** argv) {
 	} else if (args.get<bool>("h") || args.get<bool>("help")) {
 		fmt::print(HELP_MESSAGE, ZMODEL_VERSION);
 	} else {
-	}
+		try {
+			auto input = args.get<std::string>("f");
+			if (!input && !(input = args.get<std::string>("file"))) {
+				fmt::print(stderr, "no input file given\n");
+				return EXIT_FAILURE;
+			}
 
-	try {
-		auto input = args.get<std::string>("f");
-		if (!input && !(input = args.get<std::string>("file"))) {
-			fmt::print(stderr, "no input file given\n");
+			auto vdf = args.get<std::string>("e");
+			if (!vdf)
+				vdf = args.get<std::string>("vdf");
+
+			auto output = args.get<std::string>("o");
+			if (!output)
+				output = args.get<std::string>("output");
+
+			auto material = args.get<std::string>("m");
+			if (!material)
+				material = args.get<std::string>("material");
+
+			auto g1 = args.get<bool>("g1").value_or(!args.get<bool>("g2").value_or(true));
+			auto in = open_buffer(input, vdf);
+			auto extension = input->substr(input->find('.') + 1);
+
+			std::ostream* model_out = &std::cout;
+			if (output)
+				model_out = new std::ofstream {*output};
+
+			std::ostream* material_out = nullptr;
+			if (material)
+				material_out = new std::ofstream {*output};
+
+			if (phoenix::iequals(extension, "MRM")) {
+				auto mesh = phoenix::proto_mesh::parse(in);
+				dump_wavefront(*model_out, material_out, material.value_or(""), mesh);
+			} else if (phoenix::iequals(extension, "ZEN")) {
+				auto wld =
+				    phoenix::world::parse(in, g1 ? phoenix::game_version::gothic_1 : phoenix::game_version::gothic_2);
+
+				dump_wavefront(*model_out, material_out, material.value_or(""), wld.world_mesh);
+			} else if (phoenix::iequals(extension, "MSH")) {
+				auto msh = phoenix::mesh::parse(in, {});
+				dump_wavefront(*model_out, material_out, material.value_or(""), msh);
+			} else if (phoenix::iequals(extension, "MMB")) {
+				auto msh = phoenix::morph_mesh::parse(in);
+				dump_wavefront(*model_out, material_out, material.value_or(""), msh.mesh());
+			} else if (phoenix::iequals(extension, "MDL")) {
+				auto msh = phoenix::model::parse(in);
+				dump_wavefront(*model_out,
+				               material_out,
+				               material.value_or(""),
+				               msh.mesh().meshes()[0].mesh()); // FIXME: support dumping multiple meshes
+			} else if (phoenix::iequals(extension, "MDM")) {
+				auto msh = phoenix::model_mesh::parse(in);
+				dump_wavefront(*model_out,
+				               material_out,
+				               material.value_or(""),
+				               msh.meshes()[0].mesh()); // FIXME: support dumping multiple meshes
+			} else {
+				fmt::print(stderr, "format not supported: {}", extension);
+				return EXIT_FAILURE;
+			}
+		} catch (const std::exception& e) {
+			fmt::print(stderr, "cannot convert model: {}", e.what());
 			return EXIT_FAILURE;
 		}
-
-		auto vdf = args.get<std::string>("e");
-		if (!vdf)
-			vdf = args.get<std::string>("vdf");
-
-		auto output = args.get<std::string>("o");
-		if (!output)
-			output = args.get<std::string>("output");
-
-		auto material = args.get<std::string>("m");
-		if (!material)
-			material = args.get<std::string>("material");
-
-		auto g1 = args.get<bool>("g1").value_or(!args.get<bool>("g2").value_or(true));
-		auto in = open_buffer(input, vdf);
-		auto extension = input->substr(input->find('.') + 1);
-
-		std::ostream* model_out = &std::cout;
-		if (output)
-			model_out = new std::ofstream {*output};
-
-		std::ostream* material_out = nullptr;
-		if (material)
-			material_out = new std::ofstream {*output};
-
-		if (phoenix::iequals(extension, "MRM")) {
-			auto mesh = phoenix::proto_mesh::parse(in);
-			dump_wavefront(*model_out, material_out, material.value_or(""), mesh);
-		} else if (phoenix::iequals(extension, "ZEN")) {
-			auto wld =
-			    phoenix::world::parse(in, g1 ? phoenix::game_version::gothic_1 : phoenix::game_version::gothic_2);
-
-			dump_wavefront(*model_out, material_out, material.value_or(""), wld.world_mesh);
-		} else if (phoenix::iequals(extension, "MSH")) {
-			auto msh = phoenix::mesh::parse(in, {});
-			dump_wavefront(*model_out, material_out, material.value_or(""), msh);
-		} else if (phoenix::iequals(extension, "MMB")) {
-			auto msh = phoenix::morph_mesh::parse(in);
-			dump_wavefront(*model_out, material_out, material.value_or(""), msh.mesh());
-		} else if (phoenix::iequals(extension, "MDL")) {
-			auto msh = phoenix::model::parse(in);
-			dump_wavefront(*model_out,
-			               material_out,
-			               material.value_or(""),
-			               msh.mesh().meshes()[0].mesh()); // FIXME: support dumping multiple meshes
-		} else if (phoenix::iequals(extension, "MDM")) {
-			auto msh = phoenix::model_mesh::parse(in);
-			dump_wavefront(*model_out,
-			               material_out,
-			               material.value_or(""),
-			               msh.meshes()[0].mesh()); // FIXME: support dumping multiple meshes
-		} else {
-			fmt::print(stderr, "format not supported: {}", extension);
-			return EXIT_FAILURE;
-		}
-	} catch (const std::exception& e) {
-		fmt::print(stderr, "cannot convert model: {}", e.what());
-		return EXIT_FAILURE;
 	}
 
 	return 0;
