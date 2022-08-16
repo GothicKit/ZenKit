@@ -99,11 +99,20 @@ namespace phoenix::daedalus {
 			call(sym);
 
 			if constexpr (std::same_as<R, _ignore_return_value>) {
-				if (sym->has_return())
-					_m_stack.pop(); // Ignore any potential return value.
+				// clear the stack
+				_m_stack = std::stack<daedalus_stack_frame> {};
+
 				return {};
+			} else if constexpr (!std::same_as<R, void>) {
+				auto ret = pop_call_return_value<R>();
+
+				// clear the stack
+				_m_stack = std::stack<daedalus_stack_frame> {};
+
+				return ret;
 			} else {
-				return pop_call_return_value<R>();
+				// clear the stack
+				_m_stack = std::stack<daedalus_stack_frame> {};
 			}
 		}
 
