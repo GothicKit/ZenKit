@@ -6,7 +6,7 @@
 #include <utility>
 
 namespace phoenix::daedalus {
-	vm::vm(script&& scr) : script(std::move(scr)) {
+	vm::vm(script&& scr, execution_flag flags) : script(std::move(scr)), _m_flags(flags) {
 		_m_self_sym = find_symbol_by_name("SELF");
 		_m_other_sym = find_symbol_by_name("OTHER");
 		_m_victim_sym = find_symbol_by_name("VICTIM");
@@ -297,6 +297,9 @@ namespace phoenix::daedalus {
 
 	std::int32_t vm::pop_int() {
 		if (_m_stack.empty()) {
+			if ((_m_flags & vm_allow_empty_stack_pop) == 0) {
+				throw std::runtime_error {"Popping from empty stack!"};
+			}
 			// std::cerr << "WARN: popping 0 from empty stack!\n";
 			return 0;
 		}
@@ -305,7 +308,19 @@ namespace phoenix::daedalus {
 		_m_stack.pop();
 
 		if (v.reference) {
-			return std::get<symbol*>(v.value)->get_int(v.index, v.context);
+			auto* sym = std::get<symbol*>(v.value);
+
+			// compatibility: sometimes the context might be zero, but we can't fail so when
+			//                the compatibility flag is set, we just return 0
+			if (sym->is_member() && v.context == nullptr) {
+				if (!(_m_flags & vm_allow_null_instance_access)) {
+					throw no_context {*sym};
+				}
+
+				return 0;
+			}
+
+			return sym->get_int(v.index, v.context);
 		} else if (std::holds_alternative<int32_t>(v.value)) {
 			return std::get<int32_t>(v.value);
 		} else {
@@ -315,14 +330,30 @@ namespace phoenix::daedalus {
 
 	float vm::pop_float() {
 		if (_m_stack.empty()) {
-			throw std::runtime_error {"Popping from empty stack!"};
+			if ((_m_flags & vm_allow_empty_stack_pop) == 0) {
+				throw std::runtime_error {"Popping from empty stack!"};
+			}
+
+			return 0;
 		}
 
 		auto v = _m_stack.top();
 		_m_stack.pop();
 
 		if (v.reference) {
-			return std::get<symbol*>(v.value)->get_float(v.index, v.context);
+			auto* sym = std::get<symbol*>(v.value);
+
+			// compatibility: sometimes the context might be zero, but we can't fail so when
+			//                the compatibility flag is set, we just return 0
+			if (sym->is_member() && v.context == nullptr) {
+				if (!(_m_flags & vm_allow_null_instance_access)) {
+					throw no_context {*sym};
+				}
+
+				return 0;
+			}
+
+			return sym->get_float(v.index, v.context);
 		} else if (std::holds_alternative<float>(v.value)) {
 			return std::get<float>(v.value);
 		} else if (std::holds_alternative<std::int32_t>(v.value)) {

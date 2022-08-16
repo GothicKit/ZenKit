@@ -49,13 +49,18 @@ namespace phoenix::daedalus {
 		std::shared_ptr<instance> context;
 	};
 
+	enum execution_flag : std::uint8_t {
+		vm_allow_empty_stack_pop = 1 << 0,
+		vm_allow_null_instance_access = 1 << 1,
+	};
+
 	class vm : public script {
 	public:
 		/**
 		 * @brief Creates a DaedalusVM instance for the given script.
 		 * @param scr The script to load into the VM.
 		 */
-		explicit vm(script&& scr);
+		explicit vm(script&& scr, execution_flag flags = vm_allow_empty_stack_pop);
 
 		/**
 		 * @brief Calls a function by it's name.
@@ -771,5 +776,6 @@ namespace phoenix::daedalus {
 
 		std::shared_ptr<instance> _m_instance;
 		std::uint32_t _m_pc {0};
+		execution_flag _m_flags {vm_allow_empty_stack_pop};
 	};
 } // namespace phoenix::daedalus
