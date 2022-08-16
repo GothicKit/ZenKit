@@ -505,7 +505,7 @@ namespace phoenix::daedalus {
 		 */
 		template <typename _class, typename _member> // clang-format off
 		requires (std::same_as<std::string, _member> || std::same_as<float, _member> || std::same_as<int32_t, _member>)
-		void register_member(const std::string& name, _member _class::*field) { // clang-format on
+		void register_member(const std::string& name, _member _class::* field) { // clang-format on
 			auto* type = &typeid(_class);
 			auto* sym = _check_member<_class, _member, 1>(name, type);
 
