@@ -234,7 +234,7 @@ namespace phoenix {
 			return conv;
 		}
 		default:
-			throw parser_error(fmt::format("texture: cannot convert format to rgba: {}", _m_format));
+			throw parser_error(fmt::format("texture: cannot convert format to rgba: {}", int(_m_format)));
 		}
 
 		return std::vector<std::uint8_t>();

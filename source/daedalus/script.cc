@@ -8,9 +8,9 @@
 namespace phoenix::daedalus {
 	illegal_type_access::illegal_type_access(const symbol& sym, datatype expected)
 	    : illegal_access(fmt::format("illegal access of type {} on symbol {} which is another type ({})",
-	                                 expected,
+	                                 int(expected),
 	                                 sym.name(),
-	                                 sym.type())) {}
+	                                 int(sym.type()))) {}
 
 	illegal_index_access::illegal_index_access(const symbol& sym, std::uint8_t index)
 	    : illegal_access(fmt::format("illegal access of out-of-bounds index {} while reading {}", index, sym.name())) {}
