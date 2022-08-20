@@ -80,7 +80,8 @@ namespace phoenix {
 			throw;
 		}
 
-		auto hash = input.skip(1).get_uint();
+		input.skip(1);
+		auto hash = input.get_uint();
 		return _m_hash_table_entries[hash].key;
 	}
 

@@ -7,7 +7,7 @@
 
 TEST_SUITE("archive") {
 	TEST_CASE("ascii archives are read correctly") {
-		auto in = phoenix::buffer::open("./samples/ascii.zen");
+		auto in = phoenix::buffer::mmap("./samples/ascii.zen");
 		auto reader = phoenix::archive_reader::open(in);
 
 		phoenix::archive_object obj;
@@ -85,11 +85,11 @@ TEST_SUITE("archive") {
 
 		CHECK(reader->read_object_end());
 		CHECK(reader->read_object_end());
-		REQUIRE_THROWS_AS(reader->read_float(), phoenix::buffer_underflow_error);
+		REQUIRE_THROWS_AS(reader->read_float(), phoenix::buffer_underflow);
 	}
 
 	TEST_CASE("binary archives are read correctly") {
-		auto in = phoenix::buffer::open("./samples/binary.zen");
+		auto in = phoenix::buffer::mmap("./samples/binary.zen");
 		auto reader = phoenix::archive_reader::open(in);
 		CHECK(reader->read_string() == "DT_BOOKSHELF_V1_1");
 

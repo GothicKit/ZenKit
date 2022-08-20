@@ -11,7 +11,7 @@ TEST_SUITE("material") {
 		// Tests two different material archives containing two materials each.
 
 		{
-			auto in = buffer::open("./samples/material1_g1.mat");
+			auto in = buffer::mmap("./samples/material1_g1.mat");
 			auto archive = archive_reader::open(in);
 			auto m1 = material::parse(archive);
 
@@ -50,7 +50,7 @@ TEST_SUITE("material") {
 		}
 
 		{
-			auto in = buffer::open("./samples/material2_g1.mat");
+			auto in = buffer::mmap("./samples/material2_g1.mat");
 			auto archive = archive_reader::open(in);
 			auto m1 = material::parse(archive);
 

@@ -17,7 +17,7 @@ static bool compare_plane(phoenix::plane a, phoenix::plane b) {
 
 TEST_SUITE("mesh") {
 	TEST_CASE("proto meshes (MRMs) are read correctly") {
-		auto in = phoenix::buffer::open("./samples/mesh0.mrm");
+		auto in = phoenix::buffer::mmap("./samples/mesh0.mrm");
 		auto mesh = phoenix::proto_mesh::parse(in);
 
 		const auto& positions = mesh.positions();

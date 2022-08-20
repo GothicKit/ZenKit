@@ -86,12 +86,12 @@ int main(int argc, char** argv) {
 		} else {
 			auto in = px::buffer::empty();
 			if (input) {
-				in = px::buffer::open(*input);
+				in = px::buffer::mmap(*input);
 			} else {
-				std::vector<uint8_t> data {};
+				std::vector<std::byte> data {};
 
 				while (!std::cin.eof()) {
-					data.push_back(std::cin.get());
+					data.push_back(static_cast<std::byte>(std::cin.get()));
 				}
 
 				if (data.empty()) {
@@ -101,7 +101,7 @@ int main(int argc, char** argv) {
 
 				// remove the EOF byte
 				data.pop_back();
-				in = phoenix::buffer::wrap(std::move(data));
+				in = phoenix::buffer::of(std::move(data));
 			}
 
 			if (args.get<bool>("l", false) || args.get<bool>("list", false)) {

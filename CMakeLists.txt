@@ -18,6 +18,8 @@ if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
 endif()
 
 set(PX_SOURCES
+		source/phoenix.cc
+
 		source/detail/compat.cc
 		source/detail/buffer.cc
 

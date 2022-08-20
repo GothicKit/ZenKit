@@ -82,21 +82,33 @@ int dump(file_format fmt, px::buffer& in, bool json) {
 
 file_format detect_file_format(px::buffer&& buf) {
 	buf.mark();
-	if (buf.reset().get_string(4) == "ZTEX")
+	if (buf.get_string(4) == "ZTEX")
 		return file_format::tex;
-	else if (buf.reset().get_ushort() == 0xD100)
+
+	buf.reset();
+	if (buf.get_ushort() == 0xD100)
 		return file_format::mdh;
-	else if (buf.reset().get_ushort() == 0xA000)
+
+	buf.reset();
+	if (buf.get_ushort() == 0xA000)
 		return file_format::man;
-	else if (buf.reset().get_ushort() == 0xB000)
+
+	buf.reset();
+	if (buf.get_ushort() == 0xB000)
 		return file_format::msh;
-	else if (buf.reset().get_ushort() == 0xF000)
+
+	buf.reset();
+	if (buf.get_ushort() == 0xF000)
 		return file_format::msb;
-	else if (std::regex_search(buf.reset().get_line(),
-	                           std::regex(R"(\s*Model\s*\(\s*"[\w\d]+"\s*\))", std::regex::icase))) {
+
+	buf.reset();
+	if (std::regex_search(buf.get_line(), std::regex(R"(\s*Model\s*\(\s*"[\w\d]+"\s*\))", std::regex::icase))) {
 		return file_format::mds;
-	} else if (buf.reset().get_line() == "ZenGin Archive") {
-		auto copy = buf.reset().duplicate();
+	}
+
+	buf.reset();
+	if (buf.get_line() == "ZenGin Archive") {
+		auto copy = buf.duplicate();
 		auto reader = phoenix::archive_reader::open(copy);
 
 		px::archive_object obj {};
@@ -105,7 +117,10 @@ file_format detect_file_format(px::buffer&& buf) {
 
 		if (obj.class_name == "zCCSLib")
 			return file_format::csl;
-	} else if (buf.reset().get_line() == "1") {
+	}
+
+	buf.reset();
+	if (buf.get_line() == "1") {
 		return file_format::fnt;
 	}
 
@@ -141,13 +156,13 @@ int main(int argc, char** argv) {
 						return EXIT_FAILURE;
 					}
 				} else {
-					in = phoenix::buffer::open(*input);
+					in = phoenix::buffer::mmap(*input);
 				}
 			} else {
-				std::vector<uint8_t> data {};
+				std::vector<std::byte> data {};
 
 				while (!std::cin.eof()) {
-					data.push_back(std::cin.get());
+					data.push_back(static_cast<std::byte>(std::cin.get()));
 				}
 
 				if (data.empty()) {
@@ -157,7 +172,7 @@ int main(int argc, char** argv) {
 
 				// remove the EOF byte
 				data.pop_back();
-				in = phoenix::buffer::wrap(std::move(data));
+				in = phoenix::buffer::of(std::move(data));
 			}
 
 			return dump(detect_file_format(in.duplicate()), in, args.get<bool>("j") || args.get<bool>("json"));

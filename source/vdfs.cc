@@ -171,7 +171,7 @@ namespace phoenix {
 	}
 
 	vdf_file vdf_file::open(const std::filesystem::path& path) {
-		auto in = buffer::open(path);
+		auto in = buffer::mmap(path);
 		return open(in);
 	}
 

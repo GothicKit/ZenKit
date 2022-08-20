@@ -89,7 +89,7 @@ namespace phoenix {
 
 			std::vector<std::uint8_t> mipmap;
 			mipmap.resize(size);
-			in.get(mipmap);
+			in.get({std::bit_cast<std::byte*>(mipmap.data()), size});
 
 			tex._m_textures.emplace_back(std::move(mipmap));
 		}
@@ -98,7 +98,7 @@ namespace phoenix {
 	}
 
 	texture texture::parse(const std::string& path) {
-		auto rdr = buffer::open(path);
+		auto rdr = buffer::mmap(path);
 		return parse(rdr);
 	}
 

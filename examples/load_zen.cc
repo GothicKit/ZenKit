@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 
-	auto buf = phoenix::buffer::open(argv[1]);
+	auto buf = phoenix::buffer::mmap(argv[1]);
 	auto archive = phoenix::archive_reader::open(buf);
 	auto& header = archive->get_header();
 

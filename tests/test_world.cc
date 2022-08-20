@@ -6,7 +6,7 @@
 
 TEST_SUITE("world") {
 	TEST_CASE("world meshes are read correctly") {
-		auto in = phoenix::buffer::open("./samples/world.proprietary.zen");
+		auto in = phoenix::buffer::mmap("./samples/world.proprietary.zen");
 		auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_1);
 
 		auto& mesh = wld.world_mesh;
@@ -63,7 +63,7 @@ TEST_SUITE("world") {
 	}
 
 	TEST_CASE("the bsp-tree is read correctly") {
-		auto in = phoenix::buffer::open("./samples/world.proprietary.zen");
+		auto in = phoenix::buffer::mmap("./samples/world.proprietary.zen");
 		auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_1);
 		auto& tree = wld.world_bsp_tree;
 
@@ -138,7 +138,7 @@ TEST_SUITE("world") {
 	}
 
 	TEST_CASE("the vob-tree is read correctly") {
-		auto in = phoenix::buffer::open("./samples/world.proprietary.zen");
+		auto in = phoenix::buffer::mmap("./samples/world.proprietary.zen");
 		auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_1);
 		auto& vobs = wld.world_vobs;
 
@@ -262,7 +262,7 @@ TEST_SUITE("world") {
 	}
 
 	TEST_CASE("the way-net is read correctly") {
-		auto in = phoenix::buffer::open("./samples/world.proprietary.zen");
+		auto in = phoenix::buffer::mmap("./samples/world.proprietary.zen");
 		auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_1);
 		auto& waynet = wld.world_way_net;
 

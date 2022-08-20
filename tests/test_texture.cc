@@ -7,7 +7,7 @@ using namespace phoenix;
 
 TEST_SUITE("texture") {
 	TEST_CASE("textures are read correctly") {
-		auto in = buffer::open("./samples/erz.tex");
+		auto in = buffer::mmap("./samples/erz.tex");
 		auto texture = texture::parse(in);
 
 		CHECK(texture.height() == 128);

@@ -159,16 +159,16 @@ namespace phoenix {
 
 	buffer archive_reader_ascii::read_raw_bytes() {
 		auto in = read_entry("raw");
-		std::vector<std::uint8_t> out {};
+		std::vector<std::byte> out {};
 		out.resize(in.length() / 2);
 
 		auto beg_it = in.begin().base();
 
-		for (std::uint8_t& i : out) {
-			std::from_chars(beg_it + 0, beg_it + 2, i, 16);
+		for (std::byte& i : out) {
+			std::from_chars(beg_it + 0, beg_it + 2, reinterpret_cast<std::uint8_t&>(i), 16);
 			beg_it += 2;
 		}
 
-		return buffer::wrap(std::move(out));
+		return buffer::of(std::move(out));
 	}
 } // namespace phoenix

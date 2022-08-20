@@ -8,7 +8,7 @@ using namespace phoenix;
 
 TEST_SUITE("font") {
 	TEST_CASE("fonts are read correctly") {
-		auto in = buffer::open("./samples/font.fnt");
+		auto in = buffer::mmap("./samples/font.fnt");
 		auto fnt = font::parse(in);
 
 		CHECK(fnt.name() == "FONT_OLD_10_WHITE_HI.TGA");

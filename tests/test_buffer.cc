@@ -3,9 +3,20 @@
 #include <doctest/doctest.h>
 #include <phoenix/detail/buffer.hh>
 
+#include <cstring>
+
+template <typename... Args>
+static constexpr std::vector<std::byte> bytes(Args... bytes) {
+	return std::vector<std::byte> {static_cast<std::byte>(bytes)...};
+}
+
+static std::span<const std::byte> bytes_str(const char* str) {
+	return std::span<const std::byte> {std::bit_cast<const std::byte*>(str), std::strlen(str)};
+}
+
 TEST_SUITE("buffer") {
-	TEST_CASE("wrap()") {
-		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {'a', 'b', 'c'});
+	TEST_CASE("of()") {
+		auto buf = phoenix::buffer::of(bytes('a', 'b', 'c'));
 		CHECK(buf.limit() == 3);
 		CHECK(buf.position() == 0);
 		CHECK(buf.remaining() == 3);
@@ -15,7 +26,7 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("limit()") {
-		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {'a', 'b', 'c'});
+		auto buf = phoenix::buffer::of(bytes('a', 'b', 'c'));
 
 		SUBCASE("new_limit > capacity") {
 			CHECK_THROWS(buf.limit(4));
@@ -54,7 +65,7 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("position()") {
-		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {'a', 'b', 'c'});
+		auto buf = phoenix::buffer::of(bytes('a', 'b', 'c'));
 		CHECK(buf.position() == 0);
 		CHECK(buf.remaining() == 3);
 
@@ -76,7 +87,7 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("clear()") {
-		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {'a', 'b', 'c'});
+		auto buf = phoenix::buffer::of(bytes('a', 'b', 'c'));
 		buf.position(3);
 		buf.limit(2);
 
@@ -93,7 +104,7 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("duplicate()") {
-		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {'a', 'b', 'c'});
+		auto buf = phoenix::buffer::of(bytes('a', 'b', 'c'));
 		buf.position(1);
 		buf.limit(2);
 
@@ -105,7 +116,7 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("flip()") {
-		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {'a', 'b', 'c'});
+		auto buf = phoenix::buffer::of(bytes('a', 'b', 'c'));
 		buf.position(1);
 		buf.flip();
 
@@ -116,7 +127,7 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("slice()") {
-		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {'a', 'b', 'c', 'd'});
+		auto buf = phoenix::buffer::of(bytes('a', 'b', 'c', 'd'));
 
 		SUBCASE("fully") {
 			buf.position(2);
@@ -142,10 +153,12 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("mark()") {
-		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'});
+		auto buf = phoenix::buffer::of(bytes('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'));
 
 		SUBCASE("basic") {
-			buf.position(1).mark().position(5);
+			buf.position(1);
+			buf.mark();
+			buf.position(5);
 			CHECK(buf.position() == 5);
 			CHECK(buf.capacity() == 8);
 			CHECK(buf.limit() == 8);
@@ -159,13 +172,16 @@ TEST_SUITE("buffer") {
 		}
 
 		SUBCASE("underflow") {
-			buf.position(3).mark().position(5);
+			buf.position(3);
+			buf.mark();
+			buf.position(5);
 			CHECK(buf.position() == 5);
 			CHECK(buf.capacity() == 8);
 			CHECK(buf.limit() == 8);
 			CHECK(buf.remaining() == 3);
 
-			buf.limit(2).reset();
+			buf.limit(2);
+			buf.reset();
 			CHECK(buf.position() == 2);
 			CHECK(buf.capacity() == 8);
 			CHECK(buf.limit() == 2);
@@ -173,7 +189,9 @@ TEST_SUITE("buffer") {
 		}
 
 		SUBCASE("positioned") {
-			buf.position(3).mark().position(2);
+			buf.position(3);
+			buf.mark();
+			buf.position(2);
 			CHECK(buf.position() == 2);
 			CHECK(buf.capacity() == 8);
 			CHECK(buf.limit() == 8);
@@ -187,13 +205,17 @@ TEST_SUITE("buffer") {
 		}
 
 		SUBCASE("sliced") {
-			buf.position(1).mark().position(5);
+			buf.position(1);
+			buf.mark();
+			buf.position(5);
 			CHECK(buf.position() == 5);
 			CHECK(buf.capacity() == 8);
 			CHECK(buf.limit() == 8);
 			CHECK(buf.remaining() == 3);
 
-			auto slice = buf.slice().reset();
+			auto slice = buf.slice();
+			slice.reset();
+
 			CHECK(slice.position() == 0);
 			CHECK(slice.capacity() == 3);
 			CHECK(slice.limit() == 3);
@@ -202,7 +224,7 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("extract()") {
-		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {'a', 'b', 'c', 'd'});
+		auto buf = phoenix::buffer::of(bytes('a', 'b', 'c', 'd'));
 
 		auto slice = buf.extract(2);
 		CHECK(slice.limit() == 2);
@@ -215,16 +237,16 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("array()") {
-		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {'a', 'b', 'c', 'd'});
+		auto buf = phoenix::buffer::of(bytes('a', 'b', 'c', 'd'));
 		buf.limit(3);
 
 		auto array = buf.array();
 		CHECK(array.size() == 3);
-		CHECK(std::equal(array.begin(), array.end(), "abc"));
+		CHECK(std::equal(array.begin(), array.end(), bytes_str("abc").begin()));
 	}
 
 	TEST_CASE("get()") {
-		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {'\x1A', 0xA1, 'c', 'd'});
+		auto buf = phoenix::buffer::of(bytes('\x1A', 0xA1, 'c', 'd'));
 		CHECK(buf.position() == 0);
 
 		SUBCASE("relative") {
@@ -234,12 +256,12 @@ TEST_SUITE("buffer") {
 			CHECK(buf.get() == 0xA1);
 			CHECK(buf.position() == 2);
 
-			std::array<std::uint8_t, 2> array {};
+			std::array<std::byte, 2> array {};
 			buf.get({array.begin(), array.end()});
 
 			CHECK(buf.position() == 4);
 			CHECK(buf.remaining() == 0);
-			CHECK(std::equal(array.begin(), array.end(), "cd"));
+			CHECK(std::equal(array.begin(), array.end(), bytes_str("cd").begin()));
 
 			CHECK_THROWS((void) buf.get());
 			CHECK_THROWS(buf.get(array));
@@ -249,11 +271,11 @@ TEST_SUITE("buffer") {
 			CHECK(buf.get(1) == 0xA1);
 			CHECK(buf.position() == 0);
 
-			std::array<std::uint8_t, 2> array {};
+			std::array<std::byte, 2> array {};
 			buf.get(2, array);
 
 			CHECK(buf.position() == 0);
-			CHECK(std::equal(array.begin(), array.end(), "cd"));
+			CHECK(std::equal(array.begin(), array.end(), bytes_str("cd").begin()));
 
 			CHECK_THROWS((void) buf.get(4));
 			CHECK_THROWS((void) buf.get(3, array));
@@ -261,7 +283,7 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("get_char()") {
-		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {'a', 'b'});
+		auto buf = phoenix::buffer::of(bytes('a', 'b'));
 		CHECK(buf.position() == 0);
 
 		SUBCASE("relative") {
@@ -283,7 +305,7 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("get_short()") {
-		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {0xFF, 0xFF, 0x01, 0x00, 0xFF});
+		auto buf = phoenix::buffer::of(bytes(0xFF, 0xFF, 0x01, 0x00, 0xFF));
 		CHECK(buf.position() == 0);
 
 		SUBCASE("relative") {
@@ -305,7 +327,7 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("get_ushort()") {
-		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {0xFF, 0xFF, 0x01, 0x00, 0xFF});
+		auto buf = phoenix::buffer::of(bytes(0xFF, 0xFF, 0x01, 0x00, 0xFF));
 		CHECK(buf.position() == 0);
 
 		SUBCASE("relative") {
@@ -327,8 +349,7 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("get_int()") {
-		auto buf = phoenix::buffer::wrap(
-		    std::vector<std::uint8_t> {0xFF, 0xFF, 0xFF, 0xFF, 0x01, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF});
+		auto buf = phoenix::buffer::of(bytes(0xFF, 0xFF, 0xFF, 0xFF, 0x01, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF));
 		CHECK(buf.position() == 0);
 
 		SUBCASE("relative") {
@@ -350,8 +371,7 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("get_uint()") {
-		auto buf = phoenix::buffer::wrap(
-		    std::vector<std::uint8_t> {0xFF, 0xFF, 0xFF, 0xFF, 0x01, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF});
+		auto buf = phoenix::buffer::of(bytes(0xFF, 0xFF, 0xFF, 0xFF, 0x01, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF));
 		CHECK(buf.position() == 0);
 
 		SUBCASE("relative") {
@@ -373,9 +393,29 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("get_long()") {
-		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-		                                                            0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		                                                            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF});
+		auto buf = phoenix::buffer::of(bytes(0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0x01,
+		                                     0x00,
+		                                     0x00,
+		                                     0x00,
+		                                     0x00,
+		                                     0x00,
+		                                     0x00,
+		                                     0x00,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF));
 		CHECK(buf.position() == 0);
 
 		SUBCASE("relative") {
@@ -397,9 +437,29 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("get_ulong()") {
-		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-		                                                            0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		                                                            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF});
+		auto buf = phoenix::buffer::of(bytes(0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0x01,
+		                                     0x00,
+		                                     0x00,
+		                                     0x00,
+		                                     0x00,
+		                                     0x00,
+		                                     0x00,
+		                                     0x00,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF));
 		CHECK(buf.position() == 0);
 
 		SUBCASE("relative") {
@@ -422,8 +482,7 @@ TEST_SUITE("buffer") {
 
 	TEST_CASE("get_float()") {
 
-		auto buf = phoenix::buffer::wrap(
-		    std::vector<std::uint8_t> {0x52, 0x58, 0xD2, 0x43, 0x0A, 0xD7, 0x8A, 0xC2, 0xFF, 0xFF, 0xFF});
+		auto buf = phoenix::buffer::of(bytes(0x52, 0x58, 0xD2, 0x43, 0x0A, 0xD7, 0x8A, 0xC2, 0xFF, 0xFF, 0xFF));
 		CHECK(buf.position() == 0);
 
 		SUBCASE("relative") {
@@ -445,9 +504,29 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("get_double()") {
-		auto buf = phoenix::buffer::wrap(std::vector<std::uint8_t> {0xD7, 0xA3, 0x70, 0x3D, 0x0A, 0x4B, 0x7A, 0x40,
-		                                                            0x7B, 0x14, 0xAE, 0x47, 0xE1, 0x5A, 0x51, 0xC0,
-		                                                            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF});
+		auto buf = phoenix::buffer::of(bytes(0xD7,
+		                                     0xA3,
+		                                     0x70,
+		                                     0x3D,
+		                                     0x0A,
+		                                     0x4B,
+		                                     0x7A,
+		                                     0x40,
+		                                     0x7B,
+		                                     0x14,
+		                                     0xAE,
+		                                     0x47,
+		                                     0xE1,
+		                                     0x5A,
+		                                     0x51,
+		                                     0xC0,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF,
+		                                     0xFF));
 		CHECK(buf.position() == 0);
 
 		SUBCASE("relative") {
@@ -469,8 +548,8 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("get_string()") {
-		auto buf = phoenix::buffer::wrap(
-		    std::vector<std::uint8_t> {'H', 'i', 'H', 'e', 'l', 'l', 'o', ',', ' ', 'W', 'o', 'r', 'l', 'd', '!'});
+		auto buf =
+		    phoenix::buffer::of(bytes('H', 'i', 'H', 'e', 'l', 'l', 'o', ',', ' ', 'W', 'o', 'r', 'l', 'd', '!'));
 
 		SUBCASE("relative") {
 			CHECK(buf.get_string(2) == "Hi");
@@ -491,9 +570,27 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("get_line()") {
-		auto buf =
-		    phoenix::buffer::wrap(std::vector<std::uint8_t> {'H', 'i', '\n', ' ', ' ', '\r', '\t', 'H', 'e', 'l', 'l',
-		                                                     'o', ',', ' ',  'W', 'o', 'r',  'l',  'd', '!', '\n'});
+		auto buf = phoenix::buffer::of(bytes('H',
+		                                     'i',
+		                                     '\n',
+		                                     ' ',
+		                                     ' ',
+		                                     '\r',
+		                                     '\t',
+		                                     'H',
+		                                     'e',
+		                                     'l',
+		                                     'l',
+		                                     'o',
+		                                     ',',
+		                                     ' ',
+		                                     'W',
+		                                     'o',
+		                                     'r',
+		                                     'l',
+		                                     'd',
+		                                     '!',
+		                                     '\n'));
 
 		SUBCASE("relative") {
 			CHECK(buf.get_line(true) == "Hi");
@@ -526,8 +623,7 @@ TEST_SUITE("buffer") {
 	}
 
 	TEST_CASE("mismatch()") {
-		auto buf = phoenix::buffer::wrap(
-		    std::vector<std::uint8_t> {'H', 'e', 'l', 'l', 'o', ',', ' ', 'W', 'o', 'r', 'l', 'd', '!', '\n'});
+		auto buf = phoenix::buffer::of(bytes('H', 'e', 'l', 'l', 'o', ',', ' ', 'W', 'o', 'r', 'l', 'd', '!', '\n'));
 
 		SUBCASE("relative functional") {
 			buf.position(5);
@@ -541,7 +637,7 @@ TEST_SUITE("buffer") {
 		}
 
 		SUBCASE("relative buffer") {
-			auto comp = phoenix::buffer::wrap(std::vector<std::uint8_t> {'W', 'o', 'r', 'l', 'd', '.'});
+			auto comp = phoenix::buffer::of(bytes('W', 'o', 'r', 'l', 'd', '.'));
 			auto index = buf.mismatch(comp);
 			CHECK(index == 0);
 			CHECK(buf.position() == 0);
@@ -570,7 +666,7 @@ TEST_SUITE("buffer") {
 		}
 
 		SUBCASE("absolute buffer") {
-			auto comp = phoenix::buffer::wrap(std::vector<std::uint8_t> {'W', 'o', 'r', 'l', 'd', '.'});
+			auto comp = phoenix::buffer::of(bytes('W', 'o', 'r', 'l', 'd', '.'));
 			auto index = buf.mismatch(0, comp);
 			CHECK(index == 0);
 			CHECK(buf.position() == 0);
@@ -592,18 +688,18 @@ TEST_SUITE("buffer") {
 	TEST_CASE("put*()") {
 		auto buf = phoenix::buffer::allocate(57);
 
-		buf.put(0xFF)
-		    .put_short(-16)
-		    .put_ushort(16)
-		    .put_int(-16)
-		    .put_uint(16)
-		    .put_long(-16)
-		    .put_ulong(16)
-		    .put_float(69.420f)
-		    .put_double(420.69)
-		    .put_string("Hi")
-		    .put_line("Hello, World!")
-		    .flip();
+		buf.put(0xFF);
+		buf.put_short(-16);
+		buf.put_ushort(16);
+		buf.put_int(-16);
+		buf.put_uint(16);
+		buf.put_long(-16);
+		buf.put_ulong(16);
+		buf.put_float(69.420f);
+		buf.put_double(420.69);
+		buf.put_string("Hi");
+		buf.put_line("Hello, World!");
+		buf.flip();
 
 		CHECK(buf.limit() == 57);
 		CHECK(buf.get() == 0xFF);

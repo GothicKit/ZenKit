@@ -89,12 +89,12 @@ int main(int, char**) {
 	// Open MyModel.MDL for reading
 	auto buf = entry->open();
 	
-	// One could also open a normal file from disk:
-	//   auto buf = phoenix::buffer::open("/path/to/file");
+	// One could also memory-map a normal file from disk:
+	//   auto buf = phoenix::buffer::mmap("/path/to/file");
 
 	// Or if you have a vector of data:
 	//   std::vector<uint8_t> data { /* ... */ };
-	//   auto buf = phoenix::buffer::wrap(std::move(data));
+	//   auto buf = phoenix::buffer::of(std::move(data));
 	
 	// Parse the model
 	auto mdl = phoenix::model::parse(buf);

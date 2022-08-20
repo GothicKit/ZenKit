@@ -70,13 +70,13 @@ px::buffer open_buffer(const std::optional<std::string>& input, const std::optio
 				return phoenix::buffer::empty();
 			}
 		} else {
-			return phoenix::buffer::open(*input);
+			return phoenix::buffer::mmap(*input);
 		}
 	} else {
-		std::vector<uint8_t> data {};
+		std::vector<std::byte> data {};
 
 		while (!std::cin.eof()) {
-			data.push_back(std::cin.get());
+			data.push_back(static_cast<std::byte>(std::cin.get()));
 		}
 
 		if (data.empty()) {
@@ -86,7 +86,7 @@ px::buffer open_buffer(const std::optional<std::string>& input, const std::optio
 
 		// remove the EOF byte
 		data.pop_back();
-		return phoenix::buffer::wrap(std::move(data));
+		return phoenix::buffer::of(std::move(data));
 	}
 }
 

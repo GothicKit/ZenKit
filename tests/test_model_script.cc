@@ -5,7 +5,7 @@
 
 TEST_SUITE("model script") {
 	TEST_CASE("text") {
-		auto buf = phoenix::buffer::open("./samples/waran.mds");
+		auto buf = phoenix::buffer::mmap("./samples/waran.mds");
 		auto script = phoenix::model_script::parse(buf);
 
 		CHECK(script.skeleton.disable_mesh == true);
@@ -162,7 +162,7 @@ TEST_SUITE("model script") {
 	}
 
 	TEST_CASE("binary") {
-		auto buf = phoenix::buffer::open("./samples/waran.msb");
+		auto buf = phoenix::buffer::mmap("./samples/waran.msb");
 		auto script = phoenix::model_script::parse_binary(buf);
 
 		CHECK(script.skeleton.disable_mesh == true);

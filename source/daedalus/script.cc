@@ -81,7 +81,7 @@ namespace phoenix::daedalus {
 	}
 
 	script script::parse(const std::string& file) {
-		auto in = buffer::open(file);
+		auto in = buffer::mmap(file);
 		return parse(in);
 	}
 

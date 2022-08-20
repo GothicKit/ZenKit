@@ -5,7 +5,7 @@
 
 TEST_SUITE("morph mesh") {
 	TEST_CASE("morph meshes (MMBs) are read correctly") {
-		auto in = phoenix::buffer::open("./samples/morph0.mmb");
+		auto in = phoenix::buffer::mmap("./samples/morph0.mmb");
 		auto mesh = phoenix::morph_mesh::parse(in);
 
 		CHECK(mesh.name() == "ITRWSMALLBOW");
