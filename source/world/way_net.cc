@@ -1,6 +1,5 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
-#include <phoenix/detail/error.hh>
 #include <phoenix/world/way_net.hh>
 
 #include <fmt/format.h>
@@ -17,85 +16,90 @@ namespace phoenix {
 	}
 
 	way_net way_net::parse(archive_reader_ref& in) {
-		way_net net;
-		archive_object obj;
+		try {
+			way_net net;
+			archive_object obj;
 
-		if (!in->read_object_begin(obj)) {
-			throw parser_error("way net: header object missing => invalid or corrupted file");
-		}
-
-		(void) /* auto version = */ in->read_int(); // waynetVersion
-		auto count = in->read_int();                // numWaypoints
-		net._m_waypoints.reserve(count);
-
-		std::unordered_map<std::uint32_t, std::uint32_t> obj_id_to_wp {};
-
-		for (int i = 0; i < count; ++i) {
-			if (!in->read_object_begin(obj) || obj.class_name != "zCWaypoint") {
-				throw parser_error(fmt::format("way net: failed to read waypoint #{}", i));
+			if (!in->read_object_begin(obj)) {
+				throw parser_error {"way_net", "root object missing"};
 			}
 
-			auto& wp = net._m_waypoints.emplace_back();
-			read_waypoint_data(wp, in);
-			wp.free_point = true;
-			net._m_name_to_waypoint[wp.name] = &wp;
-			obj_id_to_wp[obj.index] = net._m_waypoints.size() - 1;
+			(void) /* auto version = */ in->read_int(); // waynetVersion
+			auto count = in->read_int();                // numWaypoints
+			net._m_waypoints.reserve(count);
 
-			if (!in->read_object_end()) {
-				fmt::print(stderr,
-				           "warning: way net: not all entries consumed from free point (index == {})",
-				           obj.index);
-				in->skip_object(true);
-			}
-		}
+			std::unordered_map<std::uint32_t, std::uint32_t> obj_id_to_wp {};
 
-		auto edge_count = in->read_int(); // numWays
-
-		for (int i = 0; i < edge_count; ++i) {
-			auto& edge = net._m_edges.emplace_back();
-
-			for (int j = 0; j < 2; ++j) {
-				if (!in->read_object_begin(obj)) {
-					throw parser_error(fmt::format("way net: failed to read edge #{}", i));
+			for (int i = 0; i < count; ++i) {
+				if (!in->read_object_begin(obj) || obj.class_name != "zCWaypoint") {
+					throw parser_error {"way_net", fmt::format("missing waypoint object #{}", i)};
 				}
 
-				std::uint32_t wp;
-
-				if (obj.class_name == "\xA7" /* zReference */) {
-					wp = obj_id_to_wp[obj.index];
-				} else if (obj.class_name == "zCWaypoint") {
-					auto& new_wp = net._m_waypoints.emplace_back();
-					read_waypoint_data(new_wp, in);
-					new_wp.free_point = false;
-
-					obj_id_to_wp[obj.index] = net._m_waypoints.size() - 1;
-					wp = net._m_waypoints.size() - 1;
-				} else {
-					throw parser_error(
-					    fmt::format("way net: failed to read edge #{}: illegal class name '{}'", i, obj.class_name));
-				}
-
-				if (j == 0) {
-					edge.a = wp;
-				} else {
-					edge.b = wp;
-				}
+				auto& wp = net._m_waypoints.emplace_back();
+				read_waypoint_data(wp, in);
+				wp.free_point = true;
+				net._m_name_to_waypoint[wp.name] = &wp;
+				obj_id_to_wp[obj.index] = net._m_waypoints.size() - 1;
 
 				if (!in->read_object_end()) {
 					fmt::print(stderr,
-					           "warning: way net: not all entries consumed from edge #{} (index == {})",
-					           i * 2 + j,
+					           "warning: way net: not all entries consumed from free point (index == {})",
 					           obj.index);
 					in->skip_object(true);
 				}
 			}
-		}
 
-		if (!in->read_object_end()) {
-			fmt::print(stderr, "warning: way net: not all entries consumed from way net");
-			in->skip_object(true);
+			auto edge_count = in->read_int(); // numWays
+
+			for (int i = 0; i < edge_count; ++i) {
+				auto& edge = net._m_edges.emplace_back();
+
+				for (int j = 0; j < 2; ++j) {
+					if (!in->read_object_begin(obj)) {
+						throw parser_error {"way_net", fmt::format("missing edge object #{}", i)};
+					}
+
+					std::uint32_t wp;
+
+					if (obj.class_name == "\xA7" /* zReference */) {
+						wp = obj_id_to_wp[obj.index];
+					} else if (obj.class_name == "zCWaypoint") {
+						auto& new_wp = net._m_waypoints.emplace_back();
+						read_waypoint_data(new_wp, in);
+						new_wp.free_point = false;
+
+						obj_id_to_wp[obj.index] = net._m_waypoints.size() - 1;
+						wp = net._m_waypoints.size() - 1;
+					} else {
+						throw parser_error {
+						    "way_net",
+						    fmt::format("failed to parse edge #{}: unknown class name '{}'", i, obj.class_name)};
+					}
+
+					if (j == 0) {
+						edge.a = wp;
+					} else {
+						edge.b = wp;
+					}
+
+					if (!in->read_object_end()) {
+						fmt::print(stderr,
+						           "warning: way net: not all entries consumed from edge #{} (index == {})",
+						           i * 2 + j,
+						           obj.index);
+						in->skip_object(true);
+					}
+				}
+			}
+
+			if (!in->read_object_end()) {
+				fmt::print(stderr, "warning: way net: not all entries consumed from way net");
+				in->skip_object(true);
+			}
+			return net;
+		} catch (const buffer_error& exc) {
+			throw parser_error {"way_net", exc, "eof reached"};
 		}
-		return net;
 	}
 
 	const way_point* way_net::waypoint(const std::string& name) const {

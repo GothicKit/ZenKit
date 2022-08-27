@@ -4,7 +4,6 @@
 #include <phoenix/model_script.hh>
 
 #include <phoenix/detail/compat.hh>
-#include <phoenix/detail/error.hh>
 
 #include "model_script_dsl.hh"
 

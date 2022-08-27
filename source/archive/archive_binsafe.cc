@@ -3,7 +3,6 @@
 #include "archive_binsafe.hh"
 
 #include <fmt/format.h>
-#include <phoenix/detail/error.hh>
 #include <sstream>
 
 namespace phoenix {
@@ -157,8 +156,8 @@ namespace phoenix {
 		auto unused = static_cast<std::int32_t>(ensure_entry_meta(bs_raw_float) - 2 * sizeof(float));
 
 		if (unused < 0) {
-			throw parser_error(
-			    "archive_reader_binsafe: cannot read vec2 (2 * float): not enough space in rawFloat entry.");
+			throw parser_error {"archive_reader_binsafe"
+			                    "cannot read vec2 (2 * float): not enough space in rawFloat entry."};
 		}
 
 		auto c = input.get_vec2();
@@ -203,8 +202,8 @@ namespace phoenix {
 		auto unused = static_cast<std::int32_t>(ensure_entry_meta(bs_raw_float) - 3 * 2 * sizeof(float));
 
 		if (unused < 0) {
-			throw parser_error(
-			    "archive_reader_binsafe: cannot read bbox (6 * float): not enough space in rawFloat entry.");
+			throw parser_error {"archive:reader_binsafe",
+			                    "cannot read bbox (6 * float): not enough space in rawFloat entry."};
 		}
 
 		auto c = bounding_box::parse(input);

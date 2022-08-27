@@ -32,6 +32,7 @@ namespace phoenix {
 		 * @brief Parses a world from the given reader.
 		 * @param in The reader to read from.
 		 * @return The world parsed.
+		 * @throws parser_error if parsing fails.
 		 */
 		[[nodiscard]] static world parse(buffer& in, game_version version);
 

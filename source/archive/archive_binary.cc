@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 #include "archive_binary.hh"
 
-#include <phoenix/detail/error.hh>
 #include <stdexcept>
 
 namespace phoenix {
@@ -10,19 +9,20 @@ namespace phoenix {
 		{
 			std::string objects = input.get_line();
 			if (!objects.starts_with("objects ")) {
-				throw parser_error("not an archive: objects missing");
+				throw parser_error {"archive_reader_binary", "objects header field missing"};
 			}
 			_m_objects = std::stoi(objects.substr(objects.find(' ') + 1));
 		}
 
 		if (input.get_line() != "END") {
-			throw parser_error("not an archive: END(2) missing");
+			throw parser_error {"archive_reader_binary", "second END missing"};
 		}
 	}
 
 	bool archive_reader_binary::read_object_begin(archive_object& obj) {
 		if (input.remaining() < 12)
 			return false;
+
 		_m_next_object = input.position();
 		_m_next_object += input.get_uint(); // object size including itself
 

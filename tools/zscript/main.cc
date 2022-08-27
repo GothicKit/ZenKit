@@ -41,7 +41,7 @@ OPTIONS
     -d, --disassemble           Print a disassembly of the file or the symbol passed via -s.
     -u, --usages                Print a list of all bytecode instructions referencing the symbol
                                 passed via -s.
-    -l, --decompile             Print a decompilation of the symbol passed via -s.
+    -k, --decompile             Print a decompilation of the symbol passed via -s.
 
 
 FLAGS
@@ -793,7 +793,7 @@ void find_usages(const script& scr, const symbol& sym) {
 		auto func_sym = scr.find_symbol_by_address(pc);
 
 		if (func_sym != nullptr) {
-			fmt::print("\r{: <100}", func_sym->name());
+			fmt::print("\r{: <100}\r", func_sym->name());
 			current_function = func_sym;
 		}
 

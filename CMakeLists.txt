@@ -5,17 +5,18 @@ project(phoenix)
 option(PX_BUILD_TOOLS "Build phoenix tool executables" ON)
 option(PX_BUILD_TESTS "Build core library tests" ON)
 option(PX_BUILD_EXAMPLES "Build example code" OFF)
+option(PX_NO_SANITIZERS "Build without sanitizers in debug mode" OFF)
 
 set(CMAKE_CXX_STANDARD 20)
 set(PX_CXX_FLAGS -Wall -Wextra -Werror -Wconversion)
 
-if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
-	set(PX_CXX_FLAGS ${PX_CXX_FLAGS} -fsanitize=address -fsanitize=undefined -fsanitize=leak)
+if (${CMAKE_BUILD_TYPE} MATCHES "Debug" AND NOT ${PX_NO_SANITIZERS})
+    set(PX_CXX_FLAGS ${PX_CXX_FLAGS} -fsanitize=address -fsanitize=undefined -fsanitize=leak)
 
-	if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
-		set(PX_CXX_FLAGS ${PX_CXX_FLAGS} -fstandalone-debug)
-	endif()
-endif()
+    if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+        set(PX_CXX_FLAGS ${PX_CXX_FLAGS} -fstandalone-debug)
+    endif ()
+endif ()
 
 set(PX_SOURCES
 		source/phoenix.cc

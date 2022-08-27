@@ -46,6 +46,7 @@ namespace phoenix {
 		 * @brief Parses a way net from the given reader.
 		 * @param in The reader to read from.
 		 * @return The way net parsed.
+		 * @throws parser_error if parsing fails.
 		 */
 		static way_net parse(archive_reader_ref& in);
 
@@ -73,7 +74,7 @@ namespace phoenix {
 	private:
 		std::vector<way_point> _m_waypoints;
 		std::vector<way_edge> _m_edges;
-		std::unordered_map<std::string, way_point*> _m_name_to_waypoint;
+		std::unordered_map<std::string, way_point*> _m_name_to_waypoint; // TODO: don't keep pointers!
 	};
 
 } // namespace phoenix

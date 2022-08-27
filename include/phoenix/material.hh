@@ -47,6 +47,7 @@ namespace phoenix {
 		 * @brief Reads a material from the archive.
 		 * @param[in,out] in The reader to read from.
 		 * @return The material.
+		 * @throws parser_error if parsing fails.
 		 */
 		static material parse(archive_reader_ref& in);
 

@@ -311,7 +311,7 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 		return fmt::format("{} = {}", a, b);
 	}
 	default:
-		throw;
+		return fmt::format("/* set_instance({}) */", stmt.instr.symbol);
 	}
 }
 

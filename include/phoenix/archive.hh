@@ -3,6 +3,7 @@
 #pragma once
 #include <phoenix/detail/buffer.hh>
 #include <phoenix/math/bbox.hh>
+#include <phoenix/phoenix.hh>
 
 #include <glm/mat3x3.hpp>
 #include <glm/vec2.hpp>
@@ -27,6 +28,7 @@ namespace phoenix {
 		 * @brief Reads in an archive_header from the given reader.
 		 * @param in The reader to read from.
 		 * @return The header read.
+		 * @throws parser_error if parsing fails.
 		 */
 		static archive_header parse(buffer& in);
 	};
@@ -65,7 +67,6 @@ namespace phoenix {
 		 * @brief Creates a new archive_reader from the given input reader.
 		 * @param in The reader to use.
 		 * @return The new archive_reader.
-		 * @throws phoenix::io_error
 		 * @throws phoenix::parser_error
 		 */
 		static std::unique_ptr<archive_reader> open(buffer& in);

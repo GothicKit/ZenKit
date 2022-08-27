@@ -35,7 +35,7 @@ namespace phoenix {
 
 	bool iequals(std::string_view a, std::string_view b) {
 		return std::equal(a.begin(), a.end(), b.begin(), b.end(), [](char a, char b) {
-			return tolower(a) == tolower(b);
+			return std::tolower(a) == std::tolower(b);
 		});
 	}
 } // namespace phoenix

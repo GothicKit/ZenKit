@@ -36,6 +36,7 @@ namespace phoenix {
 		 * @brief Parses in a font from the given reader.
 		 * @param in The reader to read from
 		 * @return The font parsed.
+		 * @throws parser_error if parsing fails.
 		 */
 		static font parse(buffer& in);
 

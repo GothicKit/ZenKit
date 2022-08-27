@@ -3,9 +3,7 @@
 #include "archive_ascii.hh"
 
 #include <fmt/format.h>
-#include <phoenix/detail/error.hh>
 
-#include <bit>
 #include <charconv>
 #include <sstream>
 
@@ -14,13 +12,13 @@ namespace phoenix {
 		{
 			std::string objects = input.get_line();
 			if (!objects.starts_with("objects ")) {
-				throw parser_error("not an archive: objects missing");
+				throw parser_error {"archive_reader_ascii", "objects field missing"};
 			}
 			_m_objects = std::stoi(objects.substr(objects.find(' ') + 1));
 		}
 
 		if (input.get_line() != "END") {
-			throw parser_error("not an archive: END(2) missing");
+			throw parser_error {"archive_reader_ascii", "second END missing"};
 		}
 	}
 
@@ -60,8 +58,8 @@ namespace phoenix {
 		auto colon = line.find(':');
 
 		if (line.substr(0, colon) != type) {
-			throw parser_error(
-			    fmt::format("archive_reader_ascii: type mismatch: expected {}, got: {}.", type, line.substr(0, colon)));
+			throw parser_error {"archive_reader_ascii",
+			                    fmt::format("type mismatch: expected {}, got: {}", type, line.substr(0, colon))};
 		}
 
 		auto rv = line.substr(colon + 1);
@@ -136,7 +134,7 @@ namespace phoenix {
 		auto in = read_entry("raw");
 
 		if (in.length() < 2 /* 2 chars a byte */ * sizeof(float) * 9) {
-			throw parser_error("archive_reader_ascii: raw entry does not contain enough bytes to be a 3x3 matrix");
+			throw parser_error {"archive_reader_ascii", "raw entry does not contain enough bytes to be a 3x3 matrix"};
 		}
 
 		auto beg_it = in.begin().base();

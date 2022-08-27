@@ -1,7 +1,6 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #include <phoenix/animation.hh>
-#include <phoenix/detail/error.hh>
 
 #include <fmt/format.h>
 

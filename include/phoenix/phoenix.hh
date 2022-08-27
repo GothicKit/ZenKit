@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include <filesystem>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -18,5 +19,19 @@ namespace phoenix {
 
 	public:
 		[[maybe_unused]] const std::string message;
+	};
+
+	/// \brief An error representing a parsing failure of any kind.
+	class parser_error : public error {
+	public:
+		explicit parser_error(std::string&& resource_type);
+		explicit parser_error(std::string&& resource_type, std::string&& context);
+		explicit parser_error(std::string&& resource_type, const std::exception& cause);
+		explicit parser_error(std::string&& resource_type, const std::exception& cause, std::string&& context);
+
+	public:
+		const std::string resource_type;
+		const std::optional<std::string> context {std::nullopt};
+		const std::optional<std::exception> cause {std::nullopt};
 	};
 } // namespace phoenix

@@ -1,6 +1,5 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
-#include <phoenix/detail/error.hh>
 #include <phoenix/messages.hh>
 
 #include <fmt/format.h>
@@ -12,11 +11,11 @@ namespace phoenix {
 
 		archive_object obj;
 		if (!archive->read_object_begin(obj)) {
-			throw parser_error("messages: failed to read message database: no begin object found");
+			throw parser_error {"messages", "root object missing"};
 		}
 
 		if (obj.class_name != "zCCSLib") {
-			throw parser_error("messages: failed to read message database: begin object is not zCCSLib");
+			throw parser_error {"messages", "root object is not 'zCCSLib'"};
 		}
 
 		auto item_count = archive->read_int();
@@ -24,7 +23,7 @@ namespace phoenix {
 
 		for (int i = 0; i < item_count; ++i) {
 			if (!archive->read_object_begin(obj) || obj.class_name != "zCCSBlock") {
-				throw parser_error("messages: failed to read message database: expected zCCSBlock but didn't find it");
+				throw parser_error {"messages", "expected 'zCCSBlock' but didn't find it"};
 			}
 
 			auto& itm = msgs._m_blocks.emplace_back();
@@ -32,10 +31,12 @@ namespace phoenix {
 			(void) archive->read_int();   /* TODO: function unknown at this time */
 			(void) archive->read_float(); /* TODO: function unknown at this time */
 
+			// TODO: check class/object name!
 			if (!archive->read_object_begin(obj)) {
-				throw parser_error("messages: failed to read message database: expected atomic block - not found");
+				throw parser_error("messages", "expected atomic block - not found");
 			}
 
+			// TODO: check class/object name!
 			if (!archive->read_object_begin(obj)) {
 				throw parser_error("messages: failed to read message database: expected message block - not found");
 			}
