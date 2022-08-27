@@ -27,7 +27,16 @@ namespace phoenix {
 		 * @param path The path of the file to read from
 		 * @return A proxy to the message database.
 		 */
-		static messages parse(buffer& path);
+		[[nodiscard]] static messages parse(buffer& path);
+
+		/**
+		 * @brief Parses a message database from a file.
+		 * @param path The path of the file to read from
+		 * @return A proxy to the message database.
+		 */
+		[[nodiscard]] inline static messages parse(buffer&& path) {
+			return parse(path);
+		}
 
 		/**
 		 * @return All message blocks in the database.

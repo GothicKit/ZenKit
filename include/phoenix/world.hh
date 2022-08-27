@@ -36,6 +36,16 @@ namespace phoenix {
 		 */
 		[[nodiscard]] static world parse(buffer& in, game_version version);
 
+		/**
+		 * @brief Parses a world from the given reader.
+		 * @param in The reader to read from.
+		 * @return The world parsed.
+		 * @throws parser_error if parsing fails.
+		 */
+		[[nodiscard]] inline static world parse(buffer&& in, game_version version) {
+			return parse(in, version);
+		}
+
 		std::vector<std::unique_ptr<vobs::vob>> world_vobs;
 		mesh world_mesh;
 		bsp_tree world_bsp_tree;

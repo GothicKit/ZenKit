@@ -91,7 +91,16 @@ namespace phoenix {
 		 * @param in The reader to read from.
 		 * @return The mesh read.
 		 */
-		static proto_mesh parse(buffer& in);
+		[[nodiscard]] static proto_mesh parse(buffer& in);
+
+		/**
+		 * @brief Read a mesh from the given reader.
+		 * @param in The reader to read from.
+		 * @return The mesh read.
+		 */
+		[[nodiscard]] static proto_mesh parse(buffer&& in) {
+			return parse(in);
+		}
 
 		/**
 		 * @brief Reads a proto mesh directly from a section.

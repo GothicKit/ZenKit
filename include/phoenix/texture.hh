@@ -63,7 +63,19 @@ namespace phoenix {
 		 * @param in The reader to read from
 		 * @return The texture.
 		 */
-		static texture parse(buffer& in);
+		[[nodiscard]] static texture parse(buffer& in);
+
+		/**
+		 * @brief Parses a texture from the given reader.
+		 *
+		 * If the texture is compressed using DXT1, DXT3 or DXT5 it is automatically decompressed.
+		 *
+		 * @param in The reader to read from
+		 * @return The texture.
+		 */
+		[[nodiscard]] inline static texture parse(buffer&& in) {
+			return parse(in);
+		}
 
 		/**
 		 * @brief Parses a texture from the given file.

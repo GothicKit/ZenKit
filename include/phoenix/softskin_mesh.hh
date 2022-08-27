@@ -33,7 +33,11 @@ namespace phoenix {
 	 */
 	class softskin_mesh {
 	public:
-		static softskin_mesh parse(buffer& in);
+		[[nodiscard]] static softskin_mesh parse(buffer& in);
+
+		[[nodiscard]] inline static softskin_mesh parse(buffer&& in) {
+			return parse(in);
+		}
 
 		/**
 		 * @return The embedded proto-mesh.

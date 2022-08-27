@@ -73,7 +73,16 @@ namespace phoenix {
 		 * @param in The reader to read from.
 		 * @return The animation pared.
 		 */
-		static animation parse(buffer& in);
+		[[nodiscard]] static animation parse(buffer& in);
+
+		/**
+		 * @brief Parses the animation from the given reader.
+		 * @param in The reader to read from.
+		 * @return The animation pared.
+		 */
+		[[nodiscard]] inline static animation parse(buffer&& in) {
+			return parse(in);
+		}
 
 		/**
 		 * @return The name of the animation

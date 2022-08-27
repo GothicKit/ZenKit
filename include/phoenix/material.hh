@@ -49,7 +49,17 @@ namespace phoenix {
 		 * @return The material.
 		 * @throws parser_error if parsing fails.
 		 */
-		static material parse(archive_reader_ref& in);
+		[[nodiscard]] static material parse(archive_reader_ref& in);
+
+		/**
+		 * @brief Reads a material from the archive.
+		 * @param[in] in The reader to read from.
+		 * @return The material.
+		 * @throws parser_error if parsing fails.
+		 */
+		[[nodiscard]] inline static material parse(archive_reader_ref&& in) {
+			return parse(in);
+		}
 
 	public:
 		std::string name;

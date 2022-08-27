@@ -90,6 +90,15 @@ namespace phoenix {
 		[[nodiscard]] static mesh parse(buffer& in, const std::vector<std::uint32_t>& leaf_polygons);
 
 		/**
+		 * @brief Parses a mesh from the given reader.
+		 * @param in The reader to read from.
+		 * @return The mesh parsed.
+		 */
+		[[nodiscard]] inline static mesh parse(buffer&& in, const std::vector<std::uint32_t>& leaf_polygons) {
+			return parse(in, leaf_polygons);
+		}
+
+		/**
 		 * @return The creation date of the mesh.
 		 */
 		[[nodiscard]] inline phoenix::date date() const noexcept {

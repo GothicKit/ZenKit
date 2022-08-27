@@ -8,7 +8,11 @@ namespace phoenix {
 
 	class model_mesh {
 	public:
-		static model_mesh parse(buffer& in);
+		[[nodiscard]] static model_mesh parse(buffer& in);
+
+		[[nodiscard]] inline static model_mesh parse(buffer&& in) {
+			return parse(in);
+		}
 
 		const std::vector<softskin_mesh>& meshes() const noexcept {
 			return _m_meshes;

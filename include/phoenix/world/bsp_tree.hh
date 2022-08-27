@@ -61,6 +61,15 @@ namespace phoenix {
 		[[nodiscard]] static bsp_tree parse(buffer& in, std::uint32_t version);
 
 		/**
+		 * @brief Parses a BSP tree from the given reader.
+		 * @param in The reader to read from.
+		 * @return The tree parsed.
+		 */
+		[[nodiscard]] inline static bsp_tree parse(buffer&& in, std::uint32_t version) {
+			return parse(in, version);
+		}
+
+		/**
 		 * @return The mode of the tree (either indoor or outdoor).
 		 */
 		[[nodiscard]] bsp_tree_mode mode() const noexcept {

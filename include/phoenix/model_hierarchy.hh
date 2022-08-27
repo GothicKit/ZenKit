@@ -18,7 +18,11 @@ namespace phoenix {
 
 	class model_hierachy {
 	public:
-		static model_hierachy parse(buffer& in);
+		[[nodiscard]] static model_hierachy parse(buffer& in);
+
+		[[nodiscard]] inline static model_hierachy parse(buffer&& in) {
+			return parse(in);
+		}
 
 		[[nodiscard]] const std::vector<model_hierarchy_node>& nodes() const noexcept {
 			return _m_nodes;

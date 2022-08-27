@@ -244,7 +244,16 @@ namespace phoenix {
 		 * @param buf A buffer to parse from.
 		 * @return The parsed model script.
 		 */
-		static model_script parse(buffer& buf);
+		[[nodiscard]] static model_script parse(buffer& buf);
+
+		/**
+		 * @brief Parses a model script (MDS) file from the given buffer.
+		 * @param buf A buffer to parse from.
+		 * @return The parsed model script.
+		 */
+		[[nodiscard]] inline static model_script parse(buffer&& buf) {
+			return parse(buf);
+		}
 
 		/**
 		 * @brief Parses a binary model script (MSB) file from the given buffer.

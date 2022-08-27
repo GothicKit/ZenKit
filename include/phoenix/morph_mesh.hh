@@ -49,7 +49,16 @@ namespace phoenix {
 		 * @param in The reader to read from.
 		 * @return The mesh parsed.
 		 */
-		static morph_mesh parse(buffer& in);
+		[[nodiscard]] static morph_mesh parse(buffer& in);
+
+		/**
+		 * @brief Parses a morph mesh from the given reader.
+		 * @param in The reader to read from.
+		 * @return The mesh parsed.
+		 */
+		[[nodiscard]] inline static morph_mesh parse(buffer&& in) {
+			return parse(in);
+		}
 
 		/**
 		 * @return All animations associated with the mesh
