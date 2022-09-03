@@ -16,7 +16,7 @@ namespace phoenix {
 		t.tm_min = (int) ((dos >> 5) & 0x3F);
 		t.tm_sec = ((int) ((dos >> 0) & 0x1F)) * 2;
 
-		return timegm(&t);
+		return mktime(&t);
 	}
 
 	std::uint32_t unix_time_to_dos(std::time_t nix) noexcept {

@@ -63,7 +63,8 @@ static void do_extract(const fs::path& base, const fs::path& self, const std::ve
 static void do_list(const fs::path& self, const std::vector<phoenix::vdf_entry>& entries) {
 	for (const phoenix::vdf_entry& entry : entries) {
 		auto path = self / entry.name();
-		fmt::print("{}\n", path.c_str());
+
+		fmt::print("{}\n", path.string<char>());
 
 		if (entry.is_directory()) {
 			do_list(path, entry.children());

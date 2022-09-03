@@ -243,7 +243,6 @@ std::string format_obb_json(const px::obb& bb) {
 template <>
 void dump_json<px::mesh>(const px::mesh& msh) {
 	struct tm ctime {};
-	ctime.tm_gmtoff = 0;
 	ctime.tm_year = msh.date().year;
 	ctime.tm_mon = msh.date().month;
 	ctime.tm_mday = msh.date().day;

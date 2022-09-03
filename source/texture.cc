@@ -103,15 +103,15 @@ namespace phoenix {
 
 #pragma pack(push, 1)
 	struct r5g5b5 {
-		std::uint8_t r : 5;
-		std::uint8_t g : 5;
-		std::uint8_t b : 5;
+		std::uint16_t r : 5;
+		std::uint16_t g : 5;
+		std::uint16_t b : 5;
 	};
 
 	struct r5g6b5 {
-		std::uint8_t r : 5;
-		std::uint8_t g : 6;
-		std::uint8_t b : 5;
+		std::uint16_t r : 5;
+		std::uint16_t g : 6;
+		std::uint16_t b : 5;
 	};
 #pragma pack(pop)
 

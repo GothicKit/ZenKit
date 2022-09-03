@@ -19,7 +19,7 @@ TEST_SUITE("vdfs") {
 		creationtime.tm_year = 121;
 
 		CHECK(vdf.header().comment() == "Sample VDF for openzen. Create on 2021-04-27 13:24:59.");
-		CHECK(vdf.header().timestamp() == timegm(&creationtime));
+		CHECK(vdf.header().timestamp() == mktime(&creationtime));
 		CHECK(vdf.header().entry_count() == 7);
 		CHECK(vdf.header().file_count() == 5);
 		CHECK(vdf.header().size() == 43804);
