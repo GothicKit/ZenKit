@@ -504,7 +504,8 @@ namespace phoenix::daedalus {
 		 * @param field The field to register
 		 */
 		template <typename _class, typename _member> // clang-format off
-		requires (std::same_as<std::string, _member> || std::same_as<float, _member> || std::same_as<int32_t, _member>)
+		requires (std::same_as<std::string, _member> || std::same_as<float, _member> ||
+		          std::same_as<int32_t, _member> || (std::is_enum<_member>::value && sizeof(_member) == 4))
 		void register_member(const std::string& name, _member _class::* field) { // clang-format on
 			auto* type = &typeid(_class);
 			auto* sym = _check_member<_class, _member, 1>(name, type);
@@ -521,7 +522,8 @@ namespace phoenix::daedalus {
 		 * @param field The field to register
 		 */
 		template <typename _class, typename _member, int N> // clang-format off
-		requires (std::same_as<std::string, _member> || std::same_as<int32_t, _member> || std::same_as<float, _member>)
+		requires (std::same_as<std::string, _member> || std::same_as<int32_t, _member> ||
+		          std::same_as<float, _member> || (std::is_enum<_member>::value && sizeof(_member) == 4))
 		void register_member(const std::string& name, _member (_class::*field)[N]) { // clang-format on
 			auto* type = &typeid(_class);
 			auto* sym = _check_member<_class, _member, N>(name, type);
@@ -702,7 +704,7 @@ namespace phoenix::daedalus {
 			} else if constexpr (std::same_as<float, _member>) {
 				if (sym->type() != dt_float)
 					throw invalid_registration_datatype {*sym, "float"};
-			} else if constexpr (std::same_as<int32_t, _member>) {
+			} else if constexpr (std::same_as<int32_t, _member> || std::is_enum<_member>::value) {
 				if (sym->type() != dt_integer && sym->type() != dt_function)
 					throw invalid_registration_datatype {*sym, "int"};
 			} else {
