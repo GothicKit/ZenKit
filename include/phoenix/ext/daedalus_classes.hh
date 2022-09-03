@@ -7,39 +7,50 @@
 #define string std::string
 #define func int
 
+// clang-format off
+#define FLAG(E)                                                                                                        \
+	inline E operator|(E a, E b) {                                                                                     \
+		return static_cast<E>(static_cast<std::uint32_t>(a) | static_cast<std::uint32_t>(b));                          \
+	}                                                                                                                  \
+	inline bool operator&(E a, E b) { return (static_cast<std::uint32_t>(a) & static_cast<std::uint32_t>(b)) != 0; }
+// clang-format on
+
 namespace phoenix::daedalus {
+
 	struct c_gil_values : public instance {
-		var int water_depth_knee[66];
-		var int water_depth_chest[66];
-		var int jumpup_height[66];
-		var int swim_time[66];
-		var int dive_time[66];
-		var int step_height[66];
-		var int jumplow_height[66];
-		var int jumpmid_height[66];
-		var int slide_angle[66];
-		var int slide_angle2[66];
-		var int disable_autoroll[66];
-		var int surface_align[66];
-		var int climb_heading_angle[66];
-		var int climb_horiz_angle[66];
-		var int climb_ground_angle[66];
-		var int fight_range_base[66];
-		var int fight_range_fist[66];
-		var int fight_range_g[66];
-		var int fight_range_1hs[66];
-		var int fight_range_1ha[66];
-		var int fight_range_2hs[66];
-		var int fight_range_2ha[66];
-		var int falldown_height[66];
-		var int falldown_damage[66];
-		var int blood_disabled[66];
-		var int blood_max_distance[66];
-		var int blood_amount[66];
-		var int blood_flow[66];
-		var string blood_emitter[66];
-		var string blood_texture[66];
-		var int turn_speed[66];
+		static constexpr std::uint32_t count = 66;
+
+		var int water_depth_knee[count];
+		var int water_depth_chest[count];
+		var int jumpup_height[count];
+		var int swim_time[count];
+		var int dive_time[count];
+		var int step_height[count];
+		var int jumplow_height[count];
+		var int jumpmid_height[count];
+		var int slide_angle[count];
+		var int slide_angle2[count];
+		var int disable_autoroll[count];
+		var int surface_align[count];
+		var int climb_heading_angle[count];
+		var int climb_horiz_angle[count];
+		var int climb_ground_angle[count];
+		var int fight_range_base[count];
+		var int fight_range_fist[count];
+		var int fight_range_g[count];
+		var int fight_range_1hs[count];
+		var int fight_range_1ha[count];
+		var int fight_range_2hs[count];
+		var int fight_range_2ha[count];
+		var int falldown_height[count];
+		var int falldown_damage[count];
+		var int blood_disabled[count];
+		var int blood_max_distance[count];
+		var int blood_amount[count];
+		var int blood_flow[count];
+		var string blood_emitter[count];
+		var string blood_texture[count];
+		var int turn_speed[count];
 
 		static void register_(script& s) {
 			s.register_member("C_GILVALUES.WATER_DEPTH_KNEE", &c_gil_values::water_depth_knee);
@@ -80,13 +91,57 @@ namespace phoenix::daedalus {
 		}
 	};
 
+	namespace damage_type {
+		static constexpr std::uint32_t barrier = 0U;
+		static constexpr std::uint32_t blunt = 1U;
+		static constexpr std::uint32_t edge = 2U;
+		static constexpr std::uint32_t fire = 3U;
+		static constexpr std::uint32_t fly = 4U;
+		static constexpr std::uint32_t magic = 5U;
+		static constexpr std::uint32_t point = 6U;
+		static constexpr std::uint32_t fall = 7U;
+		static constexpr std::uint32_t count = 8U;
+	}; // namespace damage_type
+
+	namespace npc_attribute {
+		static constexpr std::uint32_t hitpoints = 0U;
+		static constexpr std::uint32_t hitpoints_max = 1U;
+		static constexpr std::uint32_t mana = 2U;
+		static constexpr std::uint32_t mana_max = 3U;
+		static constexpr std::uint32_t strength = 4U;
+		static constexpr std::uint32_t dexterity = 5U;
+		static constexpr std::uint32_t regenerate_hp = 6U;
+		static constexpr std::uint32_t regenerate_mana = 7U;
+		static constexpr std::uint32_t count = 8U;
+	}; // namespace npc_attribute
+
+	enum class npc_type : std::uint32_t {
+		ambient = 0U,
+		main = 1U,
+		friend_ = 2U,
+		oc_ambient = 3U,
+		oc_main = 4U,
+		bl_ambient = 5U,
+		tal_ambient = 6U,
+		bl_main = 7U,
+	};
+
+	enum class npc_flag : std::uint32_t {
+		none = 0U,
+		friends = 1U << 0U,
+		immortal = 1U << 1U,
+		ghost = 1U << 2U,
+		protected_ = 1U << 3U,
+	};
+	FLAG(npc_flag);
+
 	struct c_npc : public instance {
 		var int id;
 		var string name[5];
 		var string slot;
 		var string effect;
-		var int npc_type;
-		var int flags;
+		var npc_type type;
+		var npc_flag flags;
 		var int attribute[8];
 		var int hitchance[5];
 		var int protection[8];
@@ -118,7 +173,7 @@ namespace phoenix::daedalus {
 			s.register_member("C_NPC.ID", &c_npc::id);
 			s.register_member("C_NPC.NAME", &c_npc::name);
 			s.register_member("C_NPC.SLOT", &c_npc::slot);
-			s.register_member("C_NPC.NPCTYPE", &c_npc::npc_type);
+			s.register_member("C_NPC.NPCTYPE", &c_npc::type);
 			s.register_member("C_NPC.FLAGS", &c_npc::flags);
 			s.register_member("C_NPC.ATTRIBUTE", &c_npc::attribute);
 			s.register_member("C_NPC.PROTECTION", &c_npc::protection);
@@ -186,6 +241,21 @@ namespace phoenix::daedalus {
 		}
 	};
 
+	enum class item_flags : std::uint32_t {
+		dagger = 1U << 13U,
+		sword = 1U << 14U,
+		axe = 1U << 15U,
+		two_handed_sword = 1U << 16U,
+		two_handed_axe = 1U << 17U,
+		bow = 1U << 19U,
+		crossbow = 1U << 20U,
+		amulet = 1U << 22U,
+		ring = 1U << 11U,
+		belt = 1U << 24U,
+		mission = 1U << 12U,
+	};
+	FLAG(item_flags);
+
 	struct c_item : public instance {
 		var int id;
 		var string name;
@@ -193,7 +263,7 @@ namespace phoenix::daedalus {
 		var int hp;
 		var int hp_max;
 		var int main_flag;
-		var int flags;
+		var item_flags flags;
 		var int weight;
 		var int value;
 		var int damage_type;
@@ -349,7 +419,7 @@ namespace phoenix::daedalus {
 			choices.insert(choices.begin(), ch);
 		}
 
-		void removeChoice(std::size_t index) {
+		void remove_choice(std::size_t index) {
 			choices.erase(choices.begin() + index);
 		}
 
@@ -901,19 +971,20 @@ namespace phoenix::daedalus {
 
 #undef REG_IF_SYM_EXIST
 
-	static constexpr uint8_t C_MENU_ITEMS_COUNT = 150;
-
-	namespace c_menu_flags {
-		static constexpr uint8_t overtop = 1 << 0;
-		static constexpr uint8_t exclusive = 1 << 1;
-		static constexpr uint8_t no_animation = 1 << 2;
-		static constexpr uint8_t dont_scale_dimension = 1 << 3;
-		static constexpr uint8_t dont_scale_position = 1 << 4;
-		static constexpr uint8_t align_center = 1 << 5;
-		static constexpr uint8_t show_info = 1 << 6;
-	} // namespace c_menu_flags
+	enum class c_menu_flags : std::uint32_t {
+		overtop = 1 << 0,
+		exclusive = 1 << 1,
+		no_animation = 1 << 2,
+		dont_scale_dimension = 1 << 3,
+		dont_scale_position = 1 << 4,
+		align_center = 1 << 5,
+		show_info = 1 << 6,
+	};
+	FLAG(c_menu_flags);
 
 	struct c_menu : public instance {
+		static constexpr std::uint8_t item_count = 150;
+
 		var string back_pic;
 		var string back_world;
 		var int pos_x;
@@ -923,8 +994,8 @@ namespace phoenix::daedalus {
 		var int alpha;
 		var string music_theme;
 		var int event_timer_msec;
-		var string items[C_MENU_ITEMS_COUNT];
-		var int flags;
+		var string items[item_count];
+		var c_menu_flags flags;
 		var int default_outgame;
 		var int default_ingame;
 
@@ -945,25 +1016,26 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	namespace c_menu_item_flags {
-		static constexpr uint16_t chromakeyed = 1 << 0;
-		static constexpr uint16_t transparent = 1 << 1;
-		static constexpr uint16_t selectable = 1 << 2;
-		static constexpr uint16_t movable = 1 << 3;
-		static constexpr uint16_t centered = 1 << 4;
-		static constexpr uint16_t disabled = 1 << 5;
-		static constexpr uint16_t fade = 1 << 6;
-		static constexpr uint16_t effects = 1 << 7;
-		static constexpr uint16_t only_outgame = 1 << 8;
-		static constexpr uint16_t only_ingame = 1 << 9;
-		static constexpr uint16_t perf_option = 1 << 10;
-		static constexpr uint16_t multiline = 1 << 11;
-		static constexpr uint16_t needs_apply = 1 << 12;
-		static constexpr uint16_t needs_restart = 1 << 13;
-		static constexpr uint16_t extended_menu = 1 << 14;
-	} // namespace c_menu_item_flags
+	enum class c_menu_item_flags : std::uint32_t {
+		chromakeyed = 1 << 0,
+		transparent = 1 << 1,
+		selectable = 1 << 2,
+		movable = 1 << 3,
+		centered = 1 << 4,
+		disabled = 1 << 5,
+		fade = 1 << 6,
+		effects = 1 << 7,
+		only_outgame = 1 << 8,
+		only_ingame = 1 << 9,
+		perf_option = 1 << 10,
+		multiline = 1 << 11,
+		needs_apply = 1 << 12,
+		needs_restart = 1 << 13,
+		extended_menu = 1 << 14,
+	};
+	FLAG(c_menu_item_flags);
 
-	enum class c_menu_item_type : uint8_t {
+	enum class c_menu_item_type : std::uint32_t {
 		unknown = 0,
 		text = 1,
 		slider = 2,
@@ -996,33 +1068,33 @@ namespace phoenix::daedalus {
 		execute_commands = 7,
 	};
 
-	static constexpr int C_MENU_ITEM_TEXT_COUNT = 10;
-	static constexpr int C_MENU_ITEM_SELECT_ACTION_COUNT = 5;
-	static constexpr int C_MENU_ITEM_EVENT_ACTION_COUNT = 10;
-	static constexpr int C_MENU_ITEM_USER_ITEM_COUNT = 4;
-
 	struct c_menu_item : public instance {
+		static constexpr std::uint32_t text_count = 10;
+		static constexpr std::uint32_t select_action_count = 5;
+		static constexpr std::uint32_t event_action_count = 10;
+		static constexpr std::uint32_t user_item_count = 4;
+
 		var string fontname;
-		var string text[C_MENU_ITEM_TEXT_COUNT];
+		var string text[text_count];
 		var string backpic;
 		var string alphamode;
 		var int alpha;
-		var int type;
-		var int on_sel_action[C_MENU_ITEM_SELECT_ACTION_COUNT];
-		var string on_sel_action_s[C_MENU_ITEM_SELECT_ACTION_COUNT];
+		var c_menu_item_type type;
+		var int on_sel_action[select_action_count];
+		var string on_sel_action_s[select_action_count];
 		var string on_chg_set_option;
 		var string on_chg_set_option_section;
-		var func on_event_action[C_MENU_ITEM_EVENT_ACTION_COUNT];
+		var func on_event_action[event_action_count];
 		var int pos_x;
 		var int pos_y;
 		var int dim_x;
 		var int dim_y;
 		var float size_start_scale;
-		var int flags;
+		var c_menu_item_flags flags;
 		var float open_delay_time;
 		var float open_duration;
-		var float user_float[C_MENU_ITEM_USER_ITEM_COUNT];
-		var string user_string[C_MENU_ITEM_USER_ITEM_COUNT];
+		var float user_float[user_item_count];
+		var string user_string[user_item_count];
 		var int frame_sizex;
 		var int frame_sizey;
 		var string hide_if_option_section_set;
@@ -1115,6 +1187,19 @@ namespace phoenix::daedalus {
 		}
 	};
 
+	enum class music_transition_type : std::uint32_t {
+		unknown = 0,
+		none = 1,
+		groove = 2,
+		fill = 3,
+		break_ = 4,
+		intro = 5,
+		end = 6,
+		end_and_into = 7
+	};
+
+	enum class music_transition_subtype : std::uint32_t { unknown = 0, immediate = 1, beat = 2, measure = 3 };
+
 	struct c_music_system : public instance {
 		var float volume;
 		var int bit_resolution;
@@ -1139,8 +1224,8 @@ namespace phoenix::daedalus {
 		var int loop;
 		var float reverbmix;
 		var float reverbtime;
-		var int transtype;
-		var int transsubtype;
+		var music_transition_type transtype;
+		var music_transition_subtype transsubtype;
 
 		static void register_(script& s) {
 			s.register_member("C_MUSICTHEME.FILE", &c_music_theme::file);
@@ -1292,6 +1377,8 @@ namespace phoenix::daedalus {
 	};
 
 	struct c_fx_base : public instance {
+		static constexpr std::uint8_t user_string_count = 5;
+
 		var string vis_name_s;
 		var string vis_size_s;
 		var float vis_alpha;
@@ -1331,7 +1418,7 @@ namespace phoenix::daedalus {
 		var float em_invest_next_key_duration;
 		var float em_fly_gravity;
 		var string em_self_rot_vel_s;
-		var string user_string[5];
+		var string user_string[user_string_count];
 		var string light_preset_name;
 		var string sfx_id;
 		var int sfx_is_ambient;
@@ -1467,7 +1554,7 @@ namespace phoenix::daedalus {
 		}
 	};
 
-	enum class c_fight_ai_move : int32_t {
+	enum class c_fight_ai_move : std::uint32_t {
 		run = 1,
 		run_back = 2,
 		jump_back = 3,
@@ -1487,10 +1574,10 @@ namespace phoenix::daedalus {
 		wait_ext = 24,
 	};
 
-	static constexpr uint8_t C_FIGHT_AI_MOVE_COUNT = 6;
-
 	struct c_fight_ai : public instance {
-		var int move[C_FIGHT_AI_MOVE_COUNT];
+		static constexpr std::uint32_t move_count = 6;
+
+		var c_fight_ai_move move[move_count];
 
 		static void register_(script& s) {
 			s.register_member("C_FIGHTAI.MOVE", &c_fight_ai::move);
