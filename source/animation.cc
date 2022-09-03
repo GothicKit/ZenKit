@@ -125,9 +125,7 @@ namespace phoenix {
 				anim._m_source_path = chunk.get_line(false);
 				anim._m_mds_source = chunk.get_line(false);
 				break;
-			case animation_chunk::animation:
-				// TODO: Reverse engineer this!
-				break;
+			case animation_chunk::animation: // the "animation" chunk is always empty
 			default:
 				break;
 			}
