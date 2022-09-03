@@ -39,6 +39,7 @@ namespace phoenix {
 			crossbow,
 			magic,
 			none,
+			invalid,
 		};
 
 		enum animation_flags : uint8_t {
