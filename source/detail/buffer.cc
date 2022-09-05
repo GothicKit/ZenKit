@@ -1,6 +1,6 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
-#include <phoenix/detail/buffer.hh>
+#include "phoenix/buffer.hh"
 
 #include <fmt/format.h>
 #include <mio/mmap.hpp>

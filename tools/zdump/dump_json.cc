@@ -145,7 +145,7 @@ void dump_json<px::animation>(const px::animation& ani) {
 	        ani.events() | std::views::transform([](const px::animation_event& evt) {
 		        auto evt_type = static_cast<int>(evt.type);
 		        return fmt::format(
-		            R"({{"type": {}, "no": {}, "tag": "{}", "content": [{}], "values": [{}], "probability": {}}})",
+		            R"({{"type": "{}", "no": {}, "tag": "{}", "content": [{}], "values": [{}], "probability": {}}})",
 		            evt_type < 12 ? EVENT_TYPE_NAMES[evt_type] : std::to_string(evt_type),
 		            evt.no,
 		            evt.tag,
@@ -460,8 +460,8 @@ void dump_json<px::model_script>(const px::model_script& obj) {
 			                      auto type = static_cast<int>(b.type);
 			                      auto fight_mode = static_cast<int>(b.fight_mode);
 			                      return fmt::format(
-			                          R"({{"frame": {}, "type": {}, "slot": "{}", "slot2": "{}", "item": "{}", )"
-			                          R"("frames": [{}], "fightMode": {}, "attached": {}}})",
+			                          R"({{"frame": {}, "type": "{}", "slot": "{}", "slot2": "{}", "item": "{}", )"
+			                          R"("frames": [{}], "fightMode": "{}", "attached": {}}})",
 			                          b.frame,
 			                          type < 23 ? EVENT_TAG_TYPE_NAMES[type] : std::to_string(type),
 			                          b.slot,

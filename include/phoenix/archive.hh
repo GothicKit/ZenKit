@@ -1,7 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
-#include <phoenix/detail/buffer.hh>
+#include <phoenix/buffer.hh>
 #include <phoenix/math/bbox.hh>
 #include <phoenix/phoenix.hh>
 

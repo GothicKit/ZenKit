@@ -113,7 +113,6 @@ namespace phoenix {
 				anim._m_samples.resize(anim._m_node_count * anim._m_frame_count);
 
 				for (std::size_t i = 0; i < anim._m_samples.size(); ++i) {
-					// FIXME: first rotation, then position. values seem more reasonable the other way around tho.
 					anim._m_samples[i].rotation = read_sample_quaternion(chunk);
 					anim._m_samples[i].position =
 					    read_sample_position(chunk, anim._m_sample_position_scalar, anim._m_sample_position_range_min);

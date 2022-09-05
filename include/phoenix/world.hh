@@ -1,7 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
-#include <phoenix/detail/buffer.hh>
+#include <phoenix/buffer.hh>
 #include <phoenix/mesh.hh>
 #include <phoenix/world/bsp_tree.hh>
 #include <phoenix/world/vob_tree.hh>
