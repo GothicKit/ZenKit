@@ -150,12 +150,12 @@ namespace phoenix {
 
 			static std::unique_ptr<decal> parse(archive_reader_ref& in, game_version version) {
 				auto vob = std::make_unique<decal>();
-				vob->name = in->read_string();                              // name
-				vob->dimension = in->read_vec2();                           // decalDim
-				vob->offset = in->read_vec2();                              // decalOffset
-				vob->two_sided = in->read_bool();                           // decal2Sided
-				vob->alpha_func = alpha_function_from_int(in->read_enum()); // decalAlphaFunc
-				vob->texture_anim_fps = in->read_float();                   // decalTexAniFPS
+				vob->name = in->read_string();                                  // name
+				vob->dimension = in->read_vec2();                               // decalDim
+				vob->offset = in->read_vec2();                                  // decalOffset
+				vob->two_sided = in->read_bool();                               // decal2Sided
+				vob->alpha_func = static_cast<alpha_function>(in->read_enum()); // decalAlphaFunc
+				vob->texture_anim_fps = in->read_float();                       // decalTexAniFPS
 
 				if (version == game_version::gothic_2) {
 					vob->alpha_weight = in->read_byte();    // decalAlphaWeight
