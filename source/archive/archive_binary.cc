@@ -23,8 +23,7 @@ namespace phoenix {
 		if (input.remaining() < 12)
 			return false;
 
-		_m_next_object = input.position();
-		_m_next_object += input.get_uint(); // object size including itself
+		_m_object_end.push(input.position() + input.get_uint());
 
 		obj.version = input.get_ushort();
 		obj.index = input.get_uint();
@@ -34,7 +33,12 @@ namespace phoenix {
 	}
 
 	bool archive_reader_binary::read_object_end() {
-		return input.position() == _m_next_object;
+		if (input.position() == _m_object_end.top()) {
+			_m_object_end.pop();
+			return true;
+		}
+
+		return false;
 	}
 
 	std::string archive_reader_binary::read_string() {
@@ -77,11 +81,14 @@ namespace phoenix {
 		return input.get_vec2();
 	}
 
-	void archive_reader_binary::skip_entry() {}
+	void archive_reader_binary::skip_entry() {
+		throw parser_error {"archive_reader", "cannot skip entry in binary archive"};
+	}
 
 	void archive_reader_binary::skip_object(bool skip_current) {
 		if (skip_current) {
-			input.position(_m_next_object);
+			input.position(_m_object_end.top());
+			_m_object_end.pop();
 		} else {
 			input.skip(input.get_uint());
 		}

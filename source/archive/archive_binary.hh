@@ -3,6 +3,8 @@
 #pragma once
 #include <phoenix/archive.hh>
 
+#include <stack>
+
 namespace phoenix {
 	class archive_reader_binary final : public archive_reader {
 	public:
@@ -34,7 +36,7 @@ namespace phoenix {
 		void read_header() override;
 
 	private:
-		uint64_t _m_next_object {0};
+		std::stack<uint64_t> _m_object_end {};
 		int _m_objects {0};
 	};
 } // namespace phoenix
