@@ -18,7 +18,7 @@ namespace phoenix {
 			throw parser_error {"messages", "root object is not 'zCCSLib'"};
 		}
 
-		auto item_count = archive->read_int();
+		auto item_count = archive->read_int(); // NumOfItems
 		msgs._m_blocks.reserve(static_cast<std::uint64_t>(item_count));
 
 		for (int i = 0; i < item_count; ++i) {
@@ -27,18 +27,21 @@ namespace phoenix {
 			}
 
 			auto& itm = msgs._m_blocks.emplace_back();
-			itm.name = archive->read_string();
-			(void) archive->read_int();   /* TODO: function unknown at this time */
-			(void) archive->read_float(); /* TODO: function unknown at this time */
+			itm.name = archive->read_string();      // blockName
+			auto block_count = archive->read_int(); // numOfBlocks
+			(void) archive->read_float();           // subBlock0
 
-			// TODO: check class/object name!
-			if (!archive->read_object_begin(obj)) {
-				throw parser_error("messages", "expected atomic block - not found");
+			if (block_count != 1) {
+				throw parser_error {"messages",
+				                    fmt::format("expected only one block but got {} for {}", block_count, itm.name)};
 			}
 
-			// TODO: check class/object name!
-			if (!archive->read_object_begin(obj)) {
-				throw parser_error("messages: failed to read message database: expected message block - not found");
+			if (!archive->read_object_begin(obj) || obj.class_name != "zCCSAtomicBlock") {
+				throw parser_error {"messages", "expected atomic block not found for " + itm.name};
+			}
+
+			if (!archive->read_object_begin(obj) || obj.class_name != "oCMsgConversation:oCNpcMessage:zCEventMessage") {
+				throw parser_error {"messages", "expected oCMsgConversation not found for " + itm.name};
 			}
 
 			// Quirk: Binary message dbs have a byte here instead of an enum.
@@ -50,18 +53,31 @@ namespace phoenix {
 
 			itm.message.text = archive->read_string();
 			itm.message.name = archive->read_string();
-			msgs._m_blocks_by_name[itm.name] = &itm;
+			msgs._m_blocks_by_name[itm.name] = msgs._m_blocks.size() - 1;
 
 			if (!archive->read_object_end()) {
+				// FIXME: in binary archives this might skip whole sections of the file due to faulty object
+				//        extents in the archive. This might be due to encoding errors the version of ZenGin
+				//        used with Gothic I
 				archive->skip_object(true);
+				fmt::print(stderr,
+				           "warning: messages: not all data consumed from oCMsgConversation (name: \"{}\")\n",
+				           itm.name);
+			}
+
+			if (!archive->read_object_end()) {
+				// FIXME: in Gothic I cutscene libraries, there is a `synchronized` attribute here
+				archive->skip_object(true);
+				fmt::print(stderr,
+				           "warning: messages: not all data consumed from zCCSAtomicBlock (name: \"{}\")\n",
+				           itm.name);
 			}
 
 			if (!archive->read_object_end()) {
 				archive->skip_object(true);
-			}
-
-			if (!archive->read_object_end()) {
-				archive->skip_object(true);
+				fmt::print(stderr,
+				           "warning: messages: not all data consumed from zCCSBlock (name: \"{}\")\n",
+				           itm.name);
 			}
 		}
 
@@ -74,7 +90,7 @@ namespace phoenix {
 
 	const message_block* messages::block_by_name(const std::string& name) const {
 		if (auto it = _m_blocks_by_name.find(name); it != _m_blocks_by_name.end()) {
-			return it->second;
+			return &_m_blocks[it->second];
 		}
 
 		return nullptr;
