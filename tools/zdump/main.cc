@@ -108,6 +108,7 @@ file_format detect_file_format(px::buffer&& buf) {
 
 	buf.reset();
 	if (buf.get_line() == "ZenGin Archive") {
+		buf.reset();
 		auto copy = buf.duplicate();
 		auto reader = phoenix::archive_reader::open(copy);
 
