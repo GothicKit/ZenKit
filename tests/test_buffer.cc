@@ -3,6 +3,7 @@
 #include "phoenix/buffer.hh"
 #include <doctest/doctest.h>
 
+#include <array>
 #include <cstring>
 
 template <typename... Args>
