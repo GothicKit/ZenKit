@@ -1,9 +1,35 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
-#include <phoenix/detail/compat.hh>
 #include <phoenix/vdfs.hh>
 
 namespace phoenix {
+	std::time_t dos_to_unix_time(std::uint32_t dos) noexcept {
+		struct tm t {};
+
+		t.tm_year = ((int) ((dos >> 25) & 0x7F)) + 80;
+		t.tm_mon = ((int) ((dos >> 21) & 0xF)) - 1;
+		t.tm_mday = (int) ((dos >> 16) & 0x1F);
+		t.tm_hour = (int) ((dos >> 11) & 0x1F);
+		t.tm_min = (int) ((dos >> 5) & 0x3F);
+		t.tm_sec = ((int) ((dos >> 0) & 0x1F)) * 2;
+
+		return mktime(&t);
+	}
+
+	std::uint32_t unix_time_to_dos(std::time_t nix) noexcept {
+		struct std::tm* t {std::gmtime(&nix)};
+		std::uint32_t dos {0};
+
+		dos |= static_cast<std::uint32_t>((t->tm_year - 80) << 25);
+		dos |= static_cast<std::uint32_t>((t->tm_mon + 1) << 21);
+		dos |= static_cast<std::uint32_t>(t->tm_mday << 16);
+		dos |= static_cast<std::uint32_t>(t->tm_hour << 11);
+		dos |= static_cast<std::uint32_t>(t->tm_min << 5);
+		dos |= static_cast<std::uint32_t>((t->tm_sec / 2) << 0);
+
+		return dos;
+	}
+
 	vdf_header::vdf_header(std::string_view comment, std::time_t timestamp)
 	    : _m_comment(comment), _m_timestamp(timestamp) {}
 

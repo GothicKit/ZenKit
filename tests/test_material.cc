@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/material.hh>
 
-#include "doctest/doctest.h"
+#include <doctest/doctest.h>
 
 using namespace phoenix;
 

@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/mesh.hh>
 #include <phoenix/model_script.hh>
-
-#include <phoenix/detail/compat.hh>
+#include <phoenix/phoenix.hh>
 
 #include "model_script_dsl.hh"
 

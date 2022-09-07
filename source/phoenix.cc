@@ -25,4 +25,10 @@ namespace phoenix {
 	                        cause.what(),
 	                        context)),
 	      resource_type(std::move(resource_type)), context(std::move(context)), cause(cause) {}
+
+	bool iequals(std::string_view a, std::string_view b) {
+		return std::equal(a.begin(), a.end(), b.begin(), b.end(), [](char a, char b) {
+			return std::tolower(a) == std::tolower(b);
+		});
+	}
 } // namespace phoenix

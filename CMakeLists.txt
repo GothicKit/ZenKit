@@ -20,9 +20,7 @@ endif ()
 
 set(PX_SOURCES
 		source/phoenix.cc
-
-		source/detail/compat.cc
-		source/detail/buffer.cc
+		source/buffer.cc
 
 		source/archive/archive_ascii.cc
 		source/archive/archive_binary.cc

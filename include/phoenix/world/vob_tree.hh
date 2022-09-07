@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include <phoenix/archive.hh>
-#include <phoenix/detail/compat.hh>
+#include <phoenix/phoenix.hh>
 #include <phoenix/vobs/vob.hh>
 
 #include <glm/mat3x3.hpp>

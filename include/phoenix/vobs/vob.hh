@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include <phoenix/archive.hh>
-#include <phoenix/detail/compat.hh>
 #include <phoenix/material.hh>
+#include <phoenix/phoenix.hh>
 
 namespace phoenix {
 	/// \brief All possible VOb types.

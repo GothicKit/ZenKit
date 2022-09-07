@@ -1,6 +1,6 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
-#include "doctest/doctest.h"
+#include <doctest/doctest.h>
 #include <phoenix/daedalus/script.hh>
 
 static bool compare_instruction(phoenix::daedalus::instruction a, phoenix::daedalus::instruction b) {

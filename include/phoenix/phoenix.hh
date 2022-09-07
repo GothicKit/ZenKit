@@ -8,6 +8,21 @@
 #include <utility>
 
 namespace phoenix {
+	/// \brief An enum for providing a game version hint to some functions
+	enum class game_version {
+		gothic_1, ///< Represents any patch of Gothic
+		gothic_2, ///< Represents any patch of Gothic II, including _Night of the Raven_.
+	};
+
+	/// \brief Tests whether two strings are equal when ignoring case.
+	///
+	/// Internally, uses std::tolower to compare the strings character by character.
+	///
+	/// \param a A string.
+	/// \param b Another string.
+	/// \return ``true`` if both strings are equal when ignoring case.
+	bool iequals(std::string_view a, std::string_view b);
+
 	/// \brief Base class for all exceptions.
 	class error : public std::exception {
 	public:

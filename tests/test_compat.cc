@@ -1,7 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
-#include "doctest/doctest.h"
-#include <phoenix/detail/compat.hh>
+#include <doctest/doctest.h>
+#include <phoenix/phoenix.hh>
 
 TEST_SUITE("compat") {
 	TEST_CASE("time encodings are converted correctly") {

@@ -1,6 +1,6 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
-#include "doctest/doctest.h"
+#include <doctest/doctest.h>
 #include <phoenix/model_mesh.hh>
 
 TEST_SUITE("model meshes") {

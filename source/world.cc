@@ -1,7 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #include <phoenix/archive.hh>
-#include <phoenix/detail/compat.hh>
+#include <phoenix/phoenix.hh>
 #include <phoenix/world.hh>
 
 #include <fmt/format.h>
