@@ -1,4 +1,6 @@
-# the _phoenix_ project
+# the _phoenix_ project#
+
+**Here be dragons! _phoenix_ is currently changing very rapidly and your application _will_ break! Be prepared to change a lot of code when updating to new versions!**
 
 The _phoenix_ project aims to re-implement file formats used by the _ZenGin_ made by [Piranha Bytes](https://www.piranha-bytes.com/)
 for their early-2000s games [Gothic](https://en.wikipedia.org/wiki/Gothic_(video_game)) and [Gothic II](https://en.wikipedia.org/wiki/Gothic_II).
