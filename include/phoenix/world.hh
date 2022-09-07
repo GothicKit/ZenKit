@@ -46,7 +46,7 @@ namespace phoenix {
 			return parse(in, version);
 		}
 
-		std::vector<std::unique_ptr<vobs::vob>> world_vobs;
+		std::vector<std::unique_ptr<vob>> world_vobs;
 		mesh world_mesh;
 		bsp_tree world_bsp_tree;
 		way_net world_way_net;

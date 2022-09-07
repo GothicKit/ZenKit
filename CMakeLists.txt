@@ -49,6 +49,15 @@ set(PX_SOURCES
 		source/world/vob_tree.cc
 		source/world/way_net.cc
 
+		source/vobs/camera.cc
+		source/vobs/light.cc
+		source/vobs/misc.cc
+		source/vobs/mob.cc
+		source/vobs/sound.cc
+		source/vobs/trigger.cc
+		source/vobs/vob.cc
+		source/vobs/zone.cc
+
 		source/daedalus/script.cc
 		source/daedalus/interpreter.cc
 
