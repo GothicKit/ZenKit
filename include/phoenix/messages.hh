@@ -47,7 +47,7 @@ namespace phoenix {
 		/// [ZenLib](https://github.com/Try/ZenLib).</p>
 		///
 		/// \param[in,out] buf The buffer to read from.
-		/// \return The parsed font object.
+		/// \return The parsed message database object.
 		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
 		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
 		///       using buffer::duplicate.
@@ -57,7 +57,7 @@ namespace phoenix {
 
 		/// \brief Parses a message database from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
-		/// \return The parsed font object.
+		/// \return The parsed message database object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
 		[[nodiscard]] inline static messages parse(buffer&& path) {

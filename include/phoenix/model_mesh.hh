@@ -12,6 +12,10 @@ namespace phoenix {
 	class model_mesh {
 	public:
 		/// \brief Parses a model mesh from the data in the given buffer.
+		///
+		/// <p>This implementation is heavily based on the implementation found in
+		/// [ZenLib](https://github.com/Try/ZenLib).</p>
+		///
 		/// \param[in,out] buf The buffer to read from.
 		/// \return The parsed model mesh object.
 		/// \note After this function returns the position of \p buf will be at the end of the parsed object.

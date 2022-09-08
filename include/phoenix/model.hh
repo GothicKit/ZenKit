@@ -7,7 +7,7 @@
 #include <phoenix/model_mesh.hh>
 
 namespace phoenix {
-	/// \brief Represents a *ZenGin* model file.
+	/// \brief Represents a *ZenGin* model.
 	///
 	/// <p>*ZenGin* models contain a phoenix::model_mesh and a phoenix::model_hierarchy bundled into one file. Try are
 	/// typically found in files with the `MDL` extension.</p>

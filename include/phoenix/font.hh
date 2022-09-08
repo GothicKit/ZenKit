@@ -38,7 +38,7 @@ namespace phoenix {
 		///          try to load it into *ZenGin*, it will fail.
 		font(std::string name, std::uint32_t height, std::vector<glyph> glyphs);
 
-		/// \brief Parses a font from the data in the given reader.
+		/// \brief Parses a font from the data in the given buffer.
 		///
 		/// <p>This implementation is heavily based on the implementation found in
 		/// [ZenLib](https://github.com/Try/ZenLib). The only change to the parsing logic is, that this implementation
@@ -54,7 +54,7 @@ namespace phoenix {
 		/// \see #parse(buffer&&)
 		[[nodiscard]] static font parse(buffer& buf);
 
-		/// \brief Parses a font from the data in the given reader.
+		/// \brief Parses a font from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed font object.
 		/// \throws parser_error if parsing fails.

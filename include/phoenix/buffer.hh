@@ -21,7 +21,6 @@
 #include <vector>
 
 namespace phoenix {
-
 	/// \brief Base class for exceptions thrown by a phoenix::buffer.
 	class buffer_error : public error {
 	public:
