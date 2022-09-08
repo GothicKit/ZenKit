@@ -31,15 +31,16 @@ namespace phoenix {
 			window,
 		};
 
+		/// \brief A set of fight stances the player can take.
 		enum class event_fight_mode {
-			fist,
-			one_handed,
-			two_handed,
-			bow,
-			crossbow,
-			magic,
-			none,
-			invalid,
+			fist,       ///< The player fights with his fists.
+			one_handed, ///< The player wields a one-handed weapon.
+			two_handed, ///< The player wields a two-handed weapon.
+			bow,        ///< The player wields a bow.
+			crossbow,   ///< The player wields a crossbow.
+			magic,      ///< The player casts a magic spell.
+			none,       ///< The player is not in a fighting stance.
+			invalid,    ///< A fight mode which acts as an `unset` marker. Added for OpenGothic compatibility.
 		};
 
 		enum animation_flags : uint8_t {
@@ -51,32 +52,27 @@ namespace phoenix {
 			af_idle = 16,
 		};
 
+		/// \brief The way the animation is to be played.
 		enum class animation_direction : uint8_t {
-			forward = 0,
-			backward = 1,
+			forward = 0,  ///< The animation samples are played from first to last.
+			backward = 1, ///< The animation samples are played from last to first.
 		};
 
-		/**
-		 * @brief The `meshAndTree` tag
-		 * @remark MDS syntax: `meshAndTree(<string> [DONT_USE_MESH])`
-		 */
+		/// \brief The `meshAndTree` tag
+		/// \remark MDS syntax: `meshAndTree(<string> [DONT_USE_MESH])`
 		struct skeleton {
 			std::string name;
 			bool disable_mesh {false};
 		};
 
-		/**
-		 * @brief The `modelTag` tag
-		 * @remark MDS syntax: `modelTag(<string> <string>)`
-		 */
+		/// \brief The `modelTag` tag
+		/// \remark MDS syntax: `modelTag(<string> <string>)`
 		struct model_tag {
 			std::string bone;
 		};
 
-		/**
-		 * @brief The `*eventTag` tag
-		 * @remark MDS syntax: `*eventTag(<int> <string> [<string>] [<string>] [ATTACH])`
-		 */
+		/// \brief The `*eventTag` tag
+		/// \remark MDS syntax: `*eventTag(<int> <string> [<string>] [<string>] [ATTACH])`
 		struct event_tag {
 			std::int32_t frame;
 			event_tag_type type;
@@ -88,10 +84,8 @@ namespace phoenix {
 			bool attached {false};
 		};
 
-		/**
-		 * @brief The `*eventPFX` tag
-		 * @remark MDS syntax: `*eventPFX(<int> [<int>] <string> <string> [ATTACH])`
-		 */
+		/// \brief The `*eventPFX` tag
+		/// \remark MDS syntax: `*eventPFX(<int> [<int>] <string> <string> [ATTACH])`
 		struct event_pfx {
 			std::int32_t frame;
 			std::int32_t index {0};
@@ -100,10 +94,8 @@ namespace phoenix {
 			bool attached {false};
 		};
 
-		/**
-		 * @brief The `*eventCamTremor` tag
-		 * @remark MDS syntax: `*eventCamTremor(<int> <int> <int> <int> <int>)`
-		 */
+		/// \brief The `*eventCamTremor` tag
+		/// \remark MDS syntax: `*eventCamTremor(<int> <int> <int> <int> <int>)`
 		struct event_camera_tremor {
 			std::int32_t frame {0};
 			std::int32_t field1 {0};
@@ -112,19 +104,15 @@ namespace phoenix {
 			std::int32_t field4 {0};
 		};
 
-		/**
-		 * @brief The `*eventPFXStop` tag
-		 * @remark MDS syntax: `*eventPFXStop(<int> <int>)`
-		 */
+		/// \brief The `*eventPFXStop` tag
+		/// \remark MDS syntax: `*eventPFXStop(<int> <int>)`
 		struct event_pfx_stop {
 			std::int32_t frame;
 			std::int32_t index;
 		};
 
-		/**
-		 * @brief The `*eventSFX` tag
-		 * @remark MDS syntax: `*eventSFX(<int> <string> [R:<float>] [EMPTY_SLOT])`
-		 */
+		/// \brief The `*eventSFX` tag
+		/// \remark MDS syntax: `*eventSFX(<int> <string> [R:<float>] [EMPTY_SLOT])`
 		struct event_sfx {
 			std::int32_t frame;
 			std::string name;
@@ -132,10 +120,8 @@ namespace phoenix {
 			bool empty_slot {false};
 		};
 
-		/**
-		 * @brief The `*eventSFXGrnd` tag
-		 * @remark MDS syntax: `*eventSFXGrnd(<int> <string>)`
-		 */
+		/// \brief The `*eventSFXGrnd` tag
+		/// \remark MDS syntax: `*eventSFXGrnd(<int> <string>)`
 		struct event_sfx_ground {
 			std::int32_t frame;
 			std::string name;
@@ -143,21 +129,17 @@ namespace phoenix {
 			bool empty_slot {false};
 		};
 
-		/**
-		 * @brief The `*eventMMStartAni` tag
-		 * @remark MDS syntax: `*eventMMStartAni(<int> <string> [<string>])`
-		 */
+		/// \brief The `*eventMMStartAni` tag
+		/// \remark MDS syntax: `*eventMMStartAni(<int> <string> [<string>])`
 		struct event_morph_animate {
 			std::int32_t frame;
 			std::string animation;
 			std::string node {};
 		};
 
-		/**
-		 * @brief The `aniAlias` tag
-		 * @remark MDS syntax: `ani(<string> <int> <string> <float> <float> <flags> <string> <F|R> <int> <int>
-		 *         [FPS:<float>] [CVS:<float>])`
-		 */
+		/// \brief The `aniAlias` tag
+		/// \remark MDS syntax: `ani(<string> <int> <string> <float> <float> <flags> <string> <F|R> <int> <int>
+		///         [FPS:<float>] [CVS:<float>])`
 		struct animation {
 			std::string name;
 			std::uint32_t layer;
@@ -182,10 +164,8 @@ namespace phoenix {
 			std::vector<event_camera_tremor> tremors {};
 		};
 
-		/**
-		 * @brief The `aniAlias` tag
-		 * @remark MDS syntax: `aniAlias(<string> <int> <string> <float> <float> <flags> <string> [<F|R>])`
-		 */
+		/// \brief The `aniAlias` tag
+		/// \remark MDS syntax: `aniAlias(<string> <int> <string> <float> <float> <flags> <string> [<F|R>])`
 		struct animation_alias {
 			std::string name;
 			std::uint32_t layer;
@@ -197,10 +177,8 @@ namespace phoenix {
 			animation_direction direction;
 		};
 
-		/**
-		 * @brief The `aniBlend` tag
-		 * @remark MDS syntax: `aniBlend(<string> [<int>] <string> [<float> <float>])`
-		 */
+		/// \brief The `aniBlend` tag
+		/// \remark MDS syntax: `aniBlend(<string> [<int>] <string> [<float> <float>])`
 		struct animation_blending {
 			std::string name;
 			std::string next;
@@ -208,10 +186,8 @@ namespace phoenix {
 			float blend_out {0};
 		};
 
-		/**
-		 * @brief The `aniComb` tag
-		 * @remark MDS syntax: `aniComb(<string> <int> <string> <float> <float> <flags> <string> <int>)`
-		 */
+		/// \brief The `aniComb` tag
+		/// \remark MDS syntax: `aniComb(<string> <int> <string> <float> <float> <flags> <string> <int>)`
 		struct animation_combination {
 			std::string name;
 			std::uint32_t layer;
@@ -226,47 +202,60 @@ namespace phoenix {
 		animation_flags animation_flags_from_string(std::string_view str);
 	} // namespace mds
 
-	/**
-	 * @brief Represents a model script containing animation settings.
-	 *
-	 * Parses ZenGin model scripts. The reference implementation can be found on GitHub:
-	 * https://github.com/Try/ZenLib/blob/master/zenload/modelScriptParser.cpp
-	 *
-	 * Thanks to the original author, Andre Taulien, nigleb, noahndertaler and ousnius as well
-	 * as Try for additional work on their ZenLib fork!
-	 *
-	 * @see https://github.com/ataulien/ZenLib
-	 * @see https://github.com/Try/ZenLib
-	 */
+	/// \brief Represents a *ZenGin* model script.
+	///
+	/// <p>Model scripts contain animations related to a model and actions the animation controller should take during
+	/// or after an animation plays (such as playing a sound).</p>
 	class model_script {
 	public:
-		/**
-		 * @brief Parses a model script (MDS) file from the given buffer.
-		 * @param buf A buffer to parse from.
-		 * @return The parsed model script.
-		 */
+		/// \brief Parses a model script from the data in the given buffer.
+		/// \param[in,out] buf The buffer to read from.
+		/// \return The parsed model script.
+		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
+		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
+		///       using buffer::duplicate.
+		/// \throws parser_error if parsing fails.
+		/// \see #parse(buffer&&)
 		[[nodiscard]] static model_script parse(buffer& buf);
 
-		/**
-		 * @brief Parses a model script (MDS) file from the given buffer.
-		 * @param buf A buffer to parse from.
-		 * @return The parsed model script.
-		 */
+		/// \brief Parses a model script from the data in the given buffer.
+		/// \param[in] buf The buffer to read from (by rvalue-reference).
+		/// \return The parsed model script.
+		/// \throws parser_error if parsing fails.
+		/// \see #parse(buffer&)
 		[[nodiscard]] inline static model_script parse(buffer&& buf) {
-			return parse(buf);
+			return model_script::parse(buf);
 		}
 
-		/**
-		 * @brief Parses a binary model script (MSB) file from the given buffer.
-		 * @param buf A buffer to parse from.
-		 * @return The parsed model script.
-		 */
-		static model_script parse_binary(buffer& buf);
+		/// \brief Parses a compiled model script from the data in the given buffer.
+		/// \param[in,out] buf The buffer to read from.
+		/// \return The parsed model script.
+		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
+		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
+		///       using buffer::duplicate.
+		/// \throws parser_error if parsing fails.
+		/// \see #parse_binary(buffer&&)
+		[[nodiscard]] static model_script parse_binary(buffer& buf);
+
+		// \brief Parses a compiled model script from the data in the given buffer.
+		/// \param[in] buf The buffer to read from (by rvalue-reference).
+		/// \return The parsed model script.
+		/// \throws parser_error if parsing fails.
+		/// \see #parse_binary(buffer&)
+		[[nodiscard]] inline static model_script parse_binary(buffer&& buf) {
+			return model_script::parse_binary(buf);
+		}
 
 	public:
+		/// \brief The model skeleton this model script was made for.
 		mds::skeleton skeleton;
+
+		/// \brief A list of meshes which can be used with this model script.
 		std::vector<std::string> meshes;
+
+		/// \brief A list of animation names which are disabled.
 		std::vector<std::string> disabled_animations;
+
 		std::vector<mds::animation_combination> combinations;
 		std::vector<mds::animation_blending> blends;
 		std::vector<mds::animation_alias> aliases;
