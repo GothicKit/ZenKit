@@ -1,6 +1,5 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
-#include <phoenix/detail/compat.hh>
 #include <phoenix/model.hh>
 #include <phoenix/morph_mesh.hh>
 #include <phoenix/proto_mesh.hh>

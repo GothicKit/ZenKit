@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include <phoenix/animation.hh>
-#include <phoenix/detail/compat.hh>
 #include <phoenix/font.hh>
 #include <phoenix/mesh.hh>
 #include <phoenix/messages.hh>
