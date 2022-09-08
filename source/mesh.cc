@@ -5,6 +5,9 @@
 #include <fmt/format.h>
 
 namespace phoenix {
+	static constexpr auto mesh_version_g1 = 9;
+	static constexpr auto mesh_version_g2 = 265;
+
 	enum class world_mesh_chunk : std::uint16_t {
 		unknown,
 		mesh = 0xB000,
@@ -93,7 +96,7 @@ namespace phoenix {
 					[[maybe_unused]] plane polygon_plane = {chunk.get_float(), chunk.get_vec3()};
 					polygon_flags pflags {};
 
-					if (version == version_g2) {
+					if (version == mesh_version_g2) {
 						std::uint8_t flags = chunk.get();
 						pflags.is_portal = (flags & 0b00000011) >> 0;
 						pflags.is_occluder = (flags & 0b00000100) >> 2;
@@ -121,17 +124,17 @@ namespace phoenix {
 
 					if (leaf_poly_it != leaf_polygons.end() && *leaf_poly_it != i) {
 						// If the current polygon is not a leaf polygon, skip it.
-						chunk.skip((version == version_g2 ? 8 : 6) * vertex_count);
+						chunk.skip((version == mesh_version_g2 ? 8 : 6) * vertex_count);
 						continue;
 					} else if (vertex_count == 0 || pflags.is_portal || pflags.is_ghost_occluder || pflags.is_outdoor) {
 						// There is no actual geometry associated with this vertex; ignore it.
-						chunk.skip((version == version_g2 ? 8 : 6) * vertex_count);
+						chunk.skip((version == mesh_version_g2 ? 8 : 6) * vertex_count);
 					} else if (vertex_count == 3) {
 						// If we have 3 vertices, we are sure that this is already a triangle,
 						// so we can just read it in
 						for (int j = 0; j < vertex_count; ++j) {
-							msh._m_polygons.vertex_indices.push_back(version == version_g2 ? chunk.get_uint()
-							                                                               : chunk.get_ushort());
+							msh._m_polygons.vertex_indices.push_back(version == mesh_version_g2 ? chunk.get_uint()
+							                                                                    : chunk.get_ushort());
 
 							msh._m_polygons.feature_indices.push_back(chunk.get_uint());
 						}
@@ -142,14 +145,14 @@ namespace phoenix {
 					} else {
 						// If we don't have 3 vertices, we need to calculate a triangle fan.
 
-						auto vertex_index_root = version == version_g2 ? chunk.get_uint() : chunk.get_ushort();
+						auto vertex_index_root = version == mesh_version_g2 ? chunk.get_uint() : chunk.get_ushort();
 						auto feature_index_root = chunk.get_uint();
 
-						auto vertex_index_a = version == version_g2 ? chunk.get_uint() : chunk.get_ushort();
+						auto vertex_index_a = version == mesh_version_g2 ? chunk.get_uint() : chunk.get_ushort();
 						auto feature_index_a = chunk.get_uint();
 
 						for (int j = 0; j < vertex_count - 2; ++j) {
-							auto vertex_index_b = version == version_g2 ? chunk.get_uint() : chunk.get_ushort();
+							auto vertex_index_b = version == mesh_version_g2 ? chunk.get_uint() : chunk.get_ushort();
 							auto feature_index_b = chunk.get_uint();
 
 							msh._m_polygons.vertex_indices.push_back(vertex_index_root);
