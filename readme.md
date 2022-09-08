@@ -1,4 +1,4 @@
-# the _phoenix_ project#
+# the _phoenix_ project
 
 **Here be dragons! _phoenix_ is currently changing very rapidly and your application _will_ break! Be prepared to change a lot of code when updating to new versions!**
 
