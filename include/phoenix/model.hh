@@ -7,28 +7,37 @@
 #include <phoenix/model_mesh.hh>
 
 namespace phoenix {
+	/// \brief Represents a *ZenGin* model file.
+	///
+	/// <p>*ZenGin* models contain a phoenix::model_mesh and a phoenix::model_hierachy bundled into one file. Try are
+	/// typically found in files with the `MDL` extension.</p>
 	class model {
 	public:
-		/**
-		 * @brief Parses a model from a file.
-		 * @param in The buffer to read from.
-		 * @return The model just read.
-		 */
-		[[nodiscard]] static model parse(buffer& in);
+		/// \brief Parses a model from the data in the given buffer.
+		/// \param[in,out] buf The buffer to read from.
+		/// \return The parsed model object.
+		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
+		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
+		///       using buffer::duplicate.
+		/// \throws parser_error if parsing fails.
+		/// \see #parse(buffer&&)
+		[[nodiscard]] static model parse(buffer& buf);
 
-		/**
-		 * @brief Parses a model from a file.
-		 * @param in The buffer to read from.
-		 * @return The model just read.
-		 */
-		[[nodiscard]] inline static model parse(buffer&& in) {
-			return parse(in);
+		/// \brief Parses a model from the data in the given buffer.
+		/// \param[in] buf The buffer to read from (by rvalue-reference).
+		/// \return The parsed model object.
+		/// \throws parser_error if parsing fails.
+		/// \see #parse(buffer&)
+		[[nodiscard]] inline static model parse(buffer&& buf) {
+			return model::parse(buf);
 		}
 
-		[[nodiscard]] const model_hierachy& hierachy() const noexcept {
+		/// \return The phoenix::model_hierachy associated with this model.
+		[[nodiscard]] const model_hierachy& hierarchy() const noexcept {
 			return _m_hierarchy;
 		}
 
+		/// \return The phoenix::model_mesh associated with this model.
 		[[nodiscard]] const model_mesh& mesh() const noexcept {
 			return _m_mesh;
 		}
