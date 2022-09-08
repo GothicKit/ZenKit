@@ -5,6 +5,9 @@
 #include <fmt/format.h>
 
 namespace phoenix {
+	static constexpr auto version_g1 = 0x305;
+	static constexpr auto version_g2 = 0x905;
+
 	enum class proto_chunk { unknown, mesh = 0xB100, end = 0xB1FF };
 
 	proto_mesh proto_mesh::parse(buffer& in) {

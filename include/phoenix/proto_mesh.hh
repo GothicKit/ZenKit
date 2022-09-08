@@ -29,11 +29,14 @@ namespace phoenix {
 		glm::vec3 normal;
 	};
 
+	/// \brief An offset and size tuple for mesh sections.
 	struct mesh_section {
 		std::uint32_t offset;
 		std::uint32_t size;
 	};
 
+	/// \brief Offsets and sizes of binary data sections containing sub-mesh data.
+	/// \note This is only of use phoenix-internally.
 	struct sub_mesh_section {
 		mesh_section triangles;
 		mesh_section wedges;
@@ -47,11 +50,11 @@ namespace phoenix {
 		mesh_section edge_scores;
 	};
 
-	/**
-	 * @brief Represents a sub-mesh
-	 */
+	/// \brief Represents a sub-mesh.
 	struct sub_mesh {
+		/// \brief The material of this sub mesh.
 		material mat;
+
 		std::vector<triangle> triangles;
 		std::vector<wedge> wedges;
 		std::vector<float> colors;
@@ -62,98 +65,80 @@ namespace phoenix {
 		std::vector<float> edge_scores;
 		std::vector<std::uint16_t> wedge_map;
 
-		/**
-		 * @brief Reads sub-mesh data from a reader.
-		 * @param in The reader to read from
-		 * @param map A a section map for the sub-mesh.
-		 * @return The sub-mesh read.
-		 */
-		static sub_mesh parse(buffer& in, const sub_mesh_section& map);
+		/// \brief Reads sub-mesh data from a reader.
+		/// \param in The reader to read from
+		/// \param map A a section map for the sub-mesh.
+		/// \return The sub-mesh read.
+		[[nodiscard]] static sub_mesh parse(buffer& in, const sub_mesh_section& map);
 	};
 
-	/**
-	 * @brief Represents a basic mesh (.MRM).
-	 *
-	 * Parses ZenGin mesh (MRM) files. The reference implementation can be found on GitHub:
-	 * https://github.com/Try/ZenLib/blob/732077c82589f5060d1762839293b996c8222c18/zenload/zCProgMeshProto.cpp and the
-	 * original version by Andre Taulien was also referenced:
-	 * https://github.com/ataulien/ZenLib/blob/e1a5e1b12e71690a5470f3be2aa3d0d6419f5191/zenload/zCProgMeshProto.cpp
-	 *
-	 * Thanks to the original author, Andre Taulien as well as Try for additional work on their ZenLib fork!
-	 *
-	 * @see https://github.com/ataulien/ZenLib
-	 * @see https://github.com/Try/ZenLib
-	 */
+	/// \brief Represents a *ZenGin* proto mesh.
+	///
+	/// <p>A proto mesh is a mesh which is made up of multiple sub-meshes. Each sub-mesh has its own material and
+	/// related values.</p>
 	class proto_mesh {
 	public:
-		/**
-		 * @brief Read a mesh from the given reader.
-		 * @param in The reader to read from.
-		 * @return The mesh read.
-		 */
+		/// \brief Parses a proto mesh from the data in the given buffer.
+		/// \param[in,out] buf The buffer to read from.
+		/// \return The parsed proto mesh.
+		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
+		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
+		///       using buffer::duplicate.
+		/// \throws parser_error if parsing fails.
+		/// \see #parse(buffer&&)
 		[[nodiscard]] static proto_mesh parse(buffer& in);
 
-		/**
-		 * @brief Read a mesh from the given reader.
-		 * @param in The reader to read from.
-		 * @return The mesh read.
-		 */
+		/// \brief Parses a proto mesh from the data in the given buffer.
+		/// \param[in] buf The buffer to read from (by rvalue-reference).
+		/// \return The parsed proto mesh.
+		/// \throws parser_error if parsing fails.
+		/// \see #parse(buffer&)
 		[[nodiscard]] static proto_mesh parse(buffer&& in) {
-			return parse(in);
+			return proto_mesh::parse(in);
 		}
 
-		/**
-		 * @brief Reads a proto mesh directly from a section.
-		 * @param in The section to read from.
-		 * @return The mesh just read.
-		 */
-		static proto_mesh parse_from_section(buffer& in);
+		/// \brief Parses a proto mesh directly from the given buffer.
+		///
+		/// This function assumes that the caller has already parsed part of the file and should only be used if you
+		/// know what you're doing. If you just want to parse a basic proto mesh, please use #parse.
+		///
+		/// \param[in,out] buf The buffer to read from.
+		/// \return The parsed proto mesh.
+		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
+		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
+		///       using buffer::duplicate.
+		/// \throws parser_error if parsing fails.
+		[[nodiscard]] static proto_mesh parse_from_section(buffer& in);
 
-		/**
-		 * @return The vertex positions associated with the mesh.
-		 */
+		/// \return The vertex positions associated with the mesh.
 		[[nodiscard]] inline const std::vector<glm::vec3>& positions() const noexcept {
 			return _m_vertices;
 		}
 
-		/**
-		 * @return The normal vectors of the mesh.
-		 * @note I'm not yet sure why this is here since normals are stored in sub-meshes as well.
-		 */
+		/// \return The normal vectors of the mesh.
 		[[nodiscard]] inline const std::vector<glm::vec3>& normals() const noexcept {
 			return _m_normals;
 		}
 
-		/**
-		 * @return A list of sub-meshes of the mesh.
-		 */
+		/// \return A list of sub-meshes of the mesh.
 		[[nodiscard]] inline const std::vector<sub_mesh>& submeshes() const noexcept {
 			return _m_sub_meshes;
 		}
 
-		/**
-		 * @return A list of all materials used by the mesh.
-		 */
+		/// \return A list of all materials used by the mesh.
 		[[nodiscard]] inline const std::vector<material>& materials() const noexcept {
 			return _m_materials;
 		}
 
-		/**
-		 * @return The bounding box of the mesh as a (min, max) tuple.
-		 */
+		/// \return The bounding box of the mesh.
 		[[nodiscard]] inline bounding_box bbox() const noexcept {
 			return _m_bbox;
 		}
 
-		/**
-		 * @return If alpha testing should be enabled.
-		 */
+		/// \return If alpha testing should be enabled.
 		[[nodiscard]] inline bool alpha_test() const noexcept {
 			return _m_has_alpha_test;
 		}
-
-		static constexpr auto version_g1 = 0x305;
-		static constexpr auto version_g2 = 0x905;
 
 	private:
 		std::vector<glm::vec3> _m_vertices;
