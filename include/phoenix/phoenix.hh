@@ -8,6 +8,8 @@
 #include <utility>
 
 namespace phoenix {
+	class buffer;
+
 	/// \brief An enum for providing a game version hint to some functions
 	enum class game_version {
 		gothic_1, ///< Represents any patch of Gothic
@@ -22,6 +24,21 @@ namespace phoenix {
 	/// \param b Another string.
 	/// \return ``true`` if both strings are equal when ignoring case.
 	bool iequals(std::string_view a, std::string_view b);
+
+	/// \brief A basic datetime structure used by the *ZenGin*.
+	struct date {
+		/// \brief Parses a date from a buffer.
+		/// \param buf The buffer to read from
+		/// \return The date.
+		static date parse(buffer& buf);
+
+		std::uint32_t year;
+		std::uint16_t month;
+		std::uint16_t day;
+		std::uint16_t hour;
+		std::uint16_t minute;
+		std::uint16_t second;
+	};
 
 	/// \brief Base class for all exceptions.
 	class error : public std::exception {

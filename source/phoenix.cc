@@ -1,7 +1,9 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
-#include <fmt/format.h>
+#include <phoenix/buffer.hh>
 #include <phoenix/phoenix.hh>
+
+#include <fmt/format.h>
 
 #include <utility>
 
@@ -30,5 +32,16 @@ namespace phoenix {
 		return std::equal(a.begin(), a.end(), b.begin(), b.end(), [](char a, char b) {
 			return std::tolower(a) == std::tolower(b);
 		});
+	}
+
+	date date::parse(buffer& buf) {
+		auto dt = date {buf.get_uint(),
+		                buf.get_ushort(),
+		                buf.get_ushort(),
+		                buf.get_ushort(),
+		                buf.get_ushort(),
+		                buf.get_ushort()};
+		(void) buf.get_ushort(); // padding
+		return dt;
 	}
 } // namespace phoenix

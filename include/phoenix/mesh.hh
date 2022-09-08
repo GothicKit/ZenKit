@@ -6,35 +6,11 @@
 #include <phoenix/math/bbox.hh>
 #include <phoenix/math/light_map.hh>
 #include <phoenix/math/obb.hh>
+#include <phoenix/phoenix.hh>
 #include <phoenix/proto_mesh.hh>
 #include <phoenix/texture.hh>
 
 namespace phoenix {
-	struct date {
-		/**
-		 * @brief Parses a date from a buffer.
-		 * @param buf The buffer to read from
-		 * @return The date.
-		 */
-		static date parse(buffer& buf) {
-			auto dt = date {buf.get_uint(),
-			                buf.get_ushort(),
-			                buf.get_ushort(),
-			                buf.get_ushort(),
-			                buf.get_ushort(),
-			                buf.get_ushort()};
-			(void) buf.get_ushort(); // padding
-			return dt;
-		}
-
-		std::uint32_t year;
-		std::uint16_t month;
-		std::uint16_t day;
-		std::uint16_t hour;
-		std::uint16_t minute;
-		std::uint16_t second;
-	};
-
 	/**
 	 * @brief Represents a vertex feature.
 	 */
