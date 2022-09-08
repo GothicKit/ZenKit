@@ -137,7 +137,7 @@ namespace phoenix {
 			throw parser_error {"archive_reader_ascii", "raw entry does not contain enough bytes to be a 3x3 matrix"};
 		}
 
-		auto beg_it = in.begin().base();
+		auto beg_it = in.data();
 
 		glm::mat3x3 v {};
 		std::uint8_t tmp[4];
@@ -160,7 +160,7 @@ namespace phoenix {
 		std::vector<std::byte> out {};
 		out.resize(in.length() / 2);
 
-		auto beg_it = in.begin().base();
+		auto beg_it = in.data();
 
 		for (std::byte& i : out) {
 			std::from_chars(beg_it + 0, beg_it + 2, reinterpret_cast<std::uint8_t&>(i), 16);

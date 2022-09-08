@@ -8,14 +8,24 @@ option(PX_BUILD_EXAMPLES "Build example code" OFF)
 option(PX_NO_SANITIZERS "Build without sanitizers in debug mode" OFF)
 
 set(CMAKE_CXX_STANDARD 20)
-set(PX_CXX_FLAGS -Wall -Wextra -Werror -Wconversion)
 
-if (${CMAKE_BUILD_TYPE} MATCHES "Debug" AND NOT ${PX_NO_SANITIZERS})
-    set(PX_CXX_FLAGS ${PX_CXX_FLAGS} -fsanitize=address -fsanitize=undefined -fsanitize=leak)
+if (MSVC)
+	# TODO: enable warnings as errors
+	set(PX_CXX_FLAGS "/W4")
 
-    if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
-        set(PX_CXX_FLAGS ${PX_CXX_FLAGS} -fstandalone-debug)
-    endif ()
+	if (${CMAKE_BUILD_TYPE} MATCHES "Debug" AND NOT ${PX_NO_SANITIZERS})
+		set(PX_CXX_FLAGS ${PX_CXX_FLAGS} "/fsanitize=address")
+	endif ()
+else ()
+	set(PX_CXX_FLAGS -Wall -Wextra -Werror -Wconversion)
+
+	if (${CMAKE_BUILD_TYPE} MATCHES "Debug" AND NOT ${PX_NO_SANITIZERS})
+		set(PX_CXX_FLAGS ${PX_CXX_FLAGS} -fsanitize=address -fsanitize=undefined -fsanitize=leak)
+
+		if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+			set(PX_CXX_FLAGS ${PX_CXX_FLAGS} -fstandalone-debug)
+		endif ()
+	endif ()
 endif ()
 
 set(PX_SOURCES
@@ -81,7 +91,10 @@ set(PX_TESTS
 		tests/test_model.cc
 		tests/test_model_script.cc)
 
-add_library(phoenix ${PX_SOURCES})
+
+file(GLOB_RECURSE PX_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include/**/*.hh")
+
+add_library(phoenix ${PX_SOURCES} ${PX_HEADERS})
 target_include_directories(phoenix PUBLIC include)
 target_link_libraries(phoenix PUBLIC glm fmt squish mio lexy)
 target_compile_options(phoenix PRIVATE ${PX_CXX_FLAGS})

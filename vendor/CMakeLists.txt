@@ -7,7 +7,10 @@ add_subdirectory(doctest)
 add_subdirectory(mio)
 add_subdirectory(lexy)
 
-target_compile_options(mio INTERFACE -Wno-conversion)
+# msvc: disable -wno-* flags
+if (NOT MSVC)
+	target_compile_options(mio INTERFACE -Wno-conversion)
+endif()
 
 FetchContent_Declare(
 		libsquish
@@ -21,7 +24,11 @@ if(NOT libsquish_POPULATED)
 	SET(BUILD_SQUISH_WITH_OPENMP OFF CACHE BOOL "" FORCE)
 	add_subdirectory(${libsquish_SOURCE_DIR} ${libsquish_BINARY_DIR})
 	target_include_directories(squish PUBLIC ${libsquish_SOURCE_DIR})
-	target_compile_options(squish PRIVATE -Wno-unused-but-set-variable)
+
+	# msvc: disable -wno-* flags
+	if (NOT MSVC)
+		target_compile_options(squish PRIVATE -Wno-unused-but-set-variable)
+	endif()
 endif()
 
 add_library(stb INTERFACE)

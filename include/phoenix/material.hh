@@ -111,7 +111,7 @@ namespace phoenix {
 		float wave_max_amplitude {0.0f};
 		float wave_grid_size {0.0f};
 		bool ignore_sun {false};
-		alpha_function alpha_func {0};
+		alpha_function alpha_func {alpha_function::none};
 		glm::vec2 default_mapping {};
 	};
 } // namespace phoenix
