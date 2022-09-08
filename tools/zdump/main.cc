@@ -56,7 +56,7 @@ VERSION
 
 int dump(file_format fmt, px::buffer& in, bool json) {
 	if (fmt == file_format::mdh) {
-		dump(phoenix::model_hierachy::parse(in), json);
+		dump(phoenix::model_hierarchy::parse(in), json);
 	} else if (fmt == file_format::man) {
 		dump(phoenix::animation::parse(in), json);
 	} else if (fmt == file_format::csl) {

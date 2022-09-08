@@ -6,7 +6,7 @@
 TEST_SUITE("model hierarchies") {
 	TEST_CASE("model hierarchies (MDHs) are read correctly") {
 		auto in = phoenix::buffer::mmap("./samples/hierarchy0.mdh");
-		auto mesh = phoenix::model_hierachy::parse(in);
+		auto mesh = phoenix::model_hierarchy::parse(in);
 
 		CHECK(mesh.nodes().size() == 7);
 		CHECK(mesh.nodes()[0].name == "BIP01 MUEHLE");

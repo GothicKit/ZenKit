@@ -99,7 +99,7 @@ void dump_text<px::animation>(const px::animation& animation) {
 }
 
 template <>
-void dump_text<px::model_hierachy>(const px::model_hierachy& hierachy) {
+void dump_text<px::model_hierarchy>(const px::model_hierarchy& hierachy) {
 	fmt::print("Type: Model Hierarchy File\n");
 	fmt::print("Root Translation: vec3(x={}, y={}, z={})\n",
 	           hierachy.root_translation().x,

@@ -162,7 +162,7 @@ void dump_json<px::animation>(const px::animation& ani) {
 }
 
 template <>
-void dump_json<px::model_hierachy>(const px::model_hierachy& obj) {
+void dump_json<px::model_hierarchy>(const px::model_hierarchy& obj) {
 	fmt::print(R"({{"type": "skeleton", "rootTranslation": {{"x": {}, "y": {}, "z": {}}}, )"
 	           R"("bbox": [{{"x": {}, "y": {}, "z": {}}}, {{"x": {}, "y": {}, "z": {}}}], )"
 	           R"("collisionBbox": [{{"x": {}, "y": {}, "z": {}}}, {{"x": {}, "y": {}, "z": {}}}], "nodes": [{}]}})",

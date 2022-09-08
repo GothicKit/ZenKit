@@ -7,8 +7,8 @@
 namespace phoenix {
 	enum class hierarchy_chunk { unknown, hierarchy = 0xD100, stats = 0xD110, end = 0xD120 };
 
-	model_hierachy model_hierachy::parse(buffer& in) {
-		model_hierachy hierarchy;
+	model_hierarchy model_hierarchy::parse(buffer& in) {
+		model_hierarchy hierarchy;
 
 		hierarchy_chunk type = hierarchy_chunk::unknown;
 		bool end_hierarchy = false;

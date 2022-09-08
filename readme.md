@@ -20,7 +20,7 @@ Currently, the following file formats are supported.
 | Format                   |           Extension            | Description                                                                                                                | _phoenix_ Class Name |
 |--------------------------|:------------------------------:|----------------------------------------------------------------------------------------------------------------------------|----------------------|
 | Model Animation          |             `.MAN`             | Contains animations for a model                                                                                            | `animation`          |
-| Model Hierarchy          |             `.MDH`             | Contains skeletal information for a model                                                                                  | `model_hierachy`     |
+| Model Hierarchy          |             `.MDH`             | Contains skeletal information for a model                                                                                  | `model_hierarchy`    |
 | Model Mesh               |             `.MDM`             | Contains the mesh of a model                                                                                               | `model_mesh`         |
 | Model                    |             `.MDL`             | Contains a mesh and a hierarchy which make up a model                                                                      | `model`              |
 | Morph Mesh Binary        |             `.MMB`             | Contains a morph mesh with its mesh, skeleton and animation data                                                           | `morph_mesh`         |

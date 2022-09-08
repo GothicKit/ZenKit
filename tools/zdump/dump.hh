@@ -132,14 +132,14 @@ void dump_json<px::animation>(const px::animation& obj);
  * @param fnt The object to print.
  */
 template <>
-void dump_text<px::model_hierachy>(const px::model_hierachy& obj);
+void dump_text<px::model_hierarchy>(const px::model_hierarchy& obj);
 
 /**
  * @brief Prints all relevant data of the given skeleton to <tt>stdout</tt> as JSON text.
  * @param fnt The object to print.
  */
 template <>
-void dump_json<px::model_hierachy>(const px::model_hierachy& obj);
+void dump_json<px::model_hierarchy>(const px::model_hierarchy& obj);
 
 /**
  * @brief Prints information about the given texture to <tt>stdout</tt>.

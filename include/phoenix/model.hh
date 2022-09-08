@@ -9,7 +9,7 @@
 namespace phoenix {
 	/// \brief Represents a *ZenGin* model file.
 	///
-	/// <p>*ZenGin* models contain a phoenix::model_mesh and a phoenix::model_hierachy bundled into one file. Try are
+	/// <p>*ZenGin* models contain a phoenix::model_mesh and a phoenix::model_hierarchy bundled into one file. Try are
 	/// typically found in files with the `MDL` extension.</p>
 	class model {
 	public:
@@ -32,8 +32,8 @@ namespace phoenix {
 			return model::parse(buf);
 		}
 
-		/// \return The phoenix::model_hierachy associated with this model.
-		[[nodiscard]] const model_hierachy& hierarchy() const noexcept {
+		/// \return The phoenix::model_hierarchy associated with this model.
+		[[nodiscard]] const model_hierarchy& hierarchy() const noexcept {
 			return _m_hierarchy;
 		}
 
@@ -43,7 +43,7 @@ namespace phoenix {
 		}
 
 	private:
-		model_hierachy _m_hierarchy;
+		model_hierarchy _m_hierarchy;
 		model_mesh _m_mesh;
 	};
 } // namespace phoenix
