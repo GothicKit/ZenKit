@@ -84,7 +84,10 @@ set(PX_TESTS
 		tests/test_model.cc
 		tests/test_model_script.cc)
 
-add_library(phoenix ${PX_SOURCES})
+
+file(GLOB_RECURSE PX_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include/**/*.hh")
+
+add_library(phoenix ${PX_SOURCES} ${PX_HEADERS})
 target_include_directories(phoenix PUBLIC include)
 target_link_libraries(phoenix PUBLIC glm fmt squish mio lexy)
 target_compile_options(phoenix PRIVATE ${PX_CXX_FLAGS})
