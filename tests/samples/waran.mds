@@ -6,7 +6,7 @@ Model("TestModel") {
 	// A comment.
 
 	aniEnum {
-		ani("aniName1" 111 "aniNext1" 4.2 0.5 MI "aniModel1" F 221 331 FPS:25 CVS:0.2)
+		ani("aniName1" 111 "aniNext1" 4.2 0.5 MI "aniModel1" F 221 -331 FPS:25 CVS:0.2
 
 		ani("aniName2" 112 "aniNext2" 9.0 0 M. "aniModel2" R 222 332) {
 			*eventTag(0 "DEF_DROP_TORCH" ATTACH)
@@ -15,6 +15,7 @@ Model("TestModel") {
 
 			*eventSFX(3 "sfxName1" EMPTY_SLOT)
 			*eventSFX(4 "sfxName2" R:67.4)
+			*eventSFX(4 "sfxName3" R:98.1 EMTPY_SLOT)
 			*eventSFXGrnd(5 "sfxGrndName")
 
 			*eventPFX(6 "pfxName1" "pfxPosition1" ATTACH)

@@ -21,7 +21,7 @@ TEST_SUITE("model script") {
 		CHECK(script.animations[0].model == "aniModel1");
 		CHECK(script.animations[0].direction == phoenix::mds::animation_direction::forward);
 		CHECK(script.animations[0].first_frame == 221);
-		CHECK(script.animations[0].last_frame == 331);
+		CHECK(script.animations[0].last_frame == -331);
 		CHECK(script.animations[0].fps == 25);
 		CHECK(script.animations[0].speed == 0);
 		CHECK(script.animations[0].collision_volume_scale == 0.2f);
@@ -61,7 +61,7 @@ TEST_SUITE("model script") {
 		CHECK(script.animations[1].events[2].item == "eventItem");
 		CHECK(script.animations[1].events[2].attached == false);
 
-		CHECK(script.animations[1].sfx.size() == 2);
+		CHECK(script.animations[1].sfx.size() == 3);
 		CHECK(script.animations[1].sfx[0].frame == 3);
 		CHECK(script.animations[1].sfx[0].name == "sfxName1");
 		CHECK(script.animations[1].sfx[0].empty_slot == true);
