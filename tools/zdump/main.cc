@@ -101,9 +101,15 @@ file_format detect_file_format(px::buffer&& buf) {
 		return file_format::msb;
 
 	buf.reset();
-	if (std::regex_search(buf.get_line(), std::regex(R"(\s*Model\s*\(\s*"[\w\d]+"\s*\))", std::regex::icase))) {
-		return file_format::mds;
-	}
+	std::string line;
+	do {
+		line = buf.get_line();
+
+		if (std::regex_search(line, std::regex(R"(\s*Model\s*\(\s*"[\w\d]+"\s*\))", std::regex::icase))) {
+			buf.reset();
+			return file_format::mds;
+		}
+	} while (line.starts_with("//"));
 
 	buf.reset();
 	if (buf.get_line() == "ZenGin Archive") {
@@ -176,7 +182,7 @@ int main(int argc, char** argv) {
 			}
 
 			return dump(detect_file_format(in.duplicate()), in, args.get<bool>("j") || args.get<bool>("json"));
-		} catch (const std::exception& e) {
+		} catch (const px::parser_error& e) {
 			fmt::print(stderr, "failed to parse file: {}", e.what());
 			return EXIT_FAILURE;
 		}
