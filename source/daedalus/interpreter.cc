@@ -180,18 +180,30 @@ namespace phoenix::daedalus {
 			case op_assign_int:
 			case op_assign_func: {
 				auto [ref, idx, context] = pop_reference();
-				ref->set_int(pop_int(), idx, context);
+
+				if (!ref->is_member() || context != nullptr || !(_m_flags & vm_allow_null_instance_access)) {
+					ref->set_int(pop_int(), idx, context);
+				}
+
 				break;
 			}
 			case op_assign_float: {
 				auto [ref, idx, context] = pop_reference();
-				ref->set_float(pop_float(), idx, context);
+
+				if (!ref->is_member() || context != nullptr || !(_m_flags & vm_allow_null_instance_access)) {
+					ref->set_float(pop_float(), idx, context);
+				}
+
 				break;
 			}
 			case op_assign_string: {
 				auto [target, target_idx, context] = pop_reference();
 				auto source = pop_string();
-				target->set_string(source, target_idx, context);
+
+				if (!target->is_member() || context != nullptr || !(_m_flags & vm_allow_null_instance_access)) {
+					target->set_string(source, target_idx, context);
+				}
+
 				break;
 			}
 			case op_assign_stringref:
@@ -398,7 +410,19 @@ namespace phoenix::daedalus {
 	}
 
 	const std::string& vm::pop_string() {
+		static std::string empty {};
 		auto [s, i, context] = pop_reference();
+
+		// compatibility: sometimes the context might be zero, but we can't fail so when
+		//                the compatibility flag is set, we just return 0
+		if (s->is_member() && context == nullptr) {
+			if (!(_m_flags & vm_allow_null_instance_access)) {
+				throw no_context {*s};
+			}
+
+			return empty;
+		}
+
 		return s->get_string(i, context);
 	}
 
