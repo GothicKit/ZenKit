@@ -6,44 +6,48 @@
 #include <string>
 
 namespace phoenix::daedalus {
-	illegal_type_access::illegal_type_access(const symbol& sym, datatype expected)
-	    : illegal_access(fmt::format("illegal access of type {} on symbol {} which is another type ({})",
-	                                 int(expected),
-	                                 sym.name(),
-	                                 int(sym.type()))) {}
+	symbol_not_found::symbol_not_found(std::string&& name) : script_error("symbol not found: " + name), name(name) {}
 
-	illegal_index_access::illegal_index_access(const symbol& sym, std::uint8_t index)
-	    : illegal_access(fmt::format("illegal access of out-of-bounds index {} while reading {}", index, sym.name())) {}
+	member_registration_error::member_registration_error(const symbol* sym, std::string&& message)
+	    : script_error("cannot register member " + sym->name() + ": " + message), sym(sym) {}
 
-	illegal_const_access::illegal_const_access(const symbol& sym)
-	    : illegal_access(fmt::format("illegal mutable access of const symbol {}", sym.name())) {}
-
-	illegal_instance_access::illegal_instance_access(const symbol& sym, std::uint32_t expected_parent)
-	    : illegal_access(fmt::format("illegal access of member {} which does not have the same parent "
-	                                 "class as the context instance ({} != {})",
-	                                 sym.name(),
-	                                 sym.parent(),
-	                                 expected_parent)) {}
-
-	unbound_member_access::unbound_member_access(const symbol& sym)
-	    : illegal_access(fmt::format("illegal access of unbound member {}", sym.name())) {}
-
-	symbol_not_found::symbol_not_found(const std::string& name) : std::runtime_error("symbol not found: " + name) {}
-
-	no_context::no_context(const symbol& sym)
-	    : illegal_access(fmt::format("illegal access of member {} without a context set.", sym.name())) {}
-
-	illegal_context_type::illegal_context_type(const symbol& sym, const std::type_info& context_type)
-	    : illegal_access("cannot access member " + sym.name() + " on context instance of type " + context_type.name() +
-	                     " because this symbol is registered to instances of type " + sym.registered_to().name()) {}
-
-	member_registration_error::member_registration_error(const symbol& sym, std::string_view message)
-	    : std::runtime_error("cannot register member " + sym.name() + ": " + message.data()) {}
-
-	invalid_registration_datatype::invalid_registration_datatype(const symbol& sym, const std::string& given)
+	invalid_registration_datatype::invalid_registration_datatype(const symbol* sym, std::string&& given)
 	    : member_registration_error(sym,
 	                                "wrong datatype: provided '" + given + "' expected " +
-	                                    DAEDALUS_DATA_TYPE_NAMES[sym.type()]) {}
+	                                    DAEDALUS_DATA_TYPE_NAMES[sym->type()]) {}
+
+	illegal_type_access::illegal_type_access(const symbol* sym, datatype expected)
+	    : illegal_access(fmt::format("illegal access of type {} on symbol {} which is another type ({})",
+	                                 int(expected),
+	                                 sym->name(),
+	                                 int(sym->type()))),
+	      sym(sym), expected(expected) {}
+
+	illegal_index_access::illegal_index_access(const symbol* sym, std::uint8_t index)
+	    : illegal_access(fmt::format("illegal access of out-of-bounds index {} while reading {}", index, sym->name())),
+	      sym(sym), index(index) {}
+
+	illegal_const_access::illegal_const_access(const symbol* sym)
+	    : illegal_access(fmt::format("illegal mutable access of const symbol {}", sym->name())), sym(sym) {}
+
+	illegal_instance_access::illegal_instance_access(const symbol* sym, std::uint32_t expected_parent)
+	    : illegal_access(fmt::format("illegal access of member {} which does not have the same parent "
+	                                 "class as the context instance ({} != {})",
+	                                 sym->name(),
+	                                 sym->parent(),
+	                                 expected_parent)),
+	      sym(sym), expected_parent(expected_parent) {}
+
+	unbound_member_access::unbound_member_access(const symbol* sym)
+	    : illegal_access(fmt::format("illegal access of unbound member {}", sym->name())), sym(sym) {}
+
+	no_context::no_context(const symbol* sym)
+	    : illegal_access(fmt::format("illegal access of member {} without a context set.", sym->name())), sym(sym) {}
+
+	illegal_context_type::illegal_context_type(const symbol* sym, const std::type_info& context_type)
+	    : illegal_access("cannot access member " + sym->name() + " on context instance of type " + context_type.name() +
+	                     " because this symbol is registered to instances of type " + sym->registered_to().name()),
+	      sym(sym), context_type(context_type) {}
 
 	instruction instruction::decode(buffer& in) {
 		instruction s {};
@@ -282,15 +286,15 @@ namespace phoenix::daedalus {
 
 	const std::string& symbol::get_string(std::uint8_t index, const std::shared_ptr<instance>& context) const {
 		if (type() != dt_string) {
-			throw illegal_type_access(*this, dt_string);
+			throw illegal_type_access(this, dt_string);
 		}
 		if (count() <= index) {
-			throw illegal_index_access(*this, index);
+			throw illegal_index_access(this, index);
 		}
 
 		if (is_member()) {
 			if (context == nullptr) {
-				throw no_context(*this);
+				throw no_context(this);
 			}
 			return *get_member_ptr<std::string>(index, context);
 		} else {
@@ -300,15 +304,15 @@ namespace phoenix::daedalus {
 
 	float symbol::get_float(std::uint8_t index, const std::shared_ptr<instance>& context) const {
 		if (type() != dt_float) {
-			throw illegal_type_access(*this, dt_float);
+			throw illegal_type_access(this, dt_float);
 		}
 		if (count() <= index) {
-			throw illegal_index_access(*this, index);
+			throw illegal_index_access(this, index);
 		}
 
 		if (is_member()) {
 			if (context == nullptr) {
-				throw no_context(*this);
+				throw no_context(this);
 			}
 			return *get_member_ptr<float>(index, context);
 		} else {
@@ -318,15 +322,15 @@ namespace phoenix::daedalus {
 
 	std::int32_t symbol::get_int(std::uint8_t index, const std::shared_ptr<instance>& context) const {
 		if (type() != dt_integer && type() != dt_function) {
-			throw illegal_type_access(*this, dt_integer);
+			throw illegal_type_access(this, dt_integer);
 		}
 		if (count() <= index) {
-			throw illegal_index_access(*this, index);
+			throw illegal_index_access(this, index);
 		}
 
 		if (is_member()) {
 			if (context == nullptr) {
-				throw no_context(*this);
+				throw no_context(this);
 			}
 			return *get_member_ptr<std::int32_t>(index, context);
 		} else {
@@ -336,18 +340,18 @@ namespace phoenix::daedalus {
 
 	void symbol::set_string(const std::string& value, std::uint8_t index, const std::shared_ptr<instance>& context) {
 		if (is_const()) {
-			throw illegal_const_access(*this);
+			throw illegal_const_access(this);
 		}
 		if (type() != dt_string) {
-			throw illegal_type_access(*this, dt_string);
+			throw illegal_type_access(this, dt_string);
 		}
 		if (count() <= index) {
-			throw illegal_index_access(*this, index);
+			throw illegal_index_access(this, index);
 		}
 
 		if (is_member()) {
 			if (context == nullptr) {
-				throw no_context(*this);
+				throw no_context(this);
 			}
 			*get_member_ptr<std::string>(index, context) = value;
 		} else {
@@ -357,18 +361,18 @@ namespace phoenix::daedalus {
 
 	void symbol::set_float(float value, std::uint8_t index, const std::shared_ptr<instance>& context) {
 		if (is_const()) {
-			throw illegal_const_access(*this);
+			throw illegal_const_access(this);
 		}
 		if (type() != dt_float) {
-			throw illegal_type_access(*this, dt_float);
+			throw illegal_type_access(this, dt_float);
 		}
 		if (count() <= index) {
-			throw illegal_index_access(*this, index);
+			throw illegal_index_access(this, index);
 		}
 
 		if (is_member()) {
 			if (context == nullptr) {
-				throw no_context(*this);
+				throw no_context(this);
 			}
 			*get_member_ptr<float>(index, context) = value;
 		} else {
@@ -378,18 +382,18 @@ namespace phoenix::daedalus {
 
 	void symbol::set_int(std::int32_t value, std::uint8_t index, const std::shared_ptr<instance>& context) {
 		if (is_const()) {
-			throw illegal_const_access(*this);
+			throw illegal_const_access(this);
 		}
 		if (type() != dt_integer && type() != dt_function) {
-			throw illegal_type_access(*this, dt_integer);
+			throw illegal_type_access(this, dt_integer);
 		}
 		if (count() <= index) {
-			throw illegal_index_access(*this, index);
+			throw illegal_index_access(this, index);
 		}
 
 		if (is_member()) {
 			if (context == nullptr) {
-				throw no_context(*this);
+				throw no_context(this);
 			}
 			*get_member_ptr<std::int32_t>(index, context) = value;
 		} else {
@@ -399,15 +403,17 @@ namespace phoenix::daedalus {
 
 	const std::shared_ptr<instance>& symbol::get_instance() {
 		if (type() != dt_instance) {
-			throw illegal_type_access(*this, dt_instance);
+			throw illegal_type_access(this, dt_instance);
 		}
+
 		return std::get<std::shared_ptr<instance>>(_m_value);
 	}
 
 	void symbol::set_instance(const std::shared_ptr<instance>& inst) {
 		if (type() != dt_instance) {
-			throw illegal_type_access(*this, dt_instance);
+			throw illegal_type_access(this, dt_instance);
 		}
+
 		std::get<std::shared_ptr<instance>>(_m_value) = inst;
 	}
 } // namespace phoenix::daedalus

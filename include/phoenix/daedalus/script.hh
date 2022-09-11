@@ -14,64 +14,66 @@
 #define unset 0xFF'FF'FF'FFU
 
 namespace phoenix::daedalus {
-	/**
-	 * @brief Types of symbols
-	 */
+	/// \brief Daedalus data types.
 	enum datatype : std::uint32_t {
-		dt_void = 0U,
-		dt_float = 1U,
-		dt_integer = 2U,
-		dt_string = 3U,
-		dt_class = 4U,
-		dt_function = 5U,
-		dt_prototype = 6U,
-		dt_instance = 7U,
+		dt_void = 0U,      ///< A datatype similar to C++'s `void`.
+		dt_float = 1U,     ///< A 32-bit floating point type similar to C++'s `float`.
+		dt_integer = 2U,   ///< A 32-bit signed integer type like std::int32_t
+		dt_string = 3U,    ///< A [Windows-1252](https://en.wikipedia.org/wiki/Windows-1252) encoded character array.
+		dt_class = 4U,     ///< A structure definition.
+		dt_function = 5U,  ///< A function definition or a function pointer represented as a 32-bit signed integer.
+		dt_prototype = 6U, ///< A prototype definition.
+		dt_instance = 7U,  ///< An instance definition or instance reference represented as a 32-bit unsigned integer.
 	};
 
-	constexpr const char* const DAEDALUS_DATA_TYPE_NAMES[] =
-	    {"void", "float", "int", "string", "class", "function", "prototype", "instance"};
+	constexpr const char* const DAEDALUS_DATA_TYPE_NAMES[] = {
+	    "void",
+	    "float",
+	    "int",
+	    "string",
+	    "class",
+	    "function",
+	    "prototype",
+	    "instance",
+	};
 
-	/**
-	 * @brief Flags set on symbols.
-	 */
+	/// \brief Flags of symbols.
 	enum flag : std::uint32_t {
-		sf_const = 1U << 0U,
-		sf_return = 1U << 1U,
-		sf_member = 1U << 2U,
-		sf_external = 1U << 3U,
-		sf_merged = 1U << 4U,
+		sf_const = 1U << 0U,    ///< The symbol is not mutable.
+		sf_return = 1U << 1U,   ///< The symbol is a function and has a return value.
+		sf_member = 1U << 2U,   ///< The symbol is a class member.
+		sf_external = 1U << 3U, ///< The symbol refers to an external function.
+		sf_merged = 1U << 4U,   ///< Unused.
 	};
 
-	/**
-	 * @brief All opcodes supported by the daedalus interpreter
-	 */
+	/// \brief All opcodes supported by the daedalus interpreter
 	enum opcode : std::uint8_t {
-		op_add = 0,               // a + b
-		op_subtract = 1,          // a - b
-		op_multiply = 2,          // a * b
-		op_divide = 3,            // a / b
-		op_modulo = 4,            // a % b
-		op_bitor = 5,             // a | b
-		op_bitand = 6,            // a & b
-		op_less = 7,              // a < b
-		op_greater = 8,           // a > b
-		op_assign_int = 9,        // a = b
-		op_or = 11,               // a || b
-		op_and = 12,              // a && b
-		op_shift_left = 13,       // a << b
-		op_shift_right = 14,      // a >> b
-		op_less_or_equal = 15,    // a <= b
-		op_equal = 16,            // a == b
-		op_not_equal = 17,        // a != b
-		op_greater_or_equal = 18, // a >= b
-		op_assign_add = 19,       // a += b (a = a + b)
-		op_assign_subtract = 20,  // a -= b (a = a - b)
-		op_assign_multiply = 21,  // a *= b (a = a * b)
-		op_assign_divide = 22,    // a /= b (a = a / b)
-		op_plus = 30,             // +a
-		op_minus = 31,            // -a
-		op_not = 32,              // !a
-		op_complement = 33,       // ~a
+		op_add = 0,               ///< a + b
+		op_subtract = 1,          ///< a - b
+		op_multiply = 2,          ///< a/// b
+		op_divide = 3,            ///< a / b
+		op_modulo = 4,            ///< a % b
+		op_bitor = 5,             ///< a | b
+		op_bitand = 6,            ///< a & b
+		op_less = 7,              ///< a < b
+		op_greater = 8,           ///< a > b
+		op_assign_int = 9,        ///< a = b
+		op_or = 11,               ///< a || b
+		op_and = 12,              ///< a && b
+		op_shift_left = 13,       ///< a << b
+		op_shift_right = 14,      ///< a >> b
+		op_less_or_equal = 15,    ///< a <= b
+		op_equal = 16,            ///< a == b
+		op_not_equal = 17,        ///< a != b
+		op_greater_or_equal = 18, ///< a >= b
+		op_assign_add = 19,       ///< a += b (a = a + b)
+		op_assign_subtract = 20,  ///< a -= b (a = a - b)
+		op_assign_multiply = 21,  ///< a *= b (a = a/// b)
+		op_assign_divide = 22,    ///< a /= b (a = a / b)
+		op_plus = 30,             ///< +a
+		op_minus = 31,            ///< -a
+		op_not = 32,              ///< !a
+		op_complement = 33,       ///< ~a
 		op_noop = 45,
 		op_return = 60,
 		op_call = 61,
@@ -87,24 +89,20 @@ namespace phoenix::daedalus {
 		op_jump = 75,
 		op_jump_if_zero = 76,
 		op_set_instance = 80,
-		op_push_array_var = 245, // EParOp_PushVar + EParOp_Array
+		op_push_array_var = 245,
 	};
 
 	class symbol;
 
-	/**
-	 * @brief Represents an object associated with an instance in the script.
-	 *
-	 * Every class defined in C++ that can be used as an instance has to inherit from this class.
-	 */
+	/// \brief Represents an object associated with an instance in the script.
+	///
+	/// Every class defined in C++ that can be used as an instance has to inherit from this class.
 	class instance {
 	public:
 		virtual ~instance() = default;
 
-		/**
-		 * @return The index of the symbol this instance is bound to.
-		 */
-		inline uint32_t symbol_index() const {
+		/// \return The index of the symbol this instance is bound to.
+		[[nodiscard]] inline uint32_t symbol_index() const {
 			return _m_symbol_index;
 		}
 
@@ -120,267 +118,307 @@ namespace phoenix::daedalus {
 		const std::type_info* _m_type {nullptr};
 	};
 
-	struct symbol_not_found : public std::runtime_error {
-		explicit symbol_not_found(const std::string& name);
+	/// \brief The base class for all exceptions thrown by interacting with a script.
+	struct script_error : public error {
+		using error::error;
 	};
 
-	struct member_registration_error : public std::runtime_error {
-		explicit member_registration_error(const symbol& sym, std::string_view message);
+	/// \brief An exception thrown if the symbol with a given name could not be found.
+	struct symbol_not_found : public script_error {
+	public:
+		explicit symbol_not_found(std::string&& name);
+
+	public:
+		std::string name;
 	};
 
-	struct invalid_registration_datatype final : member_registration_error {
-		explicit invalid_registration_datatype(const symbol& sym, const std::string& given);
+	/// \brief An exception thrown if registering a class member was unsuccessful.
+	struct member_registration_error : public script_error {
+	public:
+		explicit member_registration_error(const symbol* sym, std::string&& message);
+
+	public:
+		/// \brief The symbol being registered.
+		const symbol* sym;
 	};
 
-	/**
-	 * @brief An exception thrown when the value of a symbol is illegally accessed.
-	 */
-	struct illegal_access : public std::runtime_error {
-		using std::runtime_error::runtime_error;
+	/// \brief An exception thrown if the type of the member being registered does not match the type provided.
+	struct invalid_registration_datatype final : public member_registration_error {
+	public:
+		explicit invalid_registration_datatype(const symbol* sym, std::string&& given);
+
+	public:
+		std::string given;
 	};
 
-	/**
-	 * @brief An exception thrown when the type of a symbol does not match the type expected.
-	 */
+	/// \brief An exception thrown when the value of a symbol accessed in a way which is not permissible.
+	struct illegal_access : public script_error {
+		using script_error::script_error;
+	};
+
+	/// \brief An exception thrown when the type of a symbol does not match the type expected.
 	struct illegal_type_access final : public illegal_access {
-		illegal_type_access(const symbol& sym, datatype expected);
+	public:
+		illegal_type_access(const symbol* sym, datatype expected);
+
+	public:
+		/// \brief The symbol being accessed.
+		const symbol* sym;
+
+		/// \brief The datatype excepted.
+		datatype expected;
 	};
 
-	/**
-	 * @brief An exception thrown when an out-of-bounds index is accessed.
-	 */
+	/// \brief An exception thrown when an out-of-bounds index is accessed.
 	struct illegal_index_access final : public illegal_access {
-		illegal_index_access(const symbol& sym, std::uint8_t index);
+	public:
+		illegal_index_access(const symbol* sym, std::uint8_t index);
+
+	public:
+		/// \brief The symbol being accessed.
+		const symbol* sym;
+
+		/// \brief The index being accessed
+		std::uint8_t index;
 	};
 
-	/**
-	 * @brief An exception thrown when a constant symbol is accessed as mutable
-	 */
+	/// \brief An exception thrown when a constant symbol is accessed as mutable
 	struct illegal_const_access final : public illegal_access {
-		explicit illegal_const_access(const symbol& sym);
+	public:
+		explicit illegal_const_access(const symbol* sym);
+
+	public:
+		/// \brief The symbol being accessed.
+		const symbol* sym;
 	};
 
-	/**
-	 * @brief An exception thrown when the parent class of a member does not match the class of an instance.
-	 */
+	/// \brief An exception thrown when the parent class of a member does not match the class of an instance.
 	struct illegal_instance_access final : public illegal_access {
-		illegal_instance_access(const symbol& sym, std::uint32_t expected_parent);
+	public:
+		illegal_instance_access(const symbol* sym, std::uint32_t expected_parent);
+
+	public:
+		/// \brief The symbol being accessed.
+		const symbol* sym;
+
+		/// \brief The parent which was expected for the member.
+		std::uint32_t expected_parent;
 	};
 
-	/**
-	 * @brief An exception thrown when the parent class of a member does not match the class of an instance.
-	 */
+	/// \brief An exception thrown when the parent class of a member does not match the class of an instance.
 	struct unbound_member_access final : public illegal_access {
-		explicit unbound_member_access(const symbol& sym);
+	public:
+		explicit unbound_member_access(const symbol* sym);
+
+	public:
+		/// \brief The symbol being accessed.
+		const symbol* sym;
 	};
 
-	/**
-	 * @brief An exception thrown when the parent class of a member does not match the class of an instance.
-	 */
+	/// \brief An exception thrown if a member symbol is being access without a context set.
 	struct no_context final : public illegal_access {
-		explicit no_context(const symbol& sym);
+	public:
+		explicit no_context(const symbol* sym);
+
+	public:
+		/// \brief The symbol being accessed.
+		const symbol* sym;
 	};
 
+	/// \brief An excpetion thrown if a member symbol is being accessed with a context instance it is not bound to.
 	struct illegal_context_type final : public illegal_access {
-		illegal_context_type(const symbol& sym, const std::type_info& context_type);
+	public:
+		illegal_context_type(const symbol* sym, const std::type_info& context_type);
+
+	public:
+		/// \brief The symbol being accessed.
+		const symbol* sym;
+
+		/// \brief The type of context currently set.
+		const std::type_info& context_type;
 	};
 
-	/**
-	 * @brief Represents a compiled daedalus symbol.
-	 */
+	/// \brief Represents a compiled daedalus symbol.
 	class symbol final {
 	public:
-		/**
-		 * @brief Parses a symbol from the given reader.
-		 * @param[in,out] in The reader to read the symbol from.
-		 * @return The symbol parsed.
-		 */
+		/// \brief Parses a symbol from the given reader.
+		/// \param[in,out] in The reader to read the symbol from.
+		/// \return The symbol parsed.
 		[[nodiscard]] static symbol parse(buffer& in);
 
-		/**
-		 * @brief Validates that the symbol is a string and retrieves it's value in the given context.
-		 * @param index The index of the value to get.
-		 * @param context An instance to use as context for getting member variables.
-		 * @return The string associated with the symbol.
-		 */
+		/// \brief Validates that the symbol is a string and retrieves it's value in the given context.
+		/// \param index The index of the value to get.
+		/// \param context An instance to use as context for getting member variables.
+		/// \return The string associated with the symbol.
+		/// \throws illegal_type_access if the #type of this symbol is not dt_string.
+		/// \throws illegal_index_access if \p index >= #count.
+		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
+		/// \throws unbound_member_access if this symbol has not been registered yet
+		/// \throws illegal_context_type if this symbol #is_registered_to a different type than the type of \p context.
 		[[nodiscard]] const std::string& get_string(std::uint8_t index = 0,
 		                                            const std::shared_ptr<instance>& context = nullptr) const;
 
-		/**
-		 * @brief Validates that the symbol is a float and retrieves it's value in the given context.
-		 * @param index The index of the value to get.
-		 * @param context An instance to use as context for getting member variables.
-		 * @return The float value associated with the symbol.
-		 */
+		/// \brief Validates that the symbol is a float and retrieves it's value in the given context.
+		/// \param index The index of the value to get.
+		/// \param context An instance to use as context for getting member variables.
+		/// \return The float value associated with the symbol.
+		/// \throws illegal_type_access if the #type of this symbol is not dt_float.
+		/// \throws illegal_index_access if \p index >= #count.
+		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
+		/// \throws unbound_member_access if this symbol has not been registered yet
+		/// \throws illegal_context_type if this symbol #is_registered_to a different type than the type of \p context.
 		[[nodiscard]] float get_float(std::uint8_t index = 0, const std::shared_ptr<instance>& context = nullptr) const;
 
-		/**
-		 * @brief Validates that the symbol is an int and retrieves it's value in the given context.
-		 * @param index The index of the value to get.
-		 * @param context An instance to use as context for getting member variables.
-		 * @return The int value associated with the symbol.
-		 */
+		/// \brief Validates that the symbol is an int and retrieves it's value in the given context.
+		/// \param index The index of the value to get.
+		/// \param context An instance to use as context for getting member variables.
+		/// \return The int value associated with the symbol.
+		/// \throws illegal_type_access if the #type of this symbol is not dt_int or dt_function.
+		/// \throws illegal_index_access if \p index >= #count.
+		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
+		/// \throws unbound_member_access if this symbol has not been registered yet
+		/// \throws illegal_context_type if this symbol #is_registered_to a different type than the type of \p context.
 		[[nodiscard]] std::int32_t get_int(std::uint8_t index = 0,
 		                                   const std::shared_ptr<instance>& context = nullptr) const;
 
-		/**
-		 * @brief Validates that the symbol is an instance and retrieves it's value
-		 * @return The instance associated with the symbol.
-		 */
+		/// \brief Validates that the symbol is an instance and retrieves it's value
+		/// \return The instance associated with the symbol.
+		/// \throws illegal_type_access if the #type of this symbol is not dt_instance
 		[[nodiscard]] const std::shared_ptr<instance>& get_instance();
 
 		// -=-= Value setters =-=- //
 
-		/**
-		 * @brief Validates that the symbol is a string and not constant and sets it's value in the given context.
-		 * @param value The new value to set.
-		 * @param index The index of the value to set
-		 * @param context An instance to use as context for setting member variables.
-		 */
+		/// \brief Validates that the symbol is a string and not constant and sets it's value in the given context.
+		/// \param value The new value to set.
+		/// \param index The index of the value to set
+		/// \param context An instance to use as context for setting member variables.
+		/// \throws illegal_const_access if this symbol #is_const
+		/// \throws illegal_type_access if the #type of this symbol is not dt_string.
+		/// \throws illegal_index_access if \p index >= #count.
+		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
+		/// \throws unbound_member_access if this symbol has not been registered yet
+		/// \throws illegal_context_type if this symbol #is_registered_to a different type than the type of \p context.
 		void set_string(const std::string& value,
 		                std::uint8_t index = 0,
 		                const std::shared_ptr<instance>& context = nullptr);
 
-		/**
-		 * @brief Validates that the symbol is a float and not constant and sets it's value in the given context.
-		 * @param value The new value to set.
-		 * @param index The index of the value to set
-		 * @param context An instance to use as context for setting member variables.
-		 */
+		/// \brief Validates that the symbol is a float and not constant and sets it's value in the given context.
+		/// \param value The new value to set.
+		/// \param index The index of the value to set
+		/// \param context An instance to use as context for setting member variables.
+		/// \throws illegal_const_access if this symbol #is_const
+		/// \throws illegal_type_access if the #type of this symbol is not dt_float
+		/// \throws illegal_index_access if \p index >= #count.
+		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
+		/// \throws unbound_member_access if this symbol has not been registered yet
+		/// \throws illegal_context_type if this symbol #is_registered_to a different type than the type of \p context.
 		void set_float(float value, std::uint8_t index = 0, const std::shared_ptr<instance>& context = nullptr);
 
-		/**
-		 * @brief Validates that the symbol is an int and not constant and sets it's value in the given context.
-		 * @param value The new value to set.
-		 * @param index The index of the value to set
-		 * @param context An instance to use as context for setting member variables.
-		 */
+		/// \brief Validates that the symbol is an int and not constant and sets it's value in the given context.
+		/// \param value The new value to set.
+		/// \param index The index of the value to set
+		/// \param context An instance to use as context for setting member variables.
+		/// \throws illegal_const_access if this symbol #is_const
+		/// \throws illegal_type_access if the #type of this symbol is not dt_int or dt_function.
+		/// \throws illegal_index_access if \p index >= #count.
+		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
+		/// \throws unbound_member_access if this symbol has not been registered yet
+		/// \throws illegal_context_type if this symbol #is_registered_to a different type than the type of \p context.
 		void set_int(std::int32_t value, std::uint8_t index = 0, const std::shared_ptr<instance>& context = nullptr);
 
-		/**
-		 * @brief Validates that the symbol is an instance and sets it's value
-		 * @param inst The instance value to set
-		 */
+		/// \brief Validates that the symbol is an instance and sets it's value
+		/// \param inst The instance value to set
+		/// \throws illegal_type_access if the #type of this symbol is not dt_instance.
 		void set_instance(const std::shared_ptr<instance>& inst);
 
-		/**
-		 * @brief Tests whether this symbol holds an instance of the given type.
-		 * @tparam T The type of instance to check for.
-		 * @return <tt>true</tt> if the symbol contains an instance of the given type, <tt>false</tt> if not.
-		 */
+		/// \brief Tests whether this symbol holds an instance of the given type.
+		/// \tparam T The type of instance to check for.
+		/// \return <tt>true</tt> if the symbol contains an instance of the given type, <tt>false</tt> if not.
 		template <typename T> // clang-format off
 		requires (std::derived_from<T, instance>)
-		bool is_instance_of() { // clang-format on
-			return type() == dt_instance && get_instance() != nullptr && get_instance()->_m_type == &typeid(T);
+		inline bool is_instance_of() { // clang-format on
+			return this->type() == dt_instance && this->get_instance() != nullptr &&
+			    this->get_instance()->_m_type == &typeid(T);
 		}
 
-		/**
-		 * @brief Tests whether the symbol is a constant.
-		 * @return `true` if the symbol is a constant, `false` if not.
-		 */
+		/// \brief Tests whether the symbol is a constant.
+		/// \return `true` if the symbol is a constant, `false` if not.
 		[[nodiscard]] inline bool is_const() const noexcept {
 			return (_m_flags & sf_const) != 0;
 		}
-		/**
-		 * @brief Tests whether the symbol is a member variable.
-		 * @return `true` if the symbol is a member, `false` if not.
-		 */
+
+		/// \brief Tests whether the symbol is a member variable.
+		/// \return `true` if the symbol is a member, `false` if not.
 		[[nodiscard]] inline bool is_member() const noexcept {
 			return (_m_flags & sf_member) != 0;
 		}
 
-		/**
-		 * @brief Tests whether the symbol is an extern symbol.
-		 * @return `true` if the symbol is an extern symbol, `false` if not.
-		 */
+		/// \brief Tests whether the symbol is an extern symbol.
+		/// \return `true` if the symbol is an extern symbol, `false` if not.
 		[[nodiscard]] inline bool is_external() const noexcept {
 			return (_m_flags & sf_external) != 0;
 		}
 
-		/**
-		 * @brief Tests whether the symbol is merged.
-		 * @return `true` if the symbol is merged, `false` if not.
-		 * @note It is currently not known what 'merged' means.
-		 */
+		/// \brief Tests whether the symbol is merged.
+		/// \return `true` if the symbol is merged, `false` if not.
+		/// \note It is currently not known what 'merged' means.
 		[[nodiscard]] inline bool is_merged() const noexcept {
 			return (_m_flags & sf_merged) != 0;
 		}
 
-		/**
-		 * @brief brief Tests whether the symbol is a compiler-generated symbol
-		 * @return return `true` if the symbol is generated, `false` if not.
-		 */
+		/// \brief brief Tests whether the symbol is a compiler-generated symbol
+		/// \return return `true` if the symbol is generated, `false` if not.
 		[[nodiscard]] inline bool is_generated() const noexcept {
 			return _m_generated;
 		}
 
-		/**
-		 * @brief brief Tests whether the symbol has a return value.
-		 * @return return `true` if the symbol has a return value, `false` if not.
-		 */
+		/// \brief brief Tests whether the symbol has a return value.
+		/// \return return `true` if the symbol has a return value, `false` if not.
 		[[nodiscard]] inline bool has_return() const noexcept {
 			return (_m_flags & sf_return) != 0;
 		}
 
-		/**
-		 * @return The name of the symbol.
-		 */
+		/// \return The name of the symbol.
 		[[nodiscard]] inline const std::string& name() const noexcept {
 			return _m_name;
 		}
 
-		/**
-		 * @return The address of the symbol.
-		 */
+		/// \return The address of the symbol.
 		[[nodiscard]] inline std::uint32_t address() const noexcept {
 			return _m_address;
 		}
 
-		/**
-		 * @return The index of the parent symbol or unset if the symbol does not have a parent.
-		 */
+		/// \return The index of the parent symbol or unset if the symbol does not have a parent.
 		[[nodiscard]] inline std::uint32_t parent() const noexcept {
 			return _m_parent;
 		}
 
-		/**
-		 * @return The count of values stored in the symbol.
-		 */
+		/// \return The count of values stored in the symbol.
 		[[nodiscard]] inline std::uint32_t count() const noexcept {
 			return _m_count;
 		}
 
-		/**
-		 * @return The type of the symbol.
-		 */
+		/// \return The type of the symbol.
 		[[nodiscard]] inline datatype type() const noexcept {
 			return _m_type;
 		}
 
-		/**
-		 * @return The index of the symbol.
-		 */
+		/// \return The index of the symbol.
 		[[nodiscard]] inline std::uint32_t index() const noexcept {
 			return _m_index;
 		}
 
-		/**
-		 * @return The return type of the symbol.
-		 */
+		/// \return The return type of the symbol.
 		[[nodiscard]] inline datatype rtype() const noexcept {
 			return _m_return_type;
 		}
 
-		/**
-		 * @return The index of the file the symbol was in.
-		 */
+		/// \return The index of the file the symbol was in.
 		[[nodiscard]] inline std::uint32_t file_index() const noexcept {
 			return _m_file_index;
 		}
 
-		/**
-		 * @return The offset in bytes of a member from the start of the instance.
-		 */
+		/// \return The offset in bytes of a member from the start of the instance.
 		[[nodiscard]] inline std::uint32_t offset_as_member() const noexcept {
 			return _m_member_offset;
 		}
@@ -388,15 +426,19 @@ namespace phoenix::daedalus {
 		[[nodiscard]] inline std::uint32_t line_start() const noexcept {
 			return _m_line_start;
 		}
+
 		[[nodiscard]] inline std::uint32_t line_count() const noexcept {
 			return _m_line_count;
 		}
+
 		[[nodiscard]] inline std::uint32_t char_start() const noexcept {
 			return _m_char_start;
 		}
+
 		[[nodiscard]] inline std::uint32_t char_count() const noexcept {
 			return _m_char_count;
 		}
+
 		[[nodiscard]] inline std::uint32_t class_size() const noexcept {
 			return _m_class_size;
 		}
@@ -411,9 +453,9 @@ namespace phoenix::daedalus {
 		template <typename T>
 		const T* get_member_ptr(std::uint8_t index, const std::shared_ptr<instance>& context) const {
 			if (!_m_registered_to)
-				throw unbound_member_access(*this);
+				throw unbound_member_access(this);
 			if (*_m_registered_to != *context->_m_type)
-				throw illegal_context_type {*this, *context->_m_type};
+				throw illegal_context_type {this, *context->_m_type};
 
 			std::uint32_t target_offset = offset_as_member() + index * sizeof(T);
 			return reinterpret_cast<const T*>(reinterpret_cast<const char*>(context.get()) + target_offset);
@@ -422,9 +464,9 @@ namespace phoenix::daedalus {
 		template <typename T>
 		T* get_member_ptr(std::uint8_t index, const std::shared_ptr<instance>& context) {
 			if (!_m_registered_to)
-				throw unbound_member_access(*this);
+				throw unbound_member_access(this);
 			if (*_m_registered_to != *context->_m_type)
-				throw illegal_context_type {*this, *context->_m_type};
+				throw illegal_context_type {this, *context->_m_type};
 
 			std::uint32_t target_offset = offset_as_member() + index * sizeof(T);
 			return reinterpret_cast<T*>(reinterpret_cast<char*>(context.get()) + target_offset);
@@ -460,9 +502,7 @@ namespace phoenix::daedalus {
 		const std::type_info* _m_registered_to {nullptr};
 	};
 
-	/**
-	 * @brief Represents a daedalus VM instruction.
-	 */
+	/// \brief Represents a daedalus VM instruction.
 	struct instruction {
 		opcode op {op_noop};
 		std::uint32_t address {0};
@@ -471,38 +511,32 @@ namespace phoenix::daedalus {
 		std::uint8_t index {0};
 		std::uint8_t size {1};
 
-		/**
-		 * @brief Reads an instruction from a reader.
-		 * @param[in,out] in The reader to read from
-		 * @return The instruction read.
-		 */
+		/// \brief Reads an instruction from a reader.
+		/// \param[in,out] in The reader to read from
+		/// \return The instruction read.
 		static instruction decode(buffer& in);
 	};
 
-	/**
-	 * @brief Represents a compiled daedalus script
-	 */
+	/// \brief Represents a compiled daedalus script
+
 	class script {
 	public:
-		/**
-		 * @brief Parses in a compiled daedalus script.
-		 * @param path The path of the script file.
-		 * @return The script parsed
-		 */
+		/// \brief Parses in a compiled daedalus script.
+		/// \param path The path of the script file.
+		/// \return The script parsed
 		[[nodiscard]] static script parse(const std::string& path);
 
-		/**
-		 * @brief Parses in a compiled daedalus script.
-		 * @param buf A buffer containing the script data.
-		 * @return The script parsed
-		 */
+		/// \brief Parses in a compiled daedalus script.
+		/// \param buf A buffer containing the script data.
+		/// \return The script parsed
 		[[nodiscard]] static script parse(phoenix::buffer& buf);
 
-		/**
-		 * @brief Registers a member offset
-		 * @param name The name of the member in the script
-		 * @param field The field to register
-		 */
+		/// \brief Registers a member offset
+		/// \param name The name of the member in the script
+		/// \param field The field to register
+		/// \throws symbol_not_found if there is no symbol with the given name.
+		/// \throws member_registration_error if the member could not be registered
+		/// \throws invalid_registration_datatype If the datatype of \p _member is different than that of the symbol.
 		template <typename _class, typename _member> // clang-format off
 		requires (std::same_as<std::string, _member> || std::same_as<float, _member> ||
 		          std::same_as<int32_t, _member> || (std::is_enum<_member>::value && sizeof(_member) == 4))
@@ -516,11 +550,12 @@ namespace phoenix::daedalus {
 			sym->_m_registered_to = type;
 		}
 
-		/**
-		 * @brief Registers a member offset
-		 * @param name The name of the member in the script
-		 * @param field The field to register
-		 */
+		/// \brief Registers a member offset
+		/// \param name The name of the member in the script
+		/// \param field The field to register
+		/// \throws symbol_not_found if there is no symbol with the given name.
+		/// \throws member_registration_error if the member could not be registered
+		/// \throws invalid_registration_datatype If the datatype of \p _member is different than that of the symbol.
 		template <typename _class, typename _member, int N> // clang-format off
 		requires (std::same_as<std::string, _member> || std::same_as<int32_t, _member> ||
 		          std::same_as<float, _member> || (std::is_enum<_member>::value && sizeof(_member) == 4))
@@ -534,129 +569,97 @@ namespace phoenix::daedalus {
 			sym->_m_registered_to = type;
 		}
 
-		/**
-		 * @return All symbols in the script
-		 */
+		/// \return All symbols in the script
 		[[nodiscard]] inline const std::vector<symbol>& symbols() const noexcept {
 			return _m_symbols;
 		}
 
-		/**
-		 * @brief Retrieves the symbol with the given \p index
-		 * @param index The index of the symbol to get
-		 * @return The symbol or `nullptr` if the index was out-of-range.
-		 */
+		/// \brief Retrieves the symbol with the given \p index
+		/// \param index The index of the symbol to get
+		/// \return The symbol or `nullptr` if the index was out-of-range.
 		[[nodiscard]] const symbol* find_symbol_by_index(std::uint32_t index) const;
 
-		/**
-		 * @brief Looks for parameters of the given function symbol. Only works for external functions.
-		 * @param parent The function symbol to get the parameter symbols for.
-		 * @return A list of function parameter symbols.
-		 */
+		/// \brief Looks for parameters of the given function symbol. Only works for external functions.
+		/// \param parent The function symbol to get the parameter symbols for.
+		/// \return A list of function parameter symbols.
 		[[nodiscard]] std::vector<const symbol*> find_parameters_for_function(const symbol* parent) const;
 
-		/**
-		 * @brief Retrieves the symbol with the given \p address set
-		 * @param index The address of the symbol to get
-		 * @return The symbol or `nullptr` if no symbol with that address was found.
-		 */
+		/// \brief Retrieves the symbol with the given \p address set
+		/// \param index The address of the symbol to get
+		/// \return The symbol or `nullptr` if no symbol with that address was found.
 		[[nodiscard]] const symbol* find_symbol_by_address(std::uint32_t address) const;
 
-		/**
-		 * @brief Retrieves the symbol with the given \p name.
-		 * @param name The name of the symbol to get.
-		 * @return The symbol or `nullptr` if no symbol with that name was found.
-		 */
+		/// \brief Retrieves the symbol with the given \p name.
+		/// \param name The name of the symbol to get.
+		/// \return The symbol or `nullptr` if no symbol with that name was found.
 		[[nodiscard]] const symbol* find_symbol_by_name(const std::string& name) const;
 
-		/**
-		 * @brief Retrieves the symbol with the given \p index
-		 * @param index The index of the symbol to get
-		 * @return The symbol or `nullptr` if the index was out-of-range.
-		 */
+		/// \brief Retrieves the symbol with the given \p index
+		/// \param index The index of the symbol to get
+		/// \return The symbol or `nullptr` if the index was out-of-range.
 		[[nodiscard]] symbol* find_symbol_by_index(std::uint32_t index);
 
-		/**
-		 * @brief Retrieves the symbol with the given \p address set
-		 * @param index The address of the symbol to get
-		 * @return The symbol or `nullptr` if no symbol with that address was found.
-		 */
+		/// \brief Retrieves the symbol with the given \p address set
+		/// \param index The address of the symbol to get
+		/// \return The symbol or `nullptr` if no symbol with that address was found.
 		[[nodiscard]] symbol* find_symbol_by_address(std::uint32_t address);
 
-		/**
-		 * @brief Looks for parameters of the given function symbol. Only works for external functions.
-		 * @param parent The function symbol to get the parameter symbols for.
-		 * @return A list of function parameter symbols.
-		 */
+		/// \brief Looks for parameters of the given function symbol. Only works for external functions.
+		/// \param parent The function symbol to get the parameter symbols for.
+		/// \return A list of function parameter symbols.
 		[[nodiscard]] std::vector<symbol*> find_parameters_for_function(const symbol* parent);
 
-		/**
-		 * @brief Retrieves the symbol with the given \p name.
-		 * @param name The name of the symbol to get.
-		 * @return The symbol or `nullptr` if no symbol with that name was found.
-		 */
+		/// \brief Retrieves the symbol with the given \p name.
+		/// \param name The name of the symbol to get.
+		/// \return The symbol or `nullptr` if no symbol with that name was found.
 		[[nodiscard]] symbol* find_symbol_by_name(const std::string& name);
 
-		/**
-		 * @brief Call the given callback function for every instance symbol which is a descendant of the class with
-		 *        the given name.
-		 * @param name The name of the parent class.
-		 * @param callback The function to call with each instance symbol.
-		 */
+		/// \brief Call the given callback function for every instance symbol which is a descendant of the class with
+		///        the given name.
+		/// \param name The name of the parent class.
+		/// \param callback The function to call with each instance symbol.
 		void enumerate_instances_by_class_name(const std::string& name, const std::function<void(symbol&)>& callback);
 
-		/**
-		 * @brief Decodes the instruction at \p address and returns it.
-		 * @param address The address of the instruction to decode
-		 * @return The instruction.
-		 */
+		/// \brief Decodes the instruction at \p address and returns it.
+		/// \param address The address of the instruction to decode
+		/// \return The instruction.
 		[[nodiscard]] instruction instruction_at(std::uint32_t address) const;
 
-		/**
-		 * @return The total size of the script.
-		 */
+		/// \return The total size of the script.
 		[[nodiscard]] std::uint32_t size() const noexcept {
 			return _m_text.limit() & 0xFFFFFF;
 		}
 
-		/**
-		 * @brief Finds the symbol the given instance is currently bound to.
-		 * @param inst The instance to get the symbol for.
-		 * @return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
-		 *         with any instance.
-		 */
+		/// \brief Finds the symbol the given instance is currently bound to.
+		/// \param inst The instance to get the symbol for.
+		/// \return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
+		///         with any instance.
 		inline const symbol* find_symbol_by_instance(const instance& inst) const {
 			return find_symbol_by_index(inst._m_symbol_index);
 		}
 
-		/**
-		 * @brief Finds the symbol the given instance is currently bound to.
-		 * @param inst The instance to get the symbol for.
-		 * @return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
-		 *         with any instance.
-		 */
+		/// \brief Finds the symbol the given instance is currently bound to.
+		/// \param inst The instance to get the symbol for.
+		/// \return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
+		///         with any instance.
 		inline symbol* find_symbol_by_instance(const instance& inst) {
 			return find_symbol_by_index(inst._m_symbol_index);
 		}
 
-		/**
-		 * @brief Finds the symbol the given instance is currently bound to.
-		 * @param inst The instance to get the symbol for.
-		 * @return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
-		 *         with any instance.
-		 */
+		/// \brief Finds the symbol the given instance is currently bound to.
+		/// \param inst The instance to get the symbol for.
+		/// \return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
+		///         with any instance.
 		template <typename T> // clang-format off
 		requires(std::derived_from<T, instance>)
 		inline const symbol* find_symbol_by_instance(const std::shared_ptr<T>& inst) const { // clang-format on
 			return find_symbol_by_index(inst->_m_symbol_index);
 		}
 
-		/**
-		 * @brief Finds the symbol the given instance is currently bound to.
-		 * @param inst The instance to get the symbol for.
-		 * @return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
-		 *         with any instance.
-		 */
+		/// \brief Finds the symbol the given instance is currently bound to.
+		/// \param inst The instance to get the symbol for.
+		/// \return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
+		///         with any instance.
 		template <typename T> // clang-format off
 	    requires(std::derived_from<T, instance>)
 		inline symbol* find_symbol_by_instance(const std::shared_ptr<T>& inst) {
@@ -676,23 +679,23 @@ namespace phoenix::daedalus {
 			auto* sym = find_symbol_by_name(name);
 
 			if (sym == nullptr)
-				throw symbol_not_found {name};
+				throw symbol_not_found {std::string {name}};
 			if (!sym->is_member())
-				throw member_registration_error {*sym, "not a member"};
+				throw member_registration_error {sym, "not a member"};
 			if (sym->count() > N)
-				throw member_registration_error {*sym,
+				throw member_registration_error {sym,
 				                                 "incorrect number of elements: given " + std::to_string(N) +
 				                                     " expected " + std::to_string(sym->count())};
 
 			// check class registration
 			auto* parent = find_symbol_by_index(sym->parent());
 			if (parent == nullptr)
-				throw member_registration_error {*sym, "no parent found"};
+				throw member_registration_error {sym, "no parent found"};
 
 			if (parent->_m_registered_to == nullptr) {
 				parent->_m_registered_to = type;
 			} else if (parent->_m_registered_to != type) {
-				throw member_registration_error {*sym,
+				throw member_registration_error {sym,
 				                                 "parent class is already registered with a different type (" +
 				                                     std::string {parent->_m_registered_to->name()} + ")"};
 			}
@@ -700,13 +703,13 @@ namespace phoenix::daedalus {
 			// check type matches
 			if constexpr (std::same_as<std::string, _member>) {
 				if (sym->type() != dt_string)
-					throw invalid_registration_datatype {*sym, "string"};
+					throw invalid_registration_datatype {sym, "string"};
 			} else if constexpr (std::same_as<float, _member>) {
 				if (sym->type() != dt_float)
-					throw invalid_registration_datatype {*sym, "float"};
+					throw invalid_registration_datatype {sym, "float"};
 			} else if constexpr (std::same_as<int32_t, _member> || std::is_enum<_member>::value) {
 				if (sym->type() != dt_integer && sym->type() != dt_function)
-					throw invalid_registration_datatype {*sym, "int"};
+					throw invalid_registration_datatype {sym, "int"};
 			} else {
 				throw std::runtime_error("illegal type");
 			}

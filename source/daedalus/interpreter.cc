@@ -135,8 +135,7 @@ namespace phoenix::daedalus {
 				} else {
 					sym = find_symbol_by_address(instr.address);
 					if (sym == nullptr) {
-						throw std::runtime_error {"op_call: no symbol found for address " +
-						                          std::to_string(instr.address)};
+						throw vm_exception {"op_call: no symbol found for address " + std::to_string(instr.address)};
 					}
 
 					call(sym);
@@ -147,8 +146,7 @@ namespace phoenix::daedalus {
 			case op_call_external: {
 				sym = find_symbol_by_index(instr.symbol);
 				if (sym == nullptr) {
-					throw std::runtime_error {"op_call_external: no external found for index " +
-					                          std::to_string(instr.symbol)};
+					throw vm_exception {"op_call_external: no external found for index"};
 				}
 
 				auto cb = _m_externals.find(sym);
@@ -157,7 +155,7 @@ namespace phoenix::daedalus {
 						(*_m_external_error_handler)(*this, *sym);
 						break;
 					} else {
-						throw std::runtime_error {"op_call_external: no external registered for " + sym->name()};
+						throw vm_exception {"op_call_external: no external registered for " + sym->name()};
 					}
 				}
 
@@ -173,7 +171,7 @@ namespace phoenix::daedalus {
 			case op_push_var:
 				sym = find_symbol_by_index(instr.symbol);
 				if (sym == nullptr) {
-					throw std::runtime_error {"op_push_var: no symbol found for index " + std::to_string(instr.symbol)};
+					throw vm_exception {"op_push_var: no symbol found for index"};
 				}
 				push_reference(sym, 0);
 				break;
@@ -183,6 +181,9 @@ namespace phoenix::daedalus {
 
 				if (!ref->is_member() || context != nullptr || !(_m_flags & vm_allow_null_instance_access)) {
 					ref->set_int(pop_int(), idx, context);
+				} else if (ref->is_member()) {
+					PX_LOGE("vm: accessing member \"{}\" without an instance set", ref->name());
+					_m_stack.pop();
 				}
 
 				break;
@@ -192,6 +193,9 @@ namespace phoenix::daedalus {
 
 				if (!ref->is_member() || context != nullptr || !(_m_flags & vm_allow_null_instance_access)) {
 					ref->set_float(pop_float(), idx, context);
+				} else if (ref->is_member()) {
+					PX_LOGE("vm: accessing member \"{}\" without an instance set", ref->name());
+					_m_stack.pop();
 				}
 
 				break;
@@ -202,12 +206,14 @@ namespace phoenix::daedalus {
 
 				if (!target->is_member() || context != nullptr || !(_m_flags & vm_allow_null_instance_access)) {
 					target->set_string(source, target_idx, context);
+				} else if (target->is_member()) {
+					PX_LOGE("vm: accessing member \"{}\" without an instance set", target->name());
 				}
 
 				break;
 			}
 			case op_assign_stringref:
-				throw std::runtime_error {"not implemented: op_assign_stringref"};
+				throw vm_exception {"not implemented: op_assign_stringref"};
 			case op_assign_add: {
 				auto [ref, idx, context] = pop_reference();
 				auto result = ref->get_int(idx, context) + pop_int();
@@ -249,8 +255,7 @@ namespace phoenix::daedalus {
 			case op_set_instance: {
 				sym = find_symbol_by_index(instr.symbol);
 				if (sym == nullptr) {
-					throw std::runtime_error {"op_set_instance: no symbol found for index " +
-					                          std::to_string(instr.symbol)};
+					throw vm_exception {"op_set_instance: no symbol found for index"};
 				}
 				_m_instance = sym->get_instance();
 				break;
@@ -258,14 +263,13 @@ namespace phoenix::daedalus {
 			case op_push_array_var:
 				sym = find_symbol_by_index(instr.symbol);
 				if (sym == nullptr) {
-					throw std::runtime_error {"op_push_array_var: no symbol found for index " +
-					                          std::to_string(instr.symbol)};
+					throw vm_exception {"op_push_array_var: no symbol found for index"};
 				}
 
 				push_reference(sym, instr.index);
 				break;
 			}
-		} catch (const std::runtime_error& err) {
+		} catch (const std::exception& err) {
 			std::cerr << "+++ Error while executing script: " << err.what() << "+++\n\n";
 			print_stack_trace();
 			throw std::domain_error {std::string {err.what()}};
@@ -309,10 +313,6 @@ namespace phoenix::daedalus {
 
 	std::int32_t vm::pop_int() {
 		if (_m_stack.empty()) {
-			if ((_m_flags & vm_allow_empty_stack_pop) == 0) {
-				throw std::runtime_error {"Popping from empty stack!"};
-			}
-			// std::cerr << "WARN: popping 0 from empty stack!\n";
 			return 0;
 		}
 
@@ -326,9 +326,10 @@ namespace phoenix::daedalus {
 			//                the compatibility flag is set, we just return 0
 			if (sym->is_member() && v.context == nullptr) {
 				if (!(_m_flags & vm_allow_null_instance_access)) {
-					throw no_context {*sym};
+					throw no_context {sym};
 				}
 
+				PX_LOGE("vm: accessing member \"{}\" without an instance set", sym->name());
 				return 0;
 			}
 
@@ -336,17 +337,13 @@ namespace phoenix::daedalus {
 		} else if (std::holds_alternative<int32_t>(v.value)) {
 			return std::get<int32_t>(v.value);
 		} else {
-			throw std::runtime_error {"Tried to pop_int but frame does not contain an int."};
+			throw vm_exception {"tried to pop_int but frame does not contain a int."};
 		}
 	}
 
 	float vm::pop_float() {
 		if (_m_stack.empty()) {
-			if ((_m_flags & vm_allow_empty_stack_pop) == 0) {
-				throw std::runtime_error {"Popping from empty stack!"};
-			}
-
-			return 0;
+			return 0.0f;
 		}
 
 		auto v = _m_stack.top();
@@ -359,9 +356,10 @@ namespace phoenix::daedalus {
 			//                the compatibility flag is set, we just return 0
 			if (sym->is_member() && v.context == nullptr) {
 				if (!(_m_flags & vm_allow_null_instance_access)) {
-					throw no_context {*sym};
+					throw no_context {sym};
 				}
 
+				PX_LOGE("vm: accessing member \"{}\" without an instance set", sym->name());
 				return 0;
 			}
 
@@ -369,24 +367,23 @@ namespace phoenix::daedalus {
 		} else if (std::holds_alternative<float>(v.value)) {
 			return std::get<float>(v.value);
 		} else if (std::holds_alternative<std::int32_t>(v.value)) {
-			// std::cerr << "WARN: Popping int and reinterpreting as float\n";
 			auto k = std::get<std::int32_t>(v.value);
 			return std::bit_cast<float>(k);
 		} else {
-			throw std::runtime_error {"Tried to pop_float but frame does not contain an float."};
+			throw vm_exception {"tried to pop_float but frame does not contain a float."};
 		}
 	}
 
 	std::tuple<symbol*, std::uint8_t, std::shared_ptr<instance>> vm::pop_reference() {
 		if (_m_stack.empty()) {
-			throw std::runtime_error {"Popping from empty stack!"};
+			throw vm_exception {"popping reference from empty stack"};
 		}
 
 		auto v = _m_stack.top();
 		_m_stack.pop();
 
 		if (!v.reference) {
-			throw std::runtime_error {"Tried to pop_reference but frame does not contain a reference."};
+			throw vm_exception {"tried to pop_reference but frame does not contain a reference."};
 		}
 
 		return {std::get<symbol*>(v.value), v.index, v.context};
@@ -394,7 +391,7 @@ namespace phoenix::daedalus {
 
 	std::shared_ptr<instance> vm::pop_instance() {
 		if (_m_stack.empty()) {
-			throw std::runtime_error {"Popping from empty stack!"};
+			throw vm_exception {"popping instance from empty stack"};
 		}
 
 		auto v = _m_stack.top();
@@ -405,7 +402,7 @@ namespace phoenix::daedalus {
 		} else if (std::holds_alternative<std::shared_ptr<instance>>(v.value)) {
 			return std::get<std::shared_ptr<instance>>(v.value);
 		} else {
-			throw std::runtime_error {"Tried to pop_float but frame does not contain an float."};
+			throw vm_exception {"tried to pop_instance but frame does not contain am instance."};
 		}
 	}
 
@@ -417,9 +414,10 @@ namespace phoenix::daedalus {
 		//                the compatibility flag is set, we just return 0
 		if (s->is_member() && context == nullptr) {
 			if (!(_m_flags & vm_allow_null_instance_access)) {
-				throw no_context {*s};
+				throw no_context {s};
 			}
 
+			PX_LOGE("vm: accessing member \"{}\" without an instance set", s->name());
 			return empty;
 		}
 
@@ -546,11 +544,17 @@ namespace phoenix::daedalus {
 		std::cerr << "\n";
 	}
 
-	illegal_external_rtype::illegal_external_rtype(const symbol* sym, std::string_view provided)
-	    : illegal_external("external " + sym->name() + " has illegal return type '" + provided.data() +
-	                       "', expected '" + DAEDALUS_DATA_TYPE_NAMES[sym->rtype()] + "'") {}
+	illegal_external_definition::illegal_external_definition(const symbol* sym, std::string&& message)
+	    : script_error(std::move(message)), sym(sym) {}
 
-	illegal_external_param::illegal_external_param(const symbol* sym, std::string_view provided, std::uint8_t i)
-	    : illegal_external("external " + sym->name() + " has illegal parameter type '" + provided.data() + "' (no. " +
-	                       std::to_string(i) + "), expected '" + DAEDALUS_DATA_TYPE_NAMES[sym->type()] + "'") {}
+	illegal_external_rtype::illegal_external_rtype(const symbol* sym, std::string&& provided)
+	    : illegal_external_definition(sym,
+	                                  "external " + sym->name() + " has illegal return type '" + provided +
+	                                      "', expected '" + DAEDALUS_DATA_TYPE_NAMES[sym->rtype()] + "'") {}
+
+	illegal_external_param::illegal_external_param(const symbol* sym, std::string&& provided, std::uint8_t i)
+	    : illegal_external_definition(sym,
+	                                  "external " + sym->name() + " has illegal parameter type '" + provided +
+	                                      "' (no. " + std::to_string(i) + "), expected '" +
+	                                      DAEDALUS_DATA_TYPE_NAMES[sym->type()] + "'") {}
 } // namespace phoenix::daedalus
