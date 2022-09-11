@@ -56,13 +56,12 @@ namespace phoenix {
 		texture tex;
 
 		if (in.get_string(4) != ZTEX_SIGNATURE) {
-			throw parser_error("not a texture: invalid signature");
+			throw parser_error {"texture", "invalid signature"};
 		}
 
 		auto version = in.get_uint();
-
 		if (version != 0) {
-			throw parser_error("not a texture: invalid version");
+			throw parser_error {"texture", "invalid version"};
 		}
 
 		tex._m_format = static_cast<texture_format>(in.get_uint());
@@ -233,9 +232,7 @@ namespace phoenix {
 			return conv;
 		}
 		default:
-			throw parser_error(fmt::format("texture: cannot convert format to rgba: {}", int(_m_format)));
+			throw parser_error {"texture", fmt::format("cannot convert format to rgba: {}", int(_m_format))};
 		}
-
-		return std::vector<std::uint8_t>();
 	}
 } // namespace phoenix
