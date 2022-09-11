@@ -86,6 +86,8 @@ void find_usages(const script& scr, const symbol& sym);
 
 int main(int argc, char** argv) {
 	const flags::args args {argc, argv};
+	phoenix::logging::use_default_logger();
+
 	std::optional<std::string> input {};
 	std::optional<std::string> symbol_name {};
 	std::optional<std::string> include {};

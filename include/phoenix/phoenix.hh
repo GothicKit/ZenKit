@@ -1,11 +1,41 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include <fmt/format.h>
+
 #include <filesystem>
+#include <functional>
 #include <optional>
 #include <stdexcept>
 #include <string>
 #include <utility>
+
+#ifdef PX_LOG_LEVEL_DEBUG
+#define PX_LOGE(...) phoenix::logging::log(phoenix::logging::level::error, fmt::format(__VA_ARGS__))
+#define PX_LOGW(...) phoenix::logging::log(phoenix::logging::level::warn, fmt::format(__VA_ARGS__))
+#define PX_LOGI(...) phoenix::logging::log(phoenix::logging::level::info, fmt::format(__VA_ARGS__))
+#define PX_LOGD(...) phoenix::logging::log(phoenix::logging::level::debug, fmt::format(__VA_ARGS__))
+#elif defined(PX_LOG_LEVEL_INFO)
+#define PX_LOGE(...) phoenix::logging::log(phoenix::logging::level::error, fmt::format(__VA_ARGS__))
+#define PX_LOGW(...) phoenix::logging::log(phoenix::logging::level::warn, fmt::format(__VA_ARGS__))
+#define PX_LOGI(...) phoenix::logging::log(phoenix::logging::level::info, fmt::format(__VA_ARGS__))
+#define PX_LOGD(...)
+#elif defined(PX_LOG_LEVEL_WARN)
+#define PX_LOGE(...) phoenix::logging::log(phoenix::logging::level::error, fmt::format(__VA_ARGS__))
+#define PX_LOGW(...) phoenix::logging::log(phoenix::logging::level::warn, fmt::format(__VA_ARGS__))
+#define PX_LOGI(...)
+#define PX_LOGD(...)
+#elif defined(PX_LOG_LEVEL_ERROR)
+#define PX_LOGE(...) phoenix::logging::log(phoenix::logging::level::error, fmt::format(__VA_ARGS__))
+#define PX_LOGW(...)
+#define PX_LOGI(...)
+#define PX_LOGD(...)
+#else
+#define PX_LOGE(...)
+#define PX_LOGW(...)
+#define PX_LOGI(...)
+#define PX_LOGD(...)
+#endif
 
 namespace phoenix {
 	class buffer;
@@ -38,6 +68,31 @@ namespace phoenix {
 		std::uint16_t hour;
 		std::uint16_t minute;
 		std::uint16_t second;
+	};
+
+	/// \brief Logging manager for phoenix.
+	class logging {
+	public:
+		enum class level { error, warn, info, debug };
+
+		/// \brief Supply a custom logger callback to be used for log output from phoenix.
+		/// \param callback The callback to use.
+		static void use_logger(std::function<void(level, const std::string&)>&& callback);
+
+		/// \brief Use the default logger callback for phoenix.
+		static void use_default_logger();
+
+		/// \brief Send a logging event to the underlying log callback.
+		/// \param lvl The level of the log message.
+		/// \param message The message to send.
+		static void log(level lvl, std::string&& message) {
+			if (logging::callback) {
+				(*logging::callback)(lvl, message);
+			}
+		}
+
+	private:
+		static std::optional<std::function<void(level, const std::string&)>> callback;
 	};
 
 	/// \brief Base class for all exceptions.

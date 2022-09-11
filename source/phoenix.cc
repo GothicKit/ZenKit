@@ -28,6 +28,31 @@ namespace phoenix {
 	                        context)),
 	      resource_type(std::move(resource_type)), context(std::move(context)), cause(cause) {}
 
+	std::optional<std::function<void(logging::level, const std::string&)>> logging::callback {};
+
+	void logging::use_logger(std::function<void(level, const std::string&)>&& cb) {
+		logging::callback = std::forward<decltype(cb)>(cb);
+	}
+
+	void logging::use_default_logger() {
+		logging::callback = [](level lvl, const std::string& message) {
+			switch (lvl) {
+			case level::error:
+				fmt::print(stderr, "[phoenix] [error] {}\n", message);
+				break;
+			case level::warn:
+				fmt::print(stderr, "[phoenix] [warn ] {}\n", message);
+				break;
+			case level::info:
+				fmt::print(stderr, "[phoenix] [info ] {}\n", message);
+				break;
+			case level::debug:
+				fmt::print(stderr, "[phoenix] [debug] {}\n", message);
+				break;
+			}
+		};
+	}
+
 	bool iequals(std::string_view a, std::string_view b) {
 		return std::equal(a.begin(), a.end(), b.begin(), b.end(), [](char a, char b) {
 			return std::tolower(a) == std::tolower(b);

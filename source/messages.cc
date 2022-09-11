@@ -60,29 +60,23 @@ namespace phoenix {
 				//        extents in the archive. This might be due to encoding errors the version of ZenGin
 				//        used with Gothic I
 				archive->skip_object(true);
-				fmt::print(stderr,
-				           "warning: messages: not all data consumed from oCMsgConversation (name: \"{}\")\n",
-				           itm.name);
+				PX_LOGW("messages: oCMsgConversation(\"{}\") not fully parsed", itm.name);
 			}
 
 			if (!archive->read_object_end()) {
 				// FIXME: in Gothic I cutscene libraries, there is a `synchronized` attribute here
 				archive->skip_object(true);
-				fmt::print(stderr,
-				           "warning: messages: not all data consumed from zCCSAtomicBlock (name: \"{}\")\n",
-				           itm.name);
+				PX_LOGW("messages: zCCSAtomicBlock(\"{}\") not fully parsed", itm.name);
 			}
 
 			if (!archive->read_object_end()) {
 				archive->skip_object(true);
-				fmt::print(stderr,
-				           "warning: messages: not all data consumed from zCCSBlock (name: \"{}\")\n",
-				           itm.name);
+				PX_LOGW("messages: zCCSBlock(\"{}\") not fully parsed", itm.name);
 			}
 		}
 
 		if (!archive->read_object_end()) {
-			fmt::print(stderr, "warning: messages: not all data consumed from database\n");
+			PX_LOGW("messages: not fully parsed");
 		}
 
 		return msgs;

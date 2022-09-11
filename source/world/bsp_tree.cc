@@ -155,9 +155,7 @@ namespace phoenix {
 			}
 
 			if (chunk.remaining() != 0) {
-				fmt::print(stderr,
-				           "warning: bsp tree: not all data consumed from section 0x{:X}\n",
-				           std::uint16_t(type));
+				PX_LOGW("bsp_tree: {} bytes remaining in section 0x{:4X}", chunk.remaining(), std::uint16_t(type));
 			}
 		} while (!finished);
 

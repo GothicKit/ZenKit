@@ -92,6 +92,7 @@ px::buffer open_buffer(const std::optional<std::string>& input, const std::optio
 
 int main(int argc, char** argv) {
 	const flags::args args {argc, argv};
+	px::logging::use_default_logger();
 
 	if (args.get<bool>("v") || args.get<bool>("version")) {
 		fmt::print("ztex v{}\n", ZTEX_VERSION);

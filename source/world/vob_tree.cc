@@ -216,7 +216,7 @@ namespace phoenix {
 		}
 
 		if (!in->read_object_end()) {
-			fmt::print(stderr, "warning: not all data consumed of vob '{}'\n", obj.class_name);
+			PX_LOGW("vob: VOb \"{}\" not fully parsed", obj.class_name);
 			in->skip_object(true);
 		}
 

@@ -223,10 +223,9 @@ namespace phoenix {
 				break;
 			}
 
-			if (chunk.remaining() != 0)
-				fmt::print(stderr,
-				           "warning: world mesh: not all data consumed from section 0x{:X}\n",
-				           std::uint16_t(type));
+			if (chunk.remaining() != 0) {
+				PX_LOGW("mesh: {} bytes remaining in section 0x{:4X}", chunk.remaining(), std::uint16_t(type));
+			}
 		} while (!finished);
 
 		return msh;

@@ -42,9 +42,7 @@ namespace phoenix {
 				obj_id_to_wp[obj.index] = net._m_waypoints.size() - 1;
 
 				if (!in->read_object_end()) {
-					fmt::print(stderr,
-					           "warning: way net: not all entries consumed from free point (index == {})",
-					           obj.index);
+					PX_LOGW("way_net: free point {} not fully parsed", obj.index);
 					in->skip_object(true);
 				}
 			}
@@ -83,17 +81,14 @@ namespace phoenix {
 					}
 
 					if (!in->read_object_end()) {
-						fmt::print(stderr,
-						           "warning: way net: not all entries consumed from edge #{} (index == {})",
-						           i * 2 + j,
-						           obj.index);
+						PX_LOGW("way_net: edge {} at index {} not fully parsed", i * 2 + j, obj.index);
 						in->skip_object(true);
 					}
 				}
 			}
 
 			if (!in->read_object_end()) {
-				fmt::print(stderr, "warning: way net: not all entries consumed from way net");
+				PX_LOGW("way_net: not fully parsed");
 				in->skip_object(true);
 			}
 			return net;

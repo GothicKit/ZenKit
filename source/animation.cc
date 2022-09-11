@@ -130,9 +130,10 @@ namespace phoenix {
 			}
 
 			if (chunk.remaining() > 0) {
-				fmt::print(stderr,
-				           "warning: animation: not all data consumed from section 0x{:X}\n",
-				           std::uint16_t(type));
+				PX_LOGW("animation(\"{}\"): {} bytes remaining in section 0x{:4X}",
+				        anim.name(),
+				        chunk.remaining(),
+				        std::uint16_t(type));
 			}
 		} while (buf.remaining() != 0);
 

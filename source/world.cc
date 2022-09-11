@@ -53,12 +53,11 @@ namespace phoenix {
 				}
 
 				if (!archive->read_object_end()) {
-					fmt::print(stderr,
-					           "warning: world: not all data consumed of object '[{} {} {} {}]'\n",
-					           chnk.object_name,
-					           chnk.class_name,
-					           chnk.version,
-					           chnk.index);
+					PX_LOGW("world: object [{} {} {} {}] not fully parsed",
+					        chnk.object_name,
+					        chnk.class_name,
+					        chnk.version,
+					        chnk.index);
 					archive->skip_object(true);
 				}
 			}

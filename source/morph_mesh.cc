@@ -84,9 +84,7 @@ namespace phoenix {
 			}
 
 			if (chunk.remaining() != 0) {
-				fmt::print(stderr,
-				           "warning: morph mesh: not all data consumed from section 0x{:X}\n",
-				           std::uint16_t(type));
+				PX_LOGW("morph_mesh: {} bytes remaining in section 0x{:4X}", chunk.remaining(), std::uint16_t(type));
 			}
 		} while (in.remaining() != 0);
 

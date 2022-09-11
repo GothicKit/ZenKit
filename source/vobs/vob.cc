@@ -131,7 +131,7 @@ namespace phoenix {
 			}
 
 			if (!in->read_object_end()) {
-				fmt::print(stderr, "warning: vob_tree: visual \"{}\" not fully parsed\n", visual.class_name);
+				PX_LOGW("vob_tree: visual \"{}\" not fully parsed", visual.class_name);
 				in->skip_object(true);
 			}
 		}

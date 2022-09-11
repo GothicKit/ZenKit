@@ -44,7 +44,8 @@ namespace phoenix {
 				}
 
 				if (chunk.position() != weight_buffer_end) {
-					fmt::print(stderr, "warning: softskin mesh: not all data from weight section\n");
+					PX_LOGW("softskin_mesh: {} bytes remaining in weight section",
+					        weight_buffer_end - chunk.position());
 					chunk.position(weight_buffer_end);
 				}
 
@@ -78,9 +79,7 @@ namespace phoenix {
 			}
 
 			if (chunk.remaining() != 0) {
-				fmt::print(stderr,
-				           "warning: softskin mesh: not all data consumed from section 0x{:X}\n",
-				           std::uint16_t(type));
+				PX_LOGW("softskin_mesh: {} bytes remaining in section 0x{:4X}", chunk.remaining(), std::uint16_t(type));
 			}
 		} while (!end_mesh);
 

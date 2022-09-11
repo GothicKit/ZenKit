@@ -52,7 +52,7 @@ namespace phoenix::vobs {
 		archive_object frame_obj {};
 		while (ctx->read_object_begin(frame_obj)) {
 			if (frame_obj.class_name != "zCCamTrj_KeyFrame:zCVob") {
-				fmt::print(stderr, "error: unexpected '{}' in 'zCCSCamera:zCVob'\n", frame_obj.class_name);
+				PX_LOGW("cs_camera: unexpected \"{}\" in \"zCCSCamera:zCVob\"", frame_obj.class_name);
 				ctx->skip_object(true);
 				continue;
 			}
@@ -60,7 +60,7 @@ namespace phoenix::vobs {
 			obj.frames.emplace_back(camera_trj_frame::parse(ctx, version));
 
 			if (!ctx->read_object_end()) {
-				fmt::print(stderr, "warning: not all data consumed of 'zCCamTrj_KeyFrame'\n");
+				PX_LOGW("cs_camera: \"zCCamTrj_KeyFrame\" not fully parsed");
 				ctx->skip_object(true);
 			}
 		}

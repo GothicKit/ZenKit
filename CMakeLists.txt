@@ -6,6 +6,7 @@ option(PX_BUILD_TOOLS "Build phoenix tool executables" ON)
 option(PX_BUILD_TESTS "Build core library tests" ON)
 option(PX_BUILD_EXAMPLES "Build example code" OFF)
 option(PX_NO_SANITIZERS "Build without sanitizers in debug mode" OFF)
+set(PX_LOG_LEVEL "INFO" CACHE STRING "The logging level to use for phoenix. Set to DEBUG, INFO, WARN or ERROR")
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -26,6 +27,16 @@ else ()
 			set(PX_CXX_FLAGS ${PX_CXX_FLAGS} -fstandalone-debug)
 		endif ()
 	endif ()
+endif ()
+
+if (PX_LOG_LEVEL MATCHES "DEBUG")
+	set(PX_DEFINES PX_LOG_LEVEL_DEBUG=1)
+elseif (PX_LOG_LEVEL MATCHES "INFO")
+	set(PX_DEFINES PX_LOG_LEVEL_INFO=1)
+elseif (PX_LOG_LEVEL MATCHES "WARN")
+	set(PX_DEFINES PX_LOG_LEVEL_WARN=1)
+elseif (PX_LOG_LEVEL MATCHES "ERROR")
+	set(PX_DEFINES PX_LOG_LEVEL_ERROR=1)
 endif ()
 
 set(PX_SOURCES
@@ -97,6 +108,7 @@ file(GLOB_RECURSE PX_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include/**/*.hh")
 add_library(phoenix ${PX_SOURCES} ${PX_HEADERS})
 target_include_directories(phoenix PUBLIC include)
 target_link_libraries(phoenix PUBLIC glm fmt squish mio lexy)
+target_compile_definitions(phoenix PUBLIC ${PX_DEFINES})
 target_compile_options(phoenix PRIVATE ${PX_CXX_FLAGS})
 target_link_options(phoenix PUBLIC ${PX_CXX_FLAGS})
 

@@ -85,7 +85,7 @@ namespace phoenix {
 			}
 
 			if (!in->read_object_end()) {
-				fmt::print(stderr, "warning: not all data consumed of material '{}'\n", mat.name);
+				PX_LOGW("material(\"{}\"): not fully parsed", mat.name);
 				in->skip_object(true);
 			}
 

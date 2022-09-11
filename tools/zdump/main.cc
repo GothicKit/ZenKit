@@ -135,6 +135,7 @@ file_format detect_file_format(px::buffer&& buf) {
 
 int main(int argc, char** argv) {
 	const flags::args args {argc, argv};
+	px::logging::use_default_logger();
 
 	if (args.get<bool>("v", false) || args.get<bool>("version", false)) {
 		fmt::print("zdump v{}\n", ZDUMP_VERSION);
