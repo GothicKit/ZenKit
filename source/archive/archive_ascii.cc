@@ -42,7 +42,14 @@ namespace phoenix {
 	bool archive_reader_ascii::read_object_end() {
 		if (input.remaining() < 3)
 			return false;
+
+		input.mark();
 		auto line = input.get_line();
+
+		// Compatibility fix for binary data in ASCII archives.
+		while (std::isspace(line[0])) {
+			line = line.substr(1);
+		}
 
 		if (line != "[]") {
 			input.reset();
