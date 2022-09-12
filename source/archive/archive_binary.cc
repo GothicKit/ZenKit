@@ -99,7 +99,7 @@ namespace phoenix {
 	}
 
 	glm::mat3x3 archive_reader_binary::read_mat3x3() {
-		return input.get_mat3x3();
+		return glm::transpose(input.get_mat3x3());
 	}
 
 	buffer archive_reader_binary::read_raw_bytes() {

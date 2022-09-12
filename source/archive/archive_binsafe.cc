@@ -223,7 +223,7 @@ namespace phoenix {
 
 		auto v = input.get_mat3x3();
 		input.skip(unused);
-		return v;
+		return glm::transpose(v);
 	}
 
 	buffer archive_reader_binsafe::read_raw_bytes() {
