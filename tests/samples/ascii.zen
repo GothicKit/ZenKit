@@ -19,8 +19,8 @@ END
 
 	someField1=int:672
 	someField2=float:12.12421
-	someField3=byte:255
-	someField4=word:32621
+	someField3=int:255
+	someField4=int:32621
 	someField5=enum:6
 	someField6=bool:1
 	someField7=color:255 1 2 3

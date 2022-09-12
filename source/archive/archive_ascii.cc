@@ -86,11 +86,11 @@ namespace phoenix {
 	}
 
 	std::uint8_t archive_reader_ascii::read_byte() {
-		return std::stoul(read_entry("byte")) & 0xFF;
+		return std::stoul(read_entry("int")) & 0xFF;
 	}
 
 	std::uint16_t archive_reader_ascii::read_word() {
-		return std::stoul(read_entry("word")) & 0xFF'FF;
+		return std::stoul(read_entry("int")) & 0xFF'FF;
 	}
 
 	std::uint32_t archive_reader_ascii::read_enum() {
