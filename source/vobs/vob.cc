@@ -16,6 +16,7 @@ namespace phoenix {
 	    {"zCAICamera", visual_type::ai_camera},
 	    {"zCMorphMesh", visual_type::morph_mesh},
 	    {"\xA7", visual_type::unknown},
+	    {"%", visual_type::unknown},
 	};
 
 	decal decal::parse(std::unique_ptr<archive_reader>& in, game_version version) {
