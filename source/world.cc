@@ -23,6 +23,11 @@ namespace phoenix {
 
 			while (!archive->read_object_end()) {
 				archive->read_object_begin(chnk);
+				PX_LOGI("world: parsing object [{} {} {} {}]",
+				        chnk.object_name,
+				        chnk.class_name,
+				        chnk.version,
+				        chnk.index);
 
 				if (chnk.object_name == "MeshAndBsp") {
 					auto bsp_version = in.get_uint();

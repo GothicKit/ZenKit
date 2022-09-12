@@ -67,6 +67,8 @@ namespace phoenix {
 			auto length = in.get_uint();
 			auto chunk = in.extract(length);
 
+			PX_LOGI("bsp_tree: parsing chunk {:4X}", std::uint16_t(type));
+
 			switch (type) {
 			case bsp_chunk::header:
 				(void) chunk.get_ushort();

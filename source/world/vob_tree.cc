@@ -75,7 +75,7 @@ namespace phoenix {
 		if (const auto& it = vob_type_map.find(obj.class_name); it != vob_type_map.end()) {
 			type = it->second;
 		} else {
-			throw parser_error(fmt::format("vob_tree: expected a '*:zCVob' object but got '{}'", obj.class_name));
+			type = vob_type::unknown;
 		}
 
 		std::unique_ptr<vob> object;
@@ -212,6 +212,11 @@ namespace phoenix {
 			vobs::mover_controller::parse(dynamic_cast<vobs::mover_controller&>(*object), in, version);
 			break;
 		case vob_type::unknown:
+			PX_LOGW("vob_tree: encountered unknown VOb [{} {} {} {}]",
+			        obj.object_name,
+			        obj.class_name,
+			        obj.version,
+			        obj.index);
 			break;
 		}
 
