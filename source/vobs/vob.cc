@@ -46,7 +46,7 @@ namespace phoenix {
 
 			obj.bbox = bounding_box::parse(bin);
 			obj.position = bin.get_vec3();
-			obj.rotation = bin.get_mat3x3();
+			obj.rotation = glm::transpose(bin.get_mat3x3());
 
 			std::uint8_t bit0 = bin.get();
 			std::uint16_t bit1;
