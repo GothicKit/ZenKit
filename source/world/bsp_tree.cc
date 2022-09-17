@@ -5,6 +5,9 @@
 #include <fmt/format.h>
 
 namespace phoenix {
+	static constexpr auto version_g1 = 0x2090000;
+	[[maybe_unused]] static constexpr auto version_g2 = 0x4090000;
+
 	enum class bsp_chunk : std::uint16_t {
 		unknown,
 		header = 0xC000,
@@ -40,7 +43,7 @@ namespace phoenix {
 			node.plane.y = in.get_float();
 			node.plane.z = in.get_float();
 
-			if (version == bsp_tree::version_g1) {
+			if (version == version_g1) {
 				(void) in.get(); // "lod-flag"
 			}
 

@@ -15,6 +15,7 @@ namespace phoenix {
 		outdoor = 1,
 	};
 
+	/// \brief Represents a BSP tree node.
 	struct bsp_node {
 		glm::vec4 plane;
 		bounding_box bbox;
@@ -30,97 +31,83 @@ namespace phoenix {
 		}
 	};
 
+	/// \brief Represents a BSP sector.
 	struct bsp_sector {
 		std::string name;
 		std::vector<std::uint32_t> node_indices;
 		std::vector<std::uint32_t> portal_polygon_indices;
 	};
 
-	/**
-	 * @brief Represents a BSP tree.
-	 *
-	 * Parses ZenGin BSP trees. The reference implementation can be found on GitHub:
-	 * https://github.com/Try/ZenLib/blob/732077c82589f5060d1762839293b996c8222c18/zenload/zCBspTree.cpp and the
-	 * original version by Andre Taulien was also referenced:
-	 * https://github.com/ataulien/ZenLib/blob/e1a5e1b12e71690a5470f3be2aa3d0d6419f5191/zenload/zCBspTree.h
-	 *
-	 * Thanks to the original author, Andre Taulien as well as Try for additional work on their
-	 * ZenLib fork!
-	 *
-	 * @see https://github.com/ataulien/ZenLib
-	 * @see https://github.com/Try/ZenLib
-	 * @note This is not currently fully finished.
-	 */
+	/// \brief Represents a binary space partitioning tree as implemented in the ZenGin.
+	///
+	/// [Binary space partitioning](https://en.wikipedia.org/wiki/Binary_space_partitioning) is used for rapidly
+	/// drawing three-dimensional scenes and performing ray-casts.
 	class bsp_tree {
 	public:
-		/**
-		 * @brief Parses a BSP tree from the given reader.
-		 * @param in The reader to read from.
-		 * @return The tree parsed.
-		 */
+		/// \brief Parses a BSP tree from the data in the given buffer.
+		///
+		/// <p>This implementation is heavily based on the implementation found in
+		/// [ZenLib](https://github.com/Try/ZenLib).
+		///
+		/// \param[in,out] buf The buffer to read from.
+		/// \param version The version identifier of the tree in the buffer.
+		/// \return The parsed BSP tree.
+		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
+		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
+		///       using buffer::duplicate.
+		/// \throws parser_error if parsing fails.
+		/// \see #parse(buffer&&)
 		[[nodiscard]] static bsp_tree parse(buffer& in, std::uint32_t version);
 
-		/**
-		 * @brief Parses a BSP tree from the given reader.
-		 * @param in The reader to read from.
-		 * @return The tree parsed.
-		 */
+		/// \brief Parses a BSP tree from the data in the given buffer.
+		/// \param[in] buf The buffer to read from (by rvalue-reference).
+		/// \param version The version identifier of the tree in the buffer.
+		/// \return The parsed BSP tree.
+		/// \throws parser_error if parsing fails.
+		/// \see #parse(buffer&)
 		[[nodiscard]] inline static bsp_tree parse(buffer&& in, std::uint32_t version) {
 			return parse(in, version);
 		}
 
-		/**
-		 * @return The mode of the tree (either indoor or outdoor).
-		 */
+		/// \return The mode of the tree (either indoor or outdoor).
 		[[nodiscard]] bsp_tree_mode mode() const noexcept {
 			return _m_mode;
 		}
 
-		/**
-		 * @return A list of polygon indices.
-		 */
+		/// \return A list of polygon indices.
 		[[nodiscard]] const std::vector<std::uint32_t>& polygon_indices() const noexcept {
 			return _m_polygon_indices;
 		}
 
-		/**
-		 * @return All BSP nodes associated with the tree.
-		 */
+		/// \return All BSP nodes associated with the tree.
 		[[nodiscard]] const std::vector<bsp_node>& nodes() const noexcept {
 			return _m_nodes;
 		}
 
-		/**
-		 * @return All BSP leaf node indices.
-		 */
+		/// \return All BSP leaf node indices.
 		[[nodiscard]] const std::vector<std::uint64_t>& leaf_node_indices() const noexcept {
 			return _m_leaf_node_indices;
 		}
 
+		/// \return All BSP leaf polygon indices.
 		[[nodiscard]] const std::vector<std::uint32_t>& leaf_polygons() const noexcept {
 			return _m_leaf_polygons;
 		}
 
-		/**
-		 * @return All BSP sectors.
-		 */
+		/// \return All BSP sectors.
 		[[nodiscard]] const std::vector<bsp_sector>& sectors() const noexcept {
 			return _m_sectors;
 		}
 
-		/**
-		 * @return Polygon indices of portals.
-		 */
+		/// \return Polygon indices of portals.
 		[[nodiscard]] const std::vector<std::uint32_t>& portal_polygon_indices() const noexcept {
 			return _m_portal_polygon_indices;
 		}
 
+		/// \return All BSP light points.
 		[[nodiscard]] const std::vector<glm::vec3>& light_points() const noexcept {
 			return _m_light_points;
 		}
-
-		static constexpr auto version_g1 = 0x2090000;
-		static constexpr auto version_g2 = 0x4090000;
 
 	private:
 		bsp_tree_mode _m_mode;
