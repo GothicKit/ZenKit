@@ -368,7 +368,11 @@ namespace phoenix::daedalus {
 			return std::get<float>(v.value);
 		} else if (std::holds_alternative<std::int32_t>(v.value)) {
 			auto k = std::get<std::int32_t>(v.value);
-			return reinterpret_cast<float&>(k);
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+			return *(float*) &k;
+#pragma GCC diagnostic pop
 		} else {
 			throw vm_exception {"tried to pop_float but frame does not contain a float."};
 		}

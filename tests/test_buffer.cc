@@ -7,7 +7,7 @@
 #include <cstring>
 
 template <typename... Args>
-static constexpr std::vector<std::byte> bytes(Args... bytes) {
+static std::vector<std::byte> bytes(Args... bytes) {
 	return std::vector<std::byte> {static_cast<std::byte>(bytes)...};
 }
 

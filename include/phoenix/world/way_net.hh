@@ -3,6 +3,7 @@
 #pragma once
 #include <phoenix/archive.hh>
 
+#include <unordered_map>
 #include <vector>
 
 namespace phoenix {

@@ -1,6 +1,5 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
-#include <phoenix/mesh.hh>
 #include <phoenix/model_script.hh>
 #include <phoenix/phoenix.hh>
 
@@ -10,6 +9,9 @@
 #include <lexy/action/parse.hpp>
 #include <lexy/input/buffer.hpp>
 #include <lexy_ext/report_error.hpp>
+
+#include <sstream>
+#include <unordered_map>
 
 namespace phoenix {
 	namespace mds {

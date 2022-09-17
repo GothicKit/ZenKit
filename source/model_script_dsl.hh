@@ -57,7 +57,7 @@ namespace phoenix::mds {
 			}
 
 			model_script operator()(model_script&& s, lexy::nullopt&&) const {
-				return s;
+				return LEXY_MOV(s);
 			}
 
 			[[nodiscard]] auto sink() const {
@@ -111,7 +111,7 @@ namespace phoenix::mds {
 			}
 
 			model_script operator()(model_script&& s, lexy::nullopt&&) const {
-				return s;
+				return LEXY_MOV(s);
 			}
 
 			[[nodiscard]] auto sink() const {
@@ -532,7 +532,7 @@ namespace phoenix::mds {
 		static constexpr auto rule =
 		    LEXY_LIT("Model") + dsl::round_bracketed(dsl::p<dsl_string>) + dsl::p<dsl_script_body>;
 
-		static constexpr auto value =
-		    lexy::callback<model_script>([](std::string&&, model_script&& script) { return script; });
+		static constexpr auto value = lexy::callback<model_script>(
+		    [](std::string&&, model_script&& script) { return std::forward<model_script>(script); });
 	};
 } // namespace phoenix::mds

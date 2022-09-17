@@ -36,7 +36,6 @@ Language: Cpp
 NamespaceIndentation: All
 PointerAlignment: Left
 ReflowComments: true
-SortIncludes: CaseInsensitive
 SortUsingDeclarations: true
 SpaceAfterCStyleCast: true
 SpaceAfterLogicalNot: false

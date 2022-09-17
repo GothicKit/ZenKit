@@ -4,6 +4,8 @@
 #include <phoenix/proto_mesh.hh>
 #include <phoenix/softskin_mesh.hh>
 
+#include <unordered_map>
+
 namespace phoenix {
 	/// \brief Represents a *ZenGin* model mesh.
 	///

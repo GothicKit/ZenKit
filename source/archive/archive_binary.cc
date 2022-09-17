@@ -23,7 +23,8 @@ namespace phoenix {
 		if (input.remaining() < 12)
 			return false;
 
-		_m_object_end.push(input.position() + input.get_uint());
+		auto pos = input.position();
+		_m_object_end.push(pos + input.get_uint());
 
 		obj.version = input.get_ushort();
 		obj.index = input.get_uint();

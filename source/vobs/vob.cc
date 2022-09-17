@@ -5,6 +5,8 @@
 
 #include <fmt/format.h>
 
+#include <unordered_map>
+
 namespace phoenix {
 	/// \brief A mapping of archive class names to visual_type values.
 	static std::unordered_map<std::string, visual_type> visual_type_map = {

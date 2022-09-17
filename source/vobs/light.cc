@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/vobs/light.hh>
 
+#include <sstream>
+
 namespace phoenix::vobs {
 	void light_preset::parse(light_preset& obj, std::unique_ptr<archive_reader>& in, game_version version) {
 		obj.preset = in->read_string();                            // lightPresetInUse

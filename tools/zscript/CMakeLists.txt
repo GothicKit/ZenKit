@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(phoenix::tools::zscript VERSION 0.1.0)
+project(phoenix.tools.zscript VERSION 0.1.0)
 
 
 execute_process(

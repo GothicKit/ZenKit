@@ -21,10 +21,14 @@ else ()
 	set(PX_CXX_FLAGS -Wall -Wextra -Werror -Wconversion)
 
 	if (${CMAKE_BUILD_TYPE} MATCHES "Debug" AND NOT ${PX_NO_SANITIZERS})
-		set(PX_CXX_FLAGS ${PX_CXX_FLAGS} -fsanitize=address -fsanitize=undefined -fsanitize=leak)
+		set(PX_CXX_FLAGS ${PX_CXX_FLAGS} -fsanitize=address -fsanitize=undefined)
 
 		if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
 			set(PX_CXX_FLAGS ${PX_CXX_FLAGS} -fstandalone-debug)
+		endif ()
+
+		if (NOT APPLE)
+			set(PX_CXX_FLAGS ${PX_CXX_FLAGS} -fsanitize=leak)
 		endif ()
 	endif ()
 endif ()
@@ -121,13 +125,14 @@ set_target_properties(phoenix
 
 if (PX_BUILD_TESTS)
 	enable_testing()
+	include(vendor/doctest/scripts/cmake/doctest.cmake)
 
 	add_executable(phoenix-tests ${PX_TESTS})
 	target_link_libraries(phoenix-tests PRIVATE phoenix doctest_with_main)
 	target_compile_options(phoenix-tests PRIVATE ${PX_CXX_FLAGS})
 	target_link_options(phoenix-tests PRIVATE ${PX_CXX_FLAGS})
 
-	add_test(NAME phoenix-test COMMAND $<TARGET_FILE:phoenix-tests> --check WORKING_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests)
+	doctest_discover_tests(phoenix-tests EXTRA_ARGS -tse=messages,script,world WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/tests)
 endif ()
 
 if (PX_BUILD_EXAMPLES)

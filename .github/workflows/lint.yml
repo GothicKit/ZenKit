@@ -1,0 +1,17 @@
+name: 'Lint'
+on: 'push'
+jobs:
+  format:
+    name: 'Formatting'
+    runs-on: 'ubuntu-latest'
+    container:
+      image: 'docker.io/ubuntu:latest'
+    steps:
+      - name: "Dependencies"
+        run: 'apt update && apt install -y git clang-format'
+      - uses: 'actions/checkout@v3'
+        with:
+          submodules: 'recursive'
+      - name: 'clang-format'
+        shell: 'bash'
+        run: 'find include source tests tools examples -iname "*.hh" -or -iname "*.cc" | xargs clang-format --dry-run --style=file --Werror'

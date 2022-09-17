@@ -279,7 +279,7 @@ namespace phoenix {
 	}
 
 	std::string buffer::get_line(bool skip_whitespace) {
-		auto lf = mismatch([](char chr) { return chr == '\n' || chr == '\0'; });
+		auto lf = mismatch([](char chr) { return chr == '\n' || chr == '\0' || chr == '\r'; });
 
 		if (lf == -1) {
 			throw buffer_underflow {position(), "relative line get"};
