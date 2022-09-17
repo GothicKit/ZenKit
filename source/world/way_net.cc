@@ -5,8 +5,7 @@
 #include <fmt/format.h>
 
 namespace phoenix {
-
-	static void read_waypoint_data(way_point& wp, archive_reader_ref& in) {
+	static void read_waypoint_data(way_point& wp, std::unique_ptr<archive_reader>& in) {
 		wp.name = in->read_string();      // wpName
 		wp.water_depth = in->read_int();  // waterDepth
 		wp.under_water = in->read_bool(); // underWater
@@ -15,7 +14,7 @@ namespace phoenix {
 		wp.free_point = true;
 	}
 
-	way_net way_net::parse(archive_reader_ref& in) {
+	way_net way_net::parse(std::unique_ptr<archive_reader>& in) {
 		try {
 			way_net net;
 			archive_object obj;
@@ -38,7 +37,7 @@ namespace phoenix {
 				auto& wp = net._m_waypoints.emplace_back();
 				read_waypoint_data(wp, in);
 				wp.free_point = true;
-				net._m_name_to_waypoint[wp.name] = &wp;
+				net._m_name_to_waypoint[wp.name] = net._m_waypoints.size() - 1;
 				obj_id_to_wp[obj.index] = net._m_waypoints.size() - 1;
 
 				if (!in->read_object_end()) {
@@ -99,7 +98,7 @@ namespace phoenix {
 
 	const way_point* way_net::waypoint(const std::string& name) const {
 		if (auto it = _m_name_to_waypoint.find(name); it != _m_name_to_waypoint.end())
-			return it->second;
+			return &_m_waypoints[it->second];
 		return nullptr;
 	}
 } // namespace phoenix

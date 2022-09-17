@@ -7,9 +7,7 @@
 #include <vector>
 
 namespace phoenix {
-	/**
-	 * @brief Represents a waypoint
-	 */
+	/// \brief Represents a single waypoint.
 	struct way_point {
 		std::string name;
 		std::int32_t water_depth;
@@ -20,62 +18,44 @@ namespace phoenix {
 		bool free_point {false};
 	};
 
-	/**
-	 * @brief Represents an edge between two waypoints.
-	 */
+	/// \brief Represents a connection between two waypoints.
 	struct way_edge {
+		/// \brief The index of the first waypoint of the connection.
 		std::uint32_t a;
+
+		/// \brief The index of the second waypoint of the connection.
 		std::uint32_t b;
 	};
 
-	/**
-	 * @brief Represents a world's way-net.
-	 *
-	 * Parses ZenGin way-nets. The reference implementation can be found on GitHub:
-	 * https://github.com/Try/ZenLib/blob/9b94299307aebcd99887c5e0b050a13622e41ecb/zenload/zenParser.cpp#L487 and the
-	 * original version by Andre Taulien was also referenced:
-	 * https://github.com/ataulien/ZenLib/blob/e1a5e1b12e71690a5470f3be2aa3d0d6419f5191/zenload/zCWayNet.h
-	 *
-	 * Thanks to the original author, Andre Taulien as well as Try for additional work on their ZenLib fork!
-	 *
-	 * @see https://github.com/ataulien/ZenLib
-	 * @see https://github.com/Try/ZenLib
-	 */
+	/// \brief Represents a way-net.
+	///
+	/// Way-nets are used for NPC navigation and path finding.
 	class way_net {
 	public:
-		/**
-		 * @brief Parses a way net from the given reader.
-		 * @param in The reader to read from.
-		 * @return The way net parsed.
-		 * @throws parser_error if parsing fails.
-		 */
-		static way_net parse(archive_reader_ref& in);
+		/// \brief PParses a way-net from the given reader.
+		/// \param in The reader to read from.
+		/// \return The way-net parsed.
+		static way_net parse(std::unique_ptr<archive_reader>& in);
 
-		/**
-		 * @return All waypoints associated with the way-net.
-		 */
+		/// \return All waypoints of this way-net.
 		[[nodiscard]] inline const std::vector<way_point>& waypoints() const noexcept {
 			return _m_waypoints;
 		}
 
-		/**
-		 * @return All edges associated with the way-net.
-		 */
+		/// \return All edges of this way-net.
 		[[nodiscard]] inline const std::vector<way_edge>& edges() const noexcept {
 			return _m_edges;
 		}
 
-		/**
-		 * @brief Get the waypoint with the given name.
-		 * @param name The name of the waypoint to get.
-		 * @return A pointer to the waypoint or `nullptr` if the waypoint was not fount.
-		 */
+		/// \brief Get the waypoint with the given name.
+		/// \param name The name of the waypoint to get.
+		/// \return A pointer to the waypoint or `nullptr` if the waypoint was not fount.
 		[[nodiscard]] const way_point* waypoint(const std::string& name) const;
 
 	private:
 		std::vector<way_point> _m_waypoints;
 		std::vector<way_edge> _m_edges;
-		std::unordered_map<std::string, way_point*> _m_name_to_waypoint; // TODO: don't keep pointers!
+		std::unordered_map<std::string, std::uint32_t> _m_name_to_waypoint;
 	};
 
 } // namespace phoenix
