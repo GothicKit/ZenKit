@@ -62,7 +62,7 @@ namespace phoenix {
 	    {"\xA7", vob_type::unknown}, // some sort of padding object, probably. seems to be always empty
 	};
 
-	std::unique_ptr<vob> parse_vob_tree(archive_reader_ref& in, game_version version) {
+	std::unique_ptr<vob> parse_vob_tree(std::unique_ptr<archive_reader>& in, game_version version) {
 		std::vector<std::unique_ptr<vob>> vobs {};
 
 		archive_object obj;

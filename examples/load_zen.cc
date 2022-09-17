@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-void print_entries(phoenix::archive_reader_ref& reader) {
+void print_entries(std::unique_ptr<phoenix::archive_reader>& reader) {
 	int level = 0;
 	phoenix::archive_object obj {};
 
