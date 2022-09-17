@@ -3,14 +3,19 @@
 #pragma once
 #include <phoenix/buffer.hh>
 #include <phoenix/material.hh>
-#include <phoenix/math/bbox.hh>
-#include <phoenix/math/light_map.hh>
-#include <phoenix/math/obb.hh>
+#include <phoenix/math.hh>
 #include <phoenix/phoenix.hh>
 #include <phoenix/proto_mesh.hh>
 #include <phoenix/texture.hh>
 
 namespace phoenix {
+	/// \brief Represents a light map.
+	struct light_map {
+		std::shared_ptr<texture> image;
+		glm::vec3 normals[2];
+		glm::vec3 origin;
+	};
+
 	/// \brief Represents a vertex feature.
 	struct vertex_feature {
 		/// \brief The texture coordinates of the polygon.

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include <phoenix/buffer.hh>
-#include <phoenix/math/bbox.hh>
+#include <phoenix/math.hh>
 #include <phoenix/phoenix.hh>
 
 #include <glm/mat3x3.hpp>

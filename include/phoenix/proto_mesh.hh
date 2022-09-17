@@ -3,7 +3,7 @@
 #pragma once
 #include <phoenix/buffer.hh>
 #include <phoenix/material.hh>
-#include <phoenix/math/obb.hh>
+#include <phoenix/math.hh>
 
 namespace phoenix {
 	struct triangle {

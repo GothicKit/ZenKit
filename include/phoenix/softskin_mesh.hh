@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include <phoenix/buffer.hh>
-#include <phoenix/math/obb.hh>
+#include <phoenix/math.hh>
 #include <phoenix/proto_mesh.hh>
 
 namespace phoenix {

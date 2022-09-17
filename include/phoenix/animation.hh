@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include <phoenix/buffer.hh>
-#include <phoenix/math/bbox.hh>
+#include <phoenix/math.hh>
 #include <phoenix/mesh.hh>
 
+#include <glm/gtc/quaternion.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
