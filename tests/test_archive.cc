@@ -35,9 +35,9 @@ TEST_SUITE("archive") {
 		CHECK(reader->read_bool());
 
 		auto color = reader->read_color();
-		CHECK(color.r == 255);
+		CHECK(color.r == 2);
+		CHECK(color.b == 255);
 		CHECK(color.g == 1);
-		CHECK(color.b == 2);
 		CHECK(color.a == 3);
 
 		auto vec3 = reader->read_vec3();
