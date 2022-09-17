@@ -368,7 +368,7 @@ namespace phoenix::daedalus {
 			return std::get<float>(v.value);
 		} else if (std::holds_alternative<std::int32_t>(v.value)) {
 			auto k = std::get<std::int32_t>(v.value);
-			return std::bit_cast<float>(k);
+			return reinterpret_cast<float&>(k);
 		} else {
 			throw vm_exception {"tried to pop_float but frame does not contain a float."};
 		}

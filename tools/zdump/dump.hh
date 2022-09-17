@@ -155,30 +155,18 @@ void dump_text<px::texture>(const px::texture& obj);
 template <>
 void dump_json<px::texture>(const px::texture& obj);
 
-/**
- * @brief Prints information about the given mesh to <tt>stdout</tt>.
- * @param fnt The object to print.
- */
+/* TODO: Fix C++17 compatibility
+
 template <>
 void dump_text<px::mesh>(const px::mesh& obj);
 
-/**
- * @brief Prints all relevant data of the given mesh to <tt>stdout</tt> as JSON text.
- * @param fnt The object to print.
- */
 template <>
 void dump_json<px::mesh>(const px::mesh& obj);
 
-/**
- * @brief Prints information about the given model script to <tt>stdout</tt>.
- * @param fnt The object to print.
- */
 template <>
 void dump_text<px::model_script>(const px::model_script& obj);
 
-/**
- * @brief Prints all relevant data of the given model script to <tt>stdout</tt> as JSON text.
- * @param fnt The object to print.
- */
 template <>
 void dump_json<px::model_script>(const px::model_script& obj);
+
+*/

@@ -334,8 +334,7 @@ namespace phoenix::daedalus {
 		/// \brief Tests whether this symbol holds an instance of the given type.
 		/// \tparam T The type of instance to check for.
 		/// \return <tt>true</tt> if the symbol contains an instance of the given type, <tt>false</tt> if not.
-		template <typename T> // clang-format off
-		requires (std::derived_from<T, instance>)
+		template <typename T, typename std::enable_if<std::is_base_of_v<instance, T>>::type>
 		inline bool is_instance_of() { // clang-format on
 			return this->type() == dt_instance && this->get_instance() != nullptr &&
 			    this->get_instance()->_m_type == &typeid(T);
@@ -537,12 +536,14 @@ namespace phoenix::daedalus {
 		/// \throws symbol_not_found if there is no symbol with the given name.
 		/// \throws member_registration_error if the member could not be registered
 		/// \throws invalid_registration_datatype If the datatype of \p _member is different than that of the symbol.
-		template <typename _class, typename _member> // clang-format off
-		requires (std::same_as<std::string, _member> || std::same_as<float, _member> ||
-		          std::same_as<int32_t, _member> || (std::is_enum<_member>::value && sizeof(_member) == 4))
-		void register_member(const std::string& name, _member _class::* field) { // clang-format on
+		template <typename _class, typename _member, int N>
+		typename std::enable_if<std::is_same_v<_member, std::string> || std::is_same_v<_member, float> ||
+		                            std::is_same_v<_member, std::int32_t> ||
+		                            (std::is_enum_v<_member> && sizeof(_member) == 4),
+		                        void>::type
+		register_member(const std::string& name, _member (_class::*field)[N]) { // clang-format on
 			auto* type = &typeid(_class);
-			auto* sym = _check_member<_class, _member, 1>(name, type);
+			auto* sym = _check_member<_class, _member, N>(name, type);
 
 			_class* base = 0;
 			auto member = &(base->*field);
@@ -556,12 +557,14 @@ namespace phoenix::daedalus {
 		/// \throws symbol_not_found if there is no symbol with the given name.
 		/// \throws member_registration_error if the member could not be registered
 		/// \throws invalid_registration_datatype If the datatype of \p _member is different than that of the symbol.
-		template <typename _class, typename _member, int N> // clang-format off
-		requires (std::same_as<std::string, _member> || std::same_as<int32_t, _member> ||
-		          std::same_as<float, _member> || (std::is_enum<_member>::value && sizeof(_member) == 4))
-		void register_member(const std::string& name, _member (_class::*field)[N]) { // clang-format on
+		template <typename _class, typename _member>
+		typename std::enable_if<std::is_same_v<_member, std::string> || std::is_same_v<_member, float> ||
+		                            std::is_same_v<_member, std::int32_t> ||
+		                            (std::is_enum_v<_member> && sizeof(_member) == 4),
+		                        void>::type
+		register_member(const std::string& name, _member _class::*field) {
 			auto* type = &typeid(_class);
-			auto* sym = _check_member<_class, _member, N>(name, type);
+			auto* sym = _check_member<_class, _member, 1>(name, type);
 
 			_class* base = 0;
 			auto member = &(base->*field);
@@ -650,8 +653,7 @@ namespace phoenix::daedalus {
 		/// \param inst The instance to get the symbol for.
 		/// \return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
 		///         with any instance.
-		template <typename T> // clang-format off
-		requires(std::derived_from<T, instance>)
+		template <typename T, typename std::enable_if<std::is_base_of_v<instance, T>>::type>
 		inline const symbol* find_symbol_by_instance(const std::shared_ptr<T>& inst) const { // clang-format on
 			return find_symbol_by_index(inst->_m_symbol_index);
 		}
@@ -660,8 +662,7 @@ namespace phoenix::daedalus {
 		/// \param inst The instance to get the symbol for.
 		/// \return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
 		///         with any instance.
-		template <typename T> // clang-format off
-	    requires(std::derived_from<T, instance>)
+		template <typename T, typename std::enable_if<std::is_base_of_v<instance, T>>::type>
 		inline symbol* find_symbol_by_instance(const std::shared_ptr<T>& inst) {
 			return find_symbol_by_index(inst->_m_symbol_index);
 		}
@@ -701,13 +702,13 @@ namespace phoenix::daedalus {
 			}
 
 			// check type matches
-			if constexpr (std::same_as<std::string, _member>) {
+			if constexpr (std::is_same_v<std::string, _member>) {
 				if (sym->type() != dt_string)
 					throw invalid_registration_datatype {sym, "string"};
-			} else if constexpr (std::same_as<float, _member>) {
+			} else if constexpr (std::is_same_v<float, _member>) {
 				if (sym->type() != dt_float)
 					throw invalid_registration_datatype {sym, "float"};
-			} else if constexpr (std::same_as<int32_t, _member> || std::is_enum<_member>::value) {
+			} else if constexpr (std::is_same_v<int32_t, _member> || std::is_enum_v<_member>) {
 				if (sym->type() != dt_integer && sym->type() != dt_function)
 					throw invalid_registration_datatype {sym, "int"};
 			} else {

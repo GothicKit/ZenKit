@@ -64,13 +64,13 @@ int dump(file_format fmt, px::buffer& in, bool json) {
 	} else if (fmt == file_format::fnt) {
 		dump(phoenix::font::parse(in), json);
 	} else if (fmt == file_format::msh) {
-		dump(phoenix::mesh::parse(in, {}), json);
+		// dump(phoenix::mesh::parse(in, {}), json);
 	} else if (fmt == file_format::tex) {
 		dump(phoenix::texture::parse(in), json);
 	} else if (fmt == file_format::mds) {
-		dump(phoenix::model_script::parse(in), json);
+		// dump(phoenix::model_script::parse(in), json);
 	} else if (fmt == file_format::msb) {
-		dump(phoenix::model_script::parse_binary(in), json);
+		// dump(phoenix::model_script::parse_binary(in), json);
 	} else {
 		fmt::print(stderr, "format not supported");
 		return EXIT_FAILURE;

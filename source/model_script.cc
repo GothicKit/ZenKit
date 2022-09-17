@@ -182,7 +182,7 @@ namespace phoenix {
 	} // namespace mds
 
 	model_script model_script::parse(buffer& buf) {
-		lexy::buffer<lexy::ascii_encoding> b {(char*) buf.array().data(), buf.remaining()};
+		lexy::buffer<lexy::ascii_encoding> b {(char*) buf.array(), buf.remaining()};
 		auto result = lexy::parse<mds::d_script>(b, lexy_ext::report_error);
 
 		if (!result.has_value()) {

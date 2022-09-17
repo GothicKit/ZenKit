@@ -247,13 +247,13 @@ namespace phoenix::daedalus {
 			switch (sym._m_type) {
 			case dt_float: {
 				std::unique_ptr<float[]> value {new float[sym._m_count]};
-				in.get({(std::uint8_t*) value.get(), sym._m_count * sizeof(float)});
+				in.get((std::uint8_t*) value.get(), sym._m_count * sizeof(float));
 				sym._m_value = std::move(value);
 				break;
 			}
 			case dt_integer: {
 				std::unique_ptr<std::int32_t[]> value {new std::int32_t[sym._m_count]};
-				in.get({(std::uint8_t*) value.get(), sym._m_count * sizeof(std::uint32_t)});
+				in.get((std::uint8_t*) value.get(), sym._m_count * sizeof(std::uint32_t));
 				sym._m_value = std::move(value);
 				break;
 			}

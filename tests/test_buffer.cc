@@ -11,8 +11,11 @@ static constexpr std::vector<std::byte> bytes(Args... bytes) {
 	return std::vector<std::byte> {static_cast<std::byte>(bytes)...};
 }
 
-static std::span<const std::byte> bytes_str(const char* str) {
-	return std::span<const std::byte> {std::bit_cast<const std::byte*>(str), std::strlen(str)};
+static std::vector<std::byte> bytes_str(const char* str) {
+	std::vector<std::byte> v {};
+	v.resize(std::strlen(str));
+	std::memcpy(v.data(), str, v.size());
+	return v;
 }
 
 TEST_SUITE("buffer") {
@@ -242,8 +245,8 @@ TEST_SUITE("buffer") {
 		buf.limit(3);
 
 		auto array = buf.array();
-		CHECK(array.size() == 3);
-		CHECK(std::equal(array.begin(), array.end(), bytes_str("abc").begin()));
+		CHECK((char) *array == 'a');
+		CHECK(std::equal(array, array + buf.limit(), bytes_str("abc").begin()));
 	}
 
 	TEST_CASE("get()") {
@@ -258,14 +261,14 @@ TEST_SUITE("buffer") {
 			CHECK(buf.position() == 2);
 
 			std::array<std::byte, 2> array {};
-			buf.get({array.begin(), array.end()});
+			buf.get(array.data(), array.size());
 
 			CHECK(buf.position() == 4);
 			CHECK(buf.remaining() == 0);
 			CHECK(std::equal(array.begin(), array.end(), bytes_str("cd").begin()));
 
 			CHECK_THROWS((void) buf.get());
-			CHECK_THROWS(buf.get(array));
+			CHECK_THROWS(buf.get(array.data(), array.size()));
 		}
 
 		SUBCASE("absolute") {
@@ -273,13 +276,13 @@ TEST_SUITE("buffer") {
 			CHECK(buf.position() == 0);
 
 			std::array<std::byte, 2> array {};
-			buf.get(2, array);
+			buf.get(2, array.data(), array.size());
 
 			CHECK(buf.position() == 0);
 			CHECK(std::equal(array.begin(), array.end(), bytes_str("cd").begin()));
 
 			CHECK_THROWS((void) buf.get(4));
-			CHECK_THROWS((void) buf.get(3, array));
+			CHECK_THROWS((void) buf.get(3, array.data(), array.size()));
 		}
 	}
 

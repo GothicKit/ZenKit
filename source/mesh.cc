@@ -5,7 +5,7 @@
 #include <fmt/format.h>
 
 namespace phoenix {
-	static constexpr auto mesh_version_g1 = 9;
+	[[maybe_unused]] static constexpr auto mesh_version_g1 = 9;
 	static constexpr auto mesh_version_g2 = 265;
 
 	enum class world_mesh_chunk : std::uint16_t {

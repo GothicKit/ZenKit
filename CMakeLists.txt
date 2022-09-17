@@ -8,7 +8,7 @@ option(PX_BUILD_EXAMPLES "Build example code" OFF)
 option(PX_NO_SANITIZERS "Build without sanitizers in debug mode" OFF)
 set(PX_LOG_LEVEL "INFO" CACHE STRING "The logging level to use for phoenix. Set to DEBUG, INFO, WARN or ERROR")
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 
 if (MSVC)
 	# TODO: enable warnings as errors

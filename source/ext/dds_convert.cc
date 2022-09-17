@@ -225,7 +225,7 @@ namespace phoenix {
 	void write_dds_data(buffer& out, const texture& tex) {
 		for (uint32_t level = 0; level < tex.mipmaps(); ++level) {
 			auto& data = tex.data(level);
-			out.put(data);
+			out.put(data.data(), data.size());
 		}
 	}
 

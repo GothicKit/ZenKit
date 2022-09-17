@@ -105,7 +105,7 @@ namespace phoenix {
 		}
 
 	public:
-		[[maybe_unused]] const std::string message;
+		const std::string message;
 	};
 
 	/// \brief An error representing a parsing failure of any kind.

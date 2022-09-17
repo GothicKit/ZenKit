@@ -15,7 +15,6 @@
 #include <functional>
 #include <memory>
 #include <optional>
-#include <span>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -38,8 +37,8 @@ namespace phoenix {
 		buffer_underflow(std::uint64_t byte, std::string&& context);
 
 	public:
-		[[maybe_unused]] const std::uint64_t byte, size;
-		[[maybe_unused]] const std::optional<std::string> context;
+		const std::uint64_t byte, size;
+		const std::optional<std::string> context;
 	};
 
 	/// \brief Exception thrown when writing too many bytes to a buffer.
@@ -52,8 +51,8 @@ namespace phoenix {
 		buffer_overflow(std::uint64_t byte, std::uint64_t size, std::string&& context);
 
 	public:
-		[[maybe_unused]] const std::uint64_t byte, size;
-		[[maybe_unused]] const std::optional<std::string> context;
+		const std::uint64_t byte, size;
+		const std::optional<std::string> context;
 	};
 
 	/// \brief Exception thrown if a write is attempted on a readonly buffer.
@@ -92,26 +91,30 @@ namespace phoenix {
 
 		/// \brief Retrieves a read-only raw byte array of this backing.
 		/// \return A read-only raw byte array into this backing.
-		[[nodiscard]] virtual std::span<const std::byte> array() const = 0;
+		[[nodiscard]] virtual const std::byte* array() const = 0;
 
 		/// \brief Fills the given \p buf with bytes from this backing starting at \p offset.
 		///
 		/// This function is idempotent; calling it never alters any internal state.
 		///
 		/// \param buf A buffer to read into.
+		/// \param size The number of bytes to read.
 		/// \param offset The offset at which to start reading bytes into \p buf.
 		/// \throws buffer_underflow if filling \p buf with bytes starting at \p offset fails.
-		virtual void read(std::span<std::byte> buf, std::uint64_t offset) const = 0;
+		virtual void read(std::byte* buf, std::uint64_t size, std::uint64_t offset) const = 0;
 
 		/// \brief Writes all bytes from \p buf into this backing beginning at \p offset.
 		///
 		/// This function is idempotent; calling it never alters any internal state.
 		///
 		/// \param buf The data to write.
+		/// \param size The number of bytes to write.
 		/// \param offset The offset at which to start writing.
 		/// \throws buffer_overflow if writing all bytes of \p buf starting at \p offset fails.
 		/// \throws buffer_readonly if this backing is readonly.
-		virtual void write([[maybe_unused]] std::span<const std::byte> buf, [[maybe_unused]] std::uint64_t offset) {
+		virtual void write([[maybe_unused]] const std::byte* buf,
+		                   [[maybe_unused]] std::uint64_t size,
+		                   [[maybe_unused]] std::uint64_t offset) {
 			throw buffer_readonly {};
 		}
 	};
@@ -135,9 +138,10 @@ namespace phoenix {
 		/// \return The value read.
 		/// \throws buffer_underflow if there are not enough bytes #remaining to read the value.
 		/// \see buffer_backing::read
-		template <typename T> // clang-format off
-		    requires(std::integral<T> || std::floating_point<T>)
-		[[nodiscard]] T _get_t() { // clang-format on
+		template <
+		    typename T,
+		    typename = typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value>::type>
+		[[nodiscard]] T _get_t() {
 			auto tmp = this->_get_t<T>(this->position());
 			_m_position += sizeof(T);
 			return tmp;
@@ -148,15 +152,16 @@ namespace phoenix {
 		/// \return The value read.
 		/// \throws buffer_underflow if there are not enough bytes in the backing to read the value.
 		/// \see buffer_backing::read
-		template <typename T> // clang-format off
-		    requires(std::integral<T> || std::floating_point<T>)
-		[[nodiscard]] T _get_t(std::uint64_t pos) const { // clang-format on
+		template <
+		    typename T,
+		    typename = typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value>::type>
+		[[nodiscard]] T _get_t(std::uint64_t pos) const {
 			if (pos > limit() || pos + sizeof(T) > limit()) {
 				throw buffer_underflow {pos, sizeof(T)};
 			}
 
 			T tmp {};
-			_m_backing->read({std::bit_cast<std::byte*>(&tmp), sizeof(T)}, _m_backing_begin + pos);
+			_m_backing->read((std::byte*) &tmp, sizeof(T), _m_backing_begin + pos);
 			return tmp;
 		}
 
@@ -167,14 +172,15 @@ namespace phoenix {
 		/// \tparam T The type of scalar to write. Must be a std::integral or a std::floating_point type.
 		/// \throws buffer_overflow if there are not enough bytes #remaining to write the value.
 		/// \see buffer_backing::write
-		template <typename T> // clang-format off
-		    requires(std::integral<T> || std::floating_point<T>)
-		void _put_t(T value) { // clang-format on
+		template <
+		    typename T,
+		    typename = typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value>::type>
+		void _put_t(T value) {
 			if (this->remaining() < sizeof(T)) {
 				throw buffer_overflow {this->position(), sizeof(T)};
 			}
 
-			_m_backing->write({std::bit_cast<std::byte*>(&value), sizeof(T)}, _m_backing_begin + _m_position);
+			_m_backing->write((std::byte*) &value, sizeof(T), _m_backing_begin + _m_position);
 			_m_position += sizeof(T);
 		}
 
@@ -326,20 +332,22 @@ namespace phoenix {
 		}
 
 		/// \return A read-only view into the raw contents of this buffer.
-		[[nodiscard]] inline std::span<const std::byte> array() const noexcept {
-			return _m_backing->array().subspan(_m_backing_begin, _m_backing_end - _m_backing_begin);
+		[[nodiscard]] inline const std::byte* array() const noexcept {
+			return _m_backing->array() + _m_backing_begin;
 		}
 
 		/// \brief Get bytes from the buffer, put them into buf and advance the position accordingly.
 		/// \param buf The buffer to write into.
+		/// \param size The number of bytes to get.
 		/// \throws buffer_underflow if the size of \p buf > #remaining.
-		void get(std::span<std::byte> buf);
+		void get(std::byte* buf, std::uint64_t size);
 
 		/// \brief Get bytes from the buffer, put them into buf and advance the position accordingly.
 		/// \param buf The buffer to write into.
+		/// \param size The number of bytes to get.
 		/// \throws buffer_underflow if the size of \p buf > #remaining.
-		inline void get(std::span<std::uint8_t> buf) {
-			return this->get({std::bit_cast<std::byte*>(buf.data()), buf.size()});
+		inline void get(std::uint8_t* buf, std::uint64_t size) {
+			return this->get((std::byte*) buf, size);
 		}
 
 		/// \brief Get a value of type std::uint8_t from the buffer and advance the position accordingly.
@@ -415,15 +423,17 @@ namespace phoenix {
 		/// \brief Get bytes from the buffer, put them into buf.
 		/// \param index The index at which to start reading.
 		/// \param buf The buffer to write into.
+		/// \param size The number of bytes to get.
 		/// \throws buffer_underflow if the values can't be read.
-		void get(std::uint64_t index, std::span<std::byte> buf) const;
+		void get(std::uint64_t index, std::byte* buf, std::uint64_t size) const;
 
 		/// \brief Get bytes from the buffer, put them into buf.
 		/// \param index The index at which to start reading.
 		/// \param buf The buffer to write into.
+		/// \param size The number of bytes to get.
 		/// \throws buffer_underflow if the values can't be read.
-		inline void get(std::uint64_t index, std::span<std::uint8_t> buf) const {
-			return this->get(index, {std::bit_cast<std::byte*>(buf.data()), buf.size()});
+		inline void get(std::uint64_t index, std::uint8_t* buf, std::uint64_t size) const {
+			return this->get(index, (std::byte*) buf, size);
 		}
 
 		/// \brief Get a value of type std::uint8_t from the buffer.
@@ -627,18 +637,20 @@ namespace phoenix {
 
 		/// \brief Put bytes from buf into the buffer and advance the position accordingly.
 		/// \param buf The data to write.
+		/// \param size The number of bytes to write.
 		/// \return This buffer.
 		/// \throws buffer_overflow if the value can't be written.
 		/// \throws buffer_readonly if the buffer is read-only.
-		void put(std::span<const std::byte> buf);
+		void put(const std::byte* buf, std::uint64_t size);
 
 		/// \brief Put bytes from buf into the buffer and advance the position accordingly.
 		/// \param buf The data to write.
+		/// \param size The number of bytes to write.
 		/// \return This buffer.
 		/// \throws buffer_overflow if the value can't be written.
 		/// \throws buffer_readonly if the buffer is read-only.
-		inline void put(std::span<const std::uint8_t> buf) {
-			this->put({std::bit_cast<const std::byte*>(buf.data()), buf.size()});
+		inline void put(const std::uint8_t* buf, std::uint64_t size) {
+			this->put((const std::byte*) buf, size);
 		}
 
 		/// \brief Put a value of type std::uint8_t into the buffer and advance the position accordingly

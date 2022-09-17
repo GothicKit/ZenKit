@@ -13,16 +13,11 @@
 namespace phoenix::daedalus {
 	struct _ignore_return_value {};
 
-	/// \brief A helper for detecting whether a shared pointer so something is actually a pointer to an instance.
-	/// \tparam T The type of pointer to check
 	template <typename T>
-	struct is_instance_ptr : std::false_type {};
+	static constexpr bool is_instance_ptr_v = false;
 
-	template <typename T> // clang-format off
-	requires (std::derived_from<T, instance>)
-	struct is_instance_ptr<std::shared_ptr<T>> : std::true_type { // clang-format on
-		using instance_type = T;
-	};
+	template <typename T>
+	static constexpr bool is_instance_ptr_v<std::shared_ptr<T>> = std::is_base_of_v<instance, T>;
 
 	/// \brief An exception thrown if the definition of an external is incorrect.
 	class illegal_external_definition : public script_error {
@@ -108,7 +103,7 @@ namespace phoenix::daedalus {
 				throw std::runtime_error {"not enough arguments provided for " + sym->name() + ": given " +
 				                          std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
 
-			if constexpr (!std::same_as<R, _ignore_return_value>)
+			if constexpr (!std::is_same_v<R, _ignore_return_value>)
 				check_call_return_type<R>(sym);
 
 			if constexpr (sizeof...(P) > 0)
@@ -117,12 +112,12 @@ namespace phoenix::daedalus {
 			PX_LOGD("vm: calling function {}", sym->name());
 			call(sym);
 
-			if constexpr (std::same_as<R, _ignore_return_value>) {
+			if constexpr (std::is_same_v<R, _ignore_return_value>) {
 				// clear the stack
 				_m_stack = std::stack<daedalus_stack_frame> {};
 
 				return {};
-			} else if constexpr (!std::same_as<R, void>) {
+			} else if constexpr (!std::is_same_v<R, void>) {
 				auto ret = pop_call_return_value<R>();
 
 				// clear the stack
@@ -143,9 +138,9 @@ namespace phoenix::daedalus {
 		/// \tparam _instance_t The type of the instance to initialize (ie. C_NPC).
 		/// \param name The name of the instance to initialize (ie. 'STT_309_WHISTLER')
 		/// \return The initialized instance.
-		template <class _instance_t> // clang-format off
-		requires (std::derived_from<_instance_t, instance>)
-		std::shared_ptr<_instance_t> init_instance(const std::string& name) { // clang-format on
+		template <typename _instance_t>
+		typename std::enable_if<std::is_base_of_v<instance, _instance_t>, std::shared_ptr<_instance_t>>::type
+		init_instance(const std::string& name) {
 			return init_instance<_instance_t>(find_symbol_by_name(name));
 		}
 
@@ -153,9 +148,9 @@ namespace phoenix::daedalus {
 		/// \tparam _instance_t The type of the instance to initialize (ie. C_NPC).
 		/// \param instance The instance to initialize.
 		/// \param name The name of the instance to initialize (ie. 'STT_309_WHISTLER')
-		template <class _instance_t> // clang-format off
-		requires (std::derived_from<_instance_t, instance>)
-		void init_instance(const std::shared_ptr<_instance_t>& instance, const std::string& name) { // clang-format on
+		template <typename _instance_t>
+		typename std::enable_if<std::is_base_of_v<instance, _instance_t>, void>::type
+		init_instance(const std::shared_ptr<_instance_t>& instance, const std::string& name) {
 			init_instance<_instance_t>(instance, find_symbol_by_name(name));
 		}
 
@@ -167,9 +162,9 @@ namespace phoenix::daedalus {
 		/// \tparam _instance_t The type of the instance to initialize (ie. C_NPC).
 		/// \param sym The symbol to initialize.
 		/// \return The initialized instance.
-		template <class _instance_t> // clang-format off
-		requires (std::derived_from<_instance_t, instance>)
-		std::shared_ptr<_instance_t> init_instance(symbol* sym) { // clang-format on
+		template <typename _instance_t>
+		typename std::enable_if<std::is_base_of_v<instance, _instance_t>, std::shared_ptr<_instance_t>>::type
+		init_instance(symbol* sym) {
 			// create the instance
 			auto inst = std::make_shared<_instance_t>();
 			init_instance(inst, sym);
@@ -180,9 +175,9 @@ namespace phoenix::daedalus {
 		/// \tparam _instance_t The type of the instance to initialize (ie. C_NPC).
 		/// \param instance The instance to initialize.
 		/// \param sym The symbol to initialize.
-		template <class _instance_t> // clang-format off
-		requires (std::derived_from<_instance_t, instance>)
-		void init_instance(const std::shared_ptr<_instance_t>& instance, symbol* sym) { // clang-format on
+		template <typename _instance_t>
+		typename std::enable_if<std::is_base_of_v<instance, _instance_t>, void>::type
+		init_instance(const std::shared_ptr<_instance_t>& instance, symbol* sym) {
 			if (sym == nullptr) {
 				throw std::runtime_error {"Cannot init instance: not found"};
 			}
@@ -324,19 +319,19 @@ namespace phoenix::daedalus {
 			if (!sym->is_external())
 				throw std::runtime_error {"symbol is not external"};
 
-			if constexpr (!std::same_as<void, R>) {
+			if constexpr (!std::is_same_v<void, R>) {
 				if (!sym->has_return())
 					throw illegal_external_rtype(sym, "<non-void>");
-				if constexpr (is_instance_ptr<R>::value) {
+				if constexpr (is_instance_ptr_v<R>) {
 					if (sym->rtype() != dt_instance)
 						throw illegal_external_rtype(sym, "instance");
-				} else if constexpr (std::floating_point<R>) {
+				} else if constexpr (std::is_floating_point_v<R>) {
 					if (sym->rtype() != dt_float)
 						throw illegal_external_rtype(sym, "float");
-				} else if constexpr (std::convertible_to<int32_t, R>) {
+				} else if constexpr (std::is_convertible_v<int32_t, R>) {
 					if (sym->rtype() != dt_integer)
 						throw illegal_external_rtype(sym, "int");
-				} else if constexpr (std::convertible_to<std::string, R>) {
+				} else if constexpr (std::is_convertible_v<std::string, R>) {
 					if (sym->rtype() != dt_string)
 						throw illegal_external_rtype(sym, "string");
 				} else {
@@ -366,7 +361,7 @@ namespace phoenix::daedalus {
 
 			// *evil template hacking ensues*
 			_m_externals[sym] = [callback](vm& vm) {
-				if constexpr (std::same_as<void, R>) {
+				if constexpr (std::is_same_v<void, R>) {
 					if constexpr (sizeof...(P) > 0) {
 						auto v = vm.pop_values_for_external<P...>();
 						std::apply(callback, v);
@@ -419,19 +414,19 @@ namespace phoenix::daedalus {
 			if (sym->is_external())
 				throw std::runtime_error {"symbol is already an external"};
 
-			if constexpr (!std::same_as<void, R>) {
+			if constexpr (!std::is_same_v<void, R>) {
 				if (!sym->has_return())
 					throw illegal_external_rtype(sym, "<non-void>");
-				if constexpr (is_instance_ptr<R>::value) {
+				if constexpr (is_instance_ptr_v<R>) {
 					if (sym->rtype() != dt_instance)
 						throw illegal_external_rtype(sym, "instance");
-				} else if constexpr (std::floating_point<R>) {
+				} else if constexpr (std::is_floating_point_v<R>) {
 					if (sym->rtype() != dt_float)
 						throw illegal_external_rtype(sym, "float");
-				} else if constexpr (std::convertible_to<int32_t, R>) {
+				} else if constexpr (std::is_convertible_v<int32_t, R>) {
 					if (sym->rtype() != dt_integer)
 						throw illegal_external_rtype(sym, "int");
-				} else if constexpr (std::convertible_to<std::string, R>) {
+				} else if constexpr (std::is_convertible_v<std::string, R>) {
 					if (sym->rtype() != dt_string)
 						throw illegal_external_rtype(sym, "string");
 				} else {
@@ -461,7 +456,7 @@ namespace phoenix::daedalus {
 
 			// *evil template hacking ensues*
 			_m_function_overrides[sym->address()] = [callback](vm& vm) {
-				if constexpr (std::same_as<void, R>) {
+				if constexpr (std::is_same_v<void, R>) {
 					if constexpr (sizeof...(P) > 0) {
 						auto v = vm.pop_values_for_external<P...>();
 						std::apply(callback, v);
@@ -579,16 +574,16 @@ namespace phoenix::daedalus {
 		/// \note Requires that sizeof...(Px) + 1 == defined.size().
 		template <int i, typename P, typename... Px>
 		void check_external_params(const std::vector<symbol*>& defined) {
-			if constexpr (is_instance_ptr<P>::value || std::same_as<symbol*, P>) {
+			if constexpr (is_instance_ptr_v<P> || std::is_same_v<symbol*, P>) {
 				if (defined[i]->type() != dt_instance)
 					throw illegal_external_param(defined[i], "instance", i + 1);
-			} else if constexpr (std::same_as<float, P>) {
+			} else if constexpr (std::is_same_v<float, P>) {
 				if (defined[i]->type() != dt_float)
 					throw illegal_external_param(defined[i], "float", i + 1);
-			} else if constexpr (std::same_as<int32_t, P> || std::same_as<bool, P>) {
+			} else if constexpr (std::is_same_v<int32_t, P> || std::is_same_v<bool, P>) {
 				if (defined[i]->type() != dt_integer && defined[i]->type() != dt_function)
 					throw illegal_external_param(defined[i], "int", i + 1);
-			} else if constexpr (std::same_as<std::string_view, P>) {
+			} else if constexpr (std::is_same_v<std::string_view, P>) {
 				if (defined[i]->type() != dt_string)
 					throw illegal_external_param(defined[i], "string", i + 1);
 			}
@@ -606,15 +601,17 @@ namespace phoenix::daedalus {
 		/// \tparam T The type of the value to pop (one of std::shared_ptr<? extends instance>, float, int32_t,
 		///            symbol*, std::string_view)
 		/// \return The value popped.
-		template <typename T> // clang-format off
-		requires (is_instance_ptr<T>::value || std::same_as<float, T> || std::same_as<std::int32_t, T> ||
-		          std::same_as<bool, T> || std::same_as<std::string_view, T> || std::same_as<symbol*, T>)
-		inline T pop_value_for_external() { // clang-format on
-			if constexpr (is_instance_ptr<T>::value) {
+		template <typename T>
+		typename std::enable_if<is_instance_ptr_v<T> || std::is_same_v<T, float> || std::is_same_v<T, std::int32_t> ||
+		                            std::is_same_v<T, bool> || std::is_same_v<T, std::string_view> ||
+		                            std::is_same_v<T, symbol*>,
+		                        T>::type
+		pop_value_for_external() {
+			if constexpr (is_instance_ptr_v<T>) {
 				auto r = pop_instance();
 
-				if (r != nullptr && !std::same_as<T, std::shared_ptr<phoenix::daedalus::instance>>) {
-					auto& expected = typeid(typename is_instance_ptr<T>::instance_type);
+				if (r != nullptr && !std::is_same_v<T, std::shared_ptr<phoenix::daedalus::instance>>) {
+					auto& expected = typeid(typename T::element_type);
 
 					if (!r->_m_type) {
 						throw std::runtime_error {"Popping instance of unregistered type: " +
@@ -627,16 +624,16 @@ namespace phoenix::daedalus {
 					}
 				}
 
-				return std::static_pointer_cast<typename is_instance_ptr<T>::instance_type>(r);
-			} else if constexpr (std::same_as<float, T>) {
+				return std::static_pointer_cast<typename T::element_type>(r);
+			} else if constexpr (std::is_same_v<float, T>) {
 				return pop_float();
-			} else if constexpr (std::same_as<std::int32_t, T>) {
+			} else if constexpr (std::is_same_v<std::int32_t, T>) {
 				return pop_int();
-			} else if constexpr (std::same_as<bool, T>) {
+			} else if constexpr (std::is_same_v<bool, T>) {
 				return pop_int() != 0;
-			} else if constexpr (std::same_as<std::string_view, T>) {
+			} else if constexpr (std::is_same_v<std::string_view, T>) {
 				return pop_string();
-			} else if constexpr (std::same_as<symbol*, T>) {
+			} else if constexpr (std::is_same_v<symbol*, T>) {
 				return std::get<0>(pop_reference());
 			} else {
 				throw std::runtime_error {"pop: unsupported stack frame type"};
@@ -650,17 +647,18 @@ namespace phoenix::daedalus {
 		///
 		/// \tparam T The type of value to push.
 		/// \param v The value to push.
-		template <typename T> // clang-format off
-		requires (std::floating_point<T> || std::convertible_to<std::int32_t, T> || std::convertible_to<std::string, T> ||
-		          is_instance_ptr<T>::value)
-		void push_value_from_external(T v) { // clang-format on
-			if constexpr (is_instance_ptr<T>::value) {
+		template <typename T>
+		typename std::enable_if<is_instance_ptr_v<T> || std::is_convertible_v<T, float> ||
+		                            std::is_convertible_v<T, std::int32_t> || std::is_same_v<T, std::string>,
+		                        void>::type
+		push_value_from_external(T v) { // clang-format on
+			if constexpr (is_instance_ptr_v<T>) {
 				push_instance(std::static_pointer_cast<instance>(v));
-			} else if constexpr (std::floating_point<T>) {
+			} else if constexpr (std::is_floating_point_v<T>) {
 				push_float(static_cast<float>(v));
-			} else if constexpr (std::convertible_to<std::int32_t, T>) {
+			} else if constexpr (std::is_convertible_v<std::int32_t, T>) {
 				push_int(static_cast<std::int32_t>(v));
-			} else if constexpr (std::convertible_to<std::string, T>) {
+			} else if constexpr (std::is_same_v<T, std::string>) {
 				push_string(v);
 			} else {
 				throw std::runtime_error {"push: unsupported stack frame type"};
@@ -689,48 +687,53 @@ namespace phoenix::daedalus {
 			}
 		}
 
-		template <typename R> // clang-format off
-	    requires(is_instance_ptr<R>::value || std::same_as<float, R> || std::same_as<std::int32_t, R> ||
-	             std::same_as<std::string, R> || std::same_as<void, R>)
-		void check_call_return_type(const symbol* sym) { // clang-format off
-			if constexpr (is_instance_ptr<R>::value) {
+		template <typename R>
+		typename std::enable_if<is_instance_ptr_v<R> || std::is_same_v<R, float> || std::is_same_v<R, std::int32_t> ||
+		                            std::is_same_v<R, std::string> || std::is_same_v<R, void>,
+		                        void>::type
+		check_call_return_type(const symbol* sym) {
+			if constexpr (is_instance_ptr_v<R>) {
 				if (sym->rtype() != dt_instance)
 					throw std::runtime_error {"invalid return type for function " + sym->name()};
-			} else if constexpr (std::same_as<float, R>) {
+			} else if constexpr (std::is_same_v<float, R>) {
 				if (sym->rtype() != dt_float)
 					throw std::runtime_error {"invalid return type for function " + sym->name()};
-			} else if constexpr (std::same_as<int32_t, R>) {
+			} else if constexpr (std::is_same_v<int32_t, R>) {
 				if (sym->rtype() != dt_integer && sym->rtype() != dt_function)
 					throw std::runtime_error {"invalid return type for function " + sym->name()};
-			} else if constexpr (std::same_as<std::string, R>) {
+			} else if constexpr (std::is_same_v<std::string, R>) {
 				if (sym->rtype() != dt_string)
 					throw std::runtime_error {"invalid return type for function " + sym->name()};
-			} else if constexpr (std::same_as<void, R>) {
+			} else if constexpr (std::is_same_v<void, R>) {
 				if (sym->rtype() != dt_void)
 					throw std::runtime_error {"invalid return type for function " + sym->name()};
 			}
 		}
 
-		template <int i, typename P, typename... Px> // clang-format off
-	    requires (is_instance_ptr<P>::value || std::same_as<float, P> || std::same_as<std::int32_t, P> ||
-	             std::same_as<bool, P> || std::same_as<std::string_view, P> || std::same_as<symbol*, P>)
-		void push_call_parameters(const std::vector<symbol*>& defined, P value, Px... more) { // clang-format on
-			if constexpr (is_instance_ptr<P>::value || std::same_as<symbol*, P>) {
+		template <int i, typename P, typename... Px>
+		typename std::enable_if<is_instance_ptr_v<P> || std::is_same_v<std::remove_reference_t<P>, float> ||
+		                            std::is_same_v<std::remove_reference_t<P>, std::int32_t> ||
+		                            std::is_same_v<std::remove_reference_t<P>, bool> ||
+		                            std::is_same_v<std::remove_reference_t<P>, std::string_view> ||
+		                            std::is_same_v<std::remove_reference_t<P>, symbol*>,
+		                        void>::type
+		push_call_parameters(const std::vector<symbol*>& defined, P value, Px... more) { // clang-format on
+			if constexpr (is_instance_ptr_v<P> || std::is_same_v<symbol*, P>) {
 				if (defined[i]->type() != dt_instance)
 					throw illegal_external_param(defined[i], "instance", i + 1);
 
 				push_instance(value);
-			} else if constexpr (std::same_as<float, P>) {
+			} else if constexpr (std::is_same_v<float, P>) {
 				if (defined[i]->type() != dt_float)
 					throw illegal_external_param(defined[i], "float", i + 1);
 
 				push_float(value);
-			} else if constexpr (std::same_as<int32_t, P> || std::same_as<bool, P>) {
+			} else if constexpr (std::is_same_v<int32_t, P> || std::is_same_v<bool, P>) {
 				if (defined[i]->type() != dt_integer && defined[i]->type() != dt_function)
 					throw illegal_external_param(defined[i], "int", i + 1);
 
 				push_int(value);
-			} else if constexpr (std::same_as<std::string_view, P>) {
+			} else if constexpr (std::is_same_v<std::string_view, P>) {
 				if (defined[i]->type() != dt_string)
 					throw illegal_external_param(defined[i], "string", i + 1);
 
@@ -744,11 +747,11 @@ namespace phoenix::daedalus {
 
 		template <typename R>
 		R pop_call_return_value() {
-			if constexpr (is_instance_ptr<R>::value) {
+			if constexpr (is_instance_ptr_v<R>) {
 				auto r = pop_instance();
 
 				if (r != nullptr) {
-					auto& expected = typeid(typename is_instance_ptr<R>::instance_type);
+					auto& expected = typeid(typename R::element_type);
 
 					if (!r->_m_type) {
 						throw std::runtime_error {"Popping instance of unregistered type: " +
@@ -761,12 +764,12 @@ namespace phoenix::daedalus {
 					}
 				}
 
-				return std::static_pointer_cast<typename is_instance_ptr<R>::instance_type>(r);
-			} else if constexpr (std::same_as<float, R>) {
+				return std::static_pointer_cast<typename R::element_type>(r);
+			} else if constexpr (std::is_same_v<float, R>) {
 				return pop_float();
-			} else if constexpr (std::same_as<int32_t, R>) {
+			} else if constexpr (std::is_same_v<int32_t, R>) {
 				return pop_int();
-			} else if constexpr (std::same_as<std::string, R>) {
+			} else if constexpr (std::is_same_v<std::string, R>) {
 				return pop_string();
 			}
 		}

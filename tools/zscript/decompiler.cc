@@ -303,7 +303,7 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 		auto b = decompile_statement(script, b_instr, stack);
 
 		if (sym->type() == dt_float) {
-			return fmt::format("{} = {}", a, std::bit_cast<float>(b_instr.instr.immediate));
+			return fmt::format("{} = {}", a, reinterpret_cast<float&>(b_instr.instr.immediate));
 		} else if (sym->type() == dt_function) {
 			return fmt::format("{} = {}", a, script.find_symbol_by_index(b_instr.instr.immediate)->name());
 		}

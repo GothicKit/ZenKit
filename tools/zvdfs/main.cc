@@ -54,7 +54,7 @@ static void do_extract(const fs::path& base, const fs::path& self, const std::ve
 			auto content = entry.open();
 
 			std::ofstream out {output};
-			out.write((const char*) content.array().data(), content.limit());
+			out.write((const char*) content.array(), content.limit());
 			out.close();
 		}
 	}
@@ -125,10 +125,10 @@ int main(int argc, char** argv) {
 					std::optional<std::string> output_arg;
 					if ((output_arg = args.get<std::string>("o")) || (output_arg = args.get<std::string>("output"))) {
 						std::ofstream out {*output_arg, std::ios::binary};
-						out.write((const char*) buf.array().data(), buf.limit());
+						out.write((const char*) buf.array(), buf.limit());
 						out.close();
 					} else {
-						std::cout.write((const char*) buf.array().data(), buf.limit());
+						std::cout.write((const char*) buf.array(), buf.limit());
 					}
 				} else {
 					std::optional<std::string> output_arg;

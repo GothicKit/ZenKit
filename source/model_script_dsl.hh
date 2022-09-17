@@ -48,19 +48,19 @@ namespace phoenix::mds {
 				}
 			};
 
-			constexpr model_script operator()(lexy::nullopt&&) const {
+			model_script operator()(lexy::nullopt&&) const {
 				return model_script {};
 			}
 
-			constexpr model_script operator()(lexy::nullopt&&, lexy::nullopt&&) const {
+			model_script operator()(lexy::nullopt&&, lexy::nullopt&&) const {
 				return model_script {};
 			}
 
-			constexpr model_script operator()(model_script&& s, lexy::nullopt&&) const {
+			model_script operator()(model_script&& s, lexy::nullopt&&) const {
 				return s;
 			}
 
-			[[nodiscard]] constexpr auto sink() const {
+			[[nodiscard]] auto sink() const {
 				return _sink {model_script {}};
 			}
 		};
@@ -102,19 +102,19 @@ namespace phoenix::mds {
 				}
 			};
 
-			constexpr model_script operator()(lexy::nullopt&&) const {
+			model_script operator()(lexy::nullopt&&) const {
 				return model_script {};
 			}
 
-			constexpr model_script operator()(lexy::nullopt&&, lexy::nullopt&&) const {
+			model_script operator()(lexy::nullopt&&, lexy::nullopt&&) const {
 				return model_script {};
 			}
 
-			constexpr model_script operator()(model_script&& s, lexy::nullopt&&) const {
+			model_script operator()(model_script&& s, lexy::nullopt&&) const {
 				return s;
 			}
 
-			[[nodiscard]] constexpr auto sink() const {
+			[[nodiscard]] auto sink() const {
 				return _sink {model_script {}};
 			}
 		};
@@ -161,11 +161,11 @@ namespace phoenix::mds {
 				}
 			};
 
-			constexpr animation operator()(lexy::nullopt&&) const {
+			animation operator()(lexy::nullopt&&) const {
 				return animation {};
 			}
 
-			[[nodiscard]] constexpr auto sink() const {
+			[[nodiscard]] auto sink() const {
 				return _sink {animation {}};
 			}
 		};

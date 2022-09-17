@@ -51,7 +51,7 @@ tools currently available:
 _phoenix_ is currently only tested on Linux and while Windows _should_ be supported you might run into issues. If so,
 feel free to create an issue or open a merge request. You will need
 
-* A working compiler which supports C++20, like Clang or GCC
+* A working compiler which supports C++17, like GCC 9
 * CMake 3.10 or above
 * Git
 

@@ -34,28 +34,30 @@ namespace phoenix {
 				return _m_data.size();
 			}
 
-			[[nodiscard]] std::span<const std::byte> array() const override {
-				return _m_data;
+			[[nodiscard]] const std::byte* array() const override {
+				return _m_data.data();
 			}
 
-			void read(std::span<std::byte> buf, std::uint64_t offset) const override {
-				if (offset + buf.size() > this->size()) {
-					throw buffer_underflow {offset, buf.size(), "in backing"};
+			void read(std::byte* buf, std::uint64_t size, std::uint64_t offset) const override {
+				if (offset + size > this->size()) {
+					throw buffer_underflow {offset, size, "in backing"};
 				}
 
-				std::copy_n(_m_data.cbegin() + static_cast<long>(offset), buf.size(), buf.begin());
+				std::copy_n(_m_data.cbegin() + static_cast<long>(offset), size, buf);
 			}
 
-			void write(std::span<const std::byte> buf, std::uint64_t offset) override {
+			void write([[maybe_unused]] const std::byte* buf,
+			           [[maybe_unused]] std::uint64_t size,
+			           [[maybe_unused]] std::uint64_t offset) override {
 				if (this->readonly()) {
 					throw buffer_readonly {};
 				}
 
-				if (offset + buf.size() > this->size()) {
-					throw buffer_overflow {offset, buf.size(), "in backing"};
+				if (offset + size > this->size()) {
+					throw buffer_overflow {offset, size, "in backing"};
 				}
 
-				std::copy_n(buf.begin(), buf.size(), _m_data.begin() + static_cast<long>(offset));
+				std::copy_n(buf, size, const_cast<std::byte*>(_m_data.data()) + static_cast<long>(offset));
 			}
 
 		private:
@@ -83,30 +85,30 @@ namespace phoenix {
 				return _m_data.size();
 			}
 
-			[[nodiscard]] std::span<const std::byte> array() const noexcept override {
-				return _m_data;
+			[[nodiscard]] const std::byte* array() const noexcept override {
+				return _m_data.data();
 			}
 
-			void read(std::span<std::byte> buf, std::uint64_t offset) const override {
-				if (offset + buf.size() > this->size()) {
-					throw buffer_underflow {offset, buf.size(), "in backing"};
+			void read(std::byte* buf, std::uint64_t size, std::uint64_t offset) const override {
+				if (offset + size > this->size()) {
+					throw buffer_underflow {offset, size, "in backing"};
 				}
 
-				std::copy_n(_m_data.cbegin() + static_cast<long>(offset), buf.size(), buf.begin());
+				std::copy_n(_m_data.cbegin() + static_cast<long>(offset), size, buf);
 			}
 
-			void write(std::span<const std::byte> buf, std::uint64_t offset) override {
+			void write([[maybe_unused]] const std::byte* buf,
+			           [[maybe_unused]] std::uint64_t size,
+			           [[maybe_unused]] std::uint64_t offset) override {
 				if (this->readonly()) {
 					throw buffer_readonly {};
 				}
 
-				if (offset + buf.size() > this->size()) {
-					throw buffer_overflow {offset, buf.size(), "in backing"};
+				if (offset + size > this->size()) {
+					throw buffer_overflow {offset, size, "in backing"};
 				}
 
-				std::copy_n(buf.begin(),
-				            buf.size(),
-				            const_cast<std::byte*>(_m_data.data()) + static_cast<long>(offset));
+				std::copy_n(buf, size, const_cast<std::byte*>(_m_data.data()) + static_cast<long>(offset));
 			}
 
 		private:
@@ -237,21 +239,21 @@ namespace phoenix {
 		return buffer {_m_backing, _m_backing_begin + index, _m_backing_begin + index + size};
 	}
 
-	void buffer::get(std::span<std::byte> buf) {
-		if (this->remaining() < buf.size()) {
-			throw buffer_underflow {this->position(), buf.size(), "relative bulk get"};
+	void buffer::get(std::byte* buf, std::uint64_t size) {
+		if (this->remaining() < size) {
+			throw buffer_underflow {this->position(), size, "relative bulk get"};
 		}
 
-		_m_backing->read(buf, _m_backing_begin + _m_position);
-		_m_position += buf.size();
+		_m_backing->read(buf, size, _m_backing_begin + _m_position);
+		_m_position += size;
 	}
 
-	void buffer::get(std::uint64_t index, std::span<std::byte> buf) const {
-		if (index + buf.size() > this->limit()) {
-			throw buffer_underflow {index, buf.size(), "absolute bulk get"};
+	void buffer::get(std::uint64_t index, std::byte* buf, std::uint64_t size) const {
+		if (index + size > this->limit()) {
+			throw buffer_underflow {index, size, "absolute bulk get"};
 		}
 
-		_m_backing->read(buf, _m_backing_begin + index);
+		_m_backing->read(buf, size, _m_backing_begin + index);
 	}
 
 	std::string buffer::get_string(std::uint64_t size) {
@@ -261,7 +263,7 @@ namespace phoenix {
 
 		std::string tmp {};
 		tmp.resize(size);
-		this->get({std::bit_cast<std::byte*>(tmp.data()), size});
+		this->get((std::byte*) tmp.data(), size);
 		return tmp;
 	}
 
@@ -272,7 +274,7 @@ namespace phoenix {
 
 		std::string tmp {};
 		tmp.resize(size);
-		this->get(index, {std::bit_cast<std::byte*>(tmp.data()), size});
+		this->get(index, (std::byte*) tmp.data(), size);
 		return tmp;
 	}
 
@@ -360,17 +362,17 @@ namespace phoenix {
 		return -1;
 	}
 
-	void buffer::put(std::span<const std::byte> buf) {
-		if (this->remaining() < buf.size()) {
-			throw buffer_overflow {this->position(), buf.size(), "relative bulk put"};
+	void buffer::put(const std::byte* buf, std::uint64_t size) {
+		if (this->remaining() < size) {
+			throw buffer_overflow {this->position(), size, "relative bulk put"};
 		}
 
-		_m_backing->write(buf, _m_backing_begin + _m_position);
-		_m_position += buf.size();
+		_m_backing->write(buf, size, _m_backing_begin + _m_position);
+		_m_position += size;
 	}
 
 	void buffer::put_string(std::string_view str) {
-		this->put({std::bit_cast<std::byte*>(str.data()), str.size()});
+		this->put((const std::byte*) str.data(), str.size());
 	}
 
 	void buffer::put_line(std::string_view str) {
