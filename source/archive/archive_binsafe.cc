@@ -76,7 +76,7 @@ namespace phoenix {
 
 	const std::string& archive_reader_binsafe::get_entry_key() {
 		if (input.get(input.position()) != bs_hash) {
-			throw;
+			throw parser_error {"archive_reader_binsafe", "invalid format"};
 		}
 
 		input.skip(1);
