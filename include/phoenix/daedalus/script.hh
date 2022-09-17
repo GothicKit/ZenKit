@@ -334,8 +334,8 @@ namespace phoenix::daedalus {
 		/// \brief Tests whether this symbol holds an instance of the given type.
 		/// \tparam T The type of instance to check for.
 		/// \return <tt>true</tt> if the symbol contains an instance of the given type, <tt>false</tt> if not.
-		template <typename T, typename std::enable_if<std::is_base_of_v<instance, T>>::type>
-		inline bool is_instance_of() { // clang-format on
+		template <typename T>
+		typename std::enable_if<std::is_base_of_v<instance, T>, bool>::type inline is_instance_of() { // clang-format on
 			return this->type() == dt_instance && this->get_instance() != nullptr &&
 			    this->get_instance()->_m_type == &typeid(T);
 		}
@@ -653,8 +653,9 @@ namespace phoenix::daedalus {
 		/// \param inst The instance to get the symbol for.
 		/// \return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
 		///         with any instance.
-		template <typename T, typename std::enable_if<std::is_base_of_v<instance, T>>::type>
-		inline const symbol* find_symbol_by_instance(const std::shared_ptr<T>& inst) const { // clang-format on
+		template <typename T>
+		typename std::enable_if<std::is_base_of_v<instance, T>, const symbol*>::type inline find_symbol_by_instance(
+		    const std::shared_ptr<T>& inst) const { // clang-format on
 			return find_symbol_by_index(inst->_m_symbol_index);
 		}
 
@@ -662,8 +663,9 @@ namespace phoenix::daedalus {
 		/// \param inst The instance to get the symbol for.
 		/// \return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
 		///         with any instance.
-		template <typename T, typename std::enable_if<std::is_base_of_v<instance, T>>::type>
-		inline symbol* find_symbol_by_instance(const std::shared_ptr<T>& inst) {
+		template <typename T>
+		typename std::enable_if<std::is_base_of_v<instance, T>, symbol*>::type inline find_symbol_by_instance(
+		    const std::shared_ptr<T>& inst) {
 			return find_symbol_by_index(inst->_m_symbol_index);
 		}
 
