@@ -13,17 +13,13 @@
 #include <vector>
 
 namespace phoenix {
-	/**
-	 * @brief Represents an animation sample.
-	 */
+	/// \brief Represents an animation sample.
 	struct animation_sample {
 		glm::vec3 position;
 		glm::quat rotation;
 	};
 
-	/**
-	 * @brief Types of animation events.
-	 */
+	/// \brief Types of animation events.
 	enum class animation_event_type : std::uint32_t {
 		tag = 0,
 		sound = 1,
@@ -39,9 +35,7 @@ namespace phoenix {
 		tremor = 11,
 	};
 
-	/**
-	 * @brief Represents an animation event.
-	 */
+	/// \brief Represents an animation event.
 	struct animation_event {
 		static constexpr const auto vmax = 4;
 
@@ -53,93 +47,94 @@ namespace phoenix {
 		float probability; // ?
 	};
 
-	/**
-	 * @brief Represents an animation (.MAN).
-	 *
-	 * Parses ZenGin animation files. The reference implementation can be found on GitHub:
-	 * https://github.com/ataulien/ZenLib/blob/e1a5e1b12e71690a5470f3be2aa3d0d6419f5191/zenload/zCModelAni.cpp and an
-	 * adapted version used by OpenGothic was also referenced:
-	 * https://github.com/Try/ZenLib/blob/732077c82589f5060d1762839293b996c8222c18/zenload/zCModelAni.cpp
-	 *
-	 * Thanks to the original authors, Andre Taulien and Alexander Stillich as well as Try for additional work on their
-	 * ZenLib fork!
-	 *
-	 * @see https://github.com/ataulien/ZenLib
-	 * @see https://github.com/Try/ZenLib
-	 */
+	/// \brief Represents a model animation.
 	class animation {
 	public:
-		/**
-		 * @brief Parses the animation from the given reader.
-		 * @param in The reader to read from.
-		 * @return The animation pared.
-		 */
+		/// \brief Parses an animation from the data in the given buffer.
+		///
+		/// <p>This implementation is heavily based on the implementation found in
+		/// [ZenLib](https://github.com/Try/ZenLib).
+		///
+		/// \param[in,out] buf The buffer to read from.
+		/// \return The parsed animation.
+		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
+		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
+		///       using buffer::duplicate.
+		/// \throws parser_error if parsing fails.
+		/// \see #parse(buffer&&)
 		[[nodiscard]] static animation parse(buffer& in);
 
-		/**
-		 * @brief Parses the animation from the given reader.
-		 * @param in The reader to read from.
-		 * @return The animation pared.
-		 */
+		/// \brief Parses an animation from the data in the given buffer.
+		/// \param[in] buf The buffer to read from (by rvalue-reference).
+		/// \return The parsed animation.
+		/// \throws parser_error if parsing fails.
+		/// \see #parse(buffer&)
 		[[nodiscard]] inline static animation parse(buffer&& in) {
 			return parse(in);
 		}
 
-		/**
-		 * @return The name of the animation
-		 */
+		/// \return The name of the animation
 		[[nodiscard]] inline const std::string& name() const noexcept {
 			return _m_name;
 		}
 
+		/// \return The next animation in queue.
 		[[nodiscard]] inline const std::string& next() const noexcept {
 			return _m_next;
 		}
 
+		/// \return The layer this animation is played in.
 		[[nodiscard]] inline std::uint32_t layer() const noexcept {
 			return _m_layer;
 		}
 
+		/// \return The number of frames of this animation.
 		[[nodiscard]] inline std::uint32_t frames() const noexcept {
 			return _m_frame_count;
 		}
 
+		/// \return  The number of frames of this animation to play per second.
 		[[nodiscard]] inline float frames_per_second() const noexcept {
 			return _m_fps;
 		}
 
+		/// \return Unknown.
 		[[nodiscard]] inline float frames_per_second_alt() const noexcept {
 			return _m_fps_source;
 		}
 
-		/**
-		 * @return The bounding box of the animation (mesh) as a (min, max) tuple.
-		 */
+		/// \return The bounding box of the animation.
 		[[nodiscard]] inline bounding_box bbox() const noexcept {
 			return _m_bbox;
 		}
 
+		/// \return A checksum for this animation (inner workings unknown).
 		[[nodiscard]] inline std::uint32_t checksum() const noexcept {
 			return _m_checksum;
 		}
 
+		/// \return The list of animation samples of this animation.
 		[[nodiscard]] inline const std::vector<animation_sample>& samples() const noexcept {
 			return _m_samples;
 		}
 
+		/// \return The list of animation events of this animation.
 		[[nodiscard]] inline const std::vector<animation_event>& events() const noexcept {
 			return _m_events;
 		}
 
+		/// \return A list of model hierarchy node indices.
 		[[nodiscard]] inline const std::vector<std::uint32_t>& node_indices() const noexcept {
 			return _m_node_indices;
 		}
 
-		[[nodiscard]] inline const std::string source_path() const noexcept {
+		/// \return The original path of the animation script this animation was generated from.
+		[[nodiscard]] inline const std::string& source_path() const noexcept {
 			return _m_source_path;
 		}
 
-		[[nodiscard]] inline const std::string source_script() const noexcept {
+		/// \return The original model script snippet this animation was generated from.
+		[[nodiscard]] inline const std::string& source_script() const noexcept {
 			return _m_mds_source;
 		}
 
@@ -167,5 +162,4 @@ namespace phoenix {
 		std::vector<animation_event> _m_events;
 		std::vector<std::uint32_t> _m_node_indices;
 	};
-
 } // namespace phoenix
