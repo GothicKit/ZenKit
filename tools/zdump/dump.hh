@@ -155,8 +155,6 @@ void dump_text<px::texture>(const px::texture& obj);
 template <>
 void dump_json<px::texture>(const px::texture& obj);
 
-/* TODO: Fix C++17 compatibility
-
 template <>
 void dump_text<px::mesh>(const px::mesh& obj);
 
@@ -168,5 +166,3 @@ void dump_text<px::model_script>(const px::model_script& obj);
 
 template <>
 void dump_json<px::model_script>(const px::model_script& obj);
-
-*/

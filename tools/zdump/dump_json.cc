@@ -283,293 +283,417 @@ std::string format_obb_json(const px::obb& bb) {
 	return r + "]}}";
 }
 
-/** TODO: Fix C++17 compatibility
 template <>
 void dump_json<px::mesh>(const px::mesh& msh) {
-    struct tm ctime {};
-    ctime.tm_year = msh.date().year;
-    ctime.tm_mon = msh.date().month;
-    ctime.tm_mday = msh.date().day;
-    ctime.tm_hour = msh.date().hour;
-    ctime.tm_min = msh.date().minute;
-    ctime.tm_sec = msh.date().second;
-    std::time_t timestamp = std::mktime(&ctime);
-    auto& polys = msh.polygons();
+	struct tm ctime {};
+	ctime.tm_year = msh.date().year;
+	ctime.tm_mon = msh.date().month;
+	ctime.tm_mday = msh.date().day;
+	ctime.tm_hour = msh.date().hour;
+	ctime.tm_min = msh.date().minute;
+	ctime.tm_sec = msh.date().second;
+	std::time_t timestamp = std::mktime(&ctime);
+	auto& polys = msh.polygons();
 
-    fmt::print(
-        R"({{"type": "mesh", "name": "{}", "timestamp": {}, "aabb": [{{"x": {}, "y": {}, "z": {}}}, )"
-        R"({{"x": {}, "y": {}, "z": {}}}], "obb": [{}], "materials": [{}], "vertices": [{}], "features": [{}], )"
-        R"("polygons": [{}], "lightmaps": [{}]}})",
-        msh.name(),
-        timestamp,
-        msh.bbox().min.x,
-        msh.bbox().min.y,
-        msh.bbox().min.z,
-        msh.bbox().max.x,
-        msh.bbox().max.y,
-        msh.bbox().max.z,
-        format_obb_json(msh.oriented_bbox()),
-        fmt::join(
-            msh.materials() | std::views::transform([](const px::material& mat) {
-                auto mat_group = static_cast<int>(mat.group);
-                auto mat_alpha_func = static_cast<int>(mat.alpha_func);
+	fmt::print(R"({{"type": "mesh", "name": "{}", "timestamp": {}, "aabb": [{{"x": {}, "y": {}, "z": {}}}, )"
+	           R"({{"x": {}, "y": {}, "z": {}}}], "obb": [{}], "materials": [)",
+	           msh.name(),
+	           timestamp,
+	           msh.bbox().min.x,
+	           msh.bbox().min.y,
+	           msh.bbox().min.z,
+	           msh.bbox().max.x,
+	           msh.bbox().max.y,
+	           msh.bbox().max.z,
+	           format_obb_json(msh.oriented_bbox()));
 
-                return fmt::format(
-                    R"({{"name": "{}", "group": {}, "color": {}, "smoothAngle": {}, "texture": "{}", )"
-                    R"("textureScale": {{"x": {}, "y": {}}}, "textureAnimFps": {}, "textureAnimMapMode": {}, )"
-                    R"("textureAnimMapDir": {{"x": {}, "y": {}}}, "disableCollision": {}, "disableLightmap": {}, )"
-                    R"("dontCollapse": {}, "detailObject": "{}", "detailTextureScale": {}, "forceOccluder": {}, )"
-                    R"("environmentMapping": {}, "environmentMappingStrength": {}, "waveMode": {}, "waveSpeed": {}, )"
-                    R"("waveMaxAmplitude": {}, "waveGridSize": {}, "ignoreSun": {}, "alphaFunction": {}, )"
-                    R"("defaultMapping": {{"x": {}, "y": {}}}}})",
-                    mat.name,
-                    mat_group < 8 ? MATERIAL_GROUP_NAMES[mat_group] : std::to_string(mat_group),
-                    static_cast<uint32_t>(mat.color.a << 24 | mat.color.r << 16 | mat.color.g << 8 | mat.color.b),
-                    mat.smooth_angle,
-                    mat.texture,
-                    mat.texture_scale.x,
-                    mat.texture_scale.y,
-                    mat.texture_anim_fps,
-                    static_cast<int>(mat.texture_anim_map_mode),
-                    mat.texture_anim_map_dir.x,
-                    mat.texture_anim_map_dir.y,
-                    mat.disable_collision,
-                    mat.disable_lightmap,
-                    mat.dont_collapse,
-                    mat.detail_object,
-                    mat.detail_texture_scale,
-                    mat.force_occluder,
-                    static_cast<int>(mat.environment_mapping),
-                    mat.environment_mapping_strength,
-                    static_cast<int>(mat.wave_mode),
-                    static_cast<int>(mat.wave_speed),
-                    mat.wave_max_amplitude,
-                    mat.wave_grid_size,
-                    mat.ignore_sun,
-                    mat_alpha_func < 4 ? ALPHA_FUNC_NAMES[mat_alpha_func] : std::to_string(mat_alpha_func),
-                    mat.default_mapping.x,
-                    mat.default_mapping.y);
-            }),
-            ","),
-        fmt::join(msh.vertices() | std::views::transform([](const glm::vec3& v) {
-                      return fmt::format("[{}, {}, {}]", v.x, v.y, v.z);
-                  }),
-                  ","),
-        fmt::join(msh.features() | std::views::transform([](const px::vertex_feature& feat) {
-                      return fmt::format(R"({{"uv":[{},{}],"light":{},"normal":[{},{},{}]}})",
-                                         feat.texture.x,
-                                         feat.texture.y,
-                                         feat.light,
-                                         feat.normal.x,
-                                         feat.normal.y,
-                                         feat.normal.z);
-                  }),
-                  ","),
-        fmt::join(
-            std::views::iota(0u, msh.vertices().size() / 3) | std::views::transform([&polys](int i) {
-                return fmt::format(
-                    R"({{"vertices": [{},{},{}], "features": [{},{},{}], "material": {}, "flags": {{"isPortal": {}, )"
-                    R"("isOccluder": {}, "is_sector": {}, "shouldRelight": {}, "isOutdoor": {}, "isGhostOccluder": {},
-)" R"("isDynamicallyLit": {}, "sectorIndex": {}, "isLod": {}, "normalAxis": {}}}, "lightmap": {}}})",
-                    polys.vertex_indices[i * 3],
-                    polys.vertex_indices[i * 3 + 1],
-                    polys.vertex_indices[i * 3 + 2],
-                    polys.feature_indices[i * 3],
-                    polys.feature_indices[i * 3 + 1],
-                    polys.feature_indices[i * 3 + 2],
-                    polys.material_indices[i],
-                    polys.flags[i].is_portal,
-                    polys.flags[i].is_occluder,
-                    polys.flags[i].is_sector,
-                    polys.flags[i].should_relight,
-                    polys.flags[i].is_outdoor,
-                    polys.flags[i].is_ghost_occluder,
-                    polys.flags[i].is_dynamically_lit,
-                    polys.flags[i].sector_index,
-                    polys.flags[i].is_lod,
-                    polys.flags[i].normal_axis,
-                    polys.lightmap_indices[i]);
-            }),
-            ","),
-        fmt::join(msh.lightmaps() | std::views::transform([](const px::light_map& lm) {
-                      return fmt::format(
-                          R"({{"texture": {}, "origin": {{"x": {}, "y": {}, "z": {}}}, )"
-                          R"("normals": [{{"x": {}, "y": {}, "z": {}}}, {{"x": {}, "y": {}, "z": {}}}]}})",
-                          format_texture_json(*lm.image),
-                          lm.origin.x,
-                          lm.origin.y,
-                          lm.origin.z,
-                          lm.normals[0].x,
-                          lm.normals[0].y,
-                          lm.normals[0].z,
-                          lm.normals[1].x,
-                          lm.normals[1].y,
-                          lm.normals[1].z);
-                  }),
-                  ","));
+	for (int i = 0; i < msh.materials().size(); ++i) {
+		auto& mat = msh.materials()[i];
+
+		if (i != 0) {
+			fmt::print(",");
+		}
+
+		auto mat_group = static_cast<int>(mat.group);
+		auto mat_alpha_func = static_cast<int>(mat.alpha_func);
+
+		fmt::print(R"({{"name": "{}", "group": {}, "color": {}, "smoothAngle": {}, "texture": "{}", )"
+		           R"("textureScale": {{"x": {}, "y": {}}}, "textureAnimFps": {}, "textureAnimMapMode": {}, )"
+		           R"("textureAnimMapDir": {{"x": {}, "y": {}}}, "disableCollision": {}, "disableLightmap": {}, )"
+		           R"("dontCollapse": {}, "detailObject": "{}", "detailTextureScale": {}, "forceOccluder": {}, )"
+		           R"("environmentMapping": {}, "environmentMappingStrength": {}, "waveMode": {}, "waveSpeed": {}, )"
+		           R"("waveMaxAmplitude": {}, "waveGridSize": {}, "ignoreSun": {}, "alphaFunction": {}, )"
+		           R"("defaultMapping": {{"x": {}, "y": {}}}}})",
+		           mat.name,
+		           mat_group < 8 ? MATERIAL_GROUP_NAMES[mat_group] : std::to_string(mat_group),
+		           static_cast<uint32_t>(mat.color.a << 24 | mat.color.r << 16 | mat.color.g << 8 | mat.color.b),
+		           mat.smooth_angle,
+		           mat.texture,
+		           mat.texture_scale.x,
+		           mat.texture_scale.y,
+		           mat.texture_anim_fps,
+		           static_cast<int>(mat.texture_anim_map_mode),
+		           mat.texture_anim_map_dir.x,
+		           mat.texture_anim_map_dir.y,
+		           mat.disable_collision,
+		           mat.disable_lightmap,
+		           mat.dont_collapse,
+		           mat.detail_object,
+		           mat.detail_texture_scale,
+		           mat.force_occluder,
+		           static_cast<int>(mat.environment_mapping),
+		           mat.environment_mapping_strength,
+		           static_cast<int>(mat.wave_mode),
+		           static_cast<int>(mat.wave_speed),
+		           mat.wave_max_amplitude,
+		           mat.wave_grid_size,
+		           mat.ignore_sun,
+		           mat_alpha_func < 4 ? ALPHA_FUNC_NAMES[mat_alpha_func] : std::to_string(mat_alpha_func),
+		           mat.default_mapping.x,
+		           mat.default_mapping.y);
+	}
+
+	fmt::print(R"(], "vertices": [)");
+
+	for (int i = 0; i < msh.vertices().size(); ++i) {
+		auto& v = msh.vertices()[i];
+
+		if (i != 0) {
+			fmt::print(",");
+		}
+
+		fmt::print("[{}, {}, {}]", v.x, v.y, v.z);
+	}
+
+	fmt::print(R"(], "features": [)");
+
+	for (int i = 0; i < msh.features().size(); ++i) {
+		auto& feat = msh.features()[i];
+
+		if (i != 0) {
+			fmt::print(",");
+		}
+
+		fmt::print(R"({{"uv":[{},{}],"light":{},"normal":[{},{},{}]}})",
+		           feat.texture.x,
+		           feat.texture.y,
+		           feat.light,
+		           feat.normal.x,
+		           feat.normal.y,
+		           feat.normal.z);
+	}
+
+	fmt::print(R"(], "polygons": [)");
+
+	for (int i = 0; i < msh.vertices().size() / 3; ++i) {
+		if (i != 0) {
+			fmt::print(",");
+		}
+
+		fmt::print(R"({{"vertices": [{},{},{}], "features": [{},{},{}], "material": {}, "flags": {{"isPortal": {}, )"
+		           R"("isOccluder": {}, "is_sector": {}, "shouldRelight": {}, "isOutdoor": {}, "isGhostOccluder": {},
+)"
+		           R"("isDynamicallyLit": {}, "sectorIndex": {}, "isLod": {}, "normalAxis": {}}}, "lightmap": {}}})",
+		           polys.vertex_indices[i * 3],
+		           polys.vertex_indices[i * 3 + 1],
+		           polys.vertex_indices[i * 3 + 2],
+		           polys.feature_indices[i * 3],
+		           polys.feature_indices[i * 3 + 1],
+		           polys.feature_indices[i * 3 + 2],
+		           polys.material_indices[i],
+		           polys.flags[i].is_portal,
+		           polys.flags[i].is_occluder,
+		           polys.flags[i].is_sector,
+		           polys.flags[i].should_relight,
+		           polys.flags[i].is_outdoor,
+		           polys.flags[i].is_ghost_occluder,
+		           polys.flags[i].is_dynamically_lit,
+		           polys.flags[i].sector_index,
+		           polys.flags[i].is_lod,
+		           polys.flags[i].normal_axis,
+		           polys.lightmap_indices[i]);
+	}
+
+	fmt::print(R"(], "lightmaps": [)");
+
+	for (int i = 0; i < msh.lightmaps().size(); ++i) {
+		auto& lm = msh.lightmaps()[i];
+
+		if (i != 0) {
+			fmt::print(",");
+		}
+
+		fmt::print(R"({{"texture": {}, "origin": {{"x": {}, "y": {}, "z": {}}}, )"
+		           R"("normals": [{{"x": {}, "y": {}, "z": {}}}, {{"x": {}, "y": {}, "z": {}}}]}})",
+		           format_texture_json(*lm.image),
+		           lm.origin.x,
+		           lm.origin.y,
+		           lm.origin.z,
+		           lm.normals[0].x,
+		           lm.normals[0].y,
+		           lm.normals[0].z,
+		           lm.normals[1].x,
+		           lm.normals[1].y,
+		           lm.normals[1].z);
+	}
+
+	fmt::print("]}}");
 }
 
 template <>
 void dump_json<px::model_script>(const px::model_script& obj) {
-    auto get_ani_flags = [](px::mds::animation_flags flag) {
-        std::string flags {};
+	auto get_ani_flags = [](px::mds::animation_flags flag) {
+		std::string flags {};
 
-        if (flag & px::mds::af_move)
-            flags += "\"move\"";
-        if (flag & px::mds::af_rotate)
-            flags += flags.empty() ? "\"rotate\"" : ", \"rotate\"";
-        if (flag & px::mds::af_queue)
-            flags += flags.empty() ? "\"queue\"" : ", \"queue\"";
-        if (flag & px::mds::af_fly)
-            flags += flags.empty() ? "\"fly\"" : ", \"fly\"";
-        if (flag & px::mds::af_idle)
-            flags += flags.empty() ? "\"idle\"" : ", \"idle\"";
+		if (flag & px::mds::af_move)
+			flags += "\"move\"";
+		if (flag & px::mds::af_rotate)
+			flags += flags.empty() ? "\"rotate\"" : ", \"rotate\"";
+		if (flag & px::mds::af_queue)
+			flags += flags.empty() ? "\"queue\"" : ", \"queue\"";
+		if (flag & px::mds::af_fly)
+			flags += flags.empty() ? "\"fly\"" : ", \"fly\"";
+		if (flag & px::mds::af_idle)
+			flags += flags.empty() ? "\"idle\"" : ", \"idle\"";
 
-        return flags;
-    };
+		return flags;
+	};
 
-    fmt::print(
-        R"({{"type": "model_script", "skeleton": {{"name": "{}", "disableMesh": {}}}, "meshes": [{}], )"
-        R"("disabledAnimations": [{}], "combinations": [{}], "blends": [{}], "aliases": [{}], "modelTags": [{}], )"
-        R"("animations": [{}]}})",
-        obj.skeleton.name,
-        obj.skeleton.disable_mesh,
-        fmt::join(obj.meshes | std::views::transform([](const std::string& s) { return fmt::format("\"{}\"", s); }),
-                  ","),
-        fmt::join(obj.disabled_animations |
-                      std::views::transform([](const std::string& s) { return fmt::format("\"{}\"", s); }),
-                  ","),
-        fmt::join(obj.combinations | std::views::transform([&get_ani_flags](const px::mds::animation_combination& cmb) {
-                      return fmt::format(
-                          R"({{"name": "{}", "layer": {}, "next": "{}", "blendIn": {}, "blendOut": {}, "flags": [{}], )"
-                          R"("model": "{}", "lastFrame": {}}})",
-                          cmb.name,
-                          cmb.layer,
-                          cmb.next,
-                          cmb.blend_in,
-                          cmb.blend_out,
-                          get_ani_flags(cmb.flags),
-                          cmb.model,
-                          cmb.last_frame);
-                  }),
-                  ","),
-        fmt::join(obj.blends | std::views::transform([](const px::mds::animation_blending& cmb) {
-                      return fmt::format(R"({{"name": "{}", "next": "{}", "blendIn": {}, "blendOut": {}}})",
-                                         cmb.name,
-                                         cmb.next,
-                                         cmb.blend_in,
-                                         cmb.blend_out);
-                  }),
-                  ","),
-        fmt::join(obj.aliases | std::views::transform([&get_ani_flags](const px::mds::animation_alias& cmb) {
-                      return fmt::format(
-                          R"({{"name": "{}", "layer": {}, "next": "{}", "blendIn": {}, "blendOut": {}, "flags": [{}], )"
-                          R"("alias": "{}", "direction": "{}"}})",
-                          cmb.name,
-                          cmb.layer,
-                          cmb.next,
-                          cmb.blend_in,
-                          cmb.blend_out,
-                          get_ani_flags(cmb.flags),
-                          cmb.alias,
-                          cmb.direction == px::mds::animation_direction::forward ? "forward" : "reversed");
-                  }),
-                  ","),
-        fmt::join(obj.model_tags | std::views::transform([](const px::mds::model_tag& cmb) {
-                      return fmt::format(R"({{"bone": "{}"}})", cmb.bone);
-                  }),
-                  ","),
-        fmt::join(
-            obj.animations | std::views::transform([&get_ani_flags](const px::mds::animation& cmb) {
-                return fmt::format(
-                    R"({{"name": "{}", "layer": {}, "next": "{}", "blendIn": {}, "blendOut": {}, "flags": [{}], )"
-                    R"("model": "{}", "direction": "{}", "firstFrame": {}, "lastFrame": {}, "fps": {}, )"
-                    R"("speed": {}, "collisionVolumeScale": {}, "events": [{}], "pfx": [{}], )"
-                    R"("pfxStop": [{}], "sfx": [{}], "sfxGround": [{}], "morph": [{}], "tremors": [{}]}})",
-                    cmb.name,
-                    cmb.layer,
-                    cmb.next,
-                    cmb.blend_in,
-                    cmb.blend_out,
-                    get_ani_flags(cmb.flags),
-                    cmb.model,
-                    cmb.direction == px::mds::animation_direction::forward ? "forward" : "reversed",
-                    cmb.first_frame,
-                    cmb.last_frame,
-                    cmb.fps,
-                    cmb.speed,
-                    cmb.collision_volume_scale,
+	fmt::print(R"({{"type": "model_script", "skeleton": {{"name": "{}", "disableMesh": {}}}, "meshes": [)",
+	           obj.skeleton.name,
+	           obj.skeleton.disable_mesh);
 
-                    fmt::join(cmb.events | std::views::transform([](const px::mds::event_tag& b) {
-                                  auto type = static_cast<int>(b.type);
-                                  auto fight_mode = static_cast<int>(b.fight_mode);
-                                  return fmt::format(
-                                      R"({{"frame": {}, "type": "{}", "slot": "{}", "slot2": "{}", "item": "{}", )"
-                                      R"("frames": [{}], "fightMode": "{}", "attached": {}}})",
-                                      b.frame,
-                                      type < 23 ? EVENT_TAG_TYPE_NAMES[type] : std::to_string(type),
-                                      b.slot,
-                                      b.slot2,
-                                      b.item,
-                                      fmt::join(b.frames, ","),
-                                      fight_mode < 7 ? FIGHT_MODE_NAMES[fight_mode] : std::to_string(fight_mode),
-                                      b.attached);
-                              }),
-                              ","),
+	for (int i = 0; i < obj.meshes.size(); ++i) {
+		auto& m = obj.meshes[i];
 
-                    fmt::join(cmb.pfx | std::views::transform([](const px::mds::event_pfx& b) {
-                                  return fmt::format(
-                                      R"({{"frame": {}, "index": {}, "name": "{}", "position": "{}", "attached": {}}})",
-                                      b.frame,
-                                      b.index,
-                                      b.name,
-                                      b.position,
-                                      b.attached);
-                              }),
-                              ","),
+		if (i != 0) {
+			fmt::print(",");
+		}
 
-                    fmt::join(cmb.pfx_stop | std::views::transform([](const px::mds::event_pfx_stop& b) {
-                                  return fmt::format(R"({{"frame": {}, "index": {}}})", b.frame, b.index);
-                              }),
-                              ","),
+		fmt::print("\"{}\"", m);
+	}
 
-                    fmt::join(cmb.sfx | std::views::transform([](const px::mds::event_sfx& b) {
-                                  return fmt::format(R"({{"frame": {}, "name": "{}", "range": {}, "emptySlot": {}}})",
-                                                     b.frame,
-                                                     b.name,
-                                                     b.range,
-                                                     b.empty_slot);
-                              }),
-                              ","),
+	fmt::print(R"(], "disabledAnimations": [)");
 
-                    fmt::join(cmb.sfx_ground | std::views::transform([](const px::mds::event_sfx_ground& b) {
-                                  return fmt::format(R"({{"frame": {}, "name": "{}", "range": {}, "emptySlot": {}}})",
-                                                     b.frame,
-                                                     b.name,
-                                                     b.range,
-                                                     b.empty_slot);
-                              }),
-                              ","),
+	for (int i = 0; i < obj.disabled_animations.size(); ++i) {
+		auto& m = obj.disabled_animations[i];
 
-                    fmt::join(cmb.morph | std::views::transform([](const px::mds::event_morph_animate& b) {
-                                  return fmt::format(R"({{"frame": {}, "animation": "{}", "node": "{}"}})",
-                                                     b.frame,
-                                                     b.animation,
-                                                     b.node);
-                              }),
-                              ","),
+		if (i != 0) {
+			fmt::print(",");
+		}
 
-                    fmt::join(cmb.tremors | std::views::transform([](const px::mds::event_camera_tremor& b) {
-                                  return fmt::format(
-                                      R"({{"frame": {}, "field1": {}, "field2": {}, "field3": {}, "field4": {}}})",
-                                      b.frame,
-                                      b.field1,
-                                      b.field2,
-                                      b.field3,
-                                      b.field4);
-                              }),
-                              ","));
-            }),
-            ","));
+		fmt::print("\"{}\"", m);
+	}
+
+	fmt::print(R"(], "combinations": [)");
+
+	for (int i = 0; i < obj.combinations.size(); ++i) {
+		auto& cmb = obj.combinations[i];
+
+		if (i != 0) {
+			fmt::print(",");
+		}
+
+		fmt::print(R"({{"name": "{}", "layer": {}, "next": "{}", "blendIn": {}, "blendOut": {}, "flags": [{}], )"
+		           R"("model": "{}", "lastFrame": {}}})",
+		           cmb.name,
+		           cmb.layer,
+		           cmb.next,
+		           cmb.blend_in,
+		           cmb.blend_out,
+		           get_ani_flags(cmb.flags),
+		           cmb.model,
+		           cmb.last_frame);
+	}
+
+	fmt::print(R"(], "blends": [)");
+
+	for (int i = 0; i < obj.blends.size(); ++i) {
+		auto& cmb = obj.blends[i];
+
+		if (i != 0) {
+			fmt::print(",");
+		}
+
+		fmt::print(R"({{"name": "{}", "next": "{}", "blendIn": {}, "blendOut": {}}})",
+		           cmb.name,
+		           cmb.next,
+		           cmb.blend_in,
+		           cmb.blend_out);
+	}
+
+	fmt::print(R"(], "aliases": [)");
+
+	for (int i = 0; i < obj.aliases.size(); ++i) {
+		auto& cmb = obj.aliases[i];
+
+		if (i != 0) {
+			fmt::print(",");
+		}
+
+		fmt::print(R"({{"name": "{}", "layer": {}, "next": "{}", "blendIn": {}, "blendOut": {}, "flags": [{}], )"
+		           R"("alias": "{}", "direction": "{}"}})",
+		           cmb.name,
+		           cmb.layer,
+		           cmb.next,
+		           cmb.blend_in,
+		           cmb.blend_out,
+		           get_ani_flags(cmb.flags),
+		           cmb.alias,
+		           cmb.direction == px::mds::animation_direction::forward ? "forward" : "reversed");
+	}
+
+	fmt::print(R"(], "modelTags": [)");
+
+	for (int i = 0; i < obj.model_tags.size(); ++i) {
+		auto& cmb = obj.model_tags[i];
+
+		if (i != 0) {
+			fmt::print(",");
+		}
+
+		fmt::print(R"({{"bone": "{}"}})", cmb.bone);
+	}
+
+	fmt::print(R"(], animations": [)");
+
+	for (int i = 0; i < obj.animations.size(); ++i) {
+		auto& cmb = obj.animations[i];
+
+		if (i != 0) {
+			fmt::print(",");
+		}
+
+		fmt::print(R"({{"name": "{}", "layer": {}, "next": "{}", "blendIn": {}, "blendOut": {}, "flags": [{}], )"
+		           R"("model": "{}", "direction": "{}", "firstFrame": {}, "lastFrame": {}, "fps": {}, )"
+		           R"("speed": {}, "collisionVolumeScale": {}, "events": [)",
+		           cmb.name,
+		           cmb.layer,
+		           cmb.next,
+		           cmb.blend_in,
+		           cmb.blend_out,
+		           get_ani_flags(cmb.flags),
+		           cmb.model,
+		           cmb.direction == px::mds::animation_direction::forward ? "forward" : "reversed",
+		           cmb.first_frame,
+		           cmb.last_frame,
+		           cmb.fps,
+		           cmb.speed,
+		           cmb.collision_volume_scale);
+
+		for (int i = 0; i < cmb.events.size(); ++i) {
+			auto& b = cmb.events[i];
+			auto type = static_cast<int>(b.type);
+			auto fight_mode = static_cast<int>(b.fight_mode);
+
+			if (i != 0) {
+				fmt::print(",");
+			}
+
+			fmt::print(R"({{"frame": {}, "type": "{}", "slot": "{}", "slot2": "{}", "item": "{}", )"
+			           R"("frames": [{}], "fightMode": "{}", "attached": {}}})",
+			           b.frame,
+			           type < 23 ? EVENT_TAG_TYPE_NAMES[type] : std::to_string(type),
+			           b.slot,
+			           b.slot2,
+			           b.item,
+			           fmt::join(b.frames, ","),
+			           fight_mode < 7 ? FIGHT_MODE_NAMES[fight_mode] : std::to_string(fight_mode),
+			           b.attached);
+		}
+
+		fmt::print(R"(], "pfx": [)");
+
+		for (int i = 0; i < cmb.pfx.size(); ++i) {
+			auto& b = cmb.pfx[i];
+
+			if (i != 0) {
+				fmt::print(",");
+			}
+
+			fmt::print(R"({{"frame": {}, "index": {}, "name": "{}", "position": "{}", "attached": {}}})",
+			           b.frame,
+			           b.index,
+			           b.name,
+			           b.position,
+			           b.attached);
+		}
+
+		fmt::print(R"(], "pfxStop": [)");
+
+		for (int i = 0; i < cmb.pfx_stop.size(); ++i) {
+			auto& b = cmb.pfx_stop[i];
+
+			if (i != 0) {
+				fmt::print(",");
+			}
+
+			fmt::print(R"({{"frame": {}, "index": {}}})", b.frame, b.index);
+		}
+
+		fmt::print(R"(], "sfx": [)");
+
+		for (int i = 0; i < cmb.sfx.size(); ++i) {
+			auto& b = cmb.sfx[i];
+
+			if (i != 0) {
+				fmt::print(",");
+			}
+
+			fmt::print(R"({{"frame": {}, "name": "{}", "range": {}, "emptySlot": {}}})",
+			           b.frame,
+			           b.name,
+			           b.range,
+			           b.empty_slot);
+		}
+
+		fmt::print(R"(], "sfxGround": [)");
+
+		for (int i = 0; i < cmb.sfx_ground.size(); ++i) {
+			auto& b = cmb.sfx_ground[i];
+
+			if (i != 0) {
+				fmt::print(",");
+			}
+
+			fmt::print(R"({{"frame": {}, "name": "{}", "range": {}, "emptySlot": {}}})",
+			           b.frame,
+			           b.name,
+			           b.range,
+			           b.empty_slot);
+		}
+
+		fmt::print(R"(], "morph": [)");
+
+		for (int i = 0; i < cmb.morph.size(); ++i) {
+			auto& b = cmb.morph[i];
+
+			if (i != 0) {
+				fmt::print(",");
+			}
+
+			fmt::print(R"({{"frame": {}, "animation": "{}", "node": "{}"}})", b.frame, b.animation, b.node);
+		}
+
+		fmt::print(R"(], "tremors": [)");
+
+		for (int i = 0; i < cmb.tremors.size(); ++i) {
+			auto& b = cmb.tremors[i];
+
+			if (i != 0) {
+				fmt::print(",");
+			}
+
+			fmt::print(R"({{"frame": {}, "field1": {}, "field2": {}, "field3": {}, "field4": {}}})",
+			           b.frame,
+			           b.field1,
+			           b.field2,
+			           b.field3,
+			           b.field4);
+		}
+
+		fmt::print("]}}");
+	}
+
+	fmt::print(R"(]}})");
 }
- */

@@ -173,92 +173,90 @@ void dump_text<px::texture>(const px::texture& tex) {
 	fmt::print("Average Color (ARGB): #{:0>6x}\n", tex.average_color());
 }
 
-/* TODO: Fix C++17 compatiblity
 template <>
 void dump_text<px::mesh>(const px::mesh& msh) {
-    fmt::print("Type: Mesh\n");
-    fmt::print("Source File: {}\n", msh.name());
+	fmt::print("Type: Mesh\n");
+	fmt::print("Source File: {}\n", msh.name());
 
-    auto date = msh.date();
-    fmt::print("Date: {}-{}-{}T{}:{}:{}\n", date.year, date.month, date.day, date.hour, date.minute, date.second);
+	auto date = msh.date();
+	fmt::print("Date: {}-{}-{}T{}:{}:{}\n", date.year, date.month, date.day, date.hour, date.minute, date.second);
 
-    auto bbox = msh.bbox();
-    fmt::print("Bounding Box: min=vec3(x={}, y={}, z={}), max=vec3(x={}, y={}, z={})\n",
-               bbox.min.x,
-               bbox.min.y,
-               bbox.min.z,
-               bbox.max.x,
-               bbox.max.y,
-               bbox.max.z);
+	auto bbox = msh.bbox();
+	fmt::print("Bounding Box: min=vec3(x={}, y={}, z={}), max=vec3(x={}, y={}, z={})\n",
+	           bbox.min.x,
+	           bbox.min.y,
+	           bbox.min.z,
+	           bbox.max.x,
+	           bbox.max.y,
+	           bbox.max.z);
 
-    fmt::print("Vertex Count: {}\n", msh.vertices().size());
-    fmt::print("Polygon Count: {}\n", msh.polygons().feature_indices.size());
-    fmt::print("Feature Count: {}\n", msh.features().size());
-    fmt::print("Lightmaps:\n");
+	fmt::print("Vertex Count: {}\n", msh.vertices().size());
+	fmt::print("Polygon Count: {}\n", msh.polygons().feature_indices.size());
+	fmt::print("Feature Count: {}\n", msh.features().size());
+	fmt::print("Lightmaps:\n");
 
-    for (auto& lightmap : msh.lightmaps()) {
-        fmt::print("  - Name: {}\n", TEXTURE_FORMAT_NAMES[lightmap.image->format()]);
-        fmt::print("    Origin: vec3(x={}, y={}, z={})\n", lightmap.origin.x, lightmap.origin.y, lightmap.origin.z);
-        fmt::print("    Normals: a=vec3(x={}, y={}, z={}) b=vec3(x={}, y={}, z={})\n",
-                   lightmap.normals[0].x,
-                   lightmap.normals[0].y,
-                   lightmap.normals[0].z,
-                   lightmap.normals[1].x,
-                   lightmap.normals[1].y,
-                   lightmap.normals[1].z);
-    }
+	for (auto& lightmap : msh.lightmaps()) {
+		fmt::print("  - Name: {}\n", TEXTURE_FORMAT_NAMES[lightmap.image->format()]);
+		fmt::print("    Origin: vec3(x={}, y={}, z={})\n", lightmap.origin.x, lightmap.origin.y, lightmap.origin.z);
+		fmt::print("    Normals: a=vec3(x={}, y={}, z={}) b=vec3(x={}, y={}, z={})\n",
+		           lightmap.normals[0].x,
+		           lightmap.normals[0].y,
+		           lightmap.normals[0].z,
+		           lightmap.normals[1].x,
+		           lightmap.normals[1].y,
+		           lightmap.normals[1].z);
+	}
 
-    fmt::print("Materials:\n");
-    for (auto& material : msh.materials()) {
-        fmt::print("  - Name: {}\n", material.name);
-        fmt::print("    Texture: {}\n", material.texture);
-    }
+	fmt::print("Materials:\n");
+	for (auto& material : msh.materials()) {
+		fmt::print("  - Name: {}\n", material.name);
+		fmt::print("    Texture: {}\n", material.texture);
+	}
 }
 
 template <>
 void dump_text<px::model_script>(const px::model_script& msh) {
-    fmt::print("Type: Model Script\n");
-    fmt::print("Skeleton: {} {}\n", msh.skeleton.name, msh.skeleton.disable_mesh ? "(without mesh)" : "(with mesh)");
-    fmt::print("Model Tags ({}):\n", msh.model_tags.size());
+	fmt::print("Type: Model Script\n");
+	fmt::print("Skeleton: {} {}\n", msh.skeleton.name, msh.skeleton.disable_mesh ? "(without mesh)" : "(with mesh)");
+	fmt::print("Model Tags ({}):\n", msh.model_tags.size());
 
-    for (auto& tag : msh.model_tags) {
-        fmt::print("  - DEF_HIT_LIMB: {}\n", tag.bone);
-    }
+	for (auto& tag : msh.model_tags) {
+		fmt::print("  - DEF_HIT_LIMB: {}\n", tag.bone);
+	}
 
-    fmt::print("Meshes ({}):\n", msh.meshes.size());
+	fmt::print("Meshes ({}):\n", msh.meshes.size());
 
-    for (auto& mesh : msh.meshes) {
-        fmt::print("  - {}\n", mesh);
-    }
+	for (auto& mesh : msh.meshes) {
+		fmt::print("  - {}\n", mesh);
+	}
 
-    fmt::print("Animations ({}):\n", msh.animations.size());
+	fmt::print("Animations ({}):\n", msh.animations.size());
 
-    for (auto& ani : msh.animations) {
-        fmt::print("  - {}, next={} (layer={})\n", ani.name, ani.next, ani.layer);
-    }
+	for (auto& ani : msh.animations) {
+		fmt::print("  - {}, next={} (layer={})\n", ani.name, ani.next, ani.layer);
+	}
 
-    fmt::print("Animation Combinations ({}):\n", msh.combinations.size());
+	fmt::print("Animation Combinations ({}):\n", msh.combinations.size());
 
-    for (auto& ani : msh.combinations) {
-        fmt::print("  - {}, next={} (layer={})\n", ani.name, ani.next, ani.layer);
-    }
+	for (auto& ani : msh.combinations) {
+		fmt::print("  - {}, next={} (layer={})\n", ani.name, ani.next, ani.layer);
+	}
 
-    fmt::print("Animation Blends ({}):\n", msh.blends.size());
+	fmt::print("Animation Blends ({}):\n", msh.blends.size());
 
-    for (auto& ani : msh.blends) {
-        fmt::print("  - {}, next={}\n", ani.name, ani.next);
-    }
+	for (auto& ani : msh.blends) {
+		fmt::print("  - {}, next={}\n", ani.name, ani.next);
+	}
 
-    fmt::print("Animation Aliases ({}):\n", msh.aliases.size());
+	fmt::print("Animation Aliases ({}):\n", msh.aliases.size());
 
-    for (auto& ani : msh.aliases) {
-        fmt::print("  - {}, alias={}\n", ani.name, ani.alias);
-    }
+	for (auto& ani : msh.aliases) {
+		fmt::print("  - {}, alias={}\n", ani.name, ani.alias);
+	}
 
-    fmt::print("Disabled Animations ({}):\n", msh.disabled_animations.size());
+	fmt::print("Disabled Animations ({}):\n", msh.disabled_animations.size());
 
-    for (auto& ani : msh.disabled_animations) {
-        fmt::print("  - {}\n", ani);
-    }
+	for (auto& ani : msh.disabled_animations) {
+		fmt::print("  - {}\n", ani);
+	}
 }
-*/
