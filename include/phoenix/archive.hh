@@ -142,7 +142,7 @@ namespace phoenix {
 		virtual bool read_bool() = 0;
 
 		/**
-		 * @brief Reads a glm::u8vec4 value from the reader.
+		 * @brief Reads a RGBA color value from the reader.
 		 * @return The value read.
 		 * @throws parser_error if the value actually present is not a color
 		 */
