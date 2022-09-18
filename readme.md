@@ -1,4 +1,7 @@
+![phoenix logo](assets/logo.svg)
+
 # the _phoenix_ project
+
 [![Build](https://img.shields.io/github/workflow/status/lmichaelis/phoenix/Build?label=Build)](https://github.com/lmichaelis/phoenix/actions/workflows/build.yml)
 ![License](https://img.shields.io/github/license/lmichaelis/phoenix?label=License&color=important)
 ![C++](https://img.shields.io/static/v1?label=C%2B%2B&message=17&color=informational)
@@ -242,3 +245,8 @@ For more examples on how to use _phoenix_, take a look into the
 [`examples`](https://github.com/lmichaelis/phoenix/tree/main/examples) and
 [`tools`](https://github.com/lmichaelis/phoenix/tree/main/tools) directories. A working example of using the VM can be
 found in [`examples/run_interpreter.cc`](https://github.com/lmichaelis/phoenix/blob/main/examples/run_interpreter.cc).
+
+## licensing
+
+While the source code of _phoenix_ is licensed under the [MIT license](license.md), the
+[_phoenix_ logo](assets/logo.svg) is licensed under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/).
