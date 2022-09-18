@@ -15,8 +15,7 @@
 	inline bool operator&(E a, E b) { return (static_cast<std::uint32_t>(a) & static_cast<std::uint32_t>(b)) != 0; }
 // clang-format on
 
-namespace phoenix::daedalus {
-
+namespace phoenix {
 	struct c_gil_values : public instance {
 		static constexpr std::uint32_t count = 66;
 
@@ -1783,7 +1782,7 @@ namespace phoenix::daedalus {
 	};
 
 	void register_all_script_classes(script& s);
-} // namespace phoenix::daedalus
+} // namespace phoenix
 
 #undef var
 #undef string

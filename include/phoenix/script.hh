@@ -13,7 +13,7 @@
 
 #define unset 0xFF'FF'FF'FFU
 
-namespace phoenix::daedalus {
+namespace phoenix {
 	/// \brief Daedalus data types.
 	enum class datatype : std::uint32_t {
 		void_ = 0U,     ///< A datatype similar to C++'s `void`.
@@ -846,4 +846,4 @@ namespace phoenix::daedalus {
 		mutable buffer _m_text = buffer::empty();
 		std::uint8_t _m_version {0};
 	};
-} // namespace phoenix::daedalus
+} // namespace phoenix

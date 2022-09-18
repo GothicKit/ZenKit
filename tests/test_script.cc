@@ -5,14 +5,14 @@
 
 namespace px = phoenix;
 
-static bool compare_instruction(phoenix::daedalus::instruction a, phoenix::daedalus::instruction b) {
+static bool compare_instruction(phoenix::instruction a, phoenix::instruction b) {
 	return a.op == b.op && a.index == b.index && a.immediate == b.immediate && a.address == b.address &&
 	    a.symbol == b.symbol;
 }
 
 TEST_SUITE("script") {
 	TEST_CASE("compiled daedalus script symbols are read correctly") {
-		auto scr = phoenix::daedalus::script::parse("./samples/menu.proprietary.dat");
+		auto scr = phoenix::script::parse("./samples/menu.proprietary.dat");
 
 		auto& syms = scr.symbols();
 		CHECK(syms.size() == 1094);
@@ -40,49 +40,49 @@ TEST_SUITE("script") {
 
 		CHECK(class_symbol->name() == "C_MENU");
 		CHECK(class_symbol->count() == 13);
-		CHECK(class_symbol->type() == px::daedalus::datatype::class_);
+		CHECK(class_symbol->type() == px::datatype::class_);
 		CHECK(!class_symbol->has_return());
 		CHECK(class_symbol->class_size() == 3096);
 		// CHECK(class_symbol->parent() == -1); FIXME
 
 		CHECK(member_symbol->name() == "C_MENU.BACKPIC");
 		CHECK(member_symbol->count() == 1);
-		CHECK(member_symbol->type() == px::daedalus::datatype::string);
+		CHECK(member_symbol->type() == px::datatype::string);
 		CHECK(!member_symbol->has_return());
 		CHECK(member_symbol->parent() == 118);
 
 		CHECK(prototype_symbol->name() == "C_MENU_DEF");
 		CHECK(prototype_symbol->count() == 0);
 		CHECK(prototype_symbol->address() == 236);
-		CHECK(prototype_symbol->type() == px::daedalus::datatype::prototype);
+		CHECK(prototype_symbol->type() == px::datatype::prototype);
 		CHECK(!prototype_symbol->has_return());
 		CHECK(prototype_symbol->parent() == 118);
 
 		CHECK(instance_symbol->name() == "MENU_MAIN");
 		CHECK(instance_symbol->count() == 0);
 		CHECK(instance_symbol->address() == 372);
-		CHECK(instance_symbol->type() == px::daedalus::datatype::instance);
+		CHECK(instance_symbol->type() == px::datatype::instance);
 		CHECK(!instance_symbol->has_return());
 		CHECK(instance_symbol->parent() == 133);
 
 		CHECK(function_symbol->name() == "SHOWINTRO");
 		CHECK(function_symbol->count() == 0);
 		CHECK(function_symbol->address() == 1877);
-		CHECK(function_symbol->type() == px::daedalus::datatype::function);
+		CHECK(function_symbol->type() == px::datatype::function);
 		CHECK(function_symbol->has_return());
-		CHECK(function_symbol->rtype() == px::daedalus::datatype::integer);
+		CHECK(function_symbol->rtype() == px::datatype::integer);
 		// CHECK(function_symbol->parent() == -1); FIXME
 
 		CHECK(external_symbol->name() == "UPDATE_CHOICEBOX");
 		CHECK(external_symbol->count() == 1);
-		CHECK(external_symbol->type() == px::daedalus::datatype::function);
+		CHECK(external_symbol->type() == px::datatype::function);
 		CHECK(external_symbol->is_external());
 		CHECK(external_symbol->is_const());
 		CHECK(!external_symbol->has_return());
 	}
 
 	TEST_CASE("compiled daedalus script instructions are read correctly") {
-		auto scr = phoenix::daedalus::script::parse("./samples/menu.proprietary.dat");
+		auto scr = phoenix::script::parse("./samples/menu.proprietary.dat");
 		auto* instance_symbol = scr.find_symbol_by_name("MENU_MAIN");
 		CHECK(instance_symbol != nullptr);
 
@@ -90,20 +90,20 @@ TEST_SUITE("script") {
 		CHECK(pc_begin == 372);
 
 		// TODO: This only covers a very small amount of instructions. Improve!
-		phoenix::daedalus::instruction ops[10] = {
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::bl, .address = 236},
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::pushv, .symbol = 10},
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::pushv, .symbol = 119},
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::movs},
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::pushv, .symbol = 426},
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::pushv, .symbol = 126},
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::movs},
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::pushv, .symbol = 427},
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::pushv, .symbol = 128},
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::movs, .address = 0},
+		phoenix::instruction ops[10] = {
+		    phoenix::instruction {.op = px::opcode::bl, .address = 236},
+		    phoenix::instruction {.op = px::opcode::pushv, .symbol = 10},
+		    phoenix::instruction {.op = px::opcode::pushv, .symbol = 119},
+		    phoenix::instruction {.op = px::opcode::movs},
+		    phoenix::instruction {.op = px::opcode::pushv, .symbol = 426},
+		    phoenix::instruction {.op = px::opcode::pushv, .symbol = 126},
+		    phoenix::instruction {.op = px::opcode::movs},
+		    phoenix::instruction {.op = px::opcode::pushv, .symbol = 427},
+		    phoenix::instruction {.op = px::opcode::pushv, .symbol = 128},
+		    phoenix::instruction {.op = px::opcode::movs, .address = 0},
 		};
 
-		phoenix::daedalus::instruction op;
+		phoenix::instruction op;
 
 		for (int i = 0; i < 10; ++i) {
 			op = scr.instruction_at(pc_begin);

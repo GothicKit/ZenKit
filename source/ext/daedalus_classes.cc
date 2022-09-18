@@ -9,7 +9,7 @@
 		}                                                                                                              \
 	} while (false)
 
-namespace phoenix::daedalus {
+namespace phoenix {
 	void register_all_script_classes(script& s) {
 		IF_SYM_EXIST("C_GILVALUES", c_gil_values::register_(s));
 		IF_SYM_EXIST("C_NPC", c_npc::register_(s));
@@ -33,6 +33,6 @@ namespace phoenix::daedalus {
 		IF_SYM_EXIST("C_SFX", c_sfx::register_(s));
 		IF_SYM_EXIST("C_SNDSYS_CFG", c_sound_system::register_(s));
 	}
-} // namespace phoenix::daedalus
+} // namespace phoenix
 
 #undef IF_SYM_EXIST

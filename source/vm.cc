@@ -5,7 +5,7 @@
 #include <iostream>
 #include <utility>
 
-namespace phoenix::daedalus {
+namespace phoenix {
 	vm::vm(script&& scr, std::uint8_t flags) : script(std::move(scr)), _m_flags(flags) {
 		_m_self_sym = find_symbol_by_name("SELF");
 		_m_other_sym = find_symbol_by_name("OTHER");
@@ -565,4 +565,4 @@ namespace phoenix::daedalus {
 	                                  "external " + sym->name() + " has illegal parameter type '" + provided +
 	                                      "' (no. " + std::to_string(i) + "), expected '" +
 	                                      DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) sym->type()] + "'") {}
-} // namespace phoenix::daedalus
+} // namespace phoenix

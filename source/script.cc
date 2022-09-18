@@ -5,7 +5,7 @@
 #include <fmt/format.h>
 #include <string>
 
-namespace phoenix::daedalus {
+namespace phoenix {
 	symbol_not_found::symbol_not_found(std::string&& name) : script_error("symbol not found: " + name), name(name) {}
 
 	member_registration_error::member_registration_error(const symbol* sym, std::string&& message)
@@ -416,4 +416,4 @@ namespace phoenix::daedalus {
 
 		std::get<std::shared_ptr<instance>>(_m_value) = inst;
 	}
-} // namespace phoenix::daedalus
+} // namespace phoenix

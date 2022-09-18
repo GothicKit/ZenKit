@@ -374,7 +374,7 @@ std::pair<std::string, std::uint32_t> decompile_block(const script& script,
 	return {code, pointer};
 }
 
-std::string decompile(const phoenix::daedalus::script& script, const phoenix::daedalus::symbol& sym, int indent) {
+std::string decompile(const phoenix::script& script, const phoenix::symbol& sym, int indent) {
 	if (sym.is_external()) {
 		throw;
 	}

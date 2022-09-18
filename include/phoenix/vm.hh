@@ -10,7 +10,7 @@
 #include <typeinfo>
 #include <variant>
 
-namespace phoenix::daedalus {
+namespace phoenix {
 	struct _ignore_return_value {};
 
 	template <typename T>
@@ -610,7 +610,7 @@ namespace phoenix::daedalus {
 			if constexpr (is_instance_ptr_v<T>) {
 				auto r = pop_instance();
 
-				if (r != nullptr && !std::is_same_v<T, std::shared_ptr<phoenix::daedalus::instance>>) {
+				if (r != nullptr && !std::is_same_v<T, std::shared_ptr<phoenix::instance>>) {
 					auto& expected = typeid(typename T::element_type);
 
 					if (!r->_m_type) {
@@ -793,4 +793,4 @@ namespace phoenix::daedalus {
 		std::uint32_t _m_pc {0};
 		std::uint8_t _m_flags {execution_flag::none};
 	};
-} // namespace phoenix::daedalus
+} // namespace phoenix

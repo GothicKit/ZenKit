@@ -5,4 +5,4 @@
 
 #include <string>
 
-std::string decompile(const phoenix::daedalus::script& script, const phoenix::daedalus::symbol& sym, int indent = 0);
+std::string decompile(const phoenix::script& script, const phoenix::symbol& sym, int indent = 0);

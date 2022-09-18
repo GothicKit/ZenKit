@@ -11,8 +11,8 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 
-	phoenix::daedalus::vm vm {phoenix::daedalus::script::parse(argv[1])};
-	phoenix::daedalus::register_all_script_classes(vm); // needed for Gothic scripts
+	phoenix::vm vm {phoenix::script::parse(argv[1])};
+	phoenix::register_all_script_classes(vm); // needed for Gothic scripts
 
 	vm.register_default_external([](std::string_view name) { std::cout << "VM: No external for " << name << "\n"; });
 	vm.register_external("INTTOSTRING", [](int i) { return std::to_string(i); });
@@ -24,12 +24,11 @@ int main(int argc, char** argv) {
 		return true;
 	});
 
-	auto xardas = vm.init_instance<phoenix::daedalus::c_npc>("NONE_100_XARDAS");
-	auto hero = vm.init_instance<phoenix::daedalus::c_npc>("PC_HERO");
-	auto gold = vm.init_instance<phoenix::daedalus::c_item>("ITMI_GOLD");
+	auto xardas = vm.init_instance<phoenix::c_npc>("NONE_100_XARDAS");
+	auto hero = vm.init_instance<phoenix::c_npc>("PC_HERO");
+	auto gold = vm.init_instance<phoenix::c_item>("ITMI_GOLD");
 
-	vm.register_external("NPC_ISPLAYER",
-	                     [&hero](std::shared_ptr<phoenix::daedalus::c_npc> npc) { return npc->id == hero->id; });
+	vm.register_external("NPC_ISPLAYER", [&hero](std::shared_ptr<phoenix::c_npc> npc) { return npc->id == hero->id; });
 
 	std::cout << "\nNONE_100_XARDAS = C_NPC(\n"
 	          << "    id=" << xardas->id << ",\n"
