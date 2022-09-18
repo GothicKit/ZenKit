@@ -820,7 +820,7 @@ namespace phoenix {
 				if (sym->type() != datatype::integer && sym->type() != datatype::function)
 					throw invalid_registration_datatype {sym, "int"};
 			} else {
-				throw std::runtime_error("illegal type");
+				throw invalid_registration_datatype {sym, "<unknown>"};
 			}
 
 			return sym;
