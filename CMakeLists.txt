@@ -82,7 +82,7 @@ set(PX_SOURCES
 		source/vobs/zone.cc
 
 		source/daedalus/script.cc
-		source/daedalus/interpreter.cc
+		source/daedalus/vm.cc
 
 		source/ext/dds_convert.cc
 		source/ext/daedalus_classes.cc)
