@@ -12,7 +12,7 @@
 #include "config.hh"
 #include "decompiler.hh"
 
-using namespace phoenix::daedalus;
+using namespace phoenix;
 
 static constexpr const auto HELP_MESSAGE =
     R"(USAGE

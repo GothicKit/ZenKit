@@ -5,7 +5,7 @@
 #include <fmt/format.h>
 #include <vector>
 
-using namespace phoenix::daedalus;
+using namespace phoenix;
 
 static uint32_t current_instance = -1;
 static const symbol* current_symbol = nullptr;
