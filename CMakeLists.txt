@@ -66,6 +66,8 @@ set(PX_SOURCES
 		source/model_mesh.cc
 		source/model.cc
 		source/model_script.cc
+		source/script.cc
+		source/vm.cc
 
 		source/world.cc
 		source/world/bsp_tree.cc
@@ -80,9 +82,6 @@ set(PX_SOURCES
 		source/vobs/trigger.cc
 		source/vobs/vob.cc
 		source/vobs/zone.cc
-
-		source/daedalus/script.cc
-		source/daedalus/vm.cc
 
 		source/ext/dds_convert.cc
 		source/ext/daedalus_classes.cc)
