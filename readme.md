@@ -1,4 +1,4 @@
-![phoenix logo](assets/logo.svg)
+![phoenix logo](assets/logo.png)
 
 # the _phoenix_ project
 
