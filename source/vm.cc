@@ -6,7 +6,7 @@
 #include <utility>
 
 namespace phoenix::daedalus {
-	vm::vm(script&& scr, execution_flag flags) : script(std::move(scr)), _m_flags(flags) {
+	vm::vm(script&& scr, std::uint8_t flags) : script(std::move(scr)), _m_flags(flags) {
 		_m_self_sym = find_symbol_by_name("SELF");
 		_m_other_sym = find_symbol_by_name("OTHER");
 		_m_victim_sym = find_symbol_by_name("VICTIM");
@@ -35,97 +35,97 @@ namespace phoenix::daedalus {
 		try {
 
 			switch (instr.op) {
-			case op_add:
+			case opcode::op_add:
 				push_int(pop_int() + pop_int());
 				break;
-			case op_subtract:
+			case opcode::op_subtract:
 				a = pop_int();
 				b = pop_int();
 				push_int(a - b);
 				break;
-			case op_multiply:
+			case opcode::op_multiply:
 				push_int(pop_int() * pop_int());
 				break;
-			case op_divide:
+			case opcode::op_divide:
 				a = pop_int();
 				b = pop_int();
 				push_int(a / b);
 				break;
-			case op_modulo:
+			case opcode::op_modulo:
 				a = pop_int();
 				b = pop_int();
 				push_int(a % b);
 				break;
-			case op_bitor:
+			case opcode::op_bitor:
 				push_int(pop_int() | pop_int());
 				break;
-			case op_bitand:
+			case opcode::op_bitand:
 				push_int(pop_int() & pop_int());
 				break;
-			case op_less:
+			case opcode::op_less:
 				a = pop_int();
 				b = pop_int();
 				push_int(a < b);
 				break;
-			case op_greater:
+			case opcode::op_greater:
 				a = pop_int();
 				b = pop_int();
 				push_int(a > b);
 				break;
-			case op_shift_left:
+			case opcode::op_shift_left:
 				a = pop_int();
 				b = pop_int();
 				push_int(a << b);
 				break;
-			case op_shift_right:
+			case opcode::op_shift_right:
 				a = pop_int();
 				b = pop_int();
 				push_int(a >> b);
 				break;
-			case op_less_or_equal:
+			case opcode::op_less_or_equal:
 				a = pop_int();
 				b = pop_int();
 				push_int(a <= b);
 				break;
-			case op_equal:
+			case opcode::op_equal:
 				push_int(pop_int() == pop_int());
 				break;
-			case op_not_equal:
+			case opcode::op_not_equal:
 				push_int(pop_int() != pop_int());
 				break;
-			case op_greater_or_equal:
+			case opcode::op_greater_or_equal:
 				a = pop_int();
 				b = pop_int();
 				push_int(a >= b);
 				break;
-			case op_plus:
+			case opcode::op_plus:
 				push_int(+pop_int());
 				break;
-			case op_minus:
+			case opcode::op_minus:
 				push_int(-pop_int());
 				break;
-			case op_not:
+			case opcode::op_not:
 				push_int(!pop_int());
 				break;
-			case op_complement:
+			case opcode::op_complement:
 				push_int(~pop_int());
 				break;
-			case op_or:
+			case opcode::op_or:
 				a = pop_int();
 				b = pop_int();
 				push_int(a || b);
 				break;
-			case op_and:
+			case opcode::op_and:
 				a = pop_int();
 				b = pop_int();
 				push_int(a && b);
 				break;
-			case op_noop:
+			case opcode::op_noop:
 				// Do nothing
 				break;
-			case op_return:
+			case opcode::op_return:
 				return false;
-			case op_call: {
+			case opcode::op_call: {
 				// Check if the function is overridden and if it is, call the resulting external.
 				auto cb = _m_function_overrides.find(instr.address);
 				if (cb != _m_function_overrides.end()) {
@@ -143,7 +143,7 @@ namespace phoenix::daedalus {
 
 				break;
 			}
-			case op_call_external: {
+			case opcode::op_call_external: {
 				sym = find_symbol_by_index(instr.symbol);
 				if (sym == nullptr) {
 					throw vm_exception {"op_call_external: no external found for index"};
@@ -164,22 +164,23 @@ namespace phoenix::daedalus {
 				pop_call();
 				break;
 			}
-			case op_push_int:
+			case opcode::op_push_int:
 				push_int(instr.immediate);
 				break;
-			case op_push_instance:
-			case op_push_var:
+			case opcode::op_push_instance:
+			case opcode::op_push_var:
 				sym = find_symbol_by_index(instr.symbol);
 				if (sym == nullptr) {
 					throw vm_exception {"op_push_var: no symbol found for index"};
 				}
 				push_reference(sym, 0);
 				break;
-			case op_assign_int:
-			case op_assign_func: {
+			case opcode::op_assign_int:
+			case opcode::op_assign_func: {
 				auto [ref, idx, context] = pop_reference();
 
-				if (!ref->is_member() || context != nullptr || !(_m_flags & vm_allow_null_instance_access)) {
+				if (!ref->is_member() || context != nullptr ||
+				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
 					ref->set_int(pop_int(), idx, context);
 				} else if (ref->is_member()) {
 					PX_LOGE("vm: accessing member \"{}\" without an instance set", ref->name());
@@ -188,10 +189,11 @@ namespace phoenix::daedalus {
 
 				break;
 			}
-			case op_assign_float: {
+			case opcode::op_assign_float: {
 				auto [ref, idx, context] = pop_reference();
 
-				if (!ref->is_member() || context != nullptr || !(_m_flags & vm_allow_null_instance_access)) {
+				if (!ref->is_member() || context != nullptr ||
+				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
 					ref->set_float(pop_float(), idx, context);
 				} else if (ref->is_member()) {
 					PX_LOGE("vm: accessing member \"{}\" without an instance set", ref->name());
@@ -200,11 +202,12 @@ namespace phoenix::daedalus {
 
 				break;
 			}
-			case op_assign_string: {
+			case opcode::op_assign_string: {
 				auto [target, target_idx, context] = pop_reference();
 				auto source = pop_string();
 
-				if (!target->is_member() || context != nullptr || !(_m_flags & vm_allow_null_instance_access)) {
+				if (!target->is_member() || context != nullptr ||
+				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
 					target->set_string(source, target_idx, context);
 				} else if (target->is_member()) {
 					PX_LOGE("vm: accessing member \"{}\" without an instance set", target->name());
@@ -212,47 +215,47 @@ namespace phoenix::daedalus {
 
 				break;
 			}
-			case op_assign_stringref:
+			case opcode::op_assign_stringref:
 				throw vm_exception {"not implemented: op_assign_stringref"};
-			case op_assign_add: {
+			case opcode::op_assign_add: {
 				auto [ref, idx, context] = pop_reference();
 				auto result = ref->get_int(idx, context) + pop_int();
 				ref->set_int(result, idx, context);
 				break;
 			}
-			case op_assign_subtract: {
+			case opcode::op_assign_subtract: {
 				auto [ref, idx, context] = pop_reference();
 				auto result = ref->get_int(idx, context) - pop_int();
 				ref->set_int(result, idx, context);
 				break;
 			}
-			case op_assign_multiply: {
+			case opcode::op_assign_multiply: {
 				auto [ref, idx, context] = pop_reference();
 				auto result = ref->get_int(idx, context) * pop_int();
 				ref->set_int(result, idx, context);
 				break;
 			}
-			case op_assign_divide: {
+			case opcode::op_assign_divide: {
 				auto [ref, idx, context] = pop_reference();
 				auto result = ref->get_int(idx, context) / pop_int();
 				ref->set_int(result, idx, context);
 				break;
 			}
-			case op_assign_instance: {
+			case opcode::op_assign_instance: {
 				auto [target, target_idx, _] = pop_reference();
 				target->set_instance(pop_instance());
 				break;
 			}
-			case op_jump:
+			case opcode::op_jump:
 				jump(instr.address);
 				return true;
-			case op_jump_if_zero:
+			case opcode::op_jump_if_zero:
 				if (pop_int() == 0) {
 					jump(instr.address);
 					return true;
 				}
 				break;
-			case op_set_instance: {
+			case opcode::op_set_instance: {
 				sym = find_symbol_by_index(instr.symbol);
 				if (sym == nullptr) {
 					throw vm_exception {"op_set_instance: no symbol found for index"};
@@ -260,7 +263,7 @@ namespace phoenix::daedalus {
 				_m_instance = sym->get_instance();
 				break;
 			}
-			case op_push_array_var:
+			case opcode::op_push_array_var:
 				sym = find_symbol_by_index(instr.symbol);
 				if (sym == nullptr) {
 					throw vm_exception {"op_push_array_var: no symbol found for index"};
@@ -325,7 +328,7 @@ namespace phoenix::daedalus {
 			// compatibility: sometimes the context might be zero, but we can't fail so when
 			//                the compatibility flag is set, we just return 0
 			if (sym->is_member() && v.context == nullptr) {
-				if (!(_m_flags & vm_allow_null_instance_access)) {
+				if (!(_m_flags & execution_flag::vm_allow_null_instance_access)) {
 					throw no_context {sym};
 				}
 
@@ -355,7 +358,7 @@ namespace phoenix::daedalus {
 			// compatibility: sometimes the context might be zero, but we can't fail so when
 			//                the compatibility flag is set, we just return 0
 			if (sym->is_member() && v.context == nullptr) {
-				if (!(_m_flags & vm_allow_null_instance_access)) {
+				if (!(_m_flags & execution_flag::vm_allow_null_instance_access)) {
 					throw no_context {sym};
 				}
 
@@ -417,7 +420,7 @@ namespace phoenix::daedalus {
 		// compatibility: sometimes the context might be zero, but we can't fail so when
 		//                the compatibility flag is set, we just return 0
 		if (s->is_member() && context == nullptr) {
-			if (!(_m_flags & vm_allow_null_instance_access)) {
+			if (!(_m_flags & execution_flag::vm_allow_null_instance_access)) {
 				throw no_context {s};
 			}
 
@@ -442,20 +445,20 @@ namespace phoenix::daedalus {
 			for (int i = params.size() - 1; i >= 0; --i) {
 				auto par = params[i];
 
-				if (par->type() == dt_integer)
+				if (par->type() == datatype::integer)
 					(void) v.pop_int();
-				else if (par->type() == dt_float)
+				else if (par->type() == datatype::float_)
 					(void) v.pop_float();
-				else if (par->type() == dt_instance || par->type() == dt_string)
+				else if (par->type() == datatype::instance || par->type() == datatype::string)
 					(void) v.pop_reference();
 			}
 
 			if (sym.has_return()) {
-				if (sym.rtype() == dt_float)
+				if (sym.rtype() == datatype::float_)
 					v.push_float(0.0f);
-				else if (sym.rtype() == dt_integer)
+				else if (sym.rtype() == datatype::integer)
 					v.push_int(0);
-				else if (sym.rtype() == dt_string)
+				else if (sym.rtype() == datatype::string)
 					v.push_string("");
 
 				// TODO: We can't really push an instance since we'd need to take the type into account. Sadly,
@@ -497,23 +500,23 @@ namespace phoenix::daedalus {
 				std::cerr << i << ": [REFERENCE] " << ref->name() << "[" << (int) v.index << "] = ";
 
 				switch (ref->type()) {
-				case dt_float:
+				case datatype::float_:
 					std::cerr << ref->get_float(v.index, _m_instance) << "\n";
 					break;
-				case dt_integer:
+				case datatype::integer:
 					std::cerr << ref->get_int(v.index, _m_instance) << "\n";
 					break;
-				case dt_string:
+				case datatype::string:
 					std::cerr << "'" << ref->get_string(v.index, _m_instance) << "'\n";
 					break;
-				case dt_function: {
+				case datatype::function: {
 					auto index = ref->get_int(v.index, _m_instance);
 					auto sym = find_symbol_by_index(index);
 
 					std::cout << "&" << sym->name() << "\n";
 					break;
 				}
-				case dt_instance: {
+				case datatype::instance: {
 					auto& inst = ref->get_instance();
 					if (inst != nullptr) {
 						std::cerr << "<instance of '" << inst->_m_type->name() << "'>\n";
@@ -554,11 +557,12 @@ namespace phoenix::daedalus {
 	illegal_external_rtype::illegal_external_rtype(const symbol* sym, std::string&& provided)
 	    : illegal_external_definition(sym,
 	                                  "external " + sym->name() + " has illegal return type '" + provided +
-	                                      "', expected '" + DAEDALUS_DATA_TYPE_NAMES[sym->rtype()] + "'") {}
+	                                      "', expected '" + DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) sym->rtype()] +
+	                                      "'") {}
 
 	illegal_external_param::illegal_external_param(const symbol* sym, std::string&& provided, std::uint8_t i)
 	    : illegal_external_definition(sym,
 	                                  "external " + sym->name() + " has illegal parameter type '" + provided +
 	                                      "' (no. " + std::to_string(i) + "), expected '" +
-	                                      DAEDALUS_DATA_TYPE_NAMES[sym->type()] + "'") {}
+	                                      DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) sym->type()] + "'") {}
 } // namespace phoenix::daedalus

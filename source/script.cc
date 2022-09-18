@@ -14,7 +14,7 @@ namespace phoenix::daedalus {
 	invalid_registration_datatype::invalid_registration_datatype(const symbol* sym, std::string&& given)
 	    : member_registration_error(sym,
 	                                "wrong datatype: provided '" + given + "' expected " +
-	                                    DAEDALUS_DATA_TYPE_NAMES[sym->type()]) {}
+	                                    DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) sym->type()]) {}
 
 	illegal_type_access::illegal_type_access(const symbol* sym, datatype expected)
 	    : illegal_access(fmt::format("illegal access of type {} on symbol {} which is another type ({})",
@@ -55,24 +55,24 @@ namespace phoenix::daedalus {
 		s.size = 1;
 
 		switch (s.op) {
-		case op_call:
-		case op_jump_if_zero:
-		case op_jump:
+		case opcode::op_call:
+		case opcode::op_jump_if_zero:
+		case opcode::op_jump:
 			s.address = in.get_uint();
 			s.size += sizeof(std::uint32_t);
 			break;
-		case op_push_int:
+		case opcode::op_push_int:
 			s.immediate = in.get_int();
 			s.size += sizeof(std::uint32_t);
 			break;
-		case op_call_external:
-		case op_push_var:
-		case op_push_instance:
-		case op_set_instance:
+		case opcode::op_call_external:
+		case opcode::op_push_var:
+		case opcode::op_push_instance:
+		case opcode::op_set_instance:
 			s.symbol = in.get_uint();
 			s.size += sizeof(std::uint32_t);
 			break;
-		case op_push_array_var:
+		case opcode::op_push_array_var:
 			s.symbol = in.get_uint();
 			s.index = in.get();
 			s.size += sizeof(std::uint32_t) + sizeof(std::uint8_t);
@@ -106,8 +106,8 @@ namespace phoenix::daedalus {
 			scr._m_symbols_by_name[sym->name()] = i;
 			sym->_m_index = i;
 
-			if (sym->type() == dt_prototype || sym->type() == dt_instance ||
-			    (sym->type() == dt_function && sym->is_const() && !sym->is_member())) {
+			if (sym->type() == datatype::prototype || sym->type() == datatype::instance ||
+			    (sym->type() == datatype::function && sym->is_const() && !sym->is_member())) {
 				scr._m_symbols_by_address[sym->address()] = i;
 			}
 		}
@@ -179,9 +179,9 @@ namespace phoenix::daedalus {
 
 		std::vector<uint32_t> prototypes {};
 		for (auto& sym : _m_symbols) {
-			if (sym.type() == dt_prototype && sym.parent() == cls->index()) {
+			if (sym.type() == datatype::prototype && sym.parent() == cls->index()) {
 				prototypes.push_back(sym.index());
-			} else if (sym.type() == dt_instance &&
+			} else if (sym.type() == datatype::instance &&
 			           (std::find(prototypes.begin(), prototypes.end(), sym.parent()) != prototypes.end() ||
 			            sym.parent() == cls->index())) {
 				callback(sym);
@@ -225,15 +225,15 @@ namespace phoenix::daedalus {
 		auto vary = in.get_uint();
 		auto properties = in.get_uint();
 
-		sym._m_count = (properties >> 0U) & 0xFFFU;                      // 12 bits
-		sym._m_type = static_cast<datatype>((properties >> 12U) & 0xFU); // 4 bits
-		sym._m_flags = static_cast<flag>((properties >> 16U) & 0x3FU);   // 6 bits
+		sym._m_count = (properties >> 0U) & 0xFFFU;                             // 12 bits
+		sym._m_type = static_cast<datatype>((properties >> 12U) & 0xFU);        // 4 bits
+		sym._m_flags = static_cast<std::uint32_t>((properties >> 16U) & 0x3FU); // 6 bits
 
 		if (sym.is_member()) {
 			sym._m_member_offset = vary;
-		} else if (sym.type() == dt_class) {
+		} else if (sym.type() == datatype::class_) {
 			sym._m_class_size = vary;
-		} else if (sym.type() == dt_function) {
+		} else if (sym.type() == datatype::function) {
 			sym._m_return_type = static_cast<datatype>(vary);
 		}
 
@@ -245,19 +245,19 @@ namespace phoenix::daedalus {
 
 		if (!sym.is_member()) {
 			switch (sym._m_type) {
-			case dt_float: {
+			case datatype::float_: {
 				std::unique_ptr<float[]> value {new float[sym._m_count]};
 				in.get((std::uint8_t*) value.get(), sym._m_count * sizeof(float));
 				sym._m_value = std::move(value);
 				break;
 			}
-			case dt_integer: {
+			case datatype::integer: {
 				std::unique_ptr<std::int32_t[]> value {new std::int32_t[sym._m_count]};
 				in.get((std::uint8_t*) value.get(), sym._m_count * sizeof(std::uint32_t));
 				sym._m_value = std::move(value);
 				break;
 			}
-			case dt_string: {
+			case datatype::string: {
 				std::unique_ptr<std::string[]> value {new std::string[sym._m_count]};
 				for (std::uint32_t i = 0; i < sym._m_count; ++i) {
 					value[i] = in.get_line(false);
@@ -265,14 +265,14 @@ namespace phoenix::daedalus {
 				sym._m_value = std::move(value);
 				break;
 			}
-			case dt_class:
+			case datatype::class_:
 				sym._m_class_offset = in.get_int();
 				break;
-			case dt_instance:
+			case datatype::instance:
 				sym._m_value = std::shared_ptr<instance> {nullptr};
 				[[fallthrough]];
-			case dt_function:
-			case dt_prototype:
+			case datatype::function:
+			case datatype::prototype:
 				sym._m_address = in.get_int();
 				break;
 			default:
@@ -285,8 +285,8 @@ namespace phoenix::daedalus {
 	}
 
 	const std::string& symbol::get_string(std::uint8_t index, const std::shared_ptr<instance>& context) const {
-		if (type() != dt_string) {
-			throw illegal_type_access(this, dt_string);
+		if (type() != datatype::string) {
+			throw illegal_type_access(this, datatype::string);
 		}
 		if (count() <= index) {
 			throw illegal_index_access(this, index);
@@ -303,8 +303,8 @@ namespace phoenix::daedalus {
 	}
 
 	float symbol::get_float(std::uint8_t index, const std::shared_ptr<instance>& context) const {
-		if (type() != dt_float) {
-			throw illegal_type_access(this, dt_float);
+		if (type() != datatype::float_) {
+			throw illegal_type_access(this, datatype::float_);
 		}
 		if (count() <= index) {
 			throw illegal_index_access(this, index);
@@ -321,8 +321,8 @@ namespace phoenix::daedalus {
 	}
 
 	std::int32_t symbol::get_int(std::uint8_t index, const std::shared_ptr<instance>& context) const {
-		if (type() != dt_integer && type() != dt_function) {
-			throw illegal_type_access(this, dt_integer);
+		if (type() != datatype::integer && type() != datatype::function) {
+			throw illegal_type_access(this, datatype::integer);
 		}
 		if (count() <= index) {
 			throw illegal_index_access(this, index);
@@ -342,8 +342,8 @@ namespace phoenix::daedalus {
 		if (is_const()) {
 			throw illegal_const_access(this);
 		}
-		if (type() != dt_string) {
-			throw illegal_type_access(this, dt_string);
+		if (type() != datatype::string) {
+			throw illegal_type_access(this, datatype::string);
 		}
 		if (count() <= index) {
 			throw illegal_index_access(this, index);
@@ -363,8 +363,8 @@ namespace phoenix::daedalus {
 		if (is_const()) {
 			throw illegal_const_access(this);
 		}
-		if (type() != dt_float) {
-			throw illegal_type_access(this, dt_float);
+		if (type() != datatype::float_) {
+			throw illegal_type_access(this, datatype::float_);
 		}
 		if (count() <= index) {
 			throw illegal_index_access(this, index);
@@ -384,8 +384,8 @@ namespace phoenix::daedalus {
 		if (is_const()) {
 			throw illegal_const_access(this);
 		}
-		if (type() != dt_integer && type() != dt_function) {
-			throw illegal_type_access(this, dt_integer);
+		if (type() != datatype::integer && type() != datatype::function) {
+			throw illegal_type_access(this, datatype::integer);
 		}
 		if (count() <= index) {
 			throw illegal_index_access(this, index);
@@ -402,16 +402,16 @@ namespace phoenix::daedalus {
 	}
 
 	const std::shared_ptr<instance>& symbol::get_instance() {
-		if (type() != dt_instance) {
-			throw illegal_type_access(this, dt_instance);
+		if (type() != datatype::instance) {
+			throw illegal_type_access(this, datatype::instance);
 		}
 
 		return std::get<std::shared_ptr<instance>>(_m_value);
 	}
 
 	void symbol::set_instance(const std::shared_ptr<instance>& inst) {
-		if (type() != dt_instance) {
-			throw illegal_type_access(this, dt_instance);
+		if (type() != datatype::instance) {
+			throw illegal_type_access(this, datatype::instance);
 		}
 
 		std::get<std::shared_ptr<instance>>(_m_value) = inst;

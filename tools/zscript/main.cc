@@ -190,13 +190,12 @@ int main(int argc, char** argv) {
 					std::string def = print_definition(scr, s, scr.find_symbol_by_index(s.parent()));
 
 					if (!s.is_member() && !s.is_external() &&
-					    (s.type() == phoenix::daedalus::dt_prototype ||
-					     (s.type() == phoenix::daedalus::dt_function && s.is_const()) ||
-					     (s.type() == phoenix::daedalus::dt_instance && s.is_const()))) {
+					    (s.type() == datatype::prototype || (s.type() == datatype::function && s.is_const()) ||
+					     (s.type() == datatype::instance && s.is_const()))) {
 						def += fmt::format(" {{\n{}}}\n", decompile(scr, s, 4));
 					}
 
-					if (s.type() == dt_function) {
+					if (s.type() == datatype::function) {
 						skip = s.count();
 					}
 
@@ -219,27 +218,27 @@ int main(int argc, char** argv) {
 /// \param symbol The symbol to test on
 /// \return `true` if the symbol has a value `false` otherwise.
 bool has_constant_value(const symbol& symbol) {
-	return symbol.is_const() && symbol.type() != dt_prototype && symbol.type() != dt_instance &&
-	    symbol.type() != dt_function;
+	return symbol.is_const() && symbol.type() != datatype::prototype && symbol.type() != datatype::instance &&
+	    symbol.type() != datatype::function;
 }
 
 constexpr std::string_view get_type_name(datatype tp) {
 	switch (tp) {
-	case dt_void:
+	case datatype::void_:
 		return "void";
-	case dt_float:
+	case datatype::float_:
 		return "float";
-	case dt_integer:
+	case datatype::integer:
 		return "int";
-	case dt_string:
+	case datatype::string:
 		return "string";
-	case dt_class:
+	case datatype::class_:
 		return "class";
-	case dt_function:
+	case datatype::function:
 		return "func";
-	case dt_prototype:
+	case datatype::prototype:
 		return "prototype";
-	case dt_instance:
+	case datatype::instance:
 		return "instance";
 	default:
 		return "*ERR*";
@@ -252,13 +251,13 @@ std::string print_symbol_value(const symbol& symbol, int index = -1) {
 	std::string val {};
 	auto print_value = [&](uint8_t index) {
 		switch (symbol.type()) {
-		case dt_float:
+		case datatype::float_:
 			val += fmt::format("{}", symbol.get_float(index));
 			break;
-		case dt_integer:
+		case datatype::integer:
 			val += fmt::format("{}", symbol.get_int(index));
 			break;
-		case dt_string:
+		case datatype::string:
 			val += fmt::format("\"{}\"", symbol.get_string(index));
 			break;
 		default:
@@ -299,11 +298,11 @@ std::string print_definition(const script& scr, const symbol& sym, const symbol*
 	if (sym.is_external())
 		def += "extern ";
 
-	if (sym.type() == dt_instance) {
+	if (sym.type() == datatype::instance) {
 		def += fmt::format("instance {}({})", sym.name(), (parent == nullptr ? "*ERR*" : parent->name()));
-	} else if (sym.type() == dt_prototype) {
+	} else if (sym.type() == datatype::prototype) {
 		def += fmt::format("prototype {}({})", sym.name(), (parent == nullptr ? "*ERR*" : parent->name()));
-	} else if (sym.type() == dt_class) {
+	} else if (sym.type() == datatype::class_) {
 		def += fmt::format("class {} {{\n", sym.name());
 
 		for (const auto& member : scr.symbols()) {
@@ -317,7 +316,7 @@ std::string print_definition(const script& scr, const symbol& sym, const symbol*
 		}
 
 		def += fmt::format("{}}};", indent);
-	} else if (sym.type() == dt_function) {
+	} else if (sym.type() == datatype::function) {
 		def += fmt::format("func {} {}(", get_type_name(sym.rtype()), sym.name());
 
 		auto params = scr.find_parameters_for_function(&sym);
@@ -326,7 +325,7 @@ std::string print_definition(const script& scr, const symbol& sym, const symbol*
 			if (count > 0)
 				def += ", ";
 
-			if (param->type() == dt_instance) {
+			if (param->type() == datatype::instance) {
 				const auto* dt = scr.find_symbol_by_index(param->parent());
 
 				if (dt == nullptr) {
@@ -385,11 +384,11 @@ void print_symbol_detailed(const script& scr, const symbol& sym) {
 		fmt::print("\tVariable Offset: {}\n", sym.offset_as_member());
 	}
 
-	if (sym.type() == dt_class) {
+	if (sym.type() == datatype::class_) {
 		fmt::print("\tClass Size: {}\n", sym.class_size());
 	}
 
-	if (sym.is_const() && sym.type() == dt_function) {
+	if (sym.is_const() && sym.type() == datatype::function) {
 		fmt::print("\tReturn Type: {}\n", get_type_name(sym.rtype()));
 	}
 
@@ -403,21 +402,21 @@ void print_symbol_detailed(const script& scr, const symbol& sym) {
 /// \return The abbreviation
 constexpr char get_type_abbrev(datatype tp) {
 	switch (tp) {
-	case dt_void:
+	case datatype::void_:
 		return 'v';
-	case dt_float:
+	case datatype::float_:
 		return 'f';
-	case dt_integer:
+	case datatype::integer:
 		return 'i';
-	case dt_string:
+	case datatype::string:
 		return 's';
-	case dt_class:
+	case datatype::class_:
 		return 'C';
-	case dt_function:
+	case datatype::function:
 		return 'F';
-	case dt_prototype:
+	case datatype::prototype:
 		return 'P';
-	case dt_instance:
+	case datatype::instance:
 		return 'I';
 	}
 
@@ -470,14 +469,14 @@ bool symbol_matches_filter(const symbol& sym, std::string_view include_filter, s
 			return true;
 		}
 
-		if ((sym.type() == dt_void && SV_CONTAINS(filter, 'v')) ||
-		    (sym.type() == dt_float && SV_CONTAINS(filter, 'f')) ||
-		    (sym.type() == dt_integer && SV_CONTAINS(filter, 'i')) ||
-		    (sym.type() == dt_string && SV_CONTAINS(filter, 's')) ||
-		    (sym.type() == dt_class && SV_CONTAINS(filter, 'C')) ||
-		    (sym.type() == dt_function && SV_CONTAINS(filter, 'F')) ||
-		    (sym.type() == dt_prototype && SV_CONTAINS(filter, 'P')) ||
-		    (sym.type() == dt_instance && SV_CONTAINS(filter, 'I'))) {
+		if ((sym.type() == datatype::void_ && SV_CONTAINS(filter, 'v')) ||
+		    (sym.type() == datatype::float_ && SV_CONTAINS(filter, 'f')) ||
+		    (sym.type() == datatype::integer && SV_CONTAINS(filter, 'i')) ||
+		    (sym.type() == datatype::string && SV_CONTAINS(filter, 's')) ||
+		    (sym.type() == datatype::class_ && SV_CONTAINS(filter, 'C')) ||
+		    (sym.type() == datatype::function && SV_CONTAINS(filter, 'F')) ||
+		    (sym.type() == datatype::prototype && SV_CONTAINS(filter, 'P')) ||
+		    (sym.type() == datatype::instance && SV_CONTAINS(filter, 'I'))) {
 			return true;
 		}
 		return false;
@@ -525,7 +524,7 @@ void print_symbol_list(const script& scr,
 		fmt::print("{:0>8x} ", sym.address());
 
 		// Return type
-		if (sym.is_const() && sym.type() == dt_function) {
+		if (sym.is_const() && sym.type() == datatype::function) {
 			if (sym.has_return()) {
 				fmt::print("{} ", get_type_abbrev(sym.rtype()));
 			} else {
@@ -542,107 +541,89 @@ void print_symbol_list(const script& scr,
 
 constexpr std::string_view get_opcode_name(opcode code) {
 	switch (code) {
-	case op_noop:
+	case opcode::op_noop:
 		return "nop";
-
-		// Arithmetic operations
-
-	case op_add:
+	case opcode::op_add:
 		return "add";
-	case op_subtract:
+	case opcode::op_subtract:
 		return "sub";
-	case op_multiply:
+	case opcode::op_multiply:
 		return "mul";
-	case op_divide:
+	case opcode::op_divide:
 		return "div";
-	case op_modulo:
+	case opcode::op_modulo:
 		return "mod";
-	case op_bitor:
+	case opcode::op_bitor:
 		return "bor";
-	case op_bitand:
+	case opcode::op_bitand:
 		return "band";
-	case op_shift_left:
+	case opcode::op_shift_left:
 		return "shl";
-	case op_shift_right:
+	case opcode::op_shift_right:
 		return "shr";
-	case op_plus:
+	case opcode::op_plus:
 		return "pos";
-	case op_minus:
+	case opcode::op_minus:
 		return "neg";
-
-		// Logical operations
-
-	case op_less:
+	case opcode::op_less:
 		return "lt";
-	case op_greater:
+	case opcode::op_greater:
 		return "gt";
-	case op_or:
+	case opcode::op_or:
 		return "or";
-	case op_and:
+	case opcode::op_and:
 		return "and";
-	case op_less_or_equal:
+	case opcode::op_less_or_equal:
 		return "leq";
-	case op_equal:
+	case opcode::op_equal:
 		return "eq";
-	case op_not_equal:
+	case opcode::op_not_equal:
 		return "neq";
-	case op_greater_or_equal:
+	case opcode::op_greater_or_equal:
 		return "geq";
-	case op_not:
+	case opcode::op_not:
 		return "not";
-	case op_complement:
+	case opcode::op_complement:
 		return "compl";
-
-		// Flow control operations
-
-	case op_return:
+	case opcode::op_return:
 		return "ret";
-	case op_call:
+	case opcode::op_call:
 		return "call";
-	case op_call_external:
+	case opcode::op_call_external:
 		return "callext";
-	case op_jump:
+	case opcode::op_jump:
 		return "br";
-	case op_jump_if_zero:
+	case opcode::op_jump_if_zero:
 		return "brz";
-
-		// variable manipulation
-
-	case op_assign_add:
+	case opcode::op_assign_add:
 		return "addass";
-	case op_assign_subtract:
+	case opcode::op_assign_subtract:
 		return "subass";
-	case op_assign_multiply:
+	case opcode::op_assign_multiply:
 		return "mulass";
-	case op_assign_divide:
+	case opcode::op_assign_divide:
 		return "divass";
-	case op_assign_string:
+	case opcode::op_assign_string:
 		return "asss";
-	case op_assign_stringref:
+	case opcode::op_assign_stringref:
 		return "asssr";
-	case op_assign_func:
+	case opcode::op_assign_func:
 		return "assfn";
-	case op_assign_float:
+	case opcode::op_assign_float:
 		return "assf";
-	case op_assign_instance:
+	case opcode::op_assign_instance:
 		return "assinst";
-	case op_assign_int:
+	case opcode::op_assign_int:
 		return "assi";
-
-		// stack manipulation
-
-	case op_push_int:
+	case opcode::op_push_int:
 		return "pushi";
-	case op_push_var:
+	case opcode::op_push_var:
 		return "pushv";
-	case op_push_instance:
+	case opcode::op_push_instance:
 		return "pushinst";
-	case op_push_array_var:
+	case opcode::op_push_array_var:
 		return "pushva";
-
-		// special
-
-	case op_set_instance:
+	case opcode::op_set_instance:
 		return "setinst";
 	}
 
@@ -652,36 +633,36 @@ constexpr std::string_view get_opcode_name(opcode code) {
 /// \brief Prints the given instruction as raw bytes
 /// \param i The instruction to print
 void print_instruction_bytes(const instruction& i) {
-	fmt::print("{:0>2x} ", i.op);
+	fmt::print("{:0>2x} ", (uint32_t) i.op);
 
 	switch (i.op) {
-	case op_call:
-	case op_jump_if_zero:
-	case op_jump:
+	case opcode::op_call:
+	case opcode::op_jump_if_zero:
+	case opcode::op_jump:
 		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x}    ",
 		           i.address & 0xFFU,
 		           (i.address >> 8U) & 0xFFU,
 		           (i.address >> 16U) & 0xFFU,
 		           (i.address >> 24U) & 0xFFU);
 		break;
-	case op_push_int:
+	case opcode::op_push_int:
 		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x}    ",
 		           i.immediate & 0xFFU,
 		           (i.immediate >> 8U) & 0xFFU,
 		           (i.immediate >> 16U) & 0xFFU,
 		           (i.immediate >> 24U) & 0xFFU);
 		break;
-	case op_call_external:
-	case op_push_var:
-	case op_push_instance:
-	case op_set_instance:
+	case opcode::op_call_external:
+	case opcode::op_push_var:
+	case opcode::op_push_instance:
+	case opcode::op_set_instance:
 		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x}    ",
 		           i.symbol & 0xFFU,
 		           (i.symbol >> 8U) & 0xFFU,
 		           (i.symbol >> 16U) & 0xFFU,
 		           (i.symbol >> 24U) & 0xFFU);
 		break;
-	case op_push_array_var:
+	case opcode::op_push_array_var:
 		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x} {:0>2x} ",
 		           i.symbol & 0xFFU,
 		           (i.symbol >> 8U) & 0xFFU,
@@ -779,8 +760,8 @@ void print_assembly_of_symbol(const script& scr, const symbol& sym) {
 /// \param scr The script to disassemble
 void print_assembly(const script& scr) {
 	for (const auto& sym : scr.symbols()) {
-		if (sym.type() == dt_prototype || sym.type() == dt_instance ||
-		    (sym.type() == dt_function && !sym.is_external() && sym.is_const())) {
+		if (sym.type() == datatype::prototype || sym.type() == datatype::instance ||
+		    (sym.type() == datatype::function && !sym.is_external() && sym.is_const())) {
 			print_assembly_of_symbol(scr, sym);
 		}
 	}
@@ -800,21 +781,21 @@ void find_usages(const script& scr, const symbol& sym) {
 		}
 
 		switch (inst.op) {
-		case op_assign_add:
-		case op_assign_subtract:
-		case op_assign_multiply:
-		case op_assign_divide:
-		case op_call:
-		case op_call_external:
-		case op_push_var:
-		case op_push_instance:
-		case op_assign_int:
-		case op_assign_string:
-		case op_assign_func:
-		case op_assign_float:
-		case op_assign_instance:
-		case op_push_array_var:
-			if (inst.symbol == sym.index() || (inst.op == op_call && sym.address() == inst.address)) {
+		case opcode::op_assign_add:
+		case opcode::op_assign_subtract:
+		case opcode::op_assign_multiply:
+		case opcode::op_assign_divide:
+		case opcode::op_call:
+		case opcode::op_call_external:
+		case opcode::op_push_var:
+		case opcode::op_push_instance:
+		case opcode::op_assign_int:
+		case opcode::op_assign_string:
+		case opcode::op_assign_func:
+		case opcode::op_assign_float:
+		case opcode::op_assign_instance:
+		case opcode::op_push_array_var:
+			if (inst.symbol == sym.index() || (inst.op == opcode::op_call && sym.address() == inst.address)) {
 				fmt::print("\r[");
 				print_instruction(scr, inst, true);
 				fmt::print("] at {:0>8x} in {}\n", pc, current_function->name());

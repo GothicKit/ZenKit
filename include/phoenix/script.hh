@@ -15,15 +15,15 @@
 
 namespace phoenix::daedalus {
 	/// \brief Daedalus data types.
-	enum datatype : std::uint32_t {
-		dt_void = 0U,      ///< A datatype similar to C++'s `void`.
-		dt_float = 1U,     ///< A 32-bit floating point type similar to C++'s `float`.
-		dt_integer = 2U,   ///< A 32-bit signed integer type like std::int32_t
-		dt_string = 3U,    ///< A [Windows-1252](https://en.wikipedia.org/wiki/Windows-1252) encoded character array.
-		dt_class = 4U,     ///< A structure definition.
-		dt_function = 5U,  ///< A function definition or a function pointer represented as a 32-bit signed integer.
-		dt_prototype = 6U, ///< A prototype definition.
-		dt_instance = 7U,  ///< An instance definition or instance reference represented as a 32-bit unsigned integer.
+	enum class datatype : std::uint32_t {
+		void_ = 0U,     ///< A datatype similar to C++'s `void`.
+		float_ = 1U,    ///< A 32-bit floating point type similar to C++'s `float`.
+		integer = 2U,   ///< A 32-bit signed integer type like std::int32_t
+		string = 3U,    ///< A [Windows-1252](https://en.wikipedia.org/wiki/Windows-1252) encoded character array.
+		class_ = 4U,    ///< A structure definition.
+		function = 5U,  ///< A function definition or a function pointer represented as a 32-bit signed integer.
+		prototype = 6U, ///< A prototype definition.
+		instance = 7U,  ///< An instance definition or instance reference represented as a 32-bit unsigned integer.
 	};
 
 	constexpr const char* const DAEDALUS_DATA_TYPE_NAMES[] = {
@@ -38,16 +38,16 @@ namespace phoenix::daedalus {
 	};
 
 	/// \brief Flags of symbols.
-	enum flag : std::uint32_t {
-		sf_const = 1U << 0U,    ///< The symbol is not mutable.
-		sf_return = 1U << 1U,   ///< The symbol is a function and has a return value.
-		sf_member = 1U << 2U,   ///< The symbol is a class member.
-		sf_external = 1U << 3U, ///< The symbol refers to an external function.
-		sf_merged = 1U << 4U,   ///< Unused.
-	};
+	namespace symbol_flag {
+		static constexpr auto const_ = 1U << 0U;   ///< The symbol is not mutable.
+		static constexpr auto return_ = 1U << 1U;  ///< The symbol is a function and has a return value.
+		static constexpr auto member = 1U << 2U;   ///< The symbol is a class member.
+		static constexpr auto external = 1U << 3U; ///< The symbol refers to an external function.
+		static constexpr auto merged = 1U << 4U;   ///< Unused.
+	};                                             // namespace symbol_flag
 
 	/// \brief All opcodes supported by the daedalus interpreter
-	enum opcode : std::uint8_t {
+	enum class opcode : std::uint8_t {
 		op_add = 0,               ///< a + b
 		op_subtract = 1,          ///< a - b
 		op_multiply = 2,          ///< a/// b
@@ -336,33 +336,33 @@ namespace phoenix::daedalus {
 		/// \return <tt>true</tt> if the symbol contains an instance of the given type, <tt>false</tt> if not.
 		template <typename T>
 		typename std::enable_if<std::is_base_of_v<instance, T>, bool>::type inline is_instance_of() { // clang-format on
-			return this->type() == dt_instance && this->get_instance() != nullptr &&
+			return this->type() == datatype::instance && this->get_instance() != nullptr &&
 			    this->get_instance()->_m_type == &typeid(T);
 		}
 
 		/// \brief Tests whether the symbol is a constant.
 		/// \return `true` if the symbol is a constant, `false` if not.
 		[[nodiscard]] inline bool is_const() const noexcept {
-			return (_m_flags & sf_const) != 0;
+			return (_m_flags & symbol_flag::const_) != 0;
 		}
 
 		/// \brief Tests whether the symbol is a member variable.
 		/// \return `true` if the symbol is a member, `false` if not.
 		[[nodiscard]] inline bool is_member() const noexcept {
-			return (_m_flags & sf_member) != 0;
+			return (_m_flags & symbol_flag::member) != 0;
 		}
 
 		/// \brief Tests whether the symbol is an extern symbol.
 		/// \return `true` if the symbol is an extern symbol, `false` if not.
 		[[nodiscard]] inline bool is_external() const noexcept {
-			return (_m_flags & sf_external) != 0;
+			return (_m_flags & symbol_flag::external) != 0;
 		}
 
 		/// \brief Tests whether the symbol is merged.
 		/// \return `true` if the symbol is merged, `false` if not.
 		/// \note It is currently not known what 'merged' means.
 		[[nodiscard]] inline bool is_merged() const noexcept {
-			return (_m_flags & sf_merged) != 0;
+			return (_m_flags & symbol_flag::merged) != 0;
 		}
 
 		/// \brief brief Tests whether the symbol is a compiler-generated symbol
@@ -374,7 +374,7 @@ namespace phoenix::daedalus {
 		/// \brief brief Tests whether the symbol has a return value.
 		/// \return return `true` if the symbol has a return value, `false` if not.
 		[[nodiscard]] inline bool has_return() const noexcept {
-			return (_m_flags & sf_return) != 0;
+			return (_m_flags & symbol_flag::return_) != 0;
 		}
 
 		/// \return The name of the symbol.
@@ -485,7 +485,7 @@ namespace phoenix::daedalus {
 		std::uint32_t _m_class_offset {unset};
 		std::uint32_t _m_count {0};
 		datatype _m_type {0};
-		flag _m_flags {0};
+		std::uint32_t _m_flags {0};
 		bool _m_generated {false};
 
 		std::uint32_t _m_file_index {0};
@@ -496,14 +496,14 @@ namespace phoenix::daedalus {
 
 		std::uint32_t _m_member_offset {unset};
 		std::uint32_t _m_class_size {unset};
-		datatype _m_return_type {dt_void};
+		datatype _m_return_type {datatype::void_};
 		std::uint32_t _m_index {unset};
 		const std::type_info* _m_registered_to {nullptr};
 	};
 
 	/// \brief Represents a daedalus VM instruction.
 	struct instruction {
-		opcode op {op_noop};
+		opcode op {opcode::op_noop};
 		std::uint32_t address {0};
 		std::uint32_t symbol {0};
 		std::int32_t immediate {0};
@@ -705,13 +705,13 @@ namespace phoenix::daedalus {
 
 			// check type matches
 			if constexpr (std::is_same_v<std::string, _member>) {
-				if (sym->type() != dt_string)
+				if (sym->type() != datatype::string)
 					throw invalid_registration_datatype {sym, "string"};
 			} else if constexpr (std::is_same_v<float, _member>) {
-				if (sym->type() != dt_float)
+				if (sym->type() != datatype::float_)
 					throw invalid_registration_datatype {sym, "float"};
 			} else if constexpr (std::is_same_v<int32_t, _member> || std::is_enum_v<_member>) {
-				if (sym->type() != dt_integer && sym->type() != dt_function)
+				if (sym->type() != datatype::integer && sym->type() != datatype::function)
 					throw invalid_registration_datatype {sym, "int"};
 			} else {
 				throw std::runtime_error("illegal type");
@@ -724,7 +724,7 @@ namespace phoenix::daedalus {
 			symbol sym {};
 			sym._m_name = "$PHOENIX_FAKE_STRINGS";
 			sym._m_generated = true;
-			sym._m_type = dt_string;
+			sym._m_type = datatype::string;
 			sym._m_count = 1;
 			sym._m_value = std::unique_ptr<std::string[]> {new std::string[sym._m_count]};
 			sym._m_index = _m_symbols.size();

@@ -62,16 +62,16 @@ namespace phoenix::daedalus {
 		std::shared_ptr<instance> context;
 	};
 
-	enum execution_flag : std::uint8_t {
-		none = 0,
-		vm_allow_null_instance_access = 1 << 1,
-	};
+	namespace execution_flag {
+		static constexpr std::uint8_t none = 0;
+		static constexpr std::uint8_t vm_allow_null_instance_access = 1 << 1;
+	}; // namespace execution_flag
 
 	class vm : public script {
 	public:
 		/// \brief Creates a DaedalusVM instance for the given script.
 		/// \param scr The script to load into the VM.
-		explicit vm(script&& scr, execution_flag flags = none);
+		explicit vm(script&& scr, uint8_t flags = execution_flag::none);
 
 		/// \brief Calls a function by it's name.
 		/// \tparam P The types for the argument values.
@@ -91,7 +91,7 @@ namespace phoenix::daedalus {
 			if (sym == nullptr)
 				throw std::runtime_error {"Cannot call function: not found"};
 
-			if (sym->type() != dt_function)
+			if (sym->type() != datatype::function)
 				throw std::runtime_error {"Cannot call " + sym->name() + ": not a function"};
 
 			std::vector<symbol*> params = find_parameters_for_function(sym);
@@ -181,13 +181,13 @@ namespace phoenix::daedalus {
 			if (sym == nullptr) {
 				throw std::runtime_error {"Cannot init instance: not found"};
 			}
-			if (sym->type() != dt_instance) {
+			if (sym->type() != datatype::instance) {
 				throw std::runtime_error {"Cannot init " + sym->name() + ": not an instance"};
 			}
 
 			// check that the parent class is registered for the given instance type
 			auto* parent = find_symbol_by_index(sym->parent());
-			while (parent->type() != dt_class) {
+			while (parent->type() != datatype::class_) {
 				parent = find_symbol_by_index(parent->parent());
 			}
 
@@ -323,16 +323,16 @@ namespace phoenix::daedalus {
 				if (!sym->has_return())
 					throw illegal_external_rtype(sym, "<non-void>");
 				if constexpr (is_instance_ptr_v<R>) {
-					if (sym->rtype() != dt_instance)
+					if (sym->rtype() != datatype::instance)
 						throw illegal_external_rtype(sym, "instance");
 				} else if constexpr (std::is_floating_point_v<R>) {
-					if (sym->rtype() != dt_float)
+					if (sym->rtype() != datatype::float_)
 						throw illegal_external_rtype(sym, "float");
 				} else if constexpr (std::is_convertible_v<int32_t, R>) {
-					if (sym->rtype() != dt_integer)
+					if (sym->rtype() != datatype::integer)
 						throw illegal_external_rtype(sym, "int");
 				} else if constexpr (std::is_convertible_v<std::string, R>) {
-					if (sym->rtype() != dt_string)
+					if (sym->rtype() != datatype::string)
 						throw illegal_external_rtype(sym, "string");
 				} else {
 					throw std::runtime_error {"unsupported return type"};
@@ -418,16 +418,16 @@ namespace phoenix::daedalus {
 				if (!sym->has_return())
 					throw illegal_external_rtype(sym, "<non-void>");
 				if constexpr (is_instance_ptr_v<R>) {
-					if (sym->rtype() != dt_instance)
+					if (sym->rtype() != datatype::instance)
 						throw illegal_external_rtype(sym, "instance");
 				} else if constexpr (std::is_floating_point_v<R>) {
-					if (sym->rtype() != dt_float)
+					if (sym->rtype() != datatype::float_)
 						throw illegal_external_rtype(sym, "float");
 				} else if constexpr (std::is_convertible_v<int32_t, R>) {
-					if (sym->rtype() != dt_integer)
+					if (sym->rtype() != datatype::integer)
 						throw illegal_external_rtype(sym, "int");
 				} else if constexpr (std::is_convertible_v<std::string, R>) {
-					if (sym->rtype() != dt_string)
+					if (sym->rtype() != datatype::string)
 						throw illegal_external_rtype(sym, "string");
 				} else {
 					throw std::runtime_error {"unsupported return type"};
@@ -575,16 +575,16 @@ namespace phoenix::daedalus {
 		template <int i, typename P, typename... Px>
 		void check_external_params(const std::vector<symbol*>& defined) {
 			if constexpr (is_instance_ptr_v<P> || std::is_same_v<symbol*, P>) {
-				if (defined[i]->type() != dt_instance)
+				if (defined[i]->type() != datatype::instance)
 					throw illegal_external_param(defined[i], "instance", i + 1);
 			} else if constexpr (std::is_same_v<float, P>) {
-				if (defined[i]->type() != dt_float)
+				if (defined[i]->type() != datatype::float_)
 					throw illegal_external_param(defined[i], "float", i + 1);
 			} else if constexpr (std::is_same_v<int32_t, P> || std::is_same_v<bool, P>) {
-				if (defined[i]->type() != dt_integer && defined[i]->type() != dt_function)
+				if (defined[i]->type() != datatype::integer && defined[i]->type() != datatype::function)
 					throw illegal_external_param(defined[i], "int", i + 1);
 			} else if constexpr (std::is_same_v<std::string_view, P>) {
-				if (defined[i]->type() != dt_string)
+				if (defined[i]->type() != datatype::string)
 					throw illegal_external_param(defined[i], "string", i + 1);
 			}
 
@@ -693,19 +693,19 @@ namespace phoenix::daedalus {
 		                        void>::type
 		check_call_return_type(const symbol* sym) {
 			if constexpr (is_instance_ptr_v<R>) {
-				if (sym->rtype() != dt_instance)
+				if (sym->rtype() != datatype::instance)
 					throw std::runtime_error {"invalid return type for function " + sym->name()};
 			} else if constexpr (std::is_same_v<float, R>) {
-				if (sym->rtype() != dt_float)
+				if (sym->rtype() != datatype::float_)
 					throw std::runtime_error {"invalid return type for function " + sym->name()};
 			} else if constexpr (std::is_same_v<int32_t, R>) {
-				if (sym->rtype() != dt_integer && sym->rtype() != dt_function)
+				if (sym->rtype() != datatype::integer && sym->rtype() != datatype::function)
 					throw std::runtime_error {"invalid return type for function " + sym->name()};
 			} else if constexpr (std::is_same_v<std::string, R>) {
-				if (sym->rtype() != dt_string)
+				if (sym->rtype() != datatype::string)
 					throw std::runtime_error {"invalid return type for function " + sym->name()};
 			} else if constexpr (std::is_same_v<void, R>) {
-				if (sym->rtype() != dt_void)
+				if (sym->rtype() != datatype::void_)
 					throw std::runtime_error {"invalid return type for function " + sym->name()};
 			}
 		}
@@ -719,22 +719,22 @@ namespace phoenix::daedalus {
 		                        void>::type
 		push_call_parameters(const std::vector<symbol*>& defined, P value, Px... more) { // clang-format on
 			if constexpr (is_instance_ptr_v<P> || std::is_same_v<symbol*, P>) {
-				if (defined[i]->type() != dt_instance)
+				if (defined[i]->type() != datatype::instance)
 					throw illegal_external_param(defined[i], "instance", i + 1);
 
 				push_instance(value);
 			} else if constexpr (std::is_same_v<float, P>) {
-				if (defined[i]->type() != dt_float)
+				if (defined[i]->type() != datatype::float_)
 					throw illegal_external_param(defined[i], "float", i + 1);
 
 				push_float(value);
 			} else if constexpr (std::is_same_v<int32_t, P> || std::is_same_v<bool, P>) {
-				if (defined[i]->type() != dt_integer && defined[i]->type() != dt_function)
+				if (defined[i]->type() != datatype::integer && defined[i]->type() != datatype::function)
 					throw illegal_external_param(defined[i], "int", i + 1);
 
 				push_int(value);
 			} else if constexpr (std::is_same_v<std::string_view, P>) {
-				if (defined[i]->type() != dt_string)
+				if (defined[i]->type() != datatype::string)
 					throw illegal_external_param(defined[i], "string", i + 1);
 
 				push_string(value);
@@ -791,6 +791,6 @@ namespace phoenix::daedalus {
 
 		std::shared_ptr<instance> _m_instance;
 		std::uint32_t _m_pc {0};
-		execution_flag _m_flags {execution_flag::none};
+		std::uint8_t _m_flags {execution_flag::none};
 	};
 } // namespace phoenix::daedalus

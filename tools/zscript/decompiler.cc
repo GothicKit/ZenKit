@@ -17,26 +17,26 @@ struct stack_frame {
 
 bool is_terminating_instruction(const script& script, const instruction& i) {
 	switch (i.op) {
-	case op_assign_int:
-	case op_assign_add:
-	case op_assign_subtract:
-	case op_assign_multiply:
-	case op_assign_divide:
-	case op_return:
-	case op_assign_string:
-	case op_assign_stringref:
-	case op_assign_func:
-	case op_assign_float:
-	case op_assign_instance:
-	case op_jump:
-	case op_jump_if_zero:
+	case opcode::op_assign_int:
+	case opcode::op_assign_add:
+	case opcode::op_assign_subtract:
+	case opcode::op_assign_multiply:
+	case opcode::op_assign_divide:
+	case opcode::op_return:
+	case opcode::op_assign_string:
+	case opcode::op_assign_stringref:
+	case opcode::op_assign_func:
+	case opcode::op_assign_float:
+	case opcode::op_assign_instance:
+	case opcode::op_jump:
+	case opcode::op_jump_if_zero:
 		return true;
-	case op_set_instance:
+	case opcode::op_set_instance:
 		current_instance = i.symbol;
 		return false;
-	case op_call:
+	case opcode::op_call:
 		return !script.find_symbol_by_address(i.address)->has_return();
-	case op_call_external:
+	case opcode::op_call_external:
 		return !script.find_symbol_by_index(i.symbol)->has_return();
 	default:
 		return false;
@@ -49,7 +49,7 @@ extract_statement(const script& script, uint32_t& pointer, uint32_t end_ptr, std
 	pointer += instr.size;
 
 	while (!is_terminating_instruction(script, instr) && pointer < end_ptr) {
-		if (instr.op != op_noop && instr.op != op_set_instance) {
+		if (instr.op != opcode::op_noop && instr.op != opcode::op_set_instance) {
 			stack.push_back({instr, current_instance});
 		}
 
@@ -61,53 +61,53 @@ extract_statement(const script& script, uint32_t& pointer, uint32_t end_ptr, std
 }
 
 static std::unordered_map<opcode, std::string> OPCODE_STR {
-    {op_add, "+"},
-    {op_subtract, "-"},
-    {op_multiply, "*"},
-    {op_divide, "/"},
-    {op_modulo, "%"},
-    {op_bitor, "|"},
-    {op_bitand, "&"},
-    {op_less, "<"},
-    {op_greater, ">"},
-    {op_or, "||"},
-    {op_and, "&&"},
-    {op_shift_left, "<<"},
-    {op_shift_right, ">>"},
-    {op_less_or_equal, "<="},
-    {op_equal, "=="},
-    {op_not_equal, "!="},
-    {op_greater_or_equal, ">="},
-    {op_plus, "+"},
-    {op_minus, "-"},
-    {op_not, "!"},
-    {op_complement, "~"},
-    {op_assign_add, "+="},
-    {op_assign_subtract, "-="},
-    {op_assign_multiply, "*="},
-    {op_assign_divide, "/="},
+    {opcode::op_add, "+"},
+    {opcode::op_subtract, "-"},
+    {opcode::op_multiply, "*"},
+    {opcode::op_divide, "/"},
+    {opcode::op_modulo, "%"},
+    {opcode::op_bitor, "|"},
+    {opcode::op_bitand, "&"},
+    {opcode::op_less, "<"},
+    {opcode::op_greater, ">"},
+    {opcode::op_or, "||"},
+    {opcode::op_and, "&&"},
+    {opcode::op_shift_left, "<<"},
+    {opcode::op_shift_right, ">>"},
+    {opcode::op_less_or_equal, "<="},
+    {opcode::op_equal, "=="},
+    {opcode::op_not_equal, "!="},
+    {opcode::op_greater_or_equal, ">="},
+    {opcode::op_plus, "+"},
+    {opcode::op_minus, "-"},
+    {opcode::op_not, "!"},
+    {opcode::op_complement, "~"},
+    {opcode::op_assign_add, "+="},
+    {opcode::op_assign_subtract, "-="},
+    {opcode::op_assign_multiply, "*="},
+    {opcode::op_assign_divide, "/="},
 };
 
 std::string decompile_statement(const script& script, const stack_frame& stmt, std::vector<stack_frame>& stack) {
 	switch (stmt.instr.op) {
-	case op_add:
-	case op_subtract:
-	case op_multiply:
-	case op_divide:
-	case op_modulo:
-	case op_bitor:
-	case op_bitand:
-	case op_less:
-	case op_greater:
-	case op_or:
-	case op_and:
-	case op_shift_left:
-	case op_shift_right:
-	case op_less_or_equal:
-	case op_equal:
-	case op_not_equal:
-	case op_greater_or_equal: {
-		stack_frame a_instr {phoenix::daedalus::op_push_int, 0, 0, 0, 0, 0};
+	case opcode::op_add:
+	case opcode::op_subtract:
+	case opcode::op_multiply:
+	case opcode::op_divide:
+	case opcode::op_modulo:
+	case opcode::op_bitor:
+	case opcode::op_bitand:
+	case opcode::op_less:
+	case opcode::op_greater:
+	case opcode::op_or:
+	case opcode::op_and:
+	case opcode::op_shift_left:
+	case opcode::op_shift_right:
+	case opcode::op_less_or_equal:
+	case opcode::op_equal:
+	case opcode::op_not_equal:
+	case opcode::op_greater_or_equal: {
+		stack_frame a_instr {opcode::op_push_int, 0, 0, 0, 0, 0};
 		if (!stack.empty()) {
 			a_instr = stack.back();
 			stack.pop_back();
@@ -115,7 +115,7 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 
 		auto a = decompile_statement(script, a_instr, stack);
 
-		stack_frame b_instr {phoenix::daedalus::op_push_int, 0, 0, 0, 0, 0};
+		stack_frame b_instr {opcode::op_push_int, 0, 0, 0, 0, 0};
 		if (!stack.empty()) {
 			b_instr = stack.back();
 			stack.pop_back();
@@ -124,11 +124,11 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 		auto b = decompile_statement(script, b_instr, stack);
 		return fmt::format("({}) {} ({})", a, OPCODE_STR[stmt.instr.op], b);
 	}
-	case op_assign_add:
-	case op_assign_subtract:
-	case op_assign_multiply:
-	case op_assign_divide: {
-		stack_frame ref_instr {phoenix::daedalus::op_push_int, 0, 0, 0, 0, 0};
+	case opcode::op_assign_add:
+	case opcode::op_assign_subtract:
+	case opcode::op_assign_multiply:
+	case opcode::op_assign_divide: {
+		stack_frame ref_instr {opcode::op_push_int, 0, 0, 0, 0, 0};
 		if (!stack.empty()) {
 			ref_instr = stack.back();
 			stack.pop_back();
@@ -136,7 +136,7 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 
 		auto ref = decompile_statement(script, ref_instr, stack);
 
-		stack_frame a_instr {phoenix::daedalus::op_push_int, 0, 0, 0, 0, 0};
+		stack_frame a_instr {opcode::op_push_int, 0, 0, 0, 0, 0};
 		if (!stack.empty()) {
 			a_instr = stack.back();
 			stack.pop_back();
@@ -145,11 +145,11 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 		auto a = decompile_statement(script, a_instr, stack);
 		return fmt::format("{} {} {}", ref, OPCODE_STR[stmt.instr.op], a);
 	}
-	case op_plus:
-	case op_minus:
-	case op_not:
-	case op_complement: {
-		stack_frame a_instr {phoenix::daedalus::op_push_int, 0, 0, 0, 0, 0};
+	case opcode::op_plus:
+	case opcode::op_minus:
+	case opcode::op_not:
+	case opcode::op_complement: {
+		stack_frame a_instr {opcode::op_push_int, 0, 0, 0, 0, 0};
 		if (!stack.empty()) {
 			a_instr = stack.back();
 			stack.pop_back();
@@ -157,9 +157,9 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 		auto a = decompile_statement(script, a_instr, stack);
 		return fmt::format("{}({})", OPCODE_STR[stmt.instr.op], a);
 	}
-	case op_noop:
+	case opcode::op_noop:
 		return "";
-	case op_return: {
+	case opcode::op_return: {
 		if (!current_symbol->has_return()) {
 			return "return";
 		}
@@ -173,13 +173,13 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 		auto a = decompile_statement(script, a_instr, stack);
 		return fmt::format("return {}", a);
 	}
-	case op_call: {
+	case opcode::op_call: {
 		auto* sym = script.find_symbol_by_address(stmt.instr.address);
 		auto params = script.find_parameters_for_function(sym);
 		std::string call = "";
 
 		for (unsigned i = params.size(); i > 0; --i) {
-			stack_frame a_instr {phoenix::daedalus::op_push_int, 0, 0, 0, 0, 0};
+			stack_frame a_instr {opcode::op_push_int, 0, 0, 0, 0, 0};
 			if (!stack.empty()) {
 				a_instr = stack.back();
 				stack.pop_back();
@@ -194,13 +194,13 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 
 		return fmt::format("{}({})", sym->name(), call);
 	}
-	case op_call_external: {
+	case opcode::op_call_external: {
 		auto* sym = script.find_symbol_by_index(stmt.instr.symbol);
 		auto params = script.find_parameters_for_function(sym);
 		std::string call = "";
 
 		for (unsigned i = params.size(); i > 0; --i) {
-			stack_frame a_instr {phoenix::daedalus::op_push_int, 0, 0, 0, 0, 0};
+			stack_frame a_instr {opcode::op_push_int, 0, 0, 0, 0, 0};
 			if (!stack.empty()) {
 				a_instr = stack.back();
 				stack.pop_back();
@@ -215,23 +215,23 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 
 		return fmt::format("{}({})", sym->name(), call);
 	}
-	case op_push_int: {
+	case opcode::op_push_int: {
 		if (stmt.instr.immediate > 1000) {
 			return fmt::format("0x{:x}", stmt.instr.immediate);
 		}
 		return std::to_string(stmt.instr.immediate);
 	}
-	case op_push_var:
-	case op_push_instance: {
+	case opcode::op_push_var:
+	case opcode::op_push_instance: {
 		auto sym = script.find_symbol_by_index(stmt.instr.symbol);
 
-		if (sym->is_generated() && sym->type() == dt_string) {
+		if (sym->is_generated() && sym->type() == datatype::string) {
 			return fmt::format("\"{}\"", sym->get_string());
 		}
 
 		std::string sym_name;
 		if (sym->is_member() &&
-		    !((current_symbol->type() == dt_instance || current_symbol->type() == dt_prototype) &&
+		    !((current_symbol->type() == datatype::instance || current_symbol->type() == datatype::prototype) &&
 		      current_instance == current_symbol->index())) {
 			auto inst_sym = script.find_symbol_by_index(stmt.instance);
 			if (inst_sym == nullptr) {
@@ -255,12 +255,12 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 
 		return sym_name;
 	}
-	case op_push_array_var: {
+	case opcode::op_push_array_var: {
 		auto sym = script.find_symbol_by_index(stmt.instr.symbol);
 		std::string sym_name;
 
 		if (sym->is_member() &&
-		    !((current_symbol->type() == dt_instance || current_symbol->type() == dt_prototype) &&
+		    !((current_symbol->type() == datatype::instance || current_symbol->type() == datatype::prototype) &&
 		      current_instance == current_symbol->index())) {
 			auto inst_sym = script.find_symbol_by_index(stmt.instance);
 			if (inst_sym == nullptr) {
@@ -280,13 +280,13 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 
 		return fmt::format("{}[{}]", sym_name, stmt.instr.index);
 	}
-	case op_assign_int:
-	case op_assign_string:
-	case op_assign_stringref:
-	case op_assign_func:
-	case op_assign_float:
-	case op_assign_instance: {
-		stack_frame a_instr {phoenix::daedalus::op_push_int, 0, 0, 0, 0, 0};
+	case opcode::op_assign_int:
+	case opcode::op_assign_string:
+	case opcode::op_assign_stringref:
+	case opcode::op_assign_func:
+	case opcode::op_assign_float:
+	case opcode::op_assign_instance: {
+		stack_frame a_instr {opcode::op_push_int, 0, 0, 0, 0, 0};
 		if (!stack.empty()) {
 			a_instr = stack.back();
 			stack.pop_back();
@@ -295,16 +295,16 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 		auto a = decompile_statement(script, a_instr, stack);
 		auto sym = script.find_symbol_by_index(a_instr.instr.symbol);
 
-		stack_frame b_instr {phoenix::daedalus::op_push_int, 0, 0, 0, 0, 0};
+		stack_frame b_instr {opcode::op_push_int, 0, 0, 0, 0, 0};
 		if (!stack.empty()) {
 			b_instr = stack.back();
 			stack.pop_back();
 		}
 		auto b = decompile_statement(script, b_instr, stack);
 
-		if (sym->type() == dt_float) {
+		if (sym->type() == datatype::float_) {
 			return fmt::format("{} = {}", a, reinterpret_cast<float&>(b_instr.instr.immediate));
-		} else if (sym->type() == dt_function) {
+		} else if (sym->type() == datatype::function) {
 			return fmt::format("{} = {}", a, script.find_symbol_by_index(b_instr.instr.immediate)->name());
 		}
 
@@ -326,8 +326,8 @@ std::pair<std::string, std::uint32_t> decompile_block(const script& script,
 	do {
 		stmt = extract_statement(script, pointer, end_ptr, stack);
 
-		if (stmt.instr.op == op_jump_if_zero) {
-			stack_frame real_stmt {phoenix::daedalus::op_push_int, 0, 0, 0, 0, 0};
+		if (stmt.instr.op == opcode::op_jump_if_zero) {
+			stack_frame real_stmt {opcode::op_push_int, 0, 0, 0, 0, 0};
 			if (!stack.empty()) {
 				real_stmt = stack.back();
 				stack.pop_back();
@@ -344,7 +344,7 @@ std::pair<std::string, std::uint32_t> decompile_block(const script& script,
 			while (next_branch > stmt.instr.address && pointer <= end_ptr) {
 				auto new_stmt = extract_statement(script, pointer, end_ptr, stack);
 
-				if (new_stmt.instr.op == op_jump_if_zero) {
+				if (new_stmt.instr.op == opcode::op_jump_if_zero) {
 					// else-if block
 					if (!stack.empty()) {
 						real_stmt = stack.back();
@@ -371,7 +371,7 @@ std::pair<std::string, std::uint32_t> decompile_block(const script& script,
 			}
 
 			code += ";\n";
-		} else if (stmt.instr.op == op_jump) {
+		} else if (stmt.instr.op == opcode::op_jump) {
 			return {code, stmt.instr.address};
 		} else {
 			auto s = decompile_statement(script, stmt, stack);
@@ -387,7 +387,7 @@ std::pair<std::string, std::uint32_t> decompile_block(const script& script,
 				code += fmt::format("{: >{}}{};\n", "", indent, s);
 			}
 		}
-	} while (stmt.instr.op != op_return && pointer != end_ptr);
+	} while (stmt.instr.op != opcode::op_return && pointer != end_ptr);
 
 	return {code, pointer};
 }
@@ -398,7 +398,7 @@ std::string decompile(const phoenix::daedalus::script& script, const phoenix::da
 	}
 
 	current_symbol = &sym;
-	current_instance = (sym.type() == dt_instance || sym.type() == dt_prototype) ? sym.index() : unset;
+	current_instance = (sym.type() == datatype::instance || sym.type() == datatype::prototype) ? sym.index() : unset;
 	std::vector<stack_frame> stack {};
 	auto params = script.find_parameters_for_function(&sym);
 
