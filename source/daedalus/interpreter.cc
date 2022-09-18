@@ -1,6 +1,6 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
-#include <phoenix/daedalus/interpreter.hh>
+#include <phoenix/daedalus/vm.hh>
 
 #include <iostream>
 #include <utility>
