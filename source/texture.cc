@@ -6,14 +6,8 @@
 #include <squish.h>
 
 namespace phoenix {
-	/**
-	 * @brief Calculates the size in bytes of the texture at the given mipmap level.
-	 *
-	 * Adapted from
-	 * https://github.com/ataulien/ZenLib/blob/e1a5e1b12e71690a5470f3be2aa3d0d6419f5191/zenload/ztex2dds.cpp#L39.
-	 *
-	 * @return The size in bytes of the texture at the given mipmap level.
-	 */
+	/// \brief Calculates the size in bytes of a texture at the given mipmap level.
+	/// \return The size in bytes of a texture at the given mipmap level.
 	std::uint32_t _ztex_mipmap_size(texture_format format, std::uint32_t width, std::uint32_t height, unsigned level) {
 		std::uint32_t x = std::max(1u, width);
 		std::uint32_t y = std::max(1u, height);
@@ -73,11 +67,11 @@ namespace phoenix {
 		tex._m_average_color = in.get_uint();
 
 		if (tex._m_format == tex_p8) {
-			for (int i = 0; i < ZTEX_PALETTE_ENTRIES; ++i) {
-				tex._m_palette[i].b = in.get();
-				tex._m_palette[i].g = in.get();
-				tex._m_palette[i].r = in.get();
-				tex._m_palette[i].a = in.get();
+			for (auto& i : tex._m_palette) {
+				i.b = in.get();
+				i.g = in.get();
+				i.r = in.get();
+				i.a = in.get();
 			}
 		}
 
@@ -93,11 +87,6 @@ namespace phoenix {
 		}
 
 		return tex;
-	}
-
-	texture texture::parse(const std::string& path) {
-		auto rdr = buffer::mmap(path);
-		return parse(rdr);
 	}
 
 #pragma pack(push, 1)
@@ -118,8 +107,6 @@ namespace phoenix {
 
 	std::vector<std::uint8_t> texture::as_rgba8(std::uint32_t mipmap_level) const {
 		std::vector<std::uint8_t> conv;
-
-		// TODO: fix color conversions!
 
 		switch (_m_format) {
 		case tex_dxt1:
@@ -208,7 +195,7 @@ namespace phoenix {
 
 			std::uint32_t idx = 0;
 			for (std::uint32_t i = 0; i < map.size(); i += 2) {
-				r5g6b5* rgb = (r5g6b5*) &map[i];
+				auto* rgb = (r5g6b5*) &map[i];
 				conv[idx++] = static_cast<uint8_t>(static_cast<float>(rgb->b) * 8.225806452f);
 				conv[idx++] = static_cast<uint8_t>(static_cast<float>(rgb->g) * 4.047619048f);
 				conv[idx++] = static_cast<uint8_t>(static_cast<float>(rgb->r) * 8.225806452f);
