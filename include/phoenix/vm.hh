@@ -88,26 +88,32 @@ namespace phoenix {
 		/// \param args The arguments for the function call.
 		template <typename R = _ignore_return_value, typename... P>
 		R call_function(const symbol* sym, P... args) {
-			if (sym == nullptr)
-				throw std::runtime_error {"Cannot call function: not found"};
+			if (sym == nullptr) {
+				throw vm_exception {"Cannot call function: not found"};
+			}
 
-			if (sym->type() != datatype::function)
-				throw std::runtime_error {"Cannot call " + sym->name() + ": not a function"};
+			if (sym->type() != datatype::function) {
+				throw vm_exception {"Cannot call " + sym->name() + ": not a function"};
+			}
 
 			std::vector<symbol*> params = find_parameters_for_function(sym);
-			if (params.size() < sizeof...(P))
-				throw std::runtime_error {"too many arguments provided for " + sym->name() + ": given " +
-				                          std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
+			if (params.size() < sizeof...(P)) {
+				throw vm_exception {"too many arguments provided for " + sym->name() + ": given " +
+				                    std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
+			}
 
-			if (params.size() > sizeof...(P))
-				throw std::runtime_error {"not enough arguments provided for " + sym->name() + ": given " +
-				                          std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
+			if (params.size() > sizeof...(P)) {
+				throw vm_exception {"not enough arguments provided for " + sym->name() + ": given " +
+				                    std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
+			}
 
-			if constexpr (!std::is_same_v<R, _ignore_return_value>)
+			if constexpr (!std::is_same_v<R, _ignore_return_value>) {
 				check_call_return_type<R>(sym);
+			}
 
-			if constexpr (sizeof...(P) > 0)
+			if constexpr (sizeof...(P) > 0) {
 				push_call_parameters<0, P...>(params, args...);
+			}
 
 			PX_LOGD("vm: calling function {}", sym->name());
 			call(sym);
@@ -179,10 +185,10 @@ namespace phoenix {
 		typename std::enable_if<std::is_base_of_v<instance, _instance_t>, void>::type
 		init_instance(const std::shared_ptr<_instance_t>& instance, symbol* sym) {
 			if (sym == nullptr) {
-				throw std::runtime_error {"Cannot init instance: not found"};
+				throw vm_exception {"Cannot init instance: not found"};
 			}
 			if (sym->type() != datatype::instance) {
-				throw std::runtime_error {"Cannot init " + sym->name() + ": not an instance"};
+				throw vm_exception {"Cannot init " + sym->name() + ": not an instance"};
 			}
 
 			// check that the parent class is registered for the given instance type
@@ -192,9 +198,9 @@ namespace phoenix {
 			}
 
 			if (parent->registered_to() != typeid(_instance_t)) {
-				throw std::runtime_error {"Cannot init " + sym->name() +
-				                          ": parent class is not registered or is "
-				                          "registered to a different instance class"};
+				throw vm_exception {"Cannot init " + sym->name() +
+				                    ": parent class is not registered or is "
+				                    "registered to a different instance class"};
 			}
 
 			PX_LOGD("vm: initializing instance {}", sym->name());
@@ -317,7 +323,7 @@ namespace phoenix {
 				return;
 
 			if (!sym->is_external())
-				throw std::runtime_error {"symbol is not external"};
+				throw vm_exception {"symbol is not external"};
 
 			if constexpr (!std::is_same_v<void, R>) {
 				if (!sym->has_return())
@@ -335,7 +341,7 @@ namespace phoenix {
 					if (sym->rtype() != datatype::string)
 						throw illegal_external_rtype(sym, "string");
 				} else {
-					throw std::runtime_error {"unsupported return type"};
+					throw vm_exception {"unsupported return type"};
 				}
 			} else {
 				if (sym->has_return())
@@ -410,9 +416,9 @@ namespace phoenix {
 		void override_function(const std::string& name, const std::function<R(P...)>& callback) {
 			auto* sym = find_symbol_by_name(name);
 			if (sym == nullptr)
-				throw std::runtime_error {"symbol not found"};
+				throw vm_exception {"symbol not found"};
 			if (sym->is_external())
-				throw std::runtime_error {"symbol is already an external"};
+				throw vm_exception {"symbol is already an external"};
 
 			if constexpr (!std::is_same_v<void, R>) {
 				if (!sym->has_return())
@@ -430,7 +436,7 @@ namespace phoenix {
 					if (sym->rtype() != datatype::string)
 						throw illegal_external_rtype(sym, "string");
 				} else {
-					throw std::runtime_error {"unsupported return type"};
+					throw vm_exception {"unsupported return type"};
 				}
 			} else {
 				if (sym->has_return())
@@ -614,13 +620,13 @@ namespace phoenix {
 					auto& expected = typeid(typename T::element_type);
 
 					if (!r->_m_type) {
-						throw std::runtime_error {"Popping instance of unregistered type: " +
-						                          std::string {r->_m_type->name()} + ", expected " + expected.name()};
+						throw vm_exception {"Popping instance of unregistered type: " +
+						                    std::string {r->_m_type->name()} + ", expected " + expected.name()};
 					}
 
 					if (*r->_m_type != expected) {
-						throw std::runtime_error {"Popping instance of wrong type: " +
-						                          std::string {r->_m_type->name()} + ", expected " + expected.name()};
+						throw vm_exception {"Popping instance of wrong type: " + std::string {r->_m_type->name()} +
+						                    ", expected " + expected.name()};
 					}
 				}
 
@@ -636,7 +642,7 @@ namespace phoenix {
 			} else if constexpr (std::is_same_v<symbol*, T>) {
 				return std::get<0>(pop_reference());
 			} else {
-				throw std::runtime_error {"pop: unsupported stack frame type"};
+				throw vm_exception {"pop: unsupported stack frame type"};
 			}
 		}
 
@@ -661,7 +667,7 @@ namespace phoenix {
 			} else if constexpr (std::is_same_v<T, std::string>) {
 				push_string(v);
 			} else {
-				throw std::runtime_error {"push: unsupported stack frame type"};
+				throw vm_exception {"push: unsupported stack frame type"};
 			}
 		}
 
@@ -694,19 +700,19 @@ namespace phoenix {
 		check_call_return_type(const symbol* sym) {
 			if constexpr (is_instance_ptr_v<R>) {
 				if (sym->rtype() != datatype::instance)
-					throw std::runtime_error {"invalid return type for function " + sym->name()};
+					throw vm_exception {"invalid return type for function " + sym->name()};
 			} else if constexpr (std::is_same_v<float, R>) {
 				if (sym->rtype() != datatype::float_)
-					throw std::runtime_error {"invalid return type for function " + sym->name()};
+					throw vm_exception {"invalid return type for function " + sym->name()};
 			} else if constexpr (std::is_same_v<int32_t, R>) {
 				if (sym->rtype() != datatype::integer && sym->rtype() != datatype::function)
-					throw std::runtime_error {"invalid return type for function " + sym->name()};
+					throw vm_exception {"invalid return type for function " + sym->name()};
 			} else if constexpr (std::is_same_v<std::string, R>) {
 				if (sym->rtype() != datatype::string)
-					throw std::runtime_error {"invalid return type for function " + sym->name()};
+					throw vm_exception {"invalid return type for function " + sym->name()};
 			} else if constexpr (std::is_same_v<void, R>) {
 				if (sym->rtype() != datatype::void_)
-					throw std::runtime_error {"invalid return type for function " + sym->name()};
+					throw vm_exception {"invalid return type for function " + sym->name()};
 			}
 		}
 
@@ -754,13 +760,13 @@ namespace phoenix {
 					auto& expected = typeid(typename R::element_type);
 
 					if (!r->_m_type) {
-						throw std::runtime_error {"Popping instance of unregistered type: " +
-						                          std::string {r->_m_type->name()} + ", expected " + expected.name()};
+						throw vm_exception {"Popping instance of unregistered type: " +
+						                    std::string {r->_m_type->name()} + ", expected " + expected.name()};
 					}
 
 					if (*r->_m_type != expected) {
-						throw std::runtime_error {"Popping instance of wrong type: " +
-						                          std::string {r->_m_type->name()} + ", expected " + expected.name()};
+						throw vm_exception {"Popping instance of wrong type: " + std::string {r->_m_type->name()} +
+						                    ", expected " + expected.name()};
 					}
 				}
 

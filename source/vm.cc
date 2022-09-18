@@ -433,8 +433,9 @@ namespace phoenix {
 
 	void vm::jump(std::uint32_t address) {
 		if (address > size()) {
-			throw std::runtime_error {"Cannot jump to " + std::to_string(address) + ": illegal address"};
+			throw vm_exception {"Cannot jump to " + std::to_string(address) + ": illegal address"};
 		}
+
 		_m_pc = address;
 	}
 
