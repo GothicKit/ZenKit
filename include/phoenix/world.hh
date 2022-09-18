@@ -11,44 +11,42 @@
 #include <vector>
 
 namespace phoenix {
-
-	/**
-	 * @brief Represents a world (.ZEN).
-	 *
-	 * Parses ZenGin world files. The reference implementation can be found on GitHub:
-	 * https://github.com/Try/ZenLib/blob/732077c82589f5060d1762839293b996c8222c18/zenload/zenParser.cpp and the
-	 * original version by Andre Taulien was also referenced:
-	 * https://github.com/ataulien/ZenLib/blob/e1a5e1b12e71690a5470f3be2aa3d0d6419f5191/zenload/zenParser.cpp
-	 *
-	 * Thanks to the original author, Andre Taulien as well as Try for additional work on their
-	 * ZenLib fork!
-	 *
-	 * @see https://github.com/ataulien/ZenLib
-	 * @see https://github.com/Try/ZenLib
-	 */
+	/// \brief Represents a ZenGin world.
 	class world {
 	public:
-		/**
-		 * @brief Parses a world from the given reader.
-		 * @param in The reader to read from.
-		 * @return The world parsed.
-		 * @throws parser_error if parsing fails.
-		 */
+		/// \brief Parses a world from the data in the given buffer.
+		///
+		/// <p>This implementation is heavily based on the implementation found in
+		/// [ZenLib](https://github.com/Try/ZenLib).
+		///
+		/// \param[in,out] buf The buffer to read from.
+		/// \return The parsed world object.
+		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
+		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
+		///       using buffer::duplicate.
+		/// \throws parser_error if parsing fails.
+		/// \see #parse(buffer&&)
 		[[nodiscard]] static world parse(buffer& in, game_version version);
 
-		/**
-		 * @brief Parses a world from the given reader.
-		 * @param in The reader to read from.
-		 * @return The world parsed.
-		 * @throws parser_error if parsing fails.
-		 */
+		/// \brief Parses a world from the data in the given buffer.
+		/// \param[in,out] buf The buffer to read from (by rvalue-reference).
+		/// \return The parsed world object.
+		/// \throws parser_error if parsing fails.
+		/// \see #parse(buffer&)
 		[[nodiscard]] inline static world parse(buffer&& in, game_version version) {
-			return parse(in, version);
+			return world::parse(in, version);
 		}
 
+		/// \brief The list of VObs defined in this world.
 		std::vector<std::unique_ptr<vob>> world_vobs;
+
+		/// \brief The mesh of the world.
 		mesh world_mesh;
+
+		/// \brief The BSP-tree of this world.
 		bsp_tree world_bsp_tree;
+
+		/// \brief The way-net of this world.
 		way_net world_way_net;
 	};
 } // namespace phoenix
