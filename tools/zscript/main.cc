@@ -541,90 +541,90 @@ void print_symbol_list(const script& scr,
 
 constexpr std::string_view get_opcode_name(opcode code) {
 	switch (code) {
-	case opcode::op_noop:
+	case opcode::nop:
 		return "nop";
-	case opcode::op_add:
+	case opcode::add:
 		return "add";
-	case opcode::op_subtract:
+	case opcode::sub:
 		return "sub";
-	case opcode::op_multiply:
+	case opcode::mul:
 		return "mul";
-	case opcode::op_divide:
+	case opcode::div:
 		return "div";
-	case opcode::op_modulo:
+	case opcode::mod:
 		return "mod";
-	case opcode::op_bitor:
-		return "bor";
-	case opcode::op_bitand:
-		return "band";
-	case opcode::op_shift_left:
-		return "shl";
-	case opcode::op_shift_right:
-		return "shr";
-	case opcode::op_plus:
-		return "pos";
-	case opcode::op_minus:
-		return "neg";
-	case opcode::op_less:
-		return "lt";
-	case opcode::op_greater:
-		return "gt";
-	case opcode::op_or:
+	case opcode::or_:
 		return "or";
-	case opcode::op_and:
+	case opcode::andb:
+		return "andb";
+	case opcode::lsl:
+		return "lsl";
+	case opcode::lsr:
+		return "lsr";
+	case opcode::plus:
+		return "plus";
+	case opcode::negate:
+		return "negate";
+	case opcode::lt:
+		return "lt";
+	case opcode::gt:
+		return "gt";
+	case opcode::orr:
+		return "orr";
+	case opcode::and_:
 		return "and";
-	case opcode::op_less_or_equal:
-		return "leq";
-	case opcode::op_equal:
+	case opcode::lte:
+		return "lte";
+	case opcode::eq:
 		return "eq";
-	case opcode::op_not_equal:
+	case opcode::neq:
 		return "neq";
-	case opcode::op_greater_or_equal:
-		return "geq";
-	case opcode::op_not:
+	case opcode::gte:
+		return "gte";
+	case opcode::not_:
 		return "not";
-	case opcode::op_complement:
-		return "compl";
-	case opcode::op_return:
-		return "ret";
-	case opcode::op_call:
-		return "call";
-	case opcode::op_call_external:
-		return "callext";
-	case opcode::op_jump:
-		return "br";
-	case opcode::op_jump_if_zero:
-		return "brz";
-	case opcode::op_assign_add:
-		return "addass";
-	case opcode::op_assign_subtract:
-		return "subass";
-	case opcode::op_assign_multiply:
-		return "mulass";
-	case opcode::op_assign_divide:
-		return "divass";
-	case opcode::op_assign_string:
-		return "asss";
-	case opcode::op_assign_stringref:
-		return "asssr";
-	case opcode::op_assign_func:
-		return "assfn";
-	case opcode::op_assign_float:
-		return "assf";
-	case opcode::op_assign_instance:
-		return "assinst";
-	case opcode::op_assign_int:
-		return "assi";
-	case opcode::op_push_int:
+	case opcode::cmpl:
+		return "cmpl";
+	case opcode::rsr:
+		return "rsr";
+	case opcode::bl:
+		return "bl";
+	case opcode::be:
+		return "be";
+	case opcode::b:
+		return "b";
+	case opcode::bz:
+		return "bz";
+	case opcode::addmovi:
+		return "addmovi";
+	case opcode::submovi:
+		return "submovi";
+	case opcode::mulmovi:
+		return "mulmovi";
+	case opcode::divmovi:
+		return "divmovi";
+	case opcode::movs:
+		return "movs";
+	case opcode::movss:
+		return "movss";
+	case opcode::movvf:
+		return "movvf";
+	case opcode::movf:
+		return "movf";
+	case opcode::movvi:
+		return "movvi";
+	case opcode::movi:
+		return "movi";
+	case opcode::pushi:
 		return "pushi";
-	case opcode::op_push_var:
+	case opcode::pushv:
 		return "pushv";
-	case opcode::op_push_instance:
-		return "pushinst";
-	case opcode::op_push_array_var:
-		return "pushva";
-	case opcode::op_set_instance:
-		return "setinst";
+	case opcode::pushvi:
+		return "pushvi";
+	case opcode::pushvv:
+		return "pushvv";
+	case opcode::gmovi:
+		return "gmovi";
 	}
 
 	return "???";
@@ -636,33 +636,33 @@ void print_instruction_bytes(const instruction& i) {
 	fmt::print("{:0>2x} ", (uint32_t) i.op);
 
 	switch (i.op) {
-	case opcode::op_call:
-	case opcode::op_jump_if_zero:
-	case opcode::op_jump:
+	case opcode::bl:
+	case opcode::bz:
+	case opcode::b:
 		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x}    ",
 		           i.address & 0xFFU,
 		           (i.address >> 8U) & 0xFFU,
 		           (i.address >> 16U) & 0xFFU,
 		           (i.address >> 24U) & 0xFFU);
 		break;
-	case opcode::op_push_int:
+	case opcode::pushi:
 		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x}    ",
 		           i.immediate & 0xFFU,
 		           (i.immediate >> 8U) & 0xFFU,
 		           (i.immediate >> 16U) & 0xFFU,
 		           (i.immediate >> 24U) & 0xFFU);
 		break;
-	case opcode::op_call_external:
-	case opcode::op_push_var:
-	case opcode::op_push_instance:
-	case opcode::op_set_instance:
+	case opcode::be:
+	case opcode::pushv:
+	case opcode::pushvi:
+	case opcode::gmovi:
 		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x}    ",
 		           i.symbol & 0xFFU,
 		           (i.symbol >> 8U) & 0xFFU,
 		           (i.symbol >> 16U) & 0xFFU,
 		           (i.symbol >> 24U) & 0xFFU);
 		break;
-	case opcode::op_push_array_var:
+	case opcode::pushvv:
 		fmt::print("{:0>2x} {:0>2x} {:0>2x} {:0>2x} {:0>2x} ",
 		           i.symbol & 0xFFU,
 		           (i.symbol >> 8U) & 0xFFU,
@@ -688,20 +688,20 @@ void print_instruction(const script& scr, const instruction& i, bool instruction
 	fmt::print("{}", get_opcode_name(i.op));
 
 	switch (i.op) {
-	case opcode::op_call:
+	case opcode::bl:
 		fmt::print(" {:0>8x}", i.address);
 		if (const auto* s = scr.find_symbol_by_address(i.address); s != nullptr && !instruction_only) {
 			fmt::print(" ; <{}>", s->name());
 		}
 		break;
-	case opcode::op_jump:
-	case opcode::op_jump_if_zero:
+	case opcode::b:
+	case opcode::bz:
 		fmt::print(" {:0>8x}", i.address);
 		break;
-	case opcode::op_push_var:
-	case opcode::op_push_instance:
-	case opcode::op_call_external:
-	case opcode::op_set_instance:
+	case opcode::pushv:
+	case opcode::pushvi:
+	case opcode::be:
+	case opcode::gmovi:
 		fmt::print(" {:0>8x}", i.symbol);
 
 		if (const auto* s = scr.find_symbol_by_index(i.symbol); s != nullptr && !instruction_only) {
@@ -712,10 +712,10 @@ void print_instruction(const script& scr, const instruction& i, bool instruction
 			}
 		}
 		break;
-	case opcode::op_push_int:
+	case opcode::pushi:
 		fmt::print(" {}", i.immediate);
 		break;
-	case opcode::op_push_array_var:
+	case opcode::pushvv:
 		fmt::print(" {:0>8x} + {}", i.address, i.index);
 
 		if (const auto* s = scr.find_symbol_by_index(i.symbol); s != nullptr && !instruction_only) {
@@ -748,12 +748,12 @@ void print_assembly_of_symbol(const script& scr, const symbol& sym) {
 		print_instruction(scr, i);
 		fmt::print("\n");
 
-		if (i.op == opcode::op_jump_if_zero || i.op == opcode::op_jump) {
+		if (i.op == opcode::bz || i.op == opcode::b) {
 			return_after = return_after > i.address ? return_after : i.address;
 		}
 
 		pc += i.size;
-	} while (i.op != opcode::op_return || pc <= return_after);
+	} while (i.op != opcode::rsr || pc <= return_after);
 }
 
 /// \brief Prints the disassembly of every symbol found in the script
@@ -781,21 +781,21 @@ void find_usages(const script& scr, const symbol& sym) {
 		}
 
 		switch (inst.op) {
-		case opcode::op_assign_add:
-		case opcode::op_assign_subtract:
-		case opcode::op_assign_multiply:
-		case opcode::op_assign_divide:
-		case opcode::op_call:
-		case opcode::op_call_external:
-		case opcode::op_push_var:
-		case opcode::op_push_instance:
-		case opcode::op_assign_int:
-		case opcode::op_assign_string:
-		case opcode::op_assign_func:
-		case opcode::op_assign_float:
-		case opcode::op_assign_instance:
-		case opcode::op_push_array_var:
-			if (inst.symbol == sym.index() || (inst.op == opcode::op_call && sym.address() == inst.address)) {
+		case opcode::addmovi:
+		case opcode::submovi:
+		case opcode::mulmovi:
+		case opcode::divmovi:
+		case opcode::bl:
+		case opcode::be:
+		case opcode::pushv:
+		case opcode::pushvi:
+		case opcode::movi:
+		case opcode::movs:
+		case opcode::movvf:
+		case opcode::movf:
+		case opcode::movvi:
+		case opcode::pushvv:
+			if (inst.symbol == sym.index() || (inst.op == opcode::bl && sym.address() == inst.address)) {
 				fmt::print("\r[");
 				print_instruction(scr, inst, true);
 				fmt::print("] at {:0>8x} in {}\n", pc, current_function->name());

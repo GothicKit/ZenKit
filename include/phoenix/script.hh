@@ -44,52 +44,158 @@ namespace phoenix::daedalus {
 		static constexpr auto member = 1U << 2U;   ///< The symbol is a class member.
 		static constexpr auto external = 1U << 3U; ///< The symbol refers to an external function.
 		static constexpr auto merged = 1U << 4U;   ///< Unused.
-	};                                             // namespace symbol_flag
+	}                                              // namespace symbol_flag
 
-	/// \brief All opcodes supported by the daedalus interpreter
+	/// \brief All opcodes supported by the daedalus interpreter.
+	///
+	/// <p>In the documentation for each opcode, the following conventions apply.</p>
+	/// <ul>
+	///   <li>`a` refers to the first value on the stack and is required to be an integer.</li>
+	///   <li>`b` refers to the second value on the stack and is required to be an integer.</li>
+	///   <li>`m` refers to the first value on the stack which may be of any non-reference type.</li>
+	///   <li>`n` refers to the second value on the stack which may be of any non-reference type.</li>
+	///   <li>`x` refers to the first value on the stack and is required to be variable reference.</li>
+	///	  <li>`y` refers to the second value on the stack and is required to be variable reference.</li>
+	/// </ul>
 	enum class opcode : std::uint8_t {
-		op_add = 0,               ///< a + b
-		op_subtract = 1,          ///< a - b
-		op_multiply = 2,          ///< a/// b
-		op_divide = 3,            ///< a / b
-		op_modulo = 4,            ///< a % b
-		op_bitor = 5,             ///< a | b
-		op_bitand = 6,            ///< a & b
-		op_less = 7,              ///< a < b
-		op_greater = 8,           ///< a > b
-		op_assign_int = 9,        ///< a = b
-		op_or = 11,               ///< a || b
-		op_and = 12,              ///< a && b
-		op_shift_left = 13,       ///< a << b
-		op_shift_right = 14,      ///< a >> b
-		op_less_or_equal = 15,    ///< a <= b
-		op_equal = 16,            ///< a == b
-		op_not_equal = 17,        ///< a != b
-		op_greater_or_equal = 18, ///< a >= b
-		op_assign_add = 19,       ///< a += b (a = a + b)
-		op_assign_subtract = 20,  ///< a -= b (a = a - b)
-		op_assign_multiply = 21,  ///< a *= b (a = a/// b)
-		op_assign_divide = 22,    ///< a /= b (a = a / b)
-		op_plus = 30,             ///< +a
-		op_minus = 31,            ///< -a
-		op_not = 32,              ///< !a
-		op_complement = 33,       ///< ~a
-		op_noop = 45,
-		op_return = 60,
-		op_call = 61,
-		op_call_external = 62,
-		op_push_int = 64,
-		op_push_var = 65,
-		op_push_instance = 67,
-		op_assign_string = 70,
-		op_assign_stringref = 71,
-		op_assign_func = 72,
-		op_assign_float = 73,
-		op_assign_instance = 74,
-		op_jump = 75,
-		op_jump_if_zero = 76,
-		op_set_instance = 80,
-		op_push_array_var = 245,
+		/// \brief Add `a` and `b` and put the result back onto the stack.
+		add = 0,
+
+		/// \brief Subtract `b` from `a` and put the result back onto the stack.
+		sub = 1,
+
+		/// \brief Multiply `a` and `b` and put the result back onto the stack.
+		mul = 2,
+
+		/// \brief Divide `a` by `b` and put the result back onto the stack.
+		div = 3,
+
+		/// \brief Divide `a` by `b` and put the remainder back onto the stack.
+		mod = 4,
+
+		/// \brief Compute the bitwise or of `a` and `b` and put the result back onto the stack.
+		or_ = 5,
+
+		/// \brief Compute the bitwise and of `a` and `b` and put the result back onto the stack.
+		andb = 6, ///< a & b
+
+		/// \brief Test if `a` is less than `b` and put `1` or `0` onto the stack if
+		///        the test is true or false respectively.
+		lt = 7,
+
+		/// \brief Test if `a` is greater than `b` and put `1` or `0` onto the stack
+		///        if the test is true or false respectively.
+		gt = 8,
+
+		/// \brief Write `b` to `x` as an integer.
+		movi = 9,
+
+		/// \brief Test if `a == 1` or `b == 1` and put `1` or `0` onto the stack if
+		/// 		the test is true or false respectively.
+		orr = 11,
+
+		/// \brief Test if `a == 1` and `b == 1` and put `1` or `0` onto the stack if
+		///        the test is true or false respectively.
+		and_ = 12,
+
+		/// \brief Left shift  `a` by `b` bits and put the result back onto the stack.
+		lsl = 13,
+
+		/// \brief Right shift  `a` by `b` bits and put the result back onto the stack.
+		lsr = 14,
+
+		/// \brief Test if `a` is less than or equal to `b` and put `1` or `0` onto the
+		///        stack if the test is true or false respectively.
+		lte = 15,
+
+		/// \brief Test if `a` is equal to `b` and put `1` or `0` onto the
+		///        stack if the test is true or false respectively.
+		eq = 16,
+
+		/// \brief Test if `a` is not equal to `b` and put `1` or `0` onto the
+		///        stack if the test is true or false respectively.
+		neq = 17,
+
+		/// \brief Test if `a` is greater than or equal to `b` and put `1` or `0` onto the
+		///        stack if the test is true or false respectively.
+		gte = 18,
+
+		/// \brief Add `x` and `b` and assign the result back to `x`.
+		/// \note `x` must be a reference to an integer.
+		addmovi = 19,
+
+		/// \brief Subtract `b` from `x` and assign the result back to `x`.
+		/// \note `x` must be a reference to an integer.
+		submovi = 20,
+
+		/// \brief Multiply `x` from `b` and assign the result back to `x`.
+		/// \note `x` must be a reference to an integer.
+		mulmovi = 21,
+
+		/// \brief Divide `x` by `b` and assign the result back to `x`.
+		/// \note `x` must be a reference to an integer.
+		divmovi = 22,
+
+		/// \brief Compute `+a` and put the result back onto the stack.
+		plus = 30,
+
+		/// \brief Compute `-a` and put the result back onto the stack.
+		negate = 31,
+
+		/// \brief Compute `!a` and put the result back onto the stack.
+		not_ = 32,
+
+		/// \brief Compute the bitwise complement `a` and put the result back onto the stack.
+		cmpl = 33,
+
+		/// \brief Do nothing.
+		nop = 45,
+
+		/// \brief Return from the currently running function
+		rsr = 60,
+
+		/// \brief Call the function at the address provided in the instruction.
+		bl = 61,
+
+		/// \brief Call the external function at the symbol index provided in the instruction.
+		be = 62,
+
+		/// \brief Push the immediate value provided in the instruction onto the stack as an integer.
+		pushi = 64,
+
+		/// \brief Push the symbol with the index provided in the instruction onto the stack as a reference.
+		pushv = 65,
+
+		/// \brief Push the instance with the symbol index provided in the instruction onto the stack as a reference.
+		pushvi = 67,
+
+		/// \brief Write `m` to `x` as a string.
+		movs = 70,
+
+		/// \brief Write `m` to `x` as a string reference; not implemented.
+		movss = 71,
+
+		/// \brief Write `b` to `x` as a function reference.
+		movvf = 72,
+
+		/// \brief Write `b` to `x` as a floating point number.
+		movf = 73,
+
+		/// \brief Write `y` to `x` as an instance reference.
+		movvi = 74,
+
+		/// \brief Immediately jump to the instruction at the address provided in the instruction.
+		b = 75,
+
+		/// \brief Jump to the instruction at the address provided in the instruction if `a == 0`.
+		bz = 76,
+
+		/// \brief Set the global instance reference to the instance with the symbol index provided in the instrucion.
+		gmovi = 80,
+
+		/// \brief Push the element at the given index of the symbol with the index provided in the
+		///        instruction onto the stack as a reference.
+		pushvv = 245,
 	};
 
 	class symbol;
@@ -503,7 +609,7 @@ namespace phoenix::daedalus {
 
 	/// \brief Represents a daedalus VM instruction.
 	struct instruction {
-		opcode op {opcode::op_noop};
+		opcode op {opcode::nop};
 		std::uint32_t address {0};
 		std::uint32_t symbol {0};
 		std::int32_t immediate {0};

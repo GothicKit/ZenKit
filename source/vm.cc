@@ -35,97 +35,97 @@ namespace phoenix::daedalus {
 		try {
 
 			switch (instr.op) {
-			case opcode::op_add:
+			case opcode::add:
 				push_int(pop_int() + pop_int());
 				break;
-			case opcode::op_subtract:
+			case opcode::sub:
 				a = pop_int();
 				b = pop_int();
 				push_int(a - b);
 				break;
-			case opcode::op_multiply:
+			case opcode::mul:
 				push_int(pop_int() * pop_int());
 				break;
-			case opcode::op_divide:
+			case opcode::div:
 				a = pop_int();
 				b = pop_int();
 				push_int(a / b);
 				break;
-			case opcode::op_modulo:
+			case opcode::mod:
 				a = pop_int();
 				b = pop_int();
 				push_int(a % b);
 				break;
-			case opcode::op_bitor:
+			case opcode::or_:
 				push_int(pop_int() | pop_int());
 				break;
-			case opcode::op_bitand:
+			case opcode::andb:
 				push_int(pop_int() & pop_int());
 				break;
-			case opcode::op_less:
+			case opcode::lt:
 				a = pop_int();
 				b = pop_int();
 				push_int(a < b);
 				break;
-			case opcode::op_greater:
+			case opcode::gt:
 				a = pop_int();
 				b = pop_int();
 				push_int(a > b);
 				break;
-			case opcode::op_shift_left:
+			case opcode::lsl:
 				a = pop_int();
 				b = pop_int();
 				push_int(a << b);
 				break;
-			case opcode::op_shift_right:
+			case opcode::lsr:
 				a = pop_int();
 				b = pop_int();
 				push_int(a >> b);
 				break;
-			case opcode::op_less_or_equal:
+			case opcode::lte:
 				a = pop_int();
 				b = pop_int();
 				push_int(a <= b);
 				break;
-			case opcode::op_equal:
+			case opcode::eq:
 				push_int(pop_int() == pop_int());
 				break;
-			case opcode::op_not_equal:
+			case opcode::neq:
 				push_int(pop_int() != pop_int());
 				break;
-			case opcode::op_greater_or_equal:
+			case opcode::gte:
 				a = pop_int();
 				b = pop_int();
 				push_int(a >= b);
 				break;
-			case opcode::op_plus:
+			case opcode::plus:
 				push_int(+pop_int());
 				break;
-			case opcode::op_minus:
+			case opcode::negate:
 				push_int(-pop_int());
 				break;
-			case opcode::op_not:
+			case opcode::not_:
 				push_int(!pop_int());
 				break;
-			case opcode::op_complement:
+			case opcode::cmpl:
 				push_int(~pop_int());
 				break;
-			case opcode::op_or:
+			case opcode::orr:
 				a = pop_int();
 				b = pop_int();
 				push_int(a || b);
 				break;
-			case opcode::op_and:
+			case opcode::and_:
 				a = pop_int();
 				b = pop_int();
 				push_int(a && b);
 				break;
-			case opcode::op_noop:
+			case opcode::nop:
 				// Do nothing
 				break;
-			case opcode::op_return:
+			case opcode::rsr:
 				return false;
-			case opcode::op_call: {
+			case opcode::bl: {
 				// Check if the function is overridden and if it is, call the resulting external.
 				auto cb = _m_function_overrides.find(instr.address);
 				if (cb != _m_function_overrides.end()) {
@@ -135,7 +135,7 @@ namespace phoenix::daedalus {
 				} else {
 					sym = find_symbol_by_address(instr.address);
 					if (sym == nullptr) {
-						throw vm_exception {"op_call: no symbol found for address " + std::to_string(instr.address)};
+						throw vm_exception {"bl: no symbol found for address " + std::to_string(instr.address)};
 					}
 
 					call(sym);
@@ -143,10 +143,10 @@ namespace phoenix::daedalus {
 
 				break;
 			}
-			case opcode::op_call_external: {
+			case opcode::be: {
 				sym = find_symbol_by_index(instr.symbol);
 				if (sym == nullptr) {
-					throw vm_exception {"op_call_external: no external found for index"};
+					throw vm_exception {"be: no external found for index"};
 				}
 
 				auto cb = _m_externals.find(sym);
@@ -155,7 +155,7 @@ namespace phoenix::daedalus {
 						(*_m_external_error_handler)(*this, *sym);
 						break;
 					} else {
-						throw vm_exception {"op_call_external: no external registered for " + sym->name()};
+						throw vm_exception {"be: no external registered for " + sym->name()};
 					}
 				}
 
@@ -164,19 +164,19 @@ namespace phoenix::daedalus {
 				pop_call();
 				break;
 			}
-			case opcode::op_push_int:
+			case opcode::pushi:
 				push_int(instr.immediate);
 				break;
-			case opcode::op_push_instance:
-			case opcode::op_push_var:
+			case opcode::pushvi:
+			case opcode::pushv:
 				sym = find_symbol_by_index(instr.symbol);
 				if (sym == nullptr) {
-					throw vm_exception {"op_push_var: no symbol found for index"};
+					throw vm_exception {"pushv: no symbol found for index"};
 				}
 				push_reference(sym, 0);
 				break;
-			case opcode::op_assign_int:
-			case opcode::op_assign_func: {
+			case opcode::movi:
+			case opcode::movvf: {
 				auto [ref, idx, context] = pop_reference();
 
 				if (!ref->is_member() || context != nullptr ||
@@ -189,7 +189,7 @@ namespace phoenix::daedalus {
 
 				break;
 			}
-			case opcode::op_assign_float: {
+			case opcode::movf: {
 				auto [ref, idx, context] = pop_reference();
 
 				if (!ref->is_member() || context != nullptr ||
@@ -202,7 +202,7 @@ namespace phoenix::daedalus {
 
 				break;
 			}
-			case opcode::op_assign_string: {
+			case opcode::movs: {
 				auto [target, target_idx, context] = pop_reference();
 				auto source = pop_string();
 
@@ -215,58 +215,58 @@ namespace phoenix::daedalus {
 
 				break;
 			}
-			case opcode::op_assign_stringref:
-				throw vm_exception {"not implemented: op_assign_stringref"};
-			case opcode::op_assign_add: {
+			case opcode::movss:
+				throw vm_exception {"not implemented: movss"};
+			case opcode::addmovi: {
 				auto [ref, idx, context] = pop_reference();
 				auto result = ref->get_int(idx, context) + pop_int();
 				ref->set_int(result, idx, context);
 				break;
 			}
-			case opcode::op_assign_subtract: {
+			case opcode::submovi: {
 				auto [ref, idx, context] = pop_reference();
 				auto result = ref->get_int(idx, context) - pop_int();
 				ref->set_int(result, idx, context);
 				break;
 			}
-			case opcode::op_assign_multiply: {
+			case opcode::mulmovi: {
 				auto [ref, idx, context] = pop_reference();
 				auto result = ref->get_int(idx, context) * pop_int();
 				ref->set_int(result, idx, context);
 				break;
 			}
-			case opcode::op_assign_divide: {
+			case opcode::divmovi: {
 				auto [ref, idx, context] = pop_reference();
 				auto result = ref->get_int(idx, context) / pop_int();
 				ref->set_int(result, idx, context);
 				break;
 			}
-			case opcode::op_assign_instance: {
+			case opcode::movvi: {
 				auto [target, target_idx, _] = pop_reference();
 				target->set_instance(pop_instance());
 				break;
 			}
-			case opcode::op_jump:
+			case opcode::b:
 				jump(instr.address);
 				return true;
-			case opcode::op_jump_if_zero:
+			case opcode::bz:
 				if (pop_int() == 0) {
 					jump(instr.address);
 					return true;
 				}
 				break;
-			case opcode::op_set_instance: {
+			case opcode::gmovi: {
 				sym = find_symbol_by_index(instr.symbol);
 				if (sym == nullptr) {
-					throw vm_exception {"op_set_instance: no symbol found for index"};
+					throw vm_exception {"gmovi: no symbol found for index"};
 				}
 				_m_instance = sym->get_instance();
 				break;
 			}
-			case opcode::op_push_array_var:
+			case opcode::pushvv:
 				sym = find_symbol_by_index(instr.symbol);
 				if (sym == nullptr) {
-					throw vm_exception {"op_push_array_var: no symbol found for index"};
+					throw vm_exception {"pushvv: no symbol found for index"};
 				}
 
 				push_reference(sym, instr.index);

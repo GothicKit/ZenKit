@@ -17,26 +17,26 @@ struct stack_frame {
 
 bool is_terminating_instruction(const script& script, const instruction& i) {
 	switch (i.op) {
-	case opcode::op_assign_int:
-	case opcode::op_assign_add:
-	case opcode::op_assign_subtract:
-	case opcode::op_assign_multiply:
-	case opcode::op_assign_divide:
-	case opcode::op_return:
-	case opcode::op_assign_string:
-	case opcode::op_assign_stringref:
-	case opcode::op_assign_func:
-	case opcode::op_assign_float:
-	case opcode::op_assign_instance:
-	case opcode::op_jump:
-	case opcode::op_jump_if_zero:
+	case opcode::movi:
+	case opcode::addmovi:
+	case opcode::submovi:
+	case opcode::mulmovi:
+	case opcode::divmovi:
+	case opcode::rsr:
+	case opcode::movs:
+	case opcode::movss:
+	case opcode::movvf:
+	case opcode::movf:
+	case opcode::movvi:
+	case opcode::b:
+	case opcode::bz:
 		return true;
-	case opcode::op_set_instance:
+	case opcode::gmovi:
 		current_instance = i.symbol;
 		return false;
-	case opcode::op_call:
+	case opcode::bl:
 		return !script.find_symbol_by_address(i.address)->has_return();
-	case opcode::op_call_external:
+	case opcode::be:
 		return !script.find_symbol_by_index(i.symbol)->has_return();
 	default:
 		return false;
@@ -49,7 +49,7 @@ extract_statement(const script& script, uint32_t& pointer, uint32_t end_ptr, std
 	pointer += instr.size;
 
 	while (!is_terminating_instruction(script, instr) && pointer < end_ptr) {
-		if (instr.op != opcode::op_noop && instr.op != opcode::op_set_instance) {
+		if (instr.op != opcode::nop && instr.op != opcode::gmovi) {
 			stack.push_back({instr, current_instance});
 		}
 
@@ -61,53 +61,35 @@ extract_statement(const script& script, uint32_t& pointer, uint32_t end_ptr, std
 }
 
 static std::unordered_map<opcode, std::string> OPCODE_STR {
-    {opcode::op_add, "+"},
-    {opcode::op_subtract, "-"},
-    {opcode::op_multiply, "*"},
-    {opcode::op_divide, "/"},
-    {opcode::op_modulo, "%"},
-    {opcode::op_bitor, "|"},
-    {opcode::op_bitand, "&"},
-    {opcode::op_less, "<"},
-    {opcode::op_greater, ">"},
-    {opcode::op_or, "||"},
-    {opcode::op_and, "&&"},
-    {opcode::op_shift_left, "<<"},
-    {opcode::op_shift_right, ">>"},
-    {opcode::op_less_or_equal, "<="},
-    {opcode::op_equal, "=="},
-    {opcode::op_not_equal, "!="},
-    {opcode::op_greater_or_equal, ">="},
-    {opcode::op_plus, "+"},
-    {opcode::op_minus, "-"},
-    {opcode::op_not, "!"},
-    {opcode::op_complement, "~"},
-    {opcode::op_assign_add, "+="},
-    {opcode::op_assign_subtract, "-="},
-    {opcode::op_assign_multiply, "*="},
-    {opcode::op_assign_divide, "/="},
+    {opcode::add, "+"},      {opcode::sub, "-"},      {opcode::mul, "*"},      {opcode::div, "/"},
+    {opcode::mod, "%"},      {opcode::or_, "|"},      {opcode::andb, "&"},     {opcode::lt, "<"},
+    {opcode::gt, ">"},       {opcode::orr, "||"},     {opcode::and_, "&&"},    {opcode::lsl, "<<"},
+    {opcode::lsr, ">>"},     {opcode::lte, "<="},     {opcode::eq, "=="},      {opcode::neq, "!="},
+    {opcode::gte, ">="},     {opcode::plus, "+"},     {opcode::negate, "-"},   {opcode::not_, "!"},
+    {opcode::cmpl, "~"},     {opcode::addmovi, "+="}, {opcode::submovi, "-="}, {opcode::mulmovi, "*="},
+    {opcode::divmovi, "/="},
 };
 
 std::string decompile_statement(const script& script, const stack_frame& stmt, std::vector<stack_frame>& stack) {
 	switch (stmt.instr.op) {
-	case opcode::op_add:
-	case opcode::op_subtract:
-	case opcode::op_multiply:
-	case opcode::op_divide:
-	case opcode::op_modulo:
-	case opcode::op_bitor:
-	case opcode::op_bitand:
-	case opcode::op_less:
-	case opcode::op_greater:
-	case opcode::op_or:
-	case opcode::op_and:
-	case opcode::op_shift_left:
-	case opcode::op_shift_right:
-	case opcode::op_less_or_equal:
-	case opcode::op_equal:
-	case opcode::op_not_equal:
-	case opcode::op_greater_or_equal: {
-		stack_frame a_instr {opcode::op_push_int, 0, 0, 0, 0, 0};
+	case opcode::add:
+	case opcode::sub:
+	case opcode::mul:
+	case opcode::div:
+	case opcode::mod:
+	case opcode::or_:
+	case opcode::andb:
+	case opcode::lt:
+	case opcode::gt:
+	case opcode::orr:
+	case opcode::and_:
+	case opcode::lsl:
+	case opcode::lsr:
+	case opcode::lte:
+	case opcode::eq:
+	case opcode::neq:
+	case opcode::gte: {
+		stack_frame a_instr {opcode::pushi, 0, 0, 0, 0, 0};
 		if (!stack.empty()) {
 			a_instr = stack.back();
 			stack.pop_back();
@@ -115,7 +97,7 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 
 		auto a = decompile_statement(script, a_instr, stack);
 
-		stack_frame b_instr {opcode::op_push_int, 0, 0, 0, 0, 0};
+		stack_frame b_instr {opcode::pushi, 0, 0, 0, 0, 0};
 		if (!stack.empty()) {
 			b_instr = stack.back();
 			stack.pop_back();
@@ -124,11 +106,11 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 		auto b = decompile_statement(script, b_instr, stack);
 		return fmt::format("({}) {} ({})", a, OPCODE_STR[stmt.instr.op], b);
 	}
-	case opcode::op_assign_add:
-	case opcode::op_assign_subtract:
-	case opcode::op_assign_multiply:
-	case opcode::op_assign_divide: {
-		stack_frame ref_instr {opcode::op_push_int, 0, 0, 0, 0, 0};
+	case opcode::addmovi:
+	case opcode::submovi:
+	case opcode::mulmovi:
+	case opcode::divmovi: {
+		stack_frame ref_instr {opcode::pushi, 0, 0, 0, 0, 0};
 		if (!stack.empty()) {
 			ref_instr = stack.back();
 			stack.pop_back();
@@ -136,7 +118,7 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 
 		auto ref = decompile_statement(script, ref_instr, stack);
 
-		stack_frame a_instr {opcode::op_push_int, 0, 0, 0, 0, 0};
+		stack_frame a_instr {opcode::pushi, 0, 0, 0, 0, 0};
 		if (!stack.empty()) {
 			a_instr = stack.back();
 			stack.pop_back();
@@ -145,11 +127,11 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 		auto a = decompile_statement(script, a_instr, stack);
 		return fmt::format("{} {} {}", ref, OPCODE_STR[stmt.instr.op], a);
 	}
-	case opcode::op_plus:
-	case opcode::op_minus:
-	case opcode::op_not:
-	case opcode::op_complement: {
-		stack_frame a_instr {opcode::op_push_int, 0, 0, 0, 0, 0};
+	case opcode::plus:
+	case opcode::negate:
+	case opcode::not_:
+	case opcode::cmpl: {
+		stack_frame a_instr {opcode::pushi, 0, 0, 0, 0, 0};
 		if (!stack.empty()) {
 			a_instr = stack.back();
 			stack.pop_back();
@@ -157,9 +139,9 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 		auto a = decompile_statement(script, a_instr, stack);
 		return fmt::format("{}({})", OPCODE_STR[stmt.instr.op], a);
 	}
-	case opcode::op_noop:
+	case opcode::nop:
 		return "";
-	case opcode::op_return: {
+	case opcode::rsr: {
 		if (!current_symbol->has_return()) {
 			return "return";
 		}
@@ -173,13 +155,13 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 		auto a = decompile_statement(script, a_instr, stack);
 		return fmt::format("return {}", a);
 	}
-	case opcode::op_call: {
+	case opcode::bl: {
 		auto* sym = script.find_symbol_by_address(stmt.instr.address);
 		auto params = script.find_parameters_for_function(sym);
 		std::string call = "";
 
 		for (unsigned i = params.size(); i > 0; --i) {
-			stack_frame a_instr {opcode::op_push_int, 0, 0, 0, 0, 0};
+			stack_frame a_instr {opcode::pushi, 0, 0, 0, 0, 0};
 			if (!stack.empty()) {
 				a_instr = stack.back();
 				stack.pop_back();
@@ -194,13 +176,13 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 
 		return fmt::format("{}({})", sym->name(), call);
 	}
-	case opcode::op_call_external: {
+	case opcode::be: {
 		auto* sym = script.find_symbol_by_index(stmt.instr.symbol);
 		auto params = script.find_parameters_for_function(sym);
 		std::string call = "";
 
 		for (unsigned i = params.size(); i > 0; --i) {
-			stack_frame a_instr {opcode::op_push_int, 0, 0, 0, 0, 0};
+			stack_frame a_instr {opcode::pushi, 0, 0, 0, 0, 0};
 			if (!stack.empty()) {
 				a_instr = stack.back();
 				stack.pop_back();
@@ -215,14 +197,14 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 
 		return fmt::format("{}({})", sym->name(), call);
 	}
-	case opcode::op_push_int: {
+	case opcode::pushi: {
 		if (stmt.instr.immediate > 1000) {
 			return fmt::format("0x{:x}", stmt.instr.immediate);
 		}
 		return std::to_string(stmt.instr.immediate);
 	}
-	case opcode::op_push_var:
-	case opcode::op_push_instance: {
+	case opcode::pushv:
+	case opcode::pushvi: {
 		auto sym = script.find_symbol_by_index(stmt.instr.symbol);
 
 		if (sym->is_generated() && sym->type() == datatype::string) {
@@ -255,7 +237,7 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 
 		return sym_name;
 	}
-	case opcode::op_push_array_var: {
+	case opcode::pushvv: {
 		auto sym = script.find_symbol_by_index(stmt.instr.symbol);
 		std::string sym_name;
 
@@ -280,13 +262,13 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 
 		return fmt::format("{}[{}]", sym_name, stmt.instr.index);
 	}
-	case opcode::op_assign_int:
-	case opcode::op_assign_string:
-	case opcode::op_assign_stringref:
-	case opcode::op_assign_func:
-	case opcode::op_assign_float:
-	case opcode::op_assign_instance: {
-		stack_frame a_instr {opcode::op_push_int, 0, 0, 0, 0, 0};
+	case opcode::movi:
+	case opcode::movs:
+	case opcode::movss:
+	case opcode::movvf:
+	case opcode::movf:
+	case opcode::movvi: {
+		stack_frame a_instr {opcode::pushi, 0, 0, 0, 0, 0};
 		if (!stack.empty()) {
 			a_instr = stack.back();
 			stack.pop_back();
@@ -295,7 +277,7 @@ std::string decompile_statement(const script& script, const stack_frame& stmt, s
 		auto a = decompile_statement(script, a_instr, stack);
 		auto sym = script.find_symbol_by_index(a_instr.instr.symbol);
 
-		stack_frame b_instr {opcode::op_push_int, 0, 0, 0, 0, 0};
+		stack_frame b_instr {opcode::pushi, 0, 0, 0, 0, 0};
 		if (!stack.empty()) {
 			b_instr = stack.back();
 			stack.pop_back();
@@ -326,8 +308,8 @@ std::pair<std::string, std::uint32_t> decompile_block(const script& script,
 	do {
 		stmt = extract_statement(script, pointer, end_ptr, stack);
 
-		if (stmt.instr.op == opcode::op_jump_if_zero) {
-			stack_frame real_stmt {opcode::op_push_int, 0, 0, 0, 0, 0};
+		if (stmt.instr.op == opcode::bz) {
+			stack_frame real_stmt {opcode::pushi, 0, 0, 0, 0, 0};
 			if (!stack.empty()) {
 				real_stmt = stack.back();
 				stack.pop_back();
@@ -344,7 +326,7 @@ std::pair<std::string, std::uint32_t> decompile_block(const script& script,
 			while (next_branch > stmt.instr.address && pointer <= end_ptr) {
 				auto new_stmt = extract_statement(script, pointer, end_ptr, stack);
 
-				if (new_stmt.instr.op == opcode::op_jump_if_zero) {
+				if (new_stmt.instr.op == opcode::bz) {
 					// else-if block
 					if (!stack.empty()) {
 						real_stmt = stack.back();
@@ -371,7 +353,7 @@ std::pair<std::string, std::uint32_t> decompile_block(const script& script,
 			}
 
 			code += ";\n";
-		} else if (stmt.instr.op == opcode::op_jump) {
+		} else if (stmt.instr.op == opcode::b) {
 			return {code, stmt.instr.address};
 		} else {
 			auto s = decompile_statement(script, stmt, stack);
@@ -387,7 +369,7 @@ std::pair<std::string, std::uint32_t> decompile_block(const script& script,
 				code += fmt::format("{: >{}}{};\n", "", indent, s);
 			}
 		}
-	} while (stmt.instr.op != opcode::op_return && pointer != end_ptr);
+	} while (stmt.instr.op != opcode::rsr && pointer != end_ptr);
 
 	return {code, pointer};
 }

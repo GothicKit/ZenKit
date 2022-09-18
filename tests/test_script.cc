@@ -91,16 +91,16 @@ TEST_SUITE("script") {
 
 		// TODO: This only covers a very small amount of instructions. Improve!
 		phoenix::daedalus::instruction ops[10] = {
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::op_call, .address = 236},
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::op_push_var, .symbol = 10},
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::op_push_var, .symbol = 119},
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::op_assign_string},
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::op_push_var, .symbol = 426},
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::op_push_var, .symbol = 126},
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::op_assign_string},
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::op_push_var, .symbol = 427},
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::op_push_var, .symbol = 128},
-		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::op_assign_string, .address = 0},
+		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::bl, .address = 236},
+		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::pushv, .symbol = 10},
+		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::pushv, .symbol = 119},
+		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::movs},
+		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::pushv, .symbol = 426},
+		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::pushv, .symbol = 126},
+		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::movs},
+		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::pushv, .symbol = 427},
+		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::pushv, .symbol = 128},
+		    phoenix::daedalus::instruction {.op = px::daedalus::opcode::movs, .address = 0},
 		};
 
 		phoenix::daedalus::instruction op;

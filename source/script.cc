@@ -55,24 +55,24 @@ namespace phoenix::daedalus {
 		s.size = 1;
 
 		switch (s.op) {
-		case opcode::op_call:
-		case opcode::op_jump_if_zero:
-		case opcode::op_jump:
+		case opcode::bl:
+		case opcode::bz:
+		case opcode::b:
 			s.address = in.get_uint();
 			s.size += sizeof(std::uint32_t);
 			break;
-		case opcode::op_push_int:
+		case opcode::pushi:
 			s.immediate = in.get_int();
 			s.size += sizeof(std::uint32_t);
 			break;
-		case opcode::op_call_external:
-		case opcode::op_push_var:
-		case opcode::op_push_instance:
-		case opcode::op_set_instance:
+		case opcode::be:
+		case opcode::pushv:
+		case opcode::pushvi:
+		case opcode::gmovi:
 			s.symbol = in.get_uint();
 			s.size += sizeof(std::uint32_t);
 			break;
-		case opcode::op_push_array_var:
+		case opcode::pushvv:
 			s.symbol = in.get_uint();
 			s.index = in.get();
 			s.size += sizeof(std::uint32_t) + sizeof(std::uint8_t);
