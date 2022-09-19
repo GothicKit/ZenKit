@@ -1,7 +1,7 @@
 include(FetchContent)
 
-set(BUILD_STATIC_LIBS ON)
-set(BUILD_SHARED_LIBS OFF)
+option(BUILD_STATIC_LIBS ON)
+option(BUILD_SHARED_LIBS OFF)
 
 add_subdirectory(glm)
 add_subdirectory(fmt)
