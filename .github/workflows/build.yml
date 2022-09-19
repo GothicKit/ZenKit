@@ -22,7 +22,7 @@ jobs:
         with:
           submodules: 'recursive'
       - name: 'Configure'
-        run: 'cmake -B build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DPX_BUILD_EXAMPLES=ON'
+        run: 'cmake -B build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DPHOENIX_BUILD_EXAMPLES=ON'
       - name: 'Build'
         run: 'cmake --build build'
       - name: 'Test'
@@ -48,7 +48,7 @@ jobs:
         with:
           xcode-version: '${{matrix.xcode}}'
       - name: 'Configure'
-        run: 'cmake -B build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DPX_BUILD_EXAMPLES=ON'
+        run: 'cmake -B build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DPHOENIX_BUILD_EXAMPLES=ON'
       - name: 'Build'
         run: 'cmake --build build'
       - name: 'Test'
@@ -64,7 +64,7 @@ jobs:
           submodules: 'recursive'
       - name: 'Configure'
         shell: 'bash'
-        run: 'cmake -B build -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Release -DPX_BUILD_EXAMPLES=ON'
+        run: 'cmake -B build -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Release -DPHOENIX_BUILD_EXAMPLES=ON'
       - name: 'Build'
         run: 'cmake --build build --config Release -j 2'
       - name: 'Test'

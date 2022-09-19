@@ -95,7 +95,7 @@ jobs:
             ninja --version
             
             cd repo
-            cmake -B build -DPX_BUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Debug -G Ninja
+            cmake -B build -DPHOENIX_BUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Debug -G Ninja
             cmake --build build
             
             cd tests
