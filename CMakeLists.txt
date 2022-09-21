@@ -128,7 +128,7 @@ if (PHOENIX_BUILD_TESTS)
     add_executable(phoenix-tests ${PHOENIX_TESTS})
     target_link_libraries(phoenix-tests PRIVATE phoenix doctest_with_main)
     target_compile_options(phoenix-tests PRIVATE ${PHOENIX_CXX_FLAGS})
-    target_link_options(phoenix-tests PRIVATE ${PPHOENIX_CXX_FLAGS})
+    target_link_options(phoenix-tests PRIVATE ${PHOENIX_CXX_FLAGS})
 
     doctest_discover_tests(phoenix-tests EXTRA_ARGS -tse=messages,script,world WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/tests)
 endif ()
