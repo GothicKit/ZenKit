@@ -5,7 +5,6 @@ option(BUILD_SHARED_LIBS OFF)
 
 add_subdirectory(glm)
 add_subdirectory(fmt)
-add_subdirectory(flags)
 add_subdirectory(doctest)
 add_subdirectory(mio)
 add_subdirectory(lexy)
@@ -34,7 +33,3 @@ if (NOT libsquish_POPULATED)
         target_compile_options(squish PRIVATE -Wno-unused-but-set-variable)
     endif ()
 endif ()
-
-# add stb as a library
-add_library(stb INTERFACE)
-target_include_directories(stb INTERFACE stb)

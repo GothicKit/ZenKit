@@ -1,5 +1,0 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
-// SPDX-License-Identifier: MIT
-#pragma once
-
-constexpr const auto ZMODEL_VERSION = "@PROJECT_VERSION@+@GIT_HASH@";

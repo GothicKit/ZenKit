@@ -6,10 +6,6 @@
 	path = vendor/fmt
 	url = https://github.com/fmtlib/fmt
 	shallow = true
-[submodule "vendor/stb"]
-	path = vendor/stb
-	url = https://github.com/nothings/stb
-	shallow = true
 [submodule "vendor/doctest"]
 	path = vendor/doctest
 	url = https://github.com/doctest/doctest
@@ -21,8 +17,4 @@
 [submodule "vendor/lexy"]
 	path = vendor/lexy
 	url = https://github.com/foonathan/lexy
-	shallow = true
-[submodule "vendor/flags"]
-	path = vendor/flags
-	url = https://github.com/sailormoon/flags.git
 	shallow = true

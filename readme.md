@@ -10,14 +10,16 @@
 **Here be dragons! _phoenix_ is currently changing very rapidly and your application _will_ break! Be prepared to change
 a lot of code when updating to new versions!**
 
-The _phoenix_ project aims to re-implement file formats used by the _ZenGin_ made by [Piranha Bytes](https://www.piranha-bytes.com/)
-for their early-2000s games [Gothic](https://en.wikipedia.org/wiki/Gothic_(video_game)) and [Gothic II](https://en.wikipedia.org/wiki/Gothic_II).
+The _phoenix_ project aims to re-implement file formats used by the _ZenGin_ made
+by [Piranha Bytes](https://www.piranha-bytes.com/)
+for their early-2000s games [Gothic](https://en.wikipedia.org/wiki/Gothic_(video_game))
+and [Gothic II](https://en.wikipedia.org/wiki/Gothic_II).
 It is heavily based on [ZenLib](https://github.com/Try/ZenLib) which is used as a reference implementation for the
 different file formats used.
 
-_phoenix_ includes **parsers and basic datastructures** for most file formats used by the _ZenGin_ as well as **tools 
-designed to inspect and convert** these files. Additionally, it includes a type-safe **VM for _Daedalus_ scripts** and
-supporting infrastructure like _Gothic II_ class definitions.
+_phoenix_ includes **parsers and basic datastructures** for most file formats used by the _ZenGin_ as well as a
+type-safe **VM for _Daedalus_ scripts** and supporting infrastructure like _Gothic II_ class definitions. Tools for
+inspecting and converting _ZenGin_ files can be found in [phoenix studio](https://github.com/lmichaelis/phoenix-studio).
 
 ## contributing
 If you'd like to contribute, please read [contributing](contributing.md) first.
@@ -72,7 +74,7 @@ cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ```
 
-You will find the tool binaries in `build/bin` and the library in `build/lib`.
+You will find the library in `build/lib`.
 
 ## using
 Using _phoenix_ in your project is pretty straightforward. Just add `include` to your include directories and link

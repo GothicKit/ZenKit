@@ -5,7 +5,6 @@ project(phoenix)
 set(CMAKE_CXX_STANDARD 17)
 set(PHOENIX_LOG_LEVEL 3 CACHE STRING "The logging level to use for phoenix. Set to 4, 3, 2, or 1 for DEBUG, INFO, WARN or ERROR respectively")
 
-option(PHOENIX_BUILD_TOOLS "Build phoenix tool executables" ON)
 option(PHOENIX_BUILD_TESTS "Build core library tests" ON)
 option(PHOENIX_BUILD_EXAMPLES "Build example code" OFF)
 option(PHOENIX_DISABLE_SANITIZERS "Build without sanitizers in debug mode" OFF)
@@ -136,9 +135,4 @@ endif ()
 # when building examples, include the subdirectory
 if (PHOENIX_BUILD_EXAMPLES)
     add_subdirectory(examples)
-endif ()
-
-# when building tools, include the subdirectory
-if (PHOENIX_BUILD_TOOLS)
-    add_subdirectory(tools)
 endif ()
