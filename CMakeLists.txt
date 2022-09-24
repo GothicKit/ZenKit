@@ -5,7 +5,6 @@ project(phoenix)
 set(CMAKE_CXX_STANDARD 17)
 set(PHOENIX_LOG_LEVEL 3 CACHE STRING "The logging level to use for phoenix. Set to 4, 3, 2, or 1 for DEBUG, INFO, WARN or ERROR respectively")
 
-option(PHOENIX_BUILD_TESTS "Build core library tests" ON)
 option(PHOENIX_BUILD_EXAMPLES "Build example code" OFF)
 option(PHOENIX_DISABLE_SANITIZERS "Build without sanitizers in debug mode" OFF)
 
@@ -120,7 +119,7 @@ set_target_properties(phoenix
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 # when building tests, create a test executable and load it into CTest
-if (PHOENIX_BUILD_TESTS)
+if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     enable_testing()
     include(vendor/doctest/scripts/cmake/doctest.cmake)
 
