@@ -10,30 +10,27 @@
 #include <string>
 #include <utility>
 
-#ifdef PX_LOG_LEVEL_DEBUG
+#if PHOENIX_LOG_LEVEL > 0
 #define PX_LOGE(...) phoenix::logging::log(phoenix::logging::level::error, fmt::format(__VA_ARGS__))
-#define PX_LOGW(...) phoenix::logging::log(phoenix::logging::level::warn, fmt::format(__VA_ARGS__))
-#define PX_LOGI(...) phoenix::logging::log(phoenix::logging::level::info, fmt::format(__VA_ARGS__))
-#define PX_LOGD(...) phoenix::logging::log(phoenix::logging::level::debug, fmt::format(__VA_ARGS__))
-#elif defined(PX_LOG_LEVEL_INFO)
-#define PX_LOGE(...) phoenix::logging::log(phoenix::logging::level::error, fmt::format(__VA_ARGS__))
-#define PX_LOGW(...) phoenix::logging::log(phoenix::logging::level::warn, fmt::format(__VA_ARGS__))
-#define PX_LOGI(...) phoenix::logging::log(phoenix::logging::level::info, fmt::format(__VA_ARGS__))
-#define PX_LOGD(...)
-#elif defined(PX_LOG_LEVEL_WARN)
-#define PX_LOGE(...) phoenix::logging::log(phoenix::logging::level::error, fmt::format(__VA_ARGS__))
-#define PX_LOGW(...) phoenix::logging::log(phoenix::logging::level::warn, fmt::format(__VA_ARGS__))
-#define PX_LOGI(...)
-#define PX_LOGD(...)
-#elif defined(PX_LOG_LEVEL_ERROR)
-#define PX_LOGE(...) phoenix::logging::log(phoenix::logging::level::error, fmt::format(__VA_ARGS__))
-#define PX_LOGW(...)
-#define PX_LOGI(...)
-#define PX_LOGD(...)
 #else
-#define PX_LOGE(...)
-#define PX_LOGW(...)
-#define PX_LOGI(...)
+#defined PX_LOGE(...)
+#endif
+
+#if PHOENIX_LOG_LEVEL > 1
+#define PX_LOGW(...) phoenix::logging::log(phoenix::logging::level::warn, fmt::format(__VA_ARGS__))
+#else
+#defined PX_LOGW(...)
+#endif
+
+#if PHOENIX_LOG_LEVEL > 2
+#define PX_LOGI(...) phoenix::logging::log(phoenix::logging::level::info, fmt::format(__VA_ARGS__))
+#else
+#defined PX_LOGI(...)
+#endif
+
+#if PHOENIX_LOG_LEVEL > 3
+#define PX_LOGD(...) phoenix::logging::log(phoenix::logging::level::debug, fmt::format(__VA_ARGS__))
+#else
 #define PX_LOGD(...)
 #endif
 
