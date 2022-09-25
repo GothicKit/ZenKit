@@ -15,7 +15,7 @@ TEST_SUITE("script") {
 		auto scr = phoenix::script::parse("./samples/menu.proprietary.dat");
 
 		auto& syms = scr.symbols();
-		CHECK(syms.size() == 1094);
+		CHECK(syms.size() == 1093);
 
 		auto* class_symbol = scr.find_symbol_by_index(118);
 		auto* member_symbol = scr.find_symbol_by_name("C_MENU.BACKPIC");
