@@ -17,7 +17,7 @@ namespace phoenix {
 	};
 
 	model_mesh model_mesh::parse(buffer& in) {
-		model_mesh msh;
+		model_mesh msh {};
 		model_mesh_chunk type = model_mesh_chunk::unknown;
 		bool end_mesh = false;
 
@@ -48,17 +48,17 @@ namespace phoenix {
 				break;
 			}
 			case model_mesh_chunk::proto:
-				msh._m_attachments[attachment_names[msh._m_attachments.size()]] = proto_mesh::parse_from_section(chunk);
+				msh.attachments[attachment_names[msh.attachments.size()]] = proto_mesh::parse_from_section(chunk);
 				break;
 			case model_mesh_chunk::softskins: {
 				(void) /* checksum = */ chunk.get_uint();
 				auto count = chunk.get_ushort();
-				msh._m_meshes.reserve(count);
+				msh.meshes.reserve(count);
 
 				// Quirk: the meshes are not embedded within the chunk (as in: the stored length does not contain
 				//        the size of these meshes) so they have to be read directly from `in`.
 				for (int i = 0; i < count; ++i) {
-					msh._m_meshes.push_back(softskin_mesh::parse(in));
+					msh.meshes.push_back(softskin_mesh::parse(in));
 				}
 				break;
 			}

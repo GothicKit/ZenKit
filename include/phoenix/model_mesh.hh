@@ -36,18 +36,11 @@ namespace phoenix {
 			return model_mesh::parse(buf);
 		}
 
-		/// \return A list of soft-skin meshes associated with this model mesh.
-		const std::vector<softskin_mesh>& meshes() const noexcept {
-			return _m_meshes;
-		}
+	public:
+		/// \brief A list of soft-skin meshes associated with this model mesh.
+		std::vector<softskin_mesh> meshes {};
 
-		/// \return A map of attachment names to attachment meshes of this model mesh.
-		const std::unordered_map<std::string, proto_mesh>& attachments() const noexcept {
-			return _m_attachments;
-		}
-
-	private:
-		std::vector<softskin_mesh> _m_meshes;
-		std::unordered_map<std::string, proto_mesh> _m_attachments;
+		/// \brief A map of attachment names to attachment meshes of this model mesh.
+		std::unordered_map<std::string, proto_mesh> attachments {};
 	};
 } // namespace phoenix

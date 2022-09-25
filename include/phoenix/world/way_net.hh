@@ -37,24 +37,19 @@ namespace phoenix {
 		/// \return The way-net parsed.
 		static way_net parse(std::unique_ptr<archive_reader>& in);
 
-		/// \return All waypoints of this way-net.
-		[[nodiscard]] inline const std::vector<way_point>& waypoints() const noexcept {
-			return _m_waypoints;
-		}
-
-		/// \return All edges of this way-net.
-		[[nodiscard]] inline const std::vector<way_edge>& edges() const noexcept {
-			return _m_edges;
-		}
-
 		/// \brief Get the waypoint with the given name.
 		/// \param name The name of the waypoint to get.
 		/// \return A pointer to the waypoint or `nullptr` if the waypoint was not fount.
 		[[nodiscard]] const way_point* waypoint(const std::string& name) const;
 
+	public:
+		/// \brief All waypoints of this way-net.
+		std::vector<way_point> waypoints;
+
+		/// \brief All edges of this way-net.
+		std::vector<way_edge> edges;
+
 	private:
-		std::vector<way_point> _m_waypoints;
-		std::vector<way_edge> _m_edges;
 		std::unordered_map<std::string, std::uint32_t> _m_name_to_waypoint;
 	};
 

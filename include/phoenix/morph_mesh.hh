@@ -65,38 +65,20 @@ namespace phoenix {
 			return morph_mesh::parse(buf);
 		}
 
-		/// \return All animations associated with the mesh.
-		[[nodiscard]] inline const std::vector<morph_animation>& animations() const noexcept {
-			return _m_animations;
-		}
+	public:
+		/// \brief The name of the mesh.
+		std::string name {};
 
-		/// \return All morph positions associated with the mesh.
-		[[nodiscard]] inline const std::vector<glm::vec3>& positions() const noexcept {
-			return _m_morph_positions;
-		}
+		/// \brief The underlying mesh.
+		proto_mesh mesh {};
 
-		/// \return The name of the mesh.
-		[[nodiscard]] inline const std::string& name() const noexcept {
-			return _m_name;
-		}
+		/// \brief All morph positions associated with the mesh.
+		std::vector<glm::vec3> morph_positions {};
 
-		///\return The underlying mesh.
-		[[nodiscard]] inline const proto_mesh& mesh() const noexcept {
-			return _m_mesh;
-		}
+		/// \brief All animations associated with the mesh.
+		std::vector<morph_animation> animations {};
 
-		/// \return A list of source files this morph mesh was compiled from.
-		[[nodiscard]] inline const std::vector<morph_source>& sources() const noexcept {
-			return _m_sources;
-		}
-
-	private:
-		std::string _m_name;
-		proto_mesh _m_mesh;
-
-		std::vector<glm::vec3> _m_morph_positions;
-		std::vector<morph_animation> _m_animations;
-
-		std::vector<morph_source> _m_sources;
+		/// \brief A list of source files this morph mesh was compiled from.
+		std::vector<morph_source> sources {};
 	};
 } // namespace phoenix

@@ -25,7 +25,7 @@ namespace phoenix {
 
 			(void) /* auto version = */ in->read_int(); // waynetVersion
 			auto count = in->read_int();                // numWaypoints
-			net._m_waypoints.reserve(count);
+			net.waypoints.reserve(count);
 
 			std::unordered_map<std::uint32_t, std::uint32_t> obj_id_to_wp {};
 
@@ -34,11 +34,11 @@ namespace phoenix {
 					throw parser_error {"way_net", fmt::format("missing waypoint object #{}", i)};
 				}
 
-				auto& wp = net._m_waypoints.emplace_back();
+				auto& wp = net.waypoints.emplace_back();
 				read_waypoint_data(wp, in);
 				wp.free_point = true;
-				net._m_name_to_waypoint[wp.name] = net._m_waypoints.size() - 1;
-				obj_id_to_wp[obj.index] = net._m_waypoints.size() - 1;
+				net._m_name_to_waypoint[wp.name] = net.waypoints.size() - 1;
+				obj_id_to_wp[obj.index] = net.waypoints.size() - 1;
 
 				if (!in->read_object_end()) {
 					PX_LOGW("way_net: free point {} not fully parsed", obj.index);
@@ -49,7 +49,7 @@ namespace phoenix {
 			auto edge_count = in->read_int(); // numWays
 
 			for (int i = 0; i < edge_count; ++i) {
-				auto& edge = net._m_edges.emplace_back();
+				auto& edge = net.edges.emplace_back();
 
 				for (int j = 0; j < 2; ++j) {
 					if (!in->read_object_begin(obj)) {
@@ -61,12 +61,12 @@ namespace phoenix {
 					if (obj.class_name == "\xA7" /* zReference */) {
 						wp = obj_id_to_wp[obj.index];
 					} else if (obj.class_name == "zCWaypoint") {
-						auto& new_wp = net._m_waypoints.emplace_back();
+						auto& new_wp = net.waypoints.emplace_back();
 						read_waypoint_data(new_wp, in);
 						new_wp.free_point = false;
 
-						obj_id_to_wp[obj.index] = net._m_waypoints.size() - 1;
-						wp = net._m_waypoints.size() - 1;
+						obj_id_to_wp[obj.index] = net.waypoints.size() - 1;
+						wp = net.waypoints.size() - 1;
 					} else {
 						throw parser_error {
 						    "way_net",
@@ -98,7 +98,7 @@ namespace phoenix {
 
 	const way_point* way_net::waypoint(const std::string& name) const {
 		if (auto it = _m_name_to_waypoint.find(name); it != _m_name_to_waypoint.end())
-			return &_m_waypoints[it->second];
+			return &waypoints[it->second];
 		return nullptr;
 	}
 } // namespace phoenix

@@ -32,18 +32,11 @@ namespace phoenix {
 			return model::parse(buf);
 		}
 
-		/// \return The phoenix::model_hierarchy associated with this model.
-		[[nodiscard]] const model_hierarchy& hierarchy() const noexcept {
-			return _m_hierarchy;
-		}
+	public:
+		/// \brief The phoenix::model_hierarchy associated with this model.
+		model_hierarchy hierarchy {};
 
-		/// \return The phoenix::model_mesh associated with this model.
-		[[nodiscard]] const model_mesh& mesh() const noexcept {
-			return _m_mesh;
-		}
-
-	private:
-		model_hierarchy _m_hierarchy;
-		model_mesh _m_mesh;
+		/// \brief The phoenix::model_mesh associated with this model.
+		model_mesh mesh {};
 	};
 } // namespace phoenix

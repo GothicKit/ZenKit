@@ -6,7 +6,7 @@
 
 namespace phoenix {
 	font::font(std::string name, std::uint32_t height, std::vector<glyph> glyphs)
-	    : _m_name(std::move(name)), _m_height(height), _m_glyphs(std::move(glyphs)) {}
+	    : name(std::move(name)), height(height), glyphs(std::move(glyphs)) {}
 
 	font font::parse(buffer& in) {
 		try {

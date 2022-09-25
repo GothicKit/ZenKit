@@ -8,7 +8,7 @@ namespace phoenix {
 	enum class hierarchy_chunk { unknown, hierarchy = 0xD100, stats = 0xD110, end = 0xD120 };
 
 	model_hierarchy model_hierarchy::parse(buffer& in) {
-		model_hierarchy hierarchy;
+		model_hierarchy hierarchy {};
 
 		hierarchy_chunk type = hierarchy_chunk::unknown;
 		bool end_hierarchy = false;
@@ -25,15 +25,15 @@ namespace phoenix {
 				auto node_count = chunk.get_ushort();
 
 				for (int i = 0; i < node_count; ++i) {
-					auto& node = hierarchy._m_nodes.emplace_back();
+					auto& node = hierarchy.nodes.emplace_back();
 					node.name = chunk.get_line(false);
 					node.parent_index = chunk.get_short();
 					node.transform = glm::transpose(chunk.get_mat4x4());
 				}
 
-				hierarchy._m_bbox = bounding_box::parse(chunk);
-				hierarchy._m_collision_bbox = bounding_box::parse(chunk);
-				hierarchy._m_root_translation = chunk.get_vec3();
+				hierarchy.bbox = bounding_box::parse(chunk);
+				hierarchy.collision_bbox = bounding_box::parse(chunk);
+				hierarchy.root_translation = chunk.get_vec3();
 
 				(void) /* checksum = */ chunk.get_uint();
 				break;

@@ -20,20 +20,20 @@ TEST_SUITE("mesh") {
 		auto in = phoenix::buffer::mmap("./samples/mesh0.mrm");
 		auto mesh = phoenix::proto_mesh::parse(in);
 
-		const auto& positions = mesh.positions();
+		const auto& positions = mesh.positions;
 		CHECK(positions.size() == 8);
 		CHECK(positions[0] == glm::vec3 {200, 398.503906, 200});
 		CHECK(positions[1] == glm::vec3 {-200, 398.503906, 200});
 		CHECK(positions[7] == glm::vec3 {-200, 0, -200});
 
-		CHECK(mesh.normals().empty());
-		CHECK(mesh.alpha_test());
+		CHECK(mesh.normals.empty());
+		CHECK(mesh.alpha_test);
 
-		auto box0 = mesh.bbox();
+		auto box0 = mesh.bbox;
 		CHECK(box0.min == glm::vec3 {-200, 0, -200});
 		CHECK(box0.max == glm::vec3 {200, 398.503906, 200});
 
-		const auto& submeshes = mesh.submeshes();
+		const auto& submeshes = mesh.sub_meshes;
 		CHECK(submeshes.size() == 1);
 
 		const auto& submesh = submeshes[0];

@@ -8,7 +8,7 @@ namespace phoenix {
 	enum class softmesh_chunk { unknown, header = 0xE100, end = 0xE110, proto = 0xB100, nodes = 0xB1FF };
 
 	softskin_mesh softskin_mesh::parse(buffer& in) {
-		softskin_mesh msh;
+		softskin_mesh msh {};
 		softmesh_chunk type = softmesh_chunk::unknown;
 		bool end_mesh = false;
 
@@ -23,20 +23,20 @@ namespace phoenix {
 				(void) /* version = */ chunk.get_uint();
 				break;
 			case softmesh_chunk::proto:
-				msh._m_mesh = proto_mesh::parse_from_section(chunk);
+				msh.mesh = proto_mesh::parse_from_section(chunk);
 				break;
 			case softmesh_chunk::nodes: {
 				// weights
 				auto weight_buffer_size = chunk.get_uint();
 				auto weight_buffer_end = chunk.position() + weight_buffer_size;
 
-				msh._m_weights.resize(msh._m_mesh.positions().size());
-				for (unsigned i = 0; i < msh._m_mesh.positions().size(); ++i) {
+				msh.weights.resize(msh.mesh.positions.size());
+				for (unsigned i = 0; i < msh.mesh.positions.size(); ++i) {
 					auto count = chunk.get_uint();
-					msh._m_weights[i].reserve(count);
+					msh.weights[i].reserve(count);
 
 					for (std::uint32_t j = 0; j < count; ++j) {
-						auto& weight = msh._m_weights[i].emplace_back();
+						auto& weight = msh.weights[i].emplace_back();
 						weight.weight = chunk.get_float();
 						weight.position = chunk.get_vec3();
 						weight.node_index = chunk.get();
@@ -50,23 +50,23 @@ namespace phoenix {
 				}
 
 				// wedge normals
-				msh._m_wedge_normals.reserve(chunk.get_uint());
+				msh.wedge_normals.reserve(chunk.get_uint());
 
-				for (std::uint32_t i = 0; i < msh._m_wedge_normals.size(); ++i) {
-					auto& normal = msh._m_wedge_normals.emplace_back();
+				for (std::uint32_t i = 0; i < msh.wedge_normals.size(); ++i) {
+					auto& normal = msh.wedge_normals.emplace_back();
 					normal.normal = chunk.get_vec3();
 					normal.index = chunk.get_uint();
 				}
 
 				// nodes
-				msh._m_nodes.resize(chunk.get_ushort());
+				msh.nodes.resize(chunk.get_ushort());
 
-				for (std::uint32_t i = 0; i < msh._m_nodes.size(); ++i) {
-					msh._m_nodes[i] = chunk.get_int();
+				for (std::uint32_t i = 0; i < msh.nodes.size(); ++i) {
+					msh.nodes[i] = chunk.get_int();
 				}
 
-				for (std::uint32_t i = 0; i < msh._m_nodes.size(); ++i) {
-					msh._m_bboxes.push_back(obb::parse(chunk));
+				for (std::uint32_t i = 0; i < msh.nodes.size(); ++i) {
+					msh.bboxes.push_back(obb::parse(chunk));
 				}
 
 				break;

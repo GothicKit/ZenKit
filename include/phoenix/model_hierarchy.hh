@@ -55,30 +55,17 @@ namespace phoenix {
 			return model_hierarchy::parse(in);
 		}
 
-		/// \return The list of nodes this hierarchy consists of.
-		[[nodiscard]] const std::vector<model_hierarchy_node>& nodes() const noexcept {
-			return _m_nodes;
-		}
+	public:
+		/// \brief The list of nodes this hierarchy consists of.
+		std::vector<model_hierarchy_node> nodes {};
 
-		/// \return The bounding box of this hierarchy.
-		[[nodiscard]] bounding_box bbox() const noexcept {
-			return _m_bbox;
-		}
+		/// \brief The bounding box of this hierarchy.
+		bounding_box bbox {};
 
-		/// \return The collision bounding box of this hierarchy.
-		[[nodiscard]] bounding_box collision_bbox() const noexcept {
-			return _m_collision_bbox;
-		}
+		/// \brief The collision bounding box of this hierarchy.
+		bounding_box collision_bbox {};
 
-		/// \return The translation of the root node of this hierarchy.
-		[[nodiscard]] glm::vec3 root_translation() const noexcept {
-			return _m_root_translation;
-		}
-
-	private:
-		std::vector<model_hierarchy_node> _m_nodes;
-		bounding_box _m_bbox;
-		bounding_box _m_collision_bbox;
-		glm::vec3 _m_root_translation;
+		/// \brief The translation of the root node of this hierarchy.
+		glm::vec3 root_translation {};
 	};
 } // namespace phoenix

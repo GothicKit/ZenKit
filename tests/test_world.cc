@@ -10,29 +10,29 @@ TEST_SUITE("world") {
 		auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_1);
 
 		auto& mesh = wld.world_mesh;
-		CHECK(mesh.vertices().size() == 55439);
-		CHECK(mesh.features().size() == 419936);
-		CHECK(mesh.materials().size() == 2263);
-		CHECK(mesh.name() == "");
+		CHECK(mesh.vertices.size() == 55439);
+		CHECK(mesh.features.size() == 419936);
+		CHECK(mesh.materials.size() == 2263);
+		CHECK(mesh.name == "");
 
-		auto box0 = mesh.bbox();
+		auto box0 = mesh.bbox;
 		CHECK(box0.min == glm::vec3 {0, 0, 0});
 		CHECK(box0.max == glm::vec3 {0, 0, 0});
 
-		auto obb = mesh.oriented_bbox();
+		auto obb = mesh.obb;
 		CHECK(obb.center == glm::vec3 {0, 0, 0});
 		CHECK(obb.axes[0] == glm::vec3 {0, 0, 0});
 		CHECK(obb.axes[1] == glm::vec3 {0, 0, 0});
 		CHECK(obb.axes[2] == glm::vec3 {0, 0, 0});
 		CHECK(obb.half_width == glm::vec3 {0, 0, 0});
 
-		auto& verts = mesh.vertices();
+		auto& verts = mesh.vertices;
 		CHECK(verts[0] == glm::vec3 {91365, -4026.60083, 46900});
 		CHECK(verts[1] == glm::vec3 {92900, -4029.99976, 38399.9961});
 		CHECK(verts[500] == glm::vec3 {44263.8203, 708.517822, 6841.18262});
 		CHECK(verts[501] == glm::vec3 {45672.6094, 640.436157, 6877.81543});
 
-		auto& feats = mesh.features();
+		auto& feats = mesh.features;
 		CHECK(feats[0].texture == glm::vec2 {1.11193848, 2.64415169});
 		CHECK(feats[0].light == 4292927712);
 		CHECK(feats[0].normal == glm::vec3 {0.0000220107158, 1, -0.000121058853});
@@ -49,7 +49,7 @@ TEST_SUITE("world") {
 		CHECK(feats[501].light == 4281084972);
 		CHECK(feats[501].normal == glm::vec3 {0.000102534526, -1, -0.00014051389});
 
-		auto& mats = mesh.materials();
+		auto& mats = mesh.materials;
 		auto& mat0 = mats[0];
 		auto& mat500 = mats[500];
 
@@ -67,9 +67,9 @@ TEST_SUITE("world") {
 		auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_1);
 		auto& tree = wld.world_bsp_tree;
 
-		CHECK(tree.mode() == phoenix::bsp_tree_mode::outdoor);
+		CHECK(tree.mode == phoenix::bsp_tree_mode::outdoor);
 
-		auto& polys = tree.polygon_indices();
+		auto& polys = tree.polygon_indices;
 		CHECK(polys.size() == 480135);
 		CHECK(polys[0] == 0);
 		CHECK(polys[1] == 1);
@@ -78,7 +78,7 @@ TEST_SUITE("world") {
 		CHECK(polys[151] == 103);
 		CHECK(polys[152] == 92);
 
-		auto& nodes = tree.nodes();
+		auto& nodes = tree.nodes;
 		CHECK(nodes.size() == 6644);
 		CHECK(nodes[0].plane == glm::vec4 {1, 0, 0, 18540.0156f});
 		CHECK(nodes[0].front_index == 1);
@@ -100,7 +100,7 @@ TEST_SUITE("world") {
 		CHECK(nodes[1].bbox.max == glm::vec3 {108999.992f, 19502.1973f, 67399.9921f});
 		CHECK(!nodes[1].is_leaf());
 
-		auto& leaves = tree.leaf_node_indices();
+		auto& leaves = tree.leaf_node_indices;
 		CHECK(leaves.size() == 3318);
 		CHECK(leaves[0] == 5);
 		CHECK(leaves[10] == 26);
@@ -119,7 +119,7 @@ TEST_SUITE("world") {
 		CHECK(nodes[26].bbox.min == glm::vec3 {48899.9961f, -4029.99976f, 47400});
 		CHECK(nodes[26].bbox.max == glm::vec3 {67900, -4026.59961f, 67399.9921f});
 
-		auto& sectors = tree.sectors();
+		auto& sectors = tree.sectors;
 		CHECK(sectors.size() == 299);
 
 		CHECK(sectors[0].name == "WALD11");
@@ -130,11 +130,11 @@ TEST_SUITE("world") {
 		CHECK(sectors[50].node_indices.size() == 4);
 		CHECK(sectors[50].portal_polygon_indices.size() == 2);
 
-		auto& portal_polys = tree.portal_polygon_indices();
+		auto& portal_polys = tree.portal_polygon_indices;
 		CHECK(portal_polys.size() == 0);
 
-		CHECK(tree.light_points().size() == 3318);
-		CHECK(tree.light_points()[0] == glm::vec3 {-99, -99, -99});
+		CHECK(tree.light_points.size() == 3318);
+		CHECK(tree.light_points[0] == glm::vec3 {-99, -99, -99});
 	}
 
 	TEST_CASE("the vob-tree is read correctly") {
@@ -266,12 +266,12 @@ TEST_SUITE("world") {
 		auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_1);
 		auto& waynet = wld.world_way_net;
 
-		CHECK(waynet.waypoints().size() == 2784);
-		CHECK(waynet.edges().size() == 3500);
+		CHECK(waynet.waypoints.size() == 2784);
+		CHECK(waynet.edges.size() == 3500);
 
-		auto& wp0 = waynet.waypoints()[0];
-		auto& wp100 = waynet.waypoints()[100];
-		auto& wp500 = waynet.waypoints()[500];
+		auto& wp0 = waynet.waypoints[0];
+		auto& wp100 = waynet.waypoints[100];
+		auto& wp500 = waynet.waypoints[500];
 
 		CHECK(wp0.name == "LOCATION_28_07");
 		CHECK(wp0.water_depth == 0);
@@ -294,10 +294,10 @@ TEST_SUITE("world") {
 		CHECK(wp500.direction == glm::vec3 {-0.999390841, 0, 0.0348994918});
 		CHECK(!wp500.free_point);
 
-		auto& edge0 = waynet.edges()[0];
-		auto& edge5 = waynet.edges()[5];
-		auto& edge100 = waynet.edges()[100];
-		auto& edge500 = waynet.edges()[500];
+		auto& edge0 = waynet.edges[0];
+		auto& edge5 = waynet.edges[5];
+		auto& edge100 = waynet.edges[100];
+		auto& edge500 = waynet.edges[500];
 
 		CHECK(edge0.a == 20);
 		CHECK(edge0.b == 21);

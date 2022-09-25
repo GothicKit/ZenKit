@@ -22,7 +22,7 @@ namespace phoenix {
 	};
 
 	mesh mesh::parse(buffer& buf, const std::vector<std::uint32_t>& leaf_polygons) {
-		mesh msh;
+		mesh msh {};
 
 		std::uint16_t version {};
 		bool finished = false;
@@ -37,40 +37,40 @@ namespace phoenix {
 			switch (type) {
 			case world_mesh_chunk::mesh:
 				version = chunk.get_ushort();
-				msh._m_date = date::parse(chunk);
-				msh._m_name = chunk.get_line(false);
+				msh.date = date::parse(chunk);
+				msh.name = chunk.get_line(false);
 				break;
 			case world_mesh_chunk::bbox:
 				// first, we find a basic AABB bounding box
-				msh._m_bbox = bounding_box::parse(chunk);
+				msh.bbox = bounding_box::parse(chunk);
 
 				// but second, we find a list of OOBBs with one acting as a parent
-				msh._m_obb = obb::parse(chunk);
+				msh.obb = obb::parse(chunk);
 				break;
 			case world_mesh_chunk::material: {
 				auto matreader = archive_reader::open(chunk);
 
 				std::uint32_t material_count = chunk.get_uint();
-				msh._m_materials.reserve(material_count);
+				msh.materials.reserve(material_count);
 
 				for (std::uint32_t i = 0; i < material_count; ++i) {
-					msh._m_materials.emplace_back(material::parse(matreader));
+					msh.materials.emplace_back(material::parse(matreader));
 				}
 
 				break;
 			}
 			case world_mesh_chunk::vertices:
-				msh._m_vertices.resize(chunk.get_uint());
+				msh.vertices.resize(chunk.get_uint());
 
-				for (auto& vertex : msh._m_vertices) {
+				for (auto& vertex : msh.vertices) {
 					vertex = chunk.get_vec3();
 				}
 
 				break;
 			case world_mesh_chunk::features:
-				msh._m_features.resize(chunk.get_uint());
+				msh.features.resize(chunk.get_uint());
 
-				for (auto& feature : msh._m_features) {
+				for (auto& feature : msh.features) {
 					feature.texture = chunk.get_vec2();
 					feature.light = chunk.get_uint();
 					feature.normal = chunk.get_vec3();
@@ -80,11 +80,11 @@ namespace phoenix {
 			case world_mesh_chunk::polygons: {
 				auto poly_count = chunk.get_uint();
 
-				msh._m_polygons.material_indices.reserve(poly_count);
-				msh._m_polygons.lightmap_indices.reserve(poly_count);
-				msh._m_polygons.feature_indices.reserve(poly_count * 3);
-				msh._m_polygons.vertex_indices.reserve(poly_count * 3);
-				msh._m_polygons.flags.reserve(poly_count * 3);
+				msh.polygons.material_indices.reserve(poly_count);
+				msh.polygons.lightmap_indices.reserve(poly_count);
+				msh.polygons.feature_indices.reserve(poly_count * 3);
+				msh.polygons.vertex_indices.reserve(poly_count * 3);
+				msh.polygons.flags.reserve(poly_count * 3);
 
 				auto leaf_poly_it = leaf_polygons.begin();
 
@@ -133,15 +133,15 @@ namespace phoenix {
 						// If we have 3 vertices, we are sure that this is already a triangle,
 						// so we can just read it in
 						for (int j = 0; j < vertex_count; ++j) {
-							msh._m_polygons.vertex_indices.push_back(version == mesh_version_g2 ? chunk.get_uint()
-							                                                                    : chunk.get_ushort());
+							msh.polygons.vertex_indices.push_back(version == mesh_version_g2 ? chunk.get_uint()
+							                                                                 : chunk.get_ushort());
 
-							msh._m_polygons.feature_indices.push_back(chunk.get_uint());
+							msh.polygons.feature_indices.push_back(chunk.get_uint());
 						}
 
-						msh._m_polygons.material_indices.push_back(material_index);
-						msh._m_polygons.lightmap_indices.push_back(lightmap_index);
-						msh._m_polygons.flags.push_back(pflags);
+						msh.polygons.material_indices.push_back(material_index);
+						msh.polygons.lightmap_indices.push_back(lightmap_index);
+						msh.polygons.flags.push_back(pflags);
 					} else {
 						// If we don't have 3 vertices, we need to calculate a triangle fan.
 
@@ -155,16 +155,16 @@ namespace phoenix {
 							auto vertex_index_b = version == mesh_version_g2 ? chunk.get_uint() : chunk.get_ushort();
 							auto feature_index_b = chunk.get_uint();
 
-							msh._m_polygons.vertex_indices.push_back(vertex_index_root);
-							msh._m_polygons.vertex_indices.push_back(vertex_index_a);
-							msh._m_polygons.vertex_indices.push_back(vertex_index_b);
-							msh._m_polygons.feature_indices.push_back(feature_index_root);
-							msh._m_polygons.feature_indices.push_back(feature_index_a);
-							msh._m_polygons.feature_indices.push_back(feature_index_b);
+							msh.polygons.vertex_indices.push_back(vertex_index_root);
+							msh.polygons.vertex_indices.push_back(vertex_index_a);
+							msh.polygons.vertex_indices.push_back(vertex_index_b);
+							msh.polygons.feature_indices.push_back(feature_index_root);
+							msh.polygons.feature_indices.push_back(feature_index_a);
+							msh.polygons.feature_indices.push_back(feature_index_b);
 
-							msh._m_polygons.material_indices.push_back(material_index);
-							msh._m_polygons.lightmap_indices.push_back(lightmap_index);
-							msh._m_polygons.flags.push_back(pflags);
+							msh.polygons.material_indices.push_back(material_index);
+							msh.polygons.lightmap_indices.push_back(lightmap_index);
+							msh.polygons.flags.push_back(pflags);
 
 							vertex_index_a = vertex_index_b;
 							feature_index_a = feature_index_b;
@@ -194,7 +194,7 @@ namespace phoenix {
 					auto normal_b = chunk.get_vec3();
 					std::uint32_t texture_index = chunk.get_uint();
 
-					msh._m_lightmaps.emplace_back(
+					msh.lightmaps.emplace_back(
 					    light_map {lightmap_textures[texture_index], {normal_a, normal_b}, origin});
 				}
 
@@ -209,9 +209,9 @@ namespace phoenix {
 					auto normal_b = chunk.get_vec3();
 					auto lightmap_texture = texture::parse(chunk);
 
-					msh._m_lightmaps.emplace_back(light_map {std::make_shared<texture>(std::move(lightmap_texture)),
-					                                         {normal_a, normal_b},
-					                                         origin});
+					msh.lightmaps.emplace_back(light_map {std::make_shared<texture>(std::move(lightmap_texture)),
+					                                      {normal_a, normal_b},
+					                                      origin});
 				}
 
 				break;

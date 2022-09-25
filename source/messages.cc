@@ -19,14 +19,14 @@ namespace phoenix {
 		}
 
 		auto item_count = archive->read_int(); // NumOfItems
-		msgs._m_blocks.reserve(static_cast<std::uint64_t>(item_count));
+		msgs.blocks.reserve(static_cast<std::uint64_t>(item_count));
 
 		for (int i = 0; i < item_count; ++i) {
 			if (!archive->read_object_begin(obj) || obj.class_name != "zCCSBlock") {
 				throw parser_error {"messages", "expected 'zCCSBlock' but didn't find it"};
 			}
 
-			auto& itm = msgs._m_blocks.emplace_back();
+			auto& itm = msgs.blocks.emplace_back();
 			itm.name = archive->read_string();      // blockName
 			auto block_count = archive->read_int(); // numOfBlocks
 			(void) archive->read_float();           // subBlock0
@@ -53,7 +53,7 @@ namespace phoenix {
 
 			itm.message.text = archive->read_string();
 			itm.message.name = archive->read_string();
-			msgs._m_blocks_by_name[itm.name] = msgs._m_blocks.size() - 1;
+			msgs._m_blocks_by_name[itm.name] = msgs.blocks.size() - 1;
 
 			if (!archive->read_object_end()) {
 				// FIXME: in binary archives this might skip whole sections of the file due to faulty object
@@ -84,7 +84,7 @@ namespace phoenix {
 
 	const message_block* messages::block_by_name(const std::string& name) const {
 		if (auto it = _m_blocks_by_name.find(name); it != _m_blocks_by_name.end()) {
-			return &_m_blocks[it->second];
+			return &blocks[it->second];
 		}
 
 		return nullptr;

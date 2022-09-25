@@ -63,19 +63,14 @@ namespace phoenix {
 			return font::parse(in);
 		}
 
-		/// \brief Returns the name of this font.
-		/// \return The name of this font.
-		[[nodiscard]] inline const std::string& name() const noexcept {
-			return _m_name;
-		}
+	public:
+		/// \brief The name of this font.
+		std::string name;
 
-		/// \brief Returns the height of glyphs of this font in pixels.
-		/// \return The height of glyphs of this font in pixels.
-		[[nodiscard]] inline std::uint32_t height() const noexcept {
-			return _m_height;
-		}
+		/// \brief The height of glyphs of this font in pixels.
+		std::uint32_t height;
 
-		/// \brief Returns all glyphs of this font.
+		/// \brief All glyphs of this font.
 		///
 		/// <p>*ZenGin* fonts contain characters present in the [Windows-1252 character
 		/// encoding](https://en.wikipedia.org/wiki/Windows-1252) which is generally used by *Gothic* and *Gothic II*.
@@ -86,14 +81,6 @@ namespace phoenix {
 		///
 		/// \note The glyphs UV-coordinates are not straightforward. Refer to glyph::uv for an explanation about to
 		///       how to use them
-		/// \return All glyphs of this font.
-		[[nodiscard]] inline const std::vector<glyph>& glyphs() const noexcept {
-			return _m_glyphs;
-		}
-
-	private:
-		std::string _m_name;
-		std::uint32_t _m_height;
-		std::vector<glyph> _m_glyphs;
+		std::vector<glyph> glyphs;
 	};
 } // namespace phoenix

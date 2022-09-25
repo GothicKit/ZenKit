@@ -70,22 +70,22 @@ namespace phoenix {
 			switch (type) {
 			case animation_chunk::header:
 				(void) /* version = */ chunk.get_ushort();
-				anim._m_name = chunk.get_line(false);
-				anim._m_layer = chunk.get_uint();
-				anim._m_frame_count = chunk.get_uint();
-				anim._m_node_count = chunk.get_uint();
-				anim._m_fps = chunk.get_float();
-				anim._m_fps_source = chunk.get_float();
-				anim._m_sample_position_range_min = chunk.get_float();
-				anim._m_sample_position_scalar = chunk.get_float();
-				anim._m_bbox = bounding_box::parse(chunk);
-				anim._m_next = chunk.get_line(false);
+				anim.name = chunk.get_line(false);
+				anim.layer = chunk.get_uint();
+				anim.frame_count = chunk.get_uint();
+				anim.node_count = chunk.get_uint();
+				anim.fps = chunk.get_float();
+				anim.fps_source = chunk.get_float();
+				anim.sample_position_range_min = chunk.get_float();
+				anim.sample_position_scalar = chunk.get_float();
+				anim.bbox = bounding_box::parse(chunk);
+				anim.next = chunk.get_line(false);
 				break;
 			case animation_chunk::events:
-				anim._m_events.reserve(chunk.get_uint());
+				anim.events.reserve(chunk.get_uint());
 
-				for (std::uint32_t i = 0; i < anim._m_events.size(); ++i) {
-					auto& event = anim._m_events.emplace_back();
+				for (std::uint32_t i = 0; i < anim.events.size(); ++i) {
+					auto& event = anim.events.emplace_back();
 					event.type = static_cast<animation_event_type>(chunk.get_uint());
 					event.no = chunk.get_uint();
 					event.tag = chunk.get_line();
@@ -103,26 +103,26 @@ namespace phoenix {
 
 				break;
 			case animation_chunk::data:
-				anim._m_checksum = chunk.get_uint();
-				anim._m_node_indices.resize(anim._m_node_count);
+				anim.checksum = chunk.get_uint();
+				anim.node_indices.resize(anim.node_count);
 
-				for (std::uint32_t i = 0; i < anim._m_node_count; ++i) {
-					anim._m_node_indices[i] = chunk.get_uint();
+				for (std::uint32_t i = 0; i < anim.node_count; ++i) {
+					anim.node_indices[i] = chunk.get_uint();
 				}
 
-				anim._m_samples.resize(anim._m_node_count * anim._m_frame_count);
+				anim.samples.resize(anim.node_count * anim.frame_count);
 
-				for (std::size_t i = 0; i < anim._m_samples.size(); ++i) {
-					anim._m_samples[i].rotation = read_sample_quaternion(chunk);
-					anim._m_samples[i].position =
-					    read_sample_position(chunk, anim._m_sample_position_scalar, anim._m_sample_position_range_min);
+				for (std::size_t i = 0; i < anim.samples.size(); ++i) {
+					anim.samples[i].rotation = read_sample_quaternion(chunk);
+					anim.samples[i].position =
+					    read_sample_position(chunk, anim.sample_position_scalar, anim.sample_position_range_min);
 				}
 
 				break;
 			case animation_chunk::source:
-				anim._m_source_file_date = date::parse(chunk);
-				anim._m_source_path = chunk.get_line(false);
-				anim._m_mds_source = chunk.get_line(false);
+				anim.source_file_date = date::parse(chunk);
+				anim.source_path = chunk.get_line(false);
+				anim.source_script = chunk.get_line(false);
 				break;
 			case animation_chunk::animation: // the "animation" chunk is always empty
 			default:
@@ -131,7 +131,7 @@ namespace phoenix {
 
 			if (chunk.remaining() > 0) {
 				PX_LOGW("animation(\"{}\"): {} bytes remaining in section 0x{:4X}",
-				        anim.name(),
+				        anim.name,
 				        chunk.remaining(),
 				        std::uint16_t(type));
 			}

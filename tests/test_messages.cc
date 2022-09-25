@@ -8,11 +8,11 @@ TEST_SUITE("messages") {
 		auto buf = phoenix::buffer::mmap("./samples/ou.proprietary.bin");
 		auto msgs = phoenix::messages::parse(buf);
 
-		CHECK(msgs.blocks().size() == 7360);
+		CHECK(msgs.blocks.size() == 7360);
 
 		auto* msg20 = msgs.block_by_name("DIA_ARTO_PERM_15_00");
 		auto* msg100 = msgs.block_by_name("DIA_BaalKagan_WasDrin_13_01");
-		auto* msg200 = &msgs.blocks()[200];
+		auto* msg200 = &msgs.blocks[200];
 		auto* msg_none = msgs.block_by_name("nonexistent");
 
 		CHECK(msg20 != nullptr);

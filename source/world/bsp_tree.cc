@@ -60,7 +60,7 @@ namespace phoenix {
 	};
 
 	bsp_tree bsp_tree::parse(buffer& in, std::uint32_t version) {
-		bsp_tree bsp;
+		bsp_tree bsp {};
 		bsp_chunk type = bsp_chunk::unknown;
 		bool finished = false;
 
@@ -75,12 +75,12 @@ namespace phoenix {
 			switch (type) {
 			case bsp_chunk::header:
 				(void) chunk.get_ushort();
-				bsp._m_mode = static_cast<bsp_tree_mode>(chunk.get_uint());
+				bsp.mode = static_cast<bsp_tree_mode>(chunk.get_uint());
 				break;
 			case bsp_chunk::polygons:
-				bsp._m_polygon_indices.resize(chunk.get_uint());
+				bsp.polygon_indices.resize(chunk.get_uint());
 
-				for (unsigned int& index : bsp._m_polygon_indices) {
+				for (unsigned int& index : bsp.polygon_indices) {
 					index = chunk.get_uint();
 				}
 				break;
@@ -88,43 +88,43 @@ namespace phoenix {
 				uint32_t node_count = chunk.get_uint();
 				uint32_t leaf_count = chunk.get_uint();
 
-				bsp._m_nodes.reserve(node_count);
-				bsp._m_leaf_node_indices.reserve(leaf_count);
+				bsp.nodes.reserve(node_count);
+				bsp.leaf_node_indices.reserve(leaf_count);
 
-				_parse_bsp_nodes(chunk, bsp._m_nodes, bsp._m_leaf_node_indices, version, -1);
+				_parse_bsp_nodes(chunk, bsp.nodes, bsp.leaf_node_indices, version, -1);
 
 				// A set should be the preferred datastructure for this. For some reason though, std::set maxes out
 				// at 255 values :|
-				for (auto idx : bsp._m_leaf_node_indices) {
-					auto& node = bsp._m_nodes[idx];
+				for (auto idx : bsp.leaf_node_indices) {
+					auto& node = bsp.nodes[idx];
 
 					for (unsigned i = 0; i < node.polygon_count; ++i) {
-						bsp._m_leaf_polygons.push_back(bsp._m_polygon_indices[node.polygon_index + i]);
+						bsp.leaf_polygons.push_back(bsp.polygon_indices[node.polygon_index + i]);
 					}
 				}
 
-				std::sort(bsp._m_leaf_polygons.begin(), bsp._m_leaf_polygons.end());
-				bsp._m_leaf_polygons.erase(std::unique(bsp._m_leaf_polygons.begin(), bsp._m_leaf_polygons.end()),
-				                           bsp._m_leaf_polygons.end());
+				std::sort(bsp.leaf_polygons.begin(), bsp.leaf_polygons.end());
+				bsp.leaf_polygons.erase(std::unique(bsp.leaf_polygons.begin(), bsp.leaf_polygons.end()),
+				                        bsp.leaf_polygons.end());
 
-				assert(node_count == bsp._m_nodes.size());
-				assert(leaf_count == bsp._m_leaf_node_indices.size());
+				assert(node_count == bsp.nodes.size());
+				assert(leaf_count == bsp.leaf_node_indices.size());
 				break;
 			}
 			case bsp_chunk::light: {
-				bsp._m_light_points.resize(bsp._m_leaf_node_indices.size());
+				bsp.light_points.resize(bsp.leaf_node_indices.size());
 
-				for (std::uint32_t i = 0; i < bsp._m_light_points.size(); ++i) {
-					bsp._m_light_points[i] = chunk.get_vec3();
+				for (std::uint32_t i = 0; i < bsp.light_points.size(); ++i) {
+					bsp.light_points[i] = chunk.get_vec3();
 				}
 				break;
 			}
 			case bsp_chunk::outdoors: {
 				auto sector_count = chunk.get_uint();
-				bsp._m_sectors.reserve(sector_count);
+				bsp.sectors.reserve(sector_count);
 
 				for (std::uint32_t i = 0; i < sector_count; ++i) {
-					auto& sector = bsp._m_sectors.emplace_back();
+					auto& sector = bsp.sectors.emplace_back();
 
 					sector.name = chunk.get_line(false);
 
@@ -144,10 +144,10 @@ namespace phoenix {
 				}
 
 				auto portal_count = chunk.get_uint();
-				bsp._m_portal_polygon_indices.resize(portal_count);
+				bsp.portal_polygon_indices.resize(portal_count);
 
 				for (std::uint32_t i = 0; i < portal_count; ++i) {
-					bsp._m_portal_polygon_indices[i] = chunk.get_uint();
+					bsp.portal_polygon_indices[i] = chunk.get_uint();
 				}
 				break;
 			}

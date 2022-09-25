@@ -11,15 +11,15 @@ TEST_SUITE("font") {
 		auto in = buffer::mmap("./samples/font.fnt");
 		auto fnt = font::parse(in);
 
-		CHECK(fnt.name() == "FONT_OLD_10_WHITE_HI.TGA");
-		CHECK(fnt.height() == 17);
+		CHECK(fnt.name == "FONT_OLD_10_WHITE_HI.TGA");
+		CHECK(fnt.height == 17);
 
 		// We'll look at the three glyphs in the middle
-		auto middle = (fnt.glyphs().size() / 2) - 1;
+		auto middle = (fnt.glyphs.size() / 2) - 1;
 
-		auto f1 = fnt.glyphs()[middle - 1];
-		auto f2 = fnt.glyphs()[middle];
-		auto f3 = fnt.glyphs()[middle + 1];
+		auto f1 = fnt.glyphs[middle - 1];
+		auto f2 = fnt.glyphs[middle];
+		auto f3 = fnt.glyphs[middle + 1];
 
 		CHECK((std::uint16_t) f1.width == 9);
 		CHECK((std::uint16_t) f2.width == 8);

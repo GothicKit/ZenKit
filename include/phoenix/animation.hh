@@ -70,96 +70,53 @@ namespace phoenix {
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
 		[[nodiscard]] inline static animation parse(buffer&& in) {
-			return parse(in);
+			return animation::parse(in);
 		}
 
-		/// \return The name of the animation
-		[[nodiscard]] inline const std::string& name() const noexcept {
-			return _m_name;
-		}
+	public:
+		/// \brief The name of the animation
+		std::string name {};
 
-		/// \return The next animation in queue.
-		[[nodiscard]] inline const std::string& next() const noexcept {
-			return _m_next;
-		}
+		/// \brief The next animation in queue.
+		std::string next {};
 
-		/// \return The layer this animation is played in.
-		[[nodiscard]] inline std::uint32_t layer() const noexcept {
-			return _m_layer;
-		}
+		/// \brief The layer this animation is played in.
+		std::uint32_t layer {};
 
-		/// \return The number of frames of this animation.
-		[[nodiscard]] inline std::uint32_t frames() const noexcept {
-			return _m_frame_count;
-		}
+		/// \brief The number of frames of this animation.
+		std::uint32_t frame_count {};
+		std::uint32_t node_count {};
 
-		/// \return  The number of frames of this animation to play per second.
-		[[nodiscard]] inline float frames_per_second() const noexcept {
-			return _m_fps;
-		}
+		/// \brief The number of frames of this animation to play per second.
+		float fps {};
 
-		/// \return Unknown.
-		[[nodiscard]] inline float frames_per_second_alt() const noexcept {
-			return _m_fps_source;
-		}
+		/// \brief Unknown.
+		float fps_source {};
 
-		/// \return The bounding box of the animation.
-		[[nodiscard]] inline bounding_box bbox() const noexcept {
-			return _m_bbox;
-		}
+		float sample_position_range_min {};
+		float sample_position_scalar {};
 
-		/// \return A checksum for this animation (inner workings unknown).
-		[[nodiscard]] inline std::uint32_t checksum() const noexcept {
-			return _m_checksum;
-		}
+		/// \brief The bounding box of the animation.
+		bounding_box bbox {};
 
-		/// \return The list of animation samples of this animation.
-		[[nodiscard]] inline const std::vector<animation_sample>& samples() const noexcept {
-			return _m_samples;
-		}
+		/// \brief A checksum for this animation (inner workings unknown).
+		std::uint32_t checksum {};
 
-		/// \return The list of animation events of this animation.
-		[[nodiscard]] inline const std::vector<animation_event>& events() const noexcept {
-			return _m_events;
-		}
+		date source_file_date {};
 
-		/// \return A list of model hierarchy node indices.
-		[[nodiscard]] inline const std::vector<std::uint32_t>& node_indices() const noexcept {
-			return _m_node_indices;
-		}
+		/// \brief The original path of the animation script this animation was generated from.
+		std::string source_path {};
 
-		/// \return The original path of the animation script this animation was generated from.
-		[[nodiscard]] inline const std::string& source_path() const noexcept {
-			return _m_source_path;
-		}
+		/// \brief The original model script snippet this animation was generated from.
+		std::string source_script {};
 
-		/// \return The original model script snippet this animation was generated from.
-		[[nodiscard]] inline const std::string& source_script() const noexcept {
-			return _m_mds_source;
-		}
+		/// \brief The list of animation samples of this animation.
+		std::vector<animation_sample> samples {};
 
-	protected:
-		animation() = default;
+		/// \brief The list of animation events of this animation.
+		std::vector<animation_event> events {};
 
-	private:
-		std::string _m_name;
-		std::string _m_next;
-		std::uint32_t _m_layer {};
-		std::uint32_t _m_frame_count {};
-		std::uint32_t _m_node_count {};
-		float _m_fps {};
-		float _m_fps_source {};
-		float _m_sample_position_range_min {};
-		float _m_sample_position_scalar {};
-		bounding_box _m_bbox {};
-		std::uint32_t _m_checksum {};
-
-		date _m_source_file_date {};
-		std::string _m_source_path;
-		std::string _m_mds_source;
-
-		std::vector<animation_sample> _m_samples;
-		std::vector<animation_event> _m_events;
-		std::vector<std::uint32_t> _m_node_indices;
+		/// \brief A list of model hierarchy node indices.
+		std::vector<std::uint32_t> node_indices;
 	};
 } // namespace phoenix

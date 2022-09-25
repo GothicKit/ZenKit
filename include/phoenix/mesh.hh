@@ -100,67 +100,32 @@ namespace phoenix {
 			return mesh::parse(buf, include_polygons);
 		}
 
-		/// \return The creation date of this mesh.
-		[[nodiscard]] inline phoenix::date date() const noexcept {
-			return _m_date;
-		}
+	public:
+		/// \brief The creation date of this mesh.
+		phoenix::date date {};
 
-		/// \return The name of this mesh
-		[[nodiscard]] inline const std::string& name() const noexcept {
-			return _m_name;
-		}
+		/// \brief The name of this mesh
+		std::string name {};
 
-		/// \return The bounding box of this mesh.
-		[[nodiscard]] inline bounding_box bbox() const noexcept {
-			return _m_bbox;
-		}
+		/// \brief The bounding box of this mesh.
+		bounding_box bbox {};
 
-		/// \return A list of materials used by this mesh.
-		[[nodiscard]] inline const std::vector<material>& materials() const noexcept {
-			return _m_materials;
-		}
+		/// \brief The oriented bbox tree of this mesh.
+		phoenix::obb obb {};
 
-		/// \return A list of vertices of this mesh.
-		[[nodiscard]] inline const std::vector<glm::vec3>& vertices() const noexcept {
-			return _m_vertices;
-		}
+		/// \brief A list of materials used by this mesh.
+		std::vector<material> materials {};
 
-		/// \return A list of vertex features of this mesh.
-		[[nodiscard]] inline const std::vector<vertex_feature>& features() const noexcept {
-			return _m_features;
-		}
+		/// \brief A list of vertices of this mesh.
+		std::vector<glm::vec3> vertices {};
 
-		/// \return A list of polygons of this mesh.
-		[[nodiscard]] inline const polygon_list& polygons() const noexcept {
-			return _m_polygons;
-		}
+		/// \brief A list of vertex features of this mesh.
+		std::vector<vertex_feature> features {};
 
-		/// \return A structure containing information about the polygons of this mesh.
-		[[nodiscard]] inline polygon_list& polygons() noexcept {
-			return _m_polygons;
-		}
+		/// \brief All shared lightmaps associated with this mesh
+		std::vector<light_map> lightmaps {};
 
-		/// \return The oriented bbox tree of this mesh.
-		[[nodiscard]] const obb& oriented_bbox() const noexcept {
-			return _m_obb;
-		};
-
-		/// \return All shared lightmaps associated with this mesh
-		[[nodiscard]] const std::vector<light_map>& lightmaps() const noexcept {
-			return _m_lightmaps;
-		}
-
-	private:
-		phoenix::date _m_date {};
-		std::string _m_name {};
-		bounding_box _m_bbox {};
-		obb _m_obb {};
-
-		std::vector<material> _m_materials {};
-		std::vector<glm::vec3> _m_vertices {};
-		std::vector<vertex_feature> _m_features {};
-		std::vector<light_map> _m_lightmaps {};
-
-		polygon_list _m_polygons {};
+		/// \brief A list of polygons of this mesh.
+		polygon_list polygons {};
 	};
 } // namespace phoenix

@@ -18,16 +18,16 @@ TEST_SUITE("vdfs") {
 		creationtime.tm_mon = 3;
 		creationtime.tm_year = 121;
 
-		CHECK(vdf.header().comment() == "Sample VDF for openzen. Create on 2021-04-27 13:24:59.");
-		CHECK(vdf.header().timestamp() == mktime(&creationtime));
-		CHECK(vdf.header().entry_count() == 7);
-		CHECK(vdf.header().file_count() == 5);
-		CHECK(vdf.header().size() == 43804);
-		CHECK(vdf.header().version() == 0x50);
+		CHECK(vdf.header.comment == "Sample VDF for openzen. Create on 2021-04-27 13:24:59.");
+		CHECK(vdf.header.timestamp == mktime(&creationtime));
+		CHECK(vdf.header.entry_count == 7);
+		CHECK(vdf.header.file_count == 5);
+		CHECK(vdf.header.size == 43804);
+		CHECK(vdf.header.version == 0x50);
 
 		// Checks if all entries are here
 
-		const auto& roots = vdf.entries();
+		const auto& roots = vdf.entries;
 		CHECK(roots.size() == 3);
 
 		const auto* config_yml = vdf.find_entry("config.yml");
@@ -41,7 +41,7 @@ TEST_SUITE("vdfs") {
 		const auto* licenses_dir = vdf.find_entry("licenses");
 		CHECK(licenses_dir != nullptr);
 		CHECK(licenses_dir->is_directory());
-		CHECK(licenses_dir->children().size() == 2);
+		CHECK(licenses_dir->children.size() == 2);
 
 		const auto* mit_md = vdf.find_entry("MIT.MD");
 		CHECK(mit_md != nullptr);
@@ -50,7 +50,7 @@ TEST_SUITE("vdfs") {
 		const auto* gpl_dir = licenses_dir->find_child("gpl");
 		CHECK(gpl_dir != nullptr);
 		CHECK(gpl_dir->is_directory());
-		CHECK(gpl_dir->children().size() == 2);
+		CHECK(gpl_dir->children.size() == 2);
 
 		const auto* lgpl_md = gpl_dir->find_child("lgpl-3.0.md");
 		CHECK(gpl_dir->find_child("lgpl") == nullptr);

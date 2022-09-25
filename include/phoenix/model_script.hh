@@ -248,18 +248,18 @@ namespace phoenix {
 
 	public:
 		/// \brief The model skeleton this model script was made for.
-		mds::skeleton skeleton;
+		mds::skeleton skeleton {};
 
 		/// \brief A list of meshes which can be used with this model script.
-		std::vector<std::string> meshes;
+		std::vector<std::string> meshes {};
 
 		/// \brief A list of animation names which are disabled.
-		std::vector<std::string> disabled_animations;
+		std::vector<std::string> disabled_animations {};
 
-		std::vector<mds::animation_combination> combinations;
-		std::vector<mds::animation_blending> blends;
-		std::vector<mds::animation_alias> aliases;
-		std::vector<mds::model_tag> model_tags;
-		std::vector<mds::animation> animations;
+		std::vector<mds::animation_combination> combinations {};
+		std::vector<mds::animation_blending> blends {};
+		std::vector<mds::animation_alias> aliases {};
+		std::vector<mds::model_tag> model_tags {};
+		std::vector<mds::animation> animations {};
 	};
 } // namespace phoenix

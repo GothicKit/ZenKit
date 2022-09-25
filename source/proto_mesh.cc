@@ -74,39 +74,39 @@ namespace phoenix {
 		// read all materials
 		auto mats = archive_reader::open(chunk);
 		for (int i = 0; i < submesh_count; ++i) {
-			msh._m_materials.emplace_back(material::parse(mats));
+			msh.materials.emplace_back(material::parse(mats));
 		}
 
 		if (version == version_g2) {
-			msh._m_has_alpha_test = chunk.get() != 0;
+			msh.alpha_test = chunk.get() != 0;
 		}
 
-		msh._m_bbox = bounding_box::parse(chunk);
+		msh.bbox = bounding_box::parse(chunk);
 
 		// read positions and normals
-		msh._m_vertices.resize(vertices_size);
+		msh.positions.resize(vertices_size);
 		auto vertices = content.slice(vertices_index, vertices_size * sizeof(float) * 3);
 
 		for (std::uint32_t i = 0; i < vertices_size; ++i) {
-			msh._m_vertices[i] = vertices.get_vec3();
+			msh.positions[i] = vertices.get_vec3();
 		}
 
-		msh._m_normals.resize(normals_size);
+		msh.normals.resize(normals_size);
 		auto normals = content.slice(normals_index, normals_size * sizeof(float) * 3);
 
 		for (std::uint32_t i = 0; i < normals_size; ++i) {
-			msh._m_normals[i] = normals.get_vec3();
+			msh.normals[i] = normals.get_vec3();
 		}
 
 		// read submeshes
-		msh._m_sub_meshes.reserve(submesh_count);
+		msh.sub_meshes.reserve(submesh_count);
 
 		for (int i = 0; i < submesh_count; ++i) {
-			auto& mesh = msh._m_sub_meshes.emplace_back(sub_mesh::parse(content, submesh_sections[i]));
-			mesh.mat = msh._m_materials[i];
+			auto& mesh = msh.sub_meshes.emplace_back(sub_mesh::parse(content, submesh_sections[i]));
+			mesh.mat = msh.materials[i];
 		}
 
-		msh._m_obbox = obb::parse(chunk);
+		msh.obbox = obb::parse(chunk);
 
 		// TODO: this might be a vec4 though the values don't make any sense.
 		chunk.skip(0x10);

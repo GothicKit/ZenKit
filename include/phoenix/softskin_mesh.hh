@@ -39,37 +39,21 @@ namespace phoenix {
 			return softskin_mesh::parse(in);
 		}
 
-		/// \return The embedded proto-mesh.
-		[[nodiscard]] const proto_mesh& mesh() const noexcept {
-			return _m_mesh;
-		}
+	public:
+		/// \brief The embedded proto-mesh.
+		proto_mesh mesh;
 
-		/// \return The meshes bounding boxes (there is one for each node).
-		[[nodiscard]] const std::vector<obb>& bboxes() const noexcept {
-			return _m_bboxes;
-		}
+		/// \brief The meshes bounding boxes (there is one for each node).
+		std::vector<obb> bboxes;
 
-		/// \return A list of wedge normals.
-		[[nodiscard]] const std::vector<wedge_normal>& wedge_normals() const noexcept {
-			return _m_wedge_normals;
-		}
+		/// \brief A list of wedge normals.
+		std::vector<wedge_normal> wedge_normals;
 
-		/// \return Node weights.
-		[[nodiscard]] const std::vector<std::vector<weight_entry>>& weights() const noexcept {
-			return _m_weights;
-		}
+		/// \brief Node weights.
+		std::vector<std::vector<weight_entry>> weights;
 
-		/// \return Nodes.
-		[[nodiscard]] const std::vector<std::int32_t>& nodes() const noexcept {
-			return _m_nodes;
-		}
-
-	private:
-		proto_mesh _m_mesh;
-		std::vector<obb> _m_bboxes;
-		std::vector<wedge_normal> _m_wedge_normals;
-		std::vector<std::vector<weight_entry>> _m_weights;
-		std::vector<std::int32_t> _m_nodes;
+		/// \brief Nodes.
+		std::vector<std::int32_t> nodes;
 	};
 
 } // namespace phoenix

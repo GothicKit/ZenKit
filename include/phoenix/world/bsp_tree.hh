@@ -69,56 +69,29 @@ namespace phoenix {
 			return parse(in, version);
 		}
 
-		/// \return The mode of the tree (either indoor or outdoor).
-		[[nodiscard]] bsp_tree_mode mode() const noexcept {
-			return _m_mode;
-		}
+	public:
+		/// \brief The mode of the tree (either indoor or outdoor).
+		bsp_tree_mode mode;
 
-		/// \return A list of polygon indices.
-		[[nodiscard]] const std::vector<std::uint32_t>& polygon_indices() const noexcept {
-			return _m_polygon_indices;
-		}
+		/// \brief A list of polygon indices.
+		std::vector<std::uint32_t> polygon_indices;
 
-		/// \return All BSP nodes associated with the tree.
-		[[nodiscard]] const std::vector<bsp_node>& nodes() const noexcept {
-			return _m_nodes;
-		}
+		/// \brief All BSP leaf polygon indices.
+		std::vector<std::uint32_t> leaf_polygons;
 
-		/// \return All BSP leaf node indices.
-		[[nodiscard]] const std::vector<std::uint64_t>& leaf_node_indices() const noexcept {
-			return _m_leaf_node_indices;
-		}
+		/// \brief All BSP light points.
+		std::vector<glm::vec3> light_points;
 
-		/// \return All BSP leaf polygon indices.
-		[[nodiscard]] const std::vector<std::uint32_t>& leaf_polygons() const noexcept {
-			return _m_leaf_polygons;
-		}
+		/// \brief All BSP sectors.
+		std::vector<bsp_sector> sectors;
 
-		/// \return All BSP sectors.
-		[[nodiscard]] const std::vector<bsp_sector>& sectors() const noexcept {
-			return _m_sectors;
-		}
+		/// \brief Polygon indices of portals.
+		std::vector<std::uint32_t> portal_polygon_indices;
 
-		/// \return Polygon indices of portals.
-		[[nodiscard]] const std::vector<std::uint32_t>& portal_polygon_indices() const noexcept {
-			return _m_portal_polygon_indices;
-		}
+		/// \brief All BSP nodes associated with the tree.
+		std::vector<bsp_node> nodes;
 
-		/// \return All BSP light points.
-		[[nodiscard]] const std::vector<glm::vec3>& light_points() const noexcept {
-			return _m_light_points;
-		}
-
-	private:
-		bsp_tree_mode _m_mode;
-		std::vector<std::uint32_t> _m_polygon_indices;
-		std::vector<std::uint32_t> _m_leaf_polygons;
-		std::vector<glm::vec3> _m_light_points;
-
-		std::vector<bsp_sector> _m_sectors;
-		std::vector<std::uint32_t> _m_portal_polygon_indices;
-
-		std::vector<bsp_node> _m_nodes;
-		std::vector<std::uint64_t> _m_leaf_node_indices;
+		/// \brief All BSP leaf node indices.
+		std::vector<std::uint64_t> leaf_node_indices;
 	};
 } // namespace phoenix

@@ -110,43 +110,25 @@ namespace phoenix {
 		/// \throws parser_error if parsing fails.
 		[[nodiscard]] static proto_mesh parse_from_section(buffer& in);
 
-		/// \return The vertex positions associated with the mesh.
-		[[nodiscard]] inline const std::vector<glm::vec3>& positions() const noexcept {
-			return _m_vertices;
-		}
+	public:
+		/// \brief The vertex positions associated with the mesh.
+		std::vector<glm::vec3> positions;
 
-		/// \return The normal vectors of the mesh.
-		[[nodiscard]] inline const std::vector<glm::vec3>& normals() const noexcept {
-			return _m_normals;
-		}
+		/// \brief The normal vectors of the mesh.
+		std::vector<glm::vec3> normals;
 
-		/// \return A list of sub-meshes of the mesh.
-		[[nodiscard]] inline const std::vector<sub_mesh>& submeshes() const noexcept {
-			return _m_sub_meshes;
-		}
+		/// \brief A list of sub-meshes of the mesh.
+		std::vector<sub_mesh> sub_meshes;
 
-		/// \return A list of all materials used by the mesh.
-		[[nodiscard]] inline const std::vector<material>& materials() const noexcept {
-			return _m_materials;
-		}
+		/// \brief A list of all materials used by the mesh.
+		std::vector<material> materials;
 
-		/// \return The bounding box of the mesh.
-		[[nodiscard]] inline bounding_box bbox() const noexcept {
-			return _m_bbox;
-		}
+		/// \brief If alpha testing should be enabled.
+		std::uint8_t alpha_test {true};
 
-		/// \return If alpha testing should be enabled.
-		[[nodiscard]] inline bool alpha_test() const noexcept {
-			return _m_has_alpha_test;
-		}
+		/// \brief The bounding box of the mesh.
+		bounding_box bbox;
 
-	private:
-		std::vector<glm::vec3> _m_vertices;
-		std::vector<glm::vec3> _m_normals;
-		std::vector<sub_mesh> _m_sub_meshes;
-		std::vector<material> _m_materials;
-		std::uint8_t _m_has_alpha_test {true};
-		bounding_box _m_bbox;
-		obb _m_obbox;
+		obb obbox;
 	};
 } // namespace phoenix

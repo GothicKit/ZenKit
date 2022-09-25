@@ -36,6 +36,7 @@
 
 namespace phoenix {
 	class buffer;
+	class archive_reader;
 
 	/// \brief An enum for providing a game version hint to some functions
 	enum class game_version {
@@ -118,4 +119,19 @@ namespace phoenix {
 		const std::optional<std::string> context {std::nullopt};
 		const std::optional<std::exception> cause {std::nullopt};
 	};
+
+	template <typename T>
+	T parse(buffer& buf) {
+		throw parser_error {"unknown", "parsing routine not implemented"};
+	}
+
+	template <typename T>
+	inline T parse(buffer&& buf) {
+		return parse<T>(buf);
+	}
+
+	template <typename T>
+	T parse(archive_reader& buf) {
+		throw parser_error {"unknown", "parsing routine not implemented"};
+	}
 } // namespace phoenix

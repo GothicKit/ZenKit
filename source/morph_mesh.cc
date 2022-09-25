@@ -15,7 +15,7 @@ namespace phoenix {
 	};
 
 	morph_mesh morph_mesh::parse(buffer& in) {
-		morph_mesh msh;
+		morph_mesh msh {};
 		morph_mesh_chunk type = morph_mesh_chunk::unknown;
 
 		do {
@@ -27,34 +27,34 @@ namespace phoenix {
 			switch (type) {
 			case morph_mesh_chunk::sources: {
 				auto count = chunk.get_ushort();
-				msh._m_sources.resize(count);
+				msh.sources.resize(count);
 
 				for (int i = 0; i < count; ++i) {
-					msh._m_sources[i].file_date = date::parse(chunk);
-					msh._m_sources[i].file_name = chunk.get_line();
+					msh.sources[i].file_date = date::parse(chunk);
+					msh.sources[i].file_name = chunk.get_line();
 				}
 
 				break;
 			}
 			case morph_mesh_chunk::header:
 				/* version = */ (void) chunk.get_uint();
-				msh._m_name = chunk.get_line();
+				msh.name = chunk.get_line();
 				break;
 			case morph_mesh_chunk::proto:
-				msh._m_mesh = proto_mesh::parse_from_section(chunk);
-				msh._m_morph_positions.resize(msh._m_mesh.positions().size());
+				msh.mesh = proto_mesh::parse_from_section(chunk);
+				msh.morph_positions.resize(msh.mesh.positions.size());
 				break;
 			case morph_mesh_chunk::morph:
-				for (std::uint32_t i = 0; i < msh._m_morph_positions.size(); ++i) {
-					msh._m_morph_positions[i] = chunk.get_vec3();
+				for (std::uint32_t i = 0; i < msh.morph_positions.size(); ++i) {
+					msh.morph_positions[i] = chunk.get_vec3();
 				}
 				break;
 			case morph_mesh_chunk::animations: {
 				auto animation_count = chunk.get_ushort();
-				msh._m_animations.reserve(animation_count);
+				msh.animations.reserve(animation_count);
 
 				for (int i = 0; i < animation_count; ++i) {
-					auto& anim = msh._m_animations.emplace_back();
+					auto& anim = msh.animations.emplace_back();
 					anim.name = chunk.get_line(false);
 					anim.blend_in = chunk.get_float();
 					anim.blend_out = chunk.get_float();
