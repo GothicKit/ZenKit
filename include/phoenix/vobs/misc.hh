@@ -37,7 +37,7 @@ namespace phoenix {
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
-			static void parse(animate& obj, std::unique_ptr<archive_reader>& ctx, game_version version);
+			static void parse(animate& obj, archive_reader& ctx, game_version version);
 		};
 
 		/// \brief A VOb representing an in-game item.
@@ -50,7 +50,7 @@ namespace phoenix {
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
-			static void parse(item& obj, std::unique_ptr<archive_reader>& ctx, game_version version);
+			static void parse(item& obj, archive_reader& ctx, game_version version);
 		};
 
 		/// \brief A VOb representing a [lens flare](https://en.wikipedia.org/wiki/Lens_flare).
@@ -63,7 +63,7 @@ namespace phoenix {
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
-			static void parse(lens_flare& obj, std::unique_ptr<archive_reader>& ctx, game_version version);
+			static void parse(lens_flare& obj, archive_reader& ctx, game_version version);
 		};
 
 		/// \brief A VOb representing a particle system controller.
@@ -78,7 +78,7 @@ namespace phoenix {
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
-			static void parse(pfx_controller& obj, std::unique_ptr<archive_reader>& ctx, game_version version);
+			static void parse(pfx_controller& obj, archive_reader& ctx, game_version version);
 		};
 
 		struct message_filter : public vob {
@@ -92,7 +92,7 @@ namespace phoenix {
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
-			static void parse(message_filter& obj, std::unique_ptr<archive_reader>& ctx, game_version version);
+			static void parse(message_filter& obj, archive_reader& ctx, game_version version);
 		};
 
 		struct code_master : public vob {
@@ -109,7 +109,7 @@ namespace phoenix {
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
-			static void parse(code_master& obj, std::unique_ptr<archive_reader>& ctx, game_version version);
+			static void parse(code_master& obj, archive_reader& ctx, game_version version);
 		};
 
 		struct mover_controller : public vob {
@@ -123,7 +123,7 @@ namespace phoenix {
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
-			static void parse(mover_controller& obj, std::unique_ptr<archive_reader>& ctx, game_version version);
+			static void parse(mover_controller& obj, archive_reader& ctx, game_version version);
 		};
 
 		/// \brief A VOb which represents a damage source.
@@ -149,7 +149,7 @@ namespace phoenix {
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
-			static void parse(touch_damage& obj, std::unique_ptr<archive_reader>& ctx, game_version version);
+			static void parse(touch_damage& obj, archive_reader& ctx, game_version version);
 		};
 
 		/// \brief A VOb which represents an earthquake-like effect.
@@ -164,7 +164,7 @@ namespace phoenix {
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
-			static void parse(earthquake& obj, std::unique_ptr<archive_reader>& ctx, game_version version);
+			static void parse(earthquake& obj, archive_reader& ctx, game_version version);
 		};
 	} // namespace vobs
 } // namespace phoenix

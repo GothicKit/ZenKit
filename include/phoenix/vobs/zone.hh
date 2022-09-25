@@ -19,7 +19,7 @@ namespace phoenix::vobs {
 		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 		/// \throws parser_error if parsing fails.
 		/// \see vob::parse
-		static void parse(zone_music& obj, std::unique_ptr<archive_reader>& ctx, game_version version);
+		static void parse(zone_music& obj, archive_reader& ctx, game_version version);
 	};
 
 	/// \brief A VOb which defines the far plane settings in a certain zone.
@@ -33,7 +33,7 @@ namespace phoenix::vobs {
 		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 		/// \throws parser_error if parsing fails.
 		/// \see vob::parse
-		static void parse(zone_far_plane& obj, std::unique_ptr<archive_reader>& ctx, game_version version);
+		static void parse(zone_far_plane& obj, archive_reader& ctx, game_version version);
 	};
 
 	/// \brief A VOb which defines the fog in a certain zone.
@@ -50,6 +50,6 @@ namespace phoenix::vobs {
 		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 		/// \throws parser_error if parsing fails.
 		/// \see vob::parse
-		static void parse(zone_fog& obj, std::unique_ptr<archive_reader>& ctx, game_version version);
+		static void parse(zone_fog& obj, archive_reader& ctx, game_version version);
 	};
 } // namespace phoenix::vobs

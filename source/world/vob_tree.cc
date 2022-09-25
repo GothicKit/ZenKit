@@ -62,11 +62,11 @@ namespace phoenix {
 	    {"\xA7", vob_type::unknown}, // some sort of padding object, probably. seems to be always empty
 	};
 
-	std::unique_ptr<vob> parse_vob_tree(std::unique_ptr<archive_reader>& in, game_version version) {
+	std::unique_ptr<vob> parse_vob_tree(archive_reader& in, game_version version) {
 		std::vector<std::unique_ptr<vob>> vobs {};
 
 		archive_object obj;
-		if (!in->read_object_begin(obj)) {
+		if (!in.read_object_begin(obj)) {
 			throw parser_error("vob_tree: expected object where there was none");
 		}
 
@@ -220,19 +220,19 @@ namespace phoenix {
 			break;
 		}
 
-		if (!in->read_object_end()) {
+		if (!in.read_object_end()) {
 			PX_LOGW("vob: VOb \"{}\" not fully parsed", obj.class_name);
-			in->skip_object(true);
+			in.skip_object(true);
 		}
 
-		auto child_count = in->read_int();
+		auto child_count = in.read_int();
 		if (object == nullptr) {
 			std::function<void(int)> skip;
 			skip = [&skip, &in](int count) {
 				for (int i = 0; i < count; ++i) {
-					in->skip_object(false);
+					in.skip_object(false);
 
-					auto child_count = in->read_int();
+					auto child_count = in.read_int();
 					skip(child_count);
 				}
 			};

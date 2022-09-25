@@ -76,17 +76,8 @@ namespace phoenix {
 		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 		/// \return The parsed material object.
 		/// \throws parser_error if parsing fails.
-		/// \see #parse(std::unique_ptr<archive_reader>&&) for an owning version this function.
-		[[nodiscard]] static material parse(std::unique_ptr<archive_reader>& ctx);
-
-		/// \brief Parses a material from the given *ZenGin* archive.
-		/// \param[in] ctx The archive reader to read from.
-		/// \return The parsed material object.
-		/// \throws parser_error if parsing fails.
-		/// \see #parse(std::unique_ptr<archive_reader>&)
-		[[nodiscard]] inline static material parse(std::unique_ptr<archive_reader>&& in) {
-			return material::parse(in);
-		}
+		/// \see #parse(archive_reader&&) for an owning version this function.
+		[[nodiscard]] static material parse(archive_reader& ctx);
 
 	public:
 		std::string name;

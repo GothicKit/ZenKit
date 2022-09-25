@@ -13,7 +13,7 @@ TEST_SUITE("material") {
 		{
 			auto in = buffer::mmap("./samples/material1_g1.mat");
 			auto archive = archive_reader::open(in);
-			auto m1 = material::parse(archive);
+			auto m1 = material::parse(*archive);
 
 			CHECK(m1.name == "DT_BOOKSHELF_V1_1");
 			CHECK(m1.group == material_group::undefined);
@@ -31,7 +31,7 @@ TEST_SUITE("material") {
 			CHECK(m1.default_mapping.x == 2.343750f);
 			CHECK(m1.default_mapping.y == 2.343750f);
 
-			auto m2 = material::parse(archive);
+			auto m2 = material::parse(*archive);
 			CHECK(m2.name == "DT_BOOKSHELF_V1_2");
 			CHECK(m2.group == material_group::undefined);
 			CHECK(m2.color == glm::u8vec4 {0x19, 0x2A, 0x39, 0xFF});
@@ -52,7 +52,7 @@ TEST_SUITE("material") {
 		{
 			auto in = buffer::mmap("./samples/material2_g1.mat");
 			auto archive = archive_reader::open(in);
-			auto m1 = material::parse(archive);
+			auto m1 = material::parse(*archive);
 
 			CHECK(m1.name == "MATERIAL #356");
 			CHECK(m1.group == material_group::undefined);
@@ -70,7 +70,7 @@ TEST_SUITE("material") {
 			CHECK(m1.default_mapping.x == 2.343750f);
 			CHECK(m1.default_mapping.y == 2.343750f);
 
-			auto m2 = material::parse(archive);
+			auto m2 = material::parse(*archive);
 			CHECK(m2.name == "ERZZB1_TL");
 			CHECK(m2.group == material_group::undefined);
 			CHECK(m2.color == glm::u8vec4 {0x17, 0x1A, 0x21, 0xFF});

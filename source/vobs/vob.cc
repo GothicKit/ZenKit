@@ -21,30 +21,30 @@ namespace phoenix {
 	    {"%", visual_type::unknown},
 	};
 
-	decal decal::parse(std::unique_ptr<archive_reader>& in, game_version version) {
+	decal decal::parse(archive_reader& in, game_version version) {
 		decal dc {};
-		dc.name = in->read_string();                                  // name
-		dc.dimension = in->read_vec2();                               // decalDim
-		dc.offset = in->read_vec2();                                  // decalOffset
-		dc.two_sided = in->read_bool();                               // decal2Sided
-		dc.alpha_func = static_cast<alpha_function>(in->read_enum()); // decalAlphaFunc
-		dc.texture_anim_fps = in->read_float();                       // decalTexAniFPS
+		dc.name = in.read_string();                                  // name
+		dc.dimension = in.read_vec2();                               // decalDim
+		dc.offset = in.read_vec2();                                  // decalOffset
+		dc.two_sided = in.read_bool();                               // decal2Sided
+		dc.alpha_func = static_cast<alpha_function>(in.read_enum()); // decalAlphaFunc
+		dc.texture_anim_fps = in.read_float();                       // decalTexAniFPS
 
 		if (version == game_version::gothic_2) {
-			dc.alpha_weight = in->read_byte();    // decalAlphaWeight
-			dc.ignore_daylight = in->read_bool(); // ignoreDayLight
+			dc.alpha_weight = in.read_byte();    // decalAlphaWeight
+			dc.ignore_daylight = in.read_bool(); // ignoreDayLight
 		}
 
 		return dc;
 	}
 
-	void vob::parse(vob& obj, std::unique_ptr<archive_reader>& in, game_version version) {
-		auto packed = in->read_int() != 0; // pack
+	void vob::parse(vob& obj, archive_reader& in, game_version version) {
+		auto packed = in.read_int() != 0; // pack
 		bool has_visual_object = true;
 		bool has_ai_object = true;
 
 		if (packed) {
-			auto bin = in->read_raw_bytes(); // dataRaw
+			auto bin = in.read_raw_bytes(); // dataRaw
 
 			obj.bbox = bounding_box::parse(bin);
 			obj.position = bin.get_vec3();
@@ -84,63 +84,63 @@ namespace phoenix {
 			}
 
 			if (has_preset_name) {
-				obj.preset_name = in->read_string(); // presetName
+				obj.preset_name = in.read_string(); // presetName
 			}
 
 			if (has_vob_name) {
-				obj.vob_name = in->read_string(); // vobName
+				obj.vob_name = in.read_string(); // vobName
 			}
 
 			if (has_visual_name) {
-				obj.visual_name = in->read_string(); // visual
+				obj.visual_name = in.read_string(); // visual
 			}
 		} else {
-			obj.preset_name = in->read_string();
-			obj.bbox = in->read_bbox(); // bbox3DWS
+			obj.preset_name = in.read_string();
+			obj.bbox = in.read_bbox(); // bbox3DWS
 
-			obj.rotation = in->read_mat3x3(); // trafoOSToWSRot
-			obj.position = in->read_vec3();   // trafoOSToWSPos
+			obj.rotation = in.read_mat3x3(); // trafoOSToWSRot
+			obj.position = in.read_vec3();   // trafoOSToWSPos
 
-			obj.vob_name = in->read_string();                                      // vobName
-			obj.visual_name = in->read_string();                                   // visual
-			obj.show_visual = in->read_bool();                                     // showVisual
-			obj.camera_alignment = static_cast<camera_lock_mode>(in->read_enum()); // visualCamAlign
+			obj.vob_name = in.read_string();                                      // vobName
+			obj.visual_name = in.read_string();                                   // visual
+			obj.show_visual = in.read_bool();                                     // showVisual
+			obj.camera_alignment = static_cast<camera_lock_mode>(in.read_enum()); // visualCamAlign
 
 			if (version == game_version::gothic_1) {
-				obj.cd_static = in->read_bool();                                 // cdStatic
-				obj.cd_dynamic = in->read_bool();                                // cdDyn
-				obj.vob_static = in->read_bool();                                // staticVob
-				obj.dynamic_shadows = static_cast<shadow_mode>(in->read_enum()); // dynShadow
+				obj.cd_static = in.read_bool();                                 // cdStatic
+				obj.cd_dynamic = in.read_bool();                                // cdDyn
+				obj.vob_static = in.read_bool();                                // staticVob
+				obj.dynamic_shadows = static_cast<shadow_mode>(in.read_enum()); // dynShadow
 			} else {
-				obj.anim_mode = static_cast<animation_mode>(in->read_enum());    // visualAniMode
-				obj.anim_strength = in->read_float();                            // visualAniModeStrength
-				obj.far_clip_scale = in->read_float();                           // vobFarClipZScale
-				obj.cd_static = in->read_bool();                                 // cdStatic
-				obj.cd_dynamic = in->read_bool();                                // cdDyn
-				obj.vob_static = in->read_bool();                                // staticVob
-				obj.dynamic_shadows = static_cast<shadow_mode>(in->read_enum()); // dynShadow
-				obj.bias = in->read_int();                                       // zbias
-				obj.ambient = in->read_bool();                                   // isAmbient
+				obj.anim_mode = static_cast<animation_mode>(in.read_enum());    // visualAniMode
+				obj.anim_strength = in.read_float();                            // visualAniModeStrength
+				obj.far_clip_scale = in.read_float();                           // vobFarClipZScale
+				obj.cd_static = in.read_bool();                                 // cdStatic
+				obj.cd_dynamic = in.read_bool();                                // cdDyn
+				obj.vob_static = in.read_bool();                                // staticVob
+				obj.dynamic_shadows = static_cast<shadow_mode>(in.read_enum()); // dynShadow
+				obj.bias = in.read_int();                                       // zbias
+				obj.ambient = in.read_bool();                                   // isAmbient
 			}
 		}
 
 		if (has_visual_object) {
 			archive_object visual {};
-			in->read_object_begin(visual);
+			in.read_object_begin(visual);
 			obj.associated_visual_type = visual_type_map[visual.class_name];
 
 			if (obj.associated_visual_type == visual_type::decal) {
 				obj.visual_decal = decal::parse(in, version);
 			}
 
-			if (!in->read_object_end()) {
+			if (!in.read_object_end()) {
 				PX_LOGW("vob_tree: visual \"{}\" not fully parsed", visual.class_name);
-				in->skip_object(true);
+				in.skip_object(true);
 			}
 		}
 
 		if (has_ai_object) {
-			in->skip_object(false);
+			in.skip_object(false);
 		}
 	}
 } // namespace phoenix

@@ -48,13 +48,13 @@ namespace phoenix {
 					wld.world_vobs.reserve(count);
 
 					for (int i = 0; i < count; ++i) {
-						auto child = parse_vob_tree(archive, version);
+						auto child = parse_vob_tree(*archive, version);
 						if (child == nullptr)
 							continue;
 						wld.world_vobs.push_back(std::move(child));
 					}
 				} else if (chnk.object_name == "WayNet") {
-					wld.world_way_net = way_net::parse(archive);
+					wld.world_way_net = way_net::parse(*archive);
 				}
 
 				if (!archive->read_object_end()) {

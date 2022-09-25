@@ -111,7 +111,7 @@ namespace phoenix {
 		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 		/// \return The parsed decal.
 		/// \throws parser_error if parsing fails.
-		static decal parse(std::unique_ptr<archive_reader>& ctx, game_version version);
+		static decal parse(archive_reader& ctx, game_version version);
 	};
 
 	/// \brief The base class for all VObs.
@@ -159,6 +159,6 @@ namespace phoenix {
 		/// \param[in,out] ctx The archive reader to read from.
 		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 		/// \throws parser_error if parsing fails.
-		static void parse(vob& obj, std::unique_ptr<archive_reader>& ctx, game_version version);
+		static void parse(vob& obj, archive_reader& ctx, game_version version);
 	};
 } // namespace phoenix

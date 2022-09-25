@@ -5,32 +5,32 @@
 #include <fmt/format.h>
 
 namespace phoenix {
-	static void read_waypoint_data(way_point& wp, std::unique_ptr<archive_reader>& in) {
-		wp.name = in->read_string();      // wpName
-		wp.water_depth = in->read_int();  // waterDepth
-		wp.under_water = in->read_bool(); // underWater
-		wp.position = in->read_vec3();    // position
-		wp.direction = in->read_vec3();   // direction
+	static void read_waypoint_data(way_point& wp, archive_reader& in) {
+		wp.name = in.read_string();      // wpName
+		wp.water_depth = in.read_int();  // waterDepth
+		wp.under_water = in.read_bool(); // underWater
+		wp.position = in.read_vec3();    // position
+		wp.direction = in.read_vec3();   // direction
 		wp.free_point = true;
 	}
 
-	way_net way_net::parse(std::unique_ptr<archive_reader>& in) {
+	way_net way_net::parse(archive_reader& in) {
 		try {
 			way_net net;
 			archive_object obj;
 
-			if (!in->read_object_begin(obj)) {
+			if (!in.read_object_begin(obj)) {
 				throw parser_error {"way_net", "root object missing"};
 			}
 
-			(void) /* auto version = */ in->read_int(); // waynetVersion
-			auto count = in->read_int();                // numWaypoints
+			(void) /* auto version = */ in.read_int(); // waynetVersion
+			auto count = in.read_int();                // numWaypoints
 			net.waypoints.reserve(count);
 
 			std::unordered_map<std::uint32_t, std::uint32_t> obj_id_to_wp {};
 
 			for (int i = 0; i < count; ++i) {
-				if (!in->read_object_begin(obj) || obj.class_name != "zCWaypoint") {
+				if (!in.read_object_begin(obj) || obj.class_name != "zCWaypoint") {
 					throw parser_error {"way_net", fmt::format("missing waypoint object #{}", i)};
 				}
 
@@ -40,19 +40,19 @@ namespace phoenix {
 				net._m_name_to_waypoint[wp.name] = net.waypoints.size() - 1;
 				obj_id_to_wp[obj.index] = net.waypoints.size() - 1;
 
-				if (!in->read_object_end()) {
+				if (!in.read_object_end()) {
 					PX_LOGW("way_net: free point {} not fully parsed", obj.index);
-					in->skip_object(true);
+					in.skip_object(true);
 				}
 			}
 
-			auto edge_count = in->read_int(); // numWays
+			auto edge_count = in.read_int(); // numWays
 
 			for (int i = 0; i < edge_count; ++i) {
 				auto& edge = net.edges.emplace_back();
 
 				for (int j = 0; j < 2; ++j) {
-					if (!in->read_object_begin(obj)) {
+					if (!in.read_object_begin(obj)) {
 						throw parser_error {"way_net", fmt::format("missing edge object #{}", i)};
 					}
 
@@ -79,16 +79,16 @@ namespace phoenix {
 						edge.b = wp;
 					}
 
-					if (!in->read_object_end()) {
+					if (!in.read_object_end()) {
 						PX_LOGW("way_net: edge {} at index {} not fully parsed", i * 2 + j, obj.index);
-						in->skip_object(true);
+						in.skip_object(true);
 					}
 				}
 			}
 
-			if (!in->read_object_end()) {
+			if (!in.read_object_end()) {
 				PX_LOGW("way_net: not fully parsed");
-				in->skip_object(true);
+				in.skip_object(true);
 			}
 			return net;
 		} catch (const buffer_error& exc) {

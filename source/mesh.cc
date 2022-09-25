@@ -54,7 +54,7 @@ namespace phoenix {
 				msh.materials.reserve(material_count);
 
 				for (std::uint32_t i = 0; i < material_count; ++i) {
-					msh.materials.emplace_back(material::parse(matreader));
+					msh.materials.emplace_back(material::parse(*matreader));
 				}
 
 				break;

@@ -35,7 +35,7 @@ namespace phoenix {
 		/// \brief PParses a way-net from the given reader.
 		/// \param in The reader to read from.
 		/// \return The way-net parsed.
-		static way_net parse(std::unique_ptr<archive_reader>& in);
+		static way_net parse(archive_reader& in);
 
 		/// \brief Get the waypoint with the given name.
 		/// \param name The name of the waypoint to get.

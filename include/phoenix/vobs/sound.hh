@@ -43,7 +43,7 @@ namespace phoenix {
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
-			static void parse(sound& obj, std::unique_ptr<archive_reader>& ctx, game_version version);
+			static void parse(sound& obj, archive_reader& ctx, game_version version);
 		};
 
 		/// \brief A VOb which emits a sound only during certain times of the day.
@@ -58,7 +58,7 @@ namespace phoenix {
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
-			static void parse(sound_daytime& obj, std::unique_ptr<archive_reader>& ctx, game_version version);
+			static void parse(sound_daytime& obj, archive_reader& ctx, game_version version);
 		};
 	} // namespace vobs
 } // namespace phoenix

@@ -15,5 +15,5 @@ namespace phoenix {
 	/// \param in The reader to read from.
 	/// \param version The version of Gothic being used.
 	/// \return The tree parsed.
-	std::unique_ptr<vob> parse_vob_tree(std::unique_ptr<archive_reader>& in, game_version version);
+	std::unique_ptr<vob> parse_vob_tree(archive_reader& in, game_version version);
 } // namespace phoenix
