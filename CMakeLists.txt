@@ -109,7 +109,10 @@ target_include_directories(phoenix PUBLIC include)
 target_link_libraries(phoenix PUBLIC glm fmt squish mio lexy)
 target_compile_definitions(phoenix PUBLIC ${PHOENIX_DEFINES})
 target_compile_options(phoenix PRIVATE ${PHOENIX_CXX_FLAGS})
-target_link_options(phoenix PUBLIC ${PHOENIX_CXX_FLAGS})
+
+if (NOT MSVC)
+    target_link_options(phoenix PUBLIC ${PHOENIX_CXX_FLAGS})
+endif ()
 
 # set phoenix library properties
 set_target_properties(phoenix

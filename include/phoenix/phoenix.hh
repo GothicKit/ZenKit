@@ -121,7 +121,7 @@ namespace phoenix {
 	};
 
 	template <typename T>
-	T parse(buffer& buf) {
+	T parse([[maybe_unused]] buffer& buf) {
 		throw parser_error {"unknown", "parsing routine not implemented"};
 	}
 
@@ -131,7 +131,7 @@ namespace phoenix {
 	}
 
 	template <typename T>
-	T parse(archive_reader& buf) {
+	T parse([[maybe_unused]] archive_reader& buf) {
 		throw parser_error {"unknown", "parsing routine not implemented"};
 	}
 } // namespace phoenix
