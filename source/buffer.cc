@@ -5,6 +5,8 @@
 #include <fmt/format.h>
 #include <mio/mmap.hpp>
 
+#include <fstream>
+
 namespace phoenix {
 	namespace detail {
 		/// \brief A buffer backing which saves data on the heap.
@@ -175,6 +177,16 @@ namespace phoenix {
 		}
 
 		return buffer {std::make_shared<detail::mmap_backing<mio::access_mode::write>>(path)};
+	}
+
+	buffer buffer::read(const std::filesystem::path& path, bool readonly) {
+		std::ifstream in {path, std::ios::binary | std::ios::ate};
+		std::vector<std::byte> data {static_cast<size_t>(in.tellg())};
+
+		in.seekg(0);
+		in.read((char*) data.data(), data.size());
+
+		return buffer::of(std::move(data), readonly);
 	}
 
 	buffer buffer::empty() {

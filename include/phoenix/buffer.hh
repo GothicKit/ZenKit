@@ -785,6 +785,18 @@ namespace phoenix {
 		/// \return The newly created buffer.
 		static buffer mmap(const std::filesystem::path& path, bool readonly = true);
 
+		/// \brief Opens the given file as an indirect buffer.
+		///
+		/// The whole file is read into memory.
+		///
+		/// \param path The path of the file to read.
+		/// \param readonly Set to `false` to be able to write to the buffer.
+		/// \note Creating a buffer using this method is generally discouraged. It might cause a small performance
+		///       gain for small files but it is generally slower and uses more memory. You should probably use #mmap
+		///       instead.
+		/// \return The newly created buffer.
+		static buffer read(const std::filesystem::path& path, bool readonly = true);
+
 		/// \brief Returns a duplicate of the empty buffer.
 		/// \return The empty buffer.
 		static buffer empty();
