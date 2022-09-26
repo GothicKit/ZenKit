@@ -6,11 +6,10 @@
 ![License](https://img.shields.io/github/license/lmichaelis/phoenix?label=License&color=important)
 ![C++](https://img.shields.io/static/v1?label=C%2B%2B&message=17&color=informational)
 ![Platforms](https://img.shields.io/static/v1?label=Supports&message=GCC%20|%20Clang%20|%20MSVC%20|%20Apple%20Clang&color=blueviolet)
+![Version](https://img.shields.io/github/v/tag/lmichaelis/phoenix?label=Version&sort=semver)
 
-**🐲 This repository is currently frozen in preparation for _phoenix'_ 1.0 release. Only bugs and incorrect behavior
-will be addressed until then. Expect this freeze to last
-until [OpenGothic#271](https://github.com/Try/OpenGothic/pull/271)
-is merged.**
+**🐲 Here be dragons! _phoenix_ is still changing a lot and might break your code if you choose to update.
+See [versioning](#versioning) for details.**
 
 The _phoenix_ project aims to re-implement file formats used by the _ZenGin_ made
 by [Piranha Bytes](https://www.piranha-bytes.com/)
@@ -23,8 +22,9 @@ _phoenix_ includes **parsers and basic datastructures** for most file formats us
 type-safe **VM for _Daedalus_ scripts** and supporting infrastructure like _Gothic II_ class definitions. Tools for
 inspecting and converting _ZenGin_ files can be found in [phoenix studio](https://github.com/lmichaelis/phoenix-studio).
 
-## contributing
-If you'd like to contribute, please read [contributing](contributing.md) first.
+To get started, take a look in the [📖 Wiki](https://github.com/lmichaelis/phoenix/wiki). Don't hesitate to open a
+discussion thread over in [Discussions](https://github.com/lmichaelis/phoenix/discussions) if you have a question or
+need help. Please open an issue for any bug you encounter!
 
 ## supported file formats
 Currently, the following file formats are supported.
@@ -47,7 +47,12 @@ Currently, the following file formats are supported.
 | Model Script Binary      |             `.MSB`             | Contains model animation script data and associated hierarchy and mesh information (binary form)                           | `model_script`       |
 | Virtual Disk             |             `.VDF`             | Contains a directory structure containing multiple files; similar to [tar](https://en.wikipedia.org/wiki/Tar_(computing)). | `vdf_file`           |
 
+## contributing
+
+If you'd like to contribute, please read [contributing](contributing.md) first.
+
 ## building
+
 _phoenix_ is currently only tested on Linux and while Windows _should_ be supported you might run into issues. If so,
 feel free to create an issue or open a merge request. You will need
 
@@ -234,9 +239,20 @@ int main(int, char**) {
 ```
 
 For more examples on how to use _phoenix_, take a look into the
-[`examples`](https://github.com/lmichaelis/phoenix/tree/main/examples) and
-[`tools`](https://github.com/lmichaelis/phoenix/tree/main/tools) directories. A working example of using the VM can be
+[`examples`](https://github.com/lmichaelis/phoenix/tree/main/examples) directory and
+[`phoenix-studio`](https://github.com/lmichaelis/phoenix-studio) repository. A working example of using the VM can be
 found in [`examples/run_interpreter.cc`](https://github.com/lmichaelis/phoenix/blob/main/examples/run_interpreter.cc).
+
+## versioning
+
+_phoenix_ uses [semantic versioning](https://semver.org/). Before updating _phoenix_ in your application, make sure
+that you are aware of potential breaking changes to the API. A detailed log of changes can be found in
+[changelog.md](changelog.md) as well as the releases section of the GitHub repository page.
+
+The `main` branch is used for _phoenix_ development and contains potentially breaking changes without any kind of
+warning. Each minor version of _phoenix_ will get its own branch (e.g. `v1.0`). Within these branches API stability is
+guaranteed and patches will be merged into them as required. Patches will be backported to the last minor as well (i.e.
+if `v1.3.4` is a bugfix-release, its contents will be backported to `v1.2.*` but not `v1.1.*` or any previous version).
 
 ## licensing
 

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 include(CheckIncludeFiles)
-project(phoenix)
+project(phoenix VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(PHOENIX_LOG_LEVEL 3 CACHE STRING "The logging level to use for phoenix. Set to 4, 3, 2, or 1 for DEBUG, INFO, WARN or ERROR respectively")
@@ -119,7 +119,8 @@ set_target_properties(phoenix
         PROPERTIES
         ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
         LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+        VERSION ${PROJECT_VERSION})
 
 # when building tests, create a test executable and load it into CTest
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
