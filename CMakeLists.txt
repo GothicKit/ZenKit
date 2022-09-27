@@ -124,7 +124,7 @@ set_target_properties(phoenix
 # when building tests, create a test executable and load it into CTest
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     enable_testing()
-    include(vendor/doctest/scripts/cmake/doctest.cmake)
+    include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
 
     add_executable(phoenix-tests ${PHOENIX_TESTS})
     target_link_libraries(phoenix-tests PRIVATE phoenix doctest_with_main)
