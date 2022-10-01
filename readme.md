@@ -7,8 +7,10 @@
 ![C++](https://img.shields.io/static/v1?label=C%2B%2B&message=17&color=informational)
 ![Platforms](https://img.shields.io/static/v1?label=Supports&message=GCC%20|%20Clang%20|%20MSVC%20|%20Apple%20Clang&color=blueviolet)
 
-**Here be dragons! _phoenix_ is currently changing very rapidly and your application _will_ break! Be prepared to change
-a lot of code when updating to new versions!**
+**🐲 This repository is currently frozen in preparation for _phoenix'_ 1.0 release. Only bugs and incorrect behavior
+will be addressed until then. Expect this freeze to last
+until [OpenGothic#271](https://github.com/Try/OpenGothic/pull/271)
+is merged.**
 
 The _phoenix_ project aims to re-implement file formats used by the _ZenGin_ made
 by [Piranha Bytes](https://www.piranha-bytes.com/)
