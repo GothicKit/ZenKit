@@ -780,9 +780,6 @@ namespace phoenix {
 		script(const script& copy) = default;
 		script(script&& move) = default;
 
-		// TODO: When the script is destroyed, clear all references to symbols inside it from all instances already
-		//       initialized!
-
 		template <typename _class, typename _member, int N>
 		symbol* _check_member(const std::string& name, const std::type_info* type) {
 			auto* sym = find_symbol_by_name(name);
