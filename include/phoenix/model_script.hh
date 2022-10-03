@@ -234,16 +234,18 @@ namespace phoenix {
 		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
+		/// \deprecated model_script::parse can now handle both binary and text file types.
 		/// \see #parse_binary(buffer&&)
-		[[nodiscard]] static model_script parse_binary(buffer& buf);
+		[[nodiscard, deprecated("use model_script::parse()")]] static model_script parse_binary(buffer& buf);
 
 		// \brief Parses a compiled model script from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed model script.
 		/// \throws parser_error if parsing fails.
+		/// \deprecated model_script::parse can now handle both binary and text file types.
 		/// \see #parse_binary(buffer&)
-		[[nodiscard]] inline static model_script parse_binary(buffer&& buf) {
-			return model_script::parse_binary(buf);
+		[[nodiscard, deprecated("use model_script::parse()")]] inline static model_script parse_binary(buffer&& buf) {
+			return model_script::parse(buf);
 		}
 
 	public:
