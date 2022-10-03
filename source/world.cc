@@ -7,6 +7,43 @@
 #include <fmt/format.h>
 
 namespace phoenix {
+	[[maybe_unused]] static constexpr uint32_t BSP_VERSION_G1 = 0x2090000;
+	static constexpr uint32_t BSP_VERSION_G2 = 0x4090000;
+
+	/// \brief Tries to determine the serialization version of a game world.
+	///
+	/// This function might be very slow. If the VOb tree or way-net or both come before the mesh section in the
+	/// archive, they have to be skipped since only the `MeshAndBsp` section of the world can be used to reliably
+	/// determine the version being used.
+	///
+	/// \param buf A buffer containing the world's data.
+	/// \return The game version associated with that world.
+	game_version determine_world_version(buffer&& buf) {
+		auto archive = archive_reader::open(buf);
+
+		archive_object chnk {};
+		archive->read_object_begin(chnk);
+
+		while (!archive->read_object_end()) {
+			archive->read_object_begin(chnk);
+
+			if (chnk.object_name == "MeshAndBsp") {
+				auto bsp_version = buf.get_uint();
+
+				if (bsp_version == BSP_VERSION_G2) {
+					return game_version::gothic_2;
+				} else {
+					return game_version::gothic_1;
+				}
+			}
+
+			archive->skip_object(true);
+		}
+
+		PX_LOGE("world: failed to determine world version. Assuming Gothic 1.");
+		return game_version::gothic_1;
+	}
+
 	world world::parse(buffer& in, game_version version) {
 		try {
 			world wld;
@@ -71,5 +108,10 @@ namespace phoenix {
 		} catch (const buffer_error& exc) {
 			throw parser_error {"world", exc, "eof reached"};
 		}
+	}
+
+	world world::parse(buffer& buf) {
+		auto version = determine_world_version(buf.duplicate());
+		return world::parse(buf, version);
 	}
 } // namespace phoenix
