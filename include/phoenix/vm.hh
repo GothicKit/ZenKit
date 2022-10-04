@@ -506,6 +506,18 @@ namespace phoenix {
 		/// external.
 		void register_default_external(const std::function<void(std::string_view)>& callback);
 
+		/// \brief Registers a function to be called when script execution fails.
+		///
+		/// A variety of exceptions can occur within the VM while executing. The function passed to this handler can
+		/// inspect and alter the VMs state to try to correct the error.
+		///
+		/// \param callback The function to call. It receives a reference to the VM and the exception that occurred.
+		///                 If the function returns `true` the error is assumed to have been handled and execution will
+		///                 continue as normal. If `false` is returned, the VM will re-raise the exception and thus,
+		///                 halt execution.
+		void
+		register_exception_handler(const std::function<bool(vm&, const script_error&, const instruction&)>& callback);
+
 		/// \return the symbol referring to the global <tt>var C_NPC self</tt>.
 		inline symbol* global_self() {
 			return _m_self_sym;
@@ -533,6 +545,11 @@ namespace phoenix {
 
 		/// \brief Prints the contents of the function call stack and the VMs stack to stderr.
 		void print_stack_trace() const;
+
+		/// \return The current program counter (or instruction index) the VM is at.
+		[[nodiscard]] inline uint32_t pc() const noexcept {
+			return _m_pc;
+		}
 
 	protected:
 		/// \brief Calls the given symbol as a function.
@@ -785,7 +802,9 @@ namespace phoenix {
 		std::stack<daedalus_call_stack_frame> _m_call_stack;
 		std::unordered_map<symbol*, std::function<void(vm&)>> _m_externals;
 		std::unordered_map<uint32_t, std::function<void(vm&)>> _m_function_overrides;
-		std::optional<std::function<void(vm&, symbol&)>> _m_external_error_handler {std::nullopt};
+		std::optional<std::function<void(vm&, symbol&)>> _m_default_external {std::nullopt};
+		std::optional<std::function<bool(vm&, const script_error&, const instruction&)>> _m_exception_handler {
+		    std::nullopt};
 
 		symbol* _m_self_sym;
 		symbol* _m_other_sym;
@@ -799,4 +818,14 @@ namespace phoenix {
 		std::uint32_t _m_pc {0};
 		std::uint8_t _m_flags {execution_flag::none};
 	};
+
+	/// \brief A VM exception handler which handles some and pretends to handle other VM exceptions.
+	///
+	/// Some exceptions are just ignored and some are handled properly.
+	///
+	/// \param v The VM the exception occurred in.
+	/// \param exc The exception being handled.
+	/// \param instr The instruction being executed.
+	/// \return `true`.
+	bool lenient_vm_exception_handler(vm& v, const script_error& exc, const instruction& instr);
 } // namespace phoenix

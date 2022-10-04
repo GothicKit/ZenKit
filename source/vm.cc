@@ -33,7 +33,6 @@ namespace phoenix {
 		symbol* sym {};
 
 		try {
-
 			switch (instr.op) {
 			case opcode::add:
 				push_int(pop_int() + pop_int());
@@ -151,8 +150,8 @@ namespace phoenix {
 
 				auto cb = _m_externals.find(sym);
 				if (cb == _m_externals.end()) {
-					if (_m_external_error_handler.has_value()) {
-						(*_m_external_error_handler)(*this, *sym);
+					if (_m_default_external.has_value()) {
+						(*_m_default_external)(*this, *sym);
 						break;
 					} else {
 						throw vm_exception {"be: no external registered for " + sym->name()};
@@ -272,13 +271,22 @@ namespace phoenix {
 				push_reference(sym, instr.index);
 				break;
 			}
-		} catch (const std::exception& err) {
-			std::cerr << "+++ Error while executing script: " << err.what() << "+++\n\n";
-			print_stack_trace();
-			throw std::domain_error {std::string {err.what()}};
+
+			_m_pc += instr.size;
+		} catch (phoenix::script_error& err) {
+			uint32_t prev_pc = _m_pc;
+
+			if (_m_exception_handler && !(*_m_exception_handler)(*this, err, instr)) {
+				std::cerr << "+++ Error while executing script: " << err.what() << "+++\n\n";
+				print_stack_trace();
+				throw err;
+			}
+
+			if (_m_pc == prev_pc) {
+				_m_pc += instr.size;
+			}
 		}
 
-		_m_pc += instr.size;
 		return true;
 	}
 
@@ -440,7 +448,7 @@ namespace phoenix {
 	}
 
 	void vm::register_default_external(const std::function<void(std::string_view)>& callback) {
-		_m_external_error_handler = [this, callback](vm& v, symbol& sym) {
+		_m_default_external = [this, callback](vm& v, symbol& sym) {
 			// pop all parameters from the stack
 			auto params = find_parameters_for_function(&sym);
 			for (int i = params.size() - 1; i >= 0; --i) {
@@ -469,6 +477,11 @@ namespace phoenix {
 
 			callback(sym.name());
 		};
+	}
+
+	void
+	vm::register_exception_handler(const std::function<bool(vm&, const script_error&, const instruction&)>& callback) {
+		_m_exception_handler = callback;
 	}
 
 	void vm::print_stack_trace() const {
@@ -566,4 +579,75 @@ namespace phoenix {
 	                                  "external " + sym->name() + " has illegal parameter type '" + provided +
 	                                      "' (no. " + std::to_string(i) + "), expected '" +
 	                                      DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) sym->type()] + "'") {}
+
+	bool lenient_vm_exception_handler(vm& v, const script_error& exc, const instruction& instr) {
+		PX_LOGE("vm: internal exception: {}", exc.what());
+
+		switch (instr.op) {
+		case opcode::add:
+		case opcode::sub:
+		case opcode::mul:
+		case opcode::div:
+		case opcode::mod:
+		case opcode::or_:
+		case opcode::andb:
+		case opcode::lt:
+		case opcode::gt:
+		case opcode::orr:
+		case opcode::and_:
+		case opcode::lsl:
+		case opcode::lsr:
+		case opcode::lte:
+		case opcode::eq:
+		case opcode::neq:
+		case opcode::gte:
+		case opcode::plus:
+		case opcode::negate:
+		case opcode::not_:
+		case opcode::cmpl:
+			v.push_int(0);
+			break;
+
+		case opcode::addmovi:
+		case opcode::submovi:
+		case opcode::mulmovi:
+		case opcode::divmovi:
+		case opcode::movi:
+		case opcode::movs:
+		case opcode::movss:
+		case opcode::movvf:
+		case opcode::movf:
+		case opcode::movvi:
+			// do nothing for now but ideally, this would check the exception and/or remove the offending values
+			// from the stack.
+			break;
+		case opcode::nop:
+		case opcode::rsr:
+		case opcode::b:
+		case opcode::bz:
+			// if these fail, something has gone horribly wrong. still ignore the error though.
+			break;
+
+		case opcode::bl:
+		case opcode::be:
+			// ignore the branch
+			break;
+
+		case opcode::pushi:
+			v.push_int(0);
+			break;
+		case opcode::pushv:
+		case opcode::pushvi:
+		case opcode::pushvv:
+			// push an int and hope it's the right type!
+			v.push_int(0);
+			break;
+
+		case opcode::gmovi:
+			// do nothing for now but ideally, this would set the `null` instance
+			break;
+		}
+
+		return true;
+	}
 } // namespace phoenix
