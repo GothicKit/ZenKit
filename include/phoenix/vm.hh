@@ -47,6 +47,18 @@ namespace phoenix {
 		using script_error::script_error;
 	};
 
+	/// \brief An exception handling strategy given by VM exception handlers.
+	enum class vm_exception_strategy {
+		/// \brief Continue with execution of the script.
+		continue_,
+
+		/// \brief Return from the current subroutine.
+		return_,
+
+		/// \brief Re-throw the exception and fail.
+		fail_,
+	};
+
 	/// \brief A stack frame in the VM.
 	struct daedalus_stack_frame {
 		std::shared_ptr<instance> context;
@@ -515,8 +527,8 @@ namespace phoenix {
 		///                 If the function returns `true` the error is assumed to have been handled and execution will
 		///                 continue as normal. If `false` is returned, the VM will re-raise the exception and thus,
 		///                 halt execution.
-		void
-		register_exception_handler(const std::function<bool(vm&, const script_error&, const instruction&)>& callback);
+		void register_exception_handler(
+		    const std::function<vm_exception_strategy(vm&, const script_error&, const instruction&)>& callback);
 
 		/// \return the symbol referring to the global <tt>var C_NPC self</tt>.
 		inline symbol* global_self() {
@@ -803,8 +815,8 @@ namespace phoenix {
 		std::unordered_map<symbol*, std::function<void(vm&)>> _m_externals;
 		std::unordered_map<uint32_t, std::function<void(vm&)>> _m_function_overrides;
 		std::optional<std::function<void(vm&, symbol&)>> _m_default_external {std::nullopt};
-		std::optional<std::function<bool(vm&, const script_error&, const instruction&)>> _m_exception_handler {
-		    std::nullopt};
+		std::optional<std::function<vm_exception_strategy(vm&, const script_error&, const instruction&)>>
+		    _m_exception_handler {std::nullopt};
 
 		symbol* _m_self_sym;
 		symbol* _m_other_sym;
@@ -826,6 +838,6 @@ namespace phoenix {
 	/// \param v The VM the exception occurred in.
 	/// \param exc The exception being handled.
 	/// \param instr The instruction being executed.
-	/// \return `true`.
-	bool lenient_vm_exception_handler(vm& v, const script_error& exc, const instruction& instr);
+	/// \return vm_exception_strategy::continue_
+	vm_exception_strategy lenient_vm_exception_handler(vm& v, const script_error& exc, const instruction& instr);
 } // namespace phoenix

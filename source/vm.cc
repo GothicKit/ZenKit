@@ -276,10 +276,16 @@ namespace phoenix {
 		} catch (phoenix::script_error& err) {
 			uint32_t prev_pc = _m_pc;
 
-			if (_m_exception_handler && !(*_m_exception_handler)(*this, err, instr)) {
-				std::cerr << "+++ Error while executing script: " << err.what() << "+++\n\n";
-				print_stack_trace();
-				throw err;
+			if (_m_exception_handler) {
+				auto strategy = (*_m_exception_handler)(*this, err, instr);
+
+				if (strategy == vm_exception_strategy::fail_) {
+					std::cerr << "+++ Error while executing script: " << err.what() << "+++\n\n";
+					print_stack_trace();
+					throw err;
+				} else if (strategy == vm_exception_strategy::return_) {
+					return false;
+				}
 			}
 
 			if (_m_pc == prev_pc) {
@@ -479,8 +485,8 @@ namespace phoenix {
 		};
 	}
 
-	void
-	vm::register_exception_handler(const std::function<bool(vm&, const script_error&, const instruction&)>& callback) {
+	void vm::register_exception_handler(
+	    const std::function<vm_exception_strategy(vm&, const script_error&, const instruction&)>& callback) {
 		_m_exception_handler = callback;
 	}
 
@@ -580,7 +586,7 @@ namespace phoenix {
 	                                      "' (no. " + std::to_string(i) + "), expected '" +
 	                                      DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) sym->type()] + "'") {}
 
-	bool lenient_vm_exception_handler(vm& v, const script_error& exc, const instruction& instr) {
+	vm_exception_strategy lenient_vm_exception_handler(vm& v, const script_error& exc, const instruction& instr) {
 		PX_LOGE("vm: internal exception: {}", exc.what());
 
 		switch (instr.op) {
@@ -648,6 +654,6 @@ namespace phoenix {
 			break;
 		}
 
-		return true;
+		return vm_exception_strategy::continue_;
 	}
 } // namespace phoenix
