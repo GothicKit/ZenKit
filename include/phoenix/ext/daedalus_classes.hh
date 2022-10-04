@@ -1710,6 +1710,7 @@ namespace phoenix {
 	};
 
 	enum class c_fight_ai_move : std::uint32_t {
+		nop = 0,
 		run = 1,
 		run_back = 2,
 		jump_back = 3,
