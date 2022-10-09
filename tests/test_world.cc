@@ -60,6 +60,54 @@ TEST_SUITE("world") {
 		CHECK(mat500.name == "OMWABROWNGREEN01");
 		CHECK(mat500.group == phoenix::material_group::stone);
 		CHECK(mat500.texture == "OMWABROWNGREEN01.TGA");
+
+		auto polys = wld.world_mesh.polygons;
+		CHECK(polys.material_indices.size() == 106722);
+		CHECK(polys.lightmap_indices.size() == 106722);
+		CHECK(polys.feature_indices.size() == 106722 * 3);
+		CHECK(polys.vertex_indices.size() == 106722 * 3);
+		CHECK(polys.flags.size() == 106722);
+
+		CHECK(polys.material_indices[0] == 0);
+		CHECK(polys.material_indices[26680] == 20);
+		CHECK(polys.material_indices[53360] == 1097);
+		CHECK(polys.material_indices[106721] == 4);
+
+		CHECK(polys.lightmap_indices[0] == -1);
+		CHECK(polys.lightmap_indices[26680] == -1);
+		CHECK(polys.lightmap_indices[53360] == 557);
+		CHECK(polys.lightmap_indices[106721] == -1);
+
+		CHECK(polys.feature_indices[0 * 3 + 0] == 0);
+		CHECK(polys.feature_indices[0 * 3 + 1] == 1);
+		CHECK(polys.feature_indices[0 * 3 + 2] == 2);
+		CHECK(polys.feature_indices[26680 * 3 + 0] == 100792);
+		CHECK(polys.feature_indices[26680 * 3 + 1] == 100793);
+		CHECK(polys.feature_indices[26680 * 3 + 2] == 100794);
+		CHECK(polys.feature_indices[53360 * 3 + 0] == 210349);
+		CHECK(polys.feature_indices[53360 * 3 + 1] == 210350);
+		CHECK(polys.feature_indices[53360 * 3 + 2] == 210351);
+		CHECK(polys.feature_indices[106721 * 3 + 0] == 419933);
+		CHECK(polys.feature_indices[106721 * 3 + 1] == 419934);
+		CHECK(polys.feature_indices[106721 * 3 + 2] == 419935);
+
+		CHECK(polys.vertex_indices[0 * 3 + 0] == 0);
+		CHECK(polys.vertex_indices[0 * 3 + 1] == 2);
+		CHECK(polys.vertex_indices[0 * 3 + 2] == 1);
+		CHECK(polys.vertex_indices[26680 * 3 + 0] == 14241);
+		CHECK(polys.vertex_indices[26680 * 3 + 1] == 14243);
+		CHECK(polys.vertex_indices[26680 * 3 + 2] == 14242);
+		CHECK(polys.vertex_indices[53360 * 3 + 0] == 28518);
+		CHECK(polys.vertex_indices[53360 * 3 + 1] == 28512);
+		CHECK(polys.vertex_indices[53360 * 3 + 2] == 28520);
+		CHECK(polys.vertex_indices[106721 * 3 + 0] == 55429);
+		CHECK(polys.vertex_indices[106721 * 3 + 1] == 55428);
+		CHECK(polys.vertex_indices[106721 * 3 + 2] == 54576);
+
+		CHECK(polys.flags[0] == phoenix::polygon_flags {0, 0, 0, 0, 0, 0, 0, -1, 1, 1});
+		CHECK(polys.flags[26680] == phoenix::polygon_flags {0, 0, 0, 0, 0, 0, 0, -1, 1, 1});
+		CHECK(polys.flags[53360] == phoenix::polygon_flags {0, 1, 1, 0, 0, 0, 0, -1, 0, 0});
+		CHECK(polys.flags[106721] == phoenix::polygon_flags {0, 0, 0, 0, 0, 0, 0, -1, 1, 1});
 	}
 
 	TEST_CASE("the bsp-tree is read correctly") {

@@ -84,7 +84,7 @@ namespace phoenix {
 				msh.polygons.lightmap_indices.reserve(poly_count);
 				msh.polygons.feature_indices.reserve(poly_count * 3);
 				msh.polygons.vertex_indices.reserve(poly_count * 3);
-				msh.polygons.flags.reserve(poly_count * 3);
+				msh.polygons.flags.reserve(poly_count);
 
 				auto leaf_poly_it = leaf_polygons.begin();
 
@@ -122,6 +122,13 @@ namespace phoenix {
 
 					auto vertex_count = chunk.get();
 
+					// TODO: For meshes built for Gothic II, the `is_lod` flag can be used to determine whether a
+					//       polygon is a leaf-polygon or not. Gothic I does not have this luxury, so the leaf polygons
+					//       have to be taken from the BSP tree.
+					//
+					//       This presents a problem: Taking the leaf polygons as a parameter makes creating a unified
+					//       parsing function for world meshes impossible. Instead, there should be a function to remove
+					//       this extra data which would grant the user more freedom in how they use _phoenix_.
 					if (leaf_poly_it != leaf_polygons.end() && *leaf_poly_it != i) {
 						// If the current polygon is not a leaf polygon, skip it.
 						chunk.skip((version == mesh_version_g2 ? 8 : 6) * vertex_count);
