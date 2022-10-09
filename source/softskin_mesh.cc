@@ -31,7 +31,7 @@ namespace phoenix {
 				auto weight_buffer_end = chunk.position() + weight_buffer_size;
 
 				msh.weights.resize(msh.mesh.positions.size());
-				for (unsigned i = 0; i < msh.mesh.positions.size(); ++i) {
+				for (uint32_t i = 0; i < msh.mesh.positions.size(); ++i) {
 					auto count = chunk.get_uint();
 					msh.weights[i].reserve(count);
 

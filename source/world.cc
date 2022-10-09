@@ -47,7 +47,7 @@ namespace phoenix {
 					auto count = archive->read_int();
 					wld.world_vobs.reserve(count);
 
-					for (int i = 0; i < count; ++i) {
+					for (int32_t i = 0; i < count; ++i) {
 						auto child = parse_vob_tree(*archive, version);
 						if (child == nullptr)
 							continue;

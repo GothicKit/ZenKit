@@ -82,7 +82,7 @@ namespace phoenix {
 
 	void archive_reader::skip_object(bool skip_current) {
 		archive_object tmp;
-		int level = skip_current ? 1 : 0;
+		int32_t level = skip_current ? 1 : 0;
 
 		do {
 			if (read_object_begin(tmp)) {

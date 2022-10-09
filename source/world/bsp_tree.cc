@@ -80,7 +80,7 @@ namespace phoenix {
 			case bsp_chunk::polygons:
 				bsp.polygon_indices.resize(chunk.get_uint());
 
-				for (unsigned int& index : bsp.polygon_indices) {
+				for (uint32_t& index : bsp.polygon_indices) {
 					index = chunk.get_uint();
 				}
 				break;
@@ -98,7 +98,7 @@ namespace phoenix {
 				for (auto idx : bsp.leaf_node_indices) {
 					auto& node = bsp.nodes[idx];
 
-					for (unsigned i = 0; i < node.polygon_count; ++i) {
+					for (uint32_t i = 0; i < node.polygon_count; ++i) {
 						bsp.leaf_polygons.push_back(bsp.polygon_indices[node.polygon_index + i]);
 					}
 				}

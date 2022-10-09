@@ -18,7 +18,7 @@ namespace phoenix {
 
 	/// \brief Represents the header of a ZenGin archive.
 	struct archive_header {
-		int version;
+		int32_t version;
 
 		/// \brief The type of archiver used to create the archive. Either `zCArchiverGeneric` or `zCArchiverBinSafe`.
 		std::string archiver;

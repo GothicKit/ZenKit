@@ -33,7 +33,7 @@ namespace phoenix {
 		std::string read_entry(std::string_view type);
 
 	private:
-		int _m_objects {0};
+		int32_t _m_objects {0};
 	};
 
 } // namespace phoenix

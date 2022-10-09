@@ -6,12 +6,12 @@ namespace phoenix {
 	std::time_t dos_to_unix_time(std::uint32_t dos) noexcept {
 		struct tm t {};
 
-		t.tm_year = ((int) ((dos >> 25) & 0x7F)) + 80;
-		t.tm_mon = ((int) ((dos >> 21) & 0xF)) - 1;
-		t.tm_mday = (int) ((dos >> 16) & 0x1F);
-		t.tm_hour = (int) ((dos >> 11) & 0x1F);
-		t.tm_min = (int) ((dos >> 5) & 0x3F);
-		t.tm_sec = ((int) ((dos >> 0) & 0x1F)) * 2;
+		t.tm_year = ((int32_t) ((dos >> 25) & 0x7F)) + 80;
+		t.tm_mon = ((int32_t) ((dos >> 21) & 0xF)) - 1;
+		t.tm_mday = (int32_t) ((dos >> 16) & 0x1F);
+		t.tm_hour = (int32_t) ((dos >> 11) & 0x1F);
+		t.tm_min = (int32_t) ((dos >> 5) & 0x3F);
+		t.tm_sec = ((int32_t) ((dos >> 0) & 0x1F)) * 2;
 
 		return mktime(&t);
 	}

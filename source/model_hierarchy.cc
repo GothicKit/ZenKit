@@ -24,7 +24,7 @@ namespace phoenix {
 				(void) /* version = */ chunk.get_uint();
 				auto node_count = chunk.get_ushort();
 
-				for (int i = 0; i < node_count; ++i) {
+				for (int32_t i = 0; i < node_count; ++i) {
 					auto& node = hierarchy.nodes.emplace_back();
 					node.name = chunk.get_line(false);
 					node.parent_index = chunk.get_short();

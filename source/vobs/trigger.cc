@@ -35,7 +35,7 @@ namespace phoenix::vobs {
 
 			auto sample_reader = ctx.read_raw_bytes(); // keyframes
 
-			for (int i = 0; i < keyframe_count; ++i) {
+			for (int32_t i = 0; i < keyframe_count; ++i) {
 				obj.keyframes.push_back(
 				    animation_sample {sample_reader.get_vec3(), glm::quat {sample_reader.get_vec4()}});
 			}
@@ -56,7 +56,7 @@ namespace phoenix::vobs {
 		obj.mode = static_cast<trigger_batch_mode>(ctx.read_enum()); // listProcess
 
 		auto target_count = ctx.read_byte(); // numTarget
-		for (int i = 0; i < target_count; ++i) {
+		for (int32_t i = 0; i < target_count; ++i) {
 			obj.targets.emplace_back(target {
 			    ctx.read_string(), // triggerTarget[i]
 			    ctx.read_float()   // fireDelay[i]

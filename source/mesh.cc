@@ -132,7 +132,7 @@ namespace phoenix {
 					} else if (vertex_count == 3) {
 						// If we have 3 vertices, we are sure that this is already a triangle,
 						// so we can just read it in
-						for (int j = 0; j < vertex_count; ++j) {
+						for (int32_t j = 0; j < vertex_count; ++j) {
 							msh.polygons.vertex_indices.push_back(version == mesh_version_g2 ? chunk.get_uint()
 							                                                                 : chunk.get_ushort());
 
@@ -151,7 +151,7 @@ namespace phoenix {
 						auto vertex_index_a = version == mesh_version_g2 ? chunk.get_uint() : chunk.get_ushort();
 						auto feature_index_a = chunk.get_uint();
 
-						for (int j = 0; j < vertex_count - 2; ++j) {
+						for (int32_t j = 0; j < vertex_count - 2; ++j) {
 							auto vertex_index_b = version == mesh_version_g2 ? chunk.get_uint() : chunk.get_ushort();
 							auto feature_index_b = chunk.get_uint();
 

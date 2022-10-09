@@ -29,7 +29,7 @@ namespace phoenix {
 
 			std::unordered_map<std::uint32_t, std::uint32_t> obj_id_to_wp {};
 
-			for (int i = 0; i < count; ++i) {
+			for (int32_t i = 0; i < count; ++i) {
 				if (!in.read_object_begin(obj) || obj.class_name != "zCWaypoint") {
 					throw parser_error {"way_net", fmt::format("missing waypoint object #{}", i)};
 				}
@@ -48,10 +48,10 @@ namespace phoenix {
 
 			auto edge_count = in.read_int(); // numWays
 
-			for (int i = 0; i < edge_count; ++i) {
+			for (int32_t i = 0; i < edge_count; ++i) {
 				auto& edge = net.edges.emplace_back();
 
-				for (int j = 0; j < 2; ++j) {
+				for (int32_t j = 0; j < 2; ++j) {
 					if (!in.read_object_begin(obj)) {
 						throw parser_error {"way_net", fmt::format("missing edge object #{}", i)};
 					}

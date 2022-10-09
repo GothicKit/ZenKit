@@ -29,7 +29,7 @@ namespace phoenix {
 				auto count = chunk.get_ushort();
 				msh.sources.resize(count);
 
-				for (int i = 0; i < count; ++i) {
+				for (int32_t i = 0; i < count; ++i) {
 					msh.sources[i].file_date = date::parse(chunk);
 					msh.sources[i].file_name = chunk.get_line();
 				}
@@ -53,7 +53,7 @@ namespace phoenix {
 				auto animation_count = chunk.get_ushort();
 				msh.animations.reserve(animation_count);
 
-				for (int i = 0; i < animation_count; ++i) {
+				for (int32_t i = 0; i < animation_count; ++i) {
 					auto& anim = msh.animations.emplace_back();
 					anim.name = chunk.get_line(false);
 					anim.blend_in = chunk.get_float();

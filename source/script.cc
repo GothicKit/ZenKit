@@ -18,9 +18,9 @@ namespace phoenix {
 
 	illegal_type_access::illegal_type_access(const symbol* sym, datatype expected)
 	    : illegal_access(fmt::format("illegal access of type {} on symbol {} which is another type ({})",
-	                                 int(expected),
+	                                 int32_t(expected),
 	                                 sym->name(),
-	                                 int(sym->type()))),
+	                                 int32_t(sym->type()))),
 	      sym(sym), expected(expected) {}
 
 	illegal_index_access::illegal_index_access(const symbol* sym, std::uint8_t index)
@@ -192,7 +192,7 @@ namespace phoenix {
 	std::vector<symbol*> script::find_parameters_for_function(const symbol* parent) {
 		std::vector<symbol*> syms {};
 
-		for (unsigned i = 0; i < parent->count(); ++i) {
+		for (uint32_t i = 0; i < parent->count(); ++i) {
 			syms.push_back(find_symbol_by_index(parent->index() + i + 1));
 		}
 
@@ -202,7 +202,7 @@ namespace phoenix {
 	std::vector<const symbol*> script::find_parameters_for_function(const symbol* parent) const {
 		std::vector<const symbol*> syms {};
 
-		for (unsigned i = 0; i < parent->count(); ++i) {
+		for (uint32_t i = 0; i < parent->count(); ++i) {
 			syms.push_back(find_symbol_by_index(parent->index() + i + 1));
 		}
 

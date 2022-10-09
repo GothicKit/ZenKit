@@ -139,7 +139,7 @@ namespace phoenix {
 				auto frames = a.value_or("");
 				std::istringstream stream {frames};
 
-				int fr = 0;
+				int32_t fr = 0;
 				while (!stream.eof()) {
 					stream >> fr;
 					evt.frames.push_back(fr);
@@ -385,7 +385,7 @@ namespace phoenix {
 					auto frames = chunk.get_line(true);
 					std::istringstream stream {frames};
 
-					int frame = 0;
+					int32_t frame = 0;
 					while (!stream.eof()) {
 						stream >> frame;
 						event.frames.push_back(frame);

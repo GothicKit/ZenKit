@@ -40,7 +40,7 @@ namespace phoenix::vobs {
 		obj.untriggered_cancels = ctx.read_bool();    // untriggerCancels
 
 		auto slave_count = ctx.read_byte(); // numSlaves
-		for (int i = 0; i < slave_count; ++i) {
+		for (int32_t i = 0; i < slave_count; ++i) {
 			obj.slaves.emplace_back(ctx.read_string()); // slaveVobName[i]
 		}
 	}

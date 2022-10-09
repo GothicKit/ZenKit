@@ -227,9 +227,9 @@ namespace phoenix {
 
 		auto child_count = in.read_int();
 		if (object == nullptr) {
-			std::function<void(int)> skip;
-			skip = [&skip, &in](int count) {
-				for (int i = 0; i < count; ++i) {
+			std::function<void(int32_t)> skip;
+			skip = [&skip, &in](int32_t count) {
+				for (int32_t i = 0; i < count; ++i) {
 					in.skip_object(false);
 
 					auto child_count = in.read_int();
@@ -245,7 +245,7 @@ namespace phoenix {
 		object->id = obj.index;
 		object->type = type;
 
-		for (int i = 0; i < child_count; ++i) {
+		for (int32_t i = 0; i < child_count; ++i) {
 			auto child = parse_vob_tree(in, version);
 			if (child == nullptr)
 				continue;

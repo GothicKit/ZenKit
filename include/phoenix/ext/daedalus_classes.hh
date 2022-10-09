@@ -5,7 +5,7 @@
 
 #define var
 #define string std::string
-#define func int
+#define func int32_t
 
 // clang-format off
 #define FLAG(E)                                                                                                        \
@@ -19,37 +19,37 @@ namespace phoenix {
 	struct c_gil_values : public instance {
 		static constexpr std::uint32_t count = 66;
 
-		var int water_depth_knee[count];
-		var int water_depth_chest[count];
-		var int jumpup_height[count];
-		var int swim_time[count];
-		var int dive_time[count];
-		var int step_height[count];
-		var int jumplow_height[count];
-		var int jumpmid_height[count];
-		var int slide_angle[count];
-		var int slide_angle2[count];
-		var int disable_autoroll[count];
-		var int surface_align[count];
-		var int climb_heading_angle[count];
-		var int climb_horiz_angle[count];
-		var int climb_ground_angle[count];
-		var int fight_range_base[count];
-		var int fight_range_fist[count];
-		var int fight_range_g[count];
-		var int fight_range_1hs[count];
-		var int fight_range_1ha[count];
-		var int fight_range_2hs[count];
-		var int fight_range_2ha[count];
-		var int falldown_height[count];
-		var int falldown_damage[count];
-		var int blood_disabled[count];
-		var int blood_max_distance[count];
-		var int blood_amount[count];
-		var int blood_flow[count];
+		var int32_t water_depth_knee[count];
+		var int32_t water_depth_chest[count];
+		var int32_t jumpup_height[count];
+		var int32_t swim_time[count];
+		var int32_t dive_time[count];
+		var int32_t step_height[count];
+		var int32_t jumplow_height[count];
+		var int32_t jumpmid_height[count];
+		var int32_t slide_angle[count];
+		var int32_t slide_angle2[count];
+		var int32_t disable_autoroll[count];
+		var int32_t surface_align[count];
+		var int32_t climb_heading_angle[count];
+		var int32_t climb_horiz_angle[count];
+		var int32_t climb_ground_angle[count];
+		var int32_t fight_range_base[count];
+		var int32_t fight_range_fist[count];
+		var int32_t fight_range_g[count];
+		var int32_t fight_range_1hs[count];
+		var int32_t fight_range_1ha[count];
+		var int32_t fight_range_2hs[count];
+		var int32_t fight_range_2ha[count];
+		var int32_t falldown_height[count];
+		var int32_t falldown_damage[count];
+		var int32_t blood_disabled[count];
+		var int32_t blood_max_distance[count];
+		var int32_t blood_amount[count];
+		var int32_t blood_flow[count];
 		var string blood_emitter[count];
 		var string blood_texture[count];
-		var int turn_speed[count];
+		var int32_t turn_speed[count];
 
 		static void register_(script& s) {
 			s.register_member("C_GILVALUES.WATER_DEPTH_KNEE", &c_gil_values::water_depth_knee);
@@ -135,38 +135,38 @@ namespace phoenix {
 	FLAG(npc_flag);
 
 	struct c_npc : public instance {
-		var int id;
+		var int32_t id;
 		var string name[5];
 		var string slot;
 		var string effect;
 		var npc_type type;
 		var npc_flag flags;
-		var int attribute[8];
-		var int hitchance[5];
-		var int protection[8];
-		var int damage[8];
-		var int damage_type;
-		var int guild;
-		var int level;
+		var int32_t attribute[8];
+		var int32_t hitchance[5];
+		var int32_t protection[8];
+		var int32_t damage[8];
+		var int32_t damage_type;
+		var int32_t guild;
+		var int32_t level;
 		var func mission[5];
-		var int fight_tactic;
-		var int weapon;
-		var int voice;
-		var int voice_pitch;
-		var int body_mass;
+		var int32_t fight_tactic;
+		var int32_t weapon;
+		var int32_t voice;
+		var int32_t voice_pitch;
+		var int32_t body_mass;
 		var func daily_routine;
 		var func start_aistate;
 		var string spawnpoint;
-		var int spawn_delay;
-		var int senses;
-		var int senses_range;
-		var int aivar[100];
+		var int32_t spawn_delay;
+		var int32_t senses;
+		var int32_t senses_range;
+		var int32_t aivar[100];
 		var string wp;
-		var int exp;
-		var int exp_next;
-		var int lp;
-		var int bodystate_interruptable_override;
-		var int no_focus;
+		var int32_t exp;
+		var int32_t exp_next;
+		var int32_t lp;
+		var int32_t bodystate_interruptable_override;
+		var int32_t no_focus;
 
 		static void register_(script& s) {
 			s.register_member("C_NPC.ID", &c_npc::id);
@@ -211,8 +211,8 @@ namespace phoenix {
 	struct c_mission : public instance {
 		var string name;
 		var string description;
-		var int duration;
-		var int important;
+		var int32_t duration;
+		var int32_t important;
 		var func offer_conditions;
 		var func offer;
 		var func success_conditions;
@@ -256,50 +256,50 @@ namespace phoenix {
 	FLAG(item_flags);
 
 	struct c_item : public instance {
-		var int id;
+		var int32_t id;
 		var string name;
 		var string name_id;
-		var int hp;
-		var int hp_max;
-		var int main_flag;
+		var int32_t hp;
+		var int32_t hp_max;
+		var int32_t main_flag;
 		var item_flags flags;
-		var int weight;
-		var int value;
-		var int damage_type;
-		var int damage_total;
-		var int damage[8];
-		var int wear;
-		var int protection[8];
-		var int nutrition;
-		var int cond_atr[3];
-		var int cond_value[3];
-		var int change_atr[3];
-		var int change_value[3];
+		var int32_t weight;
+		var int32_t value;
+		var int32_t damage_type;
+		var int32_t damage_total;
+		var int32_t damage[8];
+		var int32_t wear;
+		var int32_t protection[8];
+		var int32_t nutrition;
+		var int32_t cond_atr[3];
+		var int32_t cond_value[3];
+		var int32_t change_atr[3];
+		var int32_t change_value[3];
 		var func magic;
 		var func on_equip;
 		var func on_unequip;
 		var func on_state[4];
 		var func owner;
-		var int owner_guild;
-		var int disguise_guild;
+		var int32_t owner_guild;
+		var int32_t disguise_guild;
 		var string visual;
 		var string visual_change;
 		var string effect;
-		var int visual_skin;
+		var int32_t visual_skin;
 		var string scheme_name;
-		var int material;
-		var int munition;
-		var int spell;
-		var int range;
-		var int mag_circle;
+		var int32_t material;
+		var int32_t munition;
+		var int32_t spell;
+		var int32_t range;
+		var int32_t mag_circle;
 		var string description;
 		var string text[6];
-		var int count[6];
-		var int inv_zbias;
-		var int inv_rot_x;
-		var int inv_rot_y;
-		var int inv_rot_z;
-		var int inv_animate;
+		var int32_t count[6];
+		var int32_t inv_zbias;
+		var int32_t inv_rot_x;
+		var int32_t inv_rot_y;
+		var int32_t inv_rot_z;
+		var int32_t inv_animate;
 
 		static void register_(script& s) {
 			s.register_member("C_ITEM.ID", &c_item::id);
@@ -360,19 +360,19 @@ namespace phoenix {
 		var float npc_azi;
 		var float npc_elevdo;
 		var float npc_elevup;
-		var int npc_prio;
+		var int32_t npc_prio;
 		var float item_range1;
 		var float item_range2;
 		var float item_azi;
 		var float item_elevdo;
 		var float item_elevup;
-		var int item_prio;
+		var int32_t item_prio;
 		var float mob_range1;
 		var float mob_range2;
 		var float mob_azi;
 		var float mob_elevdo;
 		var float mob_elevup;
-		var int mob_prio;
+		var int32_t mob_prio;
 
 		static void register_(script& s) {
 			s.register_member("C_FOCUS.NPC_LONGRANGE", &c_focus::npc_longrange);
@@ -399,18 +399,18 @@ namespace phoenix {
 
 	struct c_info_choice {
 		var string text;
-		var int function = 0;
+		var int32_t function = 0;
 	};
 
 	struct c_info : public instance {
-		var int npc;
-		var int nr;
-		var int important;
+		var int32_t npc;
+		var int32_t nr;
+		var int32_t important;
 		var func condition;
 		var func information;
 		var string description;
-		var int trade;
-		var int permanent;
+		var int32_t trade;
+		var int32_t permanent;
 
 		std::vector<c_info_choice> choices {};
 
@@ -435,12 +435,12 @@ namespace phoenix {
 	};
 
 	struct c_item_react : public instance {
-		var int npc;
-		var int trade_item;
-		var int trade_amount;
-		var int requested_cat;
-		var int requested_item;
-		var int requested_amount;
+		var int32_t npc;
+		var int32_t trade_item;
+		var int32_t trade_amount;
+		var int32_t requested_cat;
+		var int32_t requested_item;
+		var int32_t requested_amount;
 		var func reaction;
 
 		static void register_(script& s) {
@@ -456,17 +456,17 @@ namespace phoenix {
 
 	struct c_spell : public instance {
 		var float time_per_mana;
-		var int damage_per_level;
-		var int damage_type;
-		var int spell_type;
-		var int can_turn_during_invest;
-		var int can_change_target_during_invest;
-		var int is_multi_effect;
-		var int target_collect_algo;
-		var int target_collect_type;
-		var int target_collect_range;
-		var int target_collect_azi;
-		var int target_collect_elev;
+		var int32_t damage_per_level;
+		var int32_t damage_type;
+		var int32_t spell_type;
+		var int32_t can_turn_during_invest;
+		var int32_t can_change_target_during_invest;
+		var int32_t is_multi_effect;
+		var int32_t target_collect_algo;
+		var int32_t target_collect_type;
+		var int32_t target_collect_range;
+		var int32_t target_collect_azi;
+		var int32_t target_collect_elev;
 
 		static void register_(script& s) {
 			s.register_member("C_SPELL.TIME_PER_MANA", &c_spell::time_per_mana);
@@ -1142,17 +1142,17 @@ namespace phoenix {
 
 		var string back_pic;
 		var string back_world;
-		var int pos_x;
-		var int pos_y;
-		var int dim_x;
-		var int dim_y;
-		var int alpha;
+		var int32_t pos_x;
+		var int32_t pos_y;
+		var int32_t dim_x;
+		var int32_t dim_y;
+		var int32_t alpha;
 		var string music_theme;
-		var int event_timer_msec;
+		var int32_t event_timer_msec;
 		var string items[item_count];
 		var c_menu_flags flags;
-		var int default_outgame;
-		var int default_ingame;
+		var int32_t default_outgame;
+		var int32_t default_ingame;
 
 		static void register_(script& s) {
 			s.register_member("C_MENU.BACKPIC", &c_menu::back_pic);
@@ -1233,28 +1233,28 @@ namespace phoenix {
 		var string text[text_count];
 		var string backpic;
 		var string alphamode;
-		var int alpha;
+		var int32_t alpha;
 		var c_menu_item_type type;
-		var int on_sel_action[select_action_count];
+		var int32_t on_sel_action[select_action_count];
 		var string on_sel_action_s[select_action_count];
 		var string on_chg_set_option;
 		var string on_chg_set_option_section;
 		var func on_event_action[event_action_count];
-		var int pos_x;
-		var int pos_y;
-		var int dim_x;
-		var int dim_y;
+		var int32_t pos_x;
+		var int32_t pos_y;
+		var int32_t dim_x;
+		var int32_t dim_y;
 		var float size_start_scale;
 		var c_menu_item_flags flags;
 		var float open_delay_time;
 		var float open_duration;
 		var float user_float[user_item_count];
 		var string user_string[user_item_count];
-		var int frame_sizex;
-		var int frame_sizey;
+		var int32_t frame_sizex;
+		var int32_t frame_sizey;
 		var string hide_if_option_section_set;
 		var string hide_if_option_set;
-		var int hide_on_value;
+		var int32_t hide_on_value;
 
 		static void register_(script& s) {
 			s.register_member("C_MENU_ITEM.FONTNAME", &c_menu_item::fontname);
@@ -1311,9 +1311,9 @@ namespace phoenix {
 		var float target_offset_z;
 		var float velo_trans;
 		var float velo_rot;
-		var int translate;
-		var int rotate;
-		var int collision;
+		var int32_t translate;
+		var int32_t rotate;
+		var int32_t collision;
 
 		static void register_(script& s) {
 			s.register_member("CCAMSYS.BESTRANGE", &c_camera::best_range);
@@ -1357,11 +1357,11 @@ namespace phoenix {
 
 	struct c_music_system : public instance {
 		var float volume;
-		var int bit_resolution;
-		var int global_reverb_enabled;
-		var int sample_rate;
-		var int num_channels;
-		var int reverb_buffer_size;
+		var int32_t bit_resolution;
+		var int32_t global_reverb_enabled;
+		var int32_t sample_rate;
+		var int32_t num_channels;
+		var int32_t reverb_buffer_size;
 
 		static void register_(script& s) {
 			s.register_member("C_MUSICSYS_CFG.VOLUME", &c_music_system::volume);
@@ -1376,7 +1376,7 @@ namespace phoenix {
 	struct c_music_theme : public instance {
 		var string file;
 		var float vol;
-		var int loop;
+		var int32_t loop;
 		var float reverbmix;
 		var float reverbtime;
 		var music_transition_type transtype;
@@ -1395,9 +1395,9 @@ namespace phoenix {
 
 	struct c_music_jingle : public instance {
 		var string name;
-		var int loop;
+		var int32_t loop;
 		var float vol;
-		var int transsubtype;
+		var int32_t transsubtype;
 
 		static void register_(script& s) {
 			s.register_member("C_MUSICJINGLE.NAME", &c_music_jingle::name);
@@ -1410,8 +1410,8 @@ namespace phoenix {
 	struct c_particle_fx : public instance {
 		var float pps_value;
 		var string pps_scale_keys_s;
-		var int pps_is_looping;
-		var int pps_is_smooth;
+		var int32_t pps_is_looping;
+		var int32_t pps_is_smooth;
 		var float pps_fps;
 		var string pps_create_em_s;
 		var float pps_create_em_delay;
@@ -1420,13 +1420,13 @@ namespace phoenix {
 		var string shp_offset_vec_s;
 		var string shp_distrib_type_s;
 		var float shp_distrib_walk_speed;
-		var int shp_is_volume;
+		var int32_t shp_is_volume;
 		var string shp_dim_s;
 		var string shp_mesh_s;
-		var int shp_mesh_render_b;
+		var int32_t shp_mesh_render_b;
 		var string shp_scale_keys_s;
-		var int shp_scale_is_looping;
-		var int shp_scale_is_smooth;
+		var int32_t shp_scale_is_looping;
+		var int32_t shp_scale_is_smooth;
 		var float shp_scale_fps;
 		var string dir_mode_s;
 		var string dir_for_s;
@@ -1441,12 +1441,12 @@ namespace phoenix {
 		var float lsp_part_avg;
 		var float lsp_part_var;
 		var string fly_gravity_s;
-		var int fly_colldet_b;
+		var int32_t fly_colldet_b;
 		var string vis_name_s;
 		var string vis_orientation_s;
-		var int vis_tex_is_quadpoly;
+		var int32_t vis_tex_is_quadpoly;
 		var float vis_tex_ani_fps;
-		var int vis_tex_ani_is_looping;
+		var int32_t vis_tex_ani_is_looping;
 		var string vis_tex_color_start_s;
 		var string vis_tex_color_end_s;
 		var string vis_size_start_s;
@@ -1462,9 +1462,9 @@ namespace phoenix {
 		var float mrk_size;
 		var string flock_mode;
 		var float flock_strength;
-		var int use_emitters_for;
+		var int32_t use_emitters_for;
 		var string time_start_end_s;
-		var int m_bis_ambient_pfx;
+		var int32_t m_bis_ambient_pfx;
 
 		static void register_(script& s) {
 			s.register_member("C_PARTICLEFX.PPSVALUE", &c_particle_fx::pps_value);
@@ -1539,15 +1539,15 @@ namespace phoenix {
 		var float vis_alpha;
 		var string vis_alpha_blend_func_s;
 		var float vis_tex_ani_fps;
-		var int vis_tex_ani_is_looping;
+		var int32_t vis_tex_ani_is_looping;
 		var string em_trj_mode_s;
 		var string em_trj_origin_node;
 		var string em_trj_target_node;
 		var float em_trj_target_range;
 		var float em_trj_target_azi;
 		var float em_trj_target_elev;
-		var int em_trj_num_keys;
-		var int em_trj_num_keys_var;
+		var int32_t em_trj_num_keys;
+		var int32_t em_trj_num_keys_var;
 		var float em_trj_angle_elev_var;
 		var float em_trj_angle_head_var;
 		var float em_trj_key_dist_var;
@@ -1555,12 +1555,12 @@ namespace phoenix {
 		var string em_trj_ease_func_s;
 		var float em_trj_ease_vel;
 		var float em_trj_dyn_update_delay;
-		var int em_trj_dyn_update_target_only;
+		var int32_t em_trj_dyn_update_target_only;
 		var string em_fx_create_s;
 		var string em_fx_invest_origin_s;
 		var string em_fx_invest_target_s;
 		var float em_fx_trigger_delay;
-		var int em_fx_create_down_trj;
+		var int32_t em_fx_create_down_trj;
 		var string em_action_coll_dyn_s;
 		var string em_action_coll_stat_s;
 		var string em_fx_coll_stat_s;
@@ -1568,16 +1568,16 @@ namespace phoenix {
 		var string em_fx_coll_stat_align_s;
 		var string em_fx_coll_dyn_align_s;
 		var float em_fx_lifespan;
-		var int em_check_collision;
-		var int em_adjust_shp_to_origin;
+		var int32_t em_check_collision;
+		var int32_t em_adjust_shp_to_origin;
 		var float em_invest_next_key_duration;
 		var float em_fly_gravity;
 		var string em_self_rot_vel_s;
 		var string user_string[user_string_count];
 		var string light_preset_name;
 		var string sfx_id;
-		var int sfx_is_ambient;
-		var int send_assess_magic;
+		var int32_t sfx_is_ambient;
+		var int32_t send_assess_magic;
 		var float secs_per_damage;
 		var string em_fx_coll_dyn_perc_s;
 
@@ -1639,12 +1639,12 @@ namespace phoenix {
 		var float vis_size_scale;
 		var float scale_duration;
 		var float pfx_pps_value;
-		var int pfx_pps_is_smooth_chg;
-		var int pfx_pps_is_looping_chg;
+		var int32_t pfx_pps_is_smooth_chg;
+		var int32_t pfx_pps_is_looping_chg;
 		var float pfx_sc_time;
 		var string pfx_fly_gravity_s;
 		var string pfx_shp_dim_s;
-		var int pfx_shp_is_volume_chg;
+		var int32_t pfx_shp_is_volume_chg;
 		var float pfx_shp_scale_fps;
 		var float pfx_shp_distrib_walks_peed;
 		var string pfx_shp_offset_vec_s;
@@ -1659,13 +1659,13 @@ namespace phoenix {
 		var string light_preset_name;
 		var float light_range;
 		var string sfx_id;
-		var int sfx_is_ambient;
+		var int32_t sfx_is_ambient;
 		var string em_create_fx_id;
 		var float em_fly_gravity;
 		var string em_self_rot_vel_s;
 		var string em_trj_mode_s;
 		var float em_trj_ease_vel;
-		var int em_check_collision;
+		var int32_t em_check_collision;
 		var float em_fx_lifespan;
 
 		static void register_(script& s) {
@@ -1742,12 +1742,12 @@ namespace phoenix {
 
 	struct c_sfx : public instance {
 		var string file;
-		var int pitch_off;
-		var int pitch_var;
-		var int vol;
-		var int loop;
-		var int loop_start_offset;
-		var int loop_end_offset;
+		var int32_t pitch_off;
+		var int32_t pitch_var;
+		var int32_t vol;
+		var int32_t loop;
+		var int32_t loop_start_offset;
+		var int32_t loop_end_offset;
 		var float reverb_level;
 		var string pfx_name;
 
@@ -1766,10 +1766,10 @@ namespace phoenix {
 
 	struct c_sound_system : public instance {
 		var float volume;
-		var int bit_resolution;
-		var int sample_rate;
-		var int use_stereo;
-		var int num_sfx_channels;
+		var int32_t bit_resolution;
+		var int32_t sample_rate;
+		var int32_t use_stereo;
+		var int32_t num_sfx_channels;
 		var string used_3d_provider_name;
 
 		static void register_(script& s) {

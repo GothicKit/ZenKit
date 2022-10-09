@@ -21,7 +21,7 @@ namespace phoenix {
 		auto item_count = archive->read_int(); // NumOfItems
 		msgs.blocks.reserve(static_cast<std::uint64_t>(item_count));
 
-		for (int i = 0; i < item_count; ++i) {
+		for (int32_t i = 0; i < item_count; ++i) {
 			if (!archive->read_object_begin(obj) || obj.class_name != "zCCSBlock") {
 				throw parser_error {"messages", "expected 'zCCSBlock' but didn't find it"};
 			}

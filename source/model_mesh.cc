@@ -57,7 +57,7 @@ namespace phoenix {
 
 				// Quirk: the meshes are not embedded within the chunk (as in: the stored length does not contain
 				//        the size of these meshes) so they have to be read directly from `in`.
-				for (int i = 0; i < count; ++i) {
+				for (int32_t i = 0; i < count; ++i) {
 					msh.meshes.push_back(softskin_mesh::parse(in));
 				}
 				break;

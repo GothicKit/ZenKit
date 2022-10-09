@@ -8,11 +8,11 @@
 namespace phoenix {
 	/// \brief Calculates the size in bytes of a texture at the given mipmap level.
 	/// \return The size in bytes of a texture at the given mipmap level.
-	std::uint32_t _ztex_mipmap_size(texture_format format, std::uint32_t width, std::uint32_t height, unsigned level) {
+	std::uint32_t _ztex_mipmap_size(texture_format format, std::uint32_t width, std::uint32_t height, uint32_t level) {
 		std::uint32_t x = std::max(1u, width);
 		std::uint32_t y = std::max(1u, height);
 
-		for (unsigned i = 0; i < level; i++) {
+		for (uint32_t i = 0; i < level; i++) {
 			if (x > 1)
 				x >>= 1;
 			if (y > 1)
@@ -219,7 +219,7 @@ namespace phoenix {
 			return conv;
 		}
 		default:
-			throw parser_error {"texture", fmt::format("cannot convert format to rgba: {}", int(_m_format))};
+			throw parser_error {"texture", fmt::format("cannot convert format to rgba: {}", int32_t(_m_format))};
 		}
 	}
 } // namespace phoenix

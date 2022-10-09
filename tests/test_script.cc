@@ -105,7 +105,7 @@ TEST_SUITE("script") {
 
 		phoenix::instruction op;
 
-		for (int i = 0; i < 10; ++i) {
+		for (int32_t i = 0; i < 10; ++i) {
 			op = scr.instruction_at(pc_begin);
 			CHECK(compare_instruction(op, ops[i]));
 			pc_begin += op.size;

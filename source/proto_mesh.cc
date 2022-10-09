@@ -56,7 +56,7 @@ namespace phoenix {
 		std::vector<sub_mesh_section> submesh_sections;
 		submesh_sections.resize(submesh_count);
 
-		for (int i = 0; i < submesh_count; ++i) {
+		for (int32_t i = 0; i < submesh_count; ++i) {
 			submesh_sections[i] = {
 			    {chunk.get_uint(), chunk.get_uint()},
 			    {chunk.get_uint(), chunk.get_uint()},
@@ -73,7 +73,7 @@ namespace phoenix {
 
 		// read all materials
 		auto mats = archive_reader::open(chunk);
-		for (int i = 0; i < submesh_count; ++i) {
+		for (int32_t i = 0; i < submesh_count; ++i) {
 			msh.materials.emplace_back(material::parse(*mats));
 		}
 
@@ -101,7 +101,7 @@ namespace phoenix {
 		// read submeshes
 		msh.sub_meshes.reserve(submesh_count);
 
-		for (int i = 0; i < submesh_count; ++i) {
+		for (int32_t i = 0; i < submesh_count; ++i) {
 			auto& mesh = msh.sub_meshes.emplace_back(sub_mesh::parse(content, submesh_sections[i]));
 			mesh.mat = msh.materials[i];
 		}

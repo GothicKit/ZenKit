@@ -8,7 +8,7 @@
 
 namespace phoenix {
 	extern std::uint32_t
-	_ztex_mipmap_size(texture_format format, std::uint32_t width, std::uint32_t height, unsigned level);
+	_ztex_mipmap_size(texture_format format, std::uint32_t width, std::uint32_t height, uint32_t level);
 
 	enum {
 		DDSD_CAPS = 0x00000001l,

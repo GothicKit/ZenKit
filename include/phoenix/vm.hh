@@ -607,7 +607,7 @@ namespace phoenix {
 		/// \param defined A list of symbols to check the types P and then P... against.
 		/// \throws illegal_external_param If the types don't match.
 		/// \note Requires that sizeof...(Px) + 1 == defined.size().
-		template <int i, typename P, typename... Px>
+		template <int32_t i, typename P, typename... Px>
 		void check_external_params(const std::vector<symbol*>& defined) {
 			if constexpr (is_instance_ptr_v<P> || std::is_same_v<symbol*, P>) {
 				if (defined[i]->type() != datatype::instance)
@@ -745,7 +745,7 @@ namespace phoenix {
 			}
 		}
 
-		template <int i, typename P, typename... Px>
+		template <int32_t i, typename P, typename... Px>
 		typename std::enable_if<is_instance_ptr_v<P> || std::is_same_v<std::remove_reference_t<P>, float> ||
 		                            std::is_same_v<std::remove_reference_t<P>, std::int32_t> ||
 		                            std::is_same_v<std::remove_reference_t<P>, bool> ||

@@ -457,7 +457,7 @@ namespace phoenix {
 		_m_default_external = [this, callback](vm& v, symbol& sym) {
 			// pop all parameters from the stack
 			auto params = find_parameters_for_function(&sym);
-			for (int i = params.size() - 1; i >= 0; --i) {
+			for (int32_t i = params.size() - 1; i >= 0; --i) {
 				auto par = params[i];
 
 				if (par->type() == datatype::integer)
@@ -511,13 +511,13 @@ namespace phoenix {
 		          << "------- STACK (MOST RECENT PUSH FIRST) -------"
 		          << "\n";
 
-		int i = 0;
+		int32_t i = 0;
 		while (!stack.empty()) {
 			auto v = stack.top();
 
 			if (v.reference) {
 				auto ref = std::get<symbol*>(v.value);
-				std::cerr << i << ": [REFERENCE] " << ref->name() << "[" << (int) v.index << "] = ";
+				std::cerr << i << ": [REFERENCE] " << ref->name() << "[" << (int32_t) v.index << "] = ";
 
 				switch (ref->type()) {
 				case datatype::float_:

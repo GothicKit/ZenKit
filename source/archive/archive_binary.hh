@@ -37,6 +37,6 @@ namespace phoenix {
 
 	private:
 		std::stack<uint64_t> _m_object_end {};
-		int _m_objects {0};
+		int32_t _m_objects {0};
 	};
 } // namespace phoenix

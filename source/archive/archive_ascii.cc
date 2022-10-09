@@ -150,7 +150,7 @@ namespace phoenix {
 		glm::mat3x3 v {};
 		std::uint8_t tmp[4];
 
-		for (int i = 0; i < 9; ++i) {
+		for (int32_t i = 0; i < 9; ++i) {
 			std::from_chars(beg_it + 0, beg_it + 2, tmp[0], 16);
 			std::from_chars(beg_it + 2, beg_it + 4, tmp[1], 16);
 			std::from_chars(beg_it + 4, beg_it + 6, tmp[2], 16);

@@ -93,7 +93,7 @@ namespace phoenix {
 		if (type != tp) {
 			input.skip(size);
 			throw parser_error {
-			    fmt::format("archive_reader_binsafe: type mismatch: expected {}, got: {}", int(tp), int(type))};
+			    fmt::format("archive_reader_binsafe: type mismatch: expected {}, got: {}", int32_t(tp), int32_t(type))};
 		}
 
 		return size;
