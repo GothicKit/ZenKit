@@ -183,18 +183,7 @@ namespace phoenix {
 		}
 	} // namespace mds
 
-	model_script model_script::parse(buffer& buf) {
-		lexy::buffer<lexy::ascii_encoding> b {(char*) buf.array(), buf.remaining()};
-		auto result = lexy::parse<mds::d_script>(b, lexy_ext::report_error);
-
-		if (!result.has_value()) {
-			throw parser_error {"syntax error"};
-		}
-
-		return result.value();
-	}
-
-	model_script model_script::parse_binary(buffer& buf) {
+	static model_script parse_binary_script(buffer& buf) {
 		model_script script {};
 		mds::parser_chunk type = mds::parser_chunk::unknown;
 		int32_t ani_index = -1;
@@ -458,5 +447,26 @@ namespace phoenix {
 		} while (buf.remaining() > 0);
 
 		return script;
+	}
+
+	model_script model_script::parse(buffer& buf) {
+		auto potential_chunk_type = buf.get_ushort(buf.position());
+
+		if (potential_chunk_type >= 0xF000 || potential_chunk_type == 0xD000) {
+			return parse_binary_script(buf);
+		}
+
+		lexy::buffer<lexy::ascii_encoding> b {(char*) buf.array(), buf.remaining()};
+		auto result = lexy::parse<mds::d_script>(b, lexy_ext::report_error);
+
+		if (!result.has_value()) {
+			throw parser_error {"syntax error"};
+		}
+
+		return result.value();
+	}
+
+	model_script model_script::parse_binary(buffer& buf) {
+		return model_script::parse(buf);
 	}
 } // namespace phoenix
