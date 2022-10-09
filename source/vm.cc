@@ -286,6 +286,10 @@ namespace phoenix {
 				} else if (strategy == vm_exception_strategy::return_) {
 					return false;
 				}
+			} else {
+				std::cerr << "+++ Error while executing script: " << err.what() << "+++\n\n";
+				print_stack_trace();
+				throw err;
 			}
 
 			if (_m_pc == prev_pc) {
