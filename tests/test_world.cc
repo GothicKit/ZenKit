@@ -7,7 +7,7 @@
 TEST_SUITE("world") {
 	TEST_CASE("world meshes are read correctly") {
 		auto in = phoenix::buffer::mmap("./samples/world.proprietary.zen");
-		auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_1);
+		auto wld = phoenix::world::parse(in);
 
 		auto& mesh = wld.world_mesh;
 		CHECK(mesh.vertices.size() == 55439);
@@ -64,7 +64,7 @@ TEST_SUITE("world") {
 
 	TEST_CASE("the bsp-tree is read correctly") {
 		auto in = phoenix::buffer::mmap("./samples/world.proprietary.zen");
-		auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_1);
+		auto wld = phoenix::world::parse(in);
 		auto& tree = wld.world_bsp_tree;
 
 		CHECK(tree.mode == phoenix::bsp_tree_mode::outdoor);
@@ -139,7 +139,7 @@ TEST_SUITE("world") {
 
 	TEST_CASE("the vob-tree is read correctly") {
 		auto in = phoenix::buffer::mmap("./samples/world.proprietary.zen");
-		auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_1);
+		auto wld = phoenix::world::parse(in);
 		auto& vobs = wld.world_vobs;
 
 		CHECK(vobs.size() == 14);
@@ -265,7 +265,7 @@ TEST_SUITE("world") {
 
 	TEST_CASE("the way-net is read correctly") {
 		auto in = phoenix::buffer::mmap("./samples/world.proprietary.zen");
-		auto wld = phoenix::world::parse(in, phoenix::game_version::gothic_1);
+		auto wld = phoenix::world::parse(in);
 		auto& waynet = wld.world_way_net;
 
 		CHECK(waynet.waypoints.size() == 2784);
