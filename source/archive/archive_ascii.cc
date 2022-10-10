@@ -104,9 +104,8 @@ namespace phoenix {
 	glm::u8vec4 archive_reader_ascii::read_color() {
 		std::stringstream in {read_entry("color")};
 
-		// in ASCII archives colors are saved as BGRA unlike everywhere else.
 		std::uint16_t r, g, b, a;
-		in >> b >> g >> r >> a;
+		in >> r >> g >> b >> a;
 		return glm::u8vec4 {(std::uint8_t) r, (std::uint8_t) g, (std::uint8_t) b, (std::uint8_t) a};
 	}
 

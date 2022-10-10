@@ -138,13 +138,13 @@ namespace phoenix {
 
 	glm::u8vec4 archive_reader_binsafe::read_color() {
 		ensure_entry_meta(bs_color);
-		glm::u8vec4 c {
-		    input.get(),
-		    input.get(),
-		    input.get(),
-		    input.get(),
-		};
-		return c;
+
+		auto b = input.get();
+		auto g = input.get();
+		auto r = input.get();
+		auto a = input.get();
+
+		return {r, g, b, a};
 	}
 
 	glm::vec3 archive_reader_binsafe::read_vec3() {

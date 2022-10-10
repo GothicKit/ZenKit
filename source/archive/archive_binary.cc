@@ -71,7 +71,12 @@ namespace phoenix {
 	}
 
 	glm::u8vec4 archive_reader_binary::read_color() {
-		return glm::u8vec4 {input.get(), input.get(), input.get(), input.get()};
+		auto b = input.get();
+		auto g = input.get();
+		auto r = input.get();
+		auto a = input.get();
+
+		return {r, g, b, a};
 	}
 
 	glm::vec3 archive_reader_binary::read_vec3() {
