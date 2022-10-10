@@ -23,7 +23,7 @@ END
 	someField4=int:32621
 	someField5=enum:6
 	someField6=bool:1
-	someField7=color:255 1 2 3
+	someField7=color:1 2 3 255
 	someField8=vec3:50 100.123 -150
 	someField9=rawFloat:111.11 -12.99
 	someField10=rawFloat:12 34 56 78 89 0

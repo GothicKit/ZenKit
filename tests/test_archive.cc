@@ -35,10 +35,10 @@ TEST_SUITE("archive") {
 		CHECK(reader->read_bool());
 
 		auto color = reader->read_color();
-		CHECK(color.r == 2);
-		CHECK(color.b == 255);
-		CHECK(color.g == 1);
-		CHECK(color.a == 3);
+		CHECK(color.r == 1);
+		CHECK(color.g == 2);
+		CHECK(color.b == 3);
+		CHECK(color.a == 255);
 
 		auto vec3 = reader->read_vec3();
 		CHECK(vec3.x == 50);
@@ -104,9 +104,9 @@ TEST_SUITE("archive") {
 		CHECK(reader->read_byte() == 0);
 
 		auto color = reader->read_color();
-		CHECK(color.r == 0x19);
+		CHECK(color.r == 0x2A);
 		CHECK(color.g == 0x23);
-		CHECK(color.b == 0x2A);
+		CHECK(color.b == 0x19);
 		CHECK(color.a == 0xFF);
 
 		CHECK(reader->read_float() == 60.0f);
