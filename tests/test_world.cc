@@ -217,7 +217,7 @@ TEST_SUITE("world") {
 			CHECK(vob0->preset_name.empty());
 			CHECK(vob0->position == glm::vec3 {0, 0, 0});
 			CHECK(!vob0->show_visual);
-			CHECK(vob0->camera_alignment == phoenix::camera_lock_mode::none);
+			CHECK(vob0->sprite_camera_facing_mode == phoenix::sprite_alignment::none);
 			CHECK(vob0->anim_mode == phoenix::animation_mode::none);
 			CHECK(vob0->anim_strength == 0.0f);
 			CHECK(vob0->far_clip_scale == 0);
@@ -257,7 +257,7 @@ TEST_SUITE("world") {
 				CHECK(child1->preset_name.empty());
 				CHECK(child1->position == glm::vec3 {-18544.4863, -136.171906, 4141.19727});
 				CHECK(!child1->show_visual);
-				CHECK(child1->camera_alignment == phoenix::camera_lock_mode::none);
+				CHECK(child1->sprite_camera_facing_mode == phoenix::sprite_alignment::none);
 				CHECK(child1->anim_mode == phoenix::animation_mode::none);
 				CHECK(child1->anim_strength == 0.0f);
 				CHECK(child1->far_clip_scale == 0);
@@ -294,7 +294,7 @@ TEST_SUITE("world") {
 			CHECK(vob13->preset_name.empty());
 			CHECK(vob13->position == glm::vec3 {0, 0, 0});
 			CHECK(!vob13->show_visual);
-			CHECK(vob13->camera_alignment == phoenix::camera_lock_mode::none);
+			CHECK(vob13->sprite_camera_facing_mode == phoenix::sprite_alignment::none);
 			CHECK(vob13->anim_mode == phoenix::animation_mode::none);
 			CHECK(vob13->anim_strength == 0.0f);
 			CHECK(vob13->far_clip_scale == 0);
