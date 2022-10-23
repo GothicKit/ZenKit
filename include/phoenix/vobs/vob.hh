@@ -82,11 +82,15 @@ namespace phoenix {
 	};
 
 	/// \brief Ways the camera may behave with a VOb.
-	enum class camera_lock_mode : std::uint8_t {
-		none = 0, ///< The camera is not affected by this VOb.
-		yaw = 1,  ///< The camera's yaw is locked to the VOb's yaw.
-		full = 2, ///< The camera is fully locked to the VOb.
+	enum class sprite_alignment : std::uint8_t {
+		none = 0, ///< The sprite is not affected by the camera's position.
+		yaw = 1,  ///< The sprite rotates with the camera's yaw axis.
+		full = 2, ///< The sprite rotates with camera fully.
 	};
+
+	/// \brief Ways the camera may behave with a VOb. Same as sprite_alignment
+	/// \deprecated Use sprite_alignment instead.
+	using camera_lock_mode [[deprecated("use phoenix::sprite_alignment")]] = sprite_alignment;
 
 	/// \brief Types of wavy animation.
 	enum class animation_mode : std::uint8_t {
@@ -125,7 +129,12 @@ namespace phoenix {
 		glm::vec3 position {};
 		glm::mat3x3 rotation {};
 		bool show_visual {};
-		camera_lock_mode camera_alignment {};
+
+		union {
+			[[deprecated("use phoenix::vob::sprite_camera_facing_mode")]] sprite_alignment camera_alignment;
+			sprite_alignment sprite_camera_facing_mode;
+		};
+
 		bool cd_static {};
 		bool cd_dynamic {};
 		bool vob_static {};

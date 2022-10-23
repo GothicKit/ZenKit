@@ -60,7 +60,7 @@ namespace phoenix {
 			}
 
 			obj.show_visual = static_cast<bool>((bit0 & 0b00000001) >> 0);
-			obj.camera_alignment = static_cast<camera_lock_mode>((bit0 & 0b00000110) >> 1);
+			obj.sprite_camera_facing_mode = static_cast<sprite_alignment>((bit0 & 0b00000110) >> 1);
 			obj.cd_static = static_cast<bool>((bit0 & 0b00001000) >> 3);
 			obj.cd_dynamic = static_cast<bool>((bit0 & 0b00010000) >> 4);
 			obj.vob_static = static_cast<bool>((bit0 & 0b00100000) >> 5);
@@ -101,10 +101,10 @@ namespace phoenix {
 			obj.rotation = in.read_mat3x3(); // trafoOSToWSRot
 			obj.position = in.read_vec3();   // trafoOSToWSPos
 
-			obj.vob_name = in.read_string();                                      // vobName
-			obj.visual_name = in.read_string();                                   // visual
-			obj.show_visual = in.read_bool();                                     // showVisual
-			obj.camera_alignment = static_cast<camera_lock_mode>(in.read_enum()); // visualCamAlign
+			obj.vob_name = in.read_string();                                               // vobName
+			obj.visual_name = in.read_string();                                            // visual
+			obj.show_visual = in.read_bool();                                              // showVisual
+			obj.sprite_camera_facing_mode = static_cast<sprite_alignment>(in.read_enum()); // visualCamAlign
 
 			if (version == game_version::gothic_1) {
 				obj.cd_static = in.read_bool();                                 // cdStatic
