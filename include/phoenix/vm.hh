@@ -196,6 +196,81 @@ namespace phoenix {
 		template <typename _instance_t>
 		typename std::enable_if<std::is_base_of_v<instance, _instance_t>, void>::type
 		init_instance(const std::shared_ptr<_instance_t>& instance, symbol* sym) {
+			// Perform initial instance setup
+			this->allocate_instance(instance, sym);
+
+			// set the proper instances
+			auto old_instance = _m_instance;
+			auto old_self_instance = _m_self_sym != nullptr ? _m_self_sym->get_instance() : nullptr;
+			_m_instance = instance;
+
+			if (_m_self_sym)
+				_m_self_sym->set_instance(_m_instance);
+
+			call(sym);
+
+			// reset the VM state
+			_m_instance = old_instance;
+			if (_m_self_sym)
+				_m_self_sym->set_instance(old_self_instance);
+		}
+
+		/// \brief Allocates an instance with the given type and name and returns it.
+		///
+		/// In contrast to #init_instance, this function will only create an instance of _instance_t and assign
+		/// required internal state. The script function to initialize the instance is not called.
+		///
+		/// \tparam _instance_t The type of the instance to initialize (ie. C_NPC).
+		/// \param name The name of the instance to initialize (ie. 'STT_309_WHISTLER')
+		/// \return The initialized instance.
+		template <typename _instance_t>
+		typename std::enable_if<std::is_base_of_v<instance, _instance_t>, std::shared_ptr<_instance_t>>::type
+		allocate_instance(const std::string& name) {
+			return allocate_instance<_instance_t>(find_symbol_by_name(name));
+		}
+
+		/// \brief Allocates an instance with the given type into \p instance
+		///
+		/// In contrast to #init_instance, this function will only create an instance of _instance_t and assign
+		/// required internal state. The script function to initialize the instance is not called.
+		///
+		/// \tparam _instance_t The type of the instance to initialize (ie. C_NPC).
+		/// \param instance The instance to initialize.
+		/// \param name The name of the instance to initialize (ie. 'STT_309_WHISTLER')
+		template <typename _instance_t>
+		typename std::enable_if<std::is_base_of_v<instance, _instance_t>, void>::type
+		allocate_instance(const std::shared_ptr<_instance_t>& instance, const std::string& name) {
+			allocate_instance<_instance_t>(instance, find_symbol_by_name(name));
+		}
+
+		/// \brief Allocates an instance with the given and returns it.
+		///
+		/// In contrast to #init_instance, this function will only create an instance of _instance_t and assign
+		/// required internal state. The script function to initialize the instance is not called.
+		///
+		/// \tparam _instance_t The type of the instance to initialize (ie. C_NPC).
+		/// \param sym The symbol to initialize.
+		/// \return The initialized instance.
+		template <typename _instance_t>
+		typename std::enable_if<std::is_base_of_v<instance, _instance_t>, std::shared_ptr<_instance_t>>::type
+		allocate_instance(symbol* sym) {
+			// create the instance
+			auto inst = std::make_shared<_instance_t>();
+			allocate_instance(inst, sym);
+			return inst;
+		}
+
+		/// \brief Allocates an instance with the given type into \p instance
+		///
+		/// In contrast to #init_instance, this function will only create an instance of _instance_t and assign
+		/// required internal state. The script function to initialize the instance is not called.
+		///
+		/// \tparam _instance_t The type of the instance to initialize (ie. C_NPC).
+		/// \param instance The instance to initialize.
+		/// \param sym The symbol to initialize.
+		template <typename _instance_t>
+		typename std::enable_if<std::is_base_of_v<instance, _instance_t>, void>::type
+		allocate_instance(const std::shared_ptr<_instance_t>& instance, symbol* sym) {
 			if (sym == nullptr) {
 				throw vm_exception {"Cannot init instance: not found"};
 			}
@@ -219,22 +294,7 @@ namespace phoenix {
 
 			instance->_m_symbol_index = sym->index();
 			instance->_m_type = &typeid(_instance_t);
-
-			// set the proper instances
-			auto old_instance = _m_instance;
-			auto old_self_instance = _m_self_sym != nullptr ? _m_self_sym->get_instance() : nullptr;
-			_m_instance = instance;
-			sym->set_instance(_m_instance);
-
-			if (_m_self_sym)
-				_m_self_sym->set_instance(_m_instance);
-
-			call(sym);
-
-			// reset the VM state
-			_m_instance = old_instance;
-			if (_m_self_sym)
-				_m_self_sym->set_instance(old_self_instance);
+			sym->set_instance(instance);
 		}
 
 		void push_int(std::int32_t value);
