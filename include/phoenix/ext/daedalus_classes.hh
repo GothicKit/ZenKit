@@ -135,20 +135,26 @@ namespace phoenix {
 	FLAG(npc_flag);
 
 	struct c_npc : public instance {
+		static constexpr std::uint32_t hitchance_count =
+		    5; // -> TODO: one of "unknown", "one-handed", "two-handed", "bow", "crossbow"
+		static constexpr std::uint32_t name_count = 5;
+		static constexpr std::uint32_t mission_count = 5;
+		static constexpr std::uint32_t aivar_count = 100;
+
 		var int32_t id;
-		var string name[5];
+		var string name[name_count];
 		var string slot;
 		var string effect;
 		var npc_type type;
 		var npc_flag flags;
-		var int32_t attribute[8];
-		var int32_t hitchance[5];
-		var int32_t protection[8];
-		var int32_t damage[8];
+		var int32_t attribute[npc_attribute::count];
+		var int32_t hitchance[hitchance_count];
+		var int32_t protection[damage_type::count];
+		var int32_t damage[damage_type::count];
 		var int32_t damage_type;
 		var int32_t guild;
 		var int32_t level;
-		var func mission[5];
+		var func mission[mission_count];
 		var int32_t fight_tactic;
 		var int32_t weapon;
 		var int32_t voice;
@@ -160,7 +166,7 @@ namespace phoenix {
 		var int32_t spawn_delay;
 		var int32_t senses;
 		var int32_t senses_range;
-		var int32_t aivar[100];
+		var int32_t aivar[aivar_count];
 		var string wp;
 		var int32_t exp;
 		var int32_t exp_next;
@@ -256,6 +262,9 @@ namespace phoenix {
 	FLAG(item_flags);
 
 	struct c_item : public instance {
+		static constexpr std::uint32_t condition_count = 3;
+		static constexpr std::uint32_t state_count = 4;
+
 		var int32_t id;
 		var string name;
 		var string name_id;
@@ -267,18 +276,18 @@ namespace phoenix {
 		var int32_t value;
 		var int32_t damage_type;
 		var int32_t damage_total;
-		var int32_t damage[8];
+		var int32_t damage[damage_type::count];
 		var int32_t wear;
-		var int32_t protection[8];
+		var int32_t protection[damage_type::count];
 		var int32_t nutrition;
-		var int32_t cond_atr[3];
-		var int32_t cond_value[3];
-		var int32_t change_atr[3];
-		var int32_t change_value[3];
+		var int32_t cond_atr[condition_count];
+		var int32_t cond_value[condition_count];
+		var int32_t change_atr[condition_count];
+		var int32_t change_value[condition_count];
 		var func magic;
 		var func on_equip;
 		var func on_unequip;
-		var func on_state[4];
+		var func on_state[state_count];
 		var func owner;
 		var int32_t owner_guild;
 		var int32_t disguise_guild;
