@@ -1,6 +1,6 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
-#include "phoenix/buffer.hh"
+#include <phoenix/buffer.hh>
 
 #include <fmt/format.h>
 #include <mio/mmap.hpp>
@@ -307,6 +307,30 @@ namespace phoenix {
 			} else {
 				position(position() + count);
 			}
+		}
+
+		return tmp;
+	}
+
+	std::string buffer::get_line_escaped(bool skip_whitespace) {
+		auto tmp = this->get_line(skip_whitespace);
+		auto it = std::find(tmp.begin(), tmp.end(), '\\');
+
+		while (it != tmp.end()) {
+			auto next = it + 1;
+
+			switch (*next) {
+			case 'n':
+				*it = '\n';
+				tmp.erase(next);
+				break;
+			case 't':
+				*it = '\t';
+				tmp.erase(next);
+				break;
+			}
+
+			it = std::find(it, tmp.end(), '\\');
 		}
 
 		return tmp;

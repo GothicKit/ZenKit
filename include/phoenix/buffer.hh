@@ -536,6 +536,14 @@ namespace phoenix {
 		/// \see isspace
 		[[nodiscard]] std::string get_line(bool skip_whitespace = true);
 
+		/// \brief Get a line from the buffer, unescape all relevant escape sequences, and
+		///        advance the position accordingly.
+		/// \param skip_whitespace Set to `true` to skip whitespace characters immediately following the line.
+		/// \return The line just read.
+		/// \throws buffer_underflow if the string can't be read.
+		/// \see isspace
+		[[nodiscard]] std::string get_line_escaped(bool skip_whitespace = true);
+
 		/// \brief Get a line from the buffer.
 		/// \param index The index at which to start.
 		/// \return The line just read

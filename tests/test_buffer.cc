@@ -587,7 +587,8 @@ TEST_SUITE("buffer") {
 		                                     'l',
 		                                     'o',
 		                                     ',',
-		                                     ' ',
+		                                     '\\',
+		                                     't',
 		                                     'W',
 		                                     'o',
 		                                     'r',
@@ -599,9 +600,14 @@ TEST_SUITE("buffer") {
 		SUBCASE("relative") {
 			CHECK(buf.get_line(true) == "Hi");
 			CHECK(buf.position() == 7);
+			buf.mark();
 
-			CHECK(buf.get_line(true) == "Hello, World!");
-			CHECK(buf.position() == 21);
+			CHECK(buf.get_line(true) == "Hello,\\tWorld!");
+			CHECK(buf.position() == 22);
+
+			buf.reset();
+			CHECK(buf.get_line_escaped(true) == "Hello,\tWorld!");
+			CHECK(buf.position() == 22);
 
 			CHECK_THROWS((void) buf.get_line());
 		}
@@ -610,7 +616,7 @@ TEST_SUITE("buffer") {
 			CHECK(buf.get_line_at(1) == "i");
 			CHECK(buf.position() == 0);
 
-			CHECK_THROWS((void) buf.get_line_at(21));
+			CHECK_THROWS((void) buf.get_line_at(22));
 		}
 	}
 
