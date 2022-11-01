@@ -129,7 +129,7 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 
     add_executable(phoenix-tests ${PHOENIX_TESTS})
     target_link_libraries(phoenix-tests PRIVATE phoenix doctest_with_main)
-    target_compile_options(phoenix-tests PRIVATE ${PHOENIX_CXX_FLAGS})
+    target_compile_options(phoenix-tests PRIVATE ${PHOENIX_CXX_FLAGS} -Wno-overloaded-shift-op-parentheses)
     target_link_options(phoenix-tests PRIVATE ${PHOENIX_CXX_FLAGS})
 
     doctest_discover_tests(phoenix-tests EXTRA_ARGS -tse=messages,script,world WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/tests)
