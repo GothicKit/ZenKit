@@ -314,23 +314,20 @@ namespace phoenix {
 
 	std::string buffer::get_line_escaped(bool skip_whitespace) {
 		auto tmp = this->get_line(skip_whitespace);
-		auto it = std::find(tmp.begin(), tmp.end(), '\\');
 
-		while (it != tmp.end()) {
-			auto next = it + 1;
-
-			switch (*next) {
-			case 'n':
-				*it = '\n';
-				tmp.erase(next);
-				break;
-			case 't':
-				*it = '\t';
-				tmp.erase(next);
-				break;
+		for (auto i = 0u; i < tmp.size(); ++i) {
+			if (tmp[i] == '\\') {
+				switch (tmp[i + 1]) {
+				case 'n':
+					tmp[i] = '\n';
+					tmp.erase(i + 1, 1);
+					break;
+				case 't':
+					tmp[i] = '\t';
+					tmp.erase(i + 1, 1);
+					break;
+				}
 			}
-
-			it = std::find(it, tmp.end(), '\\');
 		}
 
 		return tmp;
