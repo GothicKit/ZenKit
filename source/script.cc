@@ -260,7 +260,7 @@ namespace phoenix {
 			case datatype::string: {
 				std::unique_ptr<std::string[]> value {new std::string[sym._m_count]};
 				for (std::uint32_t i = 0; i < sym._m_count; ++i) {
-					value[i] = in.get_line(false);
+					value[i] = in.get_line_escaped(false);
 				}
 				sym._m_value = std::move(value);
 				break;
