@@ -59,7 +59,7 @@ namespace phoenix {
 	    {"zCVobScreenFX:zCVob", vob_type::zCVobScreenFX},
 	    {"zCVobStair:zCVob", vob_type::zCVobStair},
 	    {"oCCSTrigger:zCTrigger:zCVob", vob_type::oCCSTrigger},
-	    {"\xA7", vob_type::unknown}, // some sort of padding object, probably. seems to be always empty
+	    {"\xA7", vob_type::ignored}, // some sort of padding object, probably. seems to be always empty
 	};
 
 	std::unique_ptr<vob> parse_vob_tree(archive_reader& in, game_version version) {
@@ -210,6 +210,8 @@ namespace phoenix {
 		case vob_type::zCMoverController:
 			object = std::make_unique<vobs::mover_controller>();
 			vobs::mover_controller::parse(dynamic_cast<vobs::mover_controller&>(*object), in, version);
+			break;
+		case vob_type::ignored:
 			break;
 		case vob_type::unknown:
 			PX_LOGW("vob_tree: encountered unknown VOb [{} {} {} {}]",

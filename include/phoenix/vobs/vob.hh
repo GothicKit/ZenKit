@@ -60,6 +60,7 @@ namespace phoenix {
 		zCZoneVobFarPlane,
 		zCZoneVobFarPlaneDefault,
 
+		ignored,
 		unknown,
 	};
 
