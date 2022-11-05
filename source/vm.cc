@@ -6,6 +6,74 @@
 #include <utility>
 
 namespace phoenix {
+	/// \brief A helper class for preventing stack corruption.
+	///
+	/// This class can be used to guard against stack corruption when a value is expected to be
+	/// pushed onto the stack but the push does not happen for some reason. Unless #inhibit is called,
+	/// when an instance of this class is destructed, a default value of the given datatype is pushed
+	/// into the stack.
+	///
+	/// \code
+	/// // construct the stack guard
+	/// stack_guard guard {this, datatype::int_};
+	///
+	/// // ... do something that might fail to push an int to the stack ...
+	///
+	/// // make sure to inhibit the guard if pushing the value succeeded
+	/// guard.inhibit();
+	/// \endcode
+	struct stack_guard {
+	public:
+		/// \brief Creates a new stack guard.
+		/// \param machine The VM this instance is guarding.
+		/// \param type The type of value to push if the guard is triggered.
+		stack_guard(vm* machine, datatype type) : _m_type(type), _m_machine(machine) {}
+
+		/// \brief Triggers this guard.
+		///
+		/// Unless #inhibit was called, this destructor will push a value of the datatype passed in the
+		/// constructor onto the stack of the VM passed in the constructor.
+		~stack_guard() {
+			if (_m_inhibited)
+				return;
+
+			switch (_m_type) {
+			case datatype::void_:
+				break;
+			case datatype::float_:
+				_m_machine->push_float(0);
+				break;
+			case datatype::integer:
+			case datatype::function:
+				_m_machine->push_int(0);
+				break;
+			case datatype::string:
+				_m_machine->push_string("");
+				break;
+			case datatype::instance:
+				_m_machine->push_instance(nullptr);
+				break;
+			case datatype::class_:
+				break;
+			case datatype::prototype:
+				break;
+			}
+		}
+
+		/// \brief Inhibits this guard.
+		///
+		/// Calling this function will cause the guard to disengage and thus not push a
+		/// value onto the stack.
+		void inhibit() {
+			_m_inhibited = true;
+		}
+
+	private:
+		datatype _m_type;
+		vm* _m_machine;
+		bool _m_inhibited {false};
+	};
+
 	vm::vm(script&& scr, std::uint8_t flags) : script(std::move(scr)), _m_flags(flags) {
 		_m_self_sym = find_symbol_by_name("SELF");
 		_m_other_sym = find_symbol_by_name("OTHER");
@@ -128,9 +196,15 @@ namespace phoenix {
 				// Check if the function is overridden and if it is, call the resulting external.
 				auto cb = _m_function_overrides.find(instr.address);
 				if (cb != _m_function_overrides.end()) {
+					// Guard against exceptions during external invocation.
+					stack_guard guard {this, sym->rtype()};
+
 					push_call(sym);
 					cb->second(*this);
 					pop_call();
+
+					// The stack is left intact.
+					guard.inhibit();
 				} else {
 					sym = find_symbol_by_address(instr.address);
 					if (sym == nullptr) {
@@ -148,6 +222,9 @@ namespace phoenix {
 					throw vm_exception {"be: no external found for index"};
 				}
 
+				// Guard against exceptions during external invocation.
+				stack_guard guard {this, sym->rtype()};
+
 				auto cb = _m_externals.find(sym);
 				if (cb == _m_externals.end()) {
 					if (_m_default_external.has_value()) {
@@ -161,6 +238,9 @@ namespace phoenix {
 				push_call(sym);
 				cb->second(*this);
 				pop_call();
+
+				// The stack is left intact.
+				guard.inhibit();
 				break;
 			}
 			case opcode::pushi:
