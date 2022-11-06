@@ -130,7 +130,10 @@ namespace phoenix {
 	}
 
 	const symbol* script::find_symbol_by_name(const std::string& name) const {
-		if (auto it = _m_symbols_by_name.find(name); it != _m_symbols_by_name.end()) {
+		std::string up {name};
+		std::transform(up.begin(), up.end(), up.begin(), ::toupper);
+
+		if (auto it = _m_symbols_by_name.find(up); it != _m_symbols_by_name.end()) {
 			return find_symbol_by_index(it->second);
 		}
 
