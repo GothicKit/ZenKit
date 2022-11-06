@@ -319,24 +319,23 @@ TEST_SUITE("world") {
 		CHECK(waynet.waypoints.size() == 2784);
 		CHECK(waynet.edges.size() == 3500);
 
-		auto* wp0 = waynet.waypoint("LOCATION_28_07");
+		auto& wp0 = waynet.waypoints[0];
 		auto& wp100 = waynet.waypoints[100];
 		auto* wp500 = waynet.waypoint("OW_FOGDUNGEON_32");
 		auto* wp_missing = waynet.waypoint("nonexistent");
 
-		CHECK(wp0 != nullptr);
-		CHECK(wp0->name == "LOCATION_28_07");
-		CHECK(wp0->water_depth == 0);
-		CHECK(!wp0->under_water);
-		CHECK(wp0->position == glm::vec3 {23871.457, -553.283813, 27821.3516});
-		CHECK(wp0->direction == glm::vec3 {0.86651814, 0, -0.499145567});
-		CHECK(wp0->free_point);
+		CHECK(wp0.name == "LOCATION_28_07");
+		CHECK(wp0.water_depth == 0);
+		CHECK(!wp0.under_water);
+		CHECK(wp0.position == glm::vec3 {23871.457, -553.283813, 27821.3516});
+		CHECK(wp0.direction == glm::vec3 {0.86651814, 0, -0.499145567});
+		CHECK(wp0.free_point);
 
-		CHECK(wp100.name == "FMC_HUT10_IN");
+		CHECK(wp100.name == "CASTLE_MOVEMENT_STRAIGHT3");
 		CHECK(wp100.water_depth == 0);
 		CHECK(!wp100.under_water);
-		CHECK(wp100.position == glm::vec3 {-48178.793, 4652.33252, -16504.9102});
-		CHECK(wp100.direction == glm::vec3 {-0.929777503, 0, -0.368121982});
+		CHECK(wp100.position == glm::vec3 {3362.21948, 8275.1709, -21067.9473});
+		CHECK(wp100.direction == glm::vec3 {-0.342115372, 0, 0.939657927});
 		CHECK(!wp100.free_point);
 
 		CHECK(wp500 != nullptr);

@@ -40,7 +40,7 @@ namespace phoenix {
 		/// \brief Get the waypoint with the given name.
 		/// \param name The name of the waypoint to get.
 		/// \return A pointer to the waypoint or `nullptr` if the waypoint was not fount.
-		[[nodiscard]] const way_point* waypoint(std::string_view name) const;
+		[[nodiscard]] const way_point* waypoint(const std::string& name) const;
 
 	public:
 		/// \brief All waypoints of this way-net.
@@ -48,6 +48,9 @@ namespace phoenix {
 
 		/// \brief All edges of this way-net.
 		std::vector<way_edge> edges;
+
+	private:
+		std::unordered_map<std::string, std::uint32_t> _m_name_to_waypoint;
 	};
 
 } // namespace phoenix

@@ -37,7 +37,7 @@ namespace phoenix {
 				auto& wp = net.waypoints.emplace_back();
 				read_waypoint_data(wp, in);
 				wp.free_point = true;
-
+				net._m_name_to_waypoint[wp.name] = net.waypoints.size() - 1;
 				obj_id_to_wp[obj.index] = net.waypoints.size() - 1;
 
 				if (!in.read_object_end()) {
@@ -64,7 +64,7 @@ namespace phoenix {
 						auto& new_wp = net.waypoints.emplace_back();
 						read_waypoint_data(new_wp, in);
 						new_wp.free_point = false;
-
+						net._m_name_to_waypoint[new_wp.name] = net.waypoints.size() - 1;
 						obj_id_to_wp[obj.index] = net.waypoints.size() - 1;
 						wp = net.waypoints.size() - 1;
 					} else {
@@ -90,28 +90,15 @@ namespace phoenix {
 				PX_LOGW("way_net: not fully parsed");
 				in.skip_object(true);
 			}
-
-			// Prepare blocks for binary search in block_by_name
-			std::sort(net.waypoints.begin(), net.waypoints.end(), [](const auto& a, const auto& b) {
-				return a.name < b.name;
-			});
-
 			return net;
 		} catch (const buffer_error& exc) {
 			throw parser_error {"way_net", exc, "eof reached"};
 		}
 	}
 
-	const way_point* way_net::waypoint(std::string_view name) const {
-		auto result =
-		    std::lower_bound(this->waypoints.begin(), this->waypoints.end(), name, [](const auto& wp, auto name) {
-			    return wp.name < name;
-		    });
-
-		if (result == this->waypoints.end()) {
-			return nullptr;
-		}
-
-		return &*result;
+	const way_point* way_net::waypoint(const std::string& name) const {
+		if (auto it = _m_name_to_waypoint.find(name); it != _m_name_to_waypoint.end())
+			return &waypoints[it->second];
+		return nullptr;
 	}
 } // namespace phoenix
