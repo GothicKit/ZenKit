@@ -64,7 +64,7 @@ namespace phoenix {
 						auto& new_wp = net.waypoints.emplace_back();
 						read_waypoint_data(new_wp, in);
 						new_wp.free_point = false;
-
+						net._m_name_to_waypoint[new_wp.name] = net.waypoints.size() - 1;
 						obj_id_to_wp[obj.index] = net.waypoints.size() - 1;
 						wp = net.waypoints.size() - 1;
 					} else {
