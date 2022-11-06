@@ -84,7 +84,7 @@ namespace phoenix {
 	}
 
 	const message_block* messages::block_by_name(std::string_view name) const {
-		auto result = phoenix::lower_bound(this->blocks.begin(), this->blocks.end(), name, [](const auto& it, auto n) {
+		auto result = std::lower_bound(this->blocks.begin(), this->blocks.end(), name, [](const auto& it, auto n) {
 			return it.name < n;
 		});
 

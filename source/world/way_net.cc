@@ -104,7 +104,7 @@ namespace phoenix {
 
 	const way_point* way_net::waypoint(std::string_view name) const {
 		auto result =
-		    phoenix::lower_bound(this->waypoints.begin(), this->waypoints.end(), name, [](const auto& wp, auto name) {
+		    std::lower_bound(this->waypoints.begin(), this->waypoints.end(), name, [](const auto& wp, auto name) {
 			    return wp.name < name;
 		    });
 

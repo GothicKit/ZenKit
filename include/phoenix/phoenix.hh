@@ -53,41 +53,6 @@ namespace phoenix {
 	/// \return ``true`` if both strings are equal when ignoring case.
 	bool iequals(std::string_view a, std::string_view b);
 
-	/// \brief Performs a binary search within the given iterator pair.
-	///
-	/// Taken directly from The example implementation of `lower_bound` found on cppreference
-	/// https://en.cppreference.com/w/cpp/algorithm/lower_bound#Possible_implementation
-	///
-	/// \tparam ForwardIt The type of iterator.
-	/// \tparam T The type of value to search for.
-	/// \tparam Compare The type of the comparator function.
-	/// \param first The begin iterator
-	/// \param last The end iterator
-	/// \param value The value to search for.
-	/// \param comp A function comparing a value from the iterator with the given search value.
-	/// \return An iterator pointing to the first matched value in the input range or \p last if no elements matched.
-	template <class ForwardIt, class T, class Compare>
-	ForwardIt lower_bound(ForwardIt first, ForwardIt last, const T& value, Compare comp) {
-		ForwardIt it;
-		typename std::iterator_traits<ForwardIt>::difference_type count, step;
-		count = std::distance(first, last);
-
-		while (count > 0) {
-			it = first;
-			step = count / 2;
-			std::advance(it, step);
-
-			if (comp(*it, value)) {
-				first = ++it;
-				count -= step + 1;
-			} else {
-				count = step;
-			}
-		}
-
-		return first;
-	}
-
 	/// \brief A basic datetime structure used by the *ZenGin*.
 	struct date {
 		/// \brief Parses a date from a buffer.
