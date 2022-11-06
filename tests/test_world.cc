@@ -321,7 +321,8 @@ TEST_SUITE("world") {
 
 		auto& wp0 = waynet.waypoints[0];
 		auto& wp100 = waynet.waypoints[100];
-		auto& wp500 = waynet.waypoints[500];
+		auto* wp500 = waynet.waypoint("OW_FOGDUNGEON_32");
+		auto* wp_missing = waynet.waypoint("nonexistent");
 
 		CHECK(wp0.name == "LOCATION_28_07");
 		CHECK(wp0.water_depth == 0);
@@ -337,12 +338,15 @@ TEST_SUITE("world") {
 		CHECK(wp100.direction == glm::vec3 {-0.342115372, 0, 0.939657927});
 		CHECK(!wp100.free_point);
 
-		CHECK(wp500.name == "OW_FOGDUNGEON_32");
-		CHECK(wp500.water_depth == 0);
-		CHECK(!wp500.under_water);
-		CHECK(wp500.position == glm::vec3 {26636.0645, -1802.15601, 10523.1445});
-		CHECK(wp500.direction == glm::vec3 {-0.999390841, 0, 0.0348994918});
-		CHECK(!wp500.free_point);
+		CHECK(wp500 != nullptr);
+		CHECK(wp500->name == "OW_FOGDUNGEON_32");
+		CHECK(wp500->water_depth == 0);
+		CHECK(!wp500->under_water);
+		CHECK(wp500->position == glm::vec3 {26636.0645, -1802.15601, 10523.1445});
+		CHECK(wp500->direction == glm::vec3 {-0.999390841, 0, 0.0348994918});
+		CHECK(!wp500->free_point);
+
+		CHECK(wp_missing == nullptr);
 
 		auto& edge0 = waynet.edges[0];
 		auto& edge5 = waynet.edges[5];
