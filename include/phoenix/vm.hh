@@ -19,6 +19,9 @@ namespace phoenix {
 	template <typename T>
 	static constexpr bool is_instance_ptr_v<std::shared_ptr<T>> = std::is_base_of_v<instance, T>;
 
+	template <typename T>
+	static constexpr bool is_raw_instance_ptr_v = std::is_base_of_v<instance, std::remove_pointer_t<T>>;
+
 	/// \brief An exception thrown if the definition of an external is incorrect.
 	class illegal_external_definition : public script_error {
 	public:
@@ -338,8 +341,9 @@ namespace phoenix {
 		/// 		</tr>
 		/// 		<tr>
 		/// 			<td>{instance}</td>
-		/// 			<td><tt>std::shared_ptr&lt;{instance}&gt;</tt></td>
-		/// 			<td>where {instance} is the type of instance(ie.C_NPC)[<sup>1</sup>]</td></tr>
+		/// 			<td><tt>std::shared_ptr&lt;{instance}&gt;|{instance}*</tt></td>
+		/// 			<td>where {instance} is the type of instance(ie.C_NPC)[<sup>1</sup>]</td>
+		/// 		</tr>
 		/// 	</tbody>
 		/// </table>
 		///
@@ -669,7 +673,7 @@ namespace phoenix {
 		/// \note Requires that sizeof...(Px) + 1 == defined.size().
 		template <int32_t i, typename P, typename... Px>
 		void check_external_params(const std::vector<symbol*>& defined) {
-			if constexpr (is_instance_ptr_v<P> || std::is_same_v<symbol*, P>) {
+			if constexpr (is_instance_ptr_v<P> || std::is_same_v<symbol*, P> || is_raw_instance_ptr_v<P>) {
 				if (defined[i]->type() != datatype::instance)
 					throw illegal_external_param(defined[i], "instance", i + 1);
 			} else if constexpr (std::is_same_v<float, P>) {
@@ -699,7 +703,7 @@ namespace phoenix {
 		template <typename T>
 		typename std::enable_if<is_instance_ptr_v<T> || std::is_same_v<T, float> || std::is_same_v<T, std::int32_t> ||
 		                            std::is_same_v<T, bool> || std::is_same_v<T, std::string_view> ||
-		                            std::is_same_v<T, symbol*>,
+		                            std::is_same_v<T, symbol*> || is_raw_instance_ptr_v<T>,
 		                        T>::type
 		pop_value_for_external() {
 			if constexpr (is_instance_ptr_v<T>) {
@@ -720,6 +724,24 @@ namespace phoenix {
 				}
 
 				return std::static_pointer_cast<typename T::element_type>(r);
+			} else if constexpr (is_raw_instance_ptr_v<T>) {
+				auto r = pop_instance();
+
+				if (r != nullptr && !std::is_same_v<T, phoenix::instance*>) {
+					auto& expected = typeid(typename std::remove_pointer_t<T>);
+
+					if (!r->_m_type) {
+						throw vm_exception {"Popping instance of unregistered type: " +
+						                    std::string {r->_m_type->name()} + ", expected " + expected.name()};
+					}
+
+					if (*r->_m_type != expected) {
+						throw vm_exception {"Popping instance of wrong type: " + std::string {r->_m_type->name()} +
+						                    ", expected " + expected.name()};
+					}
+				}
+
+				return reinterpret_cast<T>(r.get());
 			} else if constexpr (std::is_same_v<float, T>) {
 				return pop_float();
 			} else if constexpr (std::is_same_v<std::int32_t, T>) {
