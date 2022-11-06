@@ -53,7 +53,6 @@ namespace phoenix {
 
 			itm.message.text = archive->read_string();
 			itm.message.name = archive->read_string();
-			msgs._m_blocks_by_name[itm.name] = msgs.blocks.size() - 1;
 
 			if (!archive->read_object_end()) {
 				// FIXME: in binary archives this might skip whole sections of the file due to faulty object
@@ -79,14 +78,20 @@ namespace phoenix {
 			PX_LOGW("messages: not fully parsed");
 		}
 
+		// Prepare blocks for binary search in block_by_name
+		std::sort(msgs.blocks.begin(), msgs.blocks.end(), [](const auto& a, const auto& b) { return a.name < b.name; });
 		return msgs;
 	}
 
-	const message_block* messages::block_by_name(const std::string& name) const {
-		if (auto it = _m_blocks_by_name.find(name); it != _m_blocks_by_name.end()) {
-			return &blocks[it->second];
+	const message_block* messages::block_by_name(std::string_view name) const {
+		auto result = phoenix::lower_bound(this->blocks.begin(), this->blocks.end(), name, [](const auto& it, auto n) {
+			return it.name < n;
+		});
+
+		if (result == this->blocks.end()) {
+			return nullptr;
 		}
 
-		return nullptr;
+		return &*result;
 	}
 } // namespace phoenix

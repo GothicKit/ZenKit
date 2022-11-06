@@ -67,13 +67,10 @@ namespace phoenix {
 		/// \brief Retrieves a message block by it's name.
 		/// \param name The name of the block to get
 		/// \return A pointer to the block or `nullptr` if the block was not found.
-		const message_block* block_by_name(const std::string& name) const;
+		const message_block* block_by_name(std::string_view name) const;
 
 	public:
 		/// \brief A list of all message blocks in the database.
 		std::vector<message_block> blocks {};
-
-	private:
-		std::unordered_map<std::string, std::uint32_t> _m_blocks_by_name {};
 	};
 } // namespace phoenix
