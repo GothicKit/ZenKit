@@ -90,7 +90,7 @@ namespace phoenix {
 		/// \param sym The name of the function to call.
 		/// \param args The arguments for the function call.
 		template <typename R = _ignore_return_value, typename... P>
-		R call_function(const std::string& name, P... args) {
+		R call_function(std::string_view name, P... args) {
 			return call_function<R, P...>(find_symbol_by_name(name), args...);
 		}
 
@@ -158,7 +158,7 @@ namespace phoenix {
 		/// \return The initialized instance.
 		template <typename _instance_t>
 		typename std::enable_if<std::is_base_of_v<instance, _instance_t>, std::shared_ptr<_instance_t>>::type
-		init_instance(const std::string& name) {
+		init_instance(std::string_view name) {
 			return init_instance<_instance_t>(find_symbol_by_name(name));
 		}
 
@@ -168,7 +168,7 @@ namespace phoenix {
 		/// \param name The name of the instance to initialize (ie. 'STT_309_WHISTLER')
 		template <typename _instance_t>
 		typename std::enable_if<std::is_base_of_v<instance, _instance_t>, void>::type
-		init_instance(const std::shared_ptr<_instance_t>& instance, const std::string& name) {
+		init_instance(const std::shared_ptr<_instance_t>& instance, std::string_view name) {
 			init_instance<_instance_t>(instance, find_symbol_by_name(name));
 		}
 
@@ -225,7 +225,7 @@ namespace phoenix {
 		/// \return The initialized instance.
 		template <typename _instance_t>
 		typename std::enable_if<std::is_base_of_v<instance, _instance_t>, std::shared_ptr<_instance_t>>::type
-		allocate_instance(const std::string& name) {
+		allocate_instance(std::string_view name) {
 			return allocate_instance<_instance_t>(find_symbol_by_name(name));
 		}
 
@@ -239,7 +239,7 @@ namespace phoenix {
 		/// \param name The name of the instance to initialize (ie. 'STT_309_WHISTLER')
 		template <typename _instance_t>
 		typename std::enable_if<std::is_base_of_v<instance, _instance_t>, void>::type
-		allocate_instance(const std::shared_ptr<_instance_t>& instance, const std::string& name) {
+		allocate_instance(const std::shared_ptr<_instance_t>& instance, std::string_view name) {
 			allocate_instance<_instance_t>(instance, find_symbol_by_name(name));
 		}
 
@@ -389,7 +389,7 @@ namespace phoenix {
 		/// \throws illegal_external if The number of parameters of the definition and callback is not the same.
 		/// \throws runtime_error if any other error occurs.
 		template <typename R, typename... P>
-		void register_external(const std::string& name, const std::function<R(P...)>& callback) {
+		void register_external(std::string_view name, const std::function<R(P...)>& callback) {
 			auto* sym = find_symbol_by_name(name);
 			if (sym == nullptr)
 				return;
@@ -460,15 +460,15 @@ namespace phoenix {
 
 		/// \brief Registers an external function.
 		///
-		/// Same as #register_external(const std::string&, std::function). This method is here to bypass a template
+		/// Same as #register_external(std::string_view, std::function). This method is here to bypass a template
 		/// deduction failure when passing lambdas directly.
 		///
 		/// \tparam T The type of external function to register.
 		/// \param name The name of the external to register.
 		/// \param cb The callback function to register.
-		/// \see #register_external(const std::string&, std::function)
+		/// \see #register_external(std::string_view, std::function)
 		template <typename T>
-		void register_external(const std::string& name, const T& cb) {
+		void register_external(std::string_view name, const T& cb) {
 			register_external(name, std::function {cb});
 		}
 
@@ -482,10 +482,10 @@ namespace phoenix {
 		/// \tparam P The parameters types of the external.
 		/// \param name The name of the function to override.
 		/// \param callback The C++ function to register as the external.
-		/// \see #register_external(const std::string&, std::function)
+		/// \see #register_external(std::string_view, std::function)
 		/// \todo Deduplicate source code!
 		template <typename R, typename... P>
-		void override_function(const std::string& name, const std::function<R(P...)>& callback) {
+		void override_function(std::string_view name, const std::function<R(P...)>& callback) {
 			auto* sym = find_symbol_by_name(name);
 			if (sym == nullptr)
 				throw vm_exception {"symbol not found"};
@@ -555,15 +555,15 @@ namespace phoenix {
 
 		/// \brief Overrides a function in Daedalus code with an external definition.
 		///
-		/// Same as #override_function(const std::string&, std::function). This method is here to bypass a template
+		/// Same as #override_function(std::string_view, std::function). This method is here to bypass a template
 		/// deduction failure when passing lambdas directly.
 		///
 		/// \tparam T The type of external function to register.
 		/// \param name The name of the function to override.
 		/// \param cb The callback function to register.
-		/// \see #override_function(const std::string&, std::function)
+		/// \see #override_function(std::string_view, std::function)
 		template <typename T>
-		void override_function(const std::string& name, const T& cb) {
+		void override_function(std::string_view name, const T& cb) {
 			override_function(name, std::function {cb});
 		}
 

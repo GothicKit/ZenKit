@@ -647,7 +647,7 @@ namespace phoenix {
 		                            std::is_same_v<_member, std::int32_t> ||
 		                            (std::is_enum_v<_member> && sizeof(_member) == 4),
 		                        void>::type
-		register_member(const std::string& name, _member (_class::*field)[N]) { // clang-format on
+		register_member(std::string_view name, _member (_class::*field)[N]) { // clang-format on
 			auto* type = &typeid(_class);
 			auto* sym = _check_member<_class, _member, N>(name, type);
 
@@ -668,7 +668,7 @@ namespace phoenix {
 		                            std::is_same_v<_member, std::int32_t> ||
 		                            (std::is_enum_v<_member> && sizeof(_member) == 4),
 		                        void>::type
-		register_member(const std::string& name, _member _class::*field) {
+		register_member(std::string_view name, _member _class::*field) {
 			auto* type = &typeid(_class);
 			auto* sym = _check_member<_class, _member, 1>(name, type);
 
@@ -701,7 +701,7 @@ namespace phoenix {
 		/// \brief Retrieves the symbol with the given \p name.
 		/// \param name The name of the symbol to get.
 		/// \return The symbol or `nullptr` if no symbol with that name was found.
-		[[nodiscard]] const symbol* find_symbol_by_name(const std::string& name) const;
+		[[nodiscard]] const symbol* find_symbol_by_name(std::string_view name) const;
 
 		/// \brief Retrieves the symbol with the given \p index
 		/// \param index The index of the symbol to get
@@ -721,13 +721,13 @@ namespace phoenix {
 		/// \brief Retrieves the symbol with the given \p name.
 		/// \param name The name of the symbol to get.
 		/// \return The symbol or `nullptr` if no symbol with that name was found.
-		[[nodiscard]] symbol* find_symbol_by_name(const std::string& name);
+		[[nodiscard]] symbol* find_symbol_by_name(std::string_view name);
 
 		/// \brief Call the given callback function for every instance symbol which is a descendant of the class with
 		///        the given name.
 		/// \param name The name of the parent class.
 		/// \param callback The function to call with each instance symbol.
-		void enumerate_instances_by_class_name(const std::string& name, const std::function<void(symbol&)>& callback);
+		void enumerate_instances_by_class_name(std::string_view name, const std::function<void(symbol&)>& callback);
 
 		/// \brief Decodes the instruction at \p address and returns it.
 		/// \param address The address of the instruction to decode
@@ -781,7 +781,7 @@ namespace phoenix {
 		script(script&& move) = default;
 
 		template <typename _class, typename _member, int N>
-		symbol* _check_member(const std::string& name, const std::type_info* type) {
+		symbol* _check_member(std::string_view name, const std::type_info* type) {
 			auto* sym = find_symbol_by_name(name);
 
 			if (sym == nullptr)

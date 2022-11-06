@@ -129,7 +129,7 @@ namespace phoenix {
 		return &_m_symbols[index];
 	}
 
-	const symbol* script::find_symbol_by_name(const std::string& name) const {
+	const symbol* script::find_symbol_by_name(std::string_view name) const {
 		std::string up {name};
 		std::transform(up.begin(), up.end(), up.begin(), ::toupper);
 
@@ -155,7 +155,7 @@ namespace phoenix {
 		return &_m_symbols[index];
 	}
 
-	symbol* script::find_symbol_by_name(const std::string& name) {
+	symbol* script::find_symbol_by_name(std::string_view name) {
 		std::string up {name};
 		std::transform(up.begin(), up.end(), up.begin(), ::toupper);
 
@@ -174,7 +174,7 @@ namespace phoenix {
 		return nullptr;
 	}
 
-	void script::enumerate_instances_by_class_name(const std::string& name,
+	void script::enumerate_instances_by_class_name(std::string_view name,
 	                                               const std::function<void(symbol&)>& callback) {
 		auto* cls = find_symbol_by_name(name);
 		if (cls == nullptr)
