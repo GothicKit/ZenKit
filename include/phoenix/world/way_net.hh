@@ -40,7 +40,7 @@ namespace phoenix {
 		/// \brief Get the waypoint with the given name.
 		/// \param name The name of the waypoint to get.
 		/// \return A pointer to the waypoint or `nullptr` if the waypoint was not fount.
-		[[nodiscard]] const way_point* waypoint(const std::string& name) const;
+		[[nodiscard, deprecated("unsupported API")]] const way_point* waypoint(const std::string& name) const;
 
 	public:
 		/// \brief All waypoints of this way-net.

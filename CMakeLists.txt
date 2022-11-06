@@ -132,7 +132,7 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     target_compile_options(phoenix-tests PRIVATE ${PHOENIX_CXX_FLAGS})
 
     if (NOT MSVC)
-        target_compile_options(phoenix-tests PRIVATE -Wno-overloaded-shift-op-parentheses)
+        target_compile_options(phoenix-tests PRIVATE -Wno-overloaded-shift-op-parentheses -Wno-deprecated-declarations)
     endif ()
 
     target_link_options(phoenix-tests PRIVATE ${PHOENIX_CXX_FLAGS})
