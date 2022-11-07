@@ -30,6 +30,18 @@ namespace phoenix {
 		return dos;
 	}
 
+	bool vdf_entry_comparator::operator()(const vdf_entry& a, const vdf_entry& b) const {
+		return icompare(a.name, b.name);
+	}
+
+	bool vdf_entry_comparator::operator()(const vdf_entry& a, std::string_view b) const {
+		return icompare(a.name, b);
+	}
+
+	bool vdf_entry_comparator::operator()(std::string_view a, const vdf_entry& b) const {
+		return icompare(a, b.name);
+	}
+
 	vdf_header::vdf_header(std::string_view comment, std::time_t timestamp) : comment(comment), timestamp(timestamp) {}
 
 	vdf_header vdf_header::read(buffer& in) {
@@ -58,41 +70,52 @@ namespace phoenix {
 		auto it = path.find('/');
 		auto name = path.substr(0, it);
 
-		for (const auto& child : children) {
-			if (iequals(child.name, name)) {
-				if (it != std::string_view::npos) {
-					return child.resolve_path(path.substr(it + 1));
-				}
-
-				return &child;
-			}
+		auto result = this->children.find(name);
+		if (result == this->children.end()) {
+			return nullptr;
 		}
 
-		return nullptr;
+		if (it != std::string_view::npos) {
+			return (*result).resolve_path(path.substr(it + 1));
+		}
+
+		return &*result;
 	}
 
 	const vdf_entry* vdf_entry::find_child(std::string_view name) const {
-		for (const auto& child : children) {
-			if (iequals(child.name, name)) {
-				return &child;
-			} else if (const auto* v = child.find_child(name); v != nullptr) {
-				return v;
+		auto result = this->children.find(name);
+		if (result == this->children.end()) {
+			// recurse the search
+			const vdf_entry* child;
+
+			for (const auto& entry : children) {
+				if ((child = entry.find_child(name), child != nullptr)) {
+					return child;
+				}
 			}
+
+			return nullptr;
 		}
 
-		return nullptr;
+		return &*result;
 	}
 
 	vdf_entry* vdf_entry::find_child(std::string_view name) {
-		for (auto& child : children) {
-			if (iequals(child.name, name)) {
-				return &child;
-			} else if (auto* v = child.find_child(name); v != nullptr) {
-				return v;
+		auto result = this->children.find(name);
+		if (result == this->children.end()) {
+			// recurse the search
+			vdf_entry* child;
+
+			for (const auto& entry : children) {
+				if ((child = const_cast<vdf_entry*>(entry.find_child(name)), child != nullptr)) {
+					return child;
+				}
 			}
+
+			return nullptr;
 		}
 
-		return nullptr;
+		return const_cast<vdf_entry*>(&*result);
 	}
 
 	vdf_entry vdf_entry::read(buffer& in, std::uint32_t catalog_offset) {
@@ -112,9 +135,9 @@ namespace phoenix {
 			auto self_offset = in.position();
 			in.position(catalog_offset + entry.offset * vdf_entry::packed_size);
 
-			vdf_entry* child = nullptr;
+			const vdf_entry* child = nullptr;
 			do {
-				child = &entry.children.emplace_back(read(in, catalog_offset));
+				child = &*std::get<0>(entry.children.insert(read(in, catalog_offset)));
 			} while (!child->is_last());
 
 			in.position(self_offset);
@@ -126,73 +149,82 @@ namespace phoenix {
 	}
 
 	void vdf_entry::merge(const vdf_entry& itm, bool override_existing) {
-		for (auto it = children.begin(); it != children.end(); ++it) {
-			if (phoenix::iequals(it->name, itm.name)) {
-				if (itm.is_file() || it->is_file()) {
-					if (!override_existing) {
-						return;
-					}
-
-					// If an entry with the same name is found and either is a file,
-					// replace the entry with the new one.
-					children.erase(it);
-					children.push_back(itm);
-				} else {
-					// Otherwise, the entry is a directory, so we just continue the merge.
-					for (const auto& child : itm.children) {
-						it->merge(child, override_existing);
-					}
+		auto result = this->children.find(name);
+		if (result == this->children.end()) {
+			// If no matching entry was found, this is a new one.
+			// Just add it to the children of this entry.
+			children.insert(itm);
+		} else {
+			if (itm.is_file() || (*result).is_file()) {
+				if (!override_existing) {
+					return;
 				}
-				return;
+
+				// If an entry with the same name is found and either is a file,
+				// replace the entry with the new one.
+				children.erase(result);
+				children.insert(itm);
+			} else {
+				// Otherwise, the entry is a directory, so we just continue the merge.
+				for (const auto& child : itm.children) {
+					const_cast<vdf_entry&>(*result).merge(child, override_existing);
+				}
 			}
 		}
-
-		// If no matching entry was found, this is a new one.
-		// Just add it to the children of this entry.
-		children.push_back(itm);
 	}
 
 	vdf_file::vdf_file(std::string_view comment, std::time_t timestamp) : header(comment, timestamp) {}
 
 	const vdf_entry* vdf_file::find_entry(std::string_view name) const {
-		for (const auto& entry : entries) {
-			if (iequals(entry.name, name)) {
-				return &entry;
-			} else if (const auto* v = entry.find_child(name); v != nullptr) {
-				return v;
+		auto result = this->entries.find(name);
+		if (result == this->entries.end()) {
+			// recurse the search
+			vdf_entry* child;
+
+			for (const auto& entry : entries) {
+				if ((child = const_cast<vdf_entry*>(entry.find_child(name)), child != nullptr)) {
+					return child;
+				}
 			}
+
+			return nullptr;
 		}
 
-		return nullptr;
+		return &*result;
 	}
 
 	const vdf_entry* vdf_file::resolve_path(std::string_view path) const {
 		auto it = path.find('/');
 		auto name = path.substr(0, it);
 
-		for (const auto& child : entries) {
-			if (iequals(child.name, name)) {
-				if (it != std::string_view::npos) {
-					return child.resolve_path(path.substr(it + 1));
-				}
-
-				return &child;
-			}
+		auto result = this->entries.find(name);
+		if (result == this->entries.end()) {
+			return nullptr;
 		}
 
-		return nullptr;
+		if (it != std::string_view::npos) {
+			return (*result).resolve_path(path.substr(it + 1));
+		}
+
+		return &*result;
 	}
 
 	vdf_entry* vdf_file::find_entry(std::string_view name) {
-		for (auto& entry : entries) {
-			if (iequals(entry.name, name)) {
-				return &entry;
-			} else if (auto* v = entry.find_child(name); v != nullptr) {
-				return v;
+		auto result = this->entries.find(name);
+		if (result == this->entries.end()) {
+			// recurse the search
+			vdf_entry* child;
+
+			for (const auto& entry : entries) {
+				if ((child = const_cast<vdf_entry*>(entry.find_child(name)), child != nullptr)) {
+					return child;
+				}
 			}
+
+			return nullptr;
 		}
 
-		return nullptr;
+		return const_cast<vdf_entry*>(&*result);
 	}
 
 	vdf_file vdf_file::open(const std::filesystem::path& path) {
@@ -206,9 +238,9 @@ namespace phoenix {
 		vdf.header = vdf_header::read(buf);
 		buf.position(vdf.header.catalog_offset);
 
-		vdf_entry* entry = nullptr;
+		const vdf_entry* entry = nullptr;
 		do {
-			entry = &vdf.entries.emplace_back(vdf_entry::read(buf, vdf.header.catalog_offset));
+			entry = &*std::get<0>(vdf.entries.insert(vdf_entry::read(buf, vdf.header.catalog_offset)));
 		} while (!entry->is_last());
 
 		return vdf;
@@ -216,32 +248,26 @@ namespace phoenix {
 
 	void vdf_file::merge(const vdf_file& file, bool override_existing) {
 		for (const auto& child : file.entries) {
-			bool child_found = false;
-
-			for (auto it = entries.begin(); it != entries.end(); ++it) {
-				if (phoenix::iequals(it->name, child.name)) {
-					if (child.is_file() || it->is_file()) {
-						// If an entry with the same name is found and either is a file,
-						// replace the entry with the new one.
-						if (override_existing) {
-							entries.erase(it);
-							entries.push_back(child);
-						}
-					} else {
-						// Otherwise, the entry is a directory, so we just continue the merge.
-						for (const auto& sub_child : child.children) {
-							it->merge(sub_child, override_existing);
-						}
+			auto result = this->entries.find(child.name);
+			if (result == this->entries.end()) {
+				// If no matching entry was found, this is a new one.
+				// Just add it to the children of this entry.
+				entries.insert(child);
+			} else {
+				if (child.is_file() || (*result).is_file()) {
+					// If an entry with the same name is found and either is a file,
+					// replace the entry with the new one.
+					if (override_existing) {
+						entries.erase(result);
+						entries.insert(child);
 					}
-
-					child_found = true;
+				} else {
+					// Otherwise, the entry is a directory, so we just continue the merge.
+					for (const auto& sub_child : child.children) {
+						const_cast<vdf_entry&>(*result).merge(sub_child, override_existing);
+					}
 				}
-			}
-
-			if (!child_found) {
-				entries.push_back(child);
 			}
 		}
 	}
-
 } // namespace phoenix

@@ -5,9 +5,9 @@
 
 #include <cstdint>
 #include <ctime>
+#include <set>
 #include <string>
 #include <string_view>
-#include <vector>
 
 namespace phoenix {
 	static constexpr std::string_view VDF_SIGNATURE_G1 = "PSVDSC_V2.00\r\n\r\n";
@@ -79,6 +79,17 @@ namespace phoenix {
 		std::uint32_t version {VDF_VERSION};
 	};
 
+	class vdf_entry;
+
+	struct vdf_entry_comparator {
+	public:
+		using is_transparent = std::true_type;
+
+		bool operator()(const vdf_entry& a, const vdf_entry& b) const;
+		bool operator()(const vdf_entry& a, std::string_view b) const;
+		bool operator()(std::string_view a, const vdf_entry& b) const;
+	};
+
 	/// \brief Represents an entry of a VDF.
 	class vdf_entry {
 	public:
@@ -108,7 +119,7 @@ namespace phoenix {
 		/// \brief Searches the entry for the first child with the given name.
 		/// \param name The name of the child to search for.
 		/// \return The child with the give name or `nullptr` if no entry was found.
-		vdf_entry* find_child(std::string_view name);
+		[[deprecated("mutating vdf_entry children is broken!")]] vdf_entry* find_child(std::string_view name);
 
 		/// \brief Merges the given VDF entry into this one.
 		/// \param itm The entry to merge.
@@ -142,7 +153,7 @@ namespace phoenix {
 		std::string name;
 
 		/// \brief A list of child entries of the entry.
-		std::vector<vdf_entry> children {};
+		std::set<vdf_entry, vdf_entry_comparator> children {};
 
 		/// \brief The offset of the entry's data in the VDF.
 		std::uint32_t offset {0};
@@ -191,7 +202,7 @@ namespace phoenix {
 		/// \brief Searches the VDF file for the first entry with the given name.
 		/// \param name The name of the entry to search for.
 		/// \return The entry with the give name or `nullptr` if no entry was found.
-		vdf_entry* find_entry(std::string_view name);
+		[[deprecated("mutating vdf_entry children is broken!")]] vdf_entry* find_entry(std::string_view name);
 
 		/// \brief Merges the given VDF file into this one.
 		/// \param itm The file to merge.
@@ -200,7 +211,7 @@ namespace phoenix {
 
 	public:
 		/// \brief A list of root entries in the VDF file.
-		std::vector<vdf_entry> entries;
+		std::set<vdf_entry, vdf_entry_comparator> entries;
 
 		/// \brief The header data of the VDF file.
 		vdf_header header;

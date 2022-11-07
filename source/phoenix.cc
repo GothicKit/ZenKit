@@ -59,6 +59,12 @@ namespace phoenix {
 		});
 	}
 
+	bool icompare(std::string_view a, std::string_view b) {
+		return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end(), [](char a, char b) {
+			return std::tolower(a) < std::tolower(b);
+		});
+	}
+
 	date date::parse(buffer& buf) {
 		auto dt = date {buf.get_uint(),
 		                buf.get_ushort(),

@@ -53,6 +53,15 @@ namespace phoenix {
 	/// \return ``true`` if both strings are equal when ignoring case.
 	bool iequals(std::string_view a, std::string_view b);
 
+	/// \brief Tests whether \p a is lexicographically less than \p b.
+	///
+	/// Internally, uses std::tolower to compare the strings character by character.
+	///
+	/// \param a A string.
+	/// \param b Another string.
+	/// \return ``true`` if \p a is lexicographically less than \p b.
+	bool icompare(std::string_view a, std::string_view b);
+
 	/// \brief A basic datetime structure used by the *ZenGin*.
 	struct date {
 		/// \brief Parses a date from a buffer.
