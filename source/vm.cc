@@ -229,6 +229,7 @@ namespace phoenix {
 				if (cb == _m_externals.end()) {
 					if (_m_default_external.has_value()) {
 						(*_m_default_external)(*this, *sym);
+						guard.inhibit();
 						break;
 					} else {
 						throw vm_exception {"be: no external registered for " + sym->name()};
