@@ -149,7 +149,7 @@ namespace phoenix {
 	}
 
 	void vdf_entry::merge(const vdf_entry& itm, bool override_existing) {
-		auto result = this->children.find(name);
+		auto result = this->children.find(itm.name);
 		if (result == this->children.end()) {
 			// If no matching entry was found, this is a new one.
 			// Just add it to the children of this entry.
