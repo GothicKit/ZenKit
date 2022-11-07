@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-void print_entries(const std::vector<phoenix::vdf_entry>& entries) {
+void print_entries(const std::set<phoenix::vdf_entry, phoenix::vdf_entry_comparator>& entries) {
 	for (auto& e : entries) {
 		if (e.is_directory()) {
 			print_entries(e.children);
