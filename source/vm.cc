@@ -559,10 +559,8 @@ namespace phoenix {
 					v.push_int(0);
 				else if (sym.rtype() == datatype::string)
 					v.push_string("");
-
-				// TODO: We can't really push an instance since we'd need to take the type into account. Sadly,
-				//       compiled scripts don't store the type of instance being returned so pushing one would
-				//       most likely just result in the VM panicking anyways.
+				else if (sym.rtype() == datatype::instance)
+					v.push_instance(nullptr);
 			}
 
 			callback(sym.name());
