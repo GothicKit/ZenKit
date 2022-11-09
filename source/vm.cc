@@ -194,6 +194,7 @@ namespace phoenix {
 				return false;
 			case opcode::bl: {
 				// Check if the function is overridden and if it is, call the resulting external.
+				sym = find_symbol_by_address(instr.address);
 				auto cb = _m_function_overrides.find(instr.address);
 				if (cb != _m_function_overrides.end()) {
 					// Guard against exceptions during external invocation.
@@ -206,7 +207,6 @@ namespace phoenix {
 					// The stack is left intact.
 					guard.inhibit();
 				} else {
-					sym = find_symbol_by_address(instr.address);
 					if (sym == nullptr) {
 						throw vm_exception {"bl: no symbol found for address " + std::to_string(instr.address)};
 					}
