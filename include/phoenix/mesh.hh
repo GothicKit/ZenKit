@@ -42,7 +42,7 @@ namespace phoenix {
 		uint8_t is_lod : 1 {0};
 		uint8_t normal_axis : 2 {0};
 
-		bool operator==(const polygon_flags&) const = default;
+		bool operator==(const polygon_flags& b) const;
 	};
 
 	/// \brief List of data indices for polygons of meshes.

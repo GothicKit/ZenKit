@@ -237,4 +237,11 @@ namespace phoenix {
 
 		return msh;
 	}
+
+	bool polygon_flags::operator==(const polygon_flags& b) const {
+		return is_portal == b.is_portal && is_occluder == b.is_occluder && is_sector == b.is_sector &&
+		    should_relight == b.should_relight && is_outdoor == b.is_outdoor &&
+		    is_ghost_occluder == b.is_ghost_occluder && is_dynamically_lit == b.is_dynamically_lit &&
+		    sector_index == b.sector_index && is_lod == b.is_lod && normal_axis == b.normal_axis;
+	}
 } // namespace phoenix
