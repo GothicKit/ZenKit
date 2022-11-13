@@ -20,6 +20,8 @@ function(px_add_dependency NAME URL URL_HASH)
             FetchContent_Populate(${NAME})
             add_subdirectory(${${NAME}_SOURCE_DIR} ${${NAME}_BINARY_DIR})
         endif ()
+
+        set(${NAME}_SOURCE_DIR ${${NAME}_SOURCE_DIR} PARENT_SCOPE)
     endif ()
 endfunction()
 
