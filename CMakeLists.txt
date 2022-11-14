@@ -18,7 +18,7 @@ if (MSVC)
     endif ()
 else ()
     # enable all warnings
-    set(PHOENIX_CXX_FLAGS -Wall -Wextra -Werror -Wconversion)
+    set(PHOENIX_CXX_FLAGS -Wall -Wextra -Werror -Wconversion -Wshadow -Wpedantic)
 
     # in debug mode, enable sanitizers; note: MinGW does not seem to understand sanitizers on Windows
     if (${CMAKE_BUILD_TYPE} MATCHES "Debug" AND NOT ${PHOENIX_DISABLE_SANITIZERS} AND NOT WIN32)

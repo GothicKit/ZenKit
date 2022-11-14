@@ -6,48 +6,49 @@
 #include <string>
 
 namespace phoenix {
-	symbol_not_found::symbol_not_found(std::string&& name) : script_error("symbol not found: " + name), name(name) {}
+	symbol_not_found::symbol_not_found(std::string&& sym_name)
+	    : script_error("symbol not found: " + sym_name), name(sym_name) {}
 
-	member_registration_error::member_registration_error(const symbol* sym, std::string&& message)
-	    : script_error("cannot register member " + sym->name() + ": " + message), sym(sym) {}
+	member_registration_error::member_registration_error(const symbol* s, std::string&& msg)
+	    : script_error("cannot register member " + s->name() + ": " + msg), sym(s) {}
 
-	invalid_registration_datatype::invalid_registration_datatype(const symbol* sym, std::string&& given)
-	    : member_registration_error(sym,
-	                                "wrong datatype: provided '" + given + "' expected " +
-	                                    DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) sym->type()]) {}
+	invalid_registration_datatype::invalid_registration_datatype(const symbol* s, std::string&& provided)
+	    : member_registration_error(s,
+	                                "wrong datatype: provided '" + provided + "' expected " +
+	                                    DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) s->type()]) {}
 
-	illegal_type_access::illegal_type_access(const symbol* sym, datatype expected)
+	illegal_type_access::illegal_type_access(const symbol* s, datatype expected_dt)
 	    : illegal_access(fmt::format("illegal access of type {} on symbol {} which is another type ({})",
-	                                 int32_t(expected),
-	                                 sym->name(),
-	                                 int32_t(sym->type()))),
-	      sym(sym), expected(expected) {}
+	                                 int32_t(expected_dt),
+	                                 s->name(),
+	                                 int32_t(s->type()))),
+	      sym(s), expected(expected_dt) {}
 
-	illegal_index_access::illegal_index_access(const symbol* sym, std::uint8_t index)
-	    : illegal_access(fmt::format("illegal access of out-of-bounds index {} while reading {}", index, sym->name())),
-	      sym(sym), index(index) {}
+	illegal_index_access::illegal_index_access(const symbol* s, std::uint8_t idx)
+	    : illegal_access(fmt::format("illegal access of out-of-bounds index {} while reading {}", index, s->name())),
+	      sym(s), index(idx) {}
 
-	illegal_const_access::illegal_const_access(const symbol* sym)
-	    : illegal_access(fmt::format("illegal mutable access of const symbol {}", sym->name())), sym(sym) {}
+	illegal_const_access::illegal_const_access(const symbol* s)
+	    : illegal_access(fmt::format("illegal mutable access of const symbol {}", s->name())), sym(s) {}
 
-	illegal_instance_access::illegal_instance_access(const symbol* sym, std::uint32_t expected_parent)
+	illegal_instance_access::illegal_instance_access(const symbol* s, std::uint32_t parent)
 	    : illegal_access(fmt::format("illegal access of member {} which does not have the same parent "
 	                                 "class as the context instance ({} != {})",
-	                                 sym->name(),
-	                                 sym->parent(),
-	                                 expected_parent)),
-	      sym(sym), expected_parent(expected_parent) {}
+	                                 s->name(),
+	                                 s->parent(),
+	                                 parent)),
+	      sym(s), expected_parent(parent) {}
 
-	unbound_member_access::unbound_member_access(const symbol* sym)
-	    : illegal_access(fmt::format("illegal access of unbound member {}", sym->name())), sym(sym) {}
+	unbound_member_access::unbound_member_access(const symbol* s)
+	    : illegal_access(fmt::format("illegal access of unbound member {}", s->name())), sym(s) {}
 
-	no_context::no_context(const symbol* sym)
-	    : illegal_access(fmt::format("illegal access of member {} without a context set.", sym->name())), sym(sym) {}
+	no_context::no_context(const symbol* s)
+	    : illegal_access(fmt::format("illegal access of member {} without a context set.", s->name())), sym(s) {}
 
-	illegal_context_type::illegal_context_type(const symbol* sym, const std::type_info& context_type)
-	    : illegal_access("cannot access member " + sym->name() + " on context instance of type " + context_type.name() +
-	                     " because this symbol is registered to instances of type " + sym->registered_to().name()),
-	      sym(sym), context_type(context_type) {}
+	illegal_context_type::illegal_context_type(const symbol* s, const std::type_info& ctx)
+	    : illegal_access("cannot access member " + s->name() + " on context instance of type " + ctx.name() +
+	                     " because this symbol is registered to instances of type " + s->registered_to().name()),
+	      sym(s), context_type(ctx) {}
 
 	instruction instruction::decode(buffer& in) {
 		instruction s {};

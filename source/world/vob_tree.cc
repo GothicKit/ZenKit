@@ -234,8 +234,8 @@ namespace phoenix {
 				for (int32_t i = 0; i < count; ++i) {
 					in.skip_object(false);
 
-					auto child_count = in.read_int();
-					skip(child_count);
+					auto num_children = in.read_int();
+					skip(num_children);
 				}
 			};
 

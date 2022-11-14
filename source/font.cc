@@ -5,8 +5,8 @@
 #include <fmt/format.h>
 
 namespace phoenix {
-	font::font(std::string name, std::uint32_t height, std::vector<glyph> glyphs)
-	    : name(std::move(name)), height(height), glyphs(std::move(glyphs)) {}
+	font::font(std::string font_name, std::uint32_t font_height, std::vector<glyph> font_glyphs)
+	    : name(std::move(font_name)), height(font_height), glyphs(std::move(font_glyphs)) {}
 
 	font font::parse(buffer& in) {
 		try {

@@ -50,7 +50,8 @@ namespace phoenix {
 
 	class archive_reader_binsafe final : public archive_reader {
 	public:
-		inline archive_reader_binsafe(buffer& in, archive_header&& header) : archive_reader(in, std::move(header)) {}
+		inline archive_reader_binsafe(buffer& in, archive_header&& parent_header)
+		    : archive_reader(in, std::move(parent_header)) {}
 
 		bool read_object_begin(archive_object& obj) override;
 		bool read_object_end() override;

@@ -654,20 +654,20 @@ namespace phoenix {
 		std::cerr << "\n";
 	}
 
-	illegal_external_definition::illegal_external_definition(const symbol* sym, std::string&& message)
-	    : script_error(std::move(message)), sym(sym) {}
+	illegal_external_definition::illegal_external_definition(const symbol* s, std::string&& msg)
+	    : script_error(std::move(msg)), sym(s) {}
 
-	illegal_external_rtype::illegal_external_rtype(const symbol* sym, std::string&& provided)
-	    : illegal_external_definition(sym,
-	                                  "external " + sym->name() + " has illegal return type '" + provided +
-	                                      "', expected '" + DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) sym->rtype()] +
+	illegal_external_rtype::illegal_external_rtype(const symbol* s, std::string&& provided)
+	    : illegal_external_definition(s,
+	                                  "external " + s->name() + " has illegal return type '" + provided +
+	                                      "', expected '" + DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) s->rtype()] +
 	                                      "'") {}
 
-	illegal_external_param::illegal_external_param(const symbol* sym, std::string&& provided, std::uint8_t i)
-	    : illegal_external_definition(sym,
-	                                  "external " + sym->name() + " has illegal parameter type '" + provided +
-	                                      "' (no. " + std::to_string(i) + "), expected '" +
-	                                      DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) sym->type()] + "'") {}
+	illegal_external_param::illegal_external_param(const symbol* s, std::string&& provided, std::uint8_t i)
+	    : illegal_external_definition(s,
+	                                  "external " + s->name() + " has illegal parameter type '" + provided + "' (no. " +
+	                                      std::to_string(i) + "), expected '" +
+	                                      DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) s->type()] + "'") {}
 
 	vm_exception_strategy lenient_vm_exception_handler(vm& v, const script_error& exc, const instruction& instr) {
 		PX_LOGE("vm: internal exception: {}", exc.what());

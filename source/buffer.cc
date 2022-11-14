@@ -118,31 +118,31 @@ namespace phoenix {
 		};
 	} // namespace detail
 
-	buffer_underflow::buffer_underflow(std::uint64_t byte, std::uint64_t size)
-	    : buffer_error(fmt::format("buffer underflow at byte {:X} while reading {:X} additional bytes", byte, size)),
-	      byte(byte), size(size), context(std::nullopt) {}
+	buffer_underflow::buffer_underflow(std::uint64_t off, std::uint64_t rsize)
+	    : buffer_error(fmt::format("buffer underflow at byte {:X} while reading {:X} additional bytes", off, rsize)),
+	      byte(off), size(rsize), context(std::nullopt) {}
 
-	buffer_underflow::buffer_underflow(std::uint64_t byte, std::uint64_t size, std::string&& context)
+	buffer_underflow::buffer_underflow(std::uint64_t off, std::uint64_t rsize, std::string&& ctx)
 	    : buffer_error(fmt::format("buffer underflow at byte {:X} while reading {:X} additional bytes [context: {}]",
-	                               byte,
-	                               size,
-	                               context)),
-	      byte(byte), size(size), context(std::move(context)) {}
+	                               off,
+	                               rsize,
+	                               ctx)),
+	      byte(off), size(rsize), context(std::move(ctx)) {}
 
-	buffer_underflow::buffer_underflow(std::uint64_t byte, std::string&& context)
-	    : buffer_error(fmt::format("buffer underflow at byte {:X} [context: {}]", byte, context)), byte(byte), size(0),
-	      context(std::move(context)) {}
+	buffer_underflow::buffer_underflow(std::uint64_t off, std::string&& ctx)
+	    : buffer_error(fmt::format("buffer underflow at byte {:X} [context: {}]", byte, ctx)), byte(off), size(0),
+	      context(std::move(ctx)) {}
 
-	buffer_overflow::buffer_overflow(std::uint64_t byte, std::uint64_t size)
-	    : buffer_error(fmt::format("buffer overflow at byte {:X} while writing {:X} additional bytes", byte, size)),
-	      byte(byte), size(size), context(std::nullopt) {}
+	buffer_overflow::buffer_overflow(std::uint64_t off, std::uint64_t wsize)
+	    : buffer_error(fmt::format("buffer overflow at byte {:X} while writing {:X} additional bytes", off, wsize)),
+	      byte(off), size(wsize), context(std::nullopt) {}
 
-	buffer_overflow::buffer_overflow(std::uint64_t byte, std::uint64_t size, std::string&& context)
+	buffer_overflow::buffer_overflow(std::uint64_t off, std::uint64_t wsize, std::string&& ctx)
 	    : buffer_error(fmt::format("buffer overflow at byte {:X} while writing {:X} additional bytes [context: {}]",
-	                               byte,
-	                               size,
-	                               context)),
-	      byte(byte), size(size), context(std::move(context)) {}
+	                               off,
+	                               wsize,
+	                               ctx)),
+	      byte(off), size(wsize), context(std::move(ctx)) {}
 
 	std::unique_ptr<buffer> buffer::_m_empty {};
 

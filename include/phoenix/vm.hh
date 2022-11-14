@@ -442,19 +442,19 @@ namespace phoenix {
 			}
 
 			// *evil template hacking ensues*
-			_m_externals[sym] = [callback](vm& vm) {
+			_m_externals[sym] = [callback](vm& machine) {
 				if constexpr (std::is_same_v<void, R>) {
 					if constexpr (sizeof...(P) > 0) {
-						auto v = vm.pop_values_for_external<P...>();
+						auto v = machine.pop_values_for_external<P...>();
 						std::apply(callback, v);
 					} else {
 						callback();
 					}
 				} else {
 					if constexpr (sizeof...(P) > 0) {
-						vm.push_value_from_external(std::apply(callback, vm.pop_values_for_external<P...>()));
+						machine.push_value_from_external(std::apply(callback, machine.pop_values_for_external<P...>()));
 					} else {
-						vm.push_value_from_external(callback());
+						machine.push_value_from_external(callback());
 					}
 				}
 			};
@@ -537,19 +537,19 @@ namespace phoenix {
 			}
 
 			// *evil template hacking ensues*
-			_m_function_overrides[sym->address()] = [callback](vm& vm) {
+			_m_function_overrides[sym->address()] = [callback](vm& machine) {
 				if constexpr (std::is_same_v<void, R>) {
 					if constexpr (sizeof...(P) > 0) {
-						auto v = vm.pop_values_for_external<P...>();
+						auto v = machine.pop_values_for_external<P...>();
 						std::apply(callback, v);
 					} else {
 						callback();
 					}
 				} else {
 					if constexpr (sizeof...(P) > 0) {
-						vm.push_value_from_external(std::apply(callback, vm.pop_values_for_external<P...>()));
+						machine.push_value_from_external(std::apply(callback, machine.pop_values_for_external<P...>()));
 					} else {
-						vm.push_value_from_external(callback());
+						machine.push_value_from_external(callback());
 					}
 				}
 			};

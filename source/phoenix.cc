@@ -8,25 +8,23 @@
 #include <utility>
 
 namespace phoenix {
-	error::error(std::string&& message) : std::exception(), message(std::move(message)) {}
+	error::error(std::string&& msg) : std::exception(), message(std::move(msg)) {}
 
-	parser_error::parser_error(std::string&& resource_type)
-	    : error(fmt::format("failed parsing resource of type {}", resource_type)), resource_type(resource_type) {}
+	parser_error::parser_error(std::string&& type)
+	    : error(fmt::format("failed parsing resource of type {}", type)), resource_type(type) {}
 
-	parser_error::parser_error(std::string&& resource_type, std::string&& context)
-	    : error(fmt::format("failed parsing resource of type {} [context: {}]", resource_type, context)),
-	      resource_type(std::move(resource_type)), context(std::move(context)) {}
+	parser_error::parser_error(std::string&& type, std::string&& ctx)
+	    : error(fmt::format("failed parsing resource of type {} [context: {}]", type, ctx)),
+	      resource_type(std::move(type)), context(std::move(ctx)) {}
 
-	parser_error::parser_error(std::string&& resource_type, const std::exception& cause)
-	    : error(fmt::format("failed parsing resource of type {} due to [{}]", resource_type, cause.what())),
-	      resource_type(std::move(resource_type)), cause(cause) {}
+	parser_error::parser_error(std::string&& type, const std::exception& other_exc)
+	    : error(fmt::format("failed parsing resource of type {} due to [{}]", type, other_exc.what())),
+	      resource_type(std::move(type)), cause(other_exc) {}
 
-	parser_error::parser_error(std::string&& resource_type, const std::exception& cause, std::string&& context)
-	    : error(fmt::format("failed parsing resource of type {} due to [{}] [context: {}]",
-	                        resource_type,
-	                        cause.what(),
-	                        context)),
-	      resource_type(std::move(resource_type)), context(std::move(context)), cause(cause) {}
+	parser_error::parser_error(std::string&& type, const std::exception& other_exc, std::string&& ctx)
+	    : error(
+	          fmt::format("failed parsing resource of type {} due to [{}] [context: {}]", type, other_exc.what(), ctx)),
+	      resource_type(std::move(type)), context(std::move(ctx)), cause(other_exc) {}
 
 	std::optional<std::function<void(logging::level, const std::string&)>> logging::callback {};
 
@@ -54,14 +52,14 @@ namespace phoenix {
 	}
 
 	bool iequals(std::string_view a, std::string_view b) {
-		return std::equal(a.begin(), a.end(), b.begin(), b.end(), [](char a, char b) {
-			return std::tolower(a) == std::tolower(b);
+		return std::equal(a.begin(), a.end(), b.begin(), b.end(), [](char c1, char c2) {
+			return std::tolower(c1) == std::tolower(c2);
 		});
 	}
 
 	bool icompare(std::string_view a, std::string_view b) {
-		return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end(), [](char a, char b) {
-			return std::tolower(a) < std::tolower(b);
+		return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end(), [](char c1, char c2) {
+			return std::tolower(c1) < std::tolower(c2);
 		});
 	}
 

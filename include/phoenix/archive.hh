@@ -65,7 +65,9 @@ namespace phoenix {
 		/// \note This constructor should never be called explicitly. Use #open instead!
 		/// \param in The reader to read from
 		/// \param header The header of the archive.
-		inline archive_reader(buffer& in, archive_header&& header) : header(std::move(header)), input(in) {}
+		inline archive_reader(buffer& in, archive_header&& parent_header)
+		    : header(std::move(parent_header)), input(in) {}
+
 		virtual ~archive_reader() = default;
 
 		/// \brief Creates a new archive_reader from the given buffer.

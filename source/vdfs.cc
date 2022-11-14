@@ -42,7 +42,7 @@ namespace phoenix {
 		return icompare(a, b.name);
 	}
 
-	vdf_header::vdf_header(std::string_view comment, std::time_t timestamp) : comment(comment), timestamp(timestamp) {}
+	vdf_header::vdf_header(std::string_view comment_text, std::time_t ts) : comment(comment_text), timestamp(ts) {}
 
 	vdf_header vdf_header::read(buffer& in) {
 		vdf_header header {};
@@ -63,14 +63,14 @@ namespace phoenix {
 		return header;
 	}
 
-	vdf_entry::vdf_entry(std::string_view name, std::uint32_t attributes)
-	    : name(name), type(VDF_MASK_DIRECTORY), attributes(attributes) {}
+	vdf_entry::vdf_entry(std::string_view entry_name, std::uint32_t attrs)
+	    : name(entry_name), type(VDF_MASK_DIRECTORY), attributes(attrs) {}
 
 	const vdf_entry* vdf_entry::resolve_path(std::string_view path) const {
 		auto it = path.find('/');
-		auto name = path.substr(0, it);
+		auto current = path.substr(0, it);
 
-		auto result = this->children.find(name);
+		auto result = this->children.find(current);
 		if (result == this->children.end()) {
 			return nullptr;
 		}
@@ -82,14 +82,14 @@ namespace phoenix {
 		return &*result;
 	}
 
-	const vdf_entry* vdf_entry::find_child(std::string_view name) const {
-		auto result = this->children.find(name);
+	const vdf_entry* vdf_entry::find_child(std::string_view child_name) const {
+		auto result = this->children.find(child_name);
 		if (result == this->children.end()) {
 			// recurse the search
 			const vdf_entry* child;
 
 			for (const auto& entry : children) {
-				if ((child = entry.find_child(name), child != nullptr)) {
+				if ((child = entry.find_child(child_name), child != nullptr)) {
 					return child;
 				}
 			}
@@ -100,14 +100,14 @@ namespace phoenix {
 		return &*result;
 	}
 
-	vdf_entry* vdf_entry::find_child(std::string_view name) {
-		auto result = this->children.find(name);
+	vdf_entry* vdf_entry::find_child(std::string_view child_name) {
+		auto result = this->children.find(child_name);
 		if (result == this->children.end()) {
 			// recurse the search
 			vdf_entry* child;
 
 			for (const auto& entry : children) {
-				if ((child = const_cast<vdf_entry*>(entry.find_child(name)), child != nullptr)) {
+				if ((child = const_cast<vdf_entry*>(entry.find_child(child_name)), child != nullptr)) {
 					return child;
 				}
 			}
