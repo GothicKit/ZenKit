@@ -301,7 +301,7 @@ namespace phoenix {
 		(void) get_char(); // ignore the <LF> character itself
 
 		if (skip_whitespace) {
-			auto count = mismatch([](char chr) { return !std::isspace(chr); });
+			auto count = mismatch([](char chr) { return !std::isspace(static_cast<unsigned char>(chr)); });
 			if (count == -1) {
 				position(limit()); // the end of the buffer has been reached
 			} else {
