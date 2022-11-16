@@ -80,7 +80,7 @@ namespace phoenix {
 	namespace execution_flag {
 		static constexpr std::uint8_t none = 0;
 		static constexpr std::uint8_t vm_allow_null_instance_access = 1 << 1;
-	}; // namespace execution_flag
+	} // namespace execution_flag
 
 	class vm : public script {
 	public:

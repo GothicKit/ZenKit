@@ -100,7 +100,7 @@ namespace phoenix {
 		static constexpr std::uint32_t point = 6U;
 		static constexpr std::uint32_t fall = 7U;
 		static constexpr std::uint32_t count = 8U;
-	}; // namespace damage_type
+	} // namespace damage_type
 
 	namespace npc_attribute {
 		static constexpr std::uint32_t hitpoints = 0U;
@@ -112,7 +112,7 @@ namespace phoenix {
 		static constexpr std::uint32_t regenerate_hp = 6U;
 		static constexpr std::uint32_t regenerate_mana = 7U;
 		static constexpr std::uint32_t count = 8U;
-	}; // namespace npc_attribute
+	} // namespace npc_attribute
 
 	enum class npc_type : std::uint32_t {
 		ambient = 0U,
