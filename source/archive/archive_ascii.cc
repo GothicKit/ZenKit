@@ -27,15 +27,28 @@ namespace phoenix {
 			return false;
 
 		input.mark();
+
 		auto line = input.get_line();
 
-		if (!line.starts_with('[') || !line.ends_with(']') || line.length() <= 2) {
+		// Fail quickly if we know this can't be an object begin
+		if (line.length() <= 2) {
 			input.reset();
 			return false;
 		}
 
-		std::stringstream ss {line.substr(1, line.size() - 2)};
-		ss >> obj.object_name >> obj.class_name >> obj.version >> obj.index;
+		char class_name[128];
+		char object_name[128];
+
+		auto parsed_elements =
+		    std::sscanf(line.c_str(), "[%127s %127s %hu %u]", object_name, class_name, &obj.version, &obj.index);
+
+		if (parsed_elements != 4) {
+			input.reset();
+			return false;
+		}
+
+		obj.object_name = object_name;
+		obj.class_name = class_name;
 		return true;
 	}
 
