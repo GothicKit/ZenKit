@@ -36,8 +36,13 @@ namespace phoenix::vobs {
 			auto sample_reader = ctx.read_raw_bytes(); // keyframes
 
 			for (int32_t i = 0; i < keyframe_count; ++i) {
-				obj.keyframes.push_back(
-				    animation_sample {sample_reader.get_vec3(), glm::quat {sample_reader.get_vec4()}});
+				auto position = sample_reader.get_vec3();
+				auto rotation = glm::quat(sample_reader.get_float(),
+				                          sample_reader.get_float(),
+				                          sample_reader.get_float(),
+				                          sample_reader.get_float());
+
+				obj.keyframes.push_back(animation_sample {position, rotation});
 			}
 		}
 
