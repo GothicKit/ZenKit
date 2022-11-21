@@ -37,12 +37,13 @@ namespace phoenix::vobs {
 
 			for (int32_t i = 0; i < keyframe_count; ++i) {
 				auto position = sample_reader.get_vec3();
-				auto rotation = glm::quat(sample_reader.get_float(),
-				                          sample_reader.get_float(),
-				                          sample_reader.get_float(),
-				                          sample_reader.get_float());
 
-				obj.keyframes.push_back(animation_sample {position, rotation});
+				auto x = sample_reader.get_float();
+				auto y = sample_reader.get_float();
+				auto z = sample_reader.get_float();
+				auto w = sample_reader.get_float();
+
+				obj.keyframes.push_back(animation_sample {position, glm::quat {w, x, y, z}});
 			}
 		}
 
