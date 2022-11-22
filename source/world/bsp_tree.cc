@@ -57,7 +57,7 @@ namespace phoenix {
 				_parse_bsp_nodes(in, nodes, indices, version, std::int32_t(self_index), (flags & 0x08) != 0);
 			}
 		}
-	};
+	}
 
 	bsp_tree bsp_tree::parse(buffer& in, std::uint32_t version) {
 		bsp_tree bsp {};
