@@ -132,7 +132,7 @@ namespace phoenix {
 		ghost = 1U << 2U,
 		protected_ = 1U << 3U,
 	};
-	FLAG(npc_flag);
+	FLAG(npc_flag)
 
 	struct c_npc : public instance {
 		static constexpr std::uint32_t hitchance_count =
@@ -259,7 +259,7 @@ namespace phoenix {
 		belt = 1U << 24U,
 		mission = 1U << 12U,
 	};
-	FLAG(item_flags);
+	FLAG(item_flags)
 
 	struct c_item : public instance {
 		static constexpr std::uint32_t condition_count = 3;
@@ -1144,7 +1144,7 @@ namespace phoenix {
 		align_center = 1 << 5,
 		show_info = 1 << 6,
 	};
-	FLAG(c_menu_flags);
+	FLAG(c_menu_flags)
 
 	struct c_menu : public instance {
 		static constexpr std::uint8_t item_count = 150;
@@ -1197,7 +1197,7 @@ namespace phoenix {
 		needs_restart = 1 << 13,
 		extended_menu = 1 << 14,
 	};
-	FLAG(c_menu_item_flags);
+	FLAG(c_menu_item_flags)
 
 	enum class c_menu_item_type : std::uint32_t {
 		unknown = 0,
