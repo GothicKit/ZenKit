@@ -12,9 +12,9 @@ jobs:
           - 'Release'
           - 'Debug'
         image:
-          - 'docker.io/gcc:latest'
-          - 'docker.io/gcc:9'
-          - 'clangbuiltlinux/ubuntu:latest'
+          - 'ghcr.io/lmichaelis/images:clang-11'
+          - 'ghcr.io/lmichaelis/images:gcc-9'
+          - 'ghcr.io/lmichaelis/images:gcc-12'
     runs-on: 'ubuntu-latest'
     container:
       image: '${{matrix.image}}'
