@@ -14,9 +14,12 @@ jobs:
         build_type:
           - 'Release'
           - 'Debug'
+        image:
+          - 'docker.io/ubuntu:latest'
+          - 'docker.io/ubuntu:focal'
     runs-on: 'ubuntu-latest'
     container:
-      image: 'docker.io/ubuntu:latest'
+      image: '${{matrix.image}}'
     steps:
       - name: 'Dependencies'
         run: 'apt update && apt install -y git cmake ${{matrix.compiler}}'
