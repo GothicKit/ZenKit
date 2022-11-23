@@ -8,21 +8,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler:
-          - 'clang'
-          - 'build-essential'
         build_type:
           - 'Release'
           - 'Debug'
         image:
-          - 'docker.io/ubuntu:latest'
-          - 'docker.io/ubuntu:focal'
+          - 'docker.io/gcc:latest'
+          - 'docker.io/gcc:9'
+          - 'clangbuiltlinux/ubuntu:latest'
     runs-on: 'ubuntu-latest'
     container:
       image: '${{matrix.image}}'
     steps:
       - name: 'Dependencies'
-        run: 'apt update && apt install -y git cmake ${{matrix.compiler}}'
+        run: 'apt update && apt install -y git cmake'
       - uses: 'actions/checkout@v3'
       - name: 'Configure'
         run: 'cmake -B build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DPHOENIX_BUILD_EXAMPLES=ON'
