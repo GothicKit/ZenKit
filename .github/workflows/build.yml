@@ -28,6 +28,29 @@ jobs:
         working-directory: 'build/'
         run: 'ctest --output-on-failure'
 
+  linux-mingw:
+    name: "Linux MinGW-w64"
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type:
+          - 'Release'
+          - 'Debug'
+        image:
+          - 'ghcr.io/lmichaelis/images:mingw-w64-10'
+    runs-on: 'ubuntu-latest'
+    container:
+      image: '${{matrix.image}}'
+    steps:
+      - uses: 'actions/checkout@v3'
+      - name: 'Configure'
+        run: 'cmake -B build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DPHOENIX_BUILD_EXAMPLES=ON'
+      - name: 'Build'
+        run: 'cmake --build build'
+      - name: 'Test'
+        working-directory: 'build/'
+        run: 'ctest --output-on-failure'
+
   macos:
     name: "MacOS"
     strategy:
