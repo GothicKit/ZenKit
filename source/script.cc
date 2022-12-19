@@ -342,7 +342,7 @@ namespace phoenix {
 		}
 	}
 
-	void symbol::set_string(const std::string& value, std::uint8_t index, const std::shared_ptr<instance>& context) {
+	void symbol::set_string(std::string_view value, std::uint8_t index, const std::shared_ptr<instance>& context) {
 		if (is_const()) {
 			throw illegal_const_access(this);
 		}

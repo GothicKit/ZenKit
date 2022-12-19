@@ -304,7 +304,7 @@ namespace phoenix {
 		void push_float(float value);
 		void push_instance(std::shared_ptr<instance> value);
 		void push_reference(symbol* value, std::uint8_t index = 0);
-		void push_string(const std::string& value);
+		void push_string(std::string_view value);
 
 		[[nodiscard]] std::int32_t pop_int();
 		[[nodiscard]] float pop_float();
@@ -766,7 +766,8 @@ namespace phoenix {
 		/// \param v The value to push.
 		template <typename T>
 		typename std::enable_if<is_instance_ptr_v<T> || std::is_convertible_v<T, float> ||
-		                            std::is_convertible_v<T, std::int32_t> || std::is_same_v<T, std::string>,
+		                            std::is_convertible_v<T, std::int32_t> || std::is_same_v<T, std::string> ||
+		                            std::is_same_v<T, std::string_view>,
 		                        void>::type
 		push_value_from_external(T v) { // clang-format on
 			if constexpr (is_instance_ptr_v<T>) {
@@ -775,7 +776,7 @@ namespace phoenix {
 				push_float(static_cast<float>(v));
 			} else if constexpr (std::is_convertible_v<std::int32_t, T>) {
 				push_int(static_cast<std::int32_t>(v));
-			} else if constexpr (std::is_same_v<T, std::string>) {
+			} else if constexpr (std::is_same_v<T, std::string> || std::is_same_v<T, std::string_view>) {
 				push_string(v);
 			} else {
 				throw vm_exception {"push: unsupported stack frame type"};

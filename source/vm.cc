@@ -400,7 +400,7 @@ namespace phoenix {
 		_m_stack.push({_m_instance, true, value, index});
 	}
 
-	void vm::push_string(const std::string& value) {
+	void vm::push_string(std::string_view value) {
 		_m_temporary_strings->set_string(value);
 		push_reference(_m_temporary_strings);
 	}

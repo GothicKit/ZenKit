@@ -404,9 +404,8 @@ namespace phoenix {
 		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
 		/// \throws unbound_member_access if this symbol has not been registered yet
 		/// \throws illegal_context_type if this symbol #is_registered_to a different type than the type of \p context.
-		void set_string(const std::string& value,
-		                std::uint8_t index = 0,
-		                const std::shared_ptr<instance>& context = nullptr);
+		void
+		set_string(std::string_view value, std::uint8_t index = 0, const std::shared_ptr<instance>& context = nullptr);
 
 		/// \brief Validates that the symbol is a float and not constant and sets it's value in the given context.
 		/// \param value The new value to set.
