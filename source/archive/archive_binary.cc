@@ -67,7 +67,7 @@ namespace phoenix {
 	}
 
 	bool archive_reader_binary::read_bool() {
-		return input.get() == 1;
+		return input.get() != 0;
 	}
 
 	glm::u8vec4 archive_reader_binary::read_color() {

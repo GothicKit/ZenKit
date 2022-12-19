@@ -146,7 +146,7 @@ namespace phoenix {
 
 	bool archive_reader_binsafe::read_bool() {
 		ensure_entry_meta(bs_bool);
-		return input.get_uint() == 1;
+		return input.get_uint() != 0;
 	}
 
 	glm::u8vec4 archive_reader_binsafe::read_color() {

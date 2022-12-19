@@ -111,7 +111,7 @@ namespace phoenix {
 	}
 
 	bool archive_reader_ascii::read_bool() {
-		return std::stoul(read_entry("bool")) == 1;
+		return std::stoul(read_entry("bool")) != 0;
 	}
 
 	glm::u8vec4 archive_reader_ascii::read_color() {
