@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 include(CheckIncludeFiles)
-project(phoenix VERSION 1.0.0)
+project(phoenix VERSION 1.0.1)
 
 set(CMAKE_CXX_STANDARD 17)
 set(PHOENIX_LOG_LEVEL 3 CACHE STRING "The logging level to use for phoenix. Set to 4, 3, 2, or 1 for DEBUG, INFO, WARN or ERROR respectively")
