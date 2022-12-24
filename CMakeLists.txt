@@ -117,13 +117,8 @@ if (NOT MSVC)
     target_link_options(phoenix PUBLIC ${PHOENIX_CXX_FLAGS})
 endif ()
 
-# set phoenix library properties
-set_target_properties(phoenix
-        PROPERTIES
-        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-        VERSION ${PROJECT_VERSION})
+install(DIRECTORY "include/phoenix" TYPE INCLUDE)
+install(TARGETS phoenix LIBRARY RUNTIME)
 
 # when building tests, create a test executable and load it into CTest
 if (PHOENIX_BUILD_TESTS AND CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
