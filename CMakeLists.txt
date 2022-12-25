@@ -9,6 +9,8 @@ option(PHOENIX_BUILD_EXAMPLES "Build example code" OFF)
 option(PHOENIX_BUILD_TESTS "Build tests" ON)
 option(PHOENIX_DISABLE_SANITIZERS "Build without sanitizers in debug mode" OFF)
 
+set(PHOENIX_DEBUG_POSTFIX d CACHE STRING "Debug library postfix.")
+
 if (MSVC)
     # enable all warnings
     set(PHOENIX_CXX_FLAGS "/W4")
@@ -109,7 +111,11 @@ set(PHOENIX_TESTS
 # add the phoenix library definition
 add_library(phoenix ${PHOENIX_SOURCES} ${PHOENIX_EXTENSIONS} ${PHOENIX_HEADERS})
 target_include_directories(phoenix PUBLIC include)
+
+# TODO: Double-check if any of the dependencies may be turned PRIVATE
+# fmt: fmt includes are referenced by phoenix headers -> PUBLIC
 target_link_libraries(phoenix PUBLIC glm fmt squish mio lexy)
+
 target_compile_definitions(phoenix PUBLIC ${PHOENIX_DEFINES})
 target_compile_options(phoenix PRIVATE ${PHOENIX_CXX_FLAGS})
 
@@ -117,8 +123,11 @@ if (NOT MSVC)
     target_link_options(phoenix PUBLIC ${PHOENIX_CXX_FLAGS})
 endif ()
 
-install(DIRECTORY "include/phoenix" TYPE INCLUDE)
-install(TARGETS phoenix LIBRARY RUNTIME)
+set_target_properties(phoenix PROPERTIES
+        PUBLIC_HEADER "${PHOENIX_HEADERS}"
+        DEBUG_POSTFIX "${PHOENIX_DEBUG_POSTFIX}")
+
+install(TARGETS phoenix ARCHIVE LIBRARY RUNTIME PUBLIC_HEADER DESTINATION "include/phoenix")
 
 # when building tests, create a test executable and load it into CTest
 if (PHOENIX_BUILD_TESTS AND CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)

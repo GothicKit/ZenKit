@@ -3,6 +3,8 @@ include(FetchContent)
 set(BUILD_STATIC_LIBS ON)
 set(BUILD_SHARED_LIBS OFF)
 set(BUILD_SQUISH_WITH_OPENMP OFF CACHE BOOL "" FORCE)
+# Since we're building our own libfmt and use it as interface header, we'll need to install it aswell
+set(FMT_INSTALL ON)
 
 function(px_add_dependency NAME URL URL_HASH)
     if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${NAME}/CMakeLists.txt)
