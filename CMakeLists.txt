@@ -141,7 +141,7 @@ if (PHOENIX_BUILD_TESTS AND CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
 
     add_executable(phoenix-tests ${PHOENIX_TESTS})
-    target_link_libraries(phoenix-tests PRIVATE phoenix doctest_with_main)
+    target_link_libraries(phoenix-tests PRIVATE phoenix doctest_with_main lexy)
     target_compile_options(phoenix-tests PRIVATE ${PHOENIX_CXX_FLAGS})
 
     if (NOT MSVC)
