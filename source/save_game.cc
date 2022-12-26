@@ -186,6 +186,7 @@ namespace phoenix::unstable {
 
 	std::optional<buffer> save_game::open_world_save(std::string_view world_name) const {
 		auto path = _m_root_path / world_name;
+		path.replace_extension("SAV");
 
 		if (!std::filesystem::exists(path))
 			return std::nullopt;
