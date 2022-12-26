@@ -13,19 +13,19 @@
 #if PHOENIX_LOG_LEVEL > 0
 #define PX_LOGE(...) phoenix::logging::log(phoenix::logging::level::error, fmt::format(__VA_ARGS__))
 #else
-#defined PX_LOGE(...)
+#define PX_LOGE(...)
 #endif
 
 #if PHOENIX_LOG_LEVEL > 1
 #define PX_LOGW(...) phoenix::logging::log(phoenix::logging::level::warn, fmt::format(__VA_ARGS__))
 #else
-#defined PX_LOGW(...)
+#define PX_LOGW(...)
 #endif
 
 #if PHOENIX_LOG_LEVEL > 2
 #define PX_LOGI(...) phoenix::logging::log(phoenix::logging::level::info, fmt::format(__VA_ARGS__))
 #else
-#defined PX_LOGI(...)
+#define PX_LOGI(...)
 #endif
 
 #if PHOENIX_LOG_LEVEL > 3
