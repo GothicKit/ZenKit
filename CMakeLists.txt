@@ -131,7 +131,7 @@ set_target_properties(phoenix PROPERTIES
 if (PHOENIX_INSTALL)
         install(TARGETS phoenix ARCHIVE LIBRARY RUNTIME)
         install(DIRECTORY "include/phoenix" TYPE INCLUDE)
-        install(DIRECTORY "vendor/glm/glm" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp")
+        install(DIRECTORY "vendor/glm/glm" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h")
         install(DIRECTORY "vendor/fmt/include/" TYPE INCLUDE)
 endif ()
 
