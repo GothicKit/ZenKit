@@ -62,6 +62,7 @@ set(PHOENIX_SOURCES
         source/morph_mesh.cc
         source/phoenix.cc
         source/proto_mesh.cc
+        source/save_game.cc
         source/script.cc
         source/softskin_mesh.cc
         source/texture.cc
@@ -98,6 +99,7 @@ set(PHOENIX_TESTS
         tests/test_model_script.cc
         tests/test_morph_mesh.cc
         tests/test_proto_mesh.cc
+        tests/test_save_game.cc
         tests/test_script.cc
         tests/test_texture.cc
         tests/test_vdfs.cc

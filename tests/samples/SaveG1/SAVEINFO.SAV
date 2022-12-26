@@ -1,0 +1,22 @@
+ZenGin Archive
+ver 1
+zCArchiverGeneric
+ASCII
+saveGame 0
+date 24.12.2022 21:36:0
+user steamuser
+END
+objects 1        
+END
+
+[% oCSavegameInfo 0 0]
+	Title=string:sds
+	WorldName=string:WORLD
+	TimeDay=int:0
+	TimeHour=int:8
+	TimeMin=int:6
+	SaveDate=string:24.12.2022 - 21:36
+	VersionMajor=int:1
+	VersionMinor=int:87
+	PlayTimeSeconds=int:49
+[]
