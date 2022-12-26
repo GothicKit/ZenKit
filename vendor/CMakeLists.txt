@@ -3,12 +3,10 @@ include(FetchContent)
 set(BUILD_STATIC_LIBS ON)
 set(BUILD_SHARED_LIBS OFF)
 set(BUILD_SQUISH_WITH_OPENMP OFF CACHE BOOL "" FORCE)
-# Since we're building our own libfmt and use it as interface header, we'll need to install it aswell
-set(FMT_INSTALL ON)
 
 function(px_add_dependency NAME URL URL_HASH)
     if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${NAME}/CMakeLists.txt)
-        add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/${NAME})
+        add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/${NAME} EXCLUDE_FROM_ALL)
         set(${NAME}_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${NAME} PARENT_SCOPE)
     else ()
         FetchContent_Declare(
@@ -20,7 +18,7 @@ function(px_add_dependency NAME URL URL_HASH)
         if (NOT ${NAME}_POPULATED)
             message(STATUS "Downloading ${NAME}")
             FetchContent_Populate(${NAME})
-            add_subdirectory(${${NAME}_SOURCE_DIR} ${${NAME}_BINARY_DIR})
+            add_subdirectory(${${NAME}_SOURCE_DIR} ${${NAME}_BINARY_DIR} EXCLUDE_FROM_ALL)
         endif ()
 
         set(${NAME}_SOURCE_DIR ${${NAME}_SOURCE_DIR} PARENT_SCOPE)
