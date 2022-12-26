@@ -7,6 +7,7 @@
 #include "archive/archive_binsafe.hh"
 
 #include <fmt/format.h>
+#include <iostream>
 
 namespace phoenix {
 	archive_header archive_header::parse(buffer& in) {
@@ -91,6 +92,24 @@ namespace phoenix {
 				--level;
 			} else {
 				skip_entry();
+			}
+		} while (level > 0);
+	}
+
+	void archive_reader::print_structure(bool open_object) {
+		archive_object tmp;
+		int32_t level = open_object ? 1 : 0;
+
+		do {
+			if (read_object_begin(tmp)) {
+				std::cout << "<object type=\"" << tmp.class_name << "\" name=\"" << tmp.object_name << "\" version=\""
+				          << tmp.version << "\" index=\"" << tmp.index << "\">\n";
+				++level;
+			} else if (read_object_end()) {
+				std::cout << "</object>\n";
+				--level;
+			} else {
+				print_entry();
 			}
 		} while (level > 0);
 	}

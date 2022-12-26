@@ -3,6 +3,7 @@
 #include "archive_binsafe.hh"
 
 #include <fmt/format.h>
+#include <iostream>
 #include <sstream>
 
 namespace phoenix {
@@ -242,5 +243,82 @@ namespace phoenix {
 	buffer archive_reader_binsafe::read_raw_bytes() {
 		auto length = ensure_entry_meta(bs_raw);
 		return input.extract(length);
+	}
+
+	constexpr std::string_view type_names[] = {
+	    "unknown", // ?            = 0x00
+	    "string",  // bs_string    = 0x01,
+	    "int",     // bs_int       = 0x02,
+	    "float",   // bs_float     = 0x03,
+	    "byte",    // bs_byte      = 0x04,
+	    "word",    // bs_word      = 0x05,
+	    "bool",    // bs_bool      = 0x06,
+	    "vec3",    // bs_vec3      = 0x07,
+	    "color",   // bs_color     = 0x08,
+	    "raw",     // bs_raw       = 0x09,
+	    "unknown", // ?            = 0x0A
+	    "unknown", // ?            = 0x0B
+	    "unknown", // ?            = 0x0C
+	    "unknown", // ?            = 0x0D
+	    "unknown", // ?            = 0x0E
+	    "unknown", // ?            = 0x0F
+	    "unknown", // bs_raw_float = 0x10,
+	    "enum",    // bs_enum      = 0x11,
+	    "hash",    // bs_hash      = 0x12,
+	};
+
+	void archive_reader_binsafe::print_entry() {
+		auto type = static_cast<archive_binsafe_type>(input.get());
+
+		if (type != bs_hash) {
+			std::cout << "<field name=\"unknown\" type=\"" << type_names[type] << "\" ";
+		} else {
+			auto hash = input.get_uint();
+			auto& name = _m_hash_table_entries[hash].key;
+
+			type = static_cast<archive_binsafe_type>(input.get());
+
+			std::cout << "<field name=\"" << name << "\" type=\"" << type_names[type] << "\" ";
+		}
+
+		switch (type) {
+		case bs_string:
+			std::cout << "value=\"" << input.get_string(input.get_ushort()) << "\" ";
+			break;
+		case bs_raw:
+		case bs_raw_float: {
+			auto size = input.get_ushort();
+			std::cout << "length=\"" << size << "\" ";
+
+			input.skip(size);
+			break;
+		}
+		case bs_enum:
+		case bs_int:
+		case bs_bool:
+		case bs_color:
+		case bs_hash:
+			std::cout << "value=\"" << input.get_uint() << "\" ";
+			break;
+		case bs_float:
+			std::cout << "value=\"" << input.get_float() << "\" ";
+			break;
+		case bs_byte:
+			std::cout << "value=\"" << static_cast<uint16_t>(input.get()) << "\" ";
+			break;
+		case bs_word:
+			std::cout << "value=\"" << input.get_ushort() << "\" ";
+			break;
+		case bs_vec3: {
+			auto x = input.get_float();
+			auto y = input.get_float();
+			auto z = input.get_float();
+
+			std::cout << "value=\"(" << x << ", " << y << ", " << z << ")\" ";
+			break;
+		}
+		}
+
+		std::cout << "/>\n";
 	}
 } // namespace phoenix

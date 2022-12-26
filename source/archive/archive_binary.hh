@@ -27,14 +27,12 @@ namespace phoenix {
 		glm::mat3x3 read_mat3x3() override;
 		buffer read_raw_bytes() override;
 
-	protected:
-		void skip_entry() override;
-
-	public:
 		void skip_object(bool skip_current) override;
 
 	protected:
 		void read_header() override;
+		void skip_entry() override;
+		void print_entry() override;
 
 	private:
 		std::stack<uint64_t> _m_object_end {};

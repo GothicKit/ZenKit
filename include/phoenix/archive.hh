@@ -162,6 +162,11 @@ namespace phoenix {
 		///                     currently being read.
 		virtual void skip_object(bool skip_current);
 
+		/// \brief Dumps the current or next object of this reader as XML to standard out.
+		/// \param open_object If `false`, dumps out the next object in the reader, otherwise dumps all
+		///                    values until the current object closes.
+		virtual void print_structure(bool open_object);
+
 		/// \return The header of the archive
 		[[nodiscard]] const archive_header& get_header() const noexcept {
 			return header;
@@ -173,6 +178,7 @@ namespace phoenix {
 
 		/// \brief Skips the next entry in the reader.
 		virtual void skip_entry() = 0;
+		virtual void print_entry() = 0;
 
 	protected:
 		archive_header header;

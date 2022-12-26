@@ -70,10 +70,9 @@ namespace phoenix {
 		buffer read_raw_bytes() override;
 
 	protected:
-		void skip_entry() override;
-
-	protected:
 		void read_header() override;
+		void skip_entry() override;
+		void print_entry() override;
 
 		const std::string& get_entry_key();
 		std::uint16_t ensure_entry_meta(archive_binsafe_type tp);

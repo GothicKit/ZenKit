@@ -111,4 +111,8 @@ namespace phoenix {
 	buffer archive_reader_binary::read_raw_bytes() {
 		return input.slice();
 	}
+
+	void archive_reader_binary::print_entry() {
+		throw parser_error {"archive_reader", "cannot print entry in binary archive"};
+	}
 } // namespace phoenix

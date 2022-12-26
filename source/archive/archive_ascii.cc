@@ -5,6 +5,7 @@
 #include <fmt/format.h>
 
 #include <charconv>
+#include <iostream>
 #include <sstream>
 
 namespace phoenix {
@@ -188,5 +189,16 @@ namespace phoenix {
 		}
 
 		return buffer::of(std::move(out));
+	}
+
+	void archive_reader_ascii::print_entry() {
+		auto line = input.get_line();
+		auto name = line.substr(line.find('='));
+
+		line = line.substr(line.find('=') + 1);
+		auto colon = line.find(':');
+
+		std::cout << "<field name=\"" << name << "\" type=\"" << line.substr(0, colon) << "\" value=\""
+		          << line.substr(colon + 1) << "\" />";
 	}
 } // namespace phoenix

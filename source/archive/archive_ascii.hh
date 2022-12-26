@@ -26,10 +26,9 @@ namespace phoenix {
 		buffer read_raw_bytes() override;
 
 	protected:
-		void skip_entry() override;
-
-	protected:
 		void read_header() override;
+		void skip_entry() override;
+		void print_entry() override;
 
 		std::string read_entry(std::string_view type);
 
