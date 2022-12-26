@@ -45,8 +45,10 @@ namespace phoenix::unstable {
 
 	/// \brief The status of a single log entry.
 	enum class topic_status : std::uint32_t {
-		current = 0x01,
+		active = 0x01,
 		completed = 0x02,
+		failed = 0x03,
+		obsolete = 0x04,
 	};
 
 	struct log_topic {
