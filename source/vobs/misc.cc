@@ -80,4 +80,175 @@ namespace phoenix::vobs {
 		obj.duration = ctx.read_float(); // timeSec
 		obj.amplitude = ctx.read_vec3(); // amplitudeCM
 	}
+
+	void vobs::npc::parse(vobs::npc& obj, archive_reader& ctx, game_version version) {
+		vob::parse(obj, ctx, version);
+
+		archive_object hdr;
+		if (!ctx.read_object_begin(hdr) || hdr.class_name != "zCEventManager") {
+			throw parser_error {"vobs::npc"};
+		}
+
+		obj.event_manager_cleared = ctx.read_bool();
+		obj.event_manager_active = ctx.read_bool();
+
+		// skip emCutscene object
+		ctx.skip_object(false);
+
+		if (!ctx.read_object_end()) {
+			PX_LOGW("vob_tree: oCNpc:zCVob object not fully parsed");
+			ctx.skip_object(true);
+		}
+
+		obj.sleep_mode = ctx.read_byte();
+		obj.next_on_timer = ctx.read_float();
+		obj.npc_instance = ctx.read_string();
+		obj.model_scale = ctx.read_vec3();
+		obj.model_fatness = ctx.read_float();
+
+		auto overlay_count = ctx.read_int(); // numOverlays
+		for (auto i = 0; i < overlay_count; ++i) {
+			obj.overlays.push_back(ctx.read_string()); // overlay
+		}
+
+		obj.flags = ctx.read_int();
+		obj.guild = ctx.read_int();
+		obj.guild_true = ctx.read_int();
+		obj.level = ctx.read_int();
+		obj.xp = ctx.read_int();
+		obj.xp_next_level = ctx.read_int();
+		obj.lp = ctx.read_int();
+
+		auto talent_count = ctx.read_int();
+		obj.talents.resize(talent_count);
+
+		for (auto i = 0; i < talent_count; ++i) {
+			if (!ctx.read_object_begin(hdr))
+				throw parser_error {"vobs::npc"};
+
+			// empty object
+			if (hdr.class_name == "%") {
+				ctx.skip_object(true);
+				continue;
+			}
+
+			obj.talents[i].talent = ctx.read_int();
+			obj.talents[i].value = ctx.read_int();
+			obj.talents[i].skill = ctx.read_int();
+
+			if (!ctx.read_object_end()) {
+				PX_LOGW("vob_tree: oCNpcTalent object not fully parsed");
+				ctx.skip_object(true);
+			}
+		}
+
+		obj.fight_tactic = ctx.read_int();
+		obj.fight_mode = ctx.read_int();
+		obj.wounded = ctx.read_bool();
+		obj.mad = ctx.read_bool();
+		obj.mad_time = ctx.read_int();
+		obj.player = ctx.read_bool();
+
+		for (auto i = 0; i < 8; ++i) {
+			obj.attributes[i] = ctx.read_int();
+		}
+
+		for (auto i = 0; i < 5; ++i) {
+			obj.missions[i] = ctx.read_int();
+		}
+
+		obj.start_ai_state = ctx.read_string();
+
+		auto vars = ctx.read_raw_bytes();
+		for (auto i = 0u; i < vars.limit() / 4; ++i) {
+			obj.aivar[i] = vars.get_int();
+		}
+
+		obj.script_waypoint = ctx.read_string();
+		obj.attitude = ctx.read_int();
+		obj.attitude_temp = ctx.read_int();
+		obj.name_nr = ctx.read_int();
+
+		// unknown.
+		auto spells = ctx.read_raw_bytes();
+		[[maybe_unused]] auto unknown_count = ctx.read_int();
+
+		// [carryVob % 0 0]
+		ctx.skip_object(false);
+
+		// [enemy % 0 0]
+		ctx.skip_object(false);
+
+		obj.moveLock = ctx.read_bool();
+
+		for (auto i = 0; i < 9; ++i) {
+			obj.packed[i] = ctx.read_string();
+		}
+
+		auto item_count = ctx.read_int();
+		obj.items.resize(item_count);
+
+		for (auto i = 0; i < item_count; ++i) {
+			if (!ctx.read_object_begin(hdr))
+				throw parser_error {"vobs::npc"};
+
+			obj.items[i] = std::make_unique<item>();
+			item::parse(*obj.items[i], ctx, version);
+			obj.items[i]->id = hdr.index;
+
+			if (!ctx.read_object_end()) {
+				PX_LOGW("vob_tree: oCItem:zCVob object not fully parsed");
+				ctx.skip_object(true);
+			}
+		}
+
+		auto inv_slot_count = ctx.read_int();
+		obj.slots.resize(inv_slot_count);
+		for (auto i = 0; i < inv_slot_count; ++i) {
+			obj.slots[i].used = ctx.read_bool();
+			obj.slots[i].name = ctx.read_string();
+
+			if (obj.slots[i].used) {
+				if (!ctx.read_object_begin(hdr) || !ctx.read_object_end())
+					throw parser_error {"vobs::npc"};
+
+				// TODO: Warn if not found.
+				for (auto j = 0u; j < obj.items.size(); ++j) {
+					if (obj.items[j]->id == hdr.index) {
+						obj.slots[i].item_index = j;
+						break;
+					}
+				}
+
+				obj.slots[i].in_inventory = ctx.read_bool();
+			}
+		}
+
+		obj.current_state_valid = ctx.read_bool();
+		obj.current_state_name = ctx.read_string();
+		obj.current_state_index = ctx.read_int();
+		obj.current_state_is_routine = ctx.read_bool();
+		obj.next_state_valid = ctx.read_bool();
+		obj.next_state_name = ctx.read_string();
+		obj.next_state_index = ctx.read_int();
+		obj.next_state_is_routine = ctx.read_bool();
+		obj.last_ai_state = ctx.read_int();
+		obj.has_routine = ctx.read_bool();
+		obj.routine_changed = ctx.read_bool();
+		obj.routine_overlay = ctx.read_bool();
+		obj.routine_overlay_count = ctx.read_int();
+		obj.walkmode_routine = ctx.read_int();
+		obj.weaponmode_routine = ctx.read_bool();
+		obj.start_new_routine = ctx.read_bool();
+		obj.ai_state_driven = ctx.read_int();
+		obj.ai_state_pos = ctx.read_vec3();
+		obj.current_routine = ctx.read_string();
+		obj.respawn = ctx.read_bool();
+		obj.respawn_time = ctx.read_int();
+
+		auto protection = ctx.read_raw_bytes();
+		for (auto i = 0; i < 8; ++i) {
+			obj.protection[i] = protection.get_int();
+		}
+	}
 } // namespace phoenix::vobs

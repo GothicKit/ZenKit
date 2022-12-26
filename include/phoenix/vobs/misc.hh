@@ -166,5 +166,97 @@ namespace phoenix {
 			/// \see vob::parse
 			static void parse(earthquake& obj, archive_reader& ctx, game_version version);
 		};
+
+		struct npc : public vob {
+			struct talent {
+				int talent;
+				int value;
+				int skill;
+			};
+
+			struct slot {
+				bool used;
+				std::string name;
+				int item_index;
+				bool in_inventory;
+			};
+
+			bool event_manager_cleared;
+			bool event_manager_active;
+
+			uint8_t sleep_mode;
+			float next_on_timer;
+			std::string npc_instance;
+			glm::vec3 model_scale;
+			float model_fatness;
+
+			std::vector<std::string> overlays;
+
+			int flags;
+			int guild;
+			int guild_true;
+			int level;
+			int xp;
+			int xp_next_level;
+			int lp;
+
+			std::vector<talent> talents;
+
+			int fight_tactic;
+			int fight_mode;
+			bool wounded;
+			bool mad;
+			int mad_time;
+			bool player;
+
+			int attributes[8];
+			int missions[5];
+
+			std::string start_ai_state;
+			int aivar[100];
+			std::string script_waypoint;
+			int attitude;
+			int attitude_temp;
+			int name_nr;
+			bool moveLock;
+
+			std::string packed[9];
+			std::vector<std::unique_ptr<item>> items;
+			std::vector<slot> slots;
+
+			bool current_state_valid;
+			std::string current_state_name;
+			int current_state_index;
+			bool current_state_is_routine;
+
+			bool next_state_valid;
+			std::string next_state_name;
+			int next_state_index;
+			bool next_state_is_routine;
+
+			int last_ai_state;
+			bool has_routine;
+			bool routine_changed;
+			bool routine_overlay;
+			int routine_overlay_count;
+			int walkmode_routine;
+			bool weaponmode_routine;
+			bool start_new_routine;
+			int ai_state_driven;
+			glm::vec3 ai_state_pos;
+			std::string current_routine;
+			bool respawn;
+			int respawn_time;
+
+			int protection[8];
+
+			/// \brief Parses an NPC VOb from the given *ZenGin* archive.
+			/// \param[out] obj The object to read.
+			/// \param[in,out] ctx The archive reader to read from.
+			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+			/// \throws parser_error if parsing fails.
+			/// \see vob::parse
+			static void parse(npc& obj, archive_reader& ctx, game_version version);
+		};
 	} // namespace vobs
 } // namespace phoenix

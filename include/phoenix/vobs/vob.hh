@@ -12,6 +12,7 @@ namespace phoenix {
 		zCVob,           ///< The base type for all VObs.
 		zCVobLevelCompo, ///< A basic VOb used for grouping other VObs.
 		oCItem,          ///< A VOb representing an item
+		oCNpc,           ///< A VOb representing an NPC
 
 		zCMoverController,
 		zCVobScreenFX,

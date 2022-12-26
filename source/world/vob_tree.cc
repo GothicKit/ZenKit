@@ -19,6 +19,7 @@ namespace phoenix {
 	    {"zCVob", vob_type::zCVob},
 	    {"zCVobLevelCompo:zCVob", vob_type::zCVobLevelCompo},
 	    {"oCItem:zCVob", vob_type::oCItem},
+	    {"oCNpc:zCVob", vob_type::oCNpc},
 	    {"oCMOB:zCVob", vob_type::oCMOB},
 	    {"oCMobInter:oCMOB:zCVob", vob_type::oCMobInter},
 	    {"oCMobBed:oCMobInter:oCMOB:zCVob", vob_type::oCMobBed},
@@ -210,6 +211,10 @@ namespace phoenix {
 		case vob_type::zCMoverController:
 			object = std::make_unique<vobs::mover_controller>();
 			vobs::mover_controller::parse(dynamic_cast<vobs::mover_controller&>(*object), in, version);
+			break;
+		case vob_type::oCNpc:
+			object = std::make_unique<vobs::npc>();
+			vobs::npc::parse(dynamic_cast<vobs::npc&>(*object), in, version);
 			break;
 		case vob_type::ignored:
 			break;
