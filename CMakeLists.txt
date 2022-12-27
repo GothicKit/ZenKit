@@ -130,16 +130,16 @@ set_target_properties(phoenix PROPERTIES
 
 if (PHOENIX_INSTALL)
     install(TARGETS phoenix ARCHIVE LIBRARY RUNTIME)
-    
+
     install(DIRECTORY "include/phoenix" TYPE INCLUDE)
-    install(DIRECTORY "vendor/glm/glm" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl" PATTERN "*.h")
-    install(DIRECTORY "vendor/fmt/include/" TYPE INCLUDE)
+    install(DIRECTORY "${glm_SOURCE_DIR}/glm" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl" PATTERN "*.h")
+    install(DIRECTORY "${fmt_SOURCE_DIR}/include/" TYPE INCLUDE)
 
     if (NOT BUILD_SHARED_LIBS)
         # For static linking we'll need to provide the dependency static libraries
-        foreach(lib fmt glm::glm_static squish)
+        foreach (lib fmt glm::glm_static squish)
             install(FILES "$<TARGET_LINKER_FILE:${lib}>" TYPE LIB)
-        endforeach()
+        endforeach ()
     endif ()
 endif ()
 
