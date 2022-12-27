@@ -6,11 +6,22 @@ namespace phoenix::vobs {
 	void animate::parse(animate& obj, archive_reader& ctx, game_version version) {
 		vob::parse(obj, ctx, version);
 		obj.start_on = ctx.read_bool(); // startOn
+
+		if (obj.saved) {
+			// TODO: in save-games zone music behaves differently
+			(void) ctx.read_bool(); // isRunning
+		}
 	}
 
 	void item::parse(item& obj, archive_reader& ctx, game_version version) {
 		vob::parse(obj, ctx, version);
 		obj.instance = ctx.read_string(); // itemInstance
+
+		if (obj.saved) {
+			// TODO: items in save-games contain two extra variables
+			(void) ctx.read_int(); // amount
+			(void) ctx.read_int(); // flags
+		}
 	}
 
 	void lens_flare::parse(lens_flare& obj, archive_reader& ctx, game_version version) {
@@ -84,24 +95,6 @@ namespace phoenix::vobs {
 	void vobs::npc::parse(vobs::npc& obj, archive_reader& ctx, game_version version) {
 		vob::parse(obj, ctx, version);
 
-		archive_object hdr;
-		if (!ctx.read_object_begin(hdr) || hdr.class_name != "zCEventManager") {
-			throw parser_error {"vobs::npc"};
-		}
-
-		obj.event_manager_cleared = ctx.read_bool();
-		obj.event_manager_active = ctx.read_bool();
-
-		// skip emCutscene object
-		ctx.skip_object(false);
-
-		if (!ctx.read_object_end()) {
-			PX_LOGW("vob_tree: oCNpc:zCVob object not fully parsed");
-			ctx.skip_object(true);
-		}
-
-		obj.sleep_mode = ctx.read_byte();
-		obj.next_on_timer = ctx.read_float();
 		obj.npc_instance = ctx.read_string();
 		obj.model_scale = ctx.read_vec3();
 		obj.model_fatness = ctx.read_float();
@@ -122,6 +115,7 @@ namespace phoenix::vobs {
 		auto talent_count = ctx.read_int();
 		obj.talents.resize(talent_count);
 
+		archive_object hdr;
 		for (auto i = 0; i < talent_count; ++i) {
 			if (!ctx.read_object_begin(hdr))
 				throw parser_error {"vobs::npc"};

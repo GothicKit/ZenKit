@@ -124,6 +124,11 @@ namespace phoenix {
 	///
 	/// <p>Contains parameters all VObs have, like their position, bounding box and model.</p>
 	struct vob {
+		struct save_state {
+			uint8_t sleep_mode;
+			float next_on_timer;
+		};
+
 		vob_type type; ///< The type of this VOb.
 		uint32_t id;   ///< The index of this VOb in the archive it was read from.
 
@@ -154,6 +159,9 @@ namespace phoenix {
 
 		visual_type associated_visual_type {};
 		std::optional<decal> visual_decal {};
+
+		/// \brief Contains extra data about the item in the context of a saved game.
+		std::optional<save_state> saved;
 
 		/// \brief The children of this VOb.
 		std::vector<std::unique_ptr<vob>> children {};

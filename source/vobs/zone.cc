@@ -11,6 +11,13 @@ namespace phoenix::vobs {
 		obj.reverb = ctx.read_float();   // reverbLevel
 		obj.volume = ctx.read_float();   // volumeLevel
 		obj.loop = ctx.read_bool();      // loop
+
+		if (obj.saved) {
+			// TODO: in save-games zone music behaves differently
+			(void) ctx.read_bool(); // local_enabled
+			(void) ctx.read_bool(); // dayEntranceDone
+			(void) ctx.read_bool(); // nightEntranceDone
+		}
 	}
 
 	void zone_far_plane::parse(zone_far_plane& obj, archive_reader& ctx, game_version version) {

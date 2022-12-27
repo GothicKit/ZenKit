@@ -13,6 +13,13 @@ namespace phoenix::vobs {
 		obj.retrigger_delay_sec = ctx.read_float();    // retriggerWaitSec
 		obj.damage_threshold = ctx.read_float();       // damageThreshold
 		obj.fire_delay_sec = ctx.read_float();         // fireDelaySec
+
+		if (obj.saved) {
+			// TODO: in save-games triggers behave differently
+			(void) ctx.read_float(); // nextTimeTriggerable
+			ctx.skip_object(false);
+			(void) ctx.read_int(); // countCanBeActivated
+		}
 	}
 
 	void trigger_mover::parse(trigger_mover& obj, archive_reader& ctx, game_version version) {
@@ -47,6 +54,19 @@ namespace phoenix::vobs {
 			}
 		}
 
+		if (obj.saved) {
+			// TODO: in save-games movers behave differently
+			(void) ctx.read_vec3();  // actKeyPosDelta
+			(void) ctx.read_float(); // actKeyframeF
+			(void) ctx.read_int();   // actKeyframe
+			(void) ctx.read_int();   // nextKeyframe
+			(void) ctx.read_float(); // moveSpeedUnit
+			(void) ctx.read_float(); // advanceDir
+			(void) ctx.read_enum();  // moverState
+			(void) ctx.read_int();   // numTriggerEvents
+			(void) ctx.read_float(); // stayOpenTimeDest
+		}
+
 		obj.sfx_open_start = ctx.read_string();    // sfxOpenStart
 		obj.sfx_open_end = ctx.read_string();      // sfxOpenEnd
 		obj.sfx_transitioning = ctx.read_string(); // sfxMoving
@@ -67,6 +87,12 @@ namespace phoenix::vobs {
 			    ctx.read_string(), // triggerTarget[i]
 			    ctx.read_float()   // fireDelay[i]
 			});
+		}
+
+		if (obj.saved) {
+			// TODO: in save-games trigger lists behave differently
+			(void) ctx.read_byte(); // actTarget
+			(void) ctx.read_bool(); // sendOnTrigger
 		}
 	}
 

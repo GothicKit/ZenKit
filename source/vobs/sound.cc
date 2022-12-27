@@ -16,6 +16,12 @@ namespace phoenix::vobs {
 		obj.volume_type = static_cast<sound_trigger_volume>(ctx.read_enum()); // sndVolType
 		obj.radius = ctx.read_float();                                        // sndRadius
 		obj.sound_name = ctx.read_string();                                   // sndName
+
+		if (obj.saved) {
+			// TODO: in save-games sounds behave differently
+			(void) ctx.read_bool(); // soundIsRunning
+			(void) ctx.read_bool(); // soundAllowedToRun
+		}
 	}
 
 	void sound_daytime::parse(sound_daytime& obj, archive_reader& ctx, game_version version) {

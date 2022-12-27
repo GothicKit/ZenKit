@@ -42,6 +42,7 @@ namespace phoenix {
 		auto packed = in.read_int() != 0; // pack
 		bool has_visual_object = true;
 		bool has_ai_object = true;
+		bool has_event_manager_object = false;
 
 		if (packed) {
 			auto bin = in.read_raw_bytes(); // dataRaw
@@ -71,7 +72,11 @@ namespace phoenix {
 			bool has_visual_name = static_cast<bool>((bit1 & 0b000000000000100u) >> 2u);
 			has_visual_object = static_cast<bool>((bit1 & 0b000000000001000u) >> 3u);
 			has_ai_object = static_cast<bool>((bit1 & 0b000000000010000u) >> 4u);
-			// bool has_event_man_object = static_cast<bool>((bit1 & 0b000000000100000u) >> 5u);
+
+			// Quirk: bit 5 of this bitfield specifies whether an event manger object is
+			// present but this is only relevant in save-games.
+			has_event_manager_object = static_cast<bool>((bit1 & 0b000000000100000u) >> 5u) && in.get_header().save;
+
 			obj.physics_enabled = static_cast<bool>((bit1 & 0b000000001000000u) >> 6u);
 
 			if (version == game_version::gothic_2) {
@@ -139,8 +144,21 @@ namespace phoenix {
 			}
 		}
 
+		// TODO
 		if (has_ai_object) {
 			in.skip_object(false);
+		}
+
+		// TODO
+		if (has_event_manager_object) {
+			in.skip_object(false);
+		}
+
+		if (in.get_header().save) {
+			// save-games contain two extra values for each VOb
+			obj.saved = save_state {};
+			obj.saved->sleep_mode = in.read_byte();     // sleepMode
+			obj.saved->next_on_timer = in.read_float(); // nextOnTimer
 		}
 	}
 } // namespace phoenix

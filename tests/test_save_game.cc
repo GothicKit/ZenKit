@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 #include <doctest/doctest.h>
 #include <phoenix/save_game.hh>
+#include <phoenix/world.hh>
 
 using namespace phoenix::unstable;
 
@@ -21,6 +22,9 @@ TEST_SUITE("save_game") {
 		CHECK(save.script.day == 0);
 		CHECK(save.script.hour == 8);
 		CHECK(save.script.minute == 6);
+
+		// Try to parse the world data.
+		(void) phoenix::world::parse(*save.open_world_save(save.current_world), phoenix::game_version::gothic_1);
 
 		// TODO: Add more checks
 	}

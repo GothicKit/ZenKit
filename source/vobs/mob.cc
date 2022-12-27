@@ -34,6 +34,16 @@ namespace phoenix::vobs {
 		obj.key = ctx.read_string();         // keyInstance
 		obj.pick_string = ctx.read_string(); // pickLockStr
 		obj.contents = ctx.read_string();    // contains
+
+		if (obj.saved) {
+			// TODO: in save-games containers behave differently
+
+			auto item_count = ctx.read_int(); // NumOfEntries
+			for (auto i = 0; i < item_count; ++i) {
+				// FIXME: item::parse(items[i], ctx, version)
+				ctx.skip_object(false);
+			}
+		}
 	}
 
 	void mob_door::parse(mob_door& obj, archive_reader& ctx, game_version version) {

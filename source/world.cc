@@ -92,6 +92,75 @@ namespace phoenix {
 					}
 				} else if (chnk.object_name == "WayNet") {
 					wld.world_way_net = way_net::parse(*archive);
+				} else if (chnk.object_name == "CutscenePlayer") {
+					// TODO: only present in save-games
+
+					if (!archive->read_object_begin(chnk)) {
+						PX_LOGW("world: object [{} {} {} {}] encountered but unable to parse",
+						        chnk.object_name,
+						        chnk.class_name,
+						        chnk.version,
+						        chnk.index);
+						archive->skip_object(true);
+						continue;
+					}
+
+					(void) archive->read_int(); // lastProcessDay
+					(void) archive->read_int(); // lastProcessHour
+					(void) archive->read_int(); // playListCount
+
+					archive->read_object_end();
+				} else if (chnk.object_name == "SkyCtrl") {
+					// TODO: only present in save-games
+
+					if (!archive->read_object_begin(chnk)) {
+						PX_LOGW("world: object [{} {} {} {}] encountered but unable to parse",
+						        chnk.object_name,
+						        chnk.class_name,
+						        chnk.version,
+						        chnk.index);
+						archive->skip_object(true);
+						continue;
+					}
+
+					(void) archive->read_float(); // masterTime
+					(void) archive->read_float(); // rainWeight
+					(void) archive->read_float(); // rainStart
+					(void) archive->read_float(); // rainStop
+					(void) archive->read_float(); // rainSctTimer
+					(void) archive->read_float(); // rainSndVol
+					(void) archive->read_float(); // dayCtr
+
+					archive->read_object_end();
+				} else if (chnk.object_name == "EndMarker" && archive->get_header().save) {
+					// TODO: save games contain a list of NPCs after the end marker
+					// First, Consume the end-maker fully
+					archive->read_object_end();
+
+					// Then, read all the NPCs
+					auto npc_count = archive->read_int(); // npcCount
+					for (auto i = 0; i < npc_count; ++i) {
+						// FIXME: npc::parse(npcs[i], *archive, version)
+						archive->skip_object(false);
+					}
+
+					// After that, read all NPC spawn locations
+					auto npc_spawn_count = archive->read_int(); // NoOfEntries
+					for (auto i = 0; i < npc_spawn_count; ++i) {
+						archive->skip_object(false);  // npc zReference
+						(void) archive->read_vec3();  // spawnPos
+						(void) archive->read_float(); // timer
+					}
+
+					(void) archive->read_bool(); // spawningEnabled
+
+					if (!archive->read_object_end()) {
+						PX_LOGW("world: npc list not fully parsed");
+						archive->skip_object(true);
+					}
+
+					// We have fully consumed the world block. From here we should just die.
+					break;
 				}
 
 				if (!archive->read_object_end()) {

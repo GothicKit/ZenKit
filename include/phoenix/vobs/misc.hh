@@ -181,11 +181,6 @@ namespace phoenix {
 				bool in_inventory;
 			};
 
-			bool event_manager_cleared;
-			bool event_manager_active;
-
-			uint8_t sleep_mode;
-			float next_on_timer;
 			std::string npc_instance;
 			glm::vec3 model_scale;
 			float model_fatness;
