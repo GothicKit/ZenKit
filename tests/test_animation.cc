@@ -14,8 +14,8 @@ TEST_SUITE("animation") {
 		CHECK(anim.next == "S_BRUSH_S0");
 		CHECK(anim.layer == 1);
 		CHECK(anim.frame_count == 1);
-		CHECK(anim.fps == 25);
-		CHECK(anim.fps_source == 25);
+		CHECK(anim.fps == 25.0f);
+		CHECK(anim.fps_source == 25.0f);
 		CHECK(anim.checksum == 4170839982);
 		CHECK(anim.source_path == "\\_WORK\\DATA\\ANIMS\\BAB_SWEEP_M01.ASC");
 		CHECK(

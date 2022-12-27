@@ -829,7 +829,7 @@ namespace phoenix {
 			sym._m_type = datatype::string;
 			sym._m_count = 1;
 			sym._m_value = std::unique_ptr<std::string[]> {new std::string[sym._m_count]};
-			sym._m_index = _m_symbols.size();
+			sym._m_index = static_cast<std::uint32_t>(_m_symbols.size());
 
 			return &_m_symbols.emplace_back(std::move(sym));
 		}

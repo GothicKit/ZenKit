@@ -22,8 +22,8 @@ TEST_SUITE("model script") {
 		CHECK(script.animations[0].direction == phoenix::mds::animation_direction::forward);
 		CHECK(script.animations[0].first_frame == 221);
 		CHECK(script.animations[0].last_frame == -331);
-		CHECK(script.animations[0].fps == 25);
-		CHECK(script.animations[0].speed == 0);
+		CHECK(script.animations[0].fps == 25.0f);
+		CHECK(script.animations[0].speed == 0.0f);
 		CHECK(script.animations[0].collision_volume_scale == 0.2f);
 		CHECK(script.animations[0].pfx.empty());
 		CHECK(script.animations[0].pfx_stop.empty());
@@ -43,8 +43,8 @@ TEST_SUITE("model script") {
 		CHECK(script.animations[1].direction == phoenix::mds::animation_direction::backward);
 		CHECK(script.animations[1].first_frame == 222);
 		CHECK(script.animations[1].last_frame == 332);
-		CHECK(script.animations[1].fps == 25);
-		CHECK(script.animations[1].speed == 0);
+		CHECK(script.animations[1].fps == 25.0f);
+		CHECK(script.animations[1].speed == 0.0f);
 		CHECK(script.animations[1].collision_volume_scale == 1.0f);
 
 		CHECK(script.animations[1].events.size() == 3);
@@ -172,23 +172,23 @@ TEST_SUITE("model script") {
 		CHECK(script.animations[0].name == "T_FISTRUN_2_FISTRUNL");
 		CHECK(script.animations[0].layer == 1);
 		CHECK(script.animations[0].next == "S_FISTRUNL");
-		CHECK(script.animations[0].blend_in == 0);
-		CHECK(script.animations[0].blend_out == 0);
+		CHECK(script.animations[0].blend_in == 0.0f);
+		CHECK(script.animations[0].blend_out == 0.0f);
 		CHECK(script.animations[0].flags == phoenix::mds::af_move);
 		CHECK(script.animations[0].model == "WARAN_RUN_KM01.ASC");
 		CHECK(script.animations[0].direction == phoenix::mds::animation_direction::forward);
 		CHECK(script.animations[0].first_frame == 1);
 		CHECK(script.animations[0].last_frame == 8);
-		CHECK(script.animations[0].fps == 25);
-		CHECK(script.animations[0].speed == 0);                  // default
-		CHECK(script.animations[0].collision_volume_scale == 1); // default
+		CHECK(script.animations[0].fps == 25.0f);
+		CHECK(script.animations[0].speed == 0.0f);                  // default
+		CHECK(script.animations[0].collision_volume_scale == 1.0f); // default
 
 		CHECK(script.aliases.size() == 38);
 		CHECK(script.aliases[0].name == "S_FISTRUN");
 		CHECK(script.aliases[0].layer == 1);
 		CHECK(script.aliases[0].next == "S_FISTRUN");
-		CHECK(script.aliases[0].blend_in == 0);
-		CHECK(script.aliases[0].blend_out == 0);
+		CHECK(script.aliases[0].blend_in == 0.0f);
+		CHECK(script.aliases[0].blend_out == 0.0f);
 		CHECK(script.aliases[0].flags == (phoenix::mds::af_move | phoenix::mds::af_idle));
 		CHECK(script.aliases[0].alias == "S_FISTWALK");
 		CHECK(script.aliases[0].direction == phoenix::mds::animation_direction::forward);
@@ -196,8 +196,8 @@ TEST_SUITE("model script") {
 		CHECK(script.blends.size() == 17);
 		CHECK(script.blends[0].name == "T_FISTRUNR_2_FISTRUN");
 		CHECK(script.blends[0].next == "S_FISTRUN");
-		CHECK(script.blends[0].blend_in == 0);
-		CHECK(script.blends[0].blend_out == 0);
+		CHECK(script.blends[0].blend_in == 0.0f);
+		CHECK(script.blends[0].blend_out == 0.0f);
 
 		CHECK(script.combinations.size() == 1);
 		CHECK(script.combinations[0].name == "T_LOOK");

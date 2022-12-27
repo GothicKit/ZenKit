@@ -220,7 +220,7 @@ TEST_SUITE("world") {
 			CHECK(vob0->sprite_camera_facing_mode == phoenix::sprite_alignment::none);
 			CHECK(vob0->anim_mode == phoenix::animation_mode::none);
 			CHECK(vob0->anim_strength == 0.0f);
-			CHECK(vob0->far_clip_scale == 0);
+			CHECK(vob0->far_clip_scale == 0.0f);
 			CHECK(vob0->cd_static);
 			CHECK(!vob0->cd_dynamic);
 			CHECK(!vob0->vob_static);
@@ -260,7 +260,7 @@ TEST_SUITE("world") {
 				CHECK(child1->sprite_camera_facing_mode == phoenix::sprite_alignment::none);
 				CHECK(child1->anim_mode == phoenix::animation_mode::none);
 				CHECK(child1->anim_strength == 0.0f);
-				CHECK(child1->far_clip_scale == 0);
+				CHECK(child1->far_clip_scale == 0.0f);
 				CHECK(!child1->cd_static);
 				CHECK(!child1->cd_dynamic);
 				CHECK(!child1->vob_static);
@@ -297,7 +297,7 @@ TEST_SUITE("world") {
 			CHECK(vob13->sprite_camera_facing_mode == phoenix::sprite_alignment::none);
 			CHECK(vob13->anim_mode == phoenix::animation_mode::none);
 			CHECK(vob13->anim_strength == 0.0f);
-			CHECK(vob13->far_clip_scale == 0);
+			CHECK(vob13->far_clip_scale == 0.0f);
 			CHECK(!vob13->cd_static);
 			CHECK(!vob13->cd_dynamic);
 			CHECK(!vob13->vob_static);

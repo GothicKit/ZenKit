@@ -41,9 +41,9 @@ TEST_SUITE("archive") {
 		CHECK(color.a == 255);
 
 		auto vec3 = reader->read_vec3();
-		CHECK(vec3.x == 50);
+		CHECK(vec3.x == 50.0f);
 		CHECK(vec3.y == 100.123f);
-		CHECK(vec3.z == -150);
+		CHECK(vec3.z == -150.0f);
 
 		auto vec2 = reader->read_vec2();
 		CHECK(vec2.x == 111.11f);

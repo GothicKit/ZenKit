@@ -6,8 +6,8 @@ set(BUILD_SQUISH_WITH_OPENMP OFF CACHE BOOL "" FORCE)
 
 function(px_add_dependency NAME URL URL_HASH)
     if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${NAME}/CMakeLists.txt)
-        add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/${NAME})
-        set(${NAME}_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${NAME} PARENT_SCOPE)
+        add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/${NAME} EXCLUDE_FROM_ALL)
+        set(${NAME}_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${NAME} CACHE PATH "Path to the sources for the ${NAME} library." FORCE)
     else ()
         FetchContent_Declare(
                 ${NAME}
@@ -18,10 +18,10 @@ function(px_add_dependency NAME URL URL_HASH)
         if (NOT ${NAME}_POPULATED)
             message(STATUS "Downloading ${NAME}")
             FetchContent_Populate(${NAME})
-            add_subdirectory(${${NAME}_SOURCE_DIR} ${${NAME}_BINARY_DIR})
+            add_subdirectory(${${NAME}_SOURCE_DIR} ${${NAME}_BINARY_DIR} EXCLUDE_FROM_ALL)
         endif ()
 
-        set(${NAME}_SOURCE_DIR ${${NAME}_SOURCE_DIR} PARENT_SCOPE)
+        set(${NAME}_SOURCE_DIR ${${NAME}_SOURCE_DIR} CACHE PATH "Path to the sources for the ${NAME} library." FORCE)
     endif ()
 endfunction()
 

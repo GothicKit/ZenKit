@@ -21,7 +21,7 @@ TEST_SUITE("morph mesh") {
 		CHECK(anim.layer == 1);
 		CHECK(anim.blend_in == 0.0100000007f);
 		CHECK(anim.blend_out == -0.0100000007f);
-		CHECK(anim.duration == 400);
+		CHECK(anim.duration == 400.0f);
 		CHECK(anim.speed == 0.0250000004f);
 		CHECK(anim.flags == 0);
 

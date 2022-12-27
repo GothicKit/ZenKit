@@ -1,12 +1,16 @@
 cmake_minimum_required(VERSION 3.10)
 include(CheckIncludeFiles)
-project(phoenix VERSION 1.0.0)
+project(phoenix VERSION 1.0.1)
 
 set(CMAKE_CXX_STANDARD 17)
 set(PHOENIX_LOG_LEVEL 3 CACHE STRING "The logging level to use for phoenix. Set to 4, 3, 2, or 1 for DEBUG, INFO, WARN or ERROR respectively")
 
 option(PHOENIX_BUILD_EXAMPLES "Build example code" OFF)
+option(PHOENIX_BUILD_TESTS "Build tests" ON)
 option(PHOENIX_DISABLE_SANITIZERS "Build without sanitizers in debug mode" OFF)
+option(PHOENIX_INSTALL "Configure phoenix for cmake install" ON)
+
+set(PHOENIX_DEBUG_POSTFIX d CACHE STRING "Debug library postfix.")
 
 if (MSVC)
     # enable all warnings
@@ -108,7 +112,12 @@ set(PHOENIX_TESTS
 # add the phoenix library definition
 add_library(phoenix ${PHOENIX_SOURCES} ${PHOENIX_EXTENSIONS} ${PHOENIX_HEADERS})
 target_include_directories(phoenix PUBLIC include)
-target_link_libraries(phoenix PUBLIC glm fmt squish mio lexy)
+
+# Apps using phoenix will also need to link to glm, fmt and squish to avoid missing symbols
+target_link_libraries(phoenix
+        PUBLIC glm::glm_static fmt squish
+        PRIVATE mio lexy)
+
 target_compile_definitions(phoenix PUBLIC ${PHOENIX_DEFINES})
 target_compile_options(phoenix PRIVATE ${PHOENIX_CXX_FLAGS})
 
@@ -116,16 +125,26 @@ if (NOT MSVC)
     target_link_options(phoenix PUBLIC ${PHOENIX_CXX_FLAGS})
 endif ()
 
-# set phoenix library properties
-set_target_properties(phoenix
-        PROPERTIES
-        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-        VERSION ${PROJECT_VERSION})
+set_target_properties(phoenix PROPERTIES
+        DEBUG_POSTFIX "${PHOENIX_DEBUG_POSTFIX}")
+
+if (PHOENIX_INSTALL)
+    install(TARGETS phoenix ARCHIVE LIBRARY RUNTIME)
+
+    install(DIRECTORY "include/phoenix" TYPE INCLUDE)
+    install(DIRECTORY "${glm_SOURCE_DIR}/glm" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl" PATTERN "*.h")
+    install(DIRECTORY "${fmt_SOURCE_DIR}/include/" TYPE INCLUDE)
+
+    if (NOT BUILD_SHARED_LIBS)
+        # For static linking we'll need to provide the dependency static libraries
+        foreach (lib fmt glm::glm_static squish)
+            install(FILES "$<TARGET_LINKER_FILE:${lib}>" TYPE LIB)
+        endforeach ()
+    endif ()
+endif ()
 
 # when building tests, create a test executable and load it into CTest
-if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+if (PHOENIX_BUILD_TESTS AND CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     enable_testing()
     include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
 
