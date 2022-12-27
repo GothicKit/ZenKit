@@ -113,10 +113,10 @@ set(PHOENIX_TESTS
 add_library(phoenix ${PHOENIX_SOURCES} ${PHOENIX_EXTENSIONS} ${PHOENIX_HEADERS})
 target_include_directories(phoenix PUBLIC include)
 
-# phoenix public headers include glm and fmt headers
+# Apps using phoenix will also need to link to glm, fmt and squish to avoid missing symbols
 target_link_libraries(phoenix
-        PUBLIC glm::glm_static fmt
-        PRIVATE squish mio lexy)
+        PUBLIC glm::glm_static fmt squish
+        PRIVATE mio lexy)
 
 target_compile_definitions(phoenix PUBLIC ${PHOENIX_DEFINES})
 target_compile_options(phoenix PRIVATE ${PHOENIX_CXX_FLAGS})
@@ -137,7 +137,7 @@ if (PHOENIX_INSTALL)
 
     if (NOT BUILD_SHARED_LIBS)
         # For static linking we'll need to provide the dependency static libraries
-        foreach(lib fmt glm::glm_static)
+        foreach(lib fmt glm::glm_static squish)
             install(FILES "$<TARGET_LINKER_FILE:${lib}>" TYPE LIB)
         endforeach()
     endif ()
