@@ -428,7 +428,7 @@ namespace phoenix {
 		}
 
 		void remove_choice(std::size_t index) {
-			choices.erase(choices.begin() + index);
+			choices.erase(choices.begin() + static_cast<decltype(choices)::difference_type>(index));
 		}
 
 		static void register_(script& s) {
