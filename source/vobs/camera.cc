@@ -63,5 +63,13 @@ namespace phoenix::vobs {
 				ctx.skip_object(true);
 			}
 		}
+
+		if (obj.saved && version == game_version::gothic_2) {
+			// TODO: in G2 save-games cameras behave differently
+			(void) ctx.read_bool();  // paused
+			(void) ctx.read_bool();  // started
+			(void) ctx.read_bool();  // gotoTimeMode
+			(void) ctx.read_float(); // csTime
+		}
 	}
 } // namespace phoenix::vobs

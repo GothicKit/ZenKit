@@ -54,6 +54,16 @@ namespace phoenix::vobs {
 		for (int32_t i = 0; i < slave_count; ++i) {
 			obj.slaves.emplace_back(ctx.read_string()); // slaveVobName[i]
 		}
+
+		if (obj.saved && version == game_version::gothic_2) {
+			// TODO: in G2 save-games code master behaves differently
+			(void) ctx.read_byte(); // numSlavesTriggered
+
+			for (auto i = 0; i < slave_count; ++i) {
+				// [slaveTriggered1 % 0 0]
+				ctx.skip_object(false);
+			}
+		}
 	}
 
 	void mover_controller::parse(mover_controller& obj, archive_reader& ctx, game_version version) {
@@ -147,6 +157,13 @@ namespace phoenix::vobs {
 			obj.attributes[i] = ctx.read_int();
 		}
 
+		if (version == game_version::gothic_2) {
+			// TODO: what are these (hc<n>)?
+			for (auto i = 0; i < 4; ++i) {
+				(void) ctx.read_int(); // hc1
+			}
+		}
+
 		for (auto i = 0; i < 5; ++i) {
 			obj.missions[i] = ctx.read_int();
 		}
@@ -175,8 +192,12 @@ namespace phoenix::vobs {
 
 		obj.moveLock = ctx.read_bool();
 
-		for (auto i = 0; i < 9; ++i) {
-			obj.packed[i] = ctx.read_string();
+		if (version == game_version::gothic_1) {
+			for (auto i = 0; i < 9; ++i) {
+				obj.packed[i] = ctx.read_string();
+			}
+		} else {
+			(void) ctx.read_string();
 		}
 
 		auto item_count = ctx.read_int();
@@ -243,6 +264,13 @@ namespace phoenix::vobs {
 		auto protection = ctx.read_raw_bytes();
 		for (auto i = 0; i < 8; ++i) {
 			obj.protection[i] = protection.get_int();
+		}
+
+		if (version == game_version::gothic_2) {
+			// TODO: these need to be saved
+			(void) ctx.read_int(); // bsInterruptableOverride
+			(void) ctx.read_int(); // npcType
+			(void) ctx.read_int(); // spellMana
 		}
 	}
 } // namespace phoenix::vobs

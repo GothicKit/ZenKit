@@ -131,6 +131,13 @@ namespace phoenix {
 					(void) archive->read_float(); // rainSndVol
 					(void) archive->read_float(); // dayCtr
 
+					if (version == game_version::gothic_2) {
+						(void) archive->read_float(); // fadeScale
+						(void) archive->read_bool();  // renderLightning
+						(void) archive->read_bool();  // isRaining
+						(void) archive->read_int();   // rainCtr
+					}
+
 					archive->read_object_end();
 				} else if (chnk.object_name == "EndMarker" && archive->get_header().save) {
 					// TODO: save games contain a list of NPCs after the end marker
@@ -153,6 +160,10 @@ namespace phoenix {
 					}
 
 					(void) archive->read_bool(); // spawningEnabled
+
+					if (version == game_version::gothic_2) {
+						(void) archive->read_int(); // spawnFlags
+					}
 
 					if (!archive->read_object_end()) {
 						PX_LOGW("world: npc list not fully parsed");

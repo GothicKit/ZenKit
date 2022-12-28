@@ -19,6 +19,10 @@ namespace phoenix::vobs {
 			(void) ctx.read_float(); // nextTimeTriggerable
 			ctx.skip_object(false);
 			(void) ctx.read_int(); // countCanBeActivated
+
+			if (version == game_version::gothic_2) {
+				(void) ctx.read_bool(); // isEnabled
+			}
 		}
 	}
 
@@ -113,6 +117,11 @@ namespace phoenix::vobs {
 		vob::parse(obj, ctx, version);
 		obj.target = ctx.read_string();  // triggerTarget
 		obj.fire_once = ctx.read_bool(); // fireOnlyFirstTime
+
+		if (obj.saved && version == game_version::gothic_2) {
+			// TODO: in G2 save-games movers behave differently
+			(void) ctx.read_bool(); // hasFired
+		}
 	}
 
 	void trigger_untouch::parse(trigger_untouch& obj, archive_reader& ctx, game_version version) {
