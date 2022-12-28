@@ -245,6 +245,18 @@ namespace phoenix {
 		return input.extract(length);
 	}
 
+	buffer archive_reader_binsafe::read_raw_bytes(uint32_t size) {
+		auto length = ensure_entry_meta(bs_raw);
+
+		if (length < size) {
+			throw parser_error {"archive_reader_binsafe", "not enough raw bytes to read!"};
+		} else if (length > size) {
+			PX_LOGW("read_raw_bytes: reading {} bytes although {} are actually available", size, length);
+		}
+
+		return input.extract(length);
+	}
+
 	constexpr std::string_view type_names[] = {
 	    "unknown", // ?            = 0x00
 	    "string",  // bs_string    = 0x01,

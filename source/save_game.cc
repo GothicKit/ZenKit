@@ -106,7 +106,7 @@ namespace phoenix::unstable {
 		}
 
 		// A two-dimensional array of the form int[42][42] containing guild attitudes
-		auto raw = ar->read_raw_bytes(); // guildTable
+		auto raw = ar->read_raw_bytes(42 * 42); // guildTable
 
 		for (int i = 0; i < 42; ++i) {
 			for (int j = 0; j < 42; ++j) {

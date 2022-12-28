@@ -155,7 +155,13 @@ namespace phoenix {
 		/// \brief Reads a raw entry and returns the raw bytes stored within.
 		/// \return A vector containing the raw bytes of the entry.
 		/// \throws parser_error if the value actually present is not raw
-		virtual buffer read_raw_bytes() = 0;
+		[[deprecated("unsafe api: use read_raw_bytes(uint32_t) instead")]] virtual buffer read_raw_bytes() = 0;
+
+		/// \brief Reads a raw entry and returns the raw bytes stored within.
+		/// \param size The number of bytes to read (checked at runtime for ASCII and BIN_SAFE archives)
+		/// \return A vector containing the raw bytes of the entry.
+		/// \throws parser_error if the value actually present is not raw
+		virtual buffer read_raw_bytes(uint32_t size) = 0;
 
 		/// \brief Skips the next object in the reader and all it's children
 		/// \param skip_current If `false` skips the next object in this buffer, otherwise skip the object

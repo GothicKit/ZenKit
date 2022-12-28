@@ -24,6 +24,7 @@ namespace phoenix {
 		bounding_box read_bbox() override;
 		glm::mat3x3 read_mat3x3() override;
 		buffer read_raw_bytes() override;
+		buffer read_raw_bytes(uint32_t size) override;
 
 	protected:
 		void read_header() override;

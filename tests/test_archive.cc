@@ -68,7 +68,7 @@ TEST_SUITE("archive") {
 		CHECK(mat3[1][2] == 0.0f);
 		CHECK(mat3[2][2] == 0.994702816f);
 
-		auto raw = reader->read_raw_bytes();
+		auto raw = reader->read_raw_bytes(4);
 		CHECK(raw.get() == 0xf2);
 		CHECK(raw.get() == 0x42);
 		CHECK(raw.get() == 0xa7);

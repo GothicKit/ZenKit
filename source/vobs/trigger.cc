@@ -5,14 +5,14 @@
 namespace phoenix::vobs {
 	void trigger::parse(trigger& obj, archive_reader& ctx, game_version version) {
 		vob::parse(obj, ctx, version);
-		obj.target = ctx.read_string();                // triggerTarget
-		obj.flags = ctx.read_raw_bytes().get();        // flags
-		obj.filter_flags = ctx.read_raw_bytes().get(); // filterFlags
-		obj.vob_target = ctx.read_string();            // respondToVobName
-		obj.max_activation_count = ctx.read_int();     // numCanBeActivated
-		obj.retrigger_delay_sec = ctx.read_float();    // retriggerWaitSec
-		obj.damage_threshold = ctx.read_float();       // damageThreshold
-		obj.fire_delay_sec = ctx.read_float();         // fireDelaySec
+		obj.target = ctx.read_string();                 // triggerTarget
+		obj.flags = ctx.read_raw_bytes(1).get();        // flags
+		obj.filter_flags = ctx.read_raw_bytes(1).get(); // filterFlags
+		obj.vob_target = ctx.read_string();             // respondToVobName
+		obj.max_activation_count = ctx.read_int();      // numCanBeActivated
+		obj.retrigger_delay_sec = ctx.read_float();     // retriggerWaitSec
+		obj.damage_threshold = ctx.read_float();        // damageThreshold
+		obj.fire_delay_sec = ctx.read_float();          // fireDelaySec
 
 		if (obj.saved) {
 			// TODO: in save-games triggers behave differently
@@ -44,7 +44,7 @@ namespace phoenix::vobs {
 			obj.lerp_mode = static_cast<mover_lerp_mode>(ctx.read_enum());   // posLerpType
 			obj.speed_mode = static_cast<mover_speed_mode>(ctx.read_enum()); // speedType
 
-			auto sample_reader = ctx.read_raw_bytes(); // keyframes
+			auto sample_reader = ctx.read_raw_bytes(keyframe_count * sizeof(float) * 7); // keyframes
 
 			for (int32_t i = 0; i < keyframe_count; ++i) {
 				auto position = sample_reader.get_vec3();

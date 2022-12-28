@@ -45,7 +45,7 @@ namespace phoenix {
 		bool has_event_manager_object = false;
 
 		if (packed) {
-			auto bin = in.read_raw_bytes(); // dataRaw
+			auto bin = in.read_raw_bytes(version == game_version::gothic_1 ? 74 : 83); // dataRaw
 
 			obj.bbox = bounding_box::parse(bin);
 			obj.position = bin.get_vec3();

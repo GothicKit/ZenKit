@@ -42,6 +42,7 @@ namespace phoenix::vobs {
 		obj.on_trigger = static_cast<message_filter_action>(ctx.read_enum());   // onTrigger
 		obj.on_untrigger = static_cast<message_filter_action>(ctx.read_enum()); // onUntrigger
 	}
+
 	void code_master::parse(code_master& obj, archive_reader& ctx, game_version version) {
 		vob::parse(obj, ctx, version);
 		obj.target = ctx.read_string();               // triggerTarget
@@ -170,7 +171,7 @@ namespace phoenix::vobs {
 
 		obj.start_ai_state = ctx.read_string();
 
-		auto vars = ctx.read_raw_bytes();
+		auto vars = ctx.read_raw_bytes(version == game_version::gothic_1 ? 50 : 100);
 		for (auto i = 0u; i < vars.limit() / 4; ++i) {
 			obj.aivar[i] = vars.get_int();
 		}
@@ -181,7 +182,7 @@ namespace phoenix::vobs {
 		obj.name_nr = ctx.read_int();
 
 		// unknown.
-		auto spells = ctx.read_raw_bytes();
+		[[maybe_unused]] auto spells = ctx.read_raw_bytes(4);
 		[[maybe_unused]] auto unknown_count = ctx.read_int();
 
 		// [carryVob % 0 0]
@@ -261,7 +262,7 @@ namespace phoenix::vobs {
 		obj.respawn = ctx.read_bool();
 		obj.respawn_time = ctx.read_int();
 
-		auto protection = ctx.read_raw_bytes();
+		auto protection = ctx.read_raw_bytes(sizeof(int32_t) * 8);
 		for (auto i = 0; i < 8; ++i) {
 			obj.protection[i] = protection.get_int();
 		}

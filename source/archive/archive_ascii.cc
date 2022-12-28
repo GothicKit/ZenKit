@@ -178,8 +178,33 @@ namespace phoenix {
 
 	buffer archive_reader_ascii::read_raw_bytes() {
 		auto in = read_entry("raw");
+		auto length = in.length() / 2;
+
 		std::vector<std::byte> out {};
-		out.resize(in.length() / 2);
+		out.resize(length);
+
+		auto beg_it = in.data();
+
+		for (std::byte& i : out) {
+			std::from_chars(beg_it + 0, beg_it + 2, reinterpret_cast<std::uint8_t&>(i), 16);
+			beg_it += 2;
+		}
+
+		return buffer::of(std::move(out));
+	}
+
+	buffer archive_reader_ascii::read_raw_bytes(uint32_t size) {
+		auto in = read_entry("raw");
+		auto length = in.length() / 2;
+
+		if (length < size) {
+			throw parser_error {"archive_reader_ascii", "not enough raw bytes to read!"};
+		} else if (length > size) {
+			PX_LOGW("read_raw_bytes: reading {} bytes although {} are actually available", size, length);
+		}
+
+		std::vector<std::byte> out {};
+		out.resize(length);
 
 		auto beg_it = in.data();
 
