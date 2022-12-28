@@ -96,7 +96,7 @@ namespace phoenix {
 			input.position(_m_object_end.top());
 			_m_object_end.pop();
 		} else {
-			input.skip(input.get_uint());
+			input.skip(input.get_uint() - 4);
 		}
 	}
 
