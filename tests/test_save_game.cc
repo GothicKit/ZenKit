@@ -31,23 +31,24 @@ TEST_SUITE("save_game") {
 
 	TEST_CASE("save-games of Gothic 2 are read correctly") {
 		auto save = save_game::parse("./samples/SaveG2");
-		CHECK(save.metadata.title == "inminevalley");
-		CHECK(save.metadata.world == "OLDWORLD");
+		CHECK(save.metadata.title == "uwuowo");
+		CHECK(save.metadata.world == "NEWWORLD");
 		CHECK(save.metadata.time_day == 0);
-		CHECK(save.metadata.time_hour == 0);
-		CHECK(save.metadata.time_minute == 0);
-		CHECK(save.metadata.save_date == "3.10.2022 - 11:15");
+		CHECK(save.metadata.time_hour == 12);
+		CHECK(save.metadata.time_minute == 28);
+		CHECK(save.metadata.save_date == "28.12.2022 - 18:26");
 		CHECK(save.metadata.version_major == 2);
 		CHECK(save.metadata.version_minor == 6);
-		CHECK(save.metadata.play_time_seconds == 433);
+		CHECK(save.metadata.play_time_seconds == 1277);
 		CHECK(save.metadata.version_point == 0);
 		CHECK(save.metadata.version_int == 0);
 		CHECK(save.metadata.version_app_name == "Gothic II - 2.6 (fix)");
 
 		CHECK(save.script.day == 0);
-		CHECK(save.script.hour == 0);
-		CHECK(save.script.minute == 0);
+		CHECK(save.script.hour == 12);
+		CHECK(save.script.minute == 28);
 
+		(void) phoenix::world::parse(*save.open_world_save(save.current_world), phoenix::game_version::gothic_2);
 		// TODO: Add more checks
 	}
 }

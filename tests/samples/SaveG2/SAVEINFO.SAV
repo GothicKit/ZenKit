@@ -3,22 +3,22 @@ ver 1
 zCArchiverGeneric
 ASCII
 saveGame 0
-date 3.10.2022 11:15:55
+date 28.12.2022 18:26:10
 user steamuser
 END
 objects 1        
 END
 
 [% oCSavegameInfo 0 0]
-	Title=string:inminevalley
-	WorldName=string:OLDWORLD
+	Title=string:uwuowo
+	WorldName=string:NEWWORLD
 	TimeDay=int:0
-	TimeHour=int:0
-	TimeMin=int:0
-	SaveDate=string:3.10.2022 - 11:15
+	TimeHour=int:12
+	TimeMin=int:28
+	SaveDate=string:28.12.2022 - 18:26
 	VersionMajor=int:2
 	VersionMinor=int:6
-	PlayTimeSeconds=int:433
+	PlayTimeSeconds=int:1277
 	VersionPoint=int:0
 	VersionInt=int:0
 	VersionAppName=string:Gothic II - 2.6 (fix)
