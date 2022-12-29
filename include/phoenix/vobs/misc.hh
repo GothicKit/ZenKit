@@ -31,6 +31,9 @@ namespace phoenix {
 		struct animate : public vob {
 			bool start_on {false};
 
+			// Save-game only variables
+			bool s_is_running {false};
+
 			/// \brief Parses an animated VOb the given *ZenGin* archive.
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
@@ -43,6 +46,10 @@ namespace phoenix {
 		/// \brief A VOb representing an in-game item.
 		struct item : public vob {
 			std::string instance;
+
+			// Save-game only variables
+			int s_amount;
+			int s_flags;
 
 			/// \brief Parses an item VOb the given *ZenGin* archive.
 			/// \param[out] obj The object to read.
@@ -102,6 +109,9 @@ namespace phoenix {
 			std::string failure_target;
 			bool untriggered_cancels;
 			std::vector<std::string> slaves;
+
+			// Save-game only variables
+			uint8_t s_num_triggered_slaves;
 
 			/// \brief Parses a code master VOb the given *ZenGin* archive.
 			/// \param[out] obj The object to read.
@@ -205,6 +215,7 @@ namespace phoenix {
 			bool player;
 
 			int attributes[8];
+			int hcs[4];
 			int missions[5];
 
 			std::string start_ai_state;
@@ -213,7 +224,7 @@ namespace phoenix {
 			int attitude;
 			int attitude_temp;
 			int name_nr;
-			bool moveLock;
+			bool move_lock;
 
 			std::string packed[9];
 			std::vector<std::unique_ptr<item>> items;
@@ -244,6 +255,10 @@ namespace phoenix {
 			int respawn_time;
 
 			int protection[8];
+
+			int bs_interruptable_override {0};
+			int npc_type {0};
+			int spell_mana {0};
 
 			/// \brief Parses an NPC VOb from the given *ZenGin* archive.
 			/// \param[out] obj The object to read.

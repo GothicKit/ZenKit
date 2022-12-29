@@ -46,6 +46,11 @@ namespace phoenix {
 			float damage_threshold;
 			float fire_delay_sec;
 
+			// Save-game only variables
+			float s_next_time_triggerable {0};
+			int s_count_can_be_activated {0};
+			bool s_is_enabled {true};
+
 			/// \brief Parses a trigger VOb the given *ZenGin* archive.
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
@@ -80,6 +85,17 @@ namespace phoenix {
 			std::string sfx_unlock {};
 			std::string sfx_use_locked {};
 
+			// Save-game only variables
+			glm::vec3 s_act_key_pos_delta;
+			float s_act_keyframe_f;
+			int s_act_keyframe;
+			int s_next_keyframe;
+			float s_move_speed_unit;
+			float s_advance_dir;
+			uint32_t s_mover_state;
+			int s_trigger_event_count;
+			float s_stay_open_time_dest;
+
 			/// \brief Parses a mover trigger VOb the given *ZenGin* archive.
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
@@ -99,6 +115,10 @@ namespace phoenix {
 
 			trigger_batch_mode mode {};
 			std::vector<target> targets {};
+
+			// Save-game only variables
+			uint8_t s_act_target {0};
+			bool s_send_on_trigger {false};
 
 			/// \brief Parses a trigger list VOb the given *ZenGin* archive.
 			/// \param[out] obj The object to read.
@@ -143,6 +163,9 @@ namespace phoenix {
 		struct trigger_world_start : public vob {
 			std::string target;
 			bool fire_once;
+
+			// Save-game only variables
+			bool s_has_fired {false};
 
 			/// \brief Parses a world load trigger VOb the given *ZenGin* archive.
 			/// \param[out] obj The object to read.

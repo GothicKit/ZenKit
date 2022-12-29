@@ -35,13 +35,24 @@ namespace phoenix::vobs {
 		obj.pick_string = ctx.read_string(); // pickLockStr
 		obj.contents = ctx.read_string();    // contains
 
-		if (obj.saved) {
-			// TODO: in save-games containers behave differently
-
+		if (ctx.is_save_game()) {
+			// In save-games, containers contain extra variables
 			auto item_count = ctx.read_int(); // NumOfEntries
+			obj.s_items.resize(item_count);
+
+			archive_object itm;
 			for (auto i = 0; i < item_count; ++i) {
-				// FIXME: item::parse(items[i], ctx, version)
-				ctx.skip_object(false);
+				if (!ctx.read_object_begin(itm) || itm.class_name != "oCItem:zCVob") {
+					throw parser_error {"vobs::mob_container"};
+				}
+
+				obj.s_items[i] = std::make_unique<vobs::item>();
+				item::parse(*obj.s_items[i], ctx, version);
+
+				if (!ctx.read_object_end()) {
+					PX_LOGW("vob_tree: oCItem:zCVob object not fully parsed");
+					ctx.skip_object(true);
+				}
 			}
 		}
 	}

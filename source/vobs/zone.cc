@@ -12,11 +12,11 @@ namespace phoenix::vobs {
 		obj.volume = ctx.read_float();   // volumeLevel
 		obj.loop = ctx.read_bool();      // loop
 
-		if (obj.saved) {
-			// TODO: in save-games zone music behaves differently
-			(void) ctx.read_bool(); // local_enabled
-			(void) ctx.read_bool(); // dayEntranceDone
-			(void) ctx.read_bool(); // nightEntranceDone
+		if (ctx.is_save_game()) {
+			// In save-games, zones contain extra variables
+			obj.s_local_enabled = ctx.read_bool();       // local_enabled
+			obj.s_day_entrance_done = ctx.read_bool();   // dayEntranceDone
+			obj.s_night_entrance_done = ctx.read_bool(); // nightEntranceDone
 		}
 	}
 

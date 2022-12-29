@@ -14,14 +14,16 @@ namespace phoenix::vobs {
 		obj.damage_threshold = ctx.read_float();        // damageThreshold
 		obj.fire_delay_sec = ctx.read_float();          // fireDelaySec
 
-		if (obj.saved) {
-			// TODO: in save-games triggers behave differently
-			(void) ctx.read_float(); // nextTimeTriggerable
-			ctx.skip_object(false);
-			(void) ctx.read_int(); // countCanBeActivated
+		obj.s_count_can_be_activated = obj.max_activation_count;
+
+		if (ctx.is_save_game()) {
+			// In save-games, triggers contain extra variables
+			obj.s_next_time_triggerable = ctx.read_float(); // nextTimeTriggerable
+			ctx.skip_object(false);                         // [savedOtherVob % 0 0]
+			obj.s_count_can_be_activated = ctx.read_int();  // countCanBeActivated
 
 			if (version == game_version::gothic_2) {
-				(void) ctx.read_bool(); // isEnabled
+				obj.s_is_enabled = ctx.read_bool(); // isEnabled
 			}
 		}
 	}
@@ -58,17 +60,17 @@ namespace phoenix::vobs {
 			}
 		}
 
-		if (obj.saved) {
-			// TODO: in save-games movers behave differently
-			(void) ctx.read_vec3();  // actKeyPosDelta
-			(void) ctx.read_float(); // actKeyframeF
-			(void) ctx.read_int();   // actKeyframe
-			(void) ctx.read_int();   // nextKeyframe
-			(void) ctx.read_float(); // moveSpeedUnit
-			(void) ctx.read_float(); // advanceDir
-			(void) ctx.read_enum();  // moverState
-			(void) ctx.read_int();   // numTriggerEvents
-			(void) ctx.read_float(); // stayOpenTimeDest
+		if (ctx.is_save_game()) {
+			// In save-games, movers contain extra variables
+			obj.s_act_key_pos_delta = ctx.read_vec3();    // actKeyPosDelta
+			obj.s_act_keyframe_f = ctx.read_float();      // actKeyframeF
+			obj.s_act_keyframe = ctx.read_int();          // actKeyframe
+			obj.s_next_keyframe = ctx.read_int();         // nextKeyframe
+			obj.s_move_speed_unit = ctx.read_float();     // moveSpeedUnit
+			obj.s_advance_dir = ctx.read_float();         // advanceDir
+			obj.s_mover_state = ctx.read_enum();          // moverState
+			obj.s_trigger_event_count = ctx.read_int();   // numTriggerEvents
+			obj.s_stay_open_time_dest = ctx.read_float(); // stayOpenTimeDest
 		}
 
 		obj.sfx_open_start = ctx.read_string();    // sfxOpenStart
@@ -93,10 +95,10 @@ namespace phoenix::vobs {
 			});
 		}
 
-		if (obj.saved) {
-			// TODO: in save-games trigger lists behave differently
-			(void) ctx.read_byte(); // actTarget
-			(void) ctx.read_bool(); // sendOnTrigger
+		if (ctx.is_save_game()) {
+			// In save-games, trigger lists contain extra variables
+			obj.s_act_target = ctx.read_byte();      // actTarget
+			obj.s_send_on_trigger = ctx.read_bool(); // sendOnTrigger
 		}
 	}
 
@@ -118,9 +120,9 @@ namespace phoenix::vobs {
 		obj.target = ctx.read_string();  // triggerTarget
 		obj.fire_once = ctx.read_bool(); // fireOnlyFirstTime
 
-		if (obj.saved && version == game_version::gothic_2) {
-			// TODO: in G2 save-games movers behave differently
-			(void) ctx.read_bool(); // hasFired
+		if (ctx.is_save_game() && version == game_version::gothic_2) {
+			// In Gothic 2 save-games, world start triggers contain extra variables
+			obj.s_has_fired = ctx.read_bool(); // hasFired
 		}
 	}
 

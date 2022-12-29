@@ -79,6 +79,12 @@ namespace phoenix {
 
 			std::vector<std::unique_ptr<camera_trj_frame>> frames;
 
+			// Save-game only variables
+			bool s_paused {false};
+			bool s_started {false};
+			bool s_goto_time_mode {false};
+			float s_cs_time {0};
+
 			/// \brief Parses a cutscene camera VOb the given *ZenGin* archive.
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.

@@ -37,6 +37,10 @@ namespace phoenix {
 			float radius {0};
 			std::string sound_name {};
 
+			// Save-game only variables
+			bool s_is_running;
+			bool s_is_allowed_to_run;
+
 			/// \brief Parses a sound VOb the given *ZenGin* archive.
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.

@@ -13,6 +13,11 @@ namespace phoenix::vobs {
 		float volume {0};
 		bool loop {false};
 
+		// Save-game only variables
+		bool s_local_enabled {true};
+		bool s_day_entrance_done {false};
+		bool s_night_entrance_done {false};
+
 		/// \brief Parses a zone music VOb the given *ZenGin* archive.
 		/// \param[out] obj The object to read.
 		/// \param[in,out] ctx The archive reader to read from.

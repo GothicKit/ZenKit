@@ -17,10 +17,10 @@ namespace phoenix::vobs {
 		obj.radius = ctx.read_float();                                        // sndRadius
 		obj.sound_name = ctx.read_string();                                   // sndName
 
-		if (obj.saved) {
-			// TODO: in save-games sounds behave differently
-			(void) ctx.read_bool(); // soundIsRunning
-			(void) ctx.read_bool(); // soundAllowedToRun
+		if (ctx.is_save_game()) {
+			// In save-games, sounds contain extra variables
+			obj.s_is_running = ctx.read_bool();        // soundIsRunning
+			obj.s_is_allowed_to_run = ctx.read_bool(); // soundAllowedToRun
 		}
 	}
 

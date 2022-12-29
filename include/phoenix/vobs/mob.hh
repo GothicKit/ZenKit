@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include <phoenix/vobs/misc.hh>
 #include <phoenix/vobs/vob.hh>
 
 namespace phoenix {
@@ -75,6 +76,9 @@ namespace phoenix {
 			std::string key;
 			std::string pick_string;
 			std::string contents;
+
+			// Save-game only variables
+			std::vector<std::unique_ptr<vobs::item>> s_items;
 
 			/// \brief Parses a container VOb the given *ZenGin* archive.
 			/// \param[out] obj The object to read.

@@ -169,6 +169,11 @@ namespace phoenix {
 		/// \brief Default virtual destructor.
 		virtual ~vob() = default;
 
+		/// \return `true` if this VOb is from a save-game and `false` if not.
+		[[nodiscard]] inline bool is_save_game() const noexcept {
+			return saved.has_value();
+		}
+
 		/// \brief Parses a base VOb from the given *ZenGin* archive.
 		///
 		/// <p>This implementation is heavily based on the implementation found in

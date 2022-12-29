@@ -64,12 +64,12 @@ namespace phoenix::vobs {
 			}
 		}
 
-		if (obj.saved && version == game_version::gothic_2) {
-			// TODO: in G2 save-games cameras behave differently
-			(void) ctx.read_bool();  // paused
-			(void) ctx.read_bool();  // started
-			(void) ctx.read_bool();  // gotoTimeMode
-			(void) ctx.read_float(); // csTime
+		if (ctx.is_save_game() && version == game_version::gothic_2) {
+			// In save-games, cutscene cameras contain extra variables
+			obj.s_paused = ctx.read_bool();         // paused
+			obj.s_started = ctx.read_bool();        // started
+			obj.s_goto_time_mode = ctx.read_bool(); // gotoTimeMode
+			obj.s_cs_time = ctx.read_float();       // csTime
 		}
 	}
 } // namespace phoenix::vobs
