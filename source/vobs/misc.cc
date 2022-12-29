@@ -171,7 +171,7 @@ namespace phoenix::vobs {
 
 		obj.start_ai_state = ctx.read_string();
 
-		auto vars = ctx.read_raw_bytes(version == game_version::gothic_1 ? 50 : 100);
+		auto vars = ctx.read_raw_bytes((version == game_version::gothic_1 ? 50 : 100) * 4);
 		for (auto i = 0u; i < vars.limit() / 4; ++i) {
 			obj.aivar[i] = vars.get_int();
 		}
