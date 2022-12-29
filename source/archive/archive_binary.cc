@@ -63,7 +63,7 @@ namespace phoenix {
 	}
 
 	std::uint32_t archive_reader_binary::read_enum() {
-		return input.get_uint();
+		return input.get();
 	}
 
 	bool archive_reader_binary::read_bool() {
