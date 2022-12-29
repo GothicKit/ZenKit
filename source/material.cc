@@ -65,13 +65,13 @@ namespace phoenix {
 
 				mat.disable_collision = in.read_bool();
 				mat.disable_lightmap = in.read_bool();
-				mat.dont_collapse = in.read_byte() != 0; // TODO: This is supposed to be a bool?
+				mat.dont_collapse = in.read_bool();
 				mat.detail_object = in.read_string();
 
 				// This section is specific to G2
 				mat.detail_texture_scale = in.read_float();
 				mat.force_occluder = in.read_bool();
-				mat.environment_mapping = in.read_byte() != 0; // TODO: This is supposed to be a bool?
+				mat.environment_mapping = in.read_bool();
 				mat.environment_mapping_strength = in.read_float();
 				mat.wave_mode = static_cast<wave_mode_type>(in.read_enum());
 				mat.wave_speed = static_cast<wave_speed_type>(in.read_enum());
