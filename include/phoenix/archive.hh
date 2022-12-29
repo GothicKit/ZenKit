@@ -178,6 +178,11 @@ namespace phoenix {
 			return header;
 		}
 
+		/// \return Whether or not this archive represents a save-game.
+		[[nodiscard]] inline bool is_save_game() const noexcept {
+			return header.save;
+		}
+
 	protected:
 		/// \brief Read the header of the specific archive format.
 		virtual void read_header() = 0;
