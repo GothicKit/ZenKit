@@ -2,7 +2,7 @@
 
 # the _phoenix_ project
 
-[![Build](https://img.shields.io/github/workflow/status/lmichaelis/phoenix/Build?label=Build)](https://github.com/lmichaelis/phoenix/actions/workflows/build.yml)
+[![Build](https://img.shields.io/github/actions/workflow/status/lmichaelis/phoenix/build.yml?label=Build&branch=main)](https://github.com/lmichaelis/phoenix/actions/workflows/build.yml)
 ![License](https://img.shields.io/github/license/lmichaelis/phoenix?label=License&color=important)
 ![C++](https://img.shields.io/static/v1?label=C%2B%2B&message=17&color=informational)
 ![Platforms](https://img.shields.io/static/v1?label=Supports&message=GCC%20|%20Clang%20|%20MSVC%20|%20Apple%20Clang&color=blueviolet)
