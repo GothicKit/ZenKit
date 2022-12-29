@@ -288,7 +288,7 @@ namespace phoenix {
 		return sym;
 	}
 
-	const std::string& symbol::get_string(std::uint8_t index, const std::shared_ptr<instance>& context) const {
+	const std::string& symbol::get_string(std::size_t index, const std::shared_ptr<instance>& context) const {
 		if (type() != datatype::string) {
 			throw illegal_type_access(this, datatype::string);
 		}
@@ -306,7 +306,7 @@ namespace phoenix {
 		}
 	}
 
-	float symbol::get_float(std::uint8_t index, const std::shared_ptr<instance>& context) const {
+	float symbol::get_float(std::size_t index, const std::shared_ptr<instance>& context) const {
 		if (type() != datatype::float_) {
 			throw illegal_type_access(this, datatype::float_);
 		}
@@ -324,7 +324,7 @@ namespace phoenix {
 		}
 	}
 
-	std::int32_t symbol::get_int(std::uint8_t index, const std::shared_ptr<instance>& context) const {
+	std::int32_t symbol::get_int(std::size_t index, const std::shared_ptr<instance>& context) const {
 		if (type() != datatype::integer && type() != datatype::function) {
 			throw illegal_type_access(this, datatype::integer);
 		}
@@ -342,7 +342,7 @@ namespace phoenix {
 		}
 	}
 
-	void symbol::set_string(std::string_view value, std::uint8_t index, const std::shared_ptr<instance>& context) {
+	void symbol::set_string(std::string_view value, std::size_t index, const std::shared_ptr<instance>& context) {
 		if (is_const()) {
 			throw illegal_const_access(this);
 		}
@@ -363,7 +363,7 @@ namespace phoenix {
 		}
 	}
 
-	void symbol::set_float(float value, std::uint8_t index, const std::shared_ptr<instance>& context) {
+	void symbol::set_float(float value, std::size_t index, const std::shared_ptr<instance>& context) {
 		if (is_const()) {
 			throw illegal_const_access(this);
 		}
@@ -384,7 +384,7 @@ namespace phoenix {
 		}
 	}
 
-	void symbol::set_int(std::int32_t value, std::uint8_t index, const std::shared_ptr<instance>& context) {
+	void symbol::set_int(std::int32_t value, std::size_t index, const std::shared_ptr<instance>& context) {
 		if (is_const()) {
 			throw illegal_const_access(this);
 		}

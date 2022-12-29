@@ -361,7 +361,7 @@ namespace phoenix {
 		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
 		/// \throws unbound_member_access if this symbol has not been registered yet
 		/// \throws illegal_context_type if this symbol #is_registered_to a different type than the type of \p context.
-		[[nodiscard]] const std::string& get_string(std::uint8_t index = 0,
+		[[nodiscard]] const std::string& get_string(std::size_t index = 0,
 		                                            const std::shared_ptr<instance>& context = nullptr) const;
 
 		/// \brief Validates that the symbol is a float and retrieves it's value in the given context.
@@ -373,7 +373,7 @@ namespace phoenix {
 		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
 		/// \throws unbound_member_access if this symbol has not been registered yet
 		/// \throws illegal_context_type if this symbol #is_registered_to a different type than the type of \p context.
-		[[nodiscard]] float get_float(std::uint8_t index = 0, const std::shared_ptr<instance>& context = nullptr) const;
+		[[nodiscard]] float get_float(std::size_t index = 0, const std::shared_ptr<instance>& context = nullptr) const;
 
 		/// \brief Validates that the symbol is an int and retrieves it's value in the given context.
 		/// \param index The index of the value to get.
@@ -384,7 +384,7 @@ namespace phoenix {
 		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
 		/// \throws unbound_member_access if this symbol has not been registered yet
 		/// \throws illegal_context_type if this symbol #is_registered_to a different type than the type of \p context.
-		[[nodiscard]] std::int32_t get_int(std::uint8_t index = 0,
+		[[nodiscard]] std::int32_t get_int(std::size_t index = 0,
 		                                   const std::shared_ptr<instance>& context = nullptr) const;
 
 		/// \brief Validates that the symbol is an instance and retrieves it's value
@@ -405,7 +405,7 @@ namespace phoenix {
 		/// \throws unbound_member_access if this symbol has not been registered yet
 		/// \throws illegal_context_type if this symbol #is_registered_to a different type than the type of \p context.
 		void
-		set_string(std::string_view value, std::uint8_t index = 0, const std::shared_ptr<instance>& context = nullptr);
+		set_string(std::string_view value, std::size_t index = 0, const std::shared_ptr<instance>& context = nullptr);
 
 		/// \brief Validates that the symbol is a float and not constant and sets it's value in the given context.
 		/// \param value The new value to set.
@@ -417,7 +417,7 @@ namespace phoenix {
 		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
 		/// \throws unbound_member_access if this symbol has not been registered yet
 		/// \throws illegal_context_type if this symbol #is_registered_to a different type than the type of \p context.
-		void set_float(float value, std::uint8_t index = 0, const std::shared_ptr<instance>& context = nullptr);
+		void set_float(float value, std::size_t index = 0, const std::shared_ptr<instance>& context = nullptr);
 
 		/// \brief Validates that the symbol is an int and not constant and sets it's value in the given context.
 		/// \param value The new value to set.
@@ -429,7 +429,7 @@ namespace phoenix {
 		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
 		/// \throws unbound_member_access if this symbol has not been registered yet
 		/// \throws illegal_context_type if this symbol #is_registered_to a different type than the type of \p context.
-		void set_int(std::int32_t value, std::uint8_t index = 0, const std::shared_ptr<instance>& context = nullptr);
+		void set_int(std::int32_t value, std::size_t index = 0, const std::shared_ptr<instance>& context = nullptr);
 
 		/// \brief Validates that the symbol is an instance and sets it's value
 		/// \param inst The instance value to set
