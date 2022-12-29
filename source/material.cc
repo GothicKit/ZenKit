@@ -27,7 +27,7 @@ namespace phoenix {
 
 			if (obj.version == MATERIAL_VERSION_G1_V108k) {
 				mat.name = in.read_string();
-				mat.group = static_cast<material_group>(in.read_byte());
+				mat.group = static_cast<material_group>(in.read_enum());
 				mat.color = in.read_color();
 				mat.smooth_angle = in.read_float();
 				mat.texture = in.read_string();
@@ -36,7 +36,7 @@ namespace phoenix {
 				texture_scale >> mat.texture_scale.x >> mat.texture_scale.y;
 
 				mat.texture_anim_fps = in.read_float();
-				mat.texture_anim_map_mode = static_cast<animation_mapping_mode>(in.read_byte());
+				mat.texture_anim_map_mode = static_cast<animation_mapping_mode>(in.read_enum());
 
 				std::istringstream anim_map_dir {in.read_string()};
 				anim_map_dir >> mat.texture_anim_map_dir.x >> mat.texture_anim_map_dir.y;
@@ -49,7 +49,7 @@ namespace phoenix {
 				mat.alpha_func = alpha_function::default_;
 			} else {
 				mat.name = in.read_string();
-				mat.group = static_cast<material_group>(in.read_byte());
+				mat.group = static_cast<material_group>(in.read_enum());
 				mat.color = in.read_color();
 				mat.smooth_angle = in.read_float();
 				mat.texture = in.read_string();
@@ -58,7 +58,7 @@ namespace phoenix {
 				texture_scale >> mat.texture_scale.x >> mat.texture_scale.y;
 
 				mat.texture_anim_fps = in.read_float() / 1000.0f;
-				mat.texture_anim_map_mode = static_cast<animation_mapping_mode>(in.read_byte());
+				mat.texture_anim_map_mode = static_cast<animation_mapping_mode>(in.read_enum());
 
 				std::istringstream anim_map_dir {in.read_string()};
 				anim_map_dir >> mat.texture_anim_map_dir.x >> mat.texture_anim_map_dir.y;
@@ -73,12 +73,12 @@ namespace phoenix {
 				mat.force_occluder = in.read_bool();
 				mat.environment_mapping = in.read_byte() != 0; // TODO: This is supposed to be a bool?
 				mat.environment_mapping_strength = in.read_float();
-				mat.wave_mode = static_cast<wave_mode_type>(in.read_byte());
-				mat.wave_speed = static_cast<wave_speed_type>(in.read_byte());
+				mat.wave_mode = static_cast<wave_mode_type>(in.read_enum());
+				mat.wave_speed = static_cast<wave_speed_type>(in.read_enum());
 				mat.wave_max_amplitude = in.read_float();
 				mat.wave_grid_size = in.read_float();
 				mat.ignore_sun = in.read_bool();
-				mat.alpha_func = static_cast<alpha_function>(in.read_byte());
+				mat.alpha_func = static_cast<alpha_function>(in.read_enum());
 
 				// The mapping comes last :)
 				mat.default_mapping = in.read_vec2();
