@@ -12,12 +12,13 @@ jobs:
           - 'Release'
           - 'Debug'
         image:
-          - 'ghcr.io/lmichaelis/images:clang-11'
-          - 'ghcr.io/lmichaelis/images:gcc-9'
-          - 'ghcr.io/lmichaelis/images:gcc-12'
+          - 'clang-11'
+          - 'clang-14'
+          - 'gcc-9'
+          - 'gcc-12'
     runs-on: 'ubuntu-latest'
     container:
-      image: '${{matrix.image}}'
+      image: 'ghcr.io/lmichaelis/images:${{matrix.image}}'
     steps:
       - uses: 'actions/checkout@v3'
       - name: 'Configure'
