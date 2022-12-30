@@ -17,6 +17,10 @@ namespace phoenix {
 	struct animation_sample {
 		glm::vec3 position;
 		glm::quat rotation;
+
+		[[nodiscard]] inline bool operator==(const animation_sample& other) const noexcept {
+			return this->position == other.position && this->rotation == other.rotation;
+		}
 	};
 
 	/// \brief Types of animation events.

@@ -18,6 +18,10 @@ namespace phoenix {
 		///       height of the image. Thus to calculate the real pixel position of the top right corner,
 		///       one multiplies `uv[0].x` by the width of the font texture and `uv[0].y` by its height.
 		glm::vec2 uv[2];
+
+		[[nodiscard]] inline bool operator==(const glyph& g) const noexcept {
+			return this->width == g.width && this->uv[0] == g.uv[0] && this->uv[1] == g.uv[1];
+		}
 	};
 
 	/// \brief Represents a *ZenGin* font file.

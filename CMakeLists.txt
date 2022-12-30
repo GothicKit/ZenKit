@@ -107,6 +107,8 @@ set(PHOENIX_TESTS
         tests/test_script.cc
         tests/test_texture.cc
         tests/test_vdfs.cc
+        tests/test_vobs_g1.cc
+        tests/test_vobs_g2.cc
         tests/test_world.cc)
 
 # add the phoenix library definition

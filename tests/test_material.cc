@@ -7,85 +7,66 @@
 using namespace phoenix;
 
 TEST_SUITE("material") {
-	TEST_CASE("Gothic 1 materials are read correctly") {
-		// Tests two different material archives containing two materials each.
+	TEST_CASE("material(parse:g1)") {
+		auto in = buffer::mmap("./samples/G1/DEMON_DIE_BODY.MAT");
+		auto archive = archive_reader::open(in);
 
-		{
-			auto in = buffer::mmap("./samples/material1_g1.mat");
-			auto archive = archive_reader::open(in);
-			auto m1 = material::parse(*archive);
+		auto material_count = archive->read_int();
+		CHECK_EQ(material_count, 1);
 
-			CHECK(m1.name == "DT_BOOKSHELF_V1_1");
-			CHECK(m1.group == material_group::undefined);
-			CHECK(m1.color == glm::u8vec4 {0x2A, 0x23, 0x19, 0xFF});
-			CHECK(m1.smooth_angle == 60.0f);
-			CHECK(m1.texture == "MODIBOOKS01.TGA");
-			CHECK(m1.texture_scale == glm::vec2 {256.0f, 256.0f});
-			CHECK(m1.texture_anim_fps == 0.0f);
-			CHECK(m1.texture_anim_map_mode == phoenix::animation_mapping_mode::none);
-			CHECK(m1.texture_anim_map_dir == glm::vec2 {9.9999997e-005, 0.0f});
-			CHECK(!m1.disable_collision);
-			CHECK(!m1.disable_lightmap);
-			CHECK(!m1.dont_collapse);
-			CHECK(m1.detail_object.empty());
-			CHECK(m1.default_mapping.x == 2.343750f);
-			CHECK(m1.default_mapping.y == 2.343750f);
+		auto m1 = material::parse(*archive);
 
-			auto m2 = material::parse(*archive);
-			CHECK(m2.name == "DT_BOOKSHELF_V1_2");
-			CHECK(m2.group == material_group::undefined);
-			CHECK(m2.color == glm::u8vec4 {0x39, 0x2A, 0x19, 0xFF});
-			CHECK(m2.smooth_angle == 60.0f);
-			CHECK(m2.texture == "MOWOPLANKS05.TGA");
-			CHECK(m2.texture_scale == glm::vec2 {128.0f, 128.0f});
-			CHECK(m2.texture_anim_fps == 0.0f);
-			CHECK(m2.texture_anim_map_mode == phoenix::animation_mapping_mode::none);
-			CHECK(m2.texture_anim_map_dir == glm::vec2 {9.9999997e-005, 0.0f});
-			CHECK(!m2.disable_collision);
-			CHECK(!m2.disable_lightmap);
-			CHECK(m2.dont_collapse == 0);
-			CHECK(m2.detail_object.empty());
-			CHECK(m2.default_mapping.x == 2.343750f);
-			CHECK(m2.default_mapping.y == 2.343750f);
-		}
+		CHECK_EQ(m1.name, "BODY");
+		CHECK_EQ(m1.group, material_group::undefined);
+		CHECK_EQ(m1.color, glm::u8vec4 {115, 91, 77, 255});
+		CHECK_EQ(m1.smooth_angle, 60.0f);
+		CHECK_EQ(m1.texture, "DEM_BODY_V0.TGA");
+		CHECK_EQ(m1.texture_scale, glm::vec2 {512.0f, 512.0f});
+		CHECK_EQ(m1.texture_anim_fps, 0.0f);
+		CHECK_EQ(m1.texture_anim_map_mode, phoenix::animation_mapping_mode::none);
+		CHECK_EQ(m1.texture_anim_map_dir, glm::vec2 {9.9999997e-005, 0.0f});
+		CHECK_FALSE(m1.disable_collision);
+		CHECK_FALSE(m1.disable_lightmap);
+		CHECK_FALSE(m1.dont_collapse);
+		CHECK_EQ(m1.detail_object, "");
+		CHECK_EQ(m1.default_mapping, glm::vec2 {2.34375f, 2.34375f});
 
-		{
-			auto in = buffer::mmap("./samples/material2_g1.mat");
-			auto archive = archive_reader::open(in);
-			auto m1 = material::parse(*archive);
+		// The other fields of `material` are specific to Gothic II
+	}
 
-			CHECK(m1.name == "MATERIAL #356");
-			CHECK(m1.group == material_group::undefined);
-			CHECK(m1.color == glm::u8vec4 {0x75, 0x46, 0x3B, 0xFF});
-			CHECK(m1.smooth_angle == 60.0f);
-			CHECK(m1.texture == "HUM_EBRM2_ARMOR_V0.TGA");
-			CHECK(m1.texture_scale == glm::vec2 {512.0f, 512.0f});
-			CHECK(m1.texture_anim_fps == 0.0f);
-			CHECK(m1.texture_anim_map_mode == phoenix::animation_mapping_mode::none);
-			CHECK(m1.texture_anim_map_dir == glm::vec2 {9.9999997e-005, 0.0f});
-			CHECK(!m1.disable_collision);
-			CHECK(!m1.disable_lightmap);
-			CHECK(m1.dont_collapse == 0);
-			CHECK(m1.detail_object.empty());
-			CHECK(m1.default_mapping.x == 2.343750f);
-			CHECK(m1.default_mapping.y == 2.343750f);
+	TEST_CASE("material(parse:g2)") {
+		auto in = buffer::mmap("./samples/G2/DEMON_DIE_BODY.MAT");
+		auto archive = archive_reader::open(in);
 
-			auto m2 = material::parse(*archive);
-			CHECK(m2.name == "ERZZB1_TL");
-			CHECK(m2.group == material_group::undefined);
-			CHECK(m2.color == glm::u8vec4 {0x21, 0x1A, 0x17, 0xFF});
-			CHECK(m2.smooth_angle == 60.0f);
-			CHECK(m2.texture == "HUM_EBRM1_ARMOR_V0.TGA");
-			CHECK(m2.texture_scale == glm::vec2 {256.0f, 512.0f});
-			CHECK(m2.texture_anim_fps == 0.0f);
-			CHECK(m2.texture_anim_map_mode == phoenix::animation_mapping_mode::none);
-			CHECK(m2.texture_anim_map_dir == glm::vec2 {9.9999997e-005, 0.0f});
-			CHECK(!m2.disable_collision);
-			CHECK(!m2.disable_lightmap);
-			CHECK(m2.dont_collapse == 0);
-			CHECK(m2.detail_object.empty());
-			CHECK(m2.default_mapping.x == 2.343750f);
-			CHECK(m2.default_mapping.y == 2.343750f);
-		}
+		auto material_count = archive->read_int();
+		CHECK_EQ(material_count, 1);
+
+		auto m1 = material::parse(*archive);
+
+		CHECK_EQ(m1.name, "BODY");
+		CHECK_EQ(m1.group, material_group::undefined);
+		CHECK_EQ(m1.color, glm::u8vec4 {115, 91, 77, 255});
+		CHECK_EQ(m1.smooth_angle, 60.0f);
+		CHECK_EQ(m1.texture, "DEM_BODY_V0.TGA");
+		CHECK_EQ(m1.texture_scale, glm::vec2 {512.0f, 512.0f});
+		CHECK_EQ(m1.texture_anim_fps, 0.0f);
+		CHECK_EQ(m1.texture_anim_map_mode, phoenix::animation_mapping_mode::none);
+		CHECK_EQ(m1.texture_anim_map_dir, glm::vec2 {0.0f, 0.0f});
+		CHECK_FALSE(m1.disable_collision);
+		CHECK_FALSE(m1.disable_lightmap);
+		CHECK_FALSE(m1.dont_collapse);
+		CHECK_EQ(m1.detail_object, "");
+		CHECK_EQ(m1.default_mapping, glm::vec2 {2.34375f, 2.34375f});
+		CHECK_EQ(m1.alpha_func, alpha_function::none);
+		CHECK_EQ(m1.detail_texture_scale, 1.0f);
+		CHECK_FALSE(m1.force_occluder);
+		CHECK_FALSE(m1.environment_mapping);
+		CHECK_EQ(m1.environment_mapping_strength, 1.0f);
+		CHECK_EQ(m1.wave_mode, wave_mode_type::none);
+		CHECK_EQ(m1.wave_speed, wave_speed_type::normal);
+		CHECK_FALSE(m1.force_occluder);
+		CHECK_EQ(m1.wave_max_amplitude, 30.0);
+		CHECK_EQ(m1.wave_grid_size, 100.0f);
+		CHECK_FALSE(m1.ignore_sun);
 	}
 }

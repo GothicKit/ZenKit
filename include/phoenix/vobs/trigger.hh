@@ -111,6 +111,10 @@ namespace phoenix {
 			struct target {
 				std::string name {};
 				float delay {};
+
+				[[nodiscard]] inline bool operator==(const target& tgt) const noexcept {
+					return this->name == tgt.name && this->delay == tgt.delay;
+				}
 			};
 
 			trigger_batch_mode mode {};

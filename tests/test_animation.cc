@@ -5,38 +5,92 @@
 
 using namespace phoenix;
 
+static const std::vector<uint32_t> G1_NODE_INDICES {0,  1,  2,  3,  4,  5,  6,  8,  9,  10, 11, 12, 15,
+                                                    16, 17, 18, 19, 26, 27, 28, 29, 30, 31, 32, 33};
+
+static const std::vector<uint32_t> G2_NODE_INDICES {0,  1,  2,  3,  4,  5,  6,  8,  9,  10, 11, 12, 15,
+                                                    16, 17, 18, 19, 26, 27, 28, 29, 30, 31, 32, 33};
+
+static const animation_sample G1_SAMPLE0 {glm::vec3 {12.635274887084961f, 88.75251770019531f, -1.093428611755371f},
+                                          glm::quat {0.7771535515785217f, 0.0f, 0.6293110251426697f, 0.0f}};
+static const animation_sample G1_SAMPLE249 {glm::vec3 {12.626323699951172f, -0.00145721435546875f, 22.643518447875977f},
+                                            glm::quat {0.7071319222450256f, 0.0f, 0.70708167552948f, 0.0f}};
+static const animation_sample G1_SAMPLE499 {glm::vec3 {12.626323699951172, -0.00145721435546875, 22.643518447875977},
+                                            glm::quat {0.7071319222450256, 0.0, 0.70708167552948, 0.0}};
+
+static const animation_sample G2_SAMPLE0 {glm::vec3 {12.635274887084961f, 88.75251770019531f, -1.093428611755371f},
+                                          glm::quat {0.7771535515785217f, 0.0f, 0.6293110251426697f, 0.0f}};
+static const animation_sample G2_SAMPLE249 {glm::vec3 {12.626323699951172f, -0.00145721435546875f, 22.643518447875977f},
+                                            glm::quat {0.7071319222450256f, 0.0f, 0.70708167552948f, 0.0f}};
+static const animation_sample G2_SAMPLE499 {glm::vec3 {12.626323699951172, -0.00145721435546875, 22.643518447875977},
+                                            glm::quat {0.7071319222450256, 0.0, 0.70708167552948, 0.0}};
+
 TEST_SUITE("animation") {
-	TEST_CASE("animations are read correctly") {
-		auto in = buffer::mmap("./samples/animation.man");
+	TEST_CASE("animation(parse:g1)") {
+		auto in = buffer::mmap("./samples/G1/HUMANS-S_FISTRUN.MAN");
 		auto anim = animation::parse(in);
 
-		CHECK(anim.name == "S_BRUSH_S0");
-		CHECK(anim.next == "S_BRUSH_S0");
-		CHECK(anim.layer == 1);
-		CHECK(anim.frame_count == 1);
-		CHECK(anim.fps == 25.0f);
-		CHECK(anim.fps_source == 25.0f);
-		CHECK(anim.checksum == 4170839982);
-		CHECK(anim.source_path == "\\_WORK\\DATA\\ANIMS\\BAB_SWEEP_M01.ASC");
-		CHECK(
-		    anim.source_script ==
-		    "\t\t\tANI\t\t\t(\"S_BRUSH_S0\"\t\t\t1\t\"S_BRUSH_S0\"\t0.0\t0.0\tM.\t\"BAB_SWEEP_M01.ASC\"\t\t\tF\t3\t3)");
+		auto box0 = anim.bbox;
+		CHECK_EQ(box0.max, glm::vec3 {46.33139419555664f, 67.0935287475586f, 49.88602828979492f});
+		CHECK_EQ(box0.min, glm::vec3 {-51.09061050415039f, -94.02226257324219f, -31.280731201171875f});
+
+		CHECK_EQ(anim.checksum, 3325331650);
+		CHECK_EQ(anim.events.size(), 0);
+		CHECK_EQ(anim.fps, 10.0f);
+		CHECK_EQ(anim.fps_source, 25.0f);
+		CHECK_EQ(anim.frame_count, 20);
+		CHECK_EQ(anim.layer, 1);
+		CHECK_EQ(anim.name, "S_FISTRUN");
+		CHECK_EQ(anim.next, "S_FISTRUN");
+		CHECK_EQ(anim.node_count, 25);
+		CHECK_EQ(anim.node_indices.size(), 25);
+		CHECK_EQ(anim.node_indices, G1_NODE_INDICES);
+		CHECK_EQ(anim.sample_position_range_min, -9.01021957397461f);
+		CHECK_EQ(anim.sample_position_scalar, 0.001491763861849904f);
+
+		CHECK_EQ(anim.samples.size(), 25 * 20 /* node_count * frame_count */);
+		CHECK_EQ(anim.samples[0], G1_SAMPLE0);
+		CHECK_EQ(anim.samples[249], G1_SAMPLE249);
+		CHECK_EQ(anim.samples[499], G1_SAMPLE499);
+
+		CHECK_EQ(anim.source_path, "\\_WORK\\DATA\\ANIMS\\HUM_AMB_FISTRUN_M01.ASC");
+		CHECK_EQ(
+		    anim.source_script,
+		    "\t\t\tANI\t\t\t(\"S_FISTRUN\"\t\t\t\t1\t\"S_FISTRUN\"\t\t0.0 0.1 MI\t\"HUM_AMB_FISTRUN_M01.ASC\"\tF   "
+		    "1\t50\tFPS:10)");
+	}
+
+	TEST_CASE("animation(parse:g2)") {
+		auto in = buffer::mmap("./samples/G2/HUMANS-S_FISTRUN.MAN");
+		auto anim = animation::parse(in);
 
 		auto box0 = anim.bbox;
-		CHECK(box0.min == glm::vec3 {-42.741993, -86.539772, -29.5238342});
-		CHECK(box0.max == glm::vec3 {32.7615509, 55.5912437, 39.3346939});
+		CHECK_EQ(box0.max, glm::vec3 {46.33139419555664f, 67.0935287475586f, 49.88602828979492f});
+		CHECK_EQ(box0.min, glm::vec3 {-51.090614318847656f, -94.02226257324219f, -31.280733108520508f});
 
-		CHECK(anim.events.empty());
-		CHECK(anim.samples.size() == 27);
+		CHECK_EQ(anim.checksum, 3325331650);
+		CHECK_EQ(anim.events.size(), 0);
+		CHECK_EQ(anim.fps, 10.0f);
+		CHECK_EQ(anim.fps_source, 25.0f);
+		CHECK_EQ(anim.frame_count, 20);
+		CHECK_EQ(anim.layer, 1);
+		CHECK_EQ(anim.name, "S_FISTRUN");
+		CHECK_EQ(anim.next, "S_FISTRUN");
+		CHECK_EQ(anim.node_count, 25);
+		CHECK_EQ(anim.node_indices.size(), 25);
+		CHECK_EQ(anim.node_indices, G2_NODE_INDICES);
+		CHECK_EQ(anim.sample_position_range_min, -9.01021957397461f);
+		CHECK_EQ(anim.sample_position_scalar, 0.001491763861849904f);
 
-		// Let's grab the first and last sample
-		auto& sample0 = anim.samples[0];
-		auto& sample1 = anim.samples.back();
+		CHECK_EQ(anim.samples.size(), 25 * 20 /* node_count * frame_count */);
+		CHECK_EQ(anim.samples[0], G2_SAMPLE0);
+		CHECK_EQ(anim.samples[249], G2_SAMPLE249);
+		CHECK_EQ(anim.samples[499], G2_SAMPLE499);
 
-		CHECK(sample0.position == glm::vec3 {-1.11763525f, 85.9253082f, -2.8696866f});
-		CHECK(sample0.rotation == glm::quat {0.720371067f, -0.0477454737f, 0.687823235f, 0.0753993988f});
-
-		CHECK(sample1.position == glm::vec3 {12.0363817f, -0.0012588501f, 16.447361f});
-		CHECK(sample1.rotation == glm::quat {0.707131922f, 0.0f, 0.707081676f, 0.0f});
+		CHECK_EQ(anim.source_path, "\\_WORK\\DATA\\ANIMS\\HUM_AMB_FISTRUN_M01.ASC");
+		CHECK_EQ(
+		    anim.source_script,
+		    "\t\t\tANI\t\t\t(\"S_FISTRUN\"\t\t\t\t1\t\"S_FISTRUN\"\t\t0.0 0.1 MI\t\"HUM_AMB_FISTRUN_M01.ASC\"\tF   "
+		    "1\t50\tFPS:10)");
 	}
 }

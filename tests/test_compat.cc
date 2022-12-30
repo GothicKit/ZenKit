@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: MIT
 #include <doctest/doctest.h>
 #include <phoenix/phoenix.hh>
+#include <phoenix/vdfs.hh>
 
-TEST_SUITE("compat") {
-	TEST_CASE("time encodings are converted correctly") {
-#if 0 // TODO: fix this test
+TEST_SUITE("phoenix") {
+	TEST_CASE("unix_time_to_dos" * doctest::skip()) {
+		// TODO: This test is broken.
 		auto unix_now = time(nullptr);
 
 		// We need to make sure to use an even number of seconds
@@ -18,18 +19,17 @@ TEST_SUITE("compat") {
 		auto dos_now = phoenix::unix_time_to_dos(unix_now);
 		auto unix_now_from_dos = phoenix::dos_to_unix_time(dos_now);
 
-		CHECK(unix_now == unix_now_from_dos);
-#endif
+		CHECK_EQ(unix_now, unix_now_from_dos);
 	}
 
-	TEST_CASE("case-insensitive strings are compared correctly") {
+	TEST_CASE("iequals") {
 		CHECK(phoenix::iequals("test\nstring", "test\nstring"));
 		CHECK(phoenix::iequals("test\nSTRING", "test\nstring"));
 		CHECK(phoenix::iequals("TeSt\nStRiNg", "test\nstring"));
-		CHECK(!phoenix::iequals("TeStStRiNg", "test\nstring"));
+		CHECK_FALSE(phoenix::iequals("TeStStRiNg", "test\nstring"));
 		CHECK(phoenix::iequals("test\nstring", "test\nstring"));
 		CHECK(phoenix::iequals("test\nstring", "test\nSTRING"));
 		CHECK(phoenix::iequals("test\nstring", "TeSt\nStRiNg"));
-		CHECK(!phoenix::iequals("test\nstring", "TeStStRiNg"));
+		CHECK_FALSE(phoenix::iequals("test\nstring", "TeStStRiNg"));
 	}
 }
