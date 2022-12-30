@@ -21,6 +21,10 @@ namespace phoenix {
 	game_version determine_world_version(buffer&& buf) {
 		auto archive = archive_reader::open(buf);
 
+		if (archive->is_save_game()) {
+			throw phoenix::parser_error {"world", "cannot automatically detect world version for save-games!s"};
+		}
+
 		archive_object chnk {};
 		archive->read_object_begin(chnk);
 
