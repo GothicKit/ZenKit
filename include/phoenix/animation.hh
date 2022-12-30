@@ -102,8 +102,6 @@ namespace phoenix {
 		/// \brief A checksum for this animation (inner workings unknown).
 		std::uint32_t checksum {};
 
-		date source_file_date {};
-
 		/// \brief The original path of the animation script this animation was generated from.
 		std::string source_path {};
 

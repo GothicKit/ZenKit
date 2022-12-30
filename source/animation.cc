@@ -120,7 +120,7 @@ namespace phoenix {
 
 				break;
 			case animation_chunk::source:
-				anim.source_file_date = date::parse(chunk);
+				chunk.skip(16);
 				anim.source_path = chunk.get_line(false);
 				anim.source_script = chunk.get_line(false);
 				break;
