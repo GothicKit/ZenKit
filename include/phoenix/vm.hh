@@ -3,6 +3,7 @@
 #pragma once
 #include <phoenix/script.hh>
 
+#include <array>
 #include <functional>
 #include <optional>
 #include <stack>
@@ -84,6 +85,8 @@ namespace phoenix {
 
 	class vm : public script {
 	public:
+		static constexpr auto stack_size = 2048;
+
 		/// \brief Creates a DaedalusVM instance for the given script.
 		/// \param scr The script to load into the VM.
 		explicit vm(script&& scr, uint8_t flags = execution_flag::none);
@@ -135,19 +138,19 @@ namespace phoenix {
 
 			if constexpr (std::is_same_v<R, _ignore_return_value>) {
 				// clear the stack
-				_m_stack = std::stack<daedalus_stack_frame> {};
+				_m_stack_ptr = 0;
 
 				return {};
 			} else if constexpr (!std::is_same_v<R, void>) {
 				auto ret = pop_call_return_value<R>();
 
 				// clear the stack
-				_m_stack = std::stack<daedalus_stack_frame> {};
+				_m_stack_ptr = 0;
 
 				return ret;
 			} else {
 				// clear the stack
-				_m_stack = std::stack<daedalus_stack_frame> {};
+				_m_stack_ptr = 0;
 			}
 		}
 
@@ -893,7 +896,9 @@ namespace phoenix {
 		}
 
 	private:
-		std::stack<daedalus_stack_frame> _m_stack;
+		std::array<daedalus_stack_frame, stack_size> _m_stack;
+		uint16_t _m_stack_ptr {0};
+
 		std::stack<daedalus_call_stack_frame> _m_call_stack;
 		std::unordered_map<symbol*, std::function<void(vm&)>> _m_externals;
 		std::unordered_map<uint32_t, std::function<void(vm&)>> _m_function_overrides;

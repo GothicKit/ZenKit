@@ -264,7 +264,10 @@ namespace phoenix {
 					ref->set_int(pop_int(), idx, context);
 				} else if (ref->is_member()) {
 					PX_LOGE("vm: accessing member \"{}\" without an instance set", ref->name());
-					_m_stack.pop();
+
+					if (_m_stack_ptr > 0) {
+						_m_stack[--_m_stack_ptr].~daedalus_stack_frame();
+					}
 				}
 
 				break;
@@ -277,7 +280,10 @@ namespace phoenix {
 					ref->set_float(pop_float(), idx, context);
 				} else if (ref->is_member()) {
 					PX_LOGE("vm: accessing member \"{}\" without an instance set", ref->name());
-					_m_stack.pop();
+
+					if (_m_stack_ptr > 0) {
+						_m_stack[--_m_stack_ptr].~daedalus_stack_frame();
+					}
 				}
 
 				break;
@@ -393,11 +399,19 @@ namespace phoenix {
 	}
 
 	void vm::push_int(std::int32_t value) {
-		_m_stack.push({nullptr, false, value});
+		if (_m_stack_ptr == vm::stack_size) {
+			throw vm_exception {"stack overflow"};
+		}
+
+		_m_stack[_m_stack_ptr++] = {nullptr, false, value};
 	}
 
 	void vm::push_reference(symbol* value, std::uint8_t index) {
-		_m_stack.push({_m_instance, true, value, index});
+		if (_m_stack_ptr == vm::stack_size) {
+			throw vm_exception {"stack overflow"};
+		}
+
+		_m_stack[_m_stack_ptr++] = {_m_instance, true, value, index};
 	}
 
 	void vm::push_string(std::string_view value) {
@@ -406,20 +420,27 @@ namespace phoenix {
 	}
 
 	void vm::push_float(float value) {
-		_m_stack.push({nullptr, false, value});
+		if (_m_stack_ptr == vm::stack_size) {
+			throw vm_exception {"stack overflow"};
+		}
+
+		_m_stack[_m_stack_ptr++] = {nullptr, false, value};
 	}
 
 	void vm::push_instance(std::shared_ptr<instance> value) {
-		_m_stack.push({nullptr, false, value});
+		if (_m_stack_ptr == vm::stack_size) {
+			throw vm_exception {"stack overflow"};
+		}
+
+		_m_stack[_m_stack_ptr++] = {nullptr, false, value};
 	}
 
 	std::int32_t vm::pop_int() {
-		if (_m_stack.empty()) {
+		if (_m_stack_ptr == 0) {
 			return 0;
 		}
 
-		auto v = _m_stack.top();
-		_m_stack.pop();
+		daedalus_stack_frame v = std::move(_m_stack[--_m_stack_ptr]);
 
 		if (v.reference) {
 			auto* sym = std::get<symbol*>(v.value);
@@ -444,12 +465,11 @@ namespace phoenix {
 	}
 
 	float vm::pop_float() {
-		if (_m_stack.empty()) {
+		if (_m_stack_ptr == 0) {
 			return 0.0f;
 		}
 
-		auto v = _m_stack.top();
-		_m_stack.pop();
+		daedalus_stack_frame v = std::move(_m_stack[--_m_stack_ptr]);
 
 		if (v.reference) {
 			auto* sym = std::get<symbol*>(v.value);
@@ -481,12 +501,11 @@ namespace phoenix {
 	}
 
 	std::tuple<symbol*, std::uint8_t, std::shared_ptr<instance>> vm::pop_reference() {
-		if (_m_stack.empty()) {
+		if (_m_stack_ptr == 0) {
 			throw vm_exception {"popping reference from empty stack"};
 		}
 
-		auto v = _m_stack.top();
-		_m_stack.pop();
+		daedalus_stack_frame v = std::move(_m_stack[--_m_stack_ptr]);
 
 		if (!v.reference) {
 			throw vm_exception {"tried to pop_reference but frame does not contain a reference."};
@@ -496,12 +515,11 @@ namespace phoenix {
 	}
 
 	std::shared_ptr<instance> vm::pop_instance() {
-		if (_m_stack.empty()) {
+		if (_m_stack_ptr == 0) {
 			throw vm_exception {"popping instance from empty stack"};
 		}
 
-		auto v = _m_stack.top();
-		_m_stack.pop();
+		daedalus_stack_frame v = std::move(_m_stack[--_m_stack_ptr]);
 
 		if (v.reference) {
 			return std::get<symbol*>(v.value)->get_instance();
@@ -575,8 +593,9 @@ namespace phoenix {
 
 	void vm::print_stack_trace() const {
 		auto last_pc = _m_pc;
+		auto tmp_stack_ptr = _m_stack_ptr;
+
 		std::stack<daedalus_call_stack_frame> callstack {_m_call_stack};
-		std::stack<daedalus_stack_frame> stack {_m_stack};
 
 		std::cerr << "\n"
 		          << "------- CALL STACK (MOST RECENT CALL FIRST) -------"
@@ -594,13 +613,12 @@ namespace phoenix {
 		          << "------- STACK (MOST RECENT PUSH FIRST) -------"
 		          << "\n";
 
-		int32_t i = 0;
-		while (!stack.empty()) {
-			auto v = stack.top();
+		while (tmp_stack_ptr > 0) {
+			auto& v = _m_stack[--tmp_stack_ptr];
 
 			if (v.reference) {
 				auto ref = std::get<symbol*>(v.value);
-				std::cerr << i << ": [REFERENCE] " << ref->name() << "[" << (int32_t) v.index << "] = ";
+				std::cerr << tmp_stack_ptr << ": [REFERENCE] " << ref->name() << "[" << (int32_t) v.index << "] = ";
 
 				switch (ref->type()) {
 				case datatype::float_:
@@ -633,12 +651,12 @@ namespace phoenix {
 				}
 			} else {
 				if (std::holds_alternative<float>(v.value)) {
-					std::cerr << i << ": [IMMEDIATE FLOAT] = " << std::get<float>(v.value) << "\n";
+					std::cerr << tmp_stack_ptr << ": [IMMEDIATE FLOAT] = " << std::get<float>(v.value) << "\n";
 				} else if (std::holds_alternative<int32_t>(v.value)) {
-					std::cerr << i << ": [IMMEDIATE INT] = " << std::get<int32_t>(v.value) << "\n";
+					std::cerr << tmp_stack_ptr << ": [IMMEDIATE INT] = " << std::get<int32_t>(v.value) << "\n";
 				} else if (std::holds_alternative<std::shared_ptr<instance>>(v.value)) {
 					auto& inst = std::get<std::shared_ptr<instance>>(v.value);
-					std::cerr << i << ": [IMMEDIATE INSTANCE] = ";
+					std::cerr << tmp_stack_ptr << ": [IMMEDIATE INSTANCE] = ";
 					if (inst == nullptr) {
 						std::cerr << "NULL\n";
 					} else {
@@ -646,9 +664,6 @@ namespace phoenix {
 					}
 				}
 			}
-
-			i += 1;
-			stack.pop();
 		}
 
 		std::cerr << "\n";
