@@ -22,9 +22,9 @@ _phoenix_ includes **parsers and basic datastructures** for most file formats us
 type-safe **VM for _Daedalus_ scripts** and supporting infrastructure like _Gothic II_ class definitions. Tools for
 inspecting and converting _ZenGin_ files can be found in [phoenix studio](https://github.com/lmichaelis/phoenix-studio).
 
-To get started, take a look in the [📖 Wiki](https://github.com/lmichaelis/phoenix/wiki). Don't hesitate to open a
-discussion thread over in [Discussions](https://github.com/lmichaelis/phoenix/discussions) if you have a question or
-need help. Please open an issue for any bug you encounter!
+To get started, take a look in the [Reference Documentation](https://phoenix.lmichaelis.de/library/overview). Don't
+hesitate to open a discussion thread over in [Discussions](https://github.com/lmichaelis/phoenix/discussions) if you
+have a question or need help. Please open an issue for any bug you encounter!
 
 ## supported file formats
 Currently, the following file formats are supported.
