@@ -100,11 +100,11 @@ meaning it has a set of [entries](#entries) consistent with the definition of a 
 object name just contain a `%` instead. Objects always end with `[]`.
 
 !!! note
-This behavior can be seen in the example [above](#general-concepts). Every object with the class name `zCVob` has
-the same set of entries as shown in the example.
+    This behavior can be seen in the example [above](#general-concepts). Every object with the class name `zCVob` has
+    the same set of entries as shown in the example.
 
 !!! danger
-The object name must be unique within each sub-object. A ZEN archive like this is invalid.
+    The object name must be unique within each sub-object. A ZEN archive like this is invalid.
 
     ```text
     [% oCWorld:zCWorld 64513 0]
@@ -122,17 +122,17 @@ super-class always precede the [entries](#entries) of the subclass, so the `zCVo
 contain a `%` instead.
 
 !!! warning
-Class and object names may not contain spaces.
+    Class and object names may not contain spaces.
 
 The *version* of an object is a 32-bit unsigned number which denotes the version of the bottom-most subclass. The
 version of object `[% oCMobInter:oCMOB:zCVob 35585 0]` would be `35585`. This version, however, only refers to the
 `oCMobInter`-part.
 
 !!! danger
-This leads to issues when trying to determine whether an object uses the *Gothic* or the *Gothic II* definition.
-If the structure for `oCMobInter` did not change between the games, the version will be the same. This is not
-necessarily true for `zVob` though. Its definition might have changed but this change is not reflected in the
-`version` field of the object.
+    This leads to issues when trying to determine whether an object uses the *Gothic* or the *Gothic II* definition.
+    If the structure for `oCMobInter` did not change between the games, the version will be the same. This is not
+    necessarily true for `zVob` though. Its definition might have changed but this change is not reflected in the
+    `version` field of the object.
 
 The *index* field of the object is a 32-bit unsigned number which increments for every object with a class name in the
 archive. In the [example](#general-concepts) this can be seen with the objects `[% oCWorld:zCWorld 64513 0]` and
@@ -261,7 +261,7 @@ int32_t zen_binary_read_int(FILE* fp) {
 ```
 
 !!! note
-On big-endian architectures, the value read would have to be byte-swapped after reading.
+    On big-endian architectures, the value read would have to be byte-swapped after reading.
 
 This method of extracting values from binary archives is also used for aggregate types, like the `vec3`. Instead of
 reading just one float from the input, three are read like this.
@@ -349,7 +349,7 @@ definition for ASCII-ZENs: Objects start with a line `[% oCWorld:zCWorld 64513 0
 A full object definition might look like this: `\x01\x1B\x00[% oCWorld:zCWorld 64513 0]`.
 
 !!! note
-Note that objects are never preceded by a field name like entries are.
+    Note that objects are never preceded by a field name like entries are.
 
 ### Entries
 
@@ -377,9 +377,9 @@ Reference the table below for all types in safe binary archives.
 | `enum`     | 17      | No          | `uint32_t`                                      | 4          |
 
 !!! note
-Entries with a length prefix, are encoded like this: `\x12\x01\x00\00\x00\x01\x0D\x00Hello, world!`. It hashtable
-index is `1`, its length is `0x0D` and its value is `Hello, World!`. Note that the length is always a `uint16_t`
-and always follows directly after the type ID.
+    Entries with a length prefix, are encoded like this: `\x12\x01\x00\00\x00\x01\x0D\x00Hello, world!`. It hashtable
+    index is `1`, its length is `0x0D` and its value is `Hello, World!`. Note that the length is always a `uint16_t`
+    and always follows directly after the type ID.
 
 [^1]: The type index is relevant only for [safe binary](#safe-binary) encoded archives.
 [^2]: The actual representation of this value changes between encodings. With the [safe binary](#safe-binary) encoding

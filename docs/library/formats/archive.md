@@ -21,8 +21,8 @@ Unlike most data structures in phoenix, archives can be loaded using the `phoeni
 It takes a `phoenix::buffer` and uses it internally for loading values from the archive.
 
 !!! danger
-The buffer passed to `open` is currently contained in the `archive_reader` as a reference. Trying to read from
-an `archive_reader` after the buffer passed in `open` has been destroyed will result in undefined behavior!
+    The buffer passed to `open` is currently contained in the `archive_reader` as a reference. Trying to read from
+    an `archive_reader` after the buffer passed in `open` has been destroyed will result in undefined behavior!
 
 ```cpp title="Example"
 #include <phoenix/archive.hh>

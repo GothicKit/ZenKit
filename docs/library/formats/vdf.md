@@ -70,8 +70,8 @@ Some of them contain textures meant to be patches and some just add new textures
 easily access all of the files using a single `phoenix::vdf_file` instance using `phoenix::vdf_file::merge()`.
 
 !!! danger
-The `merge()` implementation currently does not work properly when replacing files. To make sure only the newest
-file in a given VDF is kept, you have to order the VDFs by date before merging them.
+    The `merge()` implementation currently does not work properly when replacing files. To make sure only the newest
+    file in a given VDF is kept, you have to order the VDFs by date before merging them.
 
 ```cpp title="Example"
 #include <phoenix/vdfs.hh>

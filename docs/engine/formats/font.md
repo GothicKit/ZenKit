@@ -4,8 +4,8 @@ Font (or *FNT*) files contain metadata of fonts for use with the *ZenGin*. *FNT*
 points into a TGA file containing the actual font glyphs.
 
 !!! important
-*FNT* files are binary files which are always encoded with the little-endian byte order. The number `0xCAFEBABE`
-will be represented as `BE BA FE CA` when viewing the file in a hex editor.
+    *FNT* files are binary files which are always encoded with the little-endian byte order. The number `0xCAFEBABE`
+    will be represented as `BE BA FE CA` when viewing the file in a hex editor.
 
 Font files are structured like this:
 
@@ -30,14 +30,14 @@ struct fnt_file {
 ```
 
 !!! note
-To get the actual pixel coordinate in the glyph image for any given UV-coordinate, multiply the `x` UV-coordinate
-by the width of the image and the `y` UV-coordinate by the height.
+    To get the actual pixel coordinate in the glyph image for any given UV-coordinate, multiply the `x` UV-coordinate
+    by the width of the image and the `y` UV-coordinate by the height.
 
 !!! warning
-Some UV-coordinates are negative. These should be ignored since they don't have a glyph image associated with them.
+    Some UV-coordinates are negative. These should be ignored since they don't have a glyph image associated with them.
 
 !!! info "File Location"
-Glyph image files can normally be found in `Textures.vdf` inside the `_WORK/DATA/TEXTURES/FONTS/NOMIP/`
-(*TGA* files) and `_WORK/DATA/TEXTURES/_COMPILED/` (*TEX* files) folders.
+    Glyph image files can normally be found in `Textures.vdf` inside the `_WORK/DATA/TEXTURES/FONTS/NOMIP/`
+    (*TGA* files) and `_WORK/DATA/TEXTURES/_COMPILED/` (*TEX* files) folders.
 
     The font (*FNT*) files can be found in `Textures.vdf` inside the `_WORK/DATA/TEXTURES/_COMPILED/` folder.

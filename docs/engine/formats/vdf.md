@@ -8,8 +8,8 @@ usually be found in such container formats.
 *VDF* files consist of a [header](#header), the [catalog](#catalog) and a data section which are described below.
 
 !!! important
-*VDF* files are binary files which are always encoded with the little-endian byte order. The number `0xCAFEBABE`
-will be represented as `BE BA FE CA` when viewing the file in a hex editor.
+    *VDF* files are binary files which are always encoded with the little-endian byte order. The number `0xCAFEBABE`
+    will be represented as `BE BA FE CA` when viewing the file in a hex editor.
 
 ## Header
 
@@ -42,7 +42,7 @@ struct vdf_header {
 6. The version of the VDF format being used. This is always `0x50` in reality.
 
 !!! note
-This is a packed structure.
+    This is a packed structure.
 
 ## Catalog
 
@@ -92,7 +92,7 @@ struct vdf_entry {
 5. Extra attributes for the entry. Unused.
 
 !!! note
-This is a packed structure.
+    This is a packed structure.
 
 ## DOS date format
 

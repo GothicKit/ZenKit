@@ -4,8 +4,8 @@ TEX files contain [DXT1-5](#dxt), [palette](#palette) or [raw](#raw) textures al
 texture. Texture files are binary files which start with a header after followed by palette and image data.
 
 !!! important
-*TEX* files are binary files which are always encoded with the little-endian byte order. The number `0xCAFEBABE`
-will be represented as `BE BA FE CA` when viewing the file in a hex editor.
+    *TEX* files are binary files which are always encoded with the little-endian byte order. The number `0xCAFEBABE`
+    will be represented as `BE BA FE CA` when viewing the file in a hex editor.
 
 The header has a structure as follows:
 
@@ -44,9 +44,9 @@ struct ztex_header {
 ```
 
 !!! note
-All color values should be understood as [word-order](https://en.wikipedia.org/wiki/RGBA_color_model#Representation),
-so an `RGBA` color `#aabbccdd` would be represented as the bytes `dd cc bb aa` in little-endian byte order. An alpha
-byte of `0xff` means full opacity.
+    All color values should be understood as [word-order](https://en.wikipedia.org/wiki/RGBA_color_model#Representation),
+    so an `RGBA` color `#aabbccdd` would be represented as the bytes `dd cc bb aa` in little-endian byte order. An alpha
+    byte of `0xff` means full opacity.
 
 ## Mipmaps
 
