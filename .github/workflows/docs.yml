@@ -1,0 +1,21 @@
+name: 'Documentation'
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'docs/**'
+      - 'mkdocs.yml'
+permissions:
+  contents: 'write'
+jobs:
+  deploy:
+    name: 'Publish Documentation'
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: 'actions/checkout@v3'
+      - uses: 'actions/setup-python@v4'
+        with:
+          python-version: '3.x'
+      - run: 'pip install mkdocs-material'
+      - run: 'mkdocs gh-deploy -b "auto/pages" --force'
