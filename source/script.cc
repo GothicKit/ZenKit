@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/script.hh>
 
-#include <fmt/format.h>
 #include <string>
 
 namespace phoenix {
@@ -18,32 +17,31 @@ namespace phoenix {
 	                                    DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) s->type()]) {}
 
 	illegal_type_access::illegal_type_access(const symbol* s, datatype expected_dt)
-	    : illegal_access(fmt::format("illegal access of type {} on symbol {} which is another type ({})",
-	                                 int32_t(expected_dt),
-	                                 s->name(),
-	                                 int32_t(s->type()))),
+	    : illegal_access("illegal access of type " + std::to_string(static_cast<int32_t>(expected_dt)) + " on symbol " +
+	                     s->name() + " which is another type (" + std::to_string(static_cast<int32_t>(s->type())) +
+	                     ")"),
 	      sym(s), expected(expected_dt) {}
 
 	illegal_index_access::illegal_index_access(const symbol* s, std::uint8_t idx)
-	    : illegal_access(fmt::format("illegal access of out-of-bounds index {} while reading {}", index, s->name())),
+	    : illegal_access("illegal access of out-of-bounds index " + std::to_string(idx) + " while reading " +
+	                     s->name()),
 	      sym(s), index(idx) {}
 
 	illegal_const_access::illegal_const_access(const symbol* s)
-	    : illegal_access(fmt::format("illegal mutable access of const symbol {}", s->name())), sym(s) {}
+	    : illegal_access("illegal mutable access of const symbol " + s->name()), sym(s) {}
 
 	illegal_instance_access::illegal_instance_access(const symbol* s, std::uint32_t parent)
-	    : illegal_access(fmt::format("illegal access of member {} which does not have the same parent "
-	                                 "class as the context instance ({} != {})",
-	                                 s->name(),
-	                                 s->parent(),
-	                                 parent)),
+	    : illegal_access("illegal access of member " + s->name() +
+	                     " which does not have the same parent "
+	                     "class as the context instance (" +
+	                     std::to_string(s->parent()) + " != " + std::to_string(parent) + ")"),
 	      sym(s), expected_parent(parent) {}
 
 	unbound_member_access::unbound_member_access(const symbol* s)
-	    : illegal_access(fmt::format("illegal access of unbound member {}", s->name())), sym(s) {}
+	    : illegal_access("illegal access of unbound member " + s->name()), sym(s) {}
 
 	no_context::no_context(const symbol* s)
-	    : illegal_access(fmt::format("illegal access of member {} without a context set.", s->name())), sym(s) {}
+	    : illegal_access("illegal access of member " + s->name() + " without a context set."), sym(s) {}
 
 	illegal_context_type::illegal_context_type(const symbol* s, const std::type_info& ctx)
 	    : illegal_access("cannot access member " + s->name() + " on context instance of type " + ctx.name() +

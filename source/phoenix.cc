@@ -3,27 +3,26 @@
 #include <phoenix/buffer.hh>
 #include <phoenix/phoenix.hh>
 
-#include <fmt/format.h>
-
+#include <iostream>
 #include <utility>
 
 namespace phoenix {
 	error::error(std::string&& msg) : std::exception(), message(std::move(msg)) {}
 
 	parser_error::parser_error(std::string&& type)
-	    : error(fmt::format("failed parsing resource of type {}", type)), resource_type(type) {}
+	    : error("failed parsing resource of type " + type), resource_type(type) {}
 
 	parser_error::parser_error(std::string&& type, std::string&& ctx)
-	    : error(fmt::format("failed parsing resource of type {} [context: {}]", type, ctx)),
-	      resource_type(std::move(type)), context(std::move(ctx)) {}
+	    : error("failed parsing resource of type " + type + " [context: " + ctx + "]"), resource_type(std::move(type)),
+	      context(std::move(ctx)) {}
 
 	parser_error::parser_error(std::string&& type, const std::exception& other_exc)
-	    : error(fmt::format("failed parsing resource of type {} due to [{}]", type, other_exc.what())),
+	    : error("failed parsing resource of type " + type + " due to [" + other_exc.what() + "]"),
 	      resource_type(std::move(type)), cause(other_exc) {}
 
 	parser_error::parser_error(std::string&& type, const std::exception& other_exc, std::string&& ctx)
-	    : error(
-	          fmt::format("failed parsing resource of type {} due to [{}] [context: {}]", type, other_exc.what(), ctx)),
+	    : error("failed parsing resource of type " + type + " due to [" + other_exc.what() + "] [context: " + ctx +
+	            "]"),
 	      resource_type(std::move(type)), context(std::move(ctx)), cause(other_exc) {}
 
 	std::optional<std::function<void(logging::level, const std::string&)>> logging::callback {};
@@ -36,16 +35,16 @@ namespace phoenix {
 		logging::callback = [](level lvl, const std::string& message) {
 			switch (lvl) {
 			case level::error:
-				fmt::print(stderr, "[phoenix] [error] {}\n", message);
+				std::cerr << "[phoenix] [error] " << message << "\n";
 				break;
 			case level::warn:
-				fmt::print(stderr, "[phoenix] [warn ] {}\n", message);
+				std::cerr << "[phoenix] [warn ] " << message << "\n";
 				break;
 			case level::info:
-				fmt::print(stderr, "[phoenix] [info ] {}\n", message);
+				std::cerr << "[phoenix] [info ] " << message << "\n";
 				break;
 			case level::debug:
-				fmt::print(stderr, "[phoenix] [debug] {}\n", message);
+				std::cerr << "[phoenix] [debug] " << message << "\n";
 				break;
 			}
 		};

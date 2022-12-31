@@ -6,7 +6,6 @@
 #include "archive/archive_binary.hh"
 #include "archive/archive_binsafe.hh"
 
-#include <fmt/format.h>
 #include <iostream>
 
 namespace phoenix {
@@ -74,7 +73,8 @@ namespace phoenix {
 			reader = std::make_unique<archive_reader_binsafe>(in, std::move(header));
 		} else {
 			throw parser_error {"archiver_reader",
-			                    fmt::format("format '{}' is not supported", std::uint32_t(header.format))};
+			                    "format '" + std::to_string(static_cast<uint32_t>(header.format)) +
+			                        "' is not supported"};
 		}
 
 		reader->read_header();

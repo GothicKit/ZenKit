@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/world/way_net.hh>
 
-#include <fmt/format.h>
-
 namespace phoenix {
 	static void read_waypoint_data(way_point& wp, archive_reader& in) {
 		wp.name = in.read_string();      // wpName
@@ -31,7 +29,7 @@ namespace phoenix {
 
 			for (int32_t i = 0; i < count; ++i) {
 				if (!in.read_object_begin(obj) || obj.class_name != "zCWaypoint") {
-					throw parser_error {"way_net", fmt::format("missing waypoint object #{}", i)};
+					throw parser_error {"way_net", "missing waypoint object #" + std::to_string(i)};
 				}
 
 				auto& wp = net.waypoints.emplace_back();
@@ -41,7 +39,7 @@ namespace phoenix {
 				obj_id_to_wp[obj.index] = net.waypoints.size() - 1;
 
 				if (!in.read_object_end()) {
-					PX_LOGW("way_net: free point {} not fully parsed", obj.index);
+					PX_LOGW("way_net: free point ", obj.index, " not fully parsed");
 					in.skip_object(true);
 				}
 			}
@@ -53,7 +51,7 @@ namespace phoenix {
 
 				for (int32_t j = 0; j < 2; ++j) {
 					if (!in.read_object_begin(obj)) {
-						throw parser_error {"way_net", fmt::format("missing edge object #{}", i)};
+						throw parser_error {"way_net", "missing edge object #" + std::to_string(i)};
 					}
 
 					std::uint32_t wp;
@@ -68,9 +66,9 @@ namespace phoenix {
 						obj_id_to_wp[obj.index] = net.waypoints.size() - 1;
 						wp = net.waypoints.size() - 1;
 					} else {
-						throw parser_error {
-						    "way_net",
-						    fmt::format("failed to parse edge #{}: unknown class name '{}'", i, obj.class_name)};
+						throw parser_error {"way_net",
+						                    "failed to parse edge #" + std::to_string(i) + ": unknown class name '" +
+						                        obj.class_name + "'"};
 					}
 
 					if (j == 0) {
@@ -80,7 +78,7 @@ namespace phoenix {
 					}
 
 					if (!in.read_object_end()) {
-						PX_LOGW("way_net: edge {} at index {} not fully parsed", i * 2 + j, obj.index);
+						PX_LOGW("way_net: edge ", i * 2 + j, " at index ", obj.index, " not fully parsed");
 						in.skip_object(true);
 					}
 				}

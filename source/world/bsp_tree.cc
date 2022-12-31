@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/world/bsp_tree.hh>
 
-#include <fmt/format.h>
-
 namespace phoenix {
 	static constexpr auto version_g1 = 0x2090000;
 	[[maybe_unused]] static constexpr auto version_g2 = 0x4090000;
@@ -70,7 +68,7 @@ namespace phoenix {
 			auto length = in.get_uint();
 			auto chunk = in.extract(length);
 
-			PX_LOGI("bsp_tree: parsing chunk {:4X}", std::uint16_t(type));
+			PX_LOGI("bsp_tree: parsing chunk ", std::hex, std::uint16_t(type));
 
 			switch (type) {
 			case bsp_chunk::header:
@@ -160,7 +158,7 @@ namespace phoenix {
 			}
 
 			if (chunk.remaining() != 0) {
-				PX_LOGW("bsp_tree: {} bytes remaining in section 0x{:4X}", chunk.remaining(), std::uint16_t(type));
+				PX_LOGW("bsp_tree: ", chunk.remaining(), " bytes remaining in section ", std::hex, std::uint16_t(type));
 			}
 		} while (!finished);
 

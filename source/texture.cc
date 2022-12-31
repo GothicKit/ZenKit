@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/texture.hh>
 
-#include <fmt/format.h>
 #include <squish.h>
 
 namespace phoenix {
@@ -219,7 +218,8 @@ namespace phoenix {
 			return conv;
 		}
 		default:
-			throw parser_error {"texture", fmt::format("cannot convert format to rgba: {}", int32_t(_m_format))};
+			throw parser_error {"texture",
+			                    "cannot convert format to rgba: " + std::to_string(static_cast<int32_t>(_m_format))};
 		}
 	}
 } // namespace phoenix

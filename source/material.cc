@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/material.hh>
 
-#include <fmt/format.h>
-
 #include <sstream>
 
 namespace phoenix {
@@ -85,7 +83,7 @@ namespace phoenix {
 			}
 
 			if (!in.read_object_end()) {
-				PX_LOGW("material(\"{}\"): not fully parsed", mat.name);
+				PX_LOGW("material(\"", mat.name, "\"): not fully parsed");
 				in.skip_object(true);
 			}
 

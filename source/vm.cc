@@ -263,7 +263,7 @@ namespace phoenix {
 				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
 					ref->set_int(pop_int(), idx, context);
 				} else if (ref->is_member()) {
-					PX_LOGE("vm: accessing member \"{}\" without an instance set", ref->name());
+					PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
 
 					if (_m_stack_ptr > 0) {
 						_m_stack[--_m_stack_ptr].~daedalus_stack_frame();
@@ -279,7 +279,7 @@ namespace phoenix {
 				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
 					ref->set_float(pop_float(), idx, context);
 				} else if (ref->is_member()) {
-					PX_LOGE("vm: accessing member \"{}\" without an instance set", ref->name());
+					PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
 
 					if (_m_stack_ptr > 0) {
 						_m_stack[--_m_stack_ptr].~daedalus_stack_frame();
@@ -296,7 +296,7 @@ namespace phoenix {
 				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
 					target->set_string(source, target_idx, context);
 				} else if (target->is_member()) {
-					PX_LOGE("vm: accessing member \"{}\" without an instance set", target->name());
+					PX_LOGE("vm: accessing member \"", target->name(), "\" without an instance set");
 				}
 
 				break;
@@ -452,7 +452,7 @@ namespace phoenix {
 					throw no_context {sym};
 				}
 
-				PX_LOGE("vm: accessing member \"{}\" without an instance set", sym->name());
+				PX_LOGE("vm: accessing member \"", sym->name(), "\" without an instance set");
 				return 0;
 			}
 
@@ -481,7 +481,7 @@ namespace phoenix {
 					throw no_context {sym};
 				}
 
-				PX_LOGE("vm: accessing member \"{}\" without an instance set", sym->name());
+				PX_LOGE("vm: accessing member \"", sym->name(), "\" without an instance set");
 				return 0;
 			}
 
@@ -541,7 +541,7 @@ namespace phoenix {
 				throw no_context {s};
 			}
 
-			PX_LOGE("vm: accessing member \"{}\" without an instance set", s->name());
+			PX_LOGE("vm: accessing member \"", s->name(), "\" without an instance set");
 			return empty;
 		}
 
@@ -685,7 +685,7 @@ namespace phoenix {
 	                                      DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) s->type()] + "'") {}
 
 	vm_exception_strategy lenient_vm_exception_handler(vm& v, const script_error& exc, const instruction& instr) {
-		PX_LOGE("vm: internal exception: {}", exc.what());
+		PX_LOGE("vm: internal exception: ", exc.what());
 
 		switch (instr.op) {
 		case opcode::add:

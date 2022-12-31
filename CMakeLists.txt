@@ -117,7 +117,7 @@ target_include_directories(phoenix PUBLIC include)
 
 # Apps using phoenix will also need to link to glm, fmt and squish to avoid missing symbols
 target_link_libraries(phoenix
-        PUBLIC glm::glm_static fmt squish
+        PUBLIC glm::glm_static squish
         PRIVATE mio lexy)
 
 target_compile_definitions(phoenix PUBLIC ${PHOENIX_DEFINES})
@@ -135,11 +135,10 @@ if (PHOENIX_INSTALL)
 
     install(DIRECTORY "include/phoenix" TYPE INCLUDE)
     install(DIRECTORY "${glm_SOURCE_DIR}/glm" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl" PATTERN "*.h")
-    install(DIRECTORY "${fmt_SOURCE_DIR}/include/" TYPE INCLUDE)
 
     if (NOT BUILD_SHARED_LIBS)
         # For static linking we'll need to provide the dependency static libraries
-        foreach (lib fmt glm::glm_static squish)
+        foreach (lib glm::glm_static squish)
             install(FILES "$<TARGET_LINKER_FILE:${lib}>" TYPE LIB)
         endforeach ()
     endif ()

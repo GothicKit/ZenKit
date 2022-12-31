@@ -7,9 +7,6 @@
 [submodule "vendor/lexy"]
 	path = vendor/lexy
 	url = https://github.com/foonathan/lexy.git
-[submodule "vendor/fmt"]
-	path = vendor/fmt
-	url = https://github.com/fmtlib/fmt.git
 [submodule "vendor/libsquish"]
 	path = vendor/libsquish
 	url = https://github.com/lmichaelis/phoenix-libsquish.git

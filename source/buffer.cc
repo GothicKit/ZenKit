@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/buffer.hh>
 
-#include <fmt/format.h>
 #include <mio/mmap.hpp>
 
 #include <fstream>
@@ -119,29 +118,27 @@ namespace phoenix {
 	} // namespace detail
 
 	buffer_underflow::buffer_underflow(std::uint64_t off, std::uint64_t rsize)
-	    : buffer_error(fmt::format("buffer underflow at byte {:X} while reading {:X} additional bytes", off, rsize)),
+	    : buffer_error("buffer underflow at byte " + std::to_string(off) + " while reading " + std::to_string(rsize) +
+	                   " additional bytes"),
 	      byte(off), size(rsize), context(std::nullopt) {}
 
 	buffer_underflow::buffer_underflow(std::uint64_t off, std::uint64_t rsize, std::string&& ctx)
-	    : buffer_error(fmt::format("buffer underflow at byte {:X} while reading {:X} additional bytes [context: {}]",
-	                               off,
-	                               rsize,
-	                               ctx)),
+	    : buffer_error("buffer underflow at byte " + std::to_string(off) + " while reading " + std::to_string(rsize) +
+	                   " additional bytes [context: " + ctx + "]"),
 	      byte(off), size(rsize), context(std::move(ctx)) {}
 
 	buffer_underflow::buffer_underflow(std::uint64_t off, std::string&& ctx)
-	    : buffer_error(fmt::format("buffer underflow at byte {:X} [context: {}]", byte, ctx)), byte(off), size(0),
-	      context(std::move(ctx)) {}
+	    : buffer_error("buffer underflow at byte " + std::to_string(off) + " [context: " + ctx + "]"), byte(off),
+	      size(0), context(std::move(ctx)) {}
 
 	buffer_overflow::buffer_overflow(std::uint64_t off, std::uint64_t wsize)
-	    : buffer_error(fmt::format("buffer overflow at byte {:X} while writing {:X} additional bytes", off, wsize)),
+	    : buffer_error("buffer overflow at byte " + std::to_string(off) + " while writing " + std::to_string(wsize) +
+	                   " additional bytes"),
 	      byte(off), size(wsize), context(std::nullopt) {}
 
 	buffer_overflow::buffer_overflow(std::uint64_t off, std::uint64_t wsize, std::string&& ctx)
-	    : buffer_error(fmt::format("buffer overflow at byte {:X} while writing {:X} additional bytes [context: {}]",
-	                               off,
-	                               wsize,
-	                               ctx)),
+	    : buffer_error("buffer overflow at byte " + std::to_string(off) + " while writing " + std::to_string(wsize) +
+	                   " additional bytes [context: " + ctx + "]"),
 	      byte(off), size(wsize), context(std::move(ctx)) {}
 
 	std::unique_ptr<buffer> buffer::_m_empty {};

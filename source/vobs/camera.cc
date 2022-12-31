@@ -2,10 +2,6 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/vobs/camera.hh>
 
-#include <fmt/format.h>
-
-#include <fmt/format.h>
-
 namespace phoenix::vobs {
 	std::unique_ptr<camera_trj_frame> camera_trj_frame::parse(archive_reader& ctx, game_version version) {
 		auto obj = std::make_unique<camera_trj_frame>();
@@ -51,7 +47,7 @@ namespace phoenix::vobs {
 		archive_object frame_obj {};
 		while (ctx.read_object_begin(frame_obj)) {
 			if (frame_obj.class_name != "zCCamTrj_KeyFrame:zCVob") {
-				PX_LOGW("cs_camera: unexpected \"{}\" in \"zCCSCamera:zCVob\"", frame_obj.class_name);
+				PX_LOGW("cs_camera: unexpected \"", frame_obj.class_name, "\" in \"zCCSCamera:zCVob\"");
 				ctx.skip_object(true);
 				continue;
 			}

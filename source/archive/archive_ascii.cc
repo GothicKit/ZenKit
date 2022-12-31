@@ -2,11 +2,9 @@
 // SPDX-License-Identifier: MIT
 #include "archive_ascii.hh"
 
-#include <fmt/format.h>
-
 #include <charconv>
+#include <cstring>
 #include <iostream>
-#include <sstream>
 
 namespace phoenix {
 	void archive_reader_ascii::read_header() {
@@ -80,7 +78,7 @@ namespace phoenix {
 
 		if (line.substr(0, colon) != type) {
 			throw parser_error {"archive_reader_ascii",
-			                    fmt::format("type mismatch: expected {}, got: {}", type, line.substr(0, colon))};
+			                    "type mismatch: expected " + std::string {type} + ", got: " + line.substr(0, colon)};
 		}
 
 		auto rv = line.substr(colon + 1);
@@ -200,7 +198,7 @@ namespace phoenix {
 		if (length < size) {
 			throw parser_error {"archive_reader_ascii", "not enough raw bytes to read!"};
 		} else if (length > size) {
-			PX_LOGW("read_raw_bytes: reading {} bytes although {} are actually available", size, length);
+			PX_LOGW("read_raw_bytes: reading ", size, " bytes although ", length, " are actually available");
 		}
 
 		std::vector<std::byte> out {};

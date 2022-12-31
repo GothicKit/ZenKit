@@ -11,7 +11,6 @@
 #include <phoenix/vobs/vob.hh>
 #include <phoenix/vobs/zone.hh>
 
-#include <fmt/format.h>
 #include <unordered_map>
 
 namespace phoenix {
@@ -219,16 +218,20 @@ namespace phoenix {
 		case vob_type::ignored:
 			break;
 		case vob_type::unknown:
-			PX_LOGW("vob_tree: encountered unknown VOb [{} {} {} {}]",
+			PX_LOGW("vob_tree: encountered unknown VOb [",
 			        obj.object_name,
+			        " ",
 			        obj.class_name,
+			        " ",
 			        obj.version,
-			        obj.index);
+			        " ",
+			        obj.index,
+			        "]");
 			break;
 		}
 
 		if (!in.read_object_end()) {
-			PX_LOGW("vob: VOb \"{}\" not fully parsed", obj.class_name);
+			PX_LOGW("vob: VOb \"", obj.class_name, "\" not fully parsed");
 			in.skip_object(true);
 		}
 

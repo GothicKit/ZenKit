@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/messages.hh>
 
-#include <fmt/format.h>
-
 namespace phoenix {
 	messages messages::parse(buffer& buf) {
 		auto archive = archive_reader::open(buf);
@@ -33,7 +31,8 @@ namespace phoenix {
 
 			if (block_count != 1) {
 				throw parser_error {"messages",
-				                    fmt::format("expected only one block but got {} for {}", block_count, itm.name)};
+				                    "expected only one block but got " + std::to_string(block_count) + " for " +
+				                        itm.name};
 			}
 
 			if (!archive->read_object_begin(obj) || obj.class_name != "zCCSAtomicBlock") {
@@ -59,18 +58,18 @@ namespace phoenix {
 				//        extents in the archive. This might be due to encoding errors the version of ZenGin
 				//        used with Gothic I
 				archive->skip_object(true);
-				PX_LOGW("messages: oCMsgConversation(\"{}\") not fully parsed", itm.name);
+				PX_LOGW("messages: oCMsgConversation(\"", itm.name, "\") not fully parsed");
 			}
 
 			if (!archive->read_object_end()) {
 				// FIXME: in Gothic I cutscene libraries, there is a `synchronized` attribute here
 				archive->skip_object(true);
-				PX_LOGW("messages: zCCSAtomicBlock(\"{}\") not fully parsed", itm.name);
+				PX_LOGW("messages: zCCSAtomicBlock(\"", itm.name, "\") not fully parsed");
 			}
 
 			if (!archive->read_object_end()) {
 				archive->skip_object(true);
-				PX_LOGW("messages: zCCSBlock(\"{}\") not fully parsed", itm.name);
+				PX_LOGW("messages: zCCSBlock(\"", itm.name, "\") not fully parsed");
 			}
 		}
 

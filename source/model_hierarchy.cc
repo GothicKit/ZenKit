@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/model_hierarchy.hh>
 
-#include <fmt/format.h>
-
 namespace phoenix {
 	enum class hierarchy_chunk { unknown, hierarchy = 0xD100, stats = 0xD110, end = 0xD120 };
 
@@ -51,8 +49,10 @@ namespace phoenix {
 			}
 
 			if (chunk.remaining() != 0) {
-				PX_LOGW("model_hierarchy: {} bytes remaining in section 0x{:4X}",
+				PX_LOGW("model_hierarchy: ",
 				        chunk.remaining(),
+				        " bytes remaining in section ",
+				        std::hex,
 				        std::uint16_t(type));
 			}
 		} while (!end_hierarchy);

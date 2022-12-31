@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/softskin_mesh.hh>
 
-#include <fmt/format.h>
-
 namespace phoenix {
 	enum class softmesh_chunk { unknown, header = 0xE100, end = 0xE110, proto = 0xB100, nodes = 0xB1FF };
 
@@ -44,8 +42,9 @@ namespace phoenix {
 				}
 
 				if (chunk.position() != weight_buffer_end) {
-					PX_LOGW("softskin_mesh: {} bytes remaining in weight section",
-					        weight_buffer_end - chunk.position());
+					PX_LOGW("softskin_mesh: ",
+					        weight_buffer_end - chunk.position(),
+					        " bytes remaining in weight section");
 					chunk.position(weight_buffer_end);
 				}
 
@@ -79,7 +78,11 @@ namespace phoenix {
 			}
 
 			if (chunk.remaining() != 0) {
-				PX_LOGW("softskin_mesh: {} bytes remaining in section 0x{:4X}", chunk.remaining(), std::uint16_t(type));
+				PX_LOGW("softskin_mesh: ",
+				        chunk.remaining(),
+				        " bytes remaining in section ",
+				        std::hex,
+				        std::uint16_t(type));
 			}
 		} while (!end_mesh);
 

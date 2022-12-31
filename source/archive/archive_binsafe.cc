@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 #include "archive_binsafe.hh"
 
-#include <fmt/format.h>
 #include <iostream>
 #include <sstream>
 
@@ -106,8 +105,8 @@ namespace phoenix {
 
 		if (type != tp) {
 			input.skip(size);
-			throw parser_error {
-			    fmt::format("archive_reader_binsafe: type mismatch: expected {}, got: {}", int32_t(tp), int32_t(type))};
+			throw parser_error {"archive_reader_binsafe: type mismatch: expected " + std::to_string(tp) +
+			                    ", got: " + std::to_string(static_cast<uint32_t>(type))};
 		}
 
 		return size;
@@ -251,7 +250,7 @@ namespace phoenix {
 		if (length < size) {
 			throw parser_error {"archive_reader_binsafe", "not enough raw bytes to read!"};
 		} else if (length > size) {
-			PX_LOGW("read_raw_bytes: reading {} bytes although {} are actually available", size, length);
+			PX_LOGW("read_raw_bytes: reading ", size, " bytes although ", length, " are actually available");
 		}
 
 		return input.extract(length);

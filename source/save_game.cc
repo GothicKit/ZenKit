@@ -34,7 +34,7 @@ namespace phoenix::unstable {
 		}
 
 		if (!archive->read_object_end()) {
-			PX_LOGW("save_info: {} not fully parsed", hdr.class_name);
+			PX_LOGW("save_info: ", hdr.class_name, " not fully parsed");
 		}
 
 		return info;
@@ -82,7 +82,7 @@ namespace phoenix::unstable {
 		ar->read_int(); // poolCount
 
 		if (!ar->read_object_end()) {
-			PX_LOGE("save_game: {} not fully parsed", obj.class_name);
+			PX_LOGE("save_game: ", obj.class_name, " not fully parsed");
 			ar->skip_object(true);
 		}
 

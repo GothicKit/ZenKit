@@ -1,35 +1,34 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
-#include <fmt/format.h>
-
 #include <filesystem>
 #include <functional>
 #include <optional>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <utility>
 
 #if PHOENIX_LOG_LEVEL > 0
-#define PX_LOGE(...) phoenix::logging::log(phoenix::logging::level::error, fmt::format(__VA_ARGS__))
+#define PX_LOGE(...) phoenix::logging::log(phoenix::logging::level::error, __VA_ARGS__)
 #else
 #define PX_LOGE(...)
 #endif
 
 #if PHOENIX_LOG_LEVEL > 1
-#define PX_LOGW(...) phoenix::logging::log(phoenix::logging::level::warn, fmt::format(__VA_ARGS__))
+#define PX_LOGW(...) phoenix::logging::log(phoenix::logging::level::warn, __VA_ARGS__)
 #else
 #define PX_LOGW(...)
 #endif
 
 #if PHOENIX_LOG_LEVEL > 2
-#define PX_LOGI(...) phoenix::logging::log(phoenix::logging::level::info, fmt::format(__VA_ARGS__))
+#define PX_LOGI(...) phoenix::logging::log(phoenix::logging::level::info, __VA_ARGS__)
 #else
 #define PX_LOGI(...)
 #endif
 
 #if PHOENIX_LOG_LEVEL > 3
-#define PX_LOGD(...) phoenix::logging::log(phoenix::logging::level::debug, fmt::format(__VA_ARGS__))
+#define PX_LOGD(...) phoenix::logging::log(phoenix::logging::level::debug, __VA_ARGS__)
 #else
 #define PX_LOGD(...)
 #endif
@@ -92,13 +91,25 @@ namespace phoenix {
 		/// \brief Send a logging event to the underlying log callback.
 		/// \param lvl The level of the log message.
 		/// \param message The message to send.
-		static void log(level lvl, std::string&& message) {
+		template <typename... T>
+		static void log(level lvl, const T&... msg) {
 			if (logging::callback) {
-				(*logging::callback)(lvl, message);
+				std::stringstream msg_buffer {};
+				logging::_build_log_message(msg_buffer, msg...);
+				(*logging::callback)(lvl, msg_buffer.str());
 			}
 		}
 
 	private:
+		template <typename T, typename... Ts>
+		static void _build_log_message(std::stringstream& stream, const T& v, const Ts&... vals) {
+			stream << v;
+
+			if constexpr (sizeof...(vals) > 0) {
+				_build_log_message(stream, vals...);
+			}
+		}
+
 		static std::optional<std::function<void(level, const std::string&)>> callback;
 	};
 

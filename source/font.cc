@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/font.hh>
 
-#include <fmt/format.h>
-
 namespace phoenix {
 	font::font(std::string font_name, std::uint32_t font_height, std::vector<glyph> font_glyphs)
 	    : name(std::move(font_name)), height(font_height), glyphs(std::move(font_glyphs)) {}
@@ -12,7 +10,7 @@ namespace phoenix {
 		try {
 			auto version = in.get_line();
 			if (version != "1") {
-				throw parser_error {"font", fmt::format("version mismatch: expected version '1', got '{}'", version)};
+				throw parser_error {"font", "version mismatch: expected version 1, got " + version};
 			}
 
 			auto name = in.get_line(false);

@@ -4,8 +4,6 @@
 #include <phoenix/phoenix.hh>
 #include <phoenix/world.hh>
 
-#include <fmt/format.h>
-
 namespace phoenix {
 	[[maybe_unused]] static constexpr uint32_t BSP_VERSION_G1 = 0x2090000;
 	static constexpr uint32_t BSP_VERSION_G2 = 0x4090000;
@@ -58,17 +56,20 @@ namespace phoenix {
 			archive->read_object_begin(chnk);
 
 			if (chnk.class_name != "oCWorld:zCWorld") {
-				throw parser_error {"world",
-				                    fmt::format("'oCWorld:zCWorld' chunk expected, got '{}'", chnk.class_name)};
+				throw parser_error {"world", "'oCWorld:zCWorld' chunk expected, got '" + chnk.class_name + "'"};
 			}
 
 			while (!archive->read_object_end()) {
 				archive->read_object_begin(chnk);
-				PX_LOGI("world: parsing object [{} {} {} {}]",
+				PX_LOGI("world: parsing object [",
 				        chnk.object_name,
+				        " ",
 				        chnk.class_name,
+				        " ",
 				        chnk.version,
-				        chnk.index);
+				        " ",
+				        chnk.index,
+				        "]");
 
 				if (chnk.object_name == "MeshAndBsp") {
 					auto bsp_version = in.get_uint();
@@ -100,11 +101,15 @@ namespace phoenix {
 					// TODO: only present in save-games
 
 					if (!archive->read_object_begin(chnk)) {
-						PX_LOGW("world: object [{} {} {} {}] encountered but unable to parse",
+						PX_LOGW("world: object [",
 						        chnk.object_name,
+						        " ",
 						        chnk.class_name,
+						        " ",
 						        chnk.version,
-						        chnk.index);
+						        " ",
+						        chnk.index,
+						        "] encountered but unable to parse");
 						archive->skip_object(true);
 						continue;
 					}
@@ -118,11 +123,15 @@ namespace phoenix {
 					// TODO: only present in save-games
 
 					if (!archive->read_object_begin(chnk)) {
-						PX_LOGW("world: object [{} {} {} {}] encountered but unable to parse",
+						PX_LOGW("world: object [",
 						        chnk.object_name,
+						        " ",
 						        chnk.class_name,
+						        " ",
 						        chnk.version,
-						        chnk.index);
+						        " ",
+						        chnk.index,
+						        "] encountered but unable to parse");
 						archive->skip_object(true);
 						continue;
 					}
@@ -179,11 +188,15 @@ namespace phoenix {
 				}
 
 				if (!archive->read_object_end()) {
-					PX_LOGW("world: object [{} {} {} {}] not fully parsed",
+					PX_LOGW("world: object [",
 					        chnk.object_name,
+					        " ",
 					        chnk.class_name,
+					        " ",
 					        chnk.version,
-					        chnk.index);
+					        " ",
+					        chnk.index,
+					        "] not fully parsed");
 					archive->skip_object(true);
 				}
 			}

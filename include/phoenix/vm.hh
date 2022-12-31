@@ -133,7 +133,7 @@ namespace phoenix {
 				push_call_parameters<0, P...>(params, args...);
 			}
 
-			PX_LOGD("vm: calling function {}", sym->name());
+			PX_LOGD("vm: calling function ", sym->name());
 			call(sym);
 
 			if constexpr (std::is_same_v<R, _ignore_return_value>) {
@@ -296,7 +296,7 @@ namespace phoenix {
 				                    "registered to a different instance class"};
 			}
 
-			PX_LOGD("vm: initializing instance {}", sym->name());
+			PX_LOGD("vm: initializing instance ", sym->name());
 
 			instance->_m_symbol_index = sym->index();
 			instance->_m_type = &typeid(_instance_t);
@@ -462,7 +462,7 @@ namespace phoenix {
 				}
 			};
 
-			PX_LOGD("vm: registered external for {}", sym->name());
+			PX_LOGD("vm: registered external for ", sym->name());
 		}
 
 		/// \brief Registers an external function.
@@ -557,7 +557,7 @@ namespace phoenix {
 				}
 			};
 
-			PX_LOGD("vm: overrode function {}", sym->name());
+			PX_LOGD("vm: overrode function ", sym->name());
 		}
 
 		/// \brief Overrides a function in Daedalus code with an external definition.

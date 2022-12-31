@@ -3,8 +3,6 @@
 #include <phoenix/material.hh>
 #include <phoenix/vobs/vob.hh>
 
-#include <fmt/format.h>
-
 #include <unordered_map>
 
 namespace phoenix {
@@ -139,7 +137,7 @@ namespace phoenix {
 			}
 
 			if (!in.read_object_end()) {
-				PX_LOGW("vob_tree: visual \"{}\" not fully parsed", visual.class_name);
+				PX_LOGW("vob_tree: visual \"", visual.class_name, "\" not fully parsed");
 				in.skip_object(true);
 			}
 		}

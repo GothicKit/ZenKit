@@ -2,9 +2,6 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/model_mesh.hh>
 
-#include <fmt/format.h>
-#include <phoenix/mesh.hh>
-
 namespace phoenix {
 	enum class model_mesh_chunk {
 		unknown,
@@ -70,7 +67,11 @@ namespace phoenix {
 			}
 
 			if (chunk.remaining() != 0) {
-				PX_LOGW("model_mesh: {} bytes remaining in section 0x{:4X}", chunk.remaining(), std::uint16_t(type));
+				PX_LOGW("model_mesh: ",
+				        chunk.remaining(),
+				        " bytes remaining in section ",
+				        std::hex,
+				        std::uint16_t(type));
 			}
 		} while (!end_mesh);
 

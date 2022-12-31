@@ -5,7 +5,6 @@
 
 #include "model_script_dsl.hh"
 
-#include <fmt/format.h>
 #include <lexy/action/parse.hpp>
 #include <lexy/input/buffer.hpp>
 #include <lexy_ext/report_error.hpp>
@@ -89,7 +88,7 @@ namespace phoenix {
 			auto tp = event_types.find(type);
 			if (tp == event_types.end()) {
 				evt.type = mds::event_tag_type::unknown;
-				PX_LOGW("model_script: unexpected value for event_tag_type: \"{}\"", type);
+				PX_LOGW("model_script: unexpected value for event_tag_type: \"", type, "\"");
 			} else {
 				evt.type = tp->second;
 			}
@@ -298,7 +297,7 @@ namespace phoenix {
 
 				auto event_type = chunk.get_line(false);
 				if (event_type != "DEF_HIT_LIMB" && event_type != "HIT_LIMB") {
-					PX_LOGW("model_script: unexpected type for modelTag: \"{}\"", event_type);
+					PX_LOGW("model_script: unexpected type for modelTag: \"", event_type, "\"");
 				}
 
 				tag.bone = chunk.get_line(true);
@@ -313,7 +312,7 @@ namespace phoenix {
 				auto tp = mds::event_types.find(event_type);
 				if (tp == mds::event_types.end()) {
 					event.type = mds::event_tag_type::unknown;
-					PX_LOGW("model_script: unexpected value for event_tag_type: \"{}\"", event_type);
+					PX_LOGW("model_script: unexpected value for event_tag_type: \"", event_type, "\"");
 				} else {
 					event.type = tp->second;
 				}
@@ -442,7 +441,11 @@ namespace phoenix {
 			}
 
 			if (chunk.remaining() != 0) {
-				PX_LOGW("model_script: {} bytes remaining in section 0x{:4X}", chunk.remaining(), std::uint16_t(type));
+				PX_LOGW("model_script: ",
+				        chunk.remaining(),
+				        " bytes remaining in section ",
+				        std::hex,
+				        std::uint16_t(type));
 			}
 		} while (buf.remaining() > 0);
 

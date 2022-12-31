@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/animation.hh>
 
-#include <fmt/format.h>
-
 #include <cmath>
 
 namespace phoenix {
@@ -130,9 +128,12 @@ namespace phoenix {
 			}
 
 			if (chunk.remaining() > 0) {
-				PX_LOGW("animation(\"{}\"): {} bytes remaining in section 0x{:4X}",
+				PX_LOGW("animation(\"",
 				        anim.name,
+				        "\"): ",
 				        chunk.remaining(),
+				        " bytes remaining in section ",
+				        std::hex,
 				        std::uint16_t(type));
 			}
 		} while (buf.remaining() != 0);

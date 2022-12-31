@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/proto_mesh.hh>
 
-#include <fmt/format.h>
-
 namespace phoenix {
 	[[maybe_unused]] static constexpr auto version_g1 = 0x305;
 	static constexpr auto version_g2 = 0x905;
@@ -33,7 +31,11 @@ namespace phoenix {
 			}
 
 			if (chunk.remaining() != 0) {
-				PX_LOGW("proto_mesh: {} bytes remaining in section 0x{:4X}", chunk.remaining(), std::uint16_t(type));
+				PX_LOGW("proto_mesh: ",
+				        chunk.remaining(),
+				        " bytes remaining in section ",
+				        std::hex,
+				        std::uint16_t(type));
 			}
 		} while (!end_mesh);
 
