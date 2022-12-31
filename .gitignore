@@ -5,6 +5,7 @@
 /build/
 /cmake-build-*/
 /data/
+/site/
 
 *.proprietary.*
 *.env
