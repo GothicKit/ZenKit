@@ -60,6 +60,7 @@ namespace phoenix {
 		auto line = input.get_line();
 
 		// Compatibility fix for binary data in ASCII archives.
+		// TODO: Optimize using `find_if`!
 		while (std::isspace(static_cast<unsigned char>(line[0]))) {
 			line = line.substr(1);
 		}
