@@ -87,19 +87,6 @@ namespace phoenix {
 		return input.get_vec2();
 	}
 
-	void archive_reader_binary::skip_entry() {
-		throw parser_error {"archive_reader", "cannot skip entry in binary archive"};
-	}
-
-	void archive_reader_binary::skip_object(bool skip_current) {
-		if (skip_current) {
-			input.position(_m_object_end.top());
-			_m_object_end.pop();
-		} else {
-			input.skip(input.get_uint() - 4);
-		}
-	}
-
 	bounding_box archive_reader_binary::read_bbox() {
 		return bounding_box::parse(input);
 	}
@@ -116,7 +103,20 @@ namespace phoenix {
 		return input.extract(size);
 	}
 
-	void archive_reader_binary::print_entry() {
-		throw parser_error {"archive_reader", "cannot print entry in binary archive"};
+	void archive_reader_binary::skip_entry() {
+		throw parser_error {"archive_reader", "cannot skip entry in binary archive"};
+	}
+
+	void archive_reader_binary::skip_object(bool skip_current) {
+		if (skip_current) {
+			input.position(_m_object_end.top());
+			_m_object_end.pop();
+		} else {
+			input.skip(input.get_uint() - 4);
+		}
+	}
+
+	std::variant<archive_object, archive_object_end, archive_entry> archive_reader_binary::unstable__next() {
+		throw parser_error {"archive_reader", "next() doesn't work for binary archives"};
 	}
 } // namespace phoenix

@@ -35,7 +35,7 @@ namespace phoenix {
 			return false;
 		input.mark();
 
-		if (input.get() != bs_string) {
+		if (static_cast<archive_entry_type>(input.get()) != archive_entry_type::string) {
 			input.reset();
 			return false;
 		}
@@ -71,7 +71,7 @@ namespace phoenix {
 			return false;
 		input.mark();
 
-		if (input.get() != bs_string) {
+		if (static_cast<archive_entry_type>(input.get()) != archive_entry_type::string) {
 			input.reset();
 			return false;
 		}
@@ -90,7 +90,7 @@ namespace phoenix {
 	}
 
 	const std::string& archive_reader_binsafe::get_entry_key() {
-		if (input.get(input.position()) != bs_hash) {
+		if (static_cast<archive_entry_type>(input.get(input.position())) != archive_entry_type::hash) {
 			throw parser_error {"archive_reader_binsafe", "invalid format"};
 		}
 
@@ -99,15 +99,18 @@ namespace phoenix {
 		return _m_hash_table_entries[hash].key;
 	}
 
-	std::uint16_t archive_reader_binsafe::ensure_entry_meta(archive_binsafe_type tp) {
+	std::uint16_t archive_reader_binsafe::ensure_entry_meta(archive_entry_type tp) {
 		(void) get_entry_key();
-		auto type = input.get();
-		uint16_t size =
-		    (type == bs_string || type == bs_raw || type == bs_raw_float) ? input.get_ushort() : type_sizes[type];
+		auto type = static_cast<archive_entry_type>(input.get());
+		uint16_t size = (type == archive_entry_type::string || type == archive_entry_type::raw ||
+		                 type == archive_entry_type::raw_float)
+		    ? input.get_ushort()
+		    : type_sizes[static_cast<uint8_t>(type)];
 
 		if (type != tp) {
 			input.skip(size);
-			throw parser_error {"archive_reader_binsafe: type mismatch: expected " + std::to_string(tp) +
+			throw parser_error {"archive_reader_binsafe: type mismatch: expected " +
+			                    std::to_string(static_cast<uint8_t>(tp)) +
 			                    ", got: " + std::to_string(static_cast<uint32_t>(type))};
 		}
 
@@ -115,44 +118,44 @@ namespace phoenix {
 	}
 
 	std::string archive_reader_binsafe::read_string() {
-		auto rv = input.get_string(ensure_entry_meta(bs_string));
+		auto rv = input.get_string(ensure_entry_meta(archive_entry_type::string));
 		return rv;
 	}
 
 	std::int32_t archive_reader_binsafe::read_int() {
-		ensure_entry_meta(bs_int);
+		ensure_entry_meta(archive_entry_type::int_);
 		auto rv = input.get_int();
 		return rv;
 	}
 
 	float archive_reader_binsafe::read_float() {
-		ensure_entry_meta(bs_float);
+		ensure_entry_meta(archive_entry_type::float_);
 		auto rv = input.get_float();
 		return rv;
 	}
 
 	std::uint8_t archive_reader_binsafe::read_byte() {
-		ensure_entry_meta(bs_byte);
+		ensure_entry_meta(archive_entry_type::byte);
 		return input.get();
 	}
 
 	std::uint16_t archive_reader_binsafe::read_word() {
-		ensure_entry_meta(bs_word);
+		ensure_entry_meta(archive_entry_type::word);
 		return input.get_ushort();
 	}
 
 	std::uint32_t archive_reader_binsafe::read_enum() {
-		ensure_entry_meta(bs_enum);
+		ensure_entry_meta(archive_entry_type::enum_);
 		return input.get_uint();
 	}
 
 	bool archive_reader_binsafe::read_bool() {
-		ensure_entry_meta(bs_bool);
+		ensure_entry_meta(archive_entry_type::bool_);
 		return input.get_uint() != 0;
 	}
 
 	glm::u8vec4 archive_reader_binsafe::read_color() {
-		ensure_entry_meta(bs_color);
+		ensure_entry_meta(archive_entry_type::color);
 
 		auto b = input.get();
 		auto g = input.get();
@@ -163,12 +166,12 @@ namespace phoenix {
 	}
 
 	glm::vec3 archive_reader_binsafe::read_vec3() {
-		ensure_entry_meta(bs_vec3);
+		ensure_entry_meta(archive_entry_type::vec3);
 		return input.get_vec3();
 	}
 
 	glm::vec2 archive_reader_binsafe::read_vec2() {
-		auto unused = static_cast<std::int32_t>(ensure_entry_meta(bs_raw_float) - 2 * sizeof(float));
+		auto unused = static_cast<std::int32_t>(ensure_entry_meta(archive_entry_type::raw_float) - 2 * sizeof(float));
 
 		if (unused < 0) {
 			throw parser_error {"archive_reader_binsafe"
@@ -182,39 +185,9 @@ namespace phoenix {
 		return c;
 	}
 
-	void archive_reader_binsafe::skip_entry() {
-		auto type = static_cast<archive_binsafe_type>(input.get());
-
-		switch (type) {
-		case bs_string:
-		case bs_raw:
-		case bs_raw_float:
-			input.skip(input.get_ushort());
-			break;
-		case bs_enum:
-		case bs_hash:
-		case bs_int:
-		case bs_float:
-		case bs_bool:
-		case bs_color:
-			(void) input.get_uint();
-			break;
-		case bs_byte:
-			(void) input.get();
-			break;
-		case bs_word:
-			(void) input.get_ushort();
-			break;
-		case bs_vec3:
-			(void) input.get_float();
-			(void) input.get_float();
-			(void) input.get_float();
-			break;
-		}
-	}
-
 	bounding_box archive_reader_binsafe::read_bbox() {
-		auto unused = static_cast<std::int32_t>(ensure_entry_meta(bs_raw_float) - 3 * 2 * sizeof(float));
+		auto unused =
+		    static_cast<std::int32_t>(ensure_entry_meta(archive_entry_type::raw_float) - 3 * 2 * sizeof(float));
 
 		if (unused < 0) {
 			throw parser_error {"archive:reader_binsafe",
@@ -229,7 +202,7 @@ namespace phoenix {
 	}
 
 	glm::mat3x3 archive_reader_binsafe::read_mat3x3() {
-		auto unused = static_cast<std::int32_t>(ensure_entry_meta(bs_raw) - 3 * 3 * sizeof(float));
+		auto unused = static_cast<std::int32_t>(ensure_entry_meta(archive_entry_type::raw) - 3 * 3 * sizeof(float));
 
 		if (unused < 0) {
 			throw parser_error(
@@ -242,12 +215,12 @@ namespace phoenix {
 	}
 
 	buffer archive_reader_binsafe::read_raw_bytes() {
-		auto length = ensure_entry_meta(bs_raw);
+		auto length = ensure_entry_meta(archive_entry_type::raw);
 		return input.extract(length);
 	}
 
 	buffer archive_reader_binsafe::read_raw_bytes(uint32_t size) {
-		auto length = ensure_entry_meta(bs_raw);
+		auto length = ensure_entry_meta(archive_entry_type::raw);
 
 		if (length < size) {
 			throw parser_error {"archive_reader_binsafe", "not enough raw bytes to read!"};
@@ -258,80 +231,97 @@ namespace phoenix {
 		return input.extract(length);
 	}
 
-	constexpr std::string_view type_names[] = {
-	    "unknown", // ?            = 0x00
-	    "string",  // bs_string    = 0x01,
-	    "int",     // bs_int       = 0x02,
-	    "float",   // bs_float     = 0x03,
-	    "byte",    // bs_byte      = 0x04,
-	    "word",    // bs_word      = 0x05,
-	    "bool",    // bs_bool      = 0x06,
-	    "vec3",    // bs_vec3      = 0x07,
-	    "color",   // bs_color     = 0x08,
-	    "raw",     // bs_raw       = 0x09,
-	    "unknown", // ?            = 0x0A
-	    "unknown", // ?            = 0x0B
-	    "unknown", // ?            = 0x0C
-	    "unknown", // ?            = 0x0D
-	    "unknown", // ?            = 0x0E
-	    "unknown", // ?            = 0x0F
-	    "unknown", // bs_raw_float = 0x10,
-	    "enum",    // bs_enum      = 0x11,
-	    "hash",    // bs_hash      = 0x12,
-	};
-
-	void archive_reader_binsafe::print_entry() {
-		auto type = static_cast<archive_binsafe_type>(input.get());
-
-		if (type != bs_hash) {
-			std::cout << "<field name=\"unknown\" type=\"" << type_names[type] << "\" ";
-		} else {
-			auto hash = input.get_uint();
-			auto& name = _m_hash_table_entries[hash].key;
-
-			type = static_cast<archive_binsafe_type>(input.get());
-
-			std::cout << "<field name=\"" << name << "\" type=\"" << type_names[type] << "\" ";
-		}
+	void archive_reader_binsafe::skip_entry() {
+		auto type = static_cast<archive_entry_type>(input.get());
 
 		switch (type) {
-		case bs_string:
-			std::cout << "value=\"" << input.get_string(input.get_ushort()) << "\" ";
+		case archive_entry_type::string:
+		case archive_entry_type::raw:
+		case archive_entry_type::raw_float:
+			input.skip(input.get_ushort());
 			break;
-		case bs_raw:
-		case bs_raw_float: {
-			auto size = input.get_ushort();
-			std::cout << "length=\"" << size << "\" ";
-
-			input.skip(size);
+		case archive_entry_type::enum_:
+		case archive_entry_type::hash:
+		case archive_entry_type::int_:
+		case archive_entry_type::float_:
+		case archive_entry_type::bool_:
+		case archive_entry_type::color:
+			(void) input.get_uint();
 			break;
-		}
-		case bs_enum:
-		case bs_int:
-		case bs_bool:
-		case bs_color:
-		case bs_hash:
-			std::cout << "value=\"" << input.get_uint() << "\" ";
+		case archive_entry_type::byte:
+			(void) input.get();
 			break;
-		case bs_float:
-			std::cout << "value=\"" << input.get_float() << "\" ";
+		case archive_entry_type::word:
+			(void) input.get_ushort();
 			break;
-		case bs_byte:
-			std::cout << "value=\"" << static_cast<uint16_t>(input.get()) << "\" ";
-			break;
-		case bs_word:
-			std::cout << "value=\"" << input.get_ushort() << "\" ";
-			break;
-		case bs_vec3: {
-			auto x = input.get_float();
-			auto y = input.get_float();
-			auto z = input.get_float();
-
-			std::cout << "value=\"(" << x << ", " << y << ", " << z << ")\" ";
+		case archive_entry_type::vec3:
+			(void) input.get_float();
+			(void) input.get_float();
+			(void) input.get_float();
 			break;
 		}
-		}
+	}
 
-		std::cout << "/>\n";
+	std::variant<archive_object, archive_object_end, archive_entry> archive_reader_binsafe::unstable__next() {
+		static archive_object obj {};
+		if (read_object_begin(obj)) {
+			return obj;
+		} else if (read_object_end()) {
+			return archive_object_end {};
+		} else {
+			archive_entry entry {};
+			entry.name = get_entry_key();
+			entry.type = static_cast<archive_entry_type>(input.get());
+
+			switch (entry.type) {
+			case archive_entry_type::string:
+				entry.value = input.get_string(input.get_ushort());
+				break;
+			case archive_entry_type::raw:
+			case archive_entry_type::raw_float:
+				entry.value = input.extract(input.get_ushort());
+				break;
+			case archive_entry_type::enum_:
+				entry.value = input.get_uint();
+				break;
+			case archive_entry_type::hash:
+				entry.value = input.get_uint();
+				break;
+			case archive_entry_type::int_:
+				entry.value = input.get_int();
+				break;
+			case archive_entry_type::float_:
+				entry.value = input.get_float();
+				break;
+			case archive_entry_type::bool_:
+				entry.value = input.get_uint() != 0;
+				break;
+			case archive_entry_type::color: {
+				auto b = input.get();
+				auto g = input.get();
+				auto r = input.get();
+				auto a = input.get();
+
+				entry.value = glm::u8vec4 {r, g, b, a};
+				break;
+			}
+			case archive_entry_type::byte:
+				entry.value = input.get();
+				break;
+			case archive_entry_type::word:
+				entry.value = input.get_ushort();
+				break;
+			case archive_entry_type::vec3: {
+				auto x = input.get_float();
+				auto y = input.get_float();
+				auto z = input.get_float();
+
+				entry.value = glm::vec3 {x, y, z};
+				break;
+			}
+			}
+
+			return entry;
+		}
 	}
 } // namespace phoenix

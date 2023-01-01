@@ -26,10 +26,11 @@ namespace phoenix {
 		buffer read_raw_bytes() override;
 		buffer read_raw_bytes(uint32_t size) override;
 
+		std::variant<archive_object, archive_object_end, archive_entry> unstable__next() override;
+
 	protected:
 		void read_header() override;
 		void skip_entry() override;
-		void print_entry() override;
 
 		std::string read_entry(std::string_view type);
 

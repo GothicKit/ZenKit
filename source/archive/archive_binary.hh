@@ -29,11 +29,11 @@ namespace phoenix {
 		buffer read_raw_bytes(uint32_t size) override;
 
 		void skip_object(bool skip_current) override;
+		std::variant<archive_object, archive_object_end, archive_entry> unstable__next() override;
 
 	protected:
 		void read_header() override;
 		void skip_entry() override;
-		void print_entry() override;
 
 	private:
 		std::stack<uint64_t> _m_object_end {};

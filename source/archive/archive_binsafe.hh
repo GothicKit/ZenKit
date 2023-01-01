@@ -28,21 +28,6 @@ namespace phoenix {
 	    sizeof(std::uint32_t),    // bs_hash      = 0x12,
 	};
 
-	enum archive_binsafe_type {
-		bs_string = 0x1,
-		bs_int = 0x2,
-		bs_float = 0x3,
-		bs_byte = 0x4,
-		bs_word = 0x5,
-		bs_bool = 0x6,
-		bs_vec3 = 0x7,
-		bs_color = 0x8,
-		bs_raw = 0x9,
-		bs_raw_float = 0x10,
-		bs_enum = 0x11,
-		bs_hash = 0x12,
-	};
-
 	struct hash_table_entry {
 		std::string key;
 		std::uint32_t hash; // TODO: I don't know what this is.
@@ -70,13 +55,14 @@ namespace phoenix {
 		buffer read_raw_bytes() override;
 		buffer read_raw_bytes(uint32_t size) override;
 
+		std::variant<archive_object, archive_object_end, archive_entry> unstable__next() override;
+
 	protected:
 		void read_header() override;
 		void skip_entry() override;
-		void print_entry() override;
 
 		const std::string& get_entry_key();
-		std::uint16_t ensure_entry_meta(archive_binsafe_type tp);
+		std::uint16_t ensure_entry_meta(archive_entry_type tp);
 
 	private:
 		std::uint32_t _m_object_count {0};

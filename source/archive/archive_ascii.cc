@@ -7,6 +7,21 @@
 #include <iostream>
 
 namespace phoenix {
+	static const std::unordered_map<std::string, archive_entry_type> type_name_to_enum {
+	    {"string", archive_entry_type::string},
+	    {"int", archive_entry_type::int_},
+	    {"float", archive_entry_type::float_},
+	    {"byte", archive_entry_type::byte},
+	    {"word", archive_entry_type::word},
+	    {"bool_", archive_entry_type::bool_},
+	    {"vec3", archive_entry_type::vec3},
+	    {"color", archive_entry_type::color},
+	    {"raw", archive_entry_type::raw},
+	    {"rawFloat", archive_entry_type::raw_float},
+	    {"enum", archive_entry_type::enum_},
+	    {"hash", archive_entry_type::hash},
+	};
+
 	void archive_reader_ascii::read_header() {
 		{
 			std::string objects = input.get_line();
@@ -216,14 +231,63 @@ namespace phoenix {
 		return buffer::of(std::move(out));
 	}
 
-	void archive_reader_ascii::print_entry() {
-		auto line = input.get_line();
-		auto name = line.substr(line.find('='));
+	std::variant<archive_object, archive_object_end, archive_entry> archive_reader_ascii::unstable__next() {
+		static archive_object tmp {};
+		if (read_object_begin(tmp)) {
+			return tmp;
+		} else if (read_object_end()) {
+			return archive_object_end {};
+		} else {
+			input.mark();
 
-		line = line.substr(line.find('=') + 1);
-		auto colon = line.find(':');
+			archive_entry entry {};
 
-		std::cout << "<field name=\"" << name << "\" type=\"" << line.substr(0, colon) << "\" value=\""
-		          << line.substr(colon + 1) << "\" />";
+			auto line = input.get_line();
+			entry.name = line.substr(line.find('='));
+
+			line = line.substr(line.find('=') + 1);
+			entry.type = type_name_to_enum.at(line.substr(0, line.find(':')));
+
+			input.reset();
+
+			switch (entry.type) {
+			case archive_entry_type::string:
+				entry.value = read_string();
+				break;
+			case archive_entry_type::int_:
+				entry.value = read_int();
+				break;
+			case archive_entry_type::float_:
+				entry.value = read_float();
+				break;
+			case archive_entry_type::byte:
+				entry.value = read_byte();
+				break;
+			case archive_entry_type::word:
+				entry.value = read_word();
+				break;
+			case archive_entry_type::bool_:
+				entry.value = read_bool();
+				break;
+			case archive_entry_type::vec3:
+				entry.value = read_vec3();
+				break;
+			case archive_entry_type::color:
+				entry.value = read_color();
+				break;
+			case archive_entry_type::raw:
+			case archive_entry_type::raw_float:
+				entry.value = read_raw_bytes();
+				break;
+			case archive_entry_type::enum_:
+				entry.value = read_enum();
+				break;
+			case archive_entry_type::hash:
+				entry.value = 0u;
+				break;
+			}
+
+			return entry;
+		}
 	}
 } // namespace phoenix

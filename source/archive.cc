@@ -9,6 +9,28 @@
 #include <iostream>
 
 namespace phoenix {
+	constexpr std::string_view type_names[] = {
+	    "unknown", // ?            = 0x00
+	    "string",  // bs_string    = 0x01,
+	    "int",     // bs_int       = 0x02,
+	    "float",   // bs_float     = 0x03,
+	    "byte",    // bs_byte      = 0x04,
+	    "word",    // bs_word      = 0x05,
+	    "bool",    // bs_bool      = 0x06,
+	    "vec3",    // bs_vec3      = 0x07,
+	    "color",   // bs_color     = 0x08,
+	    "raw",     // bs_raw       = 0x09,
+	    "unknown", // ?            = 0x0A
+	    "unknown", // ?            = 0x0B
+	    "unknown", // ?            = 0x0C
+	    "unknown", // ?            = 0x0D
+	    "unknown", // ?            = 0x0E
+	    "unknown", // ?            = 0x0F
+	    "unknown", // bs_raw_float = 0x10,
+	    "enum",    // bs_enum      = 0x11,
+	    "hash",    // bs_hash      = 0x12,
+	};
+
 	archive_header archive_header::parse(buffer& in) {
 		try {
 			archive_header header {};
@@ -97,19 +119,79 @@ namespace phoenix {
 	}
 
 	void archive_reader::print_structure(bool open_object) {
-		archive_object tmp;
+		this->unstable__visit_objects(
+		    open_object,
+		    [](const std::optional<archive_object>& obj, const std::optional<archive_entry>& ent) {
+			    if (obj) {
+				    std::cout << "<object class=\"" << obj->class_name << "\" name=\"" << obj->object_name
+				              << "\" version=\"" << obj->version << "\" index=\"" << obj->index << "\">\n";
+			    } else if (ent) {
+				    std::cout << "<entry name=\"" << ent->name << "\" type=\""
+				              << type_names[static_cast<uint8_t>(ent->type)] << "\" ";
+
+				    switch (ent->type) {
+				    case archive_entry_type::string:
+					    std::cout << "value=\"" << std::get<std::string>(ent->value) << "\" ";
+					    break;
+				    case archive_entry_type::int_:
+					    std::cout << "value=\"" << std::get<int>(ent->value) << "\" ";
+					    break;
+				    case archive_entry_type::float_:
+					    std::cout << "value=\"" << std::get<float>(ent->value) << "\" ";
+					    break;
+				    case archive_entry_type::byte:
+					    std::cout << "value=\"" << static_cast<uint16_t>(std::get<uint8_t>(ent->value)) << "\" ";
+					    break;
+				    case archive_entry_type::word:
+					    std::cout << "value=\"" << std::get<uint16_t>(ent->value) << "\" ";
+					    break;
+				    case archive_entry_type::bool_:
+					    std::cout << "value=\"" << std::get<bool>(ent->value) << "\" ";
+					    break;
+				    case archive_entry_type::vec3: {
+					    auto v = std::get<glm::vec3>(ent->value);
+					    std::cout << "value=\"(" << v.x << ", " << v.y << ", " << v.z << ")\" ";
+					    break;
+				    }
+				    case archive_entry_type::color: {
+					    auto v = std::get<glm::u8vec4>(ent->value);
+					    std::cout << "value=\"(" << v.r << ", " << v.g << ", " << v.b << ", " << v.a << ")\" ";
+					    break;
+				    }
+				    case archive_entry_type::raw:
+				    case archive_entry_type::raw_float:
+					    std::cout << "length=\"" << std::get<buffer>(ent->value).remaining() << "\" ";
+					    break;
+				    case archive_entry_type::enum_:
+					    std::cout << "value=\"" << std::get<uint32_t>(ent->value) << "\" ";
+					    break;
+				    case archive_entry_type::hash:
+					    std::cout << "value=\"" << std::get<uint32_t>(ent->value) << "\" ";
+					    break;
+				    }
+
+				    std::cout << "/>\n";
+			    } else {
+				    std::cout << "</object>\n";
+			    }
+		    });
+	}
+
+	void archive_reader::unstable__visit_objects(bool open_object, const archive_visitor& cb) {
+		std::variant<archive_object, archive_object_end, archive_entry> ent;
 		int32_t level = open_object ? 1 : 0;
 
 		do {
-			if (read_object_begin(tmp)) {
-				std::cout << "<object type=\"" << tmp.class_name << "\" name=\"" << tmp.object_name << "\" version=\""
-				          << tmp.version << "\" index=\"" << tmp.index << "\">\n";
+			ent = unstable__next();
+
+			if (std::holds_alternative<archive_object>(ent)) {
+				cb(std::get<archive_object>(ent), std::nullopt);
 				++level;
-			} else if (read_object_end()) {
-				std::cout << "</object>\n";
+			} else if (std::holds_alternative<archive_object_end>(ent)) {
+				cb(std::nullopt, std::nullopt);
 				--level;
 			} else {
-				print_entry();
+				cb(std::nullopt, std::get<archive_entry>(ent));
 			}
 		} while (level > 0);
 	}

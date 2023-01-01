@@ -11,7 +11,9 @@
 
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
+#include <variant>
 
 namespace phoenix {
 	enum class archive_format { binary, binsafe, ascii };
@@ -57,6 +59,32 @@ namespace phoenix {
 		/// \brief The index of the object in the archive. Unique for each object in an archive.
 		std::uint32_t index;
 	};
+
+	enum class archive_entry_type : uint8_t {
+		string = 0x1,
+		int_ = 0x2,
+		float_ = 0x3,
+		byte = 0x4,
+		word = 0x5,
+		bool_ = 0x6,
+		vec3 = 0x7,
+		color = 0x8,
+		raw = 0x9,
+		raw_float = 0x10,
+		enum_ = 0x11,
+		hash = 0x12,
+	};
+
+	struct archive_entry {
+		archive_entry_type type;
+		std::string name;
+		std::variant<std::string, int, float, uint8_t, uint16_t, bool, glm::vec3, glm::u8vec4, buffer, uint32_t> value;
+	};
+
+	struct archive_object_end {};
+
+	using archive_visitor =
+	    std::function<void(const std::optional<archive_object>&, const std::optional<archive_entry>&)>;
 
 	/// \brief A reader for ZenGin archives.
 	class archive_reader {
@@ -173,6 +201,22 @@ namespace phoenix {
 		///                    values until the current object closes.
 		virtual void print_structure(bool open_object);
 
+		/// \brief Get the next element in the archive.
+		///
+		/// Parses the next element, either an object begin, object end or entry from the archive and returns
+		/// its associated value.
+		///
+		/// \return The value of the next element in the archive.
+		/// \warning This API is unstable and may change at any time!
+		virtual std::variant<archive_object, archive_object_end, archive_entry> unstable__next() = 0;
+
+		/// \brief Walks the current or next object of the archive recursively, calling `cb` for each element.
+		/// \param open_object If `false`, walks out the next object in the reader, otherwise walks all
+		///                    values until the current object closes.
+		/// \param cb A callback function to handle each element.
+		/// \warning This API is unstable and may change at any time!
+		void unstable__visit_objects(bool open_object, const archive_visitor& cb);
+
 		/// \return The header of the archive
 		[[nodiscard]] const archive_header& get_header() const noexcept {
 			return header;
@@ -189,7 +233,6 @@ namespace phoenix {
 
 		/// \brief Skips the next entry in the reader.
 		virtual void skip_entry() = 0;
-		virtual void print_entry() = 0;
 
 	protected:
 		archive_header header;
