@@ -40,10 +40,6 @@ namespace phoenix {
 			}
 
 			void read(std::byte* buf, std::uint64_t size, std::uint64_t offset) const override {
-				if (offset + size > this->size()) {
-					throw buffer_underflow {offset, size, "in backing"};
-				}
-
 				std::copy_n(_m_data.cbegin() + static_cast<long>(offset), size, buf);
 			}
 
@@ -91,10 +87,6 @@ namespace phoenix {
 			}
 
 			void read(std::byte* buf, std::uint64_t size, std::uint64_t offset) const override {
-				if (offset + size > this->size()) {
-					throw buffer_underflow {offset, size, "in backing"};
-				}
-
 				std::copy_n(_m_data.cbegin() + static_cast<long>(offset), size, buf);
 			}
 

@@ -156,11 +156,11 @@ namespace phoenix {
 		    typename T,
 		    typename = typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value>::type>
 		[[nodiscard]] T _get_t(std::uint64_t pos) const {
-			if (pos > limit() || pos + sizeof(T) > limit()) {
+			if (pos + sizeof(T) > limit()) {
 				throw buffer_underflow {pos, sizeof(T)};
 			}
 
-			T tmp {};
+			T tmp;
 			_m_backing->read((std::byte*) &tmp, sizeof(T), _m_backing_begin + pos);
 			return tmp;
 		}
@@ -555,7 +555,9 @@ namespace phoenix {
 		/// \return The vector just read
 		/// \throws buffer_underflow if the value can't be read.
 		[[nodiscard]] inline glm::vec2 get_vec2() {
-			return {get_float(), get_float()};
+			float content[2];
+			this->get((std::byte*) content, sizeof(content));
+			return {content[0], content[1]};
 		}
 
 		/// \brief Get a 2D-vector from the buffer.
@@ -570,21 +572,54 @@ namespace phoenix {
 		/// \return The vector just read
 		/// \throws buffer_underflow if the value can't be read.
 		[[nodiscard]] inline glm::vec3 get_vec3() {
-			return {get_float(), get_float(), get_float()};
+			float content[3];
+			this->get((std::byte*) content, sizeof(content));
+			return glm::vec3 {content[0], content[1], content[2]};
 		}
 
 		/// \brief Get a 3x3 column-major matrix from the buffer.
 		/// \return The vector just read
 		/// \throws buffer_underflow if the value can't be read.
 		[[nodiscard]] inline glm::mat3x3 get_mat3x3() {
-			return glm::mat3x3 {get_vec3(), get_vec3(), get_vec3()};
+			float content[3 * 3];
+			this->get((std::byte*) content, sizeof(content));
+			return glm::mat3x3 {
+			    content[0],
+			    content[1],
+			    content[2],
+			    content[3],
+			    content[4],
+			    content[5],
+			    content[6],
+			    content[7],
+			    content[8],
+			};
 		}
 
 		/// \brief Get a 4x4 column-major matrix from the buffer.
 		/// \return The vector just read
 		/// \throws buffer_underflow if the value can't be read.
 		inline glm::mat4x4 get_mat4x4() {
-			return glm::mat4x4 {get_vec4(), get_vec4(), get_vec4(), get_vec4()};
+			float content[4 * 4];
+			this->get((std::byte*) content, sizeof(content));
+			return glm::mat4x4 {
+			    content[0],
+			    content[1],
+			    content[2],
+			    content[3],
+			    content[4],
+			    content[5],
+			    content[6],
+			    content[7],
+			    content[8],
+			    content[9],
+			    content[10],
+			    content[11],
+			    content[12],
+			    content[13],
+			    content[14],
+			    content[15],
+			};
 		}
 
 		/// \brief Get a 3D-vector from the buffer.
@@ -599,7 +634,9 @@ namespace phoenix {
 		/// \return The vector just read
 		/// \throws buffer_underflow if the value can't be read.
 		[[nodiscard]] inline glm::vec4 get_vec4() {
-			return {get_float(), get_float(), get_float(), get_float()};
+			float content[4];
+			this->get((std::byte*) content, sizeof(content));
+			return glm::vec4 {content[0], content[1], content[2], content[3]};
 		}
 
 		/// \brief Get a 4D-vector from the buffer.
