@@ -39,7 +39,7 @@ namespace phoenix {
 			return true;
 		}
 
-		return false;
+		return input.remaining() == 0;
 	}
 
 	std::string archive_reader_binary::read_string() {

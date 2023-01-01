@@ -52,8 +52,9 @@ namespace phoenix {
 	}
 
 	bool archive_reader_ascii::read_object_end() {
+		// When there are less than 3 bytes left in the input, this must be the end of the archive.
 		if (input.remaining() < 3)
-			return false;
+			return true;
 
 		input.mark();
 		auto line = input.get_line();

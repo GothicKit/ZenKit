@@ -65,6 +65,8 @@ namespace phoenix {
 	}
 
 	bool archive_reader_binsafe::read_object_end() {
+		if (input.remaining() == 0)
+			return true;
 		if (input.remaining() < 6)
 			return false;
 		input.mark();
