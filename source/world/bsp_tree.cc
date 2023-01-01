@@ -91,19 +91,13 @@ namespace phoenix {
 
 				_parse_bsp_nodes(chunk, bsp.nodes, bsp.leaf_node_indices, version, -1);
 
-				// A set should be the preferred datastructure for this. For some reason though, std::set maxes out
-				// at 255 values :|
 				for (auto idx : bsp.leaf_node_indices) {
 					auto& node = bsp.nodes[idx];
 
 					for (uint32_t i = 0; i < node.polygon_count; ++i) {
-						bsp.leaf_polygons.push_back(bsp.polygon_indices[node.polygon_index + i]);
+						bsp.leaf_polygons.insert(bsp.polygon_indices[node.polygon_index + i]);
 					}
 				}
-
-				std::sort(bsp.leaf_polygons.begin(), bsp.leaf_polygons.end());
-				bsp.leaf_polygons.erase(std::unique(bsp.leaf_polygons.begin(), bsp.leaf_polygons.end()),
-				                        bsp.leaf_polygons.end());
 
 				assert(node_count == bsp.nodes.size());
 				assert(leaf_count == bsp.leaf_node_indices.size());

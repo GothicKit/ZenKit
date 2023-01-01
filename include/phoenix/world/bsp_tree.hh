@@ -7,6 +7,7 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
+#include <unordered_set>
 #include <vector>
 
 namespace phoenix {
@@ -77,7 +78,7 @@ namespace phoenix {
 		std::vector<std::uint32_t> polygon_indices;
 
 		/// \brief All BSP leaf polygon indices.
-		std::vector<std::uint32_t> leaf_polygons;
+		std::unordered_set<std::uint32_t> leaf_polygons;
 
 		/// \brief All BSP light points.
 		std::vector<glm::vec3> light_points;

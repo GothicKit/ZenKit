@@ -8,6 +8,8 @@
 #include <phoenix/proto_mesh.hh>
 #include <phoenix/texture.hh>
 
+#include <unordered_set>
+
 namespace phoenix {
 	/// \brief Represents a light map.
 	struct light_map {
@@ -84,7 +86,7 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&, const std::vector<std::uint32_t>&)
-		[[nodiscard]] static mesh parse(buffer& buf, const std::vector<std::uint32_t>& include_polygons = {});
+		[[nodiscard]] static mesh parse(buffer& buf, const std::unordered_set<std::uint32_t>& include_polygons = {});
 
 		/// \brief Parses a mesh from the data in the given buffer.
 		///
@@ -98,7 +100,8 @@ namespace phoenix {
 		/// \return The parsed mesh object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&, const std::vector<std::uint32_t>&)
-		[[nodiscard]] inline static mesh parse(buffer&& buf, const std::vector<std::uint32_t>& include_polygons = {}) {
+		[[nodiscard]] inline static mesh parse(buffer&& buf,
+		                                       const std::unordered_set<std::uint32_t>& include_polygons = {}) {
 			return mesh::parse(buf, include_polygons);
 		}
 
