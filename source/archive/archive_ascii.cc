@@ -5,6 +5,7 @@
 #include <charconv>
 #include <cstring>
 #include <iostream>
+#include <unordered_map>
 
 namespace phoenix {
 	static const std::unordered_map<std::string, archive_entry_type> type_name_to_enum {
