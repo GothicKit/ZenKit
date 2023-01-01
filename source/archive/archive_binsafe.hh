@@ -67,14 +67,14 @@ namespace phoenix {
 		std::uint16_t ensure_entry_meta() {
 			auto type = static_cast<archive_entry_type>(input.get());
 
-			if (type != archive_entry_type::hash) [[unlikely]] {
+			if (type != archive_entry_type::hash) {
 				throw parser_error {"archive_reader_binsafe", "invalid format"};
 			}
 
 			input.skip(sizeof(uint32_t));
 			type = static_cast<archive_entry_type>(input.get());
 
-			if (type != tp) [[unlikely]] {
+			if (type != tp) {
 				throw parser_error {"archive_reader_binsafe: type mismatch: expected " +
 				                    std::to_string(static_cast<uint8_t>(tp)) +
 				                    ", got: " + std::to_string(static_cast<uint32_t>(type))};
