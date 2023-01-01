@@ -6,7 +6,7 @@
 #include <vector>
 
 namespace phoenix {
-	constexpr std::uint8_t type_sizes[] = {
+	static constexpr const std::uint8_t type_sizes[] = {
 	    0,                        // ?            = 0x00
 	    0,                        // bs_string    = 0x01,
 	    sizeof(std::int32_t),     // bs_int       = 0x02,
@@ -62,7 +62,31 @@ namespace phoenix {
 		void skip_entry() override;
 
 		const std::string& get_entry_key();
-		std::uint16_t ensure_entry_meta(archive_entry_type tp);
+
+		template <archive_entry_type tp>
+		std::uint16_t ensure_entry_meta() {
+			auto type = static_cast<archive_entry_type>(input.get());
+
+			if (type != archive_entry_type::hash) [[unlikely]] {
+				throw parser_error {"archive_reader_binsafe", "invalid format"};
+			}
+
+			input.skip(sizeof(uint32_t));
+			type = static_cast<archive_entry_type>(input.get());
+
+			if (type != tp) [[unlikely]] {
+				throw parser_error {"archive_reader_binsafe: type mismatch: expected " +
+				                    std::to_string(static_cast<uint8_t>(tp)) +
+				                    ", got: " + std::to_string(static_cast<uint32_t>(type))};
+			}
+
+			if constexpr (tp == archive_entry_type::string || tp == archive_entry_type::raw ||
+			              tp == archive_entry_type::raw_float) {
+				return input.get_ushort();
+			} else {
+				return type_sizes[static_cast<uint8_t>(type)];
+			}
+		}
 
 	private:
 		std::uint32_t _m_object_count {0};

@@ -99,63 +99,42 @@ namespace phoenix {
 		return _m_hash_table_entries[hash].key;
 	}
 
-	std::uint16_t archive_reader_binsafe::ensure_entry_meta(archive_entry_type tp) {
-		(void) get_entry_key();
-		auto type = static_cast<archive_entry_type>(input.get());
-		uint16_t size = (type == archive_entry_type::string || type == archive_entry_type::raw ||
-		                 type == archive_entry_type::raw_float)
-		    ? input.get_ushort()
-		    : type_sizes[static_cast<uint8_t>(type)];
-
-		if (type != tp) {
-			input.skip(size);
-			throw parser_error {"archive_reader_binsafe: type mismatch: expected " +
-			                    std::to_string(static_cast<uint8_t>(tp)) +
-			                    ", got: " + std::to_string(static_cast<uint32_t>(type))};
-		}
-
-		return size;
-	}
-
 	std::string archive_reader_binsafe::read_string() {
-		auto rv = input.get_string(ensure_entry_meta(archive_entry_type::string));
-		return rv;
+		return input.get_string(ensure_entry_meta<archive_entry_type::string>());
 	}
 
 	std::int32_t archive_reader_binsafe::read_int() {
-		ensure_entry_meta(archive_entry_type::int_);
-		auto rv = input.get_int();
-		return rv;
+		ensure_entry_meta<archive_entry_type::int_>();
+		return input.get_int();
 	}
 
 	float archive_reader_binsafe::read_float() {
-		ensure_entry_meta(archive_entry_type::float_);
-		auto rv = input.get_float();
-		return rv;
+		ensure_entry_meta<archive_entry_type::float_>();
+		return input.get_float();
 	}
 
 	std::uint8_t archive_reader_binsafe::read_byte() {
-		ensure_entry_meta(archive_entry_type::byte);
+		ensure_entry_meta<archive_entry_type::byte>();
 		return input.get();
 	}
 
 	std::uint16_t archive_reader_binsafe::read_word() {
-		ensure_entry_meta(archive_entry_type::word);
+		ensure_entry_meta<archive_entry_type::word>();
 		return input.get_ushort();
 	}
 
 	std::uint32_t archive_reader_binsafe::read_enum() {
-		ensure_entry_meta(archive_entry_type::enum_);
+		ensure_entry_meta<archive_entry_type::enum_>();
 		return input.get_uint();
 	}
 
 	bool archive_reader_binsafe::read_bool() {
-		ensure_entry_meta(archive_entry_type::bool_);
+		ensure_entry_meta<archive_entry_type::bool_>();
 		return input.get_uint() != 0;
 	}
 
 	glm::u8vec4 archive_reader_binsafe::read_color() {
-		ensure_entry_meta(archive_entry_type::color);
+		ensure_entry_meta<archive_entry_type::color>();
 
 		auto b = input.get();
 		auto g = input.get();
@@ -166,12 +145,12 @@ namespace phoenix {
 	}
 
 	glm::vec3 archive_reader_binsafe::read_vec3() {
-		ensure_entry_meta(archive_entry_type::vec3);
+		ensure_entry_meta<archive_entry_type::vec3>();
 		return input.get_vec3();
 	}
 
 	glm::vec2 archive_reader_binsafe::read_vec2() {
-		auto unused = static_cast<std::int32_t>(ensure_entry_meta(archive_entry_type::raw_float) - 2 * sizeof(float));
+		auto unused = static_cast<std::int32_t>(ensure_entry_meta<archive_entry_type::raw_float>() - 2 * sizeof(float));
 
 		if (unused < 0) {
 			throw parser_error {"archive_reader_binsafe"
@@ -187,7 +166,7 @@ namespace phoenix {
 
 	bounding_box archive_reader_binsafe::read_bbox() {
 		auto unused =
-		    static_cast<std::int32_t>(ensure_entry_meta(archive_entry_type::raw_float) - 3 * 2 * sizeof(float));
+		    static_cast<std::int32_t>(ensure_entry_meta<archive_entry_type::raw_float>() - 3 * 2 * sizeof(float));
 
 		if (unused < 0) {
 			throw parser_error {"archive:reader_binsafe",
@@ -202,7 +181,7 @@ namespace phoenix {
 	}
 
 	glm::mat3x3 archive_reader_binsafe::read_mat3x3() {
-		auto unused = static_cast<std::int32_t>(ensure_entry_meta(archive_entry_type::raw) - 3 * 3 * sizeof(float));
+		auto unused = static_cast<std::int32_t>(ensure_entry_meta<archive_entry_type::raw>() - 3 * 3 * sizeof(float));
 
 		if (unused < 0) {
 			throw parser_error(
@@ -215,12 +194,12 @@ namespace phoenix {
 	}
 
 	buffer archive_reader_binsafe::read_raw_bytes() {
-		auto length = ensure_entry_meta(archive_entry_type::raw);
+		auto length = ensure_entry_meta<archive_entry_type::raw>();
 		return input.extract(length);
 	}
 
 	buffer archive_reader_binsafe::read_raw_bytes(uint32_t size) {
-		auto length = ensure_entry_meta(archive_entry_type::raw);
+		auto length = ensure_entry_meta<archive_entry_type::raw>();
 
 		if (length < size) {
 			throw parser_error {"archive_reader_binsafe", "not enough raw bytes to read!"};
