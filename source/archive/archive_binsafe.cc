@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 #include "archive_binsafe.hh"
 
+#include <cstring>
 #include <iostream>
-#include <sstream>
 
 namespace phoenix {
 	void archive_reader_binsafe::read_header() {
@@ -48,17 +48,24 @@ namespace phoenix {
 			return false;
 		}
 
-		char class_name[128];
-		char object_name[128];
-
-		auto parsed_elements =
-		    std::sscanf(line.c_str(), "[%127s %127s %hu %u]", object_name, class_name, &obj.version, &obj.index);
-
-		if (parsed_elements != 4) {
+		char* it = line.data();
+		if (*it++ != '[') {
 			input.reset();
 			return false;
 		}
 
+		auto* object_name = strtok(it, " ]");
+		auto* class_name = strtok(nullptr, " ]");
+		auto* version = strtok(nullptr, " ]");
+		auto* index = strtok(nullptr, " ]");
+
+		if (object_name == nullptr || class_name == nullptr || version == nullptr || index == nullptr) {
+			input.reset();
+			return false;
+		}
+
+		obj.version = atoi(version);
+		obj.index = atoi(index);
 		obj.object_name = object_name;
 		obj.class_name = class_name;
 		return true;
