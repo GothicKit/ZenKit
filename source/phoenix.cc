@@ -63,12 +63,13 @@ namespace phoenix {
 	}
 
 	date date::parse(buffer& buf) {
-		auto dt = date {buf.get_uint(),
-		                buf.get_ushort(),
-		                buf.get_ushort(),
-		                buf.get_ushort(),
-		                buf.get_ushort(),
-		                buf.get_ushort()};
+		date dt {};
+		dt.year = buf.get_uint();
+		dt.month = buf.get_ushort();
+		dt.day = buf.get_ushort();
+		dt.hour = buf.get_ushort();
+		dt.minute = buf.get_ushort();
+		dt.second = buf.get_ushort();
 		(void) buf.get_ushort(); // padding
 		return dt;
 	}
