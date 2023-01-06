@@ -13,11 +13,16 @@ nav:
           - 'Virtual File System': 'library/formats/vdf.md'
   - 'ZenGin Reference':
       - 'Overview': 'engine/overview.md'
+      - 'Datatypes': 'engine/datatypes.md'
       - 'Formats':
+          - 'ZenGin Animations': 'engine/formats/animation.md'
           - 'ZenGin Archive': 'engine/formats/archive.md'
           - 'Font': 'engine/formats/font.md'
           - 'Texture': 'engine/formats/texture.md'
           - 'Virtual File System': 'engine/formats/vdf.md'
+      - 'Encodings':
+          - 'Binary': 'engine/encodings/binary.md'
+          - 'Binary, Chunked': 'engine/encodings/binary-chunked.md'
 theme:
   name: 'material'
   language: 'en'
@@ -48,10 +53,13 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.tabbed:
+      alternate_style: true
   - 'abbr'
   - 'admonition'
   - 'footnotes'
   - 'tables'
   - 'pymdownx.superfences'
   - 'pymdownx.inlinehilite'
-
+  - 'md_in_html'
+  - 'pymdownx.details'
