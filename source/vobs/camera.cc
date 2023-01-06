@@ -20,8 +20,8 @@ namespace phoenix::vobs {
 		obj->time_scale = ctx.read_float();                                        // timeScale
 		obj->time_fixed = ctx.read_bool();                                         // timeIsFixed
 
-		auto buf = ctx.read_raw_bytes(sizeof(float) * 4 * 4);
-		obj->original_pose = glm::transpose(buf.get_mat4x4()); // originalPose
+		auto buf = ctx.read_raw_bytes(sizeof(float) * 4 * 4); // originalPose
+		obj->original_pose = glm::transpose(buf.get_mat4x4());
 		return obj;
 	}
 

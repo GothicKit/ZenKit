@@ -107,15 +107,13 @@ namespace phoenix::vobs {
 		obj.function = ctx.read_string(); // scriptFunc
 	}
 
-	void trigger_change_level::parse(trigger_change_level& obj, archive_reader& ctx,
-	                                 game_version version) { //
+	void trigger_change_level::parse(trigger_change_level& obj, archive_reader& ctx, game_version version) {
 		trigger::parse(obj, ctx, version);
 		obj.level_name = ctx.read_string(); // levelName
 		obj.start_vob = ctx.read_string();  // startVobName
 	}
 
-	void trigger_world_start::parse(trigger_world_start& obj, archive_reader& ctx,
-	                                game_version version) { //
+	void trigger_world_start::parse(trigger_world_start& obj, archive_reader& ctx, game_version version) {
 		vob::parse(obj, ctx, version);
 		obj.target = ctx.read_string();  // triggerTarget
 		obj.fire_once = ctx.read_bool(); // fireOnlyFirstTime
