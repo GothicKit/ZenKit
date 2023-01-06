@@ -118,7 +118,10 @@ namespace phoenix {
 
 				break;
 			case animation_chunk::source:
-				chunk.skip(16);
+				// Quirk: This was intended to be a date but the original code uses an uninitialized variable here
+				//        so the actual data stored does not make any sense.
+				(void) date::parse(chunk);
+
 				anim.source_path = chunk.get_line(false);
 				anim.source_script = chunk.get_line(false);
 				break;
