@@ -10,10 +10,12 @@
 *ZenGin* animation files contain skeletal animations for rigged meshes. Each file contains the data for one animation,
 including metadata and animation samples.
 
+Animations are found within the `Anims.vdf` file found in the `Data/` directory in the Gothic installation.
+
 ## Format Description
 
-Model animations are stored in a [chunked binary](../encodings/binary-chunked.md) file which contains the following chunks. Also refer to the
-[Datatype Reference](../datatypes.md) for general information about often used datatypes.
+Model animations are stored in a [chunked binary](../encodings/binary-chunked.md) file which contains the following
+chunks. Also refer to the [Datatype Reference](../datatypes.md) for general information about often used datatypes.
 
 === "`0xA000`"
 
