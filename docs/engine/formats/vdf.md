@@ -1,34 +1,48 @@
-# The VDF file format
+# ZenGin Virtual File System
+
+!!! abstract inline end "Quick Infos"
+    **Type:** Asset Format<br/>
+    **Format Name:** Virtual File System<br/>
+    **File Extension:** `.VDF`<br/>
+    **Class Name:** `zFILE_VDFS` [^3] <br/>
+    **Encoding:** [Binary](../encodings/binary.md)<br/>
 
 *VDF* is a container format for a file/directory structure, similar to the
-[tar format](https://en.wikipedia.org/wiki/Tar_(computing)). *VDF* files are not intended
-to be used for general file transfer, and thus they don't contain metadata like permission information which can
-usually be found in such container formats.
+[tar](https://en.wikipedia.org/wiki/Tar_(computing)) format. *VDF* files are not intended to be used for general file
+transfer, and thus they don't contain metadata like permission information which can usually be found in such container
+formats.
 
-*VDF* files consist of a [header](#header), the [catalog](#catalog) and a data section which are described below.
+VDF files can usually be found in the `Data/` directory of Gothic installations.
 
-!!! important
-    *VDF* files are binary files which are always encoded with the little-endian byte order. The number `0xCAFEBABE`
-    will be represented as `BE BA FE CA` when viewing the file in a hex editor.
+## Format Description
 
-## Header
+*VDF* files consist of a [header](#header), the [catalog](#catalog) and a data section which are described below. Also
+refer to the [Datatype Reference](../datatypes.md) for general information about often used datatypes.
 
-The *VDF*'s header describes the file and its contents. It always has the same physical size and can be represented as
+```c title="VDF Structure"
+struct zFILE_VDFS {
+    zFILE_VDFS_Header header;
+    zFILE_VDFS_Catalog catalog;
+    byte data[];
+};
+```
+
+### Header
+
+The *VDF*s header describes the file and its contents. It always has the same physical size and can be represented as
 a C struct like this.
 
 ```c title="VDF Header"
-#pragma pack(push, 1)
-struct vdf_header {
- char comment[256]; // (1)
- char signature[16]; // (2)
- uint32_t file_count;
- uint32_t entry_count;
- uint32_t timestamp; // (3)
- uint32_t size; // (4)
- uint32_t catalog_offset; // (5)
- uint32_t version; // (6)
+struct zFILE_VDFS_Header {
+    char comment[256]; // (1)
+    char signature[16]; // (2)
+    uint numFiles;
+    uint numEntries;
+    uint timestamp; // (3)
+    uint size; // (4)
+    uint catalogOffset; // (5)
+    uint version; // (6)
 };
-#pragma pack(pop)
 ```
 
 1. The comment might not fill the entire 256 bytes. If it does not, the rest of the array is filled with `'\x1A'`
@@ -41,10 +55,7 @@ struct vdf_header {
 5. An offset from the beginning of the file in bytes at which the first entry of the [catalog](#catalog) is located.
 6. The version of the VDF format being used. This is always `0x50` in reality.
 
-!!! note
-    This is a packed structure.
-
-## Catalog
+### Catalog
 
 The catalog describes the directory and file structure contained within the VDF file. Each entry is either a file or a
 directory entry. File entries always point to an address in the data section of the container while directory entries
@@ -70,16 +81,16 @@ folder's entries.
 
 Each entry can be represented as a C struct like this.
 
-```c title="VDF Entry"
-#pragma pack(push, 1)
-struct vdf_entry {
-    char name[64]; // (1)
-    uint32_t offset; // (2)
-    uint32_t size; // (3)
-    uint32_t type; // (4)
-    uint32_t attributes; // (5)
+```c title="VDF Catalog"
+struct zFILE_VDFS_Catalog {
+    struct {
+        char name[64]; // (1)
+        uint32_t offset; // (2)
+        uint32_t size; // (3)
+        uint32_t type; // (4)
+        uint32_t attributes; // (5)
+    } entries[/* zFILE_VDFS_Header.numEntries */];
 };
-#pragma pack(pop)
 ```
 
 1. The name might not fill the entire 64 bytes. If it does not, the rest of the array is filled with `'\x20'`
@@ -90,9 +101,6 @@ struct vdf_entry {
 4. A bitmask describing the type of the entry. If bit `0x80000000` is set, the entry is a directory, otherwise it is
    a file. If bit `0x40000000` is set, the entry is the last in the parent directory[^2].
 5. Extra attributes for the entry. Unused.
-
-!!! note
-    This is a packed structure.
 
 ## DOS date format
 
@@ -130,6 +138,7 @@ time_t dos_to_unix_time(uint32_t dos) {
 	t.tm_sec =  ((int) ((dos >> 0 ) & 0x1F)) * 2;
 	return timegm(&t);
 }
+
 /**
  * Converts a unix timestamp to a DOS timestamp.
  */
@@ -147,10 +156,12 @@ uint32_t unix_time_to_dos(time_t nix) {
 ```
 
 [^1]: References to the DOS date format can be found in [PhysicsFS](https://www.icculus.org/physfs/) where the VDF
-format
-is [implemented](https://github.com/icculus/physfs/blob/6925c1067de2c9e39d626bcba84db0113f8395f2/src/physfs_archiver_vdf.c).
+format is [implemented](https://github.com/icculus/physfs/blob/6925c1067de2c9e39d626bcba84db0113f8395f2/src/physfs_archiver_vdf.c).
 It is also discussed in the [Wiki](https://github.com/REGoth-project/REGoth/wiki/VDF-File-Format) for
 [ReGoth](https://github.com/REGoth-project/REGoth) (the old repository).
 
 [^2]: Referring back to the example, the `0x40000000` bit will be set for entries `_WORK/` (`00`), `CUSTOM/` (`02`),
 `TEXTURES/` (`04`), `ANIM2.MAN` (`06`), `TEXTURE_C.TEX` (`09`) and `MYFILE.WAV` (`10`).
+
+[^3]: It should be noted that the original implementation of VDF files was provided by a separate DLL called
+`Vdfs32g.dll`. `zFILE_VDFS` is merely an implementation using that API.

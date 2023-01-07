@@ -3,7 +3,7 @@
 !!! abstract inline end "Quick Infos"
     **Type:** Encoding<br/>
     **Class Name:** `zFILE`<br/>
-    **Used By:** [`zCFileBIN`](binary-chunked.md), [`zCFont`](../formats/font.md), [`zCTexture`](../formats/texture.md)
+    **Used By:** [`zCFileBIN`](binary-chunked.md), [`zCFont`](../formats/font.md), [`zCTexture`](../formats/texture.md), [`zFILE_VDFS`](../formats/vdf.md)
 
 Most asset files and other encodings are based flat binary files. As their name indicates, files encoded using flat
 binary just contain raw bytes. Their structure is fully defined by the asset format using the encoding.
