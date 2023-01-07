@@ -5,6 +5,7 @@ This page contains a set of commonly used datatypes and their definition.
 | Datatype   | Size | Description                                                                                                                                                            |
 |------------|------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `byte`     | 1    | A single, unsigned 8-bit integer                                                                                                                                       |
+| `char`     | 1    | A single, 8-bit integer representing a string character                                                                                                                |
 | `short`    | 2    | A single, signed 16-bit integer                                                                                                                                        |
 | `ushort`   | 2    | A single, unsigned 16-bit integer                                                                                                                                      |
 | `int`      | 4    | A single, signed 32-bit integer                                                                                                                                        |
