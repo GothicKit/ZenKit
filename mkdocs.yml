@@ -16,8 +16,8 @@ nav:
       - 'Datatypes': 'engine/datatypes.md'
       - 'Formats':
           - 'ZenGin Animations': 'engine/formats/animation.md'
+          - 'ZenGin Font': 'engine/formats/font.md'
           - 'ZenGin Archive': 'engine/formats/archive.md'
-          - 'Font': 'engine/formats/font.md'
           - 'Texture': 'engine/formats/texture.md'
           - 'Virtual File System': 'engine/formats/vdf.md'
       - 'Encodings':
