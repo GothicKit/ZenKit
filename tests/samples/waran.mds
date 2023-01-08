@@ -31,7 +31,7 @@ Model("TestModel") {
 		// Another comment.
 		// Maybe even more :>
 
-		aniBlend("blendName1" "blendNext1")
+		aniBlend(  ("blendName1" "blendNext1")
 		aniBlend("blendName2" 113 "blendNext2")
 		aniBlend("blendName3" "blendNext3" 223.1 333.1)
 
@@ -41,7 +41,7 @@ Model("TestModel") {
 		aniComb("combName1" 116 "combNext1" 102.1 202.2 M "combModel1" 226)
 		aniComb("combName2" 117 "combNext2" 103.1 203.2 I. "combModel2" 227)
 
-		aniDisable("disable1")
+		AniDisable("disable1")
 		aniDisable("disable2")
 
 		modelTag("DEF_HIT_LIMB" "tag1")
