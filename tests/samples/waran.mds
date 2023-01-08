@@ -33,12 +33,18 @@ Model("TestModel") {
 
 		aniBlend(  ("blendName1" "blendNext1")
 		aniBlend("blendName2" 113 "blendNext2")
-		aniBlend("blendName3" "blendNext3" 223.1 333.1)
+
+		aniBlend("blendName3" "blendNext3" 223.1 333.1) {
+			*eventSFX(4 "sfxName2" R:67.4)
+		}
 
 		aniAlias("aliasName1" 114 "aliasNext1" 100.1 200.2 RE "aliasAlias1")
 		aniAlias("aliasName2" 115 "aliasNext2" 101.1 201.2 .F "aliasAlias2" R)
 
-		aniComb("combName1" 116 "combNext1" 102.1 202.2 M "combModel1" 226)
+		aniComb("combName1" 116 "combNext1" 102.1 202.2 M "combModel1" 226) {
+			*eventTag(0 "DEF_DROP_TORCH" ATTACH)
+		}
+
 		aniComb("combName2" 117 "combNext2" 103.1 203.2 I. "combModel2" 227)
 
 		AniDisable("disable1")
