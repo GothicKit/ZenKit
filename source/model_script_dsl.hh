@@ -9,6 +9,7 @@
 #include <optional>
 
 namespace phoenix::mds {
+	// TODO: case folding for everything
 	namespace dsl = lexy::dsl;
 
 	namespace sinks {
@@ -171,12 +172,7 @@ namespace phoenix::mds {
 		};
 	} // namespace sinks
 
-	static constexpr auto ws = LEXY_LIT("//") >> dsl::until(dsl::newline) | dsl::ascii::space;
-
-	struct closing_paren {
-		static constexpr auto rule = dsl::opt(dsl::lit_c<')'>);
-		static constexpr auto value = lexy::noop;
-	};
+	static constexpr auto ws = LEXY_LIT("/") >> dsl::until(dsl::newline) | dsl::ascii::space | LEXY_ASCII_ONE_OF("()");
 
 	struct dsl_string {
 		static constexpr auto rule = dsl::quoted(-dsl::lit_c<'"'>);
@@ -208,8 +204,7 @@ namespace phoenix::mds {
 
 	struct dsl_event_morph {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule = dsl::lit_c<'('> +
-		    (dsl::p<dsl_integer> + dsl::p<dsl_string> + dsl::opt(dsl::p<dsl_string>)) + dsl::p<closing_paren>;
+		static constexpr auto rule = (dsl::p<dsl_integer> + dsl::p<dsl_string> + dsl::opt(dsl::p<dsl_string>));
 		static constexpr auto value = lexy::callback<event_morph_animate>([](int32_t frame,
 		                                                                     std::string&& animation,
 		                                                                     std::optional<std::string>&& node) {
@@ -219,9 +214,8 @@ namespace phoenix::mds {
 
 	struct dsl_event_camera_tremor {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule = dsl::lit_c<'('> +
-		    (dsl::p<dsl_integer> + dsl::p<dsl_integer> + dsl::p<dsl_integer> + dsl::p<dsl_integer> +
-		     dsl::p<dsl_integer>) +dsl::p<closing_paren>;
+		static constexpr auto rule = (dsl::p<dsl_integer> + dsl::p<dsl_integer> + dsl::p<dsl_integer> +
+		                              dsl::p<dsl_integer> + dsl::p<dsl_integer>);
 		static constexpr auto value = lexy::callback<event_camera_tremor>(
 		    [](int32_t frame, int32_t field1, int32_t field2, int32_t field3, int32_t field4) {
 			    return event_camera_tremor {.frame = frame,
@@ -234,18 +228,15 @@ namespace phoenix::mds {
 
 	struct dsl_event_pfx_stop {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule =
-		    dsl::lit_c<'('> + (dsl::p<dsl_integer> + dsl::p<dsl_integer>) +dsl::p<closing_paren>;
+		static constexpr auto rule = (dsl::p<dsl_integer> + dsl::p<dsl_integer>);
 		static constexpr auto value = lexy::callback<event_pfx_stop>(
 		    [](int32_t frame, int32_t index) { return event_pfx_stop {.frame = frame, .index = index}; });
 	};
 
 	struct dsl_event_pfx {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule = dsl::lit_c<'('> +
-		    (dsl::p<dsl_integer> + dsl::opt(dsl::p<dsl_integer>) + dsl::p<dsl_string> + dsl::p<dsl_string> +
-		     dsl::opt(LEXY_LIT("ATTACH"))) +
-		    dsl::p<closing_paren>;
+		static constexpr auto rule = (dsl::p<dsl_integer> + dsl::opt(dsl::p<dsl_integer>) + dsl::p<dsl_string> +
+		                              dsl::p<dsl_string> + dsl::opt(LEXY_LIT("ATTACH")));
 		static constexpr auto value = lexy::callback<event_pfx>(
 		    [](int32_t frame, std::optional<int32_t> index, std::string&& name, std::string&& position) {
 			    return event_pfx {.frame = frame,
@@ -277,17 +268,16 @@ namespace phoenix::mds {
 
 	struct dsl_event_sfx_grnd {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule =
-		    dsl::lit_c<'('> + (dsl::p<dsl_integer> + dsl::p<string_without_closing_quote>) +dsl::p<closing_paren>;
+		static constexpr auto rule = (dsl::p<dsl_integer> + dsl::p<string_without_closing_quote>);
 		static constexpr auto value = lexy::callback<event_sfx_ground>(
 		    [](int32_t frame, std::string&& name) { return event_sfx_ground {.frame = frame, .name = name}; });
 	};
 
 	struct dsl_event_sfx {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule = dsl::lit_c<'('> + dsl::p<dsl_integer> + dsl::p<dsl_string> +
+		static constexpr auto rule = dsl::p<dsl_integer> + dsl::p<dsl_string> +
 		    dsl::opt((dsl::lit_c<'r'> | dsl::lit_c<'R'>) >> (dsl::lit_c<':'> + dsl::p<dsl_float>) ) +
-		    dsl::opt(LEXY_LIT("EMPTY_SLOT") | LEXY_LIT("EMTPY_SLOT")) + dsl::p<closing_paren>;
+		    dsl::opt(LEXY_LIT("EMPTY_SLOT") | LEXY_LIT("EMTPY_SLOT"));
 		static constexpr auto value = lexy::callback<event_sfx>(
 		    [](int32_t frame, std::string&& name, std::optional<float> range) {
 			    return event_sfx {.frame = frame, .name = name, .range = range.value_or(1000), .empty_slot = true};
@@ -299,10 +289,8 @@ namespace phoenix::mds {
 
 	struct dsl_event_tag {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule = dsl::lit_c<'('> +
-		    (dsl::p<dsl_integer> + dsl::p<dsl_string> + dsl::opt(dsl::p<dsl_string>) + dsl::opt(dsl::p<dsl_string>) +
-		     dsl::opt(LEXY_LIT("ATTACH"))) +
-		    dsl::p<closing_paren>;
+		static constexpr auto rule = (dsl::p<dsl_integer> + dsl::p<dsl_string> + dsl::opt(dsl::p<dsl_string>) +
+		                              dsl::opt(dsl::p<dsl_string>) + dsl::opt(LEXY_LIT("ATTACH")));
 		static constexpr auto value = lexy::callback<event_tag>(
 		    [](int32_t frame, std::string&& a, std::optional<std::string>&& b, std::optional<std::string>&& c) {
 			    return make_event_tag(frame, std::move(a), std::move(b), std::move(c), true);
@@ -326,12 +314,12 @@ namespace phoenix::mds {
 
 	struct dsl_ani {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule = dsl::lit_c<'('> +
+		static constexpr auto rule =
 		    (dsl::p<dsl_string> + dsl::p<dsl_integer> + dsl::p<dsl_string> + dsl::p<dsl_float> + dsl::p<dsl_float> +
 		     dsl::p<dsl_ani_flags> + dsl::p<dsl_string> + dsl::capture(dsl::token(dsl::lit_c<'F'> | dsl::lit_c<'R'>)) +
 		     dsl::p<dsl_integer> + dsl::p<dsl_integer> + dsl::opt(LEXY_LIT("FPS:") >> dsl::p<dsl_float>) +
 		     dsl::opt(LEXY_LIT("CVS:") >> dsl::p<dsl_float>)) +
-		    dsl::p<closing_paren> + dsl::opt(dsl::curly_bracketed(dsl::p<dsl_ani_events>));
+		    dsl::opt(dsl::curly_bracketed(dsl::p<dsl_ani_events>));
 		static constexpr auto value = lexy::callback<animation>(
 		    [](std::string&& name,
 		       int32_t layer,
@@ -402,10 +390,10 @@ namespace phoenix::mds {
 
 	struct dsl_ani_blend {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule = dsl::lit_c<'('> +
-		    (dsl::p<dsl_string> + dsl::opt(dsl::p<dsl_integer>) + dsl::p<dsl_string> + dsl::opt(dsl::p<dsl_float>) +
-		     dsl::opt(dsl::p<dsl_float>)) +
-		    dsl::p<closing_paren>;
+		static constexpr auto rule = (dsl::p<dsl_string> + dsl::opt(dsl::p<dsl_integer>) + dsl::p<dsl_string> +
+		                              dsl::opt(dsl::p<dsl_float>) + dsl::opt(dsl::p<dsl_float>)) +
+		    dsl::if_(dsl::lit_c<'{'> >>
+		             (dsl::while_(-LEXY_ASCII_ONE_OF("}")) + dsl::lit_c<'}'>) ); // TODO: Ani events on blend?
 		static constexpr auto value = lexy::callback<animation_blending>([](std::string&& name,
 		                                                                    std::optional<int32_t>,
 		                                                                    std::string&& next,
@@ -422,11 +410,10 @@ namespace phoenix::mds {
 
 	struct dsl_ani_alias {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule = dsl::lit_c<'('> +
+		static constexpr auto rule =
 		    (dsl::p<dsl_string> + dsl::p<dsl_integer> + dsl::p<dsl_string> + dsl::p<dsl_float> + dsl::p<dsl_float> +
 		     dsl::p<dsl_ani_flags> + dsl::p<dsl_string> +
-		     dsl::opt(dsl::capture(dsl::token(dsl::lit_c<'F'> | dsl::lit_c<'R'>)))) +
-		    dsl::p<closing_paren>;
+		     dsl::opt(dsl::capture(dsl::token(dsl::lit_c<'F'> | dsl::lit_c<'R'>))));
 		static constexpr auto value = lexy::callback<animation_alias>(
 		    [](std::string&& name,
 		       int32_t layer,
@@ -467,9 +454,11 @@ namespace phoenix::mds {
 
 	struct dsl_ani_comb {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule = dsl::lit_c<'('> +
+		static constexpr auto rule =
 		    (dsl::p<dsl_string> + dsl::p<dsl_integer> + dsl::p<dsl_string> + dsl::p<dsl_float> + dsl::p<dsl_float> +
-		     dsl::p<dsl_ani_flags> + dsl::p<dsl_string> + dsl::p<dsl_integer>) +dsl::p<closing_paren>;
+		     dsl::p<dsl_ani_flags> + dsl::p<dsl_string> +
+		     dsl::p<dsl_integer>) +dsl::if_(dsl::lit_c<'{'> >> (dsl::while_(-LEXY_ASCII_ONE_OF("}")) +
+		                                                        dsl::lit_c<'}'>) ); // TODO: Ani events on comb?
 		static constexpr auto value = lexy::callback<animation_combination>([](std::string&& name,
 		                                                                       int32_t layer,
 		                                                                       std::string&& next,
@@ -493,14 +482,13 @@ namespace phoenix::mds {
 
 	struct dsl_ani_disable {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule = dsl::lit_c<'('> + (dsl::p<dsl_string>) +dsl::p<closing_paren>;
+		static constexpr auto rule = (dsl::p<dsl_string>);
 		static constexpr auto value = lexy::forward<std::string>;
 	};
 
 	struct dsl_model_tag {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule =
-		    dsl::lit_c<'('> + (LEXY_LIT("\"DEF_HIT_LIMB\"") + dsl::p<dsl_string>) +dsl::p<closing_paren>;
+		static constexpr auto rule = (LEXY_LIT("\"DEF_HIT_LIMB\"") + dsl::p<dsl_string>);
 		static constexpr auto value =
 		    lexy::callback<model_tag>([](std::string&& name) { return model_tag {.bone = name}; });
 	};
@@ -510,16 +498,16 @@ namespace phoenix::mds {
 		static constexpr auto rule = dsl::lit_c<'{'> +
 		    dsl::opt(dsl::list(
 		        LEXY_LIT("aniBlend") >> dsl::p<dsl_ani_blend> | LEXY_LIT("aniAlias") >> dsl::p<dsl_ani_alias> |
-		        LEXY_LIT("aniComb") >> dsl::p<dsl_ani_comb> | LEXY_LIT("aniDisable") >> dsl::p<dsl_ani_disable> |
-		        LEXY_LIT("ani") >> dsl::p<dsl_ani> | LEXY_LIT("modelTag") >> dsl::p<dsl_model_tag>)) +
+		        LEXY_LIT("AniDisable") >> dsl::p<dsl_ani_disable> | LEXY_LIT("aniComb") >> dsl::p<dsl_ani_comb> |
+		        LEXY_LIT("aniDisable") >> dsl::p<dsl_ani_disable> | LEXY_LIT("ani") >> dsl::p<dsl_ani> |
+		        LEXY_LIT("modelTag") >> dsl::p<dsl_model_tag>)) +
 		    dsl::opt(dsl::lit_c<'}'>);
 		static constexpr auto value = sinks::dsl_ani_enum_sink {};
 	};
 
 	struct dsl_skeleton {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule =
-		    dsl::lit_c<'('> + (dsl::p<dsl_string> + dsl::opt(LEXY_LIT("DONT_USE_MESH"))) + dsl::p<closing_paren>;
+		static constexpr auto rule = (dsl::p<dsl_string> + dsl::opt(LEXY_LIT("DONT_USE_MESH")));
 		static constexpr auto value = lexy::callback<skeleton>(
 		    [](std::string&& name) {
 			    skeleton sk {};
@@ -537,7 +525,7 @@ namespace phoenix::mds {
 
 	struct dsl_mesh {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule = dsl::lit_c<'('> + (dsl::p<dsl_string>) +dsl::p<closing_paren>;
+		static constexpr auto rule = (dsl::p<dsl_string>);
 		static constexpr auto value = lexy::as_string<std::string>;
 	};
 
@@ -554,8 +542,7 @@ namespace phoenix::mds {
 
 	struct d_script {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule =
-		    LEXY_LIT("Model") + dsl::lit_c<'('> + (dsl::p<dsl_string>) +dsl::p<closing_paren> + dsl::p<dsl_script_body>;
+		static constexpr auto rule = LEXY_LIT("Model") + (dsl::p<dsl_string>) +dsl::p<dsl_script_body>;
 
 		static constexpr auto value = lexy::callback<model_script>(
 		    [](std::string&&, model_script&& script) { return std::forward<model_script>(script); });
