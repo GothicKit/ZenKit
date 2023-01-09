@@ -55,7 +55,7 @@ TEST_SUITE("model_script") {
 		CHECK_EQ(script.animations[1].events[1].type, phoenix::mds::event_tag_type::window);
 		CHECK_EQ(script.animations[1].events[1].frames, std::vector<int32_t> {1, 2, 3, 4, 5});
 		CHECK_EQ(script.animations[1].events[1].attached, false);
-		CHECK_EQ(script.animations[1].events[2].frame, 2);
+		CHECK_EQ(script.animations[1].events[2].frame, 0); // Defaulted
 		CHECK_EQ(script.animations[1].events[2].type, phoenix::mds::event_tag_type::create_item);
 		CHECK_EQ(script.animations[1].events[2].slot, "eventSlot");
 		CHECK_EQ(script.animations[1].events[2].item, "eventItem");
@@ -75,7 +75,7 @@ TEST_SUITE("model_script") {
 		CHECK_EQ(script.animations[1].sfx_ground[0].name, "sfxGrndName");
 		CHECK_EQ(script.animations[1].sfx_ground[0].empty_slot, false);
 
-		CHECK_EQ(script.animations[1].pfx.size(), 2);
+		CHECK_EQ(script.animations[1].pfx.size(), 3);
 		CHECK_EQ(script.animations[1].pfx[0].frame, 6);
 		CHECK_EQ(script.animations[1].pfx[0].index, 0);
 		CHECK_EQ(script.animations[1].pfx[0].name, "pfxName1");
@@ -86,6 +86,11 @@ TEST_SUITE("model_script") {
 		CHECK_EQ(script.animations[1].pfx[1].name, "pfxName2");
 		CHECK_EQ(script.animations[1].pfx[1].position, "pfxPosition2");
 		CHECK_EQ(script.animations[1].pfx[1].attached, false);
+		CHECK_EQ(script.animations[1].pfx[2].frame, 9);
+		CHECK_EQ(script.animations[1].pfx[2].index, 991);
+		CHECK_EQ(script.animations[1].pfx[2].name, "pfxName3");
+		CHECK_EQ(script.animations[1].pfx[2].position, "pfxPosition3");
+		CHECK_EQ(script.animations[1].pfx[2].attached, true);
 
 		CHECK_EQ(script.animations[1].pfx_stop.size(), 1);
 		CHECK_EQ(script.animations[1].pfx_stop[0].frame, 8);
