@@ -235,8 +235,9 @@ namespace phoenix::mds {
 
 	struct dsl_event_pfx {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule = (dsl::p<dsl_integer> + dsl::opt(dsl::p<dsl_integer>) + dsl::p<dsl_string> +
-		                              dsl::p<dsl_string> + dsl::opt(LEXY_LIT("ATTACH")));
+		static constexpr auto rule =
+		    (dsl::p<dsl_integer> + dsl::opt(dsl::p<dsl_integer>) + dsl::p<dsl_string> + dsl::p<dsl_string> +
+		     dsl::opt(LEXY_LIT("ATTACH") | LEXY_LIT("\"ATTACH\""))); // TODO: More Weirdness
 		static constexpr auto value = lexy::callback<event_pfx>(
 		    [](int32_t frame, std::optional<int32_t> index, std::string&& name, std::string&& position) {
 			    return event_pfx {.frame = frame,
@@ -289,17 +290,23 @@ namespace phoenix::mds {
 
 	struct dsl_event_tag {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule = (dsl::p<dsl_integer> + dsl::p<dsl_string> + dsl::opt(dsl::p<dsl_string>) +
-		                              dsl::opt(dsl::p<dsl_string>) + dsl::opt(LEXY_LIT("ATTACH")));
+		static constexpr auto rule =
+		    (dsl::opt(dsl::p<dsl_integer>) + dsl::p<dsl_string> + dsl::opt(dsl::p<dsl_string>) +
+		     dsl::opt(dsl::p<dsl_string>) + dsl::opt(LEXY_LIT("ATTACH")));
 		static constexpr auto value = lexy::callback<event_tag>(
-		    [](int32_t frame, std::string&& a, std::optional<std::string>&& b, std::optional<std::string>&& c) {
-			    return make_event_tag(frame, std::move(a), std::move(b), std::move(c), true);
+		    [](std::optional<int32_t> frame,
+		       std::string&& a,
+		       std::optional<std::string>&& b,
+		       std::optional<std::string>&& c) {
+			    return make_event_tag(frame.value_or(0), std::move(a), std::move(b), std::move(c), true);
 		    },
-		    [](int32_t frame,
+		    [](std::optional<int32_t> frame,
 		       std::string&& a,
 		       std::optional<std::string>&& b,
 		       std::optional<std::string>&& c,
-		       lexy::nullopt) { return make_event_tag(frame, std::move(a), std::move(b), std::move(c), false); });
+		       lexy::nullopt) {
+			    return make_event_tag(frame.value_or(0), std::move(a), std::move(b), std::move(c), false);
+		    });
 	};
 
 	struct dsl_ani_events {

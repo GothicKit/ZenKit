@@ -11,7 +11,7 @@ Model("TestModel") {
 		ani("aniName2" 112 "aniNext2" 9.0 0 M. "aniModel2" R 222 332) {
 			*eventTag(0 "DEF_DROP_TORCH" ATTACH)
 			*eventTag(1 "DEF_WINDOW" "1 2 3 4 5")
-			*eventTag(2 "DEF_CREATE_ITEM" "eventSlot" "eventItem")
+			*eventTag("DEF_CREATE_ITEM" "eventSlot" "eventItem")
 
 			*eventSFX(3 "sfxName1" EMPTY_SLOT)
 			*eventSFX(4 "sfxName2" R:67.4)
@@ -20,6 +20,7 @@ Model("TestModel") {
 
 			*eventPFX(6 "pfxName1" "pfxPosition1" ATTACH)
 			*eventPFX(7 991 "pfxName2" "pfxPosition2")
+			*eventPFX(9 991 "pfxName3" "pfxPosition3" "ATTACH")
 			*eventPFXStop(8 992)
 
 			*eventMMStartAni(9 "mmAni1")
@@ -29,7 +30,7 @@ Model("TestModel") {
 		}
 
 		// Another comment.
-		// Maybe even more :>
+		/ Maybe even more :>
 
 		aniBlend(  ("blendName1" "blendNext1")
 		aniBlend("blendName2" 113 "blendNext2")
