@@ -263,7 +263,7 @@ namespace phoenix::mds {
 
 	struct string_without_closing_quote {
 		static constexpr auto rule = dsl::lit_c<'"'> +
-		    dsl::capture(dsl::token(dsl::while_(-(dsl::lit_c<'"'> / dsl::ascii::space)))) + dsl::p<opt_quote>;
+		    dsl::capture(dsl::token(dsl::while_(-(LEXY_ASCII_ONE_OF("\")") / dsl::ascii::space)))) + dsl::p<opt_quote>;
 		static constexpr auto value = lexy::as_string<std::string>;
 	};
 
@@ -326,7 +326,7 @@ namespace phoenix::mds {
 		     dsl::p<dsl_ani_flags> + dsl::p<dsl_string> + dsl::capture(dsl::token(dsl::lit_c<'F'> | dsl::lit_c<'R'>)) +
 		     dsl::p<dsl_integer> + dsl::p<dsl_integer> + dsl::opt(LEXY_LIT("FPS:") >> dsl::p<dsl_float>) +
 		     dsl::opt(LEXY_LIT("CVS:") >> dsl::p<dsl_float>)) +
-		    dsl::opt(dsl::curly_bracketed(dsl::p<dsl_ani_events>));
+		    dsl::opt(dsl::curly_bracketed(dsl::p<dsl_ani_events>) + dsl::while_(dsl::lit_c<'}'>));
 		static constexpr auto value = lexy::callback<animation>(
 		    [](std::string&& name,
 		       int32_t layer,
@@ -397,8 +397,9 @@ namespace phoenix::mds {
 
 	struct dsl_ani_blend {
 		static constexpr auto whitespace = ws;
-		static constexpr auto rule = (dsl::p<dsl_string> + dsl::opt(dsl::p<dsl_integer>) + dsl::p<dsl_string> +
-		                              dsl::opt(dsl::p<dsl_float>) + dsl::opt(dsl::p<dsl_float>)) +
+		static constexpr auto rule =
+		    (dsl::p<dsl_string> + dsl::opt(dsl::p<dsl_integer>) + dsl::p<string_without_closing_quote> +
+		     dsl::opt(dsl::p<dsl_float>) + dsl::opt(dsl::p<dsl_float>)) +
 		    dsl::if_(dsl::lit_c<'{'> >>
 		             (dsl::while_(-LEXY_ASCII_ONE_OF("}")) + dsl::lit_c<'}'>) ); // TODO: Ani events on blend?
 		static constexpr auto value = lexy::callback<animation_blending>([](std::string&& name,
