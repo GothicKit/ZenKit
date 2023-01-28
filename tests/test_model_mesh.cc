@@ -29,6 +29,19 @@ TEST_SUITE("model_mesh") {
 		CHECK_EQ(sk.mesh.sub_meshes.size(), 1);
 
 		CHECK_EQ(sk.weights.size(), 115);
+		CHECK_EQ(sk.weights[0].size(), 1);
+		CHECK_EQ(sk.weights[0][0].weight, 1.0f);
+		CHECK_EQ(sk.weights[0][0].position, glm::vec3 {-5.49776077f, 35.086731f, -2.64756012f});
+		CHECK_EQ(sk.weights[0][0].node_index, 0);
+		CHECK_EQ(sk.weights[62].size(), 1);
+		CHECK_EQ(sk.weights[62][0].weight, 1.0f);
+		CHECK_EQ(sk.weights[62][0].position, glm::vec3 {0.260997772f, 18.0412712f, -23.9048882f});
+		CHECK_EQ(sk.weights[62][0].node_index, 4);
+		CHECK_EQ(sk.weights[114].size(), 1);
+		CHECK_EQ(sk.weights[114][0].weight, 1.0f);
+		CHECK_EQ(sk.weights[114][0].position, glm::vec3 {1.05304337f, 71.0284958f, 1.32049942f});
+		CHECK_EQ(sk.weights[114][0].node_index, 0);
+
 		CHECK_EQ(sk.wedge_normals.size(), 0);
 		CHECK_EQ(sk.nodes.size(), 6);
 		CHECK_EQ(sk.nodes[0], 0);
