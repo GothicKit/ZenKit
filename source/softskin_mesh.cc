@@ -31,10 +31,10 @@ namespace phoenix {
 				msh.weights.resize(msh.mesh.positions.size());
 				for (uint32_t i = 0; i < msh.mesh.positions.size(); ++i) {
 					auto count = chunk.get_uint();
-					msh.weights[i].reserve(count);
+					msh.weights[i].resize(count);
 
 					for (std::uint32_t j = 0; j < count; ++j) {
-						auto& weight = msh.weights[i].emplace_back();
+						auto& weight = msh.weights[i][j];
 						weight.weight = chunk.get_float();
 						weight.position = chunk.get_vec3();
 						weight.node_index = chunk.get();
@@ -49,10 +49,10 @@ namespace phoenix {
 				}
 
 				// wedge normals
-				msh.wedge_normals.reserve(chunk.get_uint());
+				msh.wedge_normals.resize(chunk.get_uint());
 
 				for (std::uint32_t i = 0; i < msh.wedge_normals.size(); ++i) {
-					auto& normal = msh.wedge_normals.emplace_back();
+					auto& normal = msh.wedge_normals[i];
 					normal.normal = chunk.get_vec3();
 					normal.index = chunk.get_uint();
 				}
