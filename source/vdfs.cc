@@ -30,6 +30,9 @@ namespace phoenix {
 		return dos;
 	}
 
+	vdfs_signature_error::vdfs_signature_error(const std::string& signature)
+	    : error("VDF signature not recognized: \"" + signature + "\"") {}
+
 	bool vdf_entry_comparator::operator()(const vdf_entry& a, const vdf_entry& b) const {
 		return icompare(a.name, b.name);
 	}
@@ -236,6 +239,12 @@ namespace phoenix {
 		vdf_file vdf {};
 
 		vdf.header = vdf_header::read(buf);
+
+		// TODO: Reverse-engineer Union VDF format
+		if (vdf.header.signature != VDF_SIGNATURE_G1 && vdf.header.signature != VDF_SIGNATURE_G2) {
+			throw vdfs_signature_error {vdf.header.signature};
+		}
+
 		buf.position(vdf.header.catalog_offset);
 
 		const vdf_entry* entry = nullptr;

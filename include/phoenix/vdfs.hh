@@ -36,6 +36,16 @@ namespace phoenix {
 	/// \note This will convert to a ``DOS`` timestamp in the ``GMT`` timezone.
 	std::uint32_t unix_time_to_dos(std::time_t tm) noexcept;
 
+	/// \brief An exception thrown if the signature of a VDF file is not recognized.
+	///
+	/// If the signature is not recognized, this means that the VDF file was created using a 3rd-party tool
+	/// like Union and is not necessarily compatible with the VDFS spec. Accepted signatures are
+	/// phoenix::VDF_SIGNATURE_G1 and phoenix::VDF_SIGNATURE_G2.
+	class vdfs_signature_error : public error {
+	public:
+		explicit vdfs_signature_error(const std::string& signature);
+	};
+
 	/// \brief Represents the header of a VDF.
 	class vdf_header {
 	public:
