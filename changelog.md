@@ -6,6 +6,23 @@ found in [readme.md](readme.md#versioning).
 
 ---
 
+## v1.0.2
+
+In this version, some quite severe bugs regarding model script parsing have been fixed. Additionally, this release
+contains a lot of smaller fixes detailed below:
+
+### Bugfixes
+
+* [cbe6feaa] Fix issue in `archive_reader::read_bool` which would return `false` for any value other than `1`. This
+  is not the correct behaviour since it should return `true` for any non-zero value instead. This is now the case.
+* [5c1c34c6] Fix typo in `#define` for log levels (thanks, @DaDummy!)
+* [15f0e4f9] Fix a bug in `archive_reader_binary::skip_opject` which caused the parser to jump 4 bytes too far
+* [a3a23ce0] Fix a compilation error specific to Apple Clang in `c_info::remove_choice`
+* [b3b7eb21, ff6735b7] Fix incorrect parsing of enums in `BINARY` archives.
+* [17dfa5af, 3abd7719, 26f53ec9, 5c628a45] Fix many issues regarding MDS parsing. MDS files seem to have a defined
+  structure at first but there are typos in original files which break that structure. These fixes address various
+  typos in these files to make them parse correctly again.
+
 ## v1.0.1
 
 This version contains patches for many bugs as well as some performance improvements in the _VDF_ and _ZenGin Archive_
