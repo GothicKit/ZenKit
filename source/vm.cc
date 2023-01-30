@@ -258,32 +258,26 @@ namespace phoenix {
 			case opcode::movi:
 			case opcode::movvf: {
 				auto [ref, idx, context] = pop_reference();
+				auto value = pop_int();
 
 				if (!ref->is_member() || context != nullptr ||
 				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
-					ref->set_int(pop_int(), idx, context);
+					ref->set_int(value, idx, context);
 				} else if (ref->is_member()) {
 					PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
-
-					if (_m_stack_ptr > 0) {
-						_m_stack[--_m_stack_ptr].~daedalus_stack_frame();
-					}
 				}
 
 				break;
 			}
 			case opcode::movf: {
 				auto [ref, idx, context] = pop_reference();
+				auto value = pop_float();
 
 				if (!ref->is_member() || context != nullptr ||
 				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
-					ref->set_float(pop_float(), idx, context);
+					ref->set_float(value, idx, context);
 				} else if (ref->is_member()) {
 					PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
-
-					if (_m_stack_ptr > 0) {
-						_m_stack[--_m_stack_ptr].~daedalus_stack_frame();
-					}
 				}
 
 				break;
