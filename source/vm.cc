@@ -299,26 +299,57 @@ namespace phoenix {
 				throw vm_exception {"not implemented: movss"};
 			case opcode::addmovi: {
 				auto [ref, idx, context] = pop_reference();
-				auto result = ref->get_int(idx, context) + pop_int();
-				ref->set_int(result, idx, context);
+				auto value = pop_int();
+
+				if (!ref->is_member() || context != nullptr ||
+				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
+					auto result = ref->get_int(idx, context) + value;
+					ref->set_int(result, idx, context);
+				} else if (ref->is_member()) {
+					PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
+				}
+
 				break;
 			}
 			case opcode::submovi: {
 				auto [ref, idx, context] = pop_reference();
-				auto result = ref->get_int(idx, context) - pop_int();
-				ref->set_int(result, idx, context);
+				auto value = pop_int();
+
+				if (!ref->is_member() || context != nullptr ||
+				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
+					auto result = ref->get_int(idx, context) - value;
+					ref->set_int(result, idx, context);
+				} else if (ref->is_member()) {
+					PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
+				}
 				break;
 			}
 			case opcode::mulmovi: {
 				auto [ref, idx, context] = pop_reference();
-				auto result = ref->get_int(idx, context) * pop_int();
-				ref->set_int(result, idx, context);
+				auto value = pop_int();
+
+				if (!ref->is_member() || context != nullptr ||
+				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
+					auto result = ref->get_int(idx, context) * value;
+					ref->set_int(result, idx, context);
+				} else if (ref->is_member()) {
+					PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
+				}
+
 				break;
 			}
 			case opcode::divmovi: {
 				auto [ref, idx, context] = pop_reference();
-				auto result = ref->get_int(idx, context) / pop_int();
-				ref->set_int(result, idx, context);
+				auto value = pop_int();
+
+				if (!ref->is_member() || context != nullptr ||
+				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
+					auto result = ref->get_int(idx, context) / value;
+					ref->set_int(result, idx, context);
+				} else if (ref->is_member()) {
+					PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
+				}
+
 				break;
 			}
 			case opcode::movvi: {
