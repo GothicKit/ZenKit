@@ -286,6 +286,13 @@ namespace phoenix {
 
 			// check that the parent class is registered for the given instance type
 			auto* parent = find_symbol_by_index(sym->parent());
+
+			if (parent == nullptr) {
+				// We're probably trying to initialize $INSTANCE_HELP which is not permitted
+				throw vm_exception {"Cannot init " + sym->name() +
+				                    ": parent class not found (did you try to initialize $INSTANCE_HELP?)"};
+			}
+
 			while (parent->type() != datatype::class_) {
 				parent = find_symbol_by_index(parent->parent());
 			}
