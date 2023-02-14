@@ -116,11 +116,19 @@ namespace phoenix {
 			case opcode::div:
 				a = pop_int();
 				b = pop_int();
+
+				if (b == 0)
+					throw vm_exception {"vm: division by zero"};
+
 				push_int(a / b);
 				break;
 			case opcode::mod:
 				a = pop_int();
 				b = pop_int();
+
+				if (b == 0)
+					throw vm_exception {"vm: division by zero"};
+
 				push_int(a % b);
 				break;
 			case opcode::or_:
@@ -341,6 +349,9 @@ namespace phoenix {
 			case opcode::divmovi: {
 				auto [ref, idx, context] = pop_reference();
 				auto value = pop_int();
+
+				if (value == 0)
+					throw vm_exception {"vm: division by zero"};
 
 				if (!ref->is_member() || context != nullptr ||
 				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
