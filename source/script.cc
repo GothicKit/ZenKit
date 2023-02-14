@@ -274,6 +274,10 @@ namespace phoenix {
 				sym._m_value = std::shared_ptr<instance> {nullptr};
 				[[fallthrough]];
 			case datatype::function:
+				if (!sym.is_const()) {
+					sym._m_value = std::unique_ptr<std::int32_t[]>(new int32_t[1]);
+				}
+				[[fallthrough]];
 			case datatype::prototype:
 				sym._m_address = in.get_int();
 				break;
