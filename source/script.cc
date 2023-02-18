@@ -347,9 +347,6 @@ namespace phoenix {
 	}
 
 	void symbol::set_string(std::string_view value, std::size_t index, const std::shared_ptr<instance>& context) {
-		if (is_const()) {
-			throw illegal_const_access(this);
-		}
 		if (type() != datatype::string) {
 			throw illegal_type_access(this, datatype::string);
 		}
@@ -368,9 +365,6 @@ namespace phoenix {
 	}
 
 	void symbol::set_float(float value, std::size_t index, const std::shared_ptr<instance>& context) {
-		if (is_const()) {
-			throw illegal_const_access(this);
-		}
 		if (type() != datatype::float_) {
 			throw illegal_type_access(this, datatype::float_);
 		}
@@ -389,9 +383,6 @@ namespace phoenix {
 	}
 
 	void symbol::set_int(std::int32_t value, std::size_t index, const std::shared_ptr<instance>& context) {
-		if (is_const()) {
-			throw illegal_const_access(this);
-		}
 		if (type() != datatype::integer && type() != datatype::function) {
 			throw illegal_type_access(this, datatype::integer);
 		}

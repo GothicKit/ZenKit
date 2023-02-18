@@ -268,6 +268,10 @@ namespace phoenix {
 				auto [ref, idx, context] = pop_reference();
 				auto value = pop_int();
 
+				if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
+					throw illegal_const_access(ref);
+				}
+
 				if (!ref->is_member() || context != nullptr ||
 				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
 					ref->set_int(value, idx, context);
@@ -281,6 +285,10 @@ namespace phoenix {
 				auto [ref, idx, context] = pop_reference();
 				auto value = pop_float();
 
+				if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
+					throw illegal_const_access(ref);
+				}
+
 				if (!ref->is_member() || context != nullptr ||
 				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
 					ref->set_float(value, idx, context);
@@ -293,6 +301,10 @@ namespace phoenix {
 			case opcode::movs: {
 				auto [target, target_idx, context] = pop_reference();
 				auto source = pop_string();
+
+				if (target->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
+					throw illegal_const_access(target);
+				}
 
 				if (!target->is_member() || context != nullptr ||
 				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
@@ -309,6 +321,10 @@ namespace phoenix {
 				auto [ref, idx, context] = pop_reference();
 				auto value = pop_int();
 
+				if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
+					throw illegal_const_access(ref);
+				}
+
 				if (!ref->is_member() || context != nullptr ||
 				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
 					auto result = ref->get_int(idx, context) + value;
@@ -323,6 +339,10 @@ namespace phoenix {
 				auto [ref, idx, context] = pop_reference();
 				auto value = pop_int();
 
+				if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
+					throw illegal_const_access(ref);
+				}
+
 				if (!ref->is_member() || context != nullptr ||
 				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
 					auto result = ref->get_int(idx, context) - value;
@@ -335,6 +355,10 @@ namespace phoenix {
 			case opcode::mulmovi: {
 				auto [ref, idx, context] = pop_reference();
 				auto value = pop_int();
+
+				if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
+					throw illegal_const_access(ref);
+				}
 
 				if (!ref->is_member() || context != nullptr ||
 				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
@@ -350,8 +374,13 @@ namespace phoenix {
 				auto [ref, idx, context] = pop_reference();
 				auto value = pop_int();
 
-				if (value == 0)
+				if (value == 0) {
 					throw vm_exception {"vm: division by zero"};
+				}
+
+				if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
+					throw illegal_const_access(ref);
+				}
 
 				if (!ref->is_member() || context != nullptr ||
 				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {

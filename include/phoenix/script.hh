@@ -398,7 +398,6 @@ namespace phoenix {
 		/// \param value The new value to set.
 		/// \param index The index of the value to set
 		/// \param context An instance to use as context for setting member variables.
-		/// \throws illegal_const_access if this symbol #is_const
 		/// \throws illegal_type_access if the #type of this symbol is not dt_string.
 		/// \throws illegal_index_access if \p index >= #count.
 		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
@@ -411,7 +410,6 @@ namespace phoenix {
 		/// \param value The new value to set.
 		/// \param index The index of the value to set
 		/// \param context An instance to use as context for setting member variables.
-		/// \throws illegal_const_access if this symbol #is_const
 		/// \throws illegal_type_access if the #type of this symbol is not dt_float
 		/// \throws illegal_index_access if \p index >= #count.
 		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
@@ -423,7 +421,6 @@ namespace phoenix {
 		/// \param value The new value to set.
 		/// \param index The index of the value to set
 		/// \param context An instance to use as context for setting member variables.
-		/// \throws illegal_const_access if this symbol #is_const
 		/// \throws illegal_type_access if the #type of this symbol is not dt_int or dt_function.
 		/// \throws illegal_index_access if \p index >= #count.
 		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
