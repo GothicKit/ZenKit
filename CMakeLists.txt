@@ -57,6 +57,7 @@ set(PHOENIX_SOURCES
         source/buffer.cc
         source/font.cc
         source/material.cc
+        source/math.cc
         source/mesh.cc
         source/messages.cc
         source/model.cc
