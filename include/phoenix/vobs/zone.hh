@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "../Api.hh"
 #include <phoenix/vobs/vob.hh>
 
 namespace phoenix::vobs {
@@ -24,7 +25,7 @@ namespace phoenix::vobs {
 		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 		/// \throws parser_error if parsing fails.
 		/// \see vob::parse
-		static void parse(zone_music& obj, archive_reader& ctx, game_version version);
+		PHOENIX_API static void parse(zone_music& obj, archive_reader& ctx, game_version version);
 	};
 
 	/// \brief A VOb which defines the far plane settings in a certain zone.
@@ -38,7 +39,7 @@ namespace phoenix::vobs {
 		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 		/// \throws parser_error if parsing fails.
 		/// \see vob::parse
-		static void parse(zone_far_plane& obj, archive_reader& ctx, game_version version);
+		PHOENIX_API static void parse(zone_far_plane& obj, archive_reader& ctx, game_version version);
 	};
 
 	/// \brief A VOb which defines the fog in a certain zone.
@@ -55,6 +56,6 @@ namespace phoenix::vobs {
 		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 		/// \throws parser_error if parsing fails.
 		/// \see vob::parse
-		static void parse(zone_fog& obj, archive_reader& ctx, game_version version);
+		PHOENIX_API static void parse(zone_fog& obj, archive_reader& ctx, game_version version);
 	};
 } // namespace phoenix::vobs

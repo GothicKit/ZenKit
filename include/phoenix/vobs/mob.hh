@@ -35,7 +35,7 @@ namespace phoenix {
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
-			static void parse(mob& obj, archive_reader& ctx, game_version version);
+			PHOENIX_API static void parse(mob& obj, archive_reader& ctx, game_version version);
 		};
 
 		struct mob_inter : public mob {
@@ -52,7 +52,7 @@ namespace phoenix {
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
-			static void parse(mob_inter& obj, archive_reader& ctx, game_version version);
+			PHOENIX_API static void parse(mob_inter& obj, archive_reader& ctx, game_version version);
 		};
 
 		/// \brief A VOb representing a campfire.
@@ -67,7 +67,7 @@ namespace phoenix {
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
 			/// \see mob::parse
-			static void parse(mob_fire& obj, archive_reader& ctx, game_version version);
+			PHOENIX_API static void parse(mob_fire& obj, archive_reader& ctx, game_version version);
 		};
 
 		/// \brief A VOb representing a container.
@@ -88,7 +88,7 @@ namespace phoenix {
 			/// \see vob::parse
 			/// \see mob::parse
 			/// \see mob_container::parse
-			static void parse(mob_container& obj, archive_reader& ctx, game_version version);
+			PHOENIX_API static void parse(mob_container& obj, archive_reader& ctx, game_version version);
 		};
 
 		/// \brief A VOb representing a door.
@@ -105,7 +105,7 @@ namespace phoenix {
 			/// \see vob::parse
 			/// \see mob::parse
 			/// \see mob_container::parse
-			static void parse(mob_door& obj, archive_reader& ctx, game_version version);
+			PHOENIX_API static void parse(mob_door& obj, archive_reader& ctx, game_version version);
 		};
 	} // namespace vobs
 } // namespace phoenix

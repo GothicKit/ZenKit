@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "Api.hh"
 #include <phoenix/buffer.hh>
 #include <phoenix/mesh.hh>
 #include <phoenix/world/bsp_tree.hh>
@@ -27,7 +28,7 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] static world parse(buffer& buf, game_version version);
+		[[nodiscard]] PHOENIX_API static world parse(buffer& buf, game_version version);
 
 		/// \brief Parses a world from the data in the given buffer.
 		///
@@ -48,7 +49,7 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] static world parse(buffer& buf);
+		[[nodiscard]] PHOENIX_API static world parse(buffer& buf);
 
 		/// \brief Parses a world from the data in the given buffer.
 		/// \param[in,out] buf The buffer to read from (by rvalue-reference).
@@ -56,7 +57,7 @@ namespace phoenix {
 		/// \return The parsed world object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] inline static world parse(buffer&& buf, game_version version) {
+		[[nodiscard]] PHOENIX_API inline static world parse(buffer&& buf, game_version version) {
 			return world::parse(buf, version);
 		}
 
@@ -65,7 +66,7 @@ namespace phoenix {
 		/// \return The parsed world object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] inline static world parse(buffer&& buf) {
+		[[nodiscard]] PHOENIX_API inline static world parse(buffer&& buf) {
 			return world::parse(buf);
 		}
 

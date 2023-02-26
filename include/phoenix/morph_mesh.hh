@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "Api.hh"
 #include <phoenix/buffer.hh>
 #include <phoenix/mesh.hh>
 #include <phoenix/proto_mesh.hh>
@@ -54,14 +55,14 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] static morph_mesh parse(buffer& buf);
+		[[nodiscard]] PHOENIX_API static morph_mesh parse(buffer& buf);
 
 		/// \brief Parses a morph mesh from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed morph mesh.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] inline static morph_mesh parse(buffer&& buf) {
+		[[nodiscard]] PHOENIX_API inline static morph_mesh parse(buffer&& buf) {
 			return morph_mesh::parse(buf);
 		}
 

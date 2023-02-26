@@ -211,6 +211,18 @@ namespace phoenix {
 		return syms;
 	}
 
+	symbol* script::add_temporary_strings_symbol() {
+		symbol sym {};
+		sym._m_name = "$PHOENIX_FAKE_STRINGS";
+		sym._m_generated = true;
+		sym._m_type = datatype::string;
+		sym._m_count = 1;
+		sym._m_value = std::unique_ptr<std::string[]> {new std::string[sym._m_count]};
+		sym._m_index = static_cast<std::uint32_t>(_m_symbols.size());
+
+		return &_m_symbols.emplace_back(std::move(sym));
+	}
+
 	symbol symbol::parse(buffer& in) {
 		symbol sym {};
 

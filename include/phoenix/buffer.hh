@@ -32,9 +32,9 @@ namespace phoenix {
 	/// is more than the number of bytes remaining.
 	class buffer_underflow : public buffer_error {
 	public:
-		buffer_underflow(std::uint64_t byte, std::uint64_t size);
-		buffer_underflow(std::uint64_t byte, std::uint64_t size, std::string&& context);
-		buffer_underflow(std::uint64_t byte, std::string&& context);
+		PHOENIX_INTERNAL buffer_underflow(std::uint64_t byte, std::uint64_t size);
+		PHOENIX_INTERNAL buffer_underflow(std::uint64_t byte, std::uint64_t size, std::string&& context);
+		PHOENIX_INTERNAL buffer_underflow(std::uint64_t byte, std::string&& context);
 
 	public:
 		const std::uint64_t byte, size;
@@ -47,8 +47,8 @@ namespace phoenix {
 	/// is more than the number of bytes remaining.
 	class buffer_overflow : public buffer_error {
 	public:
-		buffer_overflow(std::uint64_t byte, std::uint64_t size);
-		buffer_overflow(std::uint64_t byte, std::uint64_t size, std::string&& context);
+		PHOENIX_INTERNAL buffer_overflow(std::uint64_t byte, std::uint64_t size);
+		PHOENIX_INTERNAL buffer_overflow(std::uint64_t byte, std::uint64_t size, std::string&& context);
 
 	public:
 		const std::uint64_t byte, size;
@@ -58,7 +58,7 @@ namespace phoenix {
 	/// \brief Exception thrown if a write is attempted on a readonly buffer.
 	class buffer_readonly : public buffer_error {
 	public:
-		explicit buffer_readonly() : buffer_error("buffer is not readonly") {}
+		PHOENIX_INTERNAL explicit buffer_readonly() : buffer_error("buffer is not readonly") {}
 	};
 
 	/// \brief Base class for all buffer backings.
@@ -67,7 +67,7 @@ namespace phoenix {
 	/// each referencing a subsection of the backing. For this reason, buffer backings should be stateless.
 	class buffer_backing {
 	public:
-		virtual ~buffer_backing() = default;
+		PHOENIX_API virtual ~buffer_backing() = default;
 
 		/// \brief Returns whether this backing considered direct or not.
 		///
@@ -76,22 +76,22 @@ namespace phoenix {
 		/// file.
 		///
 		/// \return `true` if this backing is direct and `false` if not.
-		[[nodiscard]] virtual bool direct() const noexcept = 0;
+		[[nodiscard]] PHOENIX_API virtual bool direct() const noexcept = 0;
 
 		/// \brief Returns whether or not this backing is readonly or not.
 		///
 		/// A readonly backing is a backing which can not be written to.
 		///
 		/// \return `true` if this backing is read-only and `false` if not.
-		[[nodiscard]] virtual bool readonly() const noexcept = 0;
+		[[nodiscard]] PHOENIX_API virtual bool readonly() const noexcept = 0;
 
 		/// \brief Returns the number of bytes available in this backing.
 		/// \return The number of bytes available in this backing.
-		[[nodiscard]] virtual std::uint64_t size() const noexcept = 0;
+		[[nodiscard]] PHOENIX_API virtual std::uint64_t size() const noexcept = 0;
 
 		/// \brief Retrieves a read-only raw byte array of this backing.
 		/// \return A read-only raw byte array into this backing.
-		[[nodiscard]] virtual const std::byte* array() const = 0;
+		[[nodiscard]] PHOENIX_API virtual const std::byte* array() const = 0;
 
 		/// \brief Fills the given \p buf with bytes from this backing starting at \p offset.
 		///
@@ -101,7 +101,7 @@ namespace phoenix {
 		/// \param size The number of bytes to read.
 		/// \param offset The offset at which to start reading bytes into \p buf.
 		/// \throws buffer_underflow if filling \p buf with bytes starting at \p offset fails.
-		virtual void read(std::byte* buf, std::uint64_t size, std::uint64_t offset) const = 0;
+		PHOENIX_API virtual void read(std::byte* buf, std::uint64_t size, std::uint64_t offset) const = 0;
 
 		/// \brief Writes all bytes from \p buf into this backing beginning at \p offset.
 		///
@@ -112,9 +112,9 @@ namespace phoenix {
 		/// \param offset The offset at which to start writing.
 		/// \throws buffer_overflow if writing all bytes of \p buf starting at \p offset fails.
 		/// \throws buffer_readonly if this backing is readonly.
-		virtual void write([[maybe_unused]] const std::byte* buf,
-		                   [[maybe_unused]] std::uint64_t size,
-		                   [[maybe_unused]] std::uint64_t offset) {
+		PHOENIX_API virtual void write([[maybe_unused]] const std::byte* buf,
+		                               [[maybe_unused]] std::uint64_t size,
+		                               [[maybe_unused]] std::uint64_t offset) {
 			throw buffer_readonly {};
 		}
 	};
@@ -122,13 +122,13 @@ namespace phoenix {
 	/// \brief A buffer implementation inspired by Java's ByteBuffer
 	class buffer {
 	private:
-		buffer(std::shared_ptr<buffer_backing> backing, std::uint64_t begin, std::uint64_t end);
-		buffer(std::shared_ptr<buffer_backing> backing,
-		       std::uint64_t begin,
-		       std::uint64_t end,
-		       std::uint64_t capacity,
-		       std::uint64_t position,
-		       std::optional<std::uint64_t> mark);
+		PHOENIX_INTERNAL buffer(std::shared_ptr<buffer_backing> backing, std::uint64_t begin, std::uint64_t end);
+		PHOENIX_INTERNAL buffer(std::shared_ptr<buffer_backing> backing,
+		                        std::uint64_t begin,
+		                        std::uint64_t end,
+		                        std::uint64_t capacity,
+		                        std::uint64_t position,
+		                        std::optional<std::uint64_t> mark);
 
 		/// \brief Reads a scalar of type \p T at the current #position.
 		///
@@ -141,11 +141,7 @@ namespace phoenix {
 		template <
 		    typename T,
 		    typename = typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value>::type>
-		[[nodiscard]] T _get_t() {
-			auto tmp = this->_get_t<T>(this->position());
-			_m_position += sizeof(T);
-			return tmp;
-		}
+		[[nodiscard]] PHOENIX_INTERNAL T _get_t();
 
 		/// \brief Reads a scalar of type \p T at the given \p pos.
 		/// \tparam T The type of scalar to read. Must be a std::integral or a std::floating_point type.
@@ -155,15 +151,7 @@ namespace phoenix {
 		template <
 		    typename T,
 		    typename = typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value>::type>
-		[[nodiscard]] T _get_t(std::uint64_t pos) const {
-			if (pos + sizeof(T) > limit()) {
-				throw buffer_underflow {pos, sizeof(T)};
-			}
-
-			T tmp;
-			_m_backing->read((std::byte*) &tmp, sizeof(T), _m_backing_begin + pos);
-			return tmp;
-		}
+		[[nodiscard]] PHOENIX_INTERNAL T _get_t(std::uint64_t pos) const;
 
 		/// \brief Writes a scalar of type \p T at the current #position.
 		///
@@ -175,14 +163,7 @@ namespace phoenix {
 		template <
 		    typename T,
 		    typename = typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value>::type>
-		void _put_t(T value) {
-			if (this->remaining() < sizeof(T)) {
-				throw buffer_overflow {this->position(), sizeof(T)};
-			}
-
-			_m_backing->write((std::byte*) &value, sizeof(T), _m_backing_begin + _m_position);
-			_m_position += sizeof(T);
-		}
+		PHOENIX_INTERNAL void _put_t(T value);
 
 	public:
 		/// \brief Constructs a new buffer from the given backing.
@@ -191,22 +172,22 @@ namespace phoenix {
 		/// To shrink the buffer, see #slice or #extract.
 		///
 		/// \param backing The buffer backing to use.
-		explicit buffer(std::shared_ptr<buffer_backing> backing);
+		PHOENIX_API explicit buffer(std::shared_ptr<buffer_backing> backing);
 
 		/// \brief Gets the current position of this buffer.
 		/// \return The current position of this buffer.
-		[[nodiscard]] inline std::uint64_t position() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint64_t position() const noexcept {
 			return _m_position;
 		}
 
 		/// \brief Sets this buffer's position.
 		/// \param pos The new position value.
 		/// \throws buffer_underflow if \p pos is greater than #limit.
-		void position(std::uint64_t pos);
+		PHOENIX_API void position(std::uint64_t pos);
 
 		/// \brief Returns the number of bytes available in this buffer.
 		/// \return The limit of this buffer.
-		[[nodiscard]] inline std::uint64_t limit() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint64_t limit() const noexcept {
 			return _m_backing_end - _m_backing_begin;
 		}
 
@@ -216,12 +197,12 @@ namespace phoenix {
 		///
 		/// \param limit The new limit to set.
 		/// \throws buffer_underflow if \p limit is greater than #capacity.
-		void limit(std::uint64_t limit);
+		PHOENIX_API void limit(std::uint64_t limit);
 
 		/// \brief Rewinds this buffer by setting the position to 0.
 		///
 		/// This operation discards the #mark if it is set.
-		inline void rewind() {
+		PHOENIX_API inline void rewind() {
 			_m_position = 0;
 			_m_mark.reset();
 		}
@@ -230,7 +211,7 @@ namespace phoenix {
 		/// \param count The number of bytes to skip.
 		/// \throws buffer_underflow if #position + \p count > #limit
 		/// \see #position
-		inline void skip(std::uint64_t count) {
+		PHOENIX_API inline void skip(std::uint64_t count) {
 			return this->position(this->position() + count);
 		}
 
@@ -239,7 +220,7 @@ namespace phoenix {
 		/// The number of remaining bytes is equal to #limit - #position.
 		///
 		/// \return The number of bytes remaining in this buffer.
-		[[nodiscard]] inline std::uint64_t remaining() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint64_t remaining() const noexcept {
 			return this->limit() - this->position();
 		}
 
@@ -249,21 +230,21 @@ namespace phoenix {
 		/// the total number of bytes available in the backing.
 		///
 		/// \return The capacity of this buffer.
-		[[nodiscard]] inline std::uint64_t capacity() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint64_t capacity() const noexcept {
 			return _m_capacity;
 		}
 
 		/// \brief Returns whether this buffer is considered to be direct or not.
 		/// \return `true` if the backing of this buffer is considered to be direct.
 		/// \see buffer_backing::direct
-		[[nodiscard]] inline bool direct() const noexcept {
+		[[nodiscard]] PHOENIX_API inline bool direct() const noexcept {
 			return _m_backing->direct();
 		}
 
 		/// \brief Returns whether this buffer is read-only or not.
 		/// \return `true` if this buffer is read-only.
 		/// \see buffer_backing::readonly
-		[[nodiscard]] inline bool readonly() const noexcept {
+		[[nodiscard]] PHOENIX_API inline bool readonly() const noexcept {
 			return _m_backing->readonly();
 		}
 
@@ -271,22 +252,22 @@ namespace phoenix {
 		///
 		/// #limit is set to #capacity and #position is set to 0. The mark is discarded if
 		/// it is set.
-		void clear() noexcept;
+		PHOENIX_API void clear() noexcept;
 
 		/// \brief Flips this buffer.
 		///
 		/// Its limit is set to the current position and its current position is set to 0.
-		void flip() noexcept;
+		PHOENIX_API void flip() noexcept;
 
 		/// \brief Sets this buffer's mark at its position.
 		/// \return This buffer.
-		inline void mark() noexcept {
+		PHOENIX_API inline void mark() noexcept {
 			_m_mark = position();
 		}
 
 		/// \brief Resets this buffer's position to the previously-marked position.
 		/// \return This buffer.
-		inline void reset() {
+		PHOENIX_API inline void reset() {
 			if (_m_mark) {
 				position(*_m_mark);
 			}
@@ -298,14 +279,14 @@ namespace phoenix {
 		/// capacity and limit.
 		///
 		/// \return The newly created buffer.
-		[[nodiscard]] buffer duplicate() const noexcept;
+		[[nodiscard]] PHOENIX_API buffer duplicate() const noexcept;
 
 		/// \brief Creates a new buffer which shares a subsequence of this buffer.
 		///
 		/// The shared subsequence starts at the current position and ends at this buffer's limit.
 		///
 		/// \return The newly created buffer.
-		[[nodiscard]] buffer slice() const noexcept;
+		[[nodiscard]] PHOENIX_API buffer slice() const noexcept;
 
 		/// \brief Creates a new buffer which shares a subsequence of this buffer.
 		///
@@ -315,7 +296,7 @@ namespace phoenix {
 		/// \param size The number of bytes the new buffer will encompass.
 		/// \return The newly created buffer.
 		/// \throws buffer_underflow if \p index + \p size > #limit.
-		[[nodiscard]] buffer slice(std::uint64_t index, std::uint64_t size) const;
+		[[nodiscard]] PHOENIX_API buffer slice(std::uint64_t index, std::uint64_t size) const;
 
 		/// \brief Creates a new buffer which shares a subsequence of this buffer.
 		///
@@ -325,14 +306,14 @@ namespace phoenix {
 		/// \param size The number of bytes to extract.
 		/// \return The newly created buffer.
 		/// \throws buffer_underflow if #position + \p size > #limit.
-		[[nodiscard]] buffer extract(std::uint64_t size) {
+		[[nodiscard]] PHOENIX_API buffer extract(std::uint64_t size) {
 			auto sl = this->slice(position(), size);
 			_m_position += size;
 			return sl;
 		}
 
 		/// \return A read-only view into the raw contents of this buffer.
-		[[nodiscard]] inline const std::byte* array() const noexcept {
+		[[nodiscard]] PHOENIX_API inline const std::byte* array() const noexcept {
 			return _m_backing->array() + _m_backing_begin;
 		}
 
@@ -340,201 +321,78 @@ namespace phoenix {
 		/// \param buf The buffer to write into.
 		/// \param size The number of bytes to get.
 		/// \throws buffer_underflow if the size of \p buf > #remaining.
-		void get(std::byte* buf, std::uint64_t size);
+		PHOENIX_API void get(std::byte* buf, std::uint64_t size);
 
 		/// \brief Get bytes from the buffer, put them into buf and advance the position accordingly.
 		/// \param buf The buffer to write into.
 		/// \param size The number of bytes to get.
 		/// \throws buffer_underflow if the size of \p buf > #remaining.
-		inline void get(std::uint8_t* buf, std::uint64_t size) {
+		PHOENIX_API inline void get(std::uint8_t* buf, std::uint64_t size) {
 			return this->get((std::byte*) buf, size);
 		}
 
 		/// \brief Get a value of type std::uint8_t from the buffer and advance the position accordingly.
 		/// \return The value just read.
 		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline std::uint8_t get() {
-			return _get_t<std::uint8_t>();
-		}
+		[[nodiscard]] PHOENIX_API std::uint8_t get();
 
 		/// \brief Get a value of type ``char`` from the buffer and advance the position accordingly.
 		/// \return The value just read.
 		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline char get_char() {
-			return _get_t<char>();
-		}
+		[[nodiscard]] PHOENIX_API char get_char();
 
 		/// \brief Get a value of type std::int16_t from the buffer and advance the position accordingly.
 		/// \return The value just read.
 		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline std::int16_t get_short() {
-			return _get_t<std::int16_t>();
-		}
+		[[nodiscard]] PHOENIX_API std::int16_t get_short();
 
 		/// \brief Get a value of type std::uint16_t from the buffer and advance the position accordingly.
 		/// \return The value just read.
 		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline std::uint16_t get_ushort() {
-			return _get_t<std::uint16_t>();
-		}
+		[[nodiscard]] PHOENIX_API std::uint16_t get_ushort();
 
 		/// \brief Get a value of type std::int32_t from the buffer and advance the position accordingly.
 		/// \return The value just read.
 		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline std::int32_t get_int() {
-			return _get_t<std::int32_t>();
-		}
+		[[nodiscard]] PHOENIX_API std::int32_t get_int();
 
 		/// \brief Get a value of type std::uint32_t from the buffer and advance the position accordingly.
 		/// \return The value just read.
 		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline std::uint32_t get_uint() {
-			return _get_t<std::uint32_t>();
-		}
+		[[nodiscard]] PHOENIX_API std::uint32_t get_uint();
 
 		/// \brief  Get a value of type std::int64_t from the buffer and advance the position accordingly.
 		/// \return The value just read.
 		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline std::int64_t get_long() {
-			return _get_t<std::int64_t>();
-		}
+		[[nodiscard]] PHOENIX_API std::int64_t get_long();
 
 		/// \brief Get a value of type std::uint64_t from the buffer and advance the position accordingly.
 		/// \return The value just read.
 		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline std::uint64_t get_ulong() {
-			return _get_t<std::uint64_t>();
-		}
+		[[nodiscard]] PHOENIX_API std::uint64_t get_ulong();
 
 		/// \brief Get a value of type float from the buffer and advance the position accordingly.
 		/// \return The value just read.
 		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline float get_float() {
-			return _get_t<float>();
-		}
+		[[nodiscard]] PHOENIX_API float get_float();
 
 		/// \brief Get a value of type double from the buffer and advance the position accordingly.
 		/// \return The value just read.
 		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline double get_double() {
-			return _get_t<double>();
-		}
-
-		/// \brief Get bytes from the buffer, put them into buf.
-		/// \param index The index at which to start reading.
-		/// \param buf The buffer to write into.
-		/// \param size The number of bytes to get.
-		/// \throws buffer_underflow if the values can't be read.
-		void get(std::uint64_t index, std::byte* buf, std::uint64_t size) const;
-
-		/// \brief Get bytes from the buffer, put them into buf.
-		/// \param index The index at which to start reading.
-		/// \param buf The buffer to write into.
-		/// \param size The number of bytes to get.
-		/// \throws buffer_underflow if the values can't be read.
-		inline void get(std::uint64_t index, std::uint8_t* buf, std::uint64_t size) const {
-			return this->get(index, (std::byte*) buf, size);
-		}
-
-		/// \brief Get a value of type std::uint8_t from the buffer.
-		/// \param index The index at which to start reading.
-		/// \return The value just read.
-		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline std::uint8_t get(std::uint64_t index) const {
-			return _get_t<std::uint8_t>(index);
-		}
-
-		/// \brief Get a value of type char from the buffer.
-		/// \param index The index at which to start reading.
-		/// \return The value just read.
-		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline char get_char(std::uint64_t index) const {
-			return _get_t<char>(index);
-		}
-
-		/// \brief Get a value of type std::int16_t from the buffer.
-		/// \param index The index at which to start reading.
-		/// \return The value just read.
-		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline std::int16_t get_short(std::uint64_t index) const {
-			return _get_t<std::int16_t>(index);
-		}
-
-		/// \brief Get a value of type std::uint16_t from the buffer.
-		/// \param index The index at which to start reading.
-		/// \return The value just read.
-		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline std::uint16_t get_ushort(std::uint64_t index) const {
-			return _get_t<std::uint16_t>(index);
-		}
-
-		/// \brief Get a value of type std::int32_t from the buffer.
-		/// \param index The index at which to start reading.
-		/// \return The value just read.
-		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline std::int32_t get_int(std::uint64_t index) const {
-			return _get_t<std::int32_t>(index);
-		}
-
-		/// \brief Get a value of type std::uint32_t from the buffer.
-		/// \param index The index at which to start reading.
-		/// \return The value just read.
-		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline std::uint32_t get_uint(std::uint64_t index) const {
-			return _get_t<std::uint32_t>(index);
-		}
-
-		/// \brief  Get a value of type std::int64_t from the buffer.
-		/// \param index The index at which to start reading.
-		/// \return The value just read.
-		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline std::int64_t get_long(std::uint64_t index) const {
-			return _get_t<std::int64_t>(index);
-		}
-
-		/// \brief Get a value of type std::uint64_t from the buffer.
-		/// \param index The index at which to start reading.
-		/// \return The value just read.
-		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline std::uint64_t get_ulong(std::uint64_t index) const {
-			return _get_t<std::uint64_t>(index);
-		}
-
-		/// \brief Get a value of type float from the buffer.
-		/// \param index The index at which to start reading.
-		/// \return The value just read.
-		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline float get_float(std::uint64_t index) const {
-			return _get_t<float>(index);
-		}
-
-		/// \brief Get a value of type double from the buffer.
-		/// \param index The index at which to start reading.
-		/// \return The value just read.
-		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline double get_double(std::uint64_t index) const {
-			return _get_t<double>(index);
-		}
+		[[nodiscard]] PHOENIX_API double get_double();
 
 		/// \brief Get a string of the given size from the buffer and advance the position accordingly
 		/// \param size The number of characters to read.
 		/// \return The string just read.
 		/// \throws buffer_underflow if the string can't be read.
-		[[nodiscard]] std::string get_string(std::uint64_t size);
-
-		/// \brief Get a string of the given size from the buffer.
-		/// \param index The index at which to start.
-		/// \param size The number of characters to read.
-		/// \return The string just read.
-		/// \throws buffer_underflow if the string can't be read.
-		[[nodiscard]] std::string get_string(std::uint64_t index, std::uint64_t size) const;
+		[[nodiscard]] PHOENIX_API std::string get_string(std::uint64_t size);
 
 		/// \brief Get a line from the buffer and advance the position accordingly.
 		/// \param skip_whitespace Set to `true` to skip whitespace characters immediately following the line.
 		/// \return The line just read.
 		/// \throws buffer_underflow if the string can't be read.
 		/// \see isspace
-		[[nodiscard]] std::string get_line(bool skip_whitespace = true);
+		[[nodiscard]] PHOENIX_API std::string get_line(bool skip_whitespace = true);
 
 		/// \brief Get a line from the buffer, unescape all relevant escape sequences, and
 		///        advance the position accordingly.
@@ -542,143 +400,32 @@ namespace phoenix {
 		/// \return The line just read.
 		/// \throws buffer_underflow if the string can't be read.
 		/// \see isspace
-		[[nodiscard]] std::string get_line_escaped(bool skip_whitespace = true);
-
-		/// \brief Get a line from the buffer.
-		/// \param index The index at which to start.
-		/// \return The line just read
-		/// \throws buffer_underflow if the string can't be read.
-		/// \see isspace
-		[[nodiscard]] std::string get_line_at(std::uint64_t index) const;
+		[[nodiscard]] PHOENIX_API std::string get_line_escaped(bool skip_whitespace = true);
 
 		/// \brief Get a 2D-vector from the buffer.
 		/// \return The vector just read
 		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline glm::vec2 get_vec2() {
-			float content[2];
-			this->get((std::byte*) content, sizeof(content));
-			return {content[0], content[1]};
-		}
-
-		/// \brief Get a 2D-vector from the buffer.
-		/// \param index The index at which to start.
-		/// \return The vector just read.
-		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline glm::vec2 get_vec2(std::uint64_t index) const {
-			return {get_float(index), get_float(index + sizeof(float))};
-		}
+		[[nodiscard]] PHOENIX_API glm::vec2 get_vec2();
 
 		/// \brief Get a 3D-vector from the buffer.
 		/// \return The vector just read
 		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline glm::vec3 get_vec3() {
-			float content[3];
-			this->get((std::byte*) content, sizeof(content));
-			return glm::vec3 {content[0], content[1], content[2]};
-		}
+		[[nodiscard]] PHOENIX_API glm::vec3 get_vec3();
 
 		/// \brief Get a 3x3 column-major matrix from the buffer.
 		/// \return The vector just read
 		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline glm::mat3x3 get_mat3x3() {
-			float content[3 * 3];
-			this->get((std::byte*) content, sizeof(content));
-			return glm::transpose(glm::mat3x3 {
-			    content[0],
-			    content[1],
-			    content[2],
-			    content[3],
-			    content[4],
-			    content[5],
-			    content[6],
-			    content[7],
-			    content[8],
-			});
-		}
+		[[nodiscard]] PHOENIX_API glm::mat3x3 get_mat3x3();
 
 		/// \brief Get a 4x4 column-major matrix from the buffer.
 		/// \return The vector just read
 		/// \throws buffer_underflow if the value can't be read.
-		inline glm::mat4x4 get_mat4x4() {
-			float content[4 * 4];
-			this->get((std::byte*) content, sizeof(content));
-			return glm::transpose(glm::mat4x4 {
-			    content[0],
-			    content[1],
-			    content[2],
-			    content[3],
-			    content[4],
-			    content[5],
-			    content[6],
-			    content[7],
-			    content[8],
-			    content[9],
-			    content[10],
-			    content[11],
-			    content[12],
-			    content[13],
-			    content[14],
-			    content[15],
-			});
-		}
-
-		/// \brief Get a 3D-vector from the buffer.
-		/// \param index The index at which to start.
-		/// \return The vector just read
-		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline glm::vec3 get_vec3(std::uint64_t index) const {
-			return {get_float(index), get_float(index + sizeof(float)), get_float(index + sizeof(float) * 2)};
-		}
+		[[nodiscard]] PHOENIX_API glm::mat4x4 get_mat4x4();
 
 		/// \brief Get a 4D-vector from the buffer.
 		/// \return The vector just read
 		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline glm::vec4 get_vec4() {
-			float content[4];
-			this->get((std::byte*) content, sizeof(content));
-			return glm::vec4 {content[0], content[1], content[2], content[3]};
-		}
-
-		/// \brief Get a 4D-vector from the buffer.
-		/// \param index The index at which to start.
-		/// \return The vector just read
-		/// \throws buffer_underflow if the value can't be read.
-		[[nodiscard]] inline glm::vec4 get_vec4(std::uint64_t index) const {
-			return {get_float(index),
-			        get_float(index + sizeof(float)),
-			        get_float(index + sizeof(float) * 2),
-			        get_float(index + sizeof(float) * 3)};
-		}
-
-		/// \brief Finds and returns the relative index of the first mismatch between this buffer and the given buffer
-		/// \param other The byte buffer to be tested for a mismatch with this buffer
-		/// \return The relative index of the first mismatch between this and the given buffer, otherwise -1 if no
-		///         mismatch.
-		[[nodiscard]] std::int64_t mismatch(const buffer& other) const;
-
-		/// \brief Finds and returns the relative index of the first mismatch between this buffer and the given callback
-		/// \param other A function to be called for each char. If it return `true` it is considered a mismatch.
-		/// \return The relative index of the first mismatch between this and the given buffer, otherwise -1 if no
-		///         mismatch.
-		[[nodiscard]] std::int64_t mismatch(const std::function<bool(std::uint8_t)>& each) const;
-
-		/// \brief Finds and returns the relative index of the first mismatch between this buffer and the
-		///        given buffer at the given index in this buffer
-		/// \param index The index in this buffer to start comparing at.
-		/// \param other The byte buffer to be tested for a mismatch with this buffer
-		/// \return The relative index of the first mismatch between this and the given buffer, otherwise -1 if no
-		///         mismatch.
-		/// \throw buffer_underflow if \p index > #limit
-		[[nodiscard]] std::int64_t mismatch(std::uint64_t index, const buffer& other) const;
-
-		/// \brief Finds and returns the relative index of the first mismatch between this buffer and
-		///        the given callback at the given index in this buffer
-		/// \param index The index in this buffer to start comparing at.
-		/// \param other A function to be called for each char. If it return `true` it is considered a mismatch.
-		/// \return The relative index of the first mismatch between this and the given buffer, otherwise -1 if no
-		///         mismatch.
-		/// \throw buffer_underflow if \p index > #limit
-		[[nodiscard]] std::int64_t mismatch(std::uint64_t index, const std::function<bool(std::uint8_t)>& each) const;
+		[[nodiscard]] PHOENIX_API glm::vec4 get_vec4();
 
 		/// \brief Put bytes from buf into the buffer and advance the position accordingly.
 		/// \param buf The data to write.
@@ -686,7 +433,7 @@ namespace phoenix {
 		/// \return This buffer.
 		/// \throws buffer_overflow if the value can't be written.
 		/// \throws buffer_readonly if the buffer is read-only.
-		void put(const std::byte* buf, std::uint64_t size);
+		PHOENIX_API void put(const std::byte* buf, std::uint64_t size);
 
 		/// \brief Put bytes from buf into the buffer and advance the position accordingly.
 		/// \param buf The data to write.
@@ -694,113 +441,91 @@ namespace phoenix {
 		/// \return This buffer.
 		/// \throws buffer_overflow if the value can't be written.
 		/// \throws buffer_readonly if the buffer is read-only.
-		inline void put(const std::uint8_t* buf, std::uint64_t size) {
-			this->put((const std::byte*) buf, size);
-		}
+		PHOENIX_API void put(const std::uint8_t* buf, std::uint64_t size);
 
 		/// \brief Put a value of type std::uint8_t into the buffer and advance the position accordingly
 		/// \param value The value to put into the buffer
 		/// \return This buffer.
 		/// \throws buffer_overflow if the value can't be written.
 		/// \throws buffer_readonly if the buffer is read-only.
-		inline void put(std::uint8_t value) {
-			_put_t(value);
-		}
+		PHOENIX_API void put(std::uint8_t value);
 
 		/// \brief Put a value of type char into the buffer and advance the position accordingly
 		/// \param value The value to put into the buffer
 		/// \return This buffer.
 		/// \throws buffer_overflow if the value can't be written.
 		/// \throws buffer_readonly if the buffer is read-only.
-		inline void put_char(char value) {
-			_put_t(value);
-		}
+		PHOENIX_API void put_char(char value);
 
 		/// \brief Put a value of type std::int16_t into the buffer and advance the position accordingly
 		/// \param value The value to put into the buffer
 		/// \return This buffer.
 		/// \throws buffer_overflow if the value can't be written.
 		/// \throws buffer_readonly if the buffer is read-only.
-		inline void put_short(std::int16_t value) {
-			_put_t(value);
-		}
+		PHOENIX_API void put_short(std::int16_t value);
 
 		/// \brief Put a value of type std::uint16_t into the buffer and advance the position accordingly
 		/// \param value The value to put into the buffer
 		/// \return This buffer.
 		/// \throws buffer_overflow if the value can't be written.
 		/// \throws buffer_readonly if the buffer is read-only.
-		inline void put_ushort(std::uint16_t value) {
-			_put_t(value);
-		}
+		PHOENIX_API void put_ushort(std::uint16_t value);
 
 		/// \brief Put a value of type std::int32_t into the buffer and advance the position accordingly
 		/// \param value The value to put into the buffer
 		/// \return This buffer.
 		/// \throws buffer_overflow if the value can't be written.
 		/// \throws buffer_readonly if the buffer is read-only.
-		inline void put_int(std::int32_t value) {
-			_put_t(value);
-		}
+		PHOENIX_API void put_int(std::int32_t value);
 
 		/// \brief Put a value of type std::uint32_t into the buffer and advance the position accordingly
 		/// \param value The value to put into the buffer
 		/// \return This buffer.
 		/// \throws buffer_overflow if the value can't be written.
 		/// \throws buffer_readonly if the buffer is read-only.
-		inline void put_uint(std::uint32_t value) {
-			_put_t(value);
-		}
+		PHOENIX_API void put_uint(std::uint32_t value);
 
 		/// \brief Put a value of type std::int64_t into the buffer and advance the position accordingly
 		/// \param value The value to put into the buffer
 		/// \return This buffer.
 		/// \throws buffer_overflow if the value can't be written.
 		/// \throws buffer_readonly if the buffer is read-only.
-		inline void put_long(std::int64_t value) {
-			_put_t(value);
-		}
+		PHOENIX_API void put_long(std::int64_t value);
 
 		/// \brief Put a value of type std::uint64_t into the buffer and advance the position accordingly
 		/// \param value The value to put into the buffer
 		/// \return This buffer.
 		/// \throws buffer_overflow if the value can't be written.
 		/// \throws buffer_readonly if the buffer is read-only.
-		inline void put_ulong(std::uint64_t value) {
-			_put_t(value);
-		}
+		PHOENIX_API void put_ulong(std::uint64_t value);
 
 		/// \brief Put a value of type float into the buffer and advance the position accordingly
 		/// \param value The value to put into the buffer
 		/// \return This buffer.
 		/// \throws buffer_overflow if the value can't be written.
 		/// \throws buffer_readonly if the buffer is read-only.
-		inline void put_float(float value) {
-			_put_t(value);
-		}
+		PHOENIX_API void put_float(float value);
 
 		/// \brief Put a value of type double into the buffer and advance the position accordingly
 		/// \param value The value to put into the buffer
 		/// \return This buffer.
 		/// \throws buffer_overflow if the value can't be written.
 		/// \throws buffer_readonly if the buffer is read-only.
-		inline void put_double(double value) {
-			_put_t(value);
-		}
+		PHOENIX_API void put_double(double value);
 
 		/// \brief Put string into the buffer and advance the position accordingly
 		/// \param str The string to put into the buffer.
 		/// \return This buffer.
 		/// \throws buffer_overflow if the string can't be written.
 		/// \throws buffer_readonly if the buffer is read-only.
-		void put_string(std::string_view str);
+		PHOENIX_API void put_string(std::string_view str);
 
 		/// \brief Put string followed by <LF> into the buffer and advance the position accordingly
 		/// \param str The string to put into the buffer.
 		/// \return This buffer.
 		/// \throws buffer_overflow if the string can't be written.
 		/// \throws buffer_readonly if the buffer is read-only.
-		void put_line(std::string_view str);
+		PHOENIX_API void put_line(std::string_view str);
 
 		/// \brief Allocates a new buffer with the given size.
 		///
@@ -809,7 +534,7 @@ namespace phoenix {
 		///
 		/// \param size The number of bytes to allocate.
 		/// \return The newly allocated buffer.
-		static buffer allocate(std::uint64_t size);
+		PHOENIX_API static buffer allocate(std::uint64_t size);
 
 		/// \brief Creates a new buffer from the given vector.
 		///
@@ -819,7 +544,7 @@ namespace phoenix {
 		/// \param buf A vector containing the data to be wrapped into a buffer.
 		/// \param readonly Set to `false` to be able to write to the buffer.
 		/// \return The newly created buffer.
-		static buffer of(std::vector<std::byte>&& buf, bool readonly = true);
+		PHOENIX_API static buffer of(std::vector<std::byte>&& buf, bool readonly = true);
 
 		/// \brief Opens the given file as a direct buffer.
 		///
@@ -828,7 +553,7 @@ namespace phoenix {
 		/// \param path The path of the file to mmap.
 		/// \param readonly Set to `false` to be able to write to the buffer.
 		/// \return The newly created buffer.
-		static buffer mmap(const std::filesystem::path& path, bool readonly = true);
+		PHOENIX_API static buffer mmap(const std::filesystem::path& path, bool readonly = true);
 
 		/// \brief Opens the given file as an indirect buffer.
 		///
@@ -840,15 +565,15 @@ namespace phoenix {
 		///       gain for small files but it is generally slower and uses more memory. You should probably use #mmap
 		///       instead.
 		/// \return The newly created buffer.
-		static buffer read(const std::filesystem::path& path, bool readonly = true);
+		PHOENIX_API static buffer read(const std::filesystem::path& path, bool readonly = true);
 
 		/// \brief Returns a duplicate of the empty buffer.
 		/// \return The empty buffer.
-		static buffer empty();
+		PHOENIX_API static buffer empty();
 
 	private:
 		static std::unique_ptr<buffer> _m_empty;
-		friend bool operator==(const buffer&, const buffer&);
+		PHOENIX_API friend bool operator==(const buffer&, const buffer&);
 
 		std::shared_ptr<buffer_backing> _m_backing;
 		std::uint64_t _m_backing_begin, _m_backing_end;
@@ -857,4 +582,6 @@ namespace phoenix {
 
 		std::optional<std::uint64_t> _m_mark;
 	};
+
+	PHOENIX_API bool operator==(const buffer&, const buffer&);
 } // namespace phoenix

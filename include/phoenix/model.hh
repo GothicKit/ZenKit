@@ -21,14 +21,14 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] static model parse(buffer& buf);
+		[[nodiscard]] PHOENIX_API static model parse(buffer& buf);
 
 		/// \brief Parses a model from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed model object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] inline static model parse(buffer&& buf) {
+		[[nodiscard]] PHOENIX_API inline static model parse(buffer&& buf) {
 			return model::parse(buf);
 		}
 

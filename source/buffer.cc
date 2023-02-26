@@ -1,5 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
+#include <cctype>
+#include <cstddef>
 #include <phoenix/buffer.hh>
 
 #include <mio/mmap.hpp>
@@ -249,14 +251,6 @@ namespace phoenix {
 		_m_position += size;
 	}
 
-	void buffer::get(std::uint64_t index, std::byte* buf, std::uint64_t size) const {
-		if (index + size > this->limit()) {
-			throw buffer_underflow {index, size, "absolute bulk get"};
-		}
-
-		_m_backing->read(buf, size, _m_backing_begin + index);
-	}
-
 	std::string buffer::get_string(std::uint64_t size) {
 		if (this->remaining() < size) {
 			throw buffer_overflow {position(), size, "relative string get"};
@@ -268,33 +262,23 @@ namespace phoenix {
 		return tmp;
 	}
 
-	std::string buffer::get_string(std::uint64_t index, std::uint64_t size) const {
-		if (index + size > this->limit()) {
-			throw buffer_overflow {index, size, "absolute string get"};
-		}
-
-		std::string tmp {};
-		tmp.resize(size);
-		this->get(index, (std::byte*) tmp.data(), size);
-		return tmp;
-	}
-
 	std::string buffer::get_line(bool skip_whitespace) {
-		auto lf = mismatch([](char chr) { return chr == '\n' || chr == '\0' || chr == '\r'; });
+		std::string tmp {};
 
-		if (lf == -1) {
-			throw buffer_underflow {position(), "relative line get"};
+		char c = this->get_char();
+		while (c != '\n' && c != '\r' && c != '\0') {
+			tmp.push_back(c);
+			c = this->get_char();
 		}
 
-		auto tmp = get_string(lf);
-		(void) get_char(); // ignore the <LF> character itself
+		if (skip_whitespace && remaining() > 0) {
+			c = this->get_char();
+			while (std::isspace(static_cast<unsigned char>(c)) && remaining() > 0) {
+				c = this->get_char();
+			}
 
-		if (skip_whitespace) {
-			auto count = mismatch([](char chr) { return !std::isspace(static_cast<unsigned char>(chr)); });
-			if (count == -1) {
-				position(limit()); // the end of the buffer has been reached
-			} else {
-				position(position() + count);
+			if (remaining() != 0) {
+				this->position(this->position() - 1);
 			}
 		}
 
@@ -322,68 +306,6 @@ namespace phoenix {
 		return tmp;
 	}
 
-	std::string buffer::get_line_at(std::uint64_t index) const {
-		auto lf = mismatch(index, [](char chr) { return chr == '\n' || chr == '\0'; });
-
-		if (lf == -1) {
-			throw buffer_underflow {index, "absolute line get"};
-		}
-
-		return get_string(index, lf);
-	}
-
-	std::int64_t buffer::mismatch(const buffer& other) const {
-		auto remaining = std::min(this->remaining(), other.remaining());
-
-		for (std::uint64_t i = 0; i < remaining; ++i) {
-			if (this->get_char(this->position() + i) != other.get_char(other.position() + i)) {
-				return static_cast<long>(i);
-			}
-		}
-
-		return -1;
-	}
-
-	std::int64_t buffer::mismatch(std::uint64_t index, const buffer& other) const {
-		if (index > this->limit()) {
-			throw buffer_underflow {index, "absolute mismatch"};
-		}
-
-		auto remaining = std::min(this->limit() - index, other.remaining());
-		for (std::uint64_t i = 0; i < remaining; ++i) {
-			if (this->get_char(index + i) != other.get_char(other.position() + i)) {
-				return static_cast<long>(i);
-			}
-		}
-
-		return -1;
-	}
-
-	std::int64_t buffer::mismatch(const std::function<bool(std::uint8_t)>& each) const {
-		for (std::uint64_t i = 0; i < this->remaining(); ++i) {
-			if (each(this->get_char(this->position() + i))) {
-				return static_cast<long>(i);
-			}
-		}
-
-		return -1;
-	}
-
-	std::int64_t buffer::mismatch(std::uint64_t index, const std::function<bool(std::uint8_t)>& each) const {
-		if (index > this->limit()) {
-			throw buffer_underflow {index, "absolute mismatch"};
-		}
-
-		auto remaining = limit() - index;
-		for (std::uint64_t i = 0; i < remaining; ++i) {
-			if (each(this->get_char(index + i))) {
-				return static_cast<long>(i);
-			}
-		}
-
-		return -1;
-	}
-
 	void buffer::put(const std::byte* buf, std::uint64_t size) {
 		if (this->remaining() < size) {
 			throw buffer_overflow {this->position(), size, "relative bulk put"};
@@ -407,5 +329,174 @@ namespace phoenix {
 		    (other._m_backing == self._m_backing && other._m_backing_begin == self._m_backing_begin &&
 		     other._m_backing_end == self._m_backing_end && other._m_capacity == self._m_capacity &&
 		     other._m_position == self._m_position);
+	}
+
+	std::uint8_t buffer::get() {
+		return _get_t<std::uint8_t>();
+	}
+
+	char buffer::get_char() {
+		return _get_t<char>();
+	}
+
+	std::int16_t buffer::get_short() {
+		return _get_t<std::int16_t>();
+	}
+
+	std::uint16_t buffer::get_ushort() {
+		return _get_t<std::uint16_t>();
+	}
+
+	std::int32_t buffer::get_int() {
+		return _get_t<std::int32_t>();
+	}
+
+	std::uint32_t buffer::get_uint() {
+		return _get_t<std::uint32_t>();
+	}
+
+	std::int64_t buffer::get_long() {
+		return _get_t<std::int64_t>();
+	}
+
+	std::uint64_t buffer::get_ulong() {
+		return _get_t<std::uint64_t>();
+	}
+
+	float buffer::get_float() {
+		return _get_t<float>();
+	}
+
+	double buffer::get_double() {
+		return _get_t<double>();
+	}
+
+	glm::vec2 buffer::get_vec2() {
+		float content[2];
+		this->get((std::byte*) content, sizeof(content));
+		return {content[0], content[1]};
+	}
+
+	glm::vec3 buffer::get_vec3() {
+		float content[3];
+		this->get((std::byte*) content, sizeof(content));
+		return glm::vec3 {content[0], content[1], content[2]};
+	}
+
+	glm::mat3x3 buffer::get_mat3x3() {
+		float content[3 * 3];
+		this->get((std::byte*) content, sizeof(content));
+		return glm::transpose(glm::mat3x3 {
+		    content[0],
+		    content[1],
+		    content[2],
+		    content[3],
+		    content[4],
+		    content[5],
+		    content[6],
+		    content[7],
+		    content[8],
+		});
+	}
+
+	glm::mat4x4 buffer::get_mat4x4() {
+		float content[4 * 4];
+		this->get((std::byte*) content, sizeof(content));
+		return glm::transpose(glm::mat4x4 {
+		    content[0],
+		    content[1],
+		    content[2],
+		    content[3],
+		    content[4],
+		    content[5],
+		    content[6],
+		    content[7],
+		    content[8],
+		    content[9],
+		    content[10],
+		    content[11],
+		    content[12],
+		    content[13],
+		    content[14],
+		    content[15],
+		});
+	}
+
+	glm::vec4 buffer::get_vec4() {
+		float content[4];
+		this->get((std::byte*) content, sizeof(content));
+		return glm::vec4 {content[0], content[1], content[2], content[3]};
+	}
+
+	void buffer::put(const std::uint8_t* buf, std::uint64_t size) {
+		this->put((const std::byte*) buf, size);
+	}
+
+	void buffer::put(std::uint8_t value) {
+		_put_t(value);
+	}
+
+	void buffer::put_char(char value) {
+		_put_t(value);
+	}
+
+	void buffer::put_short(std::int16_t value) {
+		_put_t(value);
+	}
+
+	void buffer::put_ushort(std::uint16_t value) {
+		_put_t(value);
+	}
+
+	void buffer::put_int(std::int32_t value) {
+		_put_t(value);
+	}
+
+	void buffer::put_uint(std::uint32_t value) {
+		_put_t(value);
+	}
+
+	void buffer::put_long(std::int64_t value) {
+		_put_t(value);
+	}
+
+	void buffer::put_ulong(std::uint64_t value) {
+		_put_t(value);
+	}
+
+	void buffer::put_float(float value) {
+		_put_t(value);
+	}
+
+	void buffer::put_double(double value) {
+		_put_t(value);
+	}
+
+	template <typename T, typename>
+	PHOENIX_INTERNAL void buffer::_put_t(T value) {
+		if (this->remaining() < sizeof(T)) {
+			throw buffer_overflow {this->position(), sizeof(T)};
+		}
+
+		_m_backing->write((std::byte*) &value, sizeof(T), _m_backing_begin + _m_position);
+		_m_position += sizeof(T);
+	}
+
+	template <typename T, typename>
+	PHOENIX_INTERNAL T buffer::_get_t(std::uint64_t pos) const {
+		if (pos + sizeof(T) > limit()) {
+			throw buffer_underflow {pos, sizeof(T)};
+		}
+
+		T tmp;
+		_m_backing->read((std::byte*) &tmp, sizeof(T), _m_backing_begin + pos);
+		return tmp;
+	}
+
+	template <typename T, typename>
+	PHOENIX_INTERNAL T buffer::_get_t() {
+		auto tmp = this->_get_t<T>(this->position());
+		_m_position += sizeof(T);
+		return tmp;
 	}
 } // namespace phoenix

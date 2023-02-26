@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "Api.hh"
 #include <phoenix/script.hh>
 
 #include <array>
@@ -26,7 +27,7 @@ namespace phoenix {
 	/// \brief An exception thrown if the definition of an external is incorrect.
 	class illegal_external_definition : public script_error {
 	public:
-		illegal_external_definition(const symbol* sym, std::string&& message);
+		PHOENIX_API illegal_external_definition(const symbol* sym, std::string&& message);
 
 	public:
 		/// \brief The symbol the external is being registered for.
@@ -37,14 +38,14 @@ namespace phoenix {
 	///        the return type defined in the script.
 	class illegal_external_rtype : public illegal_external_definition {
 	public:
-		illegal_external_rtype(const symbol* sym, std::string&& provided);
+		PHOENIX_API illegal_external_rtype(const symbol* sym, std::string&& provided);
 	};
 
 	/// \brief An exception thrown if one of the parameter types of a new external registration does not match
 	///        the type defined in the script.
 	class illegal_external_param : public illegal_external_definition {
 	public:
-		illegal_external_param(const symbol* sym, std::string&& provided, std::uint8_t i);
+		PHOENIX_API illegal_external_param(const symbol* sym, std::string&& provided, std::uint8_t i);
 	};
 
 	class vm_exception : public script_error {
@@ -90,7 +91,7 @@ namespace phoenix {
 
 		/// \brief Creates a DaedalusVM instance for the given script.
 		/// \param scr The script to load into the VM.
-		explicit vm(script&& scr, uint8_t flags = execution_flag::none);
+		PHOENIX_API explicit vm(script&& scr, uint8_t flags = execution_flag::none);
 
 		/// \brief Calls a function by it's name.
 		/// \tparam P The types for the argument values.
@@ -164,6 +165,7 @@ namespace phoenix {
 		/// \param name The name of the instance to initialize (ie. 'STT_309_WHISTLER')
 		/// \return The initialized instance.
 		template <typename _instance_t>
+
 		typename std::enable_if<std::is_base_of_v<instance, _instance_t>, std::shared_ptr<_instance_t>>::type
 		init_instance(std::string_view name) {
 			return init_instance<_instance_t>(find_symbol_by_name(name));
@@ -188,6 +190,7 @@ namespace phoenix {
 		/// \param sym The symbol to initialize.
 		/// \return The initialized instance.
 		template <typename _instance_t>
+
 		typename std::enable_if<std::is_base_of_v<instance, _instance_t>, std::shared_ptr<_instance_t>>::type
 		init_instance(symbol* sym) {
 			// create the instance
@@ -231,6 +234,7 @@ namespace phoenix {
 		/// \param name The name of the instance to initialize (ie. 'STT_309_WHISTLER')
 		/// \return The initialized instance.
 		template <typename _instance_t>
+
 		typename std::enable_if<std::is_base_of_v<instance, _instance_t>, std::shared_ptr<_instance_t>>::type
 		allocate_instance(std::string_view name) {
 			return allocate_instance<_instance_t>(find_symbol_by_name(name));
@@ -259,6 +263,7 @@ namespace phoenix {
 		/// \param sym The symbol to initialize.
 		/// \return The initialized instance.
 		template <typename _instance_t>
+
 		typename std::enable_if<std::is_base_of_v<instance, _instance_t>, std::shared_ptr<_instance_t>>::type
 		allocate_instance(symbol* sym) {
 			// create the instance
@@ -311,17 +316,17 @@ namespace phoenix {
 			sym->set_instance(instance);
 		}
 
-		void push_int(std::int32_t value);
-		void push_float(float value);
-		void push_instance(std::shared_ptr<instance> value);
-		void push_reference(symbol* value, std::uint8_t index = 0);
-		void push_string(std::string_view value);
+		PHOENIX_API void push_int(std::int32_t value);
+		PHOENIX_API void push_float(float value);
+		PHOENIX_API void push_instance(std::shared_ptr<instance> value);
+		PHOENIX_API void push_reference(symbol* value, std::uint8_t index = 0);
+		PHOENIX_API void push_string(std::string_view value);
 
-		[[nodiscard]] std::int32_t pop_int();
-		[[nodiscard]] float pop_float();
-		[[nodiscard]] std::shared_ptr<instance> pop_instance();
-		[[nodiscard]] const std::string& pop_string();
-		[[nodiscard]] std::tuple<symbol*, std::uint8_t, std::shared_ptr<instance>> pop_reference();
+		[[nodiscard]] PHOENIX_API std::int32_t pop_int();
+		[[nodiscard]] PHOENIX_API float pop_float();
+		[[nodiscard]] PHOENIX_API std::shared_ptr<instance> pop_instance();
+		[[nodiscard]] PHOENIX_API const std::string& pop_string();
+		[[nodiscard]] PHOENIX_API std::tuple<symbol*, std::uint8_t, std::shared_ptr<instance>> pop_reference();
 
 		/// \brief Registers a Daedalus external function.
 		///
@@ -591,7 +596,7 @@ namespace phoenix {
 		///
 		/// \param callback The function to call. The one parameter of the function is the name of the unresolved
 		/// external.
-		void register_default_external(const std::function<void(std::string_view)>& callback);
+		PHOENIX_API void register_default_external(const std::function<void(std::string_view)>& callback);
 
 		/// \brief Registers a function to be called when script execution fails.
 		///
@@ -602,39 +607,39 @@ namespace phoenix {
 		///                 If the function returns `true` the error is assumed to have been handled and execution will
 		///                 continue as normal. If `false` is returned, the VM will re-raise the exception and thus,
 		///                 halt execution.
-		void register_exception_handler(
+		PHOENIX_API void register_exception_handler(
 		    const std::function<vm_exception_strategy(vm&, const script_error&, const instruction&)>& callback);
 
 		/// \return the symbol referring to the global <tt>var C_NPC self</tt>.
-		inline symbol* global_self() {
+		PHOENIX_API inline symbol* global_self() {
 			return _m_self_sym;
 		}
 
 		/// \return the symbol referring to the global <tt>var C_NPC other</tt>.
-		inline symbol* global_other() {
+		PHOENIX_API inline symbol* global_other() {
 			return _m_other_sym;
 		}
 
 		/// \return the symbol referring to the global <tt>var C_NPC victim</tt>.
-		inline symbol* global_victim() {
+		PHOENIX_API inline symbol* global_victim() {
 			return _m_victim_sym;
 		}
 
 		/// \return the symbol referring to the global <tt>var C_NPC hero</tt>.
-		inline symbol* global_hero() {
+		PHOENIX_API inline symbol* global_hero() {
 			return _m_hero_sym;
 		}
 
 		/// \return the symbol referring to the global <tt>var C_NPC item</tt>.
-		inline symbol* global_item() {
+		PHOENIX_API inline symbol* global_item() {
 			return _m_item_sym;
 		}
 
 		/// \brief Prints the contents of the function call stack and the VMs stack to stderr.
-		void print_stack_trace() const;
+		PHOENIX_API void print_stack_trace() const;
 
 		/// \return The current program counter (or instruction index) the VM is at.
-		[[nodiscard]] inline uint32_t pc() const noexcept {
+		[[nodiscard]] PHOENIX_API inline uint32_t pc() const noexcept {
 			return _m_pc;
 		}
 
@@ -645,15 +650,15 @@ namespace phoenix {
 		/// is required to deal with it appropriately.
 		///
 		/// \param sym The symbol to call.
-		void call(const symbol* sym);
+		PHOENIX_INTERNAL void call(const symbol* sym);
 
 		/// \brief Runs the instruction at the current program counter and advances it properly.
 		/// \return false, the instruction executed was a op_return instruction, otherwise true.
-		bool exec();
+		PHOENIX_INTERNAL bool exec();
 
 		/// \brief Validates the given address and jumps to it (sets the program counter).
 		/// \param address The address to jump to.
-		void jump(std::uint32_t address);
+		PHOENIX_INTERNAL void jump(std::uint32_t address);
 
 		/// \brief Pushes a call stack frame onto the call stack.
 		///
@@ -661,13 +666,13 @@ namespace phoenix {
 		/// as #pop_call is invoked.
 		///
 		/// \param sym The symbol referring to the function called.
-		void push_call(const symbol* sym);
+		PHOENIX_INTERNAL void push_call(const symbol* sym);
 
 		/// \brief Pops a call stack from from the call stack.
 		///
 		/// This method restores the interpreter's state to before the function which the
 		/// call stack entry refers to was called.
-		void pop_call();
+		PHOENIX_INTERNAL void pop_call();
 
 		/// \brief Checks that the type of each symbol in the given set of defined symbols matches the given type
 		/// parameters.
@@ -935,5 +940,7 @@ namespace phoenix {
 	/// \param exc The exception being handled.
 	/// \param instr The instruction being executed.
 	/// \return vm_exception_strategy::continue_
-	vm_exception_strategy lenient_vm_exception_handler(vm& v, const script_error& exc, const instruction& instr);
+	PHOENIX_API vm_exception_strategy lenient_vm_exception_handler(vm& v,
+	                                                               const script_error& exc,
+	                                                               const instruction& instr);
 } // namespace phoenix

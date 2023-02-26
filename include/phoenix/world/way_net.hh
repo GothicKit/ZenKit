@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "phoenix/Api.hh"
 #include <phoenix/archive.hh>
 
 #include <unordered_map>
@@ -35,12 +36,13 @@ namespace phoenix {
 		/// \brief PParses a way-net from the given reader.
 		/// \param in The reader to read from.
 		/// \return The way-net parsed.
-		static way_net parse(archive_reader& in);
+		PHOENIX_INTERNAL static way_net parse(archive_reader& in);
 
 		/// \brief Get the waypoint with the given name.
 		/// \param name The name of the waypoint to get.
 		/// \return A pointer to the waypoint or `nullptr` if the waypoint was not fount.
-		[[nodiscard, deprecated("unsupported API")]] const way_point* waypoint(const std::string& name) const;
+		[[nodiscard]] PHOENIX_DEPRECATED("unsupported API")
+		    PHOENIX_API const way_point* waypoint(const std::string& name) const;
 
 	public:
 		/// \brief All waypoints of this way-net.

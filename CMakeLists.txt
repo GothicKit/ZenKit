@@ -7,6 +7,7 @@ set(PHOENIX_LOG_LEVEL 3 CACHE STRING "The logging level to use for phoenix. Set 
 
 option(PHOENIX_BUILD_EXAMPLES "Build example code" OFF)
 option(PHOENIX_BUILD_TESTS "Build tests" ON)
+option(PHOENIX_BUILD_SHARED "Build phoenix as a shared library" OFF)
 option(PHOENIX_DISABLE_SANITIZERS "Build without sanitizers in debug mode" OFF)
 option(PHOENIX_INSTALL "Configure phoenix for cmake install" ON)
 
@@ -113,7 +114,16 @@ set(PHOENIX_TESTS
         tests/test_world.cc)
 
 # add the phoenix library definition
-add_library(phoenix ${PHOENIX_SOURCES} ${PHOENIX_EXTENSIONS} ${PHOENIX_HEADERS})
+if (BUILD_SHARED_LIBS AND PHOENIX_BUILD_SHARED)
+    add_library(phoenix SHARED)
+    set_target_properties(phoenix PROPERTIES CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN 1)
+else ()
+    add_library(phoenix STATIC)
+    set(PHOENIX_DEFINES ${PHOENIX_DEFINES} PHOENIX_STATIC=1)
+    set_target_properties(phoenix PROPERTIES COMPILE_FLAGS "-DPHOENIX_STATIC=1")
+endif ()
+
+target_sources(phoenix PRIVATE ${PHOENIX_SOURCES} ${PHOENIX_EXTENSIONS} ${PHOENIX_HEADERS})
 target_include_directories(phoenix PUBLIC include)
 
 # Apps using phoenix will also need to link to glm, fmt and squish to avoid missing symbols
@@ -121,7 +131,7 @@ target_link_libraries(phoenix
         PUBLIC glm::glm_static squish
         PRIVATE mio lexy)
 
-target_compile_definitions(phoenix PUBLIC ${PHOENIX_DEFINES})
+target_compile_definitions(phoenix PUBLIC ${PHOENIX_DEFINES} PRIVATE PHOENIX_EXPORTS=1)
 target_compile_options(phoenix PRIVATE ${PHOENIX_CXX_FLAGS})
 
 if (NOT MSVC)
@@ -129,16 +139,17 @@ if (NOT MSVC)
 endif ()
 
 set_target_properties(phoenix PROPERTIES
-        DEBUG_POSTFIX "${PHOENIX_DEBUG_POSTFIX}")
+        DEBUG_POSTFIX "${PHOENIX_DEBUG_POSTFIX}"
+        VERSION ${PROJECT_VERSION})
 
 if (PHOENIX_INSTALL)
     install(TARGETS phoenix ARCHIVE LIBRARY RUNTIME)
-
     install(DIRECTORY "include/phoenix" TYPE INCLUDE)
-    install(DIRECTORY "${glm_SOURCE_DIR}/glm" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl" PATTERN "*.h")
 
-    if (NOT BUILD_SHARED_LIBS)
+    if (NOT PHOENIX_BUILD_SHARED)
         # For static linking we'll need to provide the dependency static libraries
+        install(DIRECTORY "${glm_SOURCE_DIR}/glm" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl" PATTERN "*.h")
+
         foreach (lib glm::glm_static squish)
             install(FILES "$<TARGET_LINKER_FILE:${lib}>" TYPE LIB)
         endforeach ()

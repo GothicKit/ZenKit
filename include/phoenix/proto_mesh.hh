@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "Api.hh"
 #include <phoenix/buffer.hh>
 #include <phoenix/material.hh>
 #include <phoenix/math.hh>
@@ -69,7 +70,7 @@ namespace phoenix {
 		/// \param in The reader to read from
 		/// \param map A a section map for the sub-mesh.
 		/// \return The sub-mesh read.
-		[[nodiscard]] static sub_mesh parse(buffer& in, const sub_mesh_section& map);
+		[[nodiscard]] PHOENIX_INTERNAL static sub_mesh parse(buffer& in, const sub_mesh_section& map);
 	};
 
 	/// \brief Represents a *ZenGin* proto mesh.
@@ -86,14 +87,14 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] static proto_mesh parse(buffer& in);
+		[[nodiscard]] PHOENIX_API static proto_mesh parse(buffer& in);
 
 		/// \brief Parses a proto mesh from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed proto mesh.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] static proto_mesh parse(buffer&& in) {
+		[[nodiscard]] PHOENIX_API static proto_mesh parse(buffer&& in) {
 			return proto_mesh::parse(in);
 		}
 
@@ -108,7 +109,7 @@ namespace phoenix {
 		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
-		[[nodiscard]] static proto_mesh parse_from_section(buffer& in);
+		[[nodiscard]] PHOENIX_INTERNAL static proto_mesh parse_from_section(buffer& in);
 
 	public:
 		/// \brief The vertex positions associated with the mesh.

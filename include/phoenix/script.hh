@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "Api.hh"
 #include <phoenix/buffer.hh>
 
 #include <functional>
@@ -205,10 +206,10 @@ namespace phoenix {
 	/// Every class defined in C++ that can be used as an instance has to inherit from this class.
 	class instance {
 	public:
-		virtual ~instance() = default;
+		PHOENIX_API virtual ~instance() = default;
 
 		/// \return The index of the symbol this instance is bound to.
-		[[nodiscard]] inline uint32_t symbol_index() const {
+		[[nodiscard]] PHOENIX_API inline uint32_t symbol_index() const {
 			return _m_symbol_index;
 		}
 
@@ -232,7 +233,7 @@ namespace phoenix {
 	/// \brief An exception thrown if the symbol with a given name could not be found.
 	struct symbol_not_found : public script_error {
 	public:
-		explicit symbol_not_found(std::string&& name);
+		PHOENIX_API explicit symbol_not_found(std::string&& name);
 
 	public:
 		std::string name;
@@ -241,7 +242,7 @@ namespace phoenix {
 	/// \brief An exception thrown if registering a class member was unsuccessful.
 	struct member_registration_error : public script_error {
 	public:
-		explicit member_registration_error(const symbol* sym, std::string&& message);
+		PHOENIX_API explicit member_registration_error(const symbol* sym, std::string&& message);
 
 	public:
 		/// \brief The symbol being registered.
@@ -251,7 +252,7 @@ namespace phoenix {
 	/// \brief An exception thrown if the type of the member being registered does not match the type provided.
 	struct invalid_registration_datatype final : public member_registration_error {
 	public:
-		explicit invalid_registration_datatype(const symbol* sym, std::string&& given);
+		PHOENIX_API explicit invalid_registration_datatype(const symbol* sym, std::string&& given);
 
 	public:
 		std::string given;
@@ -265,7 +266,7 @@ namespace phoenix {
 	/// \brief An exception thrown when the type of a symbol does not match the type expected.
 	struct illegal_type_access final : public illegal_access {
 	public:
-		illegal_type_access(const symbol* sym, datatype expected);
+		PHOENIX_INTERNAL illegal_type_access(const symbol* sym, datatype expected);
 
 	public:
 		/// \brief The symbol being accessed.
@@ -278,7 +279,7 @@ namespace phoenix {
 	/// \brief An exception thrown when an out-of-bounds index is accessed.
 	struct illegal_index_access final : public illegal_access {
 	public:
-		illegal_index_access(const symbol* sym, std::uint8_t index);
+		PHOENIX_INTERNAL illegal_index_access(const symbol* sym, std::uint8_t index);
 
 	public:
 		/// \brief The symbol being accessed.
@@ -291,7 +292,7 @@ namespace phoenix {
 	/// \brief An exception thrown when a constant symbol is accessed as mutable
 	struct illegal_const_access final : public illegal_access {
 	public:
-		explicit illegal_const_access(const symbol* sym);
+		PHOENIX_INTERNAL explicit illegal_const_access(const symbol* sym);
 
 	public:
 		/// \brief The symbol being accessed.
@@ -301,7 +302,7 @@ namespace phoenix {
 	/// \brief An exception thrown when the parent class of a member does not match the class of an instance.
 	struct illegal_instance_access final : public illegal_access {
 	public:
-		illegal_instance_access(const symbol* sym, std::uint32_t expected_parent);
+		PHOENIX_INTERNAL illegal_instance_access(const symbol* sym, std::uint32_t expected_parent);
 
 	public:
 		/// \brief The symbol being accessed.
@@ -314,7 +315,7 @@ namespace phoenix {
 	/// \brief An exception thrown when the parent class of a member does not match the class of an instance.
 	struct unbound_member_access final : public illegal_access {
 	public:
-		explicit unbound_member_access(const symbol* sym);
+		PHOENIX_API explicit unbound_member_access(const symbol* sym);
 
 	public:
 		/// \brief The symbol being accessed.
@@ -324,7 +325,7 @@ namespace phoenix {
 	/// \brief An exception thrown if a member symbol is being access without a context set.
 	struct no_context final : public illegal_access {
 	public:
-		explicit no_context(const symbol* sym);
+		PHOENIX_INTERNAL explicit no_context(const symbol* sym);
 
 	public:
 		/// \brief The symbol being accessed.
@@ -334,7 +335,7 @@ namespace phoenix {
 	/// \brief An excpetion thrown if a member symbol is being accessed with a context instance it is not bound to.
 	struct illegal_context_type final : public illegal_access {
 	public:
-		illegal_context_type(const symbol* sym, const std::type_info& context_type);
+		PHOENIX_API illegal_context_type(const symbol* sym, const std::type_info& context_type);
 
 	public:
 		/// \brief The symbol being accessed.
@@ -350,7 +351,7 @@ namespace phoenix {
 		/// \brief Parses a symbol from the given reader.
 		/// \param[in,out] in The reader to read the symbol from.
 		/// \return The symbol parsed.
-		[[nodiscard]] static symbol parse(buffer& in);
+		[[nodiscard]] PHOENIX_API static symbol parse(buffer& in);
 
 		/// \brief Validates that the symbol is a string and retrieves it's value in the given context.
 		/// \param index The index of the value to get.
@@ -361,8 +362,8 @@ namespace phoenix {
 		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
 		/// \throws unbound_member_access if this symbol has not been registered yet
 		/// \throws illegal_context_type if this symbol #is_registered_to a different type than the type of \p context.
-		[[nodiscard]] const std::string& get_string(std::size_t index = 0,
-		                                            const std::shared_ptr<instance>& context = nullptr) const;
+		[[nodiscard]] PHOENIX_API const std::string&
+		get_string(std::size_t index = 0, const std::shared_ptr<instance>& context = nullptr) const;
 
 		/// \brief Validates that the symbol is a float and retrieves it's value in the given context.
 		/// \param index The index of the value to get.
@@ -373,7 +374,8 @@ namespace phoenix {
 		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
 		/// \throws unbound_member_access if this symbol has not been registered yet
 		/// \throws illegal_context_type if this symbol #is_registered_to a different type than the type of \p context.
-		[[nodiscard]] float get_float(std::size_t index = 0, const std::shared_ptr<instance>& context = nullptr) const;
+		[[nodiscard]] PHOENIX_API float get_float(std::size_t index = 0,
+		                                          const std::shared_ptr<instance>& context = nullptr) const;
 
 		/// \brief Validates that the symbol is an int and retrieves it's value in the given context.
 		/// \param index The index of the value to get.
@@ -384,13 +386,13 @@ namespace phoenix {
 		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
 		/// \throws unbound_member_access if this symbol has not been registered yet
 		/// \throws illegal_context_type if this symbol #is_registered_to a different type than the type of \p context.
-		[[nodiscard]] std::int32_t get_int(std::size_t index = 0,
-		                                   const std::shared_ptr<instance>& context = nullptr) const;
+		[[nodiscard]] PHOENIX_API std::int32_t get_int(std::size_t index = 0,
+		                                               const std::shared_ptr<instance>& context = nullptr) const;
 
 		/// \brief Validates that the symbol is an instance and retrieves it's value
 		/// \return The instance associated with the symbol.
 		/// \throws illegal_type_access if the #type of this symbol is not dt_instance
-		[[nodiscard]] const std::shared_ptr<instance>& get_instance();
+		[[nodiscard]] PHOENIX_API const std::shared_ptr<instance>& get_instance();
 
 		// -=-= Value setters =-=- //
 
@@ -403,7 +405,7 @@ namespace phoenix {
 		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
 		/// \throws unbound_member_access if this symbol has not been registered yet
 		/// \throws illegal_context_type if this symbol #is_registered_to a different type than the type of \p context.
-		void
+		PHOENIX_API void
 		set_string(std::string_view value, std::size_t index = 0, const std::shared_ptr<instance>& context = nullptr);
 
 		/// \brief Validates that the symbol is a float and not constant and sets it's value in the given context.
@@ -415,7 +417,8 @@ namespace phoenix {
 		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
 		/// \throws unbound_member_access if this symbol has not been registered yet
 		/// \throws illegal_context_type if this symbol #is_registered_to a different type than the type of \p context.
-		void set_float(float value, std::size_t index = 0, const std::shared_ptr<instance>& context = nullptr);
+		PHOENIX_API void
+		set_float(float value, std::size_t index = 0, const std::shared_ptr<instance>& context = nullptr);
 
 		/// \brief Validates that the symbol is an int and not constant and sets it's value in the given context.
 		/// \param value The new value to set.
@@ -426,133 +429,135 @@ namespace phoenix {
 		/// \throws no_context if this symbol #is_member and \p context is `nullptr`.
 		/// \throws unbound_member_access if this symbol has not been registered yet
 		/// \throws illegal_context_type if this symbol #is_registered_to a different type than the type of \p context.
-		void set_int(std::int32_t value, std::size_t index = 0, const std::shared_ptr<instance>& context = nullptr);
+		PHOENIX_API void
+		set_int(std::int32_t value, std::size_t index = 0, const std::shared_ptr<instance>& context = nullptr);
 
 		/// \brief Validates that the symbol is an instance and sets it's value
 		/// \param inst The instance value to set
 		/// \throws illegal_type_access if the #type of this symbol is not dt_instance.
-		void set_instance(const std::shared_ptr<instance>& inst);
+		PHOENIX_API void set_instance(const std::shared_ptr<instance>& inst);
 
 		/// \brief Tests whether this symbol holds an instance of the given type.
 		/// \tparam T The type of instance to check for.
 		/// \return <tt>true</tt> if the symbol contains an instance of the given type, <tt>false</tt> if not.
 		template <typename T>
-		typename std::enable_if<std::is_base_of_v<instance, T>, bool>::type inline is_instance_of() { // clang-format on
+		PHOENIX_API typename std::enable_if<std::is_base_of_v<instance, T>,
+		                                    bool>::type inline is_instance_of() { // clang-format on
 			return this->type() == datatype::instance && this->get_instance() != nullptr &&
 			    this->get_instance()->_m_type == &typeid(T);
 		}
 
 		/// \brief Tests whether the symbol is a constant.
 		/// \return `true` if the symbol is a constant, `false` if not.
-		[[nodiscard]] inline bool is_const() const noexcept {
+		[[nodiscard]] PHOENIX_API inline bool is_const() const noexcept {
 			return (_m_flags & symbol_flag::const_) != 0;
 		}
 
 		/// \brief Tests whether the symbol is a member variable.
 		/// \return `true` if the symbol is a member, `false` if not.
-		[[nodiscard]] inline bool is_member() const noexcept {
+		[[nodiscard]] PHOENIX_API inline bool is_member() const noexcept {
 			return (_m_flags & symbol_flag::member) != 0;
 		}
 
 		/// \brief Tests whether the symbol is an extern symbol.
 		/// \return `true` if the symbol is an extern symbol, `false` if not.
-		[[nodiscard]] inline bool is_external() const noexcept {
+		[[nodiscard]] PHOENIX_API inline bool is_external() const noexcept {
 			return (_m_flags & symbol_flag::external) != 0;
 		}
 
 		/// \brief Tests whether the symbol is merged.
 		/// \return `true` if the symbol is merged, `false` if not.
 		/// \note It is currently not known what 'merged' means.
-		[[nodiscard]] inline bool is_merged() const noexcept {
+		[[nodiscard]] PHOENIX_API inline bool is_merged() const noexcept {
 			return (_m_flags & symbol_flag::merged) != 0;
 		}
 
 		/// \brief brief Tests whether the symbol is a compiler-generated symbol
 		/// \return return `true` if the symbol is generated, `false` if not.
-		[[nodiscard]] inline bool is_generated() const noexcept {
+		[[nodiscard]] PHOENIX_API inline bool is_generated() const noexcept {
 			return _m_generated;
 		}
 
 		/// \brief brief Tests whether the symbol has a return value.
 		/// \return return `true` if the symbol has a return value, `false` if not.
-		[[nodiscard]] inline bool has_return() const noexcept {
+		[[nodiscard]] PHOENIX_API inline bool has_return() const noexcept {
 			return (_m_flags & symbol_flag::return_) != 0;
 		}
 
 		/// \return The name of the symbol.
-		[[nodiscard]] inline const std::string& name() const noexcept {
+		[[nodiscard]] PHOENIX_API inline const std::string& name() const noexcept {
 			return _m_name;
 		}
 
 		/// \return The address of the symbol.
-		[[nodiscard]] inline std::uint32_t address() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint32_t address() const noexcept {
 			return _m_address;
 		}
 
 		/// \return The index of the parent symbol or unset if the symbol does not have a parent.
-		[[nodiscard]] inline std::uint32_t parent() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint32_t parent() const noexcept {
 			return _m_parent;
 		}
 
 		/// \return The count of values stored in the symbol.
-		[[nodiscard]] inline std::uint32_t count() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint32_t count() const noexcept {
 			return _m_count;
 		}
 
 		/// \return The type of the symbol.
-		[[nodiscard]] inline datatype type() const noexcept {
+		[[nodiscard]] PHOENIX_API inline datatype type() const noexcept {
 			return _m_type;
 		}
 
 		/// \return The index of the symbol.
-		[[nodiscard]] inline std::uint32_t index() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint32_t index() const noexcept {
 			return _m_index;
 		}
 
 		/// \return The return type of the symbol.
-		[[nodiscard]] inline datatype rtype() const noexcept {
+		[[nodiscard]] PHOENIX_API inline datatype rtype() const noexcept {
 			return _m_return_type;
 		}
 
 		/// \return The index of the file the symbol was in.
-		[[nodiscard]] inline std::uint32_t file_index() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint32_t file_index() const noexcept {
 			return _m_file_index;
 		}
 
 		/// \return The offset in bytes of a member from the start of the instance.
-		[[nodiscard]] inline std::uint32_t offset_as_member() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint32_t offset_as_member() const noexcept {
 			return _m_member_offset;
 		}
 
-		[[nodiscard]] inline std::uint32_t line_start() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint32_t line_start() const noexcept {
 			return _m_line_start;
 		}
 
-		[[nodiscard]] inline std::uint32_t line_count() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint32_t line_count() const noexcept {
 			return _m_line_count;
 		}
 
-		[[nodiscard]] inline std::uint32_t char_start() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint32_t char_start() const noexcept {
 			return _m_char_start;
 		}
 
-		[[nodiscard]] inline std::uint32_t char_count() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint32_t char_count() const noexcept {
 			return _m_char_count;
 		}
 
-		[[nodiscard]] inline std::uint32_t class_size() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint32_t class_size() const noexcept {
 			return _m_class_size;
 		}
 
-		[[nodiscard]] inline const std::type_info& registered_to() const noexcept {
+		[[nodiscard]] PHOENIX_API inline const std::type_info& registered_to() const noexcept {
 			return *_m_registered_to;
 		};
 
 	protected:
-		symbol() = default;
+		PHOENIX_INTERNAL symbol() = default;
 
 		template <typename T>
-		const T* get_member_ptr(std::uint8_t index, const std::shared_ptr<instance>& context) const {
+		inline const T* get_member_ptr(std::uint8_t index, const std::shared_ptr<instance>& context) const {
 			if (!_m_registered_to)
 				throw unbound_member_access(this);
 			if (*_m_registered_to != *context->_m_type)
@@ -563,7 +568,7 @@ namespace phoenix {
 		}
 
 		template <typename T>
-		T* get_member_ptr(std::uint8_t index, const std::shared_ptr<instance>& context) {
+		inline T* get_member_ptr(std::uint8_t index, const std::shared_ptr<instance>& context) {
 			if (!_m_registered_to)
 				throw unbound_member_access(this);
 			if (*_m_registered_to != *context->_m_type)
@@ -615,7 +620,7 @@ namespace phoenix {
 		/// \brief Reads an instruction from a reader.
 		/// \param[in,out] in The reader to read from
 		/// \return The instruction read.
-		static instruction decode(buffer& in);
+		PHOENIX_INTERNAL static instruction decode(buffer& in);
 	};
 
 	/// \brief Represents a compiled daedalus script
@@ -625,12 +630,12 @@ namespace phoenix {
 		/// \brief Parses in a compiled daedalus script.
 		/// \param path The path of the script file.
 		/// \return The script parsed
-		[[nodiscard]] static script parse(const std::string& path);
+		[[nodiscard]] PHOENIX_API static script parse(const std::string& path);
 
 		/// \brief Parses in a compiled daedalus script.
 		/// \param buf A buffer containing the script data.
 		/// \return The script parsed
-		[[nodiscard]] static script parse(phoenix::buffer& buf);
+		[[nodiscard]] PHOENIX_API static script parse(phoenix::buffer& buf);
 
 		/// \brief Registers a member offset
 		/// \param name The name of the member in the script
@@ -675,63 +680,64 @@ namespace phoenix {
 		}
 
 		/// \return All symbols in the script
-		[[nodiscard]] inline const std::vector<symbol>& symbols() const noexcept {
+		[[nodiscard]] PHOENIX_API inline const std::vector<symbol>& symbols() const noexcept {
 			return _m_symbols;
 		}
 
 		/// \brief Retrieves the symbol with the given \p index
 		/// \param index The index of the symbol to get
 		/// \return The symbol or `nullptr` if the index was out-of-range.
-		[[nodiscard]] const symbol* find_symbol_by_index(std::uint32_t index) const;
+		[[nodiscard]] PHOENIX_API const symbol* find_symbol_by_index(std::uint32_t index) const;
 
 		/// \brief Looks for parameters of the given function symbol. Only works for external functions.
 		/// \param parent The function symbol to get the parameter symbols for.
 		/// \return A list of function parameter symbols.
-		[[nodiscard]] std::vector<const symbol*> find_parameters_for_function(const symbol* parent) const;
+		[[nodiscard]] PHOENIX_API std::vector<const symbol*> find_parameters_for_function(const symbol* parent) const;
 
 		/// \brief Retrieves the symbol with the given \p address set
 		/// \param index The address of the symbol to get
 		/// \return The symbol or `nullptr` if no symbol with that address was found.
-		[[nodiscard]] const symbol* find_symbol_by_address(std::uint32_t address) const;
+		[[nodiscard]] PHOENIX_API const symbol* find_symbol_by_address(std::uint32_t address) const;
 
 		/// \brief Retrieves the symbol with the given \p name.
 		/// \param name The name of the symbol to get.
 		/// \return The symbol or `nullptr` if no symbol with that name was found.
-		[[nodiscard]] const symbol* find_symbol_by_name(std::string_view name) const;
+		[[nodiscard]] PHOENIX_API const symbol* find_symbol_by_name(std::string_view name) const;
 
 		/// \brief Retrieves the symbol with the given \p index
 		/// \param index The index of the symbol to get
 		/// \return The symbol or `nullptr` if the index was out-of-range.
-		[[nodiscard]] symbol* find_symbol_by_index(std::uint32_t index);
+		[[nodiscard]] PHOENIX_API symbol* find_symbol_by_index(std::uint32_t index);
 
 		/// \brief Retrieves the symbol with the given \p address set
 		/// \param index The address of the symbol to get
 		/// \return The symbol or `nullptr` if no symbol with that address was found.
-		[[nodiscard]] symbol* find_symbol_by_address(std::uint32_t address);
+		[[nodiscard]] PHOENIX_API symbol* find_symbol_by_address(std::uint32_t address);
 
 		/// \brief Looks for parameters of the given function symbol. Only works for external functions.
 		/// \param parent The function symbol to get the parameter symbols for.
 		/// \return A list of function parameter symbols.
-		[[nodiscard]] std::vector<symbol*> find_parameters_for_function(const symbol* parent);
+		[[nodiscard]] PHOENIX_API std::vector<symbol*> find_parameters_for_function(const symbol* parent);
 
 		/// \brief Retrieves the symbol with the given \p name.
 		/// \param name The name of the symbol to get.
 		/// \return The symbol or `nullptr` if no symbol with that name was found.
-		[[nodiscard]] symbol* find_symbol_by_name(std::string_view name);
+		[[nodiscard]] PHOENIX_API symbol* find_symbol_by_name(std::string_view name);
 
 		/// \brief Call the given callback function for every instance symbol which is a descendant of the class with
 		///        the given name.
 		/// \param name The name of the parent class.
 		/// \param callback The function to call with each instance symbol.
-		void enumerate_instances_by_class_name(std::string_view name, const std::function<void(symbol&)>& callback);
+		PHOENIX_API void enumerate_instances_by_class_name(std::string_view name,
+		                                                   const std::function<void(symbol&)>& callback);
 
 		/// \brief Decodes the instruction at \p address and returns it.
 		/// \param address The address of the instruction to decode
 		/// \return The instruction.
-		[[nodiscard]] instruction instruction_at(std::uint32_t address) const;
+		[[nodiscard]] PHOENIX_API instruction instruction_at(std::uint32_t address) const;
 
 		/// \return The total size of the script.
-		[[nodiscard]] std::uint32_t size() const noexcept {
+		[[nodiscard]] PHOENIX_API std::uint32_t size() const noexcept {
 			return _m_text.limit() & 0xFFFFFF;
 		}
 
@@ -739,7 +745,7 @@ namespace phoenix {
 		/// \param inst The instance to get the symbol for.
 		/// \return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
 		///         with any instance.
-		inline const symbol* find_symbol_by_instance(const instance& inst) const {
+		PHOENIX_API inline const symbol* find_symbol_by_instance(const instance& inst) const {
 			return find_symbol_by_index(inst._m_symbol_index);
 		}
 
@@ -747,7 +753,7 @@ namespace phoenix {
 		/// \param inst The instance to get the symbol for.
 		/// \return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
 		///         with any instance.
-		inline symbol* find_symbol_by_instance(const instance& inst) {
+		PHOENIX_API inline symbol* find_symbol_by_instance(const instance& inst) {
 			return find_symbol_by_index(inst._m_symbol_index);
 		}
 
@@ -756,8 +762,9 @@ namespace phoenix {
 		/// \return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
 		///         with any instance.
 		template <typename T>
-		typename std::enable_if<std::is_base_of_v<instance, T>, const symbol*>::type inline find_symbol_by_instance(
-		    const std::shared_ptr<T>& inst) const { // clang-format on
+		PHOENIX_API
+		    typename std::enable_if<std::is_base_of_v<instance, T>, const symbol*>::type inline find_symbol_by_instance(
+		        const std::shared_ptr<T>& inst) const { // clang-format on
 			return find_symbol_by_index(inst->_m_symbol_index);
 		}
 
@@ -766,15 +773,16 @@ namespace phoenix {
 		/// \return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
 		///         with any instance.
 		template <typename T>
-		typename std::enable_if<std::is_base_of_v<instance, T>, symbol*>::type inline find_symbol_by_instance(
-		    const std::shared_ptr<T>& inst) {
+		PHOENIX_API
+		    typename std::enable_if<std::is_base_of_v<instance, T>, symbol*>::type inline find_symbol_by_instance(
+		        const std::shared_ptr<T>& inst) {
 			return find_symbol_by_index(inst->_m_symbol_index);
 		}
 
 	protected:
-		script() = default;
-		script(const script& copy) = default;
-		script(script&& move) = default;
+		PHOENIX_INTERNAL script() = default;
+		PHOENIX_INTERNAL script(const script& copy) = default;
+		PHOENIX_INTERNAL script(script&& move) = default;
 
 		template <typename _class, typename _member, int N>
 		symbol* _check_member(std::string_view name, const std::type_info* type) {
@@ -819,17 +827,7 @@ namespace phoenix {
 			return sym;
 		}
 
-		symbol* add_temporary_strings_symbol() {
-			symbol sym {};
-			sym._m_name = "$PHOENIX_FAKE_STRINGS";
-			sym._m_generated = true;
-			sym._m_type = datatype::string;
-			sym._m_count = 1;
-			sym._m_value = std::unique_ptr<std::string[]> {new std::string[sym._m_count]};
-			sym._m_index = static_cast<std::uint32_t>(_m_symbols.size());
-
-			return &_m_symbols.emplace_back(std::move(sym));
-		}
+		PHOENIX_API symbol* add_temporary_strings_symbol();
 
 	private:
 		std::vector<symbol> _m_symbols;

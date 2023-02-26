@@ -18,7 +18,7 @@ namespace phoenix {
 		/// \brief Parses a bounding box from the given buffer.
 		/// \param[in,out] in The buffer to parse from.
 		/// \return The bounding box parsed.
-		static bounding_box parse(buffer& in);
+		PHOENIX_API static bounding_box parse(buffer& in);
 	};
 
 	/// \brief Represents an oriented bounding box.
@@ -36,11 +36,11 @@ namespace phoenix {
 		/// \brief Calculates an axis-aligned bounding box from this oriented bounding box.
 		/// \todo Write a test for this.
 		/// \return An AABB which contains this OBB.
-		[[nodiscard]] bounding_box as_bbox() const;
+		[[nodiscard]] PHOENIX_API bounding_box as_bbox() const;
 
 		/// \brief Parses an oriented bounding box from a buffer.
 		/// \param[in,out] in The buffer to parse from.
 		/// \return The parsed bounding box.
-		[[nodiscard]] static obb parse(buffer& in);
+		[[nodiscard]] PHOENIX_API static obb parse(buffer& in);
 	};
 } // namespace phoenix

@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "../Api.hh"
 #include <phoenix/vobs/vob.hh>
 
 namespace phoenix {
@@ -45,7 +46,7 @@ namespace phoenix {
 			/// \param[in,out] ctx The archive reader to read from.
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 			/// \throws parser_error if parsing fails.
-			static void parse(light_preset& obj, archive_reader& ctx, game_version version);
+			PHOENIX_API static void parse(light_preset& obj, archive_reader& ctx, game_version version);
 
 			/// \brief Parses a light preset the given *ZenGin* archive.
 			/// \param[in,out] ctx The archive reader to read from.
@@ -53,7 +54,7 @@ namespace phoenix {
 			/// \return The parsed light preset.
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
-			static light_preset parse(archive_reader& in, game_version version);
+			PHOENIX_API static light_preset parse(archive_reader& in, game_version version);
 		};
 
 		/// \brief A VOb which acts as a light source.
@@ -65,7 +66,7 @@ namespace phoenix {
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
 			/// \see light_preset::parse
-			static void parse(light& obj, archive_reader& ctx, game_version version);
+			PHOENIX_API static void parse(light& obj, archive_reader& ctx, game_version version);
 		};
 	} // namespace vobs
 } // namespace phoenix

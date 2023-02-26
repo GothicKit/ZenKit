@@ -453,7 +453,9 @@ namespace phoenix {
 	}
 
 	model_script model_script::parse(buffer& buf) {
-		auto potential_chunk_type = buf.get_ushort(buf.position());
+		auto peek = buf.position();
+		auto potential_chunk_type = buf.get_ushort();
+		buf.position(peek);
 
 		if (potential_chunk_type >= 0xF000 || potential_chunk_type == 0xD000) {
 			return parse_binary_script(buf);

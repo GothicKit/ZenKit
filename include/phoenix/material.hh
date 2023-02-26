@@ -77,7 +77,7 @@ namespace phoenix {
 		/// \return The parsed material object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(archive_reader&&) for an owning version this function.
-		[[nodiscard]] static material parse(archive_reader& ctx);
+		[[nodiscard]] PHOENIX_API static material parse(archive_reader& ctx);
 
 	public:
 		std::string name;

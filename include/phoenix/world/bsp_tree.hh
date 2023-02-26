@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "../Api.hh"
 #include <phoenix/buffer.hh>
 #include <phoenix/math.hh>
 
@@ -27,7 +28,7 @@ namespace phoenix {
 		std::int32_t back_index {-1};
 		std::int32_t parent_index {-1};
 
-		inline bool is_leaf() const noexcept {
+		PHOENIX_API inline bool is_leaf() const noexcept {
 			return front_index == -1 && back_index == -1;
 		}
 	};
@@ -58,7 +59,7 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] static bsp_tree parse(buffer& in, std::uint32_t version);
+		[[nodiscard]] PHOENIX_INTERNAL static bsp_tree parse(buffer& in, std::uint32_t version);
 
 		/// \brief Parses a BSP tree from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
@@ -66,7 +67,7 @@ namespace phoenix {
 		/// \return The parsed BSP tree.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] inline static bsp_tree parse(buffer&& in, std::uint32_t version) {
+		[[nodiscard]] PHOENIX_INTERNAL inline static bsp_tree parse(buffer&& in, std::uint32_t version) {
 			return parse(in, version);
 		}
 

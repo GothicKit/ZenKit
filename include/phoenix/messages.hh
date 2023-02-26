@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "Api.hh"
 #include <phoenix/archive.hh>
 
 #include <string>
@@ -53,21 +54,21 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] static messages parse(buffer& path);
+		[[nodiscard]] PHOENIX_API static messages parse(buffer& path);
 
 		/// \brief Parses a message database from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed message database object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] inline static messages parse(buffer&& path) {
+		[[nodiscard]] PHOENIX_API inline static messages parse(buffer&& path) {
 			return messages::parse(path);
 		}
 
 		/// \brief Retrieves a message block by it's name.
 		/// \param name The name of the block to get
 		/// \return A pointer to the block or `nullptr` if the block was not found.
-		const message_block* block_by_name(std::string_view name) const;
+		[[nodiscard]] PHOENIX_API const message_block* block_by_name(std::string_view name) const;
 
 	public:
 		/// \brief A list of all message blocks in the database.

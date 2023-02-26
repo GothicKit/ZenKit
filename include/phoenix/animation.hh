@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include <phoenix/Api.hh>
 #include <phoenix/buffer.hh>
 #include <phoenix/math.hh>
 #include <phoenix/mesh.hh>
@@ -66,14 +67,14 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] static animation parse(buffer& in);
+		[[nodiscard]] PHOENIX_API static animation parse(buffer& in);
 
 		/// \brief Parses an animation from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed animation.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] inline static animation parse(buffer&& in) {
+		[[nodiscard]] PHOENIX_API inline static animation parse(buffer&& in) {
 			return animation::parse(in);
 		}
 
