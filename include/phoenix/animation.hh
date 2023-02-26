@@ -104,7 +104,7 @@ namespace phoenix {
 		/// \brief The bounding box of the animation.
 		bounding_box bbox {};
 
-		/// \brief A checksum for this animation (inner workings unknown).
+		/// \brief The checksum of the model hierarchy this animation was made for.
 		std::uint32_t checksum {};
 
 		/// \brief The original path of the animation script this animation was generated from.

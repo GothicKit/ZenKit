@@ -48,7 +48,7 @@ namespace phoenix {
 				msh.attachments[attachment_names[msh.attachments.size()]] = proto_mesh::parse_from_section(chunk);
 				break;
 			case model_mesh_chunk::softskins: {
-				(void) /* checksum = */ chunk.get_uint();
+				msh.checksum = chunk.get_uint();
 				auto count = chunk.get_ushort();
 				msh.meshes.reserve(count);
 

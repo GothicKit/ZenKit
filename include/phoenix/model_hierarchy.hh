@@ -68,5 +68,8 @@ namespace phoenix {
 
 		/// \brief The translation of the root node of this hierarchy.
 		glm::vec3 root_translation {};
+
+		/// \brief The checksum of this hierarchy.
+		std::uint32_t checksum;
 	};
 } // namespace phoenix

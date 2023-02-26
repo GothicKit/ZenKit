@@ -43,5 +43,8 @@ namespace phoenix {
 
 		/// \brief A map of attachment names to attachment meshes of this model mesh.
 		std::unordered_map<std::string, proto_mesh> attachments {};
+
+		/// \brief The checksum of the model hierarchy this model was made for.
+		std::uint32_t checksum;
 	};
 } // namespace phoenix

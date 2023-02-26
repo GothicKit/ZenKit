@@ -32,8 +32,7 @@ namespace phoenix {
 				hierarchy.bbox = bounding_box::parse(chunk);
 				hierarchy.collision_bbox = bounding_box::parse(chunk);
 				hierarchy.root_translation = chunk.get_vec3();
-
-				(void) /* checksum = */ chunk.get_uint();
+				hierarchy.checksum = chunk.get_uint();
 				break;
 			}
 			case hierarchy_chunk::stats:
