@@ -583,7 +583,7 @@ namespace phoenix {
 		[[nodiscard]] inline glm::mat3x3 get_mat3x3() {
 			float content[3 * 3];
 			this->get((std::byte*) content, sizeof(content));
-			return glm::mat3x3 {
+			return glm::transpose(glm::mat3x3 {
 			    content[0],
 			    content[1],
 			    content[2],
@@ -593,7 +593,7 @@ namespace phoenix {
 			    content[6],
 			    content[7],
 			    content[8],
-			};
+			});
 		}
 
 		/// \brief Get a 4x4 column-major matrix from the buffer.
@@ -602,7 +602,7 @@ namespace phoenix {
 		inline glm::mat4x4 get_mat4x4() {
 			float content[4 * 4];
 			this->get((std::byte*) content, sizeof(content));
-			return glm::mat4x4 {
+			return glm::transpose(glm::mat4x4 {
 			    content[0],
 			    content[1],
 			    content[2],
@@ -619,7 +619,7 @@ namespace phoenix {
 			    content[13],
 			    content[14],
 			    content[15],
-			};
+			});
 		}
 
 		/// \brief Get a 3D-vector from the buffer.

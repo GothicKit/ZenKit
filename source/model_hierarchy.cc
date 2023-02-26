@@ -26,7 +26,7 @@ namespace phoenix {
 					auto& node = hierarchy.nodes.emplace_back();
 					node.name = chunk.get_line(false);
 					node.parent_index = chunk.get_short();
-					node.transform = glm::transpose(chunk.get_mat4x4());
+					node.transform = chunk.get_mat4x4();
 				}
 
 				hierarchy.bbox = bounding_box::parse(chunk);

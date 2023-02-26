@@ -197,7 +197,7 @@ namespace phoenix {
 
 		auto v = input.get_mat3x3();
 		input.skip(unused);
-		return glm::transpose(v);
+		return v;
 	}
 
 	buffer archive_reader_binsafe::read_raw_bytes() {
