@@ -1,4 +1,5 @@
 include(FetchContent)
+cmake_policy(SET CMP0135 NEW)
 
 set(BUILD_STATIC_LIBS ON)
 set(BUILD_SHARED_LIBS OFF)
