@@ -3,6 +3,8 @@
 #include <phoenix/buffer.hh>
 #include <phoenix/math.hh>
 
+#include <limits>
+
 namespace phoenix {
 	bounding_box bounding_box::parse(buffer& in) {
 		bounding_box bbox {};

@@ -1,8 +1,9 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
-#include <cstdint>
-#include <limits>
+#include <glm/vec3.hpp>
+
+#include <vector>
 
 namespace phoenix {
 	class buffer;
