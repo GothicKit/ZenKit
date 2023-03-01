@@ -1,5 +1,10 @@
 include(FetchContent)
+
+# This warning only occurs in CMake 3.24 or greater.
+# https://cmake.org/cmake/help/latest/policy/CMP0135.html#cmp0135
+if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24")
 cmake_policy(SET CMP0135 NEW)
+endif ()
 
 set(BUILD_STATIC_LIBS ON)
 set(BUILD_SHARED_LIBS OFF)
