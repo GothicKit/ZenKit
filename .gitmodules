@@ -4,9 +4,6 @@
 [submodule "vendor/mio"]
 	path = vendor/mio
 	url = https://github.com/mandreyel/mio.git
-[submodule "vendor/lexy"]
-	path = vendor/lexy
-	url = https://github.com/foonathan/lexy.git
 [submodule "vendor/libsquish"]
 	path = vendor/libsquish
 	url = https://github.com/lmichaelis/phoenix-libsquish.git

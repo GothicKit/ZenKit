@@ -40,7 +40,7 @@ namespace phoenix {
 			}
 
 			std::string version = in.get_line();
-			if (!version.starts_with("ver ")) {
+			if (version.find("ver ") != 0) {
 				throw parser_error {"archive_header", "ver field missing"};
 			}
 			header.version = std::stoi(version.substr(version.find(' ') + 1));
@@ -57,18 +57,18 @@ namespace phoenix {
 			}
 
 			std::string save_game = in.get_line();
-			if (!save_game.starts_with("saveGame ")) {
+			if (save_game.find("saveGame ") != 0) {
 				throw parser_error {"archive_header", "saveGame field missing"};
 			}
 			header.save = std::stoi(save_game.substr(save_game.find(' ') + 1)) != 0;
 
 			std::string optional = in.get_line();
-			if (optional.starts_with("date ")) {
+			if (optional.find("date ") == 0) {
 				header.date = optional.substr(optional.find(' ') + 1);
 				optional = in.get_line();
 			}
 
-			if (optional.starts_with("user ")) {
+			if (optional.find("user ") == 0) {
 				header.user = optional.substr(optional.find(' ') + 1);
 				optional = in.get_line();
 			}

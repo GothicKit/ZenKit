@@ -1,10 +1,15 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2023 Luis Michaelis <me@lmichaelis.de>
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "Api.hh"
 #include <phoenix/buffer.hh>
 
 namespace phoenix {
+	struct syntax_error : public phoenix::parser_error {
+	public:
+		syntax_error(std::string&& location, std::string&& msg);
+	};
+
 	namespace mds {
 		enum class event_tag_type {
 			unknown,

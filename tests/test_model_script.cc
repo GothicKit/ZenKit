@@ -5,6 +5,7 @@
 
 TEST_SUITE("model_script") {
 	TEST_CASE("model_script(parse:?)") {
+		phoenix::logging::use_default_logger();
 		auto buf = phoenix::buffer::mmap("./samples/waran.mds");
 		auto script = phoenix::model_script::parse(buf);
 

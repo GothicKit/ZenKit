@@ -65,6 +65,7 @@ set(PHOENIX_SOURCES
         source/model_hierarchy.cc
         source/model_mesh.cc
         source/model_script.cc
+        source/model_script_dsl.cc
         source/morph_mesh.cc
         source/phoenix.cc
         source/proto_mesh.cc
@@ -129,7 +130,7 @@ target_include_directories(phoenix PUBLIC include)
 # Apps using phoenix will also need to link to glm, fmt and squish to avoid missing symbols
 target_link_libraries(phoenix
         PUBLIC glm::glm_static squish
-        PRIVATE mio lexy)
+        PRIVATE mio)
 
 target_compile_definitions(phoenix PUBLIC ${PHOENIX_DEFINES} PRIVATE PHOENIX_EXPORTS=1)
 target_compile_options(phoenix PRIVATE ${PHOENIX_CXX_FLAGS})

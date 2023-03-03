@@ -8,7 +8,7 @@ namespace phoenix {
 	void archive_reader_binary::read_header() {
 		{
 			std::string objects = input.get_line();
-			if (!objects.starts_with("objects ")) {
+			if (objects.find("objects ") != 0) {
 				throw parser_error {"archive_reader_binary", "objects header field missing"};
 			}
 			_m_objects = std::stoi(objects.substr(objects.find(' ') + 1));
