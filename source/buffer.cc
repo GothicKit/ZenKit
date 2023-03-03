@@ -263,6 +263,14 @@ namespace phoenix {
 	}
 
 	std::string buffer::get_line(bool skip_whitespace) {
+		if (skip_whitespace) {
+			return this->get_line_and_ignore(" \f\n\r\t\v");
+		}
+
+		return this->get_line_and_ignore("");
+	}
+
+	std::string buffer::get_line_and_ignore(std::string_view whitespace) {
 		std::string tmp {};
 
 		char c = this->get_char();
@@ -271,9 +279,9 @@ namespace phoenix {
 			c = this->get_char();
 		}
 
-		if (skip_whitespace && remaining() > 0) {
+		if (!whitespace.empty() && remaining() > 0) {
 			c = this->get_char();
-			while (std::isspace(static_cast<unsigned char>(c)) && remaining() > 0) {
+			while (whitespace.find(c) != std::string_view::npos && remaining() > 0) {
 				c = this->get_char();
 			}
 

@@ -14,7 +14,7 @@ namespace phoenix {
 			_m_objects = std::stoi(objects.substr(objects.find(' ') + 1));
 		}
 
-		if (input.get_line() != "END") {
+		if (input.get_line_and_ignore("\n") != "END") {
 			throw parser_error {"archive_reader_binary", "second END missing"};
 		}
 	}
