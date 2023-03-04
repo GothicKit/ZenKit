@@ -5,9 +5,14 @@
 #include <cmath>
 
 namespace phoenix {
-	static const float SAMPLE_ROT_BITS = float(1 << 16) - 1.0f;
-	static const float SAMPLE_QUAT_SCALAR = (1.0f / SAMPLE_ROT_BITS) * 2.1f;
-	static const std::uint16_t SAMPLE_QUAT_MIDDLE = (1 << 15) - 1;
+	/// \brief The highest number representable by a single rotation component.
+	static const float SAMPLE_ROTATION_RANGE = float(1 << 16) - 1.0f;
+
+	/// \brief The scaling factor applied to each rotation component.
+	static const float SAMPLE_ROTATION_SCALE = (1.0f / SAMPLE_ROTATION_RANGE) * 2.1f;
+
+	/// \brief The number half way to `SAMPLE_ROTATION_RANGE`.
+	static const std::uint16_t SAMPLE_ROTATION_MID = (1 << 15) - 1;
 
 	enum class animation_chunk {
 		animation = 0xa000u,
@@ -18,29 +23,29 @@ namespace phoenix {
 		unknown
 	};
 
-	/**
-	 * Adapted from ZenLib
-	 * (https://github.com/ataulien/ZenLib/blob/e1a5e1b12e71690a5470f3be2aa3d0d6419f5191/zenload/zCModelAni.cpp#L43).
-	 * Thanks to Andre Taulien and Alexander Stillich!
-	 */
-	static glm::vec3 read_sample_position(buffer& in, float sample_pos_s, float sample_pos_range_min) {
+	/// \brief Reads the position of a single animation sample from the given buffer.
+	/// \param in The buffer to read from.
+	/// \param scale The scaling factor to apply (taken from the animation's header).
+	/// \param minimum The value of the smallest position component in the animation (part of its header).
+	/// \return A vector containing the parsed position.
+	/// \see http://phoenix.lmichaelis.de/engine/formats/animation/#sample-positions
+	static glm::vec3 read_sample_position(buffer& in, float scale, float minimum) {
 		glm::vec3 v {};
-		v.x = (float) in.get_ushort() * sample_pos_s + sample_pos_range_min;
-		v.y = (float) in.get_ushort() * sample_pos_s + sample_pos_range_min;
-		v.z = (float) in.get_ushort() * sample_pos_s + sample_pos_range_min;
+		v.x = (float) in.get_ushort() * scale + minimum;
+		v.y = (float) in.get_ushort() * scale + minimum;
+		v.z = (float) in.get_ushort() * scale + minimum;
 		return v;
 	}
 
-	/**
-	 * Adapted from ZenLib
-	 * (https://github.com/ataulien/ZenLib/blob/e1a5e1b12e71690a5470f3be2aa3d0d6419f5191/zenload/zCModelAni.cpp#L50).
-	 * Thanks to Andre Taulien and Alexander Stillich!
-	 */
+	/// \brief Reads the rotation of a single animation sample from the given buffer.
+	/// \param in The buffer to read from.
+	/// \return A quaternion containing the parsed rotation.
+	/// \see http://phoenix.lmichaelis.de/engine/formats/animation/#sample-rotations
 	static glm::quat read_sample_quaternion(buffer& in) {
 		glm::quat v {};
-		v.x = ((float) in.get_ushort() - SAMPLE_QUAT_MIDDLE) * SAMPLE_QUAT_SCALAR;
-		v.y = ((float) in.get_ushort() - SAMPLE_QUAT_MIDDLE) * SAMPLE_QUAT_SCALAR;
-		v.z = ((float) in.get_ushort() - SAMPLE_QUAT_MIDDLE) * SAMPLE_QUAT_SCALAR;
+		v.x = ((float) in.get_ushort() - SAMPLE_ROTATION_MID) * SAMPLE_ROTATION_SCALE;
+		v.y = ((float) in.get_ushort() - SAMPLE_ROTATION_MID) * SAMPLE_ROTATION_SCALE;
+		v.z = ((float) in.get_ushort() - SAMPLE_ROTATION_MID) * SAMPLE_ROTATION_SCALE;
 
 		float len_q = v.x * v.x + v.y * v.y + v.z * v.z;
 
@@ -51,6 +56,7 @@ namespace phoenix {
 			v.z *= l;
 			v.w = 0;
 		} else {
+			// We know the quaternion has to be a unit quaternion, so we can calculate the missing value.
 			v.w = sqrtf(1.0f - len_q);
 		}
 
