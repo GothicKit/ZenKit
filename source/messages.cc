@@ -44,12 +44,7 @@ namespace phoenix {
 			}
 
 			// Quirk: Binary message dbs have a byte here instead of an enum.
-			if (archive->get_header().format == archive_format::binary) {
-				itm.message.type = archive->read_byte();
-			} else {
-				itm.message.type = archive->read_enum();
-			}
-
+			itm.message.type = archive->read_enum();
 			itm.message.text = archive->read_string();
 			itm.message.name = archive->read_string();
 
