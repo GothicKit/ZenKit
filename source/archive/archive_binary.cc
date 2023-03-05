@@ -28,8 +28,8 @@ namespace phoenix {
 
 		obj.version = input.get_ushort();
 		obj.index = input.get_uint();
-		obj.object_name = input.get_line();
-		obj.class_name = input.get_line();
+		obj.object_name = input.get_line(false);
+		obj.class_name = input.get_line(false);
 		return true;
 	}
 
