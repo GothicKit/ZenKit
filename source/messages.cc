@@ -43,15 +43,11 @@ namespace phoenix {
 				throw parser_error {"messages", "expected oCMsgConversation not found for " + itm.name};
 			}
 
-			// Quirk: Binary message dbs have a byte here instead of an enum.
 			itm.message.type = archive->read_enum();
 			itm.message.text = archive->read_string();
 			itm.message.name = archive->read_string();
 
 			if (!archive->read_object_end()) {
-				// FIXME: in binary archives this might skip whole sections of the file due to faulty object
-				//        extents in the archive. This might be due to encoding errors the version of ZenGin
-				//        used with Gothic I
 				archive->skip_object(true);
 				PX_LOGW("messages: oCMsgConversation(\"", itm.name, "\") not fully parsed");
 			}
