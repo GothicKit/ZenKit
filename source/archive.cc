@@ -80,6 +80,8 @@ namespace phoenix {
 			return header;
 		} catch (const buffer_error& exc) {
 			throw parser_error {"archive_header", exc, "eof reached"};
+		} catch (std::invalid_argument const& e) {
+			throw parser_error {"archive_reader_binary", e, "reading int"};
 		}
 	}
 

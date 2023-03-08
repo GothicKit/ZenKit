@@ -11,7 +11,12 @@ namespace phoenix {
 			if (objects.find("objects ") != 0) {
 				throw parser_error {"archive_reader_binary", "objects header field missing"};
 			}
-			_m_objects = std::stoi(objects.substr(objects.find(' ') + 1));
+
+			try {
+				_m_objects = std::stoi(objects.substr(objects.find(' ') + 1));
+			} catch (std::invalid_argument const& e) {
+				throw parser_error {"archive_reader_binary", e, "reading int"};
+			}
 		}
 
 		if (input.get_line_and_ignore("\n") != "END") {

@@ -1,11 +1,13 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #include "archive_ascii.hh"
+#include "phoenix/phoenix.hh"
 
 #include <charconv>
 #include <cstring>
-#include <iostream>
+#include <stdexcept>
 #include <unordered_map>
+#include <utility>
 
 namespace phoenix {
 	static const std::unordered_map<std::string, archive_entry_type> type_name_to_enum {
@@ -29,7 +31,12 @@ namespace phoenix {
 			if (objects.find("objects ") != 0) {
 				throw parser_error {"archive_reader_ascii", "objects field missing"};
 			}
-			_m_objects = std::stoi(objects.substr(objects.find(' ') + 1));
+
+			try {
+				_m_objects = std::stoi(objects.substr(objects.find(' ') + 1));
+			} catch (std::invalid_argument const& e) {
+				throw parser_error {"archive_reader_ascii", e, "reading int"};
+			}
 		}
 
 		if (input.get_line() != "END") {
@@ -108,27 +115,51 @@ namespace phoenix {
 	}
 
 	std::int32_t archive_reader_ascii::read_int() {
-		return std::stoi(read_entry("int"));
+		try {
+			return std::stoi(read_entry("int"));
+		} catch (std::invalid_argument const& e) {
+			throw parser_error {"archive_reader_ascii", e, "reading int"};
+		}
 	}
 
 	float archive_reader_ascii::read_float() {
-		return std::stof(read_entry("float"));
+		try {
+			return std::stof(read_entry("float"));
+		} catch (std::invalid_argument const& e) {
+			throw parser_error {"archive_reader_ascii", e, "reading int"};
+		}
 	}
 
 	std::uint8_t archive_reader_ascii::read_byte() {
-		return std::stoul(read_entry("int")) & 0xFF;
+		try {
+			return std::stoul(read_entry("int")) & 0xFF;
+		} catch (std::invalid_argument const& e) {
+			throw parser_error {"archive_reader_ascii", e, "reading int"};
+		}
 	}
 
 	std::uint16_t archive_reader_ascii::read_word() {
-		return std::stoul(read_entry("int")) & 0xFF'FF;
+		try {
+			return std::stoul(read_entry("int")) & 0xFF'FF;
+		} catch (std::invalid_argument const& e) {
+			throw parser_error {"archive_reader_ascii", e, "reading int"};
+		}
 	}
 
 	std::uint32_t archive_reader_ascii::read_enum() {
-		return std::stoul(read_entry("enum")) & 0xFFFF'FFFF;
+		try {
+			return std::stoul(read_entry("enum")) & 0xFFFF'FFFF;
+		} catch (std::invalid_argument const& e) {
+			throw parser_error {"archive_reader_ascii", e, "reading int"};
+		}
 	}
 
 	bool archive_reader_ascii::read_bool() {
-		return std::stoul(read_entry("bool")) != 0;
+		try {
+			return std::stoul(read_entry("bool")) != 0;
+		} catch (std::invalid_argument const& e) {
+			throw parser_error {"archive_reader_ascii", e, "reading int"};
+		}
 	}
 
 	glm::u8vec4 archive_reader_ascii::read_color() {
