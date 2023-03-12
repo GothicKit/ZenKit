@@ -6,6 +6,33 @@ found in [readme.md](readme.md#versioning).
 
 ---
 
+## v1.1.1
+
+This update again brings many bugfixes and smaller improvements in addition to updates to the documentation.
+_phoenix_ can now also be built as a shared library which should be considered an experimental feature. This update
+also finally replaces the old [lexy](https://github.com/foonathan/lexy) parser for model scripts with a self-rolled
+implementation.
+
+### Bugfixes
+* [03cb97bd] Fixed a stack corruption issue in the VM which could be triggered if the `movvf` or `movf` was called 
+  with a member but no current instance was present
+* [c6cb69de] Fixed broken VM execution flag `allow_null_instance_access` for instructions `addmovi`, `submovi`,
+  `mulmovi` and `divmovi`.
+* [cae1c118, f0d6751f] Fixed a VM/script bug which could occur when using higher-order functions.
+* [2cd3da6f] Added checks for division by zero errors in the VM.
+* [3693450b] Prevent null-pointer de-reference in `vm::initialize_instance` if the instance's parent symbol can
+  not be found. 
+* [1bf25106] VDF entries with a size larger than the VDF file itself are now no longer loaded.
+* [5d78aa49, 4e7b8630] Fix an issues with ignoring whitespace in binary archives.
+* [c7d4115f] Catch numeric conversion errors in archives and re-throw them as `parser_error`s.
+
+### Misc
+
+* [4e9ae25e] Move the const-ness check for script symbols into the VM.
+* [c7c6b94a] (experimental) Allow for building phoenix as a shared library.
+* [15cd5893] Save the checksums for animations, model meshes and skeletons.
+* [16679249] Switch to a custom model script parser, dropping the dependency on [lexy](https://github.com/foonathan/lexy)
+
 ## v1.1.0
 
 Oh boy, this is a big one! There are a lot of additions, some changes and also some deprecations here. Also, the
