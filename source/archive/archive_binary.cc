@@ -8,13 +8,18 @@ namespace phoenix {
 	void archive_reader_binary::read_header() {
 		{
 			std::string objects = input.get_line();
-			if (!objects.starts_with("objects ")) {
+			if (objects.find("objects ") != 0) {
 				throw parser_error {"archive_reader_binary", "objects header field missing"};
 			}
-			_m_objects = std::stoi(objects.substr(objects.find(' ') + 1));
+
+			try {
+				_m_objects = std::stoi(objects.substr(objects.find(' ') + 1));
+			} catch (std::invalid_argument const& e) {
+				throw parser_error {"archive_reader_binary", e, "reading int"};
+			}
 		}
 
-		if (input.get_line() != "END") {
+		if (input.get_line_and_ignore("\n") != "END") {
 			throw parser_error {"archive_reader_binary", "second END missing"};
 		}
 	}
@@ -28,8 +33,8 @@ namespace phoenix {
 
 		obj.version = input.get_ushort();
 		obj.index = input.get_uint();
-		obj.object_name = input.get_line();
-		obj.class_name = input.get_line();
+		obj.object_name = input.get_line(false);
+		obj.class_name = input.get_line(false);
 		return true;
 	}
 
@@ -92,7 +97,7 @@ namespace phoenix {
 	}
 
 	glm::mat3x3 archive_reader_binary::read_mat3x3() {
-		return glm::transpose(input.get_mat3x3());
+		return input.get_mat3x3();
 	}
 
 	buffer archive_reader_binary::read_raw_bytes() {

@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "Api.hh"
 #include <phoenix/proto_mesh.hh>
 #include <phoenix/softskin_mesh.hh>
 
@@ -25,14 +26,14 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] static model_mesh parse(buffer& buf);
+		[[nodiscard]] PHOENIX_API static model_mesh parse(buffer& buf);
 
 		/// \brief Parses a model mesh from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed model mesh object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] inline static model_mesh parse(buffer&& buf) {
+		[[nodiscard]] PHOENIX_API inline static model_mesh parse(buffer&& buf) {
 			return model_mesh::parse(buf);
 		}
 
@@ -42,5 +43,8 @@ namespace phoenix {
 
 		/// \brief A map of attachment names to attachment meshes of this model mesh.
 		std::unordered_map<std::string, proto_mesh> attachments {};
+
+		/// \brief The checksum of the model hierarchy this model was made for.
+		std::uint32_t checksum;
 	};
 } // namespace phoenix

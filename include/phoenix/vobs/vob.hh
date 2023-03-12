@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "../Api.hh"
 #include <phoenix/archive.hh>
 #include <phoenix/material.hh>
 #include <phoenix/phoenix.hh>
@@ -117,7 +118,7 @@ namespace phoenix {
 		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 		/// \return The parsed decal.
 		/// \throws parser_error if parsing fails.
-		static decal parse(archive_reader& ctx, game_version version);
+		PHOENIX_API static decal parse(archive_reader& ctx, game_version version);
 	};
 
 	/// \brief The base class for all VObs.
@@ -170,7 +171,7 @@ namespace phoenix {
 		virtual ~vob() = default;
 
 		/// \return `true` if this VOb is from a save-game and `false` if not.
-		[[nodiscard]] inline bool is_save_game() const noexcept {
+		[[nodiscard]] PHOENIX_API inline bool is_save_game() const noexcept {
 			return saved.has_value();
 		}
 
@@ -183,6 +184,6 @@ namespace phoenix {
 		/// \param[in,out] ctx The archive reader to read from.
 		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 		/// \throws parser_error if parsing fails.
-		static void parse(vob& obj, archive_reader& ctx, game_version version);
+		PHOENIX_API static void parse(vob& obj, archive_reader& ctx, game_version version);
 	};
 } // namespace phoenix

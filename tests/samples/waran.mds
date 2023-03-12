@@ -28,7 +28,6 @@ Model("TestModel") {
 
 			*eventCamTremor(11 881 882 883 884)
 		}
-		}
 
 		// Another comment.
 		/ Maybe even more :>

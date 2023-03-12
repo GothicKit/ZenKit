@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "../Api.hh"
 #include <phoenix/script.hh>
 
 #define var
@@ -51,7 +52,7 @@ namespace phoenix {
 		var string blood_texture[count];
 		var int32_t turn_speed[count];
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("C_GILVALUES.WATER_DEPTH_KNEE", &c_gil_values::water_depth_knee);
 			s.register_member("C_GILVALUES.WATER_DEPTH_CHEST", &c_gil_values::water_depth_chest);
 			s.register_member("C_GILVALUES.JUMPUP_HEIGHT", &c_gil_values::jumpup_height);
@@ -174,7 +175,7 @@ namespace phoenix {
 		var int32_t bodystate_interruptable_override;
 		var int32_t no_focus;
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("C_NPC.ID", &c_npc::id);
 			s.register_member("C_NPC.NAME", &c_npc::name);
 			s.register_member("C_NPC.SLOT", &c_npc::slot);
@@ -229,7 +230,7 @@ namespace phoenix {
 		var func obsolete;
 		var func running;
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("C_MISSION.NAME", &c_mission::name);
 			s.register_member("C_MISSION.DESCRIPTION", &c_mission::description);
 			s.register_member("C_MISSION.DURATION", &c_mission::duration);
@@ -310,7 +311,7 @@ namespace phoenix {
 		var int32_t inv_rot_z;
 		var int32_t inv_animate;
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("C_ITEM.ID", &c_item::id);
 			s.register_member("C_ITEM.NAME", &c_item::name);
 			s.register_member("C_ITEM.NAMEID", &c_item::name_id);
@@ -383,7 +384,7 @@ namespace phoenix {
 		var float mob_elevup;
 		var int32_t mob_prio;
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("C_FOCUS.NPC_LONGRANGE", &c_focus::npc_longrange);
 			s.register_member("C_FOCUS.NPC_RANGE1", &c_focus::npc_range1);
 			s.register_member("C_FOCUS.NPC_RANGE2", &c_focus::npc_range2);
@@ -423,15 +424,15 @@ namespace phoenix {
 
 		std::vector<c_info_choice> choices {};
 
-		void add_choice(const c_info_choice& ch) {
+		PHOENIX_API void add_choice(const c_info_choice& ch) {
 			choices.insert(choices.begin(), ch);
 		}
 
-		void remove_choice(std::size_t index) {
+		PHOENIX_API void remove_choice(std::size_t index) {
 			choices.erase(choices.begin() + static_cast<decltype(choices)::difference_type>(index));
 		}
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("C_INFO.NPC", &c_info::npc);
 			s.register_member("C_INFO.NR", &c_info::nr);
 			s.register_member("C_INFO.IMPORTANT", &c_info::important);
@@ -452,7 +453,7 @@ namespace phoenix {
 		var int32_t requested_amount;
 		var func reaction;
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("C_ITEMREACT.NPC", &c_item_react::npc);
 			s.register_member("C_ITEMREACT.TRADE_ITEM", &c_item_react::trade_item);
 			s.register_member("C_ITEMREACT.TRADE_AMOUNT", &c_item_react::trade_amount);
@@ -477,7 +478,7 @@ namespace phoenix {
 		var int32_t target_collect_azi;
 		var int32_t target_collect_elev;
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("C_SPELL.TIME_PER_MANA", &c_spell::time_per_mana);
 			s.register_member("C_SPELL.DAMAGE_PER_LEVEL", &c_spell::damage_per_level);
 			s.register_member("C_SPELL.DAMAGETYPE", &c_spell::damage_type);
@@ -815,7 +816,7 @@ namespace phoenix {
 		}                                                                                                              \
 	} while (false)
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			REG_IF_SYM_EXIST("C_SVM.MILGREETINGS", &c_svm::MILGREETINGS);
 			REG_IF_SYM_EXIST("C_SVM.PALGREETINGS", &c_svm::PALGREETINGS);
 			REG_IF_SYM_EXIST("C_SVM.WEATHER", &c_svm::WEATHER);
@@ -1163,7 +1164,7 @@ namespace phoenix {
 		var int32_t default_outgame;
 		var int32_t default_ingame;
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("C_MENU.BACKPIC", &c_menu::back_pic);
 			s.register_member("C_MENU.BACKWORLD", &c_menu::back_world);
 			s.register_member("C_MENU.POSX", &c_menu::pos_x);
@@ -1265,7 +1266,7 @@ namespace phoenix {
 		var string hide_if_option_set;
 		var int32_t hide_on_value;
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("C_MENU_ITEM.FONTNAME", &c_menu_item::fontname);
 			s.register_member("C_MENU_ITEM.TEXT", &c_menu_item::text);
 			s.register_member("C_MENU_ITEM.BACKPIC", &c_menu_item::backpic);
@@ -1324,7 +1325,7 @@ namespace phoenix {
 		var int32_t rotate;
 		var int32_t collision;
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("CCAMSYS.BESTRANGE", &c_camera::best_range);
 			s.register_member("CCAMSYS.MINRANGE", &c_camera::min_range);
 			s.register_member("CCAMSYS.MAXRANGE", &c_camera::max_range);
@@ -1372,7 +1373,7 @@ namespace phoenix {
 		var int32_t num_channels;
 		var int32_t reverb_buffer_size;
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("C_MUSICSYS_CFG.VOLUME", &c_music_system::volume);
 			s.register_member("C_MUSICSYS_CFG.BITRESOLUTION", &c_music_system::bit_resolution);
 			s.register_member("C_MUSICSYS_CFG.GLOBALREVERBENABLED", &c_music_system::global_reverb_enabled);
@@ -1391,7 +1392,7 @@ namespace phoenix {
 		var music_transition_type transtype;
 		var music_transition_subtype transsubtype;
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("C_MUSICTHEME.FILE", &c_music_theme::file);
 			s.register_member("C_MUSICTHEME.VOL", &c_music_theme::vol);
 			s.register_member("C_MUSICTHEME.LOOP", &c_music_theme::loop);
@@ -1408,7 +1409,7 @@ namespace phoenix {
 		var float vol;
 		var int32_t transsubtype;
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("C_MUSICJINGLE.NAME", &c_music_jingle::name);
 			s.register_member("C_MUSICJINGLE.LOOP", &c_music_jingle::loop);
 			s.register_member("C_MUSICJINGLE.VOL", &c_music_jingle::vol);
@@ -1475,7 +1476,7 @@ namespace phoenix {
 		var string time_start_end_s;
 		var int32_t m_bis_ambient_pfx;
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("C_PARTICLEFX.PPSVALUE", &c_particle_fx::pps_value);
 			s.register_member("C_PARTICLEFX.PPSSCALEKEYS_S", &c_particle_fx::pps_scale_keys_s);
 			s.register_member("C_PARTICLEFX.PPSISLOOPING", &c_particle_fx::pps_is_looping);
@@ -1590,7 +1591,7 @@ namespace phoenix {
 		var float secs_per_damage;
 		var string em_fx_coll_dyn_perc_s;
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("CFX_BASE.VISNAME_S", &c_fx_base::vis_name_s);
 			s.register_member("CFX_BASE.VISSIZE_S", &c_fx_base::vis_size_s);
 			s.register_member("CFX_BASE.VISALPHA", &c_fx_base::vis_alpha);
@@ -1677,7 +1678,7 @@ namespace phoenix {
 		var int32_t em_check_collision;
 		var float em_fx_lifespan;
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("C_PARTICLEFXEMITKEY.VISNAME_S", &c_particle_fx_emit_key::vis_name_s);
 			s.register_member("C_PARTICLEFXEMITKEY.VISSIZESCALE", &c_particle_fx_emit_key::vis_size_scale);
 			s.register_member("C_PARTICLEFXEMITKEY.SCALEDURATION", &c_particle_fx_emit_key::scale_duration);
@@ -1744,7 +1745,7 @@ namespace phoenix {
 
 		var c_fight_ai_move move[move_count];
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("C_FIGHTAI.MOVE", &c_fight_ai::move);
 		}
 	};
@@ -1760,7 +1761,7 @@ namespace phoenix {
 		var float reverb_level;
 		var string pfx_name;
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("C_SFX.FILE", &c_sfx::file);
 			s.register_member("C_SFX.PITCHOFF", &c_sfx::pitch_off);
 			s.register_member("C_SFX.PITCHVAR", &c_sfx::pitch_var);
@@ -1781,7 +1782,7 @@ namespace phoenix {
 		var int32_t num_sfx_channels;
 		var string used_3d_provider_name;
 
-		static void register_(script& s) {
+		PHOENIX_API static void register_(script& s) {
 			s.register_member("C_SNDSYS_CFG.VOLUME", &c_sound_system::volume);
 			s.register_member("C_SNDSYS_CFG.BITRESOLUTION", &c_sound_system::bit_resolution);
 			s.register_member("C_SNDSYS_CFG.SAMPLERATE", &c_sound_system::sample_rate);
@@ -1791,7 +1792,7 @@ namespace phoenix {
 		}
 	};
 
-	void register_all_script_classes(script& s);
+	PHOENIX_API void register_all_script_classes(script& s);
 } // namespace phoenix
 
 #undef var

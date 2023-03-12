@@ -52,3 +52,4 @@ SpacesBeforeTrailingComments: 1
 TabWidth: 4
 UseTab: ForIndentation
 AccessModifierOffset: -4
+IndentPPDirectives: BeforeHash

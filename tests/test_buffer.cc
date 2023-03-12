@@ -253,147 +253,86 @@ TEST_SUITE("buffer") {
 		auto buf = phoenix::buffer::of(bytes('\x1A', 0xA1, 'c', 'd'));
 		CHECK_EQ(buf.position(), 0);
 
-		SUBCASE("relative") {
-			CHECK_EQ(buf.get(), 0x1A);
-			CHECK_EQ(buf.position(), 1);
+		CHECK_EQ(buf.get(), 0x1A);
+		CHECK_EQ(buf.position(), 1);
 
-			CHECK_EQ(buf.get(), 0xA1);
-			CHECK_EQ(buf.position(), 2);
+		CHECK_EQ(buf.get(), 0xA1);
+		CHECK_EQ(buf.position(), 2);
 
-			std::array<std::byte, 2> array {};
-			buf.get(array.data(), array.size());
+		std::array<std::byte, 2> array {};
+		buf.get(array.data(), array.size());
 
-			CHECK_EQ(buf.position(), 4);
-			CHECK_EQ(buf.remaining(), 0);
-			CHECK(std::equal(array.begin(), array.end(), bytes_str("cd").begin()));
+		CHECK_EQ(buf.position(), 4);
+		CHECK_EQ(buf.remaining(), 0);
+		CHECK(std::equal(array.begin(), array.end(), bytes_str("cd").begin()));
 
-			CHECK_THROWS((void) buf.get());
-			CHECK_THROWS(buf.get(array.data(), array.size()));
-		}
-
-		SUBCASE("absolute") {
-			CHECK_EQ(buf.get(1), 0xA1);
-			CHECK_EQ(buf.position(), 0);
-
-			std::array<std::byte, 2> array {};
-			buf.get(2, array.data(), array.size());
-
-			CHECK_EQ(buf.position(), 0);
-			CHECK(std::equal(array.begin(), array.end(), bytes_str("cd").begin()));
-
-			CHECK_THROWS((void) buf.get(4));
-			CHECK_THROWS((void) buf.get(3, array.data(), array.size()));
-		}
+		CHECK_THROWS((void) buf.get());
+		CHECK_THROWS(buf.get(array.data(), array.size()));
 	}
 
 	TEST_CASE("buffer(get_char)") {
 		auto buf = phoenix::buffer::of(bytes('a', 'b'));
 		CHECK_EQ(buf.position(), 0);
 
-		SUBCASE("relative") {
-			CHECK_EQ(buf.get_char(), 'a');
-			CHECK_EQ(buf.position(), 1);
+		CHECK_EQ(buf.get_char(), 'a');
+		CHECK_EQ(buf.position(), 1);
 
-			CHECK_EQ(buf.get_char(), 'b');
-			CHECK_EQ(buf.position(), 2);
+		CHECK_EQ(buf.get_char(), 'b');
+		CHECK_EQ(buf.position(), 2);
 
-			CHECK_THROWS((void) buf.get_char());
-		}
-
-		SUBCASE("absolute") {
-			CHECK_EQ(buf.get_char(1), 'b');
-			CHECK_EQ(buf.position(), 0);
-
-			CHECK_THROWS((void) buf.get_char(2));
-		}
+		CHECK_THROWS((void) buf.get_char());
 	}
 
 	TEST_CASE("buffer(get_short)") {
 		auto buf = phoenix::buffer::of(bytes(0xFF, 0xFF, 0x01, 0x00, 0xFF));
 		CHECK_EQ(buf.position(), 0);
 
-		SUBCASE("relative") {
-			CHECK_EQ(buf.get_short(), -1);
-			CHECK_EQ(buf.position(), 2);
+		CHECK_EQ(buf.get_short(), -1);
+		CHECK_EQ(buf.position(), 2);
 
-			CHECK_EQ(buf.get_short(), 1);
-			CHECK_EQ(buf.position(), 4);
+		CHECK_EQ(buf.get_short(), 1);
+		CHECK_EQ(buf.position(), 4);
 
-			CHECK_THROWS((void) buf.get_short());
-		}
-
-		SUBCASE("absolute") {
-			CHECK_EQ(buf.get_short(2), 1);
-			CHECK_EQ(buf.position(), 0);
-
-			CHECK_THROWS((void) buf.get_short(4));
-		}
+		CHECK_THROWS((void) buf.get_short());
 	}
 
 	TEST_CASE("buffer(get_ushort)") {
 		auto buf = phoenix::buffer::of(bytes(0xFF, 0xFF, 0x01, 0x00, 0xFF));
 		CHECK_EQ(buf.position(), 0);
 
-		SUBCASE("relative") {
-			CHECK_EQ(buf.get_ushort(), 0xFF'FF);
-			CHECK_EQ(buf.position(), 2);
+		CHECK_EQ(buf.get_ushort(), 0xFF'FF);
+		CHECK_EQ(buf.position(), 2);
 
-			CHECK_EQ(buf.get_ushort(), 1);
-			CHECK_EQ(buf.position(), 4);
+		CHECK_EQ(buf.get_ushort(), 1);
+		CHECK_EQ(buf.position(), 4);
 
-			CHECK_THROWS((void) buf.get_short());
-		}
-
-		SUBCASE("absolute") {
-			CHECK_EQ(buf.get_ushort(2), 1);
-			CHECK_EQ(buf.position(), 0);
-
-			CHECK_THROWS((void) buf.get_ushort(4));
-		}
+		CHECK_THROWS((void) buf.get_short());
 	}
 
 	TEST_CASE("buffer(get_int)") {
 		auto buf = phoenix::buffer::of(bytes(0xFF, 0xFF, 0xFF, 0xFF, 0x01, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF));
 		CHECK_EQ(buf.position(), 0);
 
-		SUBCASE("relative") {
-			CHECK_EQ(buf.get_int(), -1);
-			CHECK_EQ(buf.position(), 4);
+		CHECK_EQ(buf.get_int(), -1);
+		CHECK_EQ(buf.position(), 4);
 
-			CHECK_EQ(buf.get_int(), 1);
-			CHECK_EQ(buf.position(), 8);
+		CHECK_EQ(buf.get_int(), 1);
+		CHECK_EQ(buf.position(), 8);
 
-			CHECK_THROWS((void) buf.get_int());
-		}
-
-		SUBCASE("absolute") {
-			CHECK_EQ(buf.get_int(4), 1);
-			CHECK_EQ(buf.position(), 0);
-
-			CHECK_THROWS((void) buf.get_int(8));
-		}
+		CHECK_THROWS((void) buf.get_int());
 	}
 
 	TEST_CASE("buffer(get_uint)") {
 		auto buf = phoenix::buffer::of(bytes(0xFF, 0xFF, 0xFF, 0xFF, 0x01, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF));
 		CHECK_EQ(buf.position(), 0);
 
-		SUBCASE("relative") {
-			CHECK_EQ(buf.get_uint(), 0xFFFF'FFFF);
-			CHECK_EQ(buf.position(), 4);
+		CHECK_EQ(buf.get_uint(), 0xFFFF'FFFF);
+		CHECK_EQ(buf.position(), 4);
 
-			CHECK_EQ(buf.get_uint(), 1);
-			CHECK_EQ(buf.position(), 8);
+		CHECK_EQ(buf.get_uint(), 1);
+		CHECK_EQ(buf.position(), 8);
 
-			CHECK_THROWS((void) buf.get_uint());
-		}
-
-		SUBCASE("absolute") {
-			CHECK_EQ(buf.get_uint(4), 1);
-			CHECK_EQ(buf.position(), 0);
-
-			CHECK_THROWS((void) buf.get_uint(8));
-		}
+		CHECK_THROWS((void) buf.get_uint());
 	}
 
 	TEST_CASE("buffer(get_long)") {
@@ -422,22 +361,13 @@ TEST_SUITE("buffer") {
 		                                     0xFF));
 		CHECK_EQ(buf.position(), 0);
 
-		SUBCASE("relative") {
-			CHECK_EQ(buf.get_long(), -1);
-			CHECK_EQ(buf.position(), 8);
+		CHECK_EQ(buf.get_long(), -1);
+		CHECK_EQ(buf.position(), 8);
 
-			CHECK_EQ(buf.get_long(), 1);
-			CHECK_EQ(buf.position(), 16);
+		CHECK_EQ(buf.get_long(), 1);
+		CHECK_EQ(buf.position(), 16);
 
-			CHECK_THROWS((void) buf.get_long());
-		}
-
-		SUBCASE("absolute") {
-			CHECK_EQ(buf.get_long(8), 1);
-			CHECK_EQ(buf.position(), 0);
-
-			CHECK_THROWS((void) buf.get_long(16));
-		}
+		CHECK_THROWS((void) buf.get_long());
 	}
 
 	TEST_CASE("buffer(get_ulong)") {
@@ -466,22 +396,13 @@ TEST_SUITE("buffer") {
 		                                     0xFF));
 		CHECK_EQ(buf.position(), 0);
 
-		SUBCASE("relative") {
-			CHECK_EQ(buf.get_ulong(), 0xFFFFFFFF'FFFFFFFFL);
-			CHECK_EQ(buf.position(), 8);
+		CHECK_EQ(buf.get_ulong(), 0xFFFFFFFF'FFFFFFFFL);
+		CHECK_EQ(buf.position(), 8);
 
-			CHECK_EQ(buf.get_ulong(), 1);
-			CHECK_EQ(buf.position(), 16);
+		CHECK_EQ(buf.get_ulong(), 1);
+		CHECK_EQ(buf.position(), 16);
 
-			CHECK_THROWS((void) buf.get_ulong());
-		}
-
-		SUBCASE("absolute") {
-			CHECK_EQ(buf.get_ulong(8), 1);
-			CHECK_EQ(buf.position(), 0);
-
-			CHECK_THROWS((void) buf.get_ulong(16));
-		}
+		CHECK_THROWS((void) buf.get_ulong());
 	}
 
 	TEST_CASE("buffer(get_float)") {
@@ -489,22 +410,13 @@ TEST_SUITE("buffer") {
 		auto buf = phoenix::buffer::of(bytes(0x52, 0x58, 0xD2, 0x43, 0x0A, 0xD7, 0x8A, 0xC2, 0xFF, 0xFF, 0xFF));
 		CHECK_EQ(buf.position(), 0);
 
-		SUBCASE("relative") {
-			CHECK_EQ(buf.get_float(), 420.69f);
-			CHECK_EQ(buf.position(), 4);
+		CHECK_EQ(buf.get_float(), 420.69f);
+		CHECK_EQ(buf.position(), 4);
 
-			CHECK_EQ(buf.get_float(), -69.420f);
-			CHECK_EQ(buf.position(), 8);
+		CHECK_EQ(buf.get_float(), -69.420f);
+		CHECK_EQ(buf.position(), 8);
 
-			CHECK_THROWS((void) buf.get_float());
-		}
-
-		SUBCASE("absolute") {
-			CHECK_EQ(buf.get_float(4), -69.420f);
-			CHECK_EQ(buf.position(), 0);
-
-			CHECK_THROWS((void) buf.get_float(8));
-		}
+		CHECK_THROWS((void) buf.get_float());
 	}
 
 	TEST_CASE("buffer(get_double)") {
@@ -533,44 +445,26 @@ TEST_SUITE("buffer") {
 		                                     0xFF));
 		CHECK_EQ(buf.position(), 0);
 
-		SUBCASE("relative") {
-			CHECK_EQ(buf.get_double(), 420.69);
-			CHECK_EQ(buf.position(), 8);
+		CHECK_EQ(buf.get_double(), 420.69);
+		CHECK_EQ(buf.position(), 8);
 
-			CHECK_EQ(buf.get_double(), -69.420);
-			CHECK_EQ(buf.position(), 16);
+		CHECK_EQ(buf.get_double(), -69.420);
+		CHECK_EQ(buf.position(), 16);
 
-			CHECK_THROWS((void) buf.get_double());
-		}
-
-		SUBCASE("absolute") {
-			CHECK_EQ(buf.get_double(8), -69.420);
-			CHECK_EQ(buf.position(), 0);
-
-			CHECK_THROWS((void) buf.get_double(16));
-		}
+		CHECK_THROWS((void) buf.get_double());
 	}
 
 	TEST_CASE("buffer(get_string)") {
 		auto buf =
 		    phoenix::buffer::of(bytes('H', 'i', 'H', 'e', 'l', 'l', 'o', ',', ' ', 'W', 'o', 'r', 'l', 'd', '!'));
 
-		SUBCASE("relative") {
-			CHECK_EQ(buf.get_string(2), "Hi");
-			CHECK_EQ(buf.position(), 2);
+		CHECK_EQ(buf.get_string(2), "Hi");
+		CHECK_EQ(buf.position(), 2);
 
-			CHECK_EQ(buf.get_string(13), "Hello, World!");
-			CHECK_EQ(buf.position(), 15);
+		CHECK_EQ(buf.get_string(13), "Hello, World!");
+		CHECK_EQ(buf.position(), 15);
 
-			CHECK_THROWS((void) buf.get_string(1));
-		}
-
-		SUBCASE("absolute") {
-			CHECK_EQ(buf.get_string(2, 13), "Hello, World!");
-			CHECK_EQ(buf.position(), 0);
-
-			CHECK_THROWS((void) buf.get_string(14, 2));
-		}
+		CHECK_THROWS((void) buf.get_string(1));
 	}
 
 	TEST_CASE("buffer(get_line)") {
@@ -597,27 +491,18 @@ TEST_SUITE("buffer") {
 		                                     '!',
 		                                     '\n'));
 
-		SUBCASE("relative") {
-			CHECK_EQ(buf.get_line(true), "Hi");
-			CHECK_EQ(buf.position(), 7);
-			buf.mark();
+		CHECK_EQ(buf.get_line(true), "Hi");
+		CHECK_EQ(buf.position(), 7);
+		buf.mark();
 
-			CHECK_EQ(buf.get_line(true), "Hello,\\tWorld!");
-			CHECK_EQ(buf.position(), 22);
+		CHECK_EQ(buf.get_line(true), "Hello,\\tWorld!");
+		CHECK_EQ(buf.position(), 22);
 
-			buf.reset();
-			CHECK_EQ(buf.get_line_escaped(true), "Hello,\tWorld!");
-			CHECK_EQ(buf.position(), 22);
+		buf.reset();
+		CHECK_EQ(buf.get_line_escaped(true), "Hello,\tWorld!");
+		CHECK_EQ(buf.position(), 22);
 
-			CHECK_THROWS((void) buf.get_line());
-		}
-
-		SUBCASE("absolute") {
-			CHECK_EQ(buf.get_line_at(1), "i");
-			CHECK_EQ(buf.position(), 0);
-
-			CHECK_THROWS((void) buf.get_line_at(22));
-		}
+		CHECK_THROWS((void) buf.get_line());
 	}
 
 	TEST_CASE("buffer(get_vec2)" * doctest::skip()) {
@@ -630,69 +515,6 @@ TEST_SUITE("buffer") {
 
 	TEST_CASE("buffer(get_vec4)" * doctest::skip()) {
 		// TODO: Stub
-	}
-
-	TEST_CASE("buffer(mismatch)") {
-		auto buf = phoenix::buffer::of(bytes('H', 'e', 'l', 'l', 'o', ',', ' ', 'W', 'o', 'r', 'l', 'd', '!', '\n'));
-
-		SUBCASE("relative functional") {
-			buf.position(5);
-
-			auto index = buf.mismatch([](char chr) { return chr == 'W'; });
-			CHECK_EQ(index, 2);
-			CHECK_EQ(buf.position(), 5);
-
-			index = buf.mismatch([](char) { return false; });
-			CHECK_EQ(index, -1);
-		}
-
-		SUBCASE("relative buffer") {
-			auto comp = phoenix::buffer::of(bytes('W', 'o', 'r', 'l', 'd', '.'));
-			auto index = buf.mismatch(comp);
-			CHECK_EQ(index, 0);
-			CHECK_EQ(buf.position(), 0);
-			CHECK_EQ(comp.position(), 0);
-
-			buf.position(7);
-			index = buf.mismatch(comp);
-			CHECK_EQ(index, 5);
-			CHECK_EQ(buf.position(), 7);
-			CHECK_EQ(comp.position(), 0);
-
-			comp.limit(comp.limit() - 1);
-			index = buf.mismatch(comp);
-			CHECK_EQ(index, -1);
-			CHECK_EQ(buf.position(), 7);
-			CHECK_EQ(comp.position(), 0);
-		}
-
-		SUBCASE("absolute functional") {
-			auto index = buf.mismatch(5, [](char chr) { return chr == 'W'; });
-			CHECK_EQ(index, 2);
-			CHECK_EQ(buf.position(), 0);
-
-			index = buf.mismatch(7, [](char) { return false; });
-			CHECK_EQ(index, -1);
-		}
-
-		SUBCASE("absolute buffer") {
-			auto comp = phoenix::buffer::of(bytes('W', 'o', 'r', 'l', 'd', '.'));
-			auto index = buf.mismatch(0, comp);
-			CHECK_EQ(index, 0);
-			CHECK_EQ(buf.position(), 0);
-			CHECK_EQ(comp.position(), 0);
-
-			index = buf.mismatch(7, comp);
-			CHECK_EQ(index, 5);
-			CHECK_EQ(buf.position(), 0);
-			CHECK_EQ(comp.position(), 0);
-
-			comp.limit(comp.limit() - 1);
-			index = buf.mismatch(7, comp);
-			CHECK_EQ(index, -1);
-			CHECK_EQ(buf.position(), 0);
-			CHECK_EQ(comp.position(), 0);
-		}
 	}
 
 	TEST_CASE("buffer(put*)") {

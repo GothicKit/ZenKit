@@ -58,7 +58,7 @@ namespace phoenix {
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
 			/// \see trigger::parse
-			static void parse(trigger& obj, archive_reader& ctx, game_version version);
+			PHOENIX_API static void parse(trigger& obj, archive_reader& ctx, game_version version);
 		};
 
 		/// \brief A VOb which can move upon player interaction.
@@ -103,7 +103,7 @@ namespace phoenix {
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
 			/// \see trigger::parse
-			static void parse(trigger_mover& obj, archive_reader& ctx, game_version version);
+			PHOENIX_API static void parse(trigger_mover& obj, archive_reader& ctx, game_version version);
 		};
 
 		/// \brief A VOb which can call multiple script function upon being triggered.
@@ -131,7 +131,7 @@ namespace phoenix {
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
 			/// \see trigger::parse
-			static void parse(trigger_list& obj, archive_reader& ctx, game_version version);
+			PHOENIX_API static void parse(trigger_list& obj, archive_reader& ctx, game_version version);
 		};
 
 		/// \brief A VOb which calls a script function upon being triggered.
@@ -145,7 +145,7 @@ namespace phoenix {
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
 			/// \see trigger::parse
-			static void parse(trigger_script& obj, archive_reader& ctx, game_version version);
+			PHOENIX_API static void parse(trigger_script& obj, archive_reader& ctx, game_version version);
 		};
 
 		/// \brief A VOb which triggers a level change if the player moves close to it.
@@ -160,7 +160,7 @@ namespace phoenix {
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
 			/// \see trigger::parse
-			static void parse(trigger_change_level& obj, archive_reader& ctx, game_version version);
+			PHOENIX_API static void parse(trigger_change_level& obj, archive_reader& ctx, game_version version);
 		};
 
 		/// \brief A VOb which triggers a world start event.
@@ -177,7 +177,7 @@ namespace phoenix {
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
-			static void parse(trigger_world_start& obj, archive_reader& ctx, game_version version);
+			PHOENIX_API static void parse(trigger_world_start& obj, archive_reader& ctx, game_version version);
 		};
 
 		struct trigger_untouch : public vob {
@@ -189,7 +189,7 @@ namespace phoenix {
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 			/// \throws parser_error if parsing fails.
 			/// \see vob::parse
-			static void parse(trigger_untouch& obj, archive_reader& ctx, game_version version);
+			PHOENIX_API static void parse(trigger_untouch& obj, archive_reader& ctx, game_version version);
 		};
 	} // namespace vobs
 } // namespace phoenix

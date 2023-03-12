@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "Api.hh"
 #include <phoenix/buffer.hh>
 
 #include <glm/vec2.hpp>
@@ -19,7 +20,7 @@ namespace phoenix {
 		///       one multiplies `uv[0].x` by the width of the font texture and `uv[0].y` by its height.
 		glm::vec2 uv[2];
 
-		[[nodiscard]] inline bool operator==(const glyph& g) const noexcept {
+		[[nodiscard]] PHOENIX_API inline bool operator==(const glyph& g) const noexcept {
 			return this->width == g.width && this->uv[0] == g.uv[0] && this->uv[1] == g.uv[1];
 		}
 	};
@@ -40,7 +41,7 @@ namespace phoenix {
 		/// \warning While *phoenix* supports an arbitrary number of glyphs for fonts, Gothic and Gothic II always
 		///          expect 256 glyphs for all fonts. Should you create a font a number of glyphs not equal to 256 and
 		///          try to load it into *ZenGin*, it will fail.
-		font(std::string name, std::uint32_t height, std::vector<glyph> glyphs);
+		PHOENIX_API font(std::string name, std::uint32_t height, std::vector<glyph> glyphs);
 
 		/// \brief Parses a font from the data in the given buffer.
 		///
@@ -56,14 +57,14 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] static font parse(buffer& buf);
+		[[nodiscard]] PHOENIX_API static font parse(buffer& buf);
 
 		/// \brief Parses a font from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed font object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] inline static font parse(buffer&& in) {
+		[[nodiscard]] PHOENIX_API inline static font parse(buffer&& in) {
 			return font::parse(in);
 		}
 

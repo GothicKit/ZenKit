@@ -145,7 +145,12 @@ namespace phoenix {
 
 			in.position(self_offset);
 		} else {
-			entry._m_data = in.slice(entry.offset, entry.size);
+			if (entry.offset + entry.size > in.limit()) {
+				entry._m_data = in.slice(entry.offset, 0);
+				PX_LOGE("failed to parse VDF entry '{}': too big", entry.name);
+			} else {
+				entry._m_data = in.slice(entry.offset, entry.size);
+			}
 		}
 
 		return entry;

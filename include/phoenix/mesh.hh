@@ -44,7 +44,7 @@ namespace phoenix {
 		uint8_t is_lod : 1;
 		uint8_t normal_axis : 2;
 
-		bool operator==(const polygon_flags& b) const;
+		PHOENIX_API bool operator==(const polygon_flags& b) const;
 	};
 
 	/// \brief List of data indices for polygons of meshes.
@@ -86,7 +86,8 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&, const std::vector<std::uint32_t>&)
-		[[nodiscard]] static mesh parse(buffer& buf, const std::unordered_set<std::uint32_t>& include_polygons = {});
+		[[nodiscard]] PHOENIX_API static mesh parse(buffer& buf,
+		                                            const std::unordered_set<std::uint32_t>& include_polygons = {});
 
 		/// \brief Parses a mesh from the data in the given buffer.
 		///
@@ -100,8 +101,8 @@ namespace phoenix {
 		/// \return The parsed mesh object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&, const std::vector<std::uint32_t>&)
-		[[nodiscard]] inline static mesh parse(buffer&& buf,
-		                                       const std::unordered_set<std::uint32_t>& include_polygons = {}) {
+		[[nodiscard]] PHOENIX_API inline static mesh
+		parse(buffer&& buf, const std::unordered_set<std::uint32_t>& include_polygons = {}) {
 			return mesh::parse(buf, include_polygons);
 		}
 

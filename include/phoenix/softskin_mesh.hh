@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "Api.hh"
 #include <phoenix/buffer.hh>
 #include <phoenix/math.hh>
 #include <phoenix/proto_mesh.hh>
@@ -28,14 +29,14 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] static softskin_mesh parse(buffer& in);
+		[[nodiscard]] PHOENIX_API static softskin_mesh parse(buffer& in);
 
 		/// \brief Parses a soft-skin mesh from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed soft-skin mesh.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] inline static softskin_mesh parse(buffer&& in) {
+		[[nodiscard]] PHOENIX_API inline static softskin_mesh parse(buffer&& in) {
 			return softskin_mesh::parse(in);
 		}
 

@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <me@lmichaelis.de>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "Api.hh"
 #include <phoenix/buffer.hh>
 #include <phoenix/texture.hh>
 
@@ -34,7 +35,7 @@ namespace phoenix::unstable {
 		/// \throws parser_error if parsing fails.
 		/// \note Instead of calling this directly, you probably want to parse a whole save-game.
 		///       Use save_game::parse for that instead.
-		static save_info parse(buffer&& buf);
+		PHOENIX_API static save_info parse(buffer&& buf);
 	};
 
 	/// \brief The section log entries are in.
@@ -85,7 +86,7 @@ namespace phoenix::unstable {
 		/// \throws parser_error if parsing fails.
 		/// \note Instead of calling this directly, you probably want to parse a whole save-game.
 		///       Use save_game::parse for that instead.
-		static script_state parse(buffer&& buf, bool g2);
+		PHOENIX_INTERNAL static script_state parse(buffer&& buf, bool g2);
 	};
 
 	struct save_game {
@@ -94,7 +95,7 @@ namespace phoenix::unstable {
 		/// \param path The path of the save-game folder.
 		/// \return The parsed save-game.
 		/// \throws parser_error if parsing fails.
-		static save_game parse(const std::filesystem::path& path);
+		PHOENIX_API static save_game parse(const std::filesystem::path& path);
 
 		/// \brief Opens the saved world file with the given world name as a buffer and returns it.
 		///
@@ -103,7 +104,7 @@ namespace phoenix::unstable {
 		///
 		/// \param world_name The name of the world to open, including the `.ZEN` extension.
 		/// \return A buffer containing the world's data or std::nullopt if the world is not present in this save.
-		std::optional<buffer> open_world_save(std::string_view world_name) const;
+		PHOENIX_API std::optional<buffer> open_world_save(std::string_view world_name) const;
 
 	public:
 		/// \brief Contains metadata about the save-game, like its name and version numbers.
@@ -125,5 +126,4 @@ namespace phoenix::unstable {
 	private:
 		std::filesystem::path _m_root_path;
 	};
-
 } // namespace phoenix::unstable

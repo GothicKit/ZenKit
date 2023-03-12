@@ -125,7 +125,7 @@ namespace phoenix {
 					//       This presents a problem: Taking the leaf polygons as a parameter makes creating a unified
 					//       parsing function for world meshes impossible. Instead, there should be a function to remove
 					//       this extra data which would grant the user more freedom in how they use _phoenix_.
-					if (!leaf_polygons.contains(i)) {
+					if (leaf_polygons.find(i) == leaf_polygons.end()) {
 						// If the current polygon is not a leaf polygon, skip it.
 						chunk.skip((version == mesh_version_g2 ? 8 : 6) * vertex_count);
 						continue;

@@ -116,11 +116,19 @@ namespace phoenix {
 			case opcode::div:
 				a = pop_int();
 				b = pop_int();
+
+				if (b == 0)
+					throw vm_exception {"vm: division by zero"};
+
 				push_int(a / b);
 				break;
 			case opcode::mod:
 				a = pop_int();
 				b = pop_int();
+
+				if (b == 0)
+					throw vm_exception {"vm: division by zero"};
+
 				push_int(a % b);
 				break;
 			case opcode::or_:
@@ -258,32 +266,34 @@ namespace phoenix {
 			case opcode::movi:
 			case opcode::movvf: {
 				auto [ref, idx, context] = pop_reference();
+				auto value = pop_int();
+
+				if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
+					throw illegal_const_access(ref);
+				}
 
 				if (!ref->is_member() || context != nullptr ||
 				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
-					ref->set_int(pop_int(), idx, context);
+					ref->set_int(value, idx, context);
 				} else if (ref->is_member()) {
 					PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
-
-					if (_m_stack_ptr > 0) {
-						_m_stack[--_m_stack_ptr].~daedalus_stack_frame();
-					}
 				}
 
 				break;
 			}
 			case opcode::movf: {
 				auto [ref, idx, context] = pop_reference();
+				auto value = pop_float();
+
+				if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
+					throw illegal_const_access(ref);
+				}
 
 				if (!ref->is_member() || context != nullptr ||
 				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
-					ref->set_float(pop_float(), idx, context);
+					ref->set_float(value, idx, context);
 				} else if (ref->is_member()) {
 					PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
-
-					if (_m_stack_ptr > 0) {
-						_m_stack[--_m_stack_ptr].~daedalus_stack_frame();
-					}
 				}
 
 				break;
@@ -291,6 +301,10 @@ namespace phoenix {
 			case opcode::movs: {
 				auto [target, target_idx, context] = pop_reference();
 				auto source = pop_string();
+
+				if (target->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
+					throw illegal_const_access(target);
+				}
 
 				if (!target->is_member() || context != nullptr ||
 				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
@@ -305,26 +319,77 @@ namespace phoenix {
 				throw vm_exception {"not implemented: movss"};
 			case opcode::addmovi: {
 				auto [ref, idx, context] = pop_reference();
-				auto result = ref->get_int(idx, context) + pop_int();
-				ref->set_int(result, idx, context);
+				auto value = pop_int();
+
+				if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
+					throw illegal_const_access(ref);
+				}
+
+				if (!ref->is_member() || context != nullptr ||
+				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
+					auto result = ref->get_int(idx, context) + value;
+					ref->set_int(result, idx, context);
+				} else if (ref->is_member()) {
+					PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
+				}
+
 				break;
 			}
 			case opcode::submovi: {
 				auto [ref, idx, context] = pop_reference();
-				auto result = ref->get_int(idx, context) - pop_int();
-				ref->set_int(result, idx, context);
+				auto value = pop_int();
+
+				if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
+					throw illegal_const_access(ref);
+				}
+
+				if (!ref->is_member() || context != nullptr ||
+				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
+					auto result = ref->get_int(idx, context) - value;
+					ref->set_int(result, idx, context);
+				} else if (ref->is_member()) {
+					PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
+				}
 				break;
 			}
 			case opcode::mulmovi: {
 				auto [ref, idx, context] = pop_reference();
-				auto result = ref->get_int(idx, context) * pop_int();
-				ref->set_int(result, idx, context);
+				auto value = pop_int();
+
+				if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
+					throw illegal_const_access(ref);
+				}
+
+				if (!ref->is_member() || context != nullptr ||
+				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
+					auto result = ref->get_int(idx, context) * value;
+					ref->set_int(result, idx, context);
+				} else if (ref->is_member()) {
+					PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
+				}
+
 				break;
 			}
 			case opcode::divmovi: {
 				auto [ref, idx, context] = pop_reference();
-				auto result = ref->get_int(idx, context) / pop_int();
-				ref->set_int(result, idx, context);
+				auto value = pop_int();
+
+				if (value == 0) {
+					throw vm_exception {"vm: division by zero"};
+				}
+
+				if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
+					throw illegal_const_access(ref);
+				}
+
+				if (!ref->is_member() || context != nullptr ||
+				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
+					auto result = ref->get_int(idx, context) / value;
+					ref->set_int(result, idx, context);
+				} else if (ref->is_member()) {
+					PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
+				}
+
 				break;
 			}
 			case opcode::movvi: {

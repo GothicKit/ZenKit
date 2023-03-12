@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "Api.hh"
 #include <phoenix/buffer.hh>
 #include <phoenix/math.hh>
 
@@ -40,7 +41,7 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] static model_hierarchy parse(buffer& in);
+		[[nodiscard]] PHOENIX_API static model_hierarchy parse(buffer& in);
 
 		/// \brief Parses a model hierarchy from the data in the given buffer.
 		///
@@ -51,7 +52,7 @@ namespace phoenix {
 		/// \return The parsed model hierarchy object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] inline static model_hierarchy parse(buffer&& in) {
+		[[nodiscard]] PHOENIX_API inline static model_hierarchy parse(buffer&& in) {
 			return model_hierarchy::parse(in);
 		}
 
@@ -67,5 +68,8 @@ namespace phoenix {
 
 		/// \brief The translation of the root node of this hierarchy.
 		glm::vec3 root_translation {};
+
+		/// \brief The checksum of this hierarchy.
+		std::uint32_t checksum;
 	};
 } // namespace phoenix

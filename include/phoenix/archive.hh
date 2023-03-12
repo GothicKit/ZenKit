@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "phoenix/Api.hh"
 #include <phoenix/buffer.hh>
 #include <phoenix/math.hh>
 #include <phoenix/phoenix.hh>
@@ -41,7 +42,7 @@ namespace phoenix {
 		/// \param in The reader to read from.
 		/// \return The header read.
 		/// \throws parser_error if parsing fails.
-		[[nodiscard]] static archive_header parse(buffer& in);
+		[[nodiscard]] PHOENIX_INTERNAL static archive_header parse(buffer& in);
 	};
 
 	/// \brief Represents the header of an object stored in a ZenGin archive.
@@ -87,7 +88,7 @@ namespace phoenix {
 	    std::function<void(const std::optional<archive_object>&, const std::optional<archive_entry>&)>;
 
 	/// \brief A reader for ZenGin archives.
-	class archive_reader {
+	class PHOENIX_API archive_reader {
 	public:
 		/// \brief Constructs a new archive_reader from the given reader and header.
 		/// \note This constructor should never be called explicitly. Use #open instead!
@@ -183,7 +184,7 @@ namespace phoenix {
 		/// \brief Reads a raw entry and returns the raw bytes stored within.
 		/// \return A vector containing the raw bytes of the entry.
 		/// \throws parser_error if the value actually present is not raw
-		[[deprecated("unsafe api: use read_raw_bytes(uint32_t) instead")]] virtual buffer read_raw_bytes() = 0;
+		PHOENIX_DEPRECATED("unsafe api: use read_raw_bytes(uint32_t) instead") virtual buffer read_raw_bytes() = 0;
 
 		/// \brief Reads a raw entry and returns the raw bytes stored within.
 		/// \param size The number of bytes to read (checked at runtime for ASCII and BIN_SAFE archives)

@@ -211,6 +211,18 @@ namespace phoenix {
 		return syms;
 	}
 
+	symbol* script::add_temporary_strings_symbol() {
+		symbol sym {};
+		sym._m_name = "$PHOENIX_FAKE_STRINGS";
+		sym._m_generated = true;
+		sym._m_type = datatype::string;
+		sym._m_count = 1;
+		sym._m_value = std::unique_ptr<std::string[]> {new std::string[sym._m_count]};
+		sym._m_index = static_cast<std::uint32_t>(_m_symbols.size());
+
+		return &_m_symbols.emplace_back(std::move(sym));
+	}
+
 	symbol symbol::parse(buffer& in) {
 		symbol sym {};
 
@@ -272,8 +284,14 @@ namespace phoenix {
 				break;
 			case datatype::instance:
 				sym._m_value = std::shared_ptr<instance> {nullptr};
-				[[fallthrough]];
+				sym._m_address = in.get_int();
+				break;
 			case datatype::function:
+				if (!sym.is_const()) {
+					sym._m_value = std::unique_ptr<std::int32_t[]>(new int32_t[1]);
+				}
+				sym._m_address = in.get_int();
+				break;
 			case datatype::prototype:
 				sym._m_address = in.get_int();
 				break;
@@ -341,9 +359,6 @@ namespace phoenix {
 	}
 
 	void symbol::set_string(std::string_view value, std::size_t index, const std::shared_ptr<instance>& context) {
-		if (is_const()) {
-			throw illegal_const_access(this);
-		}
 		if (type() != datatype::string) {
 			throw illegal_type_access(this, datatype::string);
 		}
@@ -362,9 +377,6 @@ namespace phoenix {
 	}
 
 	void symbol::set_float(float value, std::size_t index, const std::shared_ptr<instance>& context) {
-		if (is_const()) {
-			throw illegal_const_access(this);
-		}
 		if (type() != datatype::float_) {
 			throw illegal_type_access(this, datatype::float_);
 		}
@@ -383,9 +395,6 @@ namespace phoenix {
 	}
 
 	void symbol::set_int(std::int32_t value, std::size_t index, const std::shared_ptr<instance>& context) {
-		if (is_const()) {
-			throw illegal_const_access(this);
-		}
 		if (type() != datatype::integer && type() != datatype::function) {
 			throw illegal_type_access(this, datatype::integer);
 		}

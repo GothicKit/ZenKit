@@ -1,6 +1,7 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "Api.hh"
 #include <phoenix/buffer.hh>
 
 #include <vector>
@@ -50,72 +51,73 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] static texture parse(buffer& in);
+		[[nodiscard]] PHOENIX_API static texture parse(buffer& in);
 
 		/// \brief Parses a texture from the data in the given buffer.
 		/// \param[in,out] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed texture.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] inline static texture parse(buffer&& in) {
+		[[nodiscard]] PHOENIX_API inline static texture parse(buffer&& in) {
 			return parse(in);
 		}
 
 		/// \return The format of the texture.
-		[[nodiscard]] inline texture_format format() const noexcept {
+		[[nodiscard]] PHOENIX_API inline texture_format format() const noexcept {
 			return _m_format;
 		}
 
 		/// \return The width in pixels of the first mipmap level.
-		[[nodiscard]] inline std::uint32_t width() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint32_t width() const noexcept {
 			return _m_width;
 		}
 
 		/// \return The height in pixels of the first mipmap level.
-		[[nodiscard]] inline std::uint32_t height() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint32_t height() const noexcept {
 			return _m_height;
 		}
 
 		/// \param level The mipmap level to use (beginning from 0).
 		/// \return The width in pixels of the given mipmap level.
-		[[nodiscard]] inline std::uint32_t mipmap_width(std::uint32_t level) const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint32_t mipmap_width(std::uint32_t level) const noexcept {
 			return _m_width >> level;
 		}
 
 		/// \param level The mipmap level to use (beginning from 0).
 		/// \return The height in pixels of the given mipmap level.
-		[[nodiscard]] inline std::uint32_t mipmap_height(std::uint32_t level) const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint32_t mipmap_height(std::uint32_t level) const noexcept {
 			return _m_height >> level;
 		}
 
 		/// \return The width of the texture in-engine.
-		[[nodiscard]] inline std::uint32_t ref_width() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint32_t ref_width() const noexcept {
 			return _m_reference_width;
 		}
 
 		/// \return The height of the texture in-engine.
-		[[nodiscard]] inline std::uint32_t ref_height() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint32_t ref_height() const noexcept {
 			return _m_reference_height;
 		}
 
 		/// \return The number of mipmaps of the texture.
-		[[nodiscard]] inline std::uint32_t mipmaps() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint32_t mipmaps() const noexcept {
 			return _m_mipmap_count;
 		}
 
 		/// \return The average color of the texture.
-		[[nodiscard]] inline std::uint32_t average_color() const noexcept {
+		[[nodiscard]] PHOENIX_API inline std::uint32_t average_color() const noexcept {
 			return _m_average_color;
 		}
 
 		/// \return The palette of the texture.
-		[[nodiscard]] inline argb* palette() const noexcept {
+		[[nodiscard]] PHOENIX_API inline argb* palette() const noexcept {
 			return (argb*) _m_palette;
 		}
 
 		/// \param mipmap_level The mipmap level to get.
 		/// \return The texture data at the given mipmap level.
-		[[nodiscard]] inline const std::vector<std::uint8_t>& data(std::uint32_t mipmap_level = 0) const noexcept {
+		[[nodiscard]] PHOENIX_API inline const std::vector<std::uint8_t>&
+		data(std::uint32_t mipmap_level = 0) const noexcept {
 			return _m_textures.at(_m_mipmap_count - 1 - mipmap_level);
 		}
 
@@ -123,7 +125,7 @@ namespace phoenix {
 		/// \param mipmap_level The mipmap level of the texture to convert
 		/// \return The converted texture data.
 		/// \attention This method is very expensive as it allocates a new buffer and copies the internal data into it.
-		[[nodiscard]] std::vector<std::uint8_t> as_rgba8(std::uint32_t mipmap_level = 0) const;
+		[[nodiscard]] PHOENIX_API std::vector<std::uint8_t> as_rgba8(std::uint32_t mipmap_level = 0) const;
 
 	private:
 		texture() = default;

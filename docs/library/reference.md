@@ -15,7 +15,7 @@ The following is a list of file types and formats used by ZenGin.
 
 | Format                                                    |           Extension            | Description                                                                                                                | _phoenix_ Class Name |
 |-----------------------------------------------------------|:------------------------------:|----------------------------------------------------------------------------------------------------------------------------|----------------------|
-| [Model Animation](formats/model-animation.md)             |             `.MAN`             | Contains animations for a model                                                                                            | `animation`          |
+| [Model Animation](formats/animation.md)                   |             `.MAN`             | Contains animations for a model                                                                                            | `animation`          |
 | [Model Hierarchy](formats/model-hierarchy.md)             |             `.MDH`             | Contains skeletal information for a model                                                                                  | `model_hierarchy`    |
 | [Model Mesh](formats/model-mesh.md)                       |             `.MDM`             | Contains the mesh of a model                                                                                               | `model_mesh`         |
 | [Model](formats/model.md)                                 |             `.MDL`             | Contains a mesh and a hierarchy which make up a model                                                                      | `model`              |

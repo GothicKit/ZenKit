@@ -1,9 +1,15 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2023 Luis Michaelis <me@lmichaelis.de>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "Api.hh"
 #include <phoenix/buffer.hh>
 
 namespace phoenix {
+	struct syntax_error : public phoenix::parser_error {
+	public:
+		syntax_error(std::string&& location, std::string&& msg);
+	};
+
 	namespace mds {
 		enum class event_tag_type {
 			unknown,
@@ -199,7 +205,7 @@ namespace phoenix {
 			std::int32_t last_frame;
 		};
 
-		animation_flags animation_flags_from_string(std::string_view str);
+		PHOENIX_INTERNAL animation_flags animation_flags_from_string(std::string_view str);
 	} // namespace mds
 
 	/// \brief Represents a *ZenGin* model script.
@@ -216,14 +222,14 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] static model_script parse(buffer& buf);
+		[[nodiscard]] PHOENIX_API static model_script parse(buffer& buf);
 
 		/// \brief Parses a model script from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed model script.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] inline static model_script parse(buffer&& buf) {
+		[[nodiscard]] PHOENIX_API inline static model_script parse(buffer&& buf) {
 			return model_script::parse(buf);
 		}
 
@@ -236,7 +242,8 @@ namespace phoenix {
 		/// \throws parser_error if parsing fails.
 		/// \deprecated model_script::parse can now handle both binary and text file types.
 		/// \see #parse_binary(buffer&&)
-		[[nodiscard, deprecated("use model_script::parse()")]] static model_script parse_binary(buffer& buf);
+		[[nodiscard]] PHOENIX_DEPRECATED("use model_script::parse()") PHOENIX_API static model_script
+		    parse_binary(buffer& buf);
 
 		// \brief Parses a compiled model script from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
@@ -244,7 +251,8 @@ namespace phoenix {
 		/// \throws parser_error if parsing fails.
 		/// \deprecated model_script::parse can now handle both binary and text file types.
 		/// \see #parse_binary(buffer&)
-		[[nodiscard, deprecated("use model_script::parse()")]] inline static model_script parse_binary(buffer&& buf) {
+		[[nodiscard]] PHOENIX_DEPRECATED("use model_script::parse()") PHOENIX_API inline static model_script
+		    parse_binary(buffer&& buf) {
 			return model_script::parse(buf);
 		}
 

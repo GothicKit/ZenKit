@@ -97,11 +97,10 @@ namespace phoenix {
 	}
 
 	const std::string& archive_reader_binsafe::get_entry_key() {
-		if (static_cast<archive_entry_type>(input.get(input.position())) != archive_entry_type::hash) {
+		if (static_cast<archive_entry_type>(input.get()) != archive_entry_type::hash) {
 			throw parser_error {"archive_reader_binsafe", "invalid format"};
 		}
 
-		input.skip(1);
 		auto hash = input.get_uint();
 		return _m_hash_table_entries[hash].key;
 	}
@@ -197,7 +196,7 @@ namespace phoenix {
 
 		auto v = input.get_mat3x3();
 		input.skip(unused);
-		return glm::transpose(v);
+		return v;
 	}
 
 	buffer archive_reader_binsafe::read_raw_bytes() {

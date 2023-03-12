@@ -1,6 +1,8 @@
 // Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "Api.hh"
+
 #include <filesystem>
 #include <functional>
 #include <optional>
@@ -10,27 +12,27 @@
 #include <utility>
 
 #if PHOENIX_LOG_LEVEL > 0
-#define PX_LOGE(...) phoenix::logging::log(phoenix::logging::level::error, __VA_ARGS__)
+	#define PX_LOGE(...) phoenix::logging::log(phoenix::logging::level::error, __VA_ARGS__)
 #else
-#define PX_LOGE(...)
+	#define PX_LOGE(...)
 #endif
 
 #if PHOENIX_LOG_LEVEL > 1
-#define PX_LOGW(...) phoenix::logging::log(phoenix::logging::level::warn, __VA_ARGS__)
+	#define PX_LOGW(...) phoenix::logging::log(phoenix::logging::level::warn, __VA_ARGS__)
 #else
-#define PX_LOGW(...)
+	#define PX_LOGW(...)
 #endif
 
 #if PHOENIX_LOG_LEVEL > 2
-#define PX_LOGI(...) phoenix::logging::log(phoenix::logging::level::info, __VA_ARGS__)
+	#define PX_LOGI(...) phoenix::logging::log(phoenix::logging::level::info, __VA_ARGS__)
 #else
-#define PX_LOGI(...)
+	#define PX_LOGI(...)
 #endif
 
 #if PHOENIX_LOG_LEVEL > 3
-#define PX_LOGD(...) phoenix::logging::log(phoenix::logging::level::debug, __VA_ARGS__)
+	#define PX_LOGD(...) phoenix::logging::log(phoenix::logging::level::debug, __VA_ARGS__)
 #else
-#define PX_LOGD(...)
+	#define PX_LOGD(...)
 #endif
 
 namespace phoenix {
@@ -50,7 +52,7 @@ namespace phoenix {
 	/// \param a A string.
 	/// \param b Another string.
 	/// \return ``true`` if both strings are equal when ignoring case.
-	bool iequals(std::string_view a, std::string_view b);
+	PHOENIX_API bool iequals(std::string_view a, std::string_view b);
 
 	/// \brief Tests whether \p a is lexicographically less than \p b.
 	///
@@ -59,14 +61,14 @@ namespace phoenix {
 	/// \param a A string.
 	/// \param b Another string.
 	/// \return ``true`` if \p a is lexicographically less than \p b.
-	bool icompare(std::string_view a, std::string_view b);
+	PHOENIX_API bool icompare(std::string_view a, std::string_view b);
 
 	/// \brief A basic datetime structure used by the *ZenGin*.
 	struct date {
 		/// \brief Parses a date from a buffer.
 		/// \param buf The buffer to read from
 		/// \return The date.
-		static date parse(buffer& buf);
+		PHOENIX_API static date parse(buffer& buf);
 
 		std::uint32_t year;
 		std::uint16_t month;
@@ -83,10 +85,10 @@ namespace phoenix {
 
 		/// \brief Supply a custom logger callback to be used for log output from phoenix.
 		/// \param callback The callback to use.
-		static void use_logger(std::function<void(level, const std::string&)>&& callback);
+		PHOENIX_API static void use_logger(std::function<void(level, const std::string&)>&& callback);
 
 		/// \brief Use the default logger callback for phoenix.
-		static void use_default_logger();
+		PHOENIX_API static void use_default_logger();
 
 		/// \brief Send a logging event to the underlying log callback.
 		/// \param lvl The level of the log message.
@@ -116,9 +118,9 @@ namespace phoenix {
 	/// \brief Base class for all exceptions.
 	class error : public std::exception {
 	public:
-		explicit error(std::string&& message);
+		PHOENIX_API explicit error(std::string&& message);
 
-		[[nodiscard]] inline const char* what() const noexcept override {
+		[[nodiscard]] PHOENIX_API inline const char* what() const noexcept override {
 			return message.c_str();
 		}
 
@@ -129,10 +131,12 @@ namespace phoenix {
 	/// \brief An error representing a parsing failure of any kind.
 	class parser_error : public error {
 	public:
-		explicit parser_error(std::string&& resource_type);
-		explicit parser_error(std::string&& resource_type, std::string&& context);
-		explicit parser_error(std::string&& resource_type, const std::exception& cause);
-		explicit parser_error(std::string&& resource_type, const std::exception& cause, std::string&& context);
+		PHOENIX_INTERNAL explicit parser_error(std::string&& resource_type);
+		PHOENIX_API explicit parser_error(std::string&& resource_type, std::string&& context);
+		PHOENIX_INTERNAL explicit parser_error(std::string&& resource_type, const std::exception& cause);
+		PHOENIX_INTERNAL explicit parser_error(std::string&& resource_type,
+		                                       const std::exception& cause,
+		                                       std::string&& context);
 
 	public:
 		const std::string resource_type;

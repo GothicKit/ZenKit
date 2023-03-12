@@ -1,15 +1,11 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2023 Luis Michaelis <me@lmichaelis.de>
 // SPDX-License-Identifier: MIT
 #include <phoenix/model_script.hh>
 #include <phoenix/phoenix.hh>
 
 #include "model_script_dsl.hh"
 
-#include <lexy/action/parse.hpp>
-#include <lexy/input/buffer.hpp>
-#include <lexy_ext/report_error.hpp>
-
-#include <sstream>
+#include <iostream>
 #include <unordered_map>
 
 namespace phoenix {
@@ -213,8 +209,8 @@ namespace phoenix {
 				anim.blend_out = chunk.get_float();
 				anim.flags = mds::animation_flags_from_string(chunk.get_line(false));
 				anim.model = chunk.get_line(false);
-				anim.direction = chunk.get_line(false).starts_with('R') ? mds::animation_direction::backward
-				                                                        : mds::animation_direction::forward;
+				anim.direction = chunk.get_line(false).find('R') == 0 ? mds::animation_direction::backward
+				                                                      : mds::animation_direction::forward;
 				anim.first_frame = chunk.get_int();
 				anim.last_frame = chunk.get_int();
 				anim.fps = chunk.get_float();
@@ -233,8 +229,8 @@ namespace phoenix {
 				alias.blend_out = chunk.get_float();
 				alias.flags = mds::animation_flags_from_string(chunk.get_line(false));
 				alias.alias = chunk.get_line(false);
-				alias.direction = chunk.get_line(false).starts_with('R') ? mds::animation_direction::backward
-				                                                         : mds::animation_direction::forward;
+				alias.direction = chunk.get_line(false).find('R') == 0 ? mds::animation_direction::backward
+				                                                       : mds::animation_direction::forward;
 				script.aliases.push_back(std::move(alias));
 				break;
 			}
@@ -452,21 +448,21 @@ namespace phoenix {
 		return script;
 	}
 
+	static model_script parse_source_script(buffer& buf) {
+		parser::parser p {buf.duplicate()};
+		return p.parse_script();
+	}
+
 	model_script model_script::parse(buffer& buf) {
-		auto potential_chunk_type = buf.get_ushort(buf.position());
+		auto peek = buf.position();
+		auto potential_chunk_type = buf.get_ushort();
+		buf.position(peek);
 
 		if (potential_chunk_type >= 0xF000 || potential_chunk_type == 0xD000) {
 			return parse_binary_script(buf);
 		}
 
-		lexy::buffer<lexy::ascii_encoding> b {(char*) buf.array(), buf.remaining()};
-		auto result = lexy::parse<mds::d_script>(b, lexy_ext::report_error);
-
-		if (!result.has_value()) {
-			throw parser_error {"syntax error"};
-		}
-
-		return result.value();
+		return parse_source_script(buf);
 	}
 
 	model_script model_script::parse_binary(buffer& buf) {
