@@ -26,6 +26,8 @@ To get started, take a look in the [Reference Documentation](https://phoenix.lmi
 hesitate to open a discussion thread over in [Discussions](https://github.com/lmichaelis/phoenix/discussions) if you
 have a question or need help. Please open an issue for any bug you encounter!
 
+You can also contact me on Discord, ideally by pinging me (lmichaelis#6242) in the [GMC Discord](https://discord.gg/mCpS5b5SUY) in the _tools_ channel.
+
 ## supported file formats
 Currently, the following file formats are supported.
 
