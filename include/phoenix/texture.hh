@@ -39,6 +39,12 @@ namespace phoenix {
 	/// \brief Represents a ZenGin texture.
 	class texture {
 	public:
+		texture(texture&&) = default;
+		texture(texture const&) = default;
+
+		texture& operator=(texture&&) = default;
+		texture& operator=(texture const&) = default;
+
 		/// \brief Parses a texture from the data in the given buffer.
 		///
 		/// <p>This implementation is heavily based on the implementation found in
