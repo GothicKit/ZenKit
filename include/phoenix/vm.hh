@@ -650,7 +650,7 @@ namespace phoenix {
 		/// is required to deal with it appropriately.
 		///
 		/// \param sym The symbol to call.
-		PHOENIX_INTERNAL void call(const symbol* sym);
+		PHOENIX_API void call(const symbol* sym);
 
 		/// \brief Runs the instruction at the current program counter and advances it properly.
 		/// \return false, the instruction executed was a op_return instruction, otherwise true.
