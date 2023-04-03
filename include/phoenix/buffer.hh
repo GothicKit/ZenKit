@@ -32,9 +32,9 @@ namespace phoenix {
 	/// is more than the number of bytes remaining.
 	class buffer_underflow : public buffer_error {
 	public:
-		PHOENIX_INTERNAL buffer_underflow(std::uint64_t byte, std::uint64_t size);
-		PHOENIX_INTERNAL buffer_underflow(std::uint64_t byte, std::uint64_t size, std::string&& context);
-		PHOENIX_INTERNAL buffer_underflow(std::uint64_t byte, std::string&& context);
+		PHOENIX_API buffer_underflow(std::uint64_t byte, std::uint64_t size);
+		PHOENIX_API buffer_underflow(std::uint64_t byte, std::uint64_t size, std::string&& context);
+		PHOENIX_API buffer_underflow(std::uint64_t byte, std::string&& context);
 
 	public:
 		const std::uint64_t byte, size;
@@ -47,8 +47,8 @@ namespace phoenix {
 	/// is more than the number of bytes remaining.
 	class buffer_overflow : public buffer_error {
 	public:
-		PHOENIX_INTERNAL buffer_overflow(std::uint64_t byte, std::uint64_t size);
-		PHOENIX_INTERNAL buffer_overflow(std::uint64_t byte, std::uint64_t size, std::string&& context);
+		PHOENIX_API buffer_overflow(std::uint64_t byte, std::uint64_t size);
+		PHOENIX_API buffer_overflow(std::uint64_t byte, std::uint64_t size, std::string&& context);
 
 	public:
 		const std::uint64_t byte, size;
@@ -58,7 +58,7 @@ namespace phoenix {
 	/// \brief Exception thrown if a write is attempted on a readonly buffer.
 	class buffer_readonly : public buffer_error {
 	public:
-		PHOENIX_INTERNAL explicit buffer_readonly() : buffer_error("buffer is not readonly") {}
+		PHOENIX_API explicit buffer_readonly() : buffer_error("buffer is not readonly") {}
 	};
 
 	/// \brief Base class for all buffer backings.
