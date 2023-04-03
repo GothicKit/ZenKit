@@ -627,6 +627,9 @@ namespace phoenix {
 
 	class script {
 	public:
+		PHOENIX_API script(const script& copy) = default;
+		PHOENIX_API script(script&& move) = default;
+
 		/// \brief Parses in a compiled daedalus script.
 		/// \param path The path of the script file.
 		/// \return The script parsed
@@ -781,8 +784,6 @@ namespace phoenix {
 
 	protected:
 		PHOENIX_INTERNAL script() = default;
-		PHOENIX_INTERNAL script(const script& copy) = default;
-		PHOENIX_INTERNAL script(script&& move) = default;
 
 		template <typename _class, typename _member, int N>
 		symbol* _check_member(std::string_view name, const std::type_info* type) {
