@@ -83,7 +83,7 @@ namespace phoenix {
 		_m_temporary_strings = add_temporary_strings_symbol();
 	}
 
-	void vm::call(const symbol* sym) {
+	void vm::unsafe_call(const symbol* sym) {
 		push_call(sym);
 		jump(sym->address());
 
@@ -219,7 +219,7 @@ namespace phoenix {
 						throw vm_exception {"bl: no symbol found for address " + std::to_string(instr.address)};
 					}
 
-					call(sym);
+					unsafe_call(sym);
 				}
 
 				break;

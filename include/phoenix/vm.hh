@@ -136,7 +136,7 @@ namespace phoenix {
 			}
 
 			PX_LOGD("vm: calling function ", sym->name());
-			call(sym);
+			unsafe_call(sym);
 
 			if constexpr (std::is_same_v<R, _ignore_return_value>) {
 				// clear the stack
@@ -217,7 +217,7 @@ namespace phoenix {
 			if (_m_self_sym)
 				_m_self_sym->set_instance(_m_instance);
 
-			call(sym);
+			unsafe_call(sym);
 
 			// reset the VM state
 			_m_instance = old_instance;
@@ -610,6 +610,14 @@ namespace phoenix {
 		PHOENIX_API void register_exception_handler(
 		    const std::function<vm_exception_strategy(vm&, const script_error&, const instruction&)>& callback);
 
+		/// \brief Calls the given symbol as a function.
+		///
+		/// Automatically pushes a call stack frame. If the function has parameters and/or a return value,
+		/// the caller is required to deal with them appropriately.
+		///
+		/// \param sym The symbol to unsafe_call.
+		PHOENIX_API void unsafe_call(const symbol* sym);
+
 		/// \return the symbol referring to the global <tt>var C_NPC self</tt>.
 		PHOENIX_API inline symbol* global_self() {
 			return _m_self_sym;
@@ -644,14 +652,6 @@ namespace phoenix {
 		}
 
 	protected:
-		/// \brief Calls the given symbol as a function.
-		///
-		/// Automatically pushes a call stack frame. If the function has a return value, the caller
-		/// is required to deal with it appropriately.
-		///
-		/// \param sym The symbol to call.
-		PHOENIX_API void call(const symbol* sym);
-
 		/// \brief Runs the instruction at the current program counter and advances it properly.
 		/// \return false, the instruction executed was a op_return instruction, otherwise true.
 		PHOENIX_INTERNAL bool exec();
