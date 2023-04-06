@@ -10,60 +10,52 @@ namespace phoenix {
 	/// \brief All possible VOb types.
 	/// \summary Mostly copied from [ZenLib](https://github.com/Try/ZenLib).
 	enum class vob_type : std::uint8_t {
-		zCVob,           ///< The base type for all VObs.
-		zCVobLevelCompo, ///< A basic VOb used for grouping other VObs.
-		oCItem,          ///< A VOb representing an item
-		oCNpc,           ///< A VOb representing an NPC
-
-		zCMoverController,
-		zCVobScreenFX,
-		zCVobStair,
-		zCPFXController,
-		zCVobAnimate,
-		zCVobLensFlare,
-		zCVobLight,
-		zCVobSpot,
-		zCVobStartpoint,
-		zCMessageFilter,
-		zCCodeMaster,
-		zCTriggerWorldStart,
-		zCCSCamera,
-		zCCamTrj_KeyFrame,
-		oCTouchDamage,
-		zCTriggerUntouch,
-		zCEarthquake,
-
-		oCMOB,          ///< The base VOb type used for dynamic world objects.
-		oCMobInter,     ///< The base VOb type used for interactive world objects.
-		oCMobBed,       ///< A bed the player can sleep in.
-		oCMobFire,      ///< A campfire the player can cook things on.
-		oCMobLadder,    ///< A ladder the player can climb.
-		oCMobSwitch,    ///< A switch or button the player can use.
-		oCMobWheel,     ///< A grindstone the player can sharpen their weapon with.
-		oCMobContainer, ///< A container the player can open.
-		oCMobDoor,      ///< A door the player can open.
-
-		zCTrigger,            ///< The base VOb type used for all kinds of triggers.
-		zCTriggerList,        ///< A collection of multiple triggers.
-		oCTriggerScript,      ///< A trigger for calling a script function.
-		oCTriggerChangeLevel, ///< A trigger for changing the game world.
-		oCCSTrigger,          ///< A cutscene trigger.
-		zCMover,
-
-		zCVobSound,        ///< A VOb which emits a certain sound.
-		zCVobSoundDaytime, ///< A VOb which emits a sound only during a specified time.
-
-		oCZoneMusic, ///< A VOb which plays music from the soundtrack.
-		oCZoneMusicDefault,
-
-		zCZoneZFog, ///< A VOb which indicates a foggy area.
-		zCZoneZFogDefault,
-
-		zCZoneVobFarPlane,
-		zCZoneVobFarPlaneDefault,
-
-		ignored,
-		unknown,
+		zCVob = 0,           ///< The base type for all VObs.
+		zCVobLevelCompo = 1, ///< A basic VOb used for grouping other VObs.
+		oCItem = 2,          ///< A VOb representing an item
+		oCNpc = 3,           ///< A VOb representing an NPC
+		zCMoverController = 4,
+		zCVobScreenFX = 5,
+		zCVobStair = 6,
+		zCPFXController = 7,
+		zCVobAnimate = 8,
+		zCVobLensFlare = 9,
+		zCVobLight = 10,
+		zCVobSpot = 11,
+		zCVobStartpoint = 12,
+		zCMessageFilter = 13,
+		zCCodeMaster = 14,
+		zCTriggerWorldStart = 15,
+		zCCSCamera = 16,
+		zCCamTrj_KeyFrame = 17,
+		oCTouchDamage = 18,
+		zCTriggerUntouch = 19,
+		zCEarthquake = 20,
+		oCMOB = 21,                ///< The base VOb type used for dynamic world objects.
+		oCMobInter = 22,           ///< The base VOb type used for interactive world objects.
+		oCMobBed = 23,             ///< A bed the player can sleep in.
+		oCMobFire = 24,            ///< A campfire the player can cook things on.
+		oCMobLadder = 25,          ///< A ladder the player can climb.
+		oCMobSwitch = 26,          ///< A switch or button the player can use.
+		oCMobWheel = 27,           ///< A grindstone the player can sharpen their weapon with.
+		oCMobContainer = 28,       ///< A container the player can open.
+		oCMobDoor = 29,            ///< A door the player can open.
+		zCTrigger = 30,            ///< The base VOb type used for all kinds of triggers.
+		zCTriggerList = 31,        ///< A collection of multiple triggers.
+		oCTriggerScript = 32,      ///< A trigger for calling a script function.
+		oCTriggerChangeLevel = 33, ///< A trigger for changing the game world.
+		oCCSTrigger = 34,          ///< A cutscene trigger.
+		zCMover = 35,
+		zCVobSound = 36,        ///< A VOb which emits a certain sound.
+		zCVobSoundDaytime = 37, ///< A VOb which emits a sound only during a specified time.
+		oCZoneMusic = 38,       ///< A VOb which plays music from the soundtrack.
+		oCZoneMusicDefault = 39,
+		zCZoneZFog = 40, ///< A VOb which indicates a foggy area.
+		zCZoneZFogDefault = 41,
+		zCZoneVobFarPlane = 42,
+		zCZoneVobFarPlaneDefault = 43,
+		ignored = 44,
+		unknown = 45,
 	};
 
 	/// \brief Ways a VOb can cast shadows.
@@ -74,14 +66,14 @@ namespace phoenix {
 
 	/// \brief Ways a VOb is seen in the game world.
 	enum class visual_type : std::uint8_t {
-		decal,           ///< The VOb presents as a decal.
-		mesh,            ///< The VOb presents a phoenix::mesh.
-		proto_mesh,      ///< The VOb presents a phoenix::proto_mesh.
-		particle_system, ///< The VOb presents as a particle system.
-		ai_camera,       ///< The VOb is a game-controlled camera.
-		model,           ///< The VOb presents a phoenix::model.
-		morph_mesh,      ///< The VOb presents a phoenix::morph_mesh.
-		unknown,         ///< The VOb presents an unknown visual or no visual at all.
+		decal = 0,           ///< The VOb presents as a decal.
+		mesh = 1,            ///< The VOb presents a phoenix::mesh.
+		proto_mesh = 2,      ///< The VOb presents a phoenix::proto_mesh.
+		particle_system = 3, ///< The VOb presents as a particle system.
+		ai_camera = 4,       ///< The VOb is a game-controlled camera.
+		model = 5,           ///< The VOb presents a phoenix::model.
+		morph_mesh = 6,      ///< The VOb presents a phoenix::morph_mesh.
+		unknown = 7,         ///< The VOb presents an unknown visual or no visual at all.
 	};
 
 	/// \brief Ways the camera may behave with a VOb.
