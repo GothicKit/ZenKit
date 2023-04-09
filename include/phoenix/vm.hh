@@ -598,6 +598,8 @@ namespace phoenix {
 		/// external.
 		PHOENIX_API void register_default_external(const std::function<void(std::string_view)>& callback);
 
+		PHOENIX_API void register_default_external_custom(const std::function<void(vm&, symbol&)>& callback);
+
 		/// \brief Registers a function to be called when script execution fails.
 		///
 		/// A variety of exceptions can occur within the VM while executing. The function passed to this handler can

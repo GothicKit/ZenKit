@@ -651,6 +651,10 @@ namespace phoenix {
 		};
 	}
 
+	void vm::register_default_external_custom(const std::function<void(vm&, symbol&)>& callback) {
+		_m_default_external = callback;
+	}
+
 	void vm::register_exception_handler(
 	    const std::function<vm_exception_strategy(vm&, const script_error&, const instruction&)>& callback) {
 		_m_exception_handler = callback;
