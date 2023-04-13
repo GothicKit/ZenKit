@@ -672,7 +672,7 @@ namespace phoenix {
 		std::stack<daedalus_call_stack_frame> callstack {_m_call_stack};
 
 		using log = phoenix::logging;
-		log::log(log::level::error, "\n", "------- CALL STACK (MOST RECENT CALL FIRST) -------");
+		log::log(log::level::error, "------- CALL STACK (MOST RECENT CALL FIRST) -------");
 
 		while (!callstack.empty()) {
 			auto v = callstack.top();
@@ -682,7 +682,7 @@ namespace phoenix {
 			callstack.pop();
 		}
 
-		log::log(log::level::error, "\n", "------- STACK (MOST RECENT PUSH FIRST) -------");
+		log::log(log::level::error, "------- STACK (MOST RECENT PUSH FIRST) -------");
 
 		while (tmp_stack_ptr > 0) {
 			auto& v = _m_stack[--tmp_stack_ptr];
