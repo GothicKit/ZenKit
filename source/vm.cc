@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 #include <phoenix/vm.hh>
 
-#include <iostream>
 #include <utility>
 
 namespace phoenix {
@@ -432,14 +431,20 @@ namespace phoenix {
 				auto strategy = (*_m_exception_handler)(*this, err, instr);
 
 				if (strategy == vm_exception_strategy::fail_) {
-					std::cerr << "+++ Error while executing script: " << err.what() << "+++\n\n";
+					phoenix::logging::log(phoenix::logging::level::error,
+					                      "+++ Error while executing script: ",
+					                      err.what(),
+					                      "+++");
 					print_stack_trace();
 					throw err;
 				} else if (strategy == vm_exception_strategy::return_) {
 					return false;
 				}
 			} else {
-				std::cerr << "+++ Error while executing script: " << err.what() << "+++\n\n";
+				phoenix::logging::log(phoenix::logging::level::error,
+				                      "+++ Error while executing script: ",
+				                      err.what(),
+				                      "+++");
 				print_stack_trace();
 				throw err;
 			}
@@ -666,76 +671,82 @@ namespace phoenix {
 
 		std::stack<daedalus_call_stack_frame> callstack {_m_call_stack};
 
-		std::cerr << "\n"
-		          << "------- CALL STACK (MOST RECENT CALL FIRST) -------"
-		          << "\n";
+		using log = phoenix::logging;
+		log::log(log::level::error, "\n", "------- CALL STACK (MOST RECENT CALL FIRST) -------");
 
 		while (!callstack.empty()) {
 			auto v = callstack.top();
-			std::cerr << "in " << v.function->name() << " at 0x" << std::hex << last_pc << std::dec << "\n";
+			log::log(log::level::error, "in ", v.function->name(), " at 0x", std::hex, last_pc, std::dec);
 
 			last_pc = v.program_counter;
 			callstack.pop();
 		}
 
-		std::cerr << "\n"
-		          << "------- STACK (MOST RECENT PUSH FIRST) -------"
-		          << "\n";
+		log::log(log::level::error, "\n", "------- STACK (MOST RECENT PUSH FIRST) -------");
 
 		while (tmp_stack_ptr > 0) {
 			auto& v = _m_stack[--tmp_stack_ptr];
 
 			if (v.reference) {
 				auto ref = std::get<symbol*>(v.value);
-				std::cerr << tmp_stack_ptr << ": [REFERENCE] " << ref->name() << "[" << (int32_t) v.index << "] = ";
+				std::string value;
 
 				switch (ref->type()) {
 				case datatype::float_:
-					std::cerr << ref->get_float(v.index, _m_instance) << "\n";
+					value = std::to_string(ref->get_float(v.index, _m_instance));
 					break;
 				case datatype::integer:
-					std::cerr << ref->get_int(v.index, _m_instance) << "\n";
+					value = std::to_string(ref->get_int(v.index, _m_instance));
 					break;
 				case datatype::string:
-					std::cerr << "'" << ref->get_string(v.index, _m_instance) << "'\n";
+					value = "'" + ref->get_string(v.index, _m_instance) + "'";
 					break;
 				case datatype::function: {
 					auto index = ref->get_int(v.index, _m_instance);
 					auto sym = find_symbol_by_index(index);
-
-					std::cout << "&" << sym->name() << "\n";
+					value = "&" + sym->name();
 					break;
 				}
 				case datatype::instance: {
 					auto& inst = ref->get_instance();
 					if (inst != nullptr) {
-						std::cerr << "<instance of '" << inst->_m_type->name() << "'>\n";
+						value = "<instance of '" + std::string(inst->_m_type->name()) + "'>";
 					} else {
-						std::cerr << "NULL\n";
+						value = "NULL";
 					}
 					break;
 				}
 				default:
-					std::cerr << "<invalid stack frame>\n";
+					value = "<invalid stack frame>";
 				}
+
+				log::log(log::level::error,
+				         tmp_stack_ptr,
+				         ": [REFERENCE] ",
+				         ref->name(),
+				         "[",
+				         (int32_t) v.index,
+				         "] = ",
+				         value);
 			} else {
 				if (std::holds_alternative<float>(v.value)) {
-					std::cerr << tmp_stack_ptr << ": [IMMEDIATE FLOAT] = " << std::get<float>(v.value) << "\n";
+					log::log(log::level::error, tmp_stack_ptr, ": [IMMEDIATE FLOAT] = ", std::get<float>(v.value));
 				} else if (std::holds_alternative<int32_t>(v.value)) {
-					std::cerr << tmp_stack_ptr << ": [IMMEDIATE INT] = " << std::get<int32_t>(v.value) << "\n";
+					log::log(log::level::error, tmp_stack_ptr, ": [IMMEDIATE INT] = ", std::get<int32_t>(v.value));
 				} else if (std::holds_alternative<std::shared_ptr<instance>>(v.value)) {
 					auto& inst = std::get<std::shared_ptr<instance>>(v.value);
-					std::cerr << tmp_stack_ptr << ": [IMMEDIATE INSTANCE] = ";
 					if (inst == nullptr) {
-						std::cerr << "NULL\n";
+						log::log(log::level::error, tmp_stack_ptr, ": [IMMEDIATE INSTANCE] = NULL ");
 					} else {
-						std::cerr << "<instance of '" << inst->_m_type->name() << "'>\n";
+						log::log(log::level::error,
+						         tmp_stack_ptr,
+						         ": [IMMEDIATE INSTANCE] = <instance of '",
+						         std::string(inst->_m_type->name()),
+						         "'>");
 					}
 				}
 			}
 		}
-
-		std::cerr << "\n";
 	}
 
 	illegal_external_definition::illegal_external_definition(const symbol* s, std::string&& msg)
