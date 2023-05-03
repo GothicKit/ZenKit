@@ -189,16 +189,19 @@ namespace phoenix {
 		/// \brief Opens the file at the given \p path as a VDF file.
 		/// \param comment The comment on the file. Note that comments are trimmed to 256 characters.
 		/// \param timestamp The timestamp of the archive.
+		PHOENIX_DEPRECATED("scheduled for removal; use Vfs instead")
 		PHOENIX_API explicit vdf_file(std::string_view comment, std::time_t timestamp = -1);
 
 		/// \brief Reads the header and catalog from a file and creates a vdf_file from it.
 		/// \param path The path of the file to read from.
 		/// \return The vdf_file.
+		PHOENIX_DEPRECATED("scheduled for removal; use Vfs instead")
 		PHOENIX_API static vdf_file open(const std::filesystem::path& path);
 
 		/// \brief Reads the header and catalog from a buffer and creates a vdf_file from it.
 		/// \param path The buffer to read from.
 		/// \return The vdf_file.
+		PHOENIX_DEPRECATED("scheduled for removal; use Vfs instead")
 		PHOENIX_API static vdf_file open(phoenix::buffer& buf);
 
 		/// \brief Searches the VDF file for the first entry with the given name.

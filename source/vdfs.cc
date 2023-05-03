@@ -236,8 +236,24 @@ namespace phoenix {
 	}
 
 	vdf_file vdf_file::open(const std::filesystem::path& path) {
-		auto in = buffer::mmap(path);
-		return open(in);
+		auto buf = buffer::mmap(path);
+
+		vdf_file vdf {};
+		vdf.header = vdf_header::read(buf);
+
+		// TODO: Reverse-engineer Union VDF format
+		if (vdf.header.signature != VDF_SIGNATURE_G1 && vdf.header.signature != VDF_SIGNATURE_G2) {
+			throw vdfs_signature_error {vdf.header.signature};
+		}
+
+		buf.position(vdf.header.catalog_offset);
+
+		const vdf_entry* entry = nullptr;
+		do {
+			entry = &*std::get<0>(vdf.entries.insert(vdf_entry::read(buf, vdf.header.catalog_offset)));
+		} while (!entry->is_last());
+
+		return vdf;
 	}
 
 	vdf_file vdf_file::open(phoenix::buffer& buf) {

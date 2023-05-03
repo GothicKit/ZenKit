@@ -74,6 +74,7 @@ set(PHOENIX_SOURCES
         source/softskin_mesh.cc
         source/texture.cc
         source/vdfs.cc
+        source/Vfs.cc
         source/vobs/camera.cc
         source/vobs/light.cc
         source/vobs/misc.cc
@@ -96,7 +97,6 @@ set(PHOENIX_TESTS
         tests/test_animation.cc
         tests/test_archive.cc
         tests/test_buffer.cc
-        tests/test_compat.cc
         tests/test_font.cc
         tests/test_material.cc
         tests/test_messages.cc
@@ -109,7 +109,7 @@ set(PHOENIX_TESTS
         tests/test_save_game.cc
         tests/test_script.cc
         tests/test_texture.cc
-        tests/test_vdfs.cc
+        tests/TestVfs.cc
         tests/test_vobs_g1.cc
         tests/test_vobs_g2.cc
         tests/test_world.cc)
