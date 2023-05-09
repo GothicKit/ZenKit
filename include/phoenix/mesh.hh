@@ -8,6 +8,7 @@
 #include <phoenix/proto_mesh.hh>
 #include <phoenix/texture.hh>
 
+#include <optional>
 #include <unordered_set>
 
 namespace phoenix {
@@ -86,8 +87,8 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&, const std::vector<std::uint32_t>&)
-		[[nodiscard]] PHOENIX_API static mesh parse(buffer& buf,
-		                                            const std::unordered_set<std::uint32_t>& include_polygons = {});
+		[[nodiscard]] PHOENIX_API static mesh
+		parse(buffer& buf, std::optional<std::unordered_set<std::uint32_t>> const& include_polygons = std::nullopt);
 
 		/// \brief Parses a mesh from the data in the given buffer.
 		///
@@ -102,7 +103,7 @@ namespace phoenix {
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&, const std::vector<std::uint32_t>&)
 		[[nodiscard]] PHOENIX_API inline static mesh
-		parse(buffer&& buf, const std::unordered_set<std::uint32_t>& include_polygons = {}) {
+		parse(buffer&& buf, std::optional<std::unordered_set<std::uint32_t>> const& include_polygons = std::nullopt) {
 			return mesh::parse(buf, include_polygons);
 		}
 

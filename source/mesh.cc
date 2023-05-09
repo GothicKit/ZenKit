@@ -19,7 +19,7 @@ namespace phoenix {
 		end = 0xB060
 	};
 
-	mesh mesh::parse(buffer& buf, const std::unordered_set<std::uint32_t>& leaf_polygons) {
+	mesh mesh::parse(buffer& buf, std::optional<std::unordered_set<std::uint32_t>> const& leaf_polygons) {
 		mesh msh {};
 
 		std::uint16_t version {};
@@ -125,7 +125,7 @@ namespace phoenix {
 					//       This presents a problem: Taking the leaf polygons as a parameter makes creating a unified
 					//       parsing function for world meshes impossible. Instead, there should be a function to remove
 					//       this extra data which would grant the user more freedom in how they use _phoenix_.
-					if (leaf_polygons.find(i) == leaf_polygons.end()) {
+					if (leaf_polygons && leaf_polygons->find(i) == leaf_polygons->end()) {
 						// If the current polygon is not a leaf polygon, skip it.
 						chunk.skip((version == mesh_version_g2 ? 8 : 6) * vertex_count);
 						continue;
