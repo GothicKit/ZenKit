@@ -17,7 +17,7 @@ namespace phoenix {
 
 	enum class camera_trajectory : std::uint32_t {
 		world = 0,
-		object = 0,
+		object = 1,
 	};
 
 	enum class camera_lerp_mode : std::uint32_t {
