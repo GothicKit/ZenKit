@@ -24,9 +24,10 @@ namespace phoenix {
 				auto chr = static_cast<unsigned char>(_m_buffer.get_char());
 				_m_column += 1;
 
-				// ignore spaces, quotation marks and parentheses
+				// ignore spaces, quotation marks, semicolons and parentheses
 				// NOTE: Quirk of original implementation: parens are not significant.
-				if (std::isspace(chr) || chr == '(' || chr == ')') {
+				// NOTE: Semicolons are not used in model scripts but can cause parsing failures if not ignored
+				if (std::isspace(chr) || chr == '(' || chr == ')' || chr == ';') {
 					if (chr == '\n') {
 						_m_line += 1;
 						_m_column = 1;
