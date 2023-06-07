@@ -116,14 +116,33 @@ namespace phoenix {
 	} // namespace npc_attribute
 
 	enum class npc_type : std::uint32_t {
-		ambient = 0U,
-		main = 1U,
-		friend_ = 2U,
-		oc_ambient = 3U,
-		oc_main = 4U,
-		bl_ambient = 5U,
-		tal_ambient = 6U,
-		bl_main = 7U,
+		g1_ambient = 0U,
+		g1_main = 1U,
+		g1_guard = 2U,
+		g1_friend = 3U,
+		g1_mine_ambient = 4U,
+		g1_mine_guard = 5U,
+		g1_ow_ambient = 6U,
+		g1_ow_guard = 7U,
+		g1_rogue = 8U,
+
+		g2_ambient = 0U,
+		g2_main = 1U,
+		g2_friend = 2U,
+		g2_oc_ambient = 3U,
+		g2_oc_main = 4U,
+		g2_bl_ambient = 5U,
+		g2_tal_ambient = 6U,
+		g2_bl_main = 7U,
+
+		ambient PHOENIX_DEPRECATED("use npc_type::g2_ambient") = g2_ambient,
+		main PHOENIX_DEPRECATED("use npc_type::g2_main") = g2_main,
+		friend_ PHOENIX_DEPRECATED("use npc_type::g2_friend") = g2_friend,
+		oc_ambient PHOENIX_DEPRECATED("use npc_type::g2_oc_ambient") = g2_oc_ambient,
+		oc_main PHOENIX_DEPRECATED("use npc_type::g2_oc_main") = g2_oc_main,
+		bl_ambient PHOENIX_DEPRECATED("use npc_type::g2_bl_ambient") = g2_bl_ambient,
+		tal_ambient PHOENIX_DEPRECATED("use npc_type::g2_tal_ambient") = g2_tal_ambient,
+		bl_main PHOENIX_DEPRECATED("use npc_type::g2_bl_main") = g2_bl_main,
 	};
 
 	enum class npc_flag : std::uint32_t {
