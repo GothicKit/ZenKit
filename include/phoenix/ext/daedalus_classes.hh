@@ -135,8 +135,9 @@ namespace phoenix {
 		g2_tal_ambient = 6U,
 		g2_bl_main = 7U,
 
-		ambient PHOENIX_DEPRECATED("use npc_type::g2_ambient") = g2_ambient,
-		main PHOENIX_DEPRECATED("use npc_type::g2_main") = g2_main,
+		ambient = g2_ambient,
+		main = g2_main,
+
 		friend_ PHOENIX_DEPRECATED("use npc_type::g2_friend") = g2_friend,
 		oc_ambient PHOENIX_DEPRECATED("use npc_type::g2_oc_ambient") = g2_oc_ambient,
 		oc_main PHOENIX_DEPRECATED("use npc_type::g2_oc_main") = g2_oc_main,
@@ -144,6 +145,9 @@ namespace phoenix {
 		tal_ambient PHOENIX_DEPRECATED("use npc_type::g2_tal_ambient") = g2_tal_ambient,
 		bl_main PHOENIX_DEPRECATED("use npc_type::g2_bl_main") = g2_bl_main,
 	};
+
+	static_assert(npc_type::g1_ambient == npc_type::g2_ambient);
+	static_assert(npc_type::g1_main == npc_type::g2_main);
 
 	enum class npc_flag : std::uint32_t {
 		none = 0U,
