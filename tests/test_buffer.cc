@@ -559,4 +559,13 @@ TEST_SUITE("buffer") {
 		auto buf = phoenix::buffer::allocate(10);
 		CHECK_FALSE(empty == buf);
 	}
+
+	TEST_CASE("buffer(mmap)") {
+		SUBCASE("empty file") {
+			auto buf = phoenix::buffer::mmap("samples/empty.txt");
+			CHECK_EQ(buf.limit(), 0);
+			CHECK_EQ(buf.capacity(), 0);
+			CHECK_THROWS_AS((void) buf.get_char(), phoenix::buffer_underflow);
+		}
+	}
 }

@@ -163,6 +163,10 @@ namespace phoenix {
 	}
 
 	buffer buffer::mmap(const std::filesystem::path& path, bool readonly) {
+		auto file_size = std::filesystem::file_size(path);
+		if (file_size == 0)
+			return buffer::empty();
+
 		if (readonly) {
 			return buffer {std::make_shared<detail::mmap_backing<mio::access_mode::read>>(path)};
 		}
