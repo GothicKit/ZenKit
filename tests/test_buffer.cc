@@ -502,7 +502,7 @@ TEST_SUITE("buffer") {
 		CHECK_EQ(buf.get_line_escaped(true), "Hello,\tWorld!");
 		CHECK_EQ(buf.position(), 22);
 
-		CHECK_THROWS((void) buf.get_line());
+		CHECK(buf.get_line().empty());
 	}
 
 	TEST_CASE("buffer(get_vec2)" * doctest::skip()) {
