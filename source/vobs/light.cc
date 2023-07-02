@@ -33,10 +33,37 @@ namespace phoenix::vobs {
 			std::istringstream colors {color_animation_list};
 			colors.setf(std::ios::skipws);
 
+			// # Original Format in ABNF:
+			//
+			//   color-ani-list = *(color-ani-list-element SP)
+			//   color-ani-list-element = greyscale-color-element | rgb-color-element
+			//
+			//   greyscale-color-element = color-scalar
+			//   rgb-color-element = "(" color-scalar SP color-scalar SP color-scalar ")"
+			//
+			//   color-scalar = 1*3DIGIT
+
+			char c;
 			uint32_t r, g, b;
-			char br = ' ';
-			while (colors >> br >> r >> g >> b >> br) {
-				obj.color_animation_list.emplace_back(r, g, b, 0);
+			while (colors >> c) {
+				if (::isdigit(c)) {
+					colors.unget();
+					colors >> r;
+					obj.color_animation_list.emplace_back(r, r, r, 255);
+					continue;
+				}
+
+				if (c != '(') {
+					PX_LOGW("light_preset: failed parsing `colorAniList`: invalid char '", c, "'");
+				}
+
+				colors >> r >> g >> b >> c;
+
+				if (c != ')') {
+					PX_LOGW("light_preset: failed parsing `colorAniList`: expected ')', got '", c, "'");
+				}
+
+				obj.color_animation_list.emplace_back(r, g, b, 255);
 			}
 
 			if (version == game_version::gothic_2) {
