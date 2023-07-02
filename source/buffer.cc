@@ -277,8 +277,14 @@ namespace phoenix {
 	std::string buffer::get_line_and_ignore(std::string_view whitespace) {
 		std::string tmp {};
 
+		// Fix for #70, avoid attempting to read bytes from a
+		// buffer which has reached its limit.
+		if (this->remaining() == 0) {
+			return "";
+		}
+
 		char c = this->get_char();
-		while (c != '\n' && c != '\r' && c != '\0') {
+		while (c != '\n' && c != '\r' && c != '\0' && this->remaining() > 0) {
 			tmp.push_back(c);
 			c = this->get_char();
 		}

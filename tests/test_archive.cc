@@ -84,7 +84,7 @@ TEST_SUITE("archive") {
 
 		CHECK(reader->read_object_end());
 		CHECK(reader->read_object_end());
-		REQUIRE_THROWS_AS(reader->read_float(), phoenix::buffer_underflow);
+		REQUIRE_THROWS_AS(reader->read_float(), phoenix::parser_error);
 	}
 
 	TEST_CASE("archive(open:BINARY)") {
