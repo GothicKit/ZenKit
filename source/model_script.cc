@@ -135,7 +135,7 @@ namespace phoenix {
 				std::istringstream stream {frames};
 
 				int32_t fr = 0;
-				while (!stream.eof()) {
+				while (!stream.eof() && !stream.fail()) {
 					stream >> fr;
 					evt.frames.push_back(fr);
 				}

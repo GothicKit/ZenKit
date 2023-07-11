@@ -88,10 +88,12 @@ namespace phoenix::parser {
 
 		[[nodiscard]] std::string expect_string();
 		[[nodiscard]] std::string expect_keyword();
+		[[nodiscard]] std::optional<std::string> maybe_keyword();
 		void expect_keyword(std::string_view value);
 		[[nodiscard]] float expect_number();
 		[[nodiscard]] int expect_int();
 		[[nodiscard]] mds::animation_flags expect_flags();
+		[[nodiscard]] std::optional<mds::animation_flags> maybe_flags();
 
 		template <token kind>
 		bool maybe();
