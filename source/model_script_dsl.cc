@@ -156,6 +156,12 @@ namespace phoenix {
 			return _m_stream.token_value();
 		}
 
+		std::optional<std::string> parser::maybe_keyword() {
+			if (this->maybe<token::keyword>())
+				return _m_stream.token_value();
+			return std::nullopt;
+		}
+
 		void parser::expect_keyword(std::string_view value) {
 			this->expect<token::keyword>();
 			if (!phoenix::iequals(_m_stream.token_value(), value)) {
@@ -183,6 +189,24 @@ namespace phoenix {
 			//       _not set_ but sometimes ":" appears instead.
 			(void) this->maybe<token::colon>();
 			return mds::animation_flags_from_string(kw);
+		}
+
+		std::optional<mds::animation_flags> parser::maybe_flags() {
+			// NOTE: Workaround for mod-specific issues
+			auto kw = this->maybe_keyword();
+			if (!kw) {
+				return std::nullopt;
+			}
+
+			if (kw->find("ani") != std::string::npos || kw->find("model") != std::string::npos) {
+				this->_m_stream.backtrack();
+				return std::nullopt;
+			}
+
+			// NOTE: Quirk of original implementation: Normally, "." is used in flags to indicate
+			//       _not set_ but sometimes ":" appears instead.
+			(void) this->maybe<token::colon>();
+			return mds::animation_flags_from_string(*kw);
 		}
 
 		template <token kind>
@@ -388,6 +412,9 @@ namespace phoenix {
 			mds::event_sfx_ground sfx {};
 			sfx.frame = this->expect_int();
 			sfx.name = this->expect_string();
+
+			// NOTE: Fix for mod-specific issues
+			(void) this->maybe_keyword("EMPTY_SLOT");
 			return sfx;
 		}
 
@@ -495,6 +522,9 @@ namespace phoenix {
 			blend.next = this->expect_string();
 			blend.blend_in = this->maybe_number().value_or(0);
 			blend.blend_out = this->maybe_number().value_or(0);
+
+			// NOTE: Fix for mod-specific issues
+			(void) this->maybe_flags();
 
 			// Optional events block.
 			if (this->maybe<token::lbrace>()) {
