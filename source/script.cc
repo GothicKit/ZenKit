@@ -301,6 +301,35 @@ namespace phoenix {
 		}
 
 		sym._m_parent = in.get_int();
+		if (sym.type() == datatype::string && !sym.is_member() && sym.is_const() &&
+		    std::isspace(sym._m_parent & 0xFF)) {
+
+			// Possible string newline issues here.
+			auto savepoint = in.position();
+
+			// Only lookahead four bytes max.
+			unsigned byte = 4;
+			for (; byte > 0; --byte) {
+				in.position(in.position() - 3);
+				auto parent_index = in.get_int();
+
+				if (parent_index == -1) {
+					// This parent index is valid.
+					sym._m_parent = parent_index;
+					break;
+				}
+			}
+
+			if (byte == 0) {
+				// We didn't find any match.
+				in.position(savepoint);
+				sym._m_parent = in.get_uint();
+				PX_LOGW("symbol::parse: heuristic: No valid endpoint found. Aborting search. Issues might arise.");
+			}
+
+			return sym;
+		}
+
 		return sym;
 	}
 
