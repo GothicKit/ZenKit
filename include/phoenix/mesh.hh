@@ -88,7 +88,7 @@ namespace phoenix {
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&, const std::vector<std::uint32_t>&)
 		[[nodiscard]] PHOENIX_API static mesh
-		parse(buffer& buf, std::optional<std::unordered_set<std::uint32_t>> const& include_polygons = std::nullopt);
+		parse(buffer& buf, std::unordered_set<uint32_t> const& include_polygons = {});
 
 		/// \brief Parses a mesh from the data in the given buffer.
 		///
@@ -103,7 +103,7 @@ namespace phoenix {
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&, const std::vector<std::uint32_t>&)
 		[[nodiscard]] PHOENIX_API inline static mesh
-		parse(buffer&& buf, std::optional<std::unordered_set<std::uint32_t>> const& include_polygons = std::nullopt) {
+		parse(buffer&& buf, std::unordered_set<std::uint32_t> const & include_polygons = {}) {
 			return mesh::parse(buf, include_polygons);
 		}
 
