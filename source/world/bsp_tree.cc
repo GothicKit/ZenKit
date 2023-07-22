@@ -95,9 +95,10 @@ namespace phoenix {
 					auto& node = bsp.nodes[idx];
 
 					for (uint32_t i = 0; i < node.polygon_count; ++i) {
-						bsp.leaf_polygons.insert(bsp.polygon_indices[node.polygon_index + i]);
+						bsp.leaf_polygons.push_back(bsp.polygon_indices[node.polygon_index + i]);
 					}
 				}
+				std::sort(bsp.leaf_polygons.begin(), bsp.leaf_polygons.end());
 
 				assert(node_count == bsp.nodes.size());
 				assert(leaf_count == bsp.leaf_node_indices.size());

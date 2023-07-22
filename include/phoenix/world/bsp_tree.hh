@@ -79,7 +79,7 @@ namespace phoenix {
 		std::vector<std::uint32_t> polygon_indices;
 
 		/// \brief All BSP leaf polygon indices.
-		std::unordered_set<std::uint32_t> leaf_polygons;
+		std::vector<std::uint32_t> leaf_polygons;
 
 		/// \brief All BSP light points.
 		std::vector<glm::vec3> light_points;
