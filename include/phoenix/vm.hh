@@ -15,6 +15,8 @@
 namespace phoenix {
 	struct _ignore_return_value {};
 
+	struct naked_call {};
+
 	template <typename T>
 	static constexpr bool is_instance_ptr_v = false;
 
@@ -83,6 +85,7 @@ namespace phoenix {
 		static constexpr std::uint8_t none = 0;
 		static constexpr std::uint8_t vm_allow_null_instance_access = 1 << 1;
 		static constexpr std::uint8_t vm_ignore_const_specifier = 1 << 2;
+		static constexpr std::uint8_t vm_allow_loop_traps = 1 << 3;
 	} // namespace execution_flag
 
 	class vm : public script {
@@ -512,7 +515,7 @@ namespace phoenix {
 			if (sym->is_external())
 				throw vm_exception {"symbol is already an external"};
 
-			if constexpr (!std::is_same_v<void, R>) {
+			if constexpr (!std::is_same_v<void, R> && !std::is_same_v<naked_call, R>) {
 				if (!sym->has_return())
 					throw illegal_external_rtype(sym, "<non-void>");
 				if constexpr (is_instance_ptr_v<R>) {
@@ -530,43 +533,49 @@ namespace phoenix {
 				} else {
 					throw vm_exception {"unsupported return type"};
 				}
-			} else {
+			} else if (!std::is_same_v<naked_call, R>){
 				if (sym->has_return())
 					throw illegal_external_rtype(sym, "void");
 			}
 
 			std::vector<symbol*> params = find_parameters_for_function(sym);
-			if (params.size() < sizeof...(P))
+			if (params.size() < sizeof...(P) && !std::is_same_v<naked_call, R>)
 				throw illegal_external_definition {sym,
 				                                   "too many arguments declared for function override " + sym->name() +
 				                                       ": declared " + std::to_string(sizeof...(P)) + " expected " +
 				                                       std::to_string(params.size())};
 
-			if (params.size() > sizeof...(P))
+			if (params.size() > sizeof...(P) && !std::is_same_v<naked_call, R>)
 				throw illegal_external_definition {sym,
 				                                   "not enough arguments declared for function override " +
 				                                       sym->name() + ": declared " + std::to_string(sizeof...(P)) +
 				                                       " expected " + std::to_string(params.size())};
 
-			if constexpr (sizeof...(P) > 0) {
+			if constexpr (sizeof...(P) > 0 && !std::is_same_v<naked_call, R>) {
 				check_external_params<0, P...>(params);
 			}
 
 			// *evil template hacking ensues*
-			_m_function_overrides[sym->address()] = [callback](vm& machine) {
+			_m_function_overrides[sym->address()] = [callback, sym](vm& machine) {
 				if constexpr (std::is_same_v<void, R>) {
+					machine.push_call(sym);
 					if constexpr (sizeof...(P) > 0) {
 						auto v = machine.pop_values_for_external<P...>();
 						std::apply(callback, v);
 					} else {
 						callback();
 					}
+					machine.pop_call();
+				} else if constexpr (std::is_same_v<phoenix::naked_call, R>){
+					callback(machine);
 				} else {
+					machine.push_call(sym);
 					if constexpr (sizeof...(P) > 0) {
 						machine.push_value_from_external(std::apply(callback, machine.pop_values_for_external<P...>()));
 					} else {
 						machine.push_value_from_external(callback());
 					}
+					machine.pop_call();
 				}
 			};
 
@@ -600,6 +609,8 @@ namespace phoenix {
 
 		PHOENIX_API void register_default_external_custom(const std::function<void(vm&, symbol&)>& callback);
 
+		PHOENIX_API void register_loop_trap(const std::function<void (symbol &)> &callback);
+
 		/// \brief Registers a function to be called when script execution fails.
 		///
 		/// A variety of exceptions can occur within the VM while executing. The function passed to this handler can
@@ -619,6 +630,8 @@ namespace phoenix {
 		///
 		/// \param sym The symbol to unsafe_call.
 		PHOENIX_API void unsafe_call(const symbol* sym);
+
+		PHOENIX_API void unsafe_jump(uint32_t address);
 
 		/// \return the symbol referring to the global <tt>var C_NPC self</tt>.
 		PHOENIX_API inline symbol* global_self() {
@@ -691,7 +704,7 @@ namespace phoenix {
 		/// \note Requires that sizeof...(Px) + 1 == defined.size().
 		template <int32_t i, typename P, typename... Px>
 		void check_external_params(const std::vector<symbol*>& defined) {
-			if constexpr (is_instance_ptr_v<P> || std::is_same_v<symbol*, P> || is_raw_instance_ptr_v<P>) {
+			if constexpr (is_instance_ptr_v<P> || is_raw_instance_ptr_v<P>) {
 				if (defined[i]->type() != datatype::instance)
 					throw illegal_external_param(defined[i], "instance", i + 1);
 			} else if constexpr (std::is_same_v<float, P>) {
@@ -918,6 +931,7 @@ namespace phoenix {
 		std::unordered_map<symbol*, std::function<void(vm&)>> _m_externals;
 		std::unordered_map<uint32_t, std::function<void(vm&)>> _m_function_overrides;
 		std::optional<std::function<void(vm&, symbol&)>> _m_default_external {std::nullopt};
+		std::function<void(symbol&)> _m_default_loop_trap;
 		std::optional<std::function<vm_exception_strategy(vm&, const script_error&, const instruction&)>>
 		    _m_exception_handler {std::nullopt};
 
@@ -928,6 +942,10 @@ namespace phoenix {
 		symbol* _m_item_sym;
 
 		symbol* _m_temporary_strings;
+
+		symbol* _m_loop_end_sym {};
+		symbol* _m_loop_break_sym {};
+		symbol* _m_loop_continue_sym {};
 
 		std::shared_ptr<instance> _m_instance;
 		std::uint32_t _m_pc {0};

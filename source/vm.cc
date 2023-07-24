@@ -80,6 +80,12 @@ namespace phoenix {
 		_m_hero_sym = find_symbol_by_name("HERO");
 		_m_item_sym = find_symbol_by_name("ITEM");
 		_m_temporary_strings = add_temporary_strings_symbol();
+
+		if (_m_flags & execution_flag::vm_allow_loop_traps) {
+			_m_loop_end_sym = find_symbol_by_name("END");
+			_m_loop_break_sym = find_symbol_by_name("BREAK");
+			_m_loop_continue_sym = find_symbol_by_name("CONTINUE");
+		}
 	}
 
 	void vm::unsafe_call(const symbol* sym) {
@@ -91,6 +97,10 @@ namespace phoenix {
 			;
 
 		pop_call();
+	}
+
+	void vm::unsafe_jump(uint32_t address) {
+		this->jump(address);
 	}
 
 	bool vm::exec() {
@@ -206,11 +216,8 @@ namespace phoenix {
 				if (cb != _m_function_overrides.end()) {
 					// Guard against exceptions during external invocation.
 					stack_guard guard {this, sym->rtype()};
-
-					push_call(sym);
+					// Call maybe naked.
 					cb->second(*this);
-					pop_call();
-
 					// The stack is left intact.
 					guard.inhibit();
 				} else {
@@ -260,7 +267,11 @@ namespace phoenix {
 				if (sym == nullptr) {
 					throw vm_exception {"pushv: no symbol found for index"};
 				}
-				push_reference(sym, 0);
+				if ((_m_loop_end_sym == sym || _m_loop_break_sym==sym || _m_loop_continue_sym==sym) && _m_default_loop_trap) {
+					_m_default_loop_trap(*sym);
+				} else {
+					push_reference(sym, 0);
+				}
 				break;
 			case opcode::movi:
 			case opcode::movvf: {
@@ -658,6 +669,12 @@ namespace phoenix {
 
 	void vm::register_default_external_custom(const std::function<void(vm&, symbol&)>& callback) {
 		_m_default_external = callback;
+	}
+
+	void vm::register_loop_trap(const std::function<void (symbol &)> &callback) {
+		if (_m_flags & execution_flag::vm_allow_loop_traps)
+			throw vm_exception {"Loop traps are not enabled"};
+		_m_default_loop_trap = callback;
 	}
 
 	void vm::register_exception_handler(
