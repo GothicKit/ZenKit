@@ -672,7 +672,7 @@ namespace phoenix {
 	}
 
 	void vm::register_loop_trap(const std::function<void (symbol &)> &callback) {
-		if (_m_flags & execution_flag::vm_allow_loop_traps)
+		if (!(_m_flags & execution_flag::vm_allow_loop_traps))
 			throw vm_exception {"Loop traps are not enabled"};
 		_m_default_loop_trap = callback;
 	}
