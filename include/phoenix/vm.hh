@@ -931,7 +931,7 @@ namespace phoenix {
 		std::unordered_map<symbol*, std::function<void(vm&)>> _m_externals;
 		std::unordered_map<uint32_t, std::function<void(vm&)>> _m_function_overrides;
 		std::optional<std::function<void(vm&, symbol&)>> _m_default_external {std::nullopt};
-		std::function<void(symbol&)> _m_default_loop_trap;
+		std::function<void(symbol&)> _m_loop_trap;
 		std::optional<std::function<vm_exception_strategy(vm&, const script_error&, const instruction&)>>
 		    _m_exception_handler {std::nullopt};
 

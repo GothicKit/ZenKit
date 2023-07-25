@@ -267,8 +267,8 @@ namespace phoenix {
 				if (sym == nullptr) {
 					throw vm_exception {"pushv: no symbol found for index"};
 				}
-				if ((_m_loop_end_sym == sym || _m_loop_break_sym==sym || _m_loop_continue_sym==sym) && _m_default_loop_trap) {
-					_m_default_loop_trap(*sym);
+				if ((_m_loop_end_sym == sym || _m_loop_break_sym==sym || _m_loop_continue_sym==sym) && _m_loop_trap) {
+					_m_loop_trap(*sym);
 				} else {
 					push_reference(sym, 0);
 				}
@@ -674,7 +674,7 @@ namespace phoenix {
 	void vm::register_loop_trap(const std::function<void (symbol &)> &callback) {
 		if (!(_m_flags & execution_flag::vm_allow_loop_traps))
 			throw vm_exception {"Loop traps are not enabled"};
-		_m_default_loop_trap = callback;
+		_m_loop_trap = callback;
 	}
 
 	void vm::register_exception_handler(
