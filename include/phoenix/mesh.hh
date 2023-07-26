@@ -87,8 +87,7 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&, const std::vector<std::uint32_t>&)
-		[[nodiscard]] PHOENIX_API static mesh
-		parse(buffer& buf, std::vector<uint32_t> const& include_polygons = {});
+		[[nodiscard]] PHOENIX_API static mesh parse(buffer& buf, std::vector<uint32_t> const& include_polygons = {});
 
 		/// \brief Parses a mesh from the data in the given buffer.
 		///
@@ -102,8 +101,8 @@ namespace phoenix {
 		/// \return The parsed mesh object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&, const std::vector<std::uint32_t>&)
-		[[nodiscard]] PHOENIX_API inline static mesh
-		parse(buffer&& buf, std::vector<std::uint32_t> const & include_polygons = {}) {
+		[[nodiscard]] PHOENIX_API inline static mesh parse(buffer&& buf,
+		                                                   std::vector<std::uint32_t> const& include_polygons = {}) {
 			return mesh::parse(buf, include_polygons);
 		}
 
