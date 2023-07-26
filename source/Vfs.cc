@@ -220,8 +220,14 @@ namespace phoenix {
 			    auto type = buf.get_uint();
 			    [[maybe_unused]] auto attributes = buf.get_uint();
 
-			    if (auto it = name.find('\x20'); it != std::string::npos) {
-				    name.resize(it);
+			    // Find the first non-space char from the end (refer #77)
+			    auto it = std::find_if(name.rbegin(), name.rend(), [](char c) {
+				    return !std::isspace(static_cast<unsigned char>(c));
+			    });
+
+			    if (it != name.rend()) {
+				    auto n = name.rend() - it;
+				    name.resize(n);
 			    }
 
 			    VfsNode* existing = parent->child(name);
