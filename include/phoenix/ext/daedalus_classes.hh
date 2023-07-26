@@ -288,6 +288,7 @@ namespace phoenix {
 	struct c_item : public instance {
 		static constexpr std::uint32_t condition_count = 3;
 		static constexpr std::uint32_t state_count = 4;
+		static constexpr std::uint32_t text_count = 6;
 
 		var int32_t id;
 		var string name;
@@ -326,8 +327,8 @@ namespace phoenix {
 		var int32_t range;
 		var int32_t mag_circle;
 		var string description;
-		var string text[6];
-		var int32_t count[6];
+		var string text[text_count];
+		var int32_t count[text_count];
 		var int32_t inv_zbias;
 		var int32_t inv_rot_x;
 		var int32_t inv_rot_y;
