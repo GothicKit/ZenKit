@@ -53,6 +53,10 @@ void check_vfs(Vfs const& vdf) {
 	CHECK_NE(vdf.resolve("/LICENSES"), nullptr);
 	CHECK_NE(vdf.resolve(""), nullptr);
 	CHECK_NE(vdf.resolve("/"), nullptr);
+
+	// Ignores trailing whitespace (see #75)
+	CHECK_NE(vdf.find("config.yml "), nullptr);
+	CHECK_NE(vdf.resolve("licEnSES /GPL/gpl-3.0.md "), nullptr);
 }
 
 TEST_SUITE("Vfs") {

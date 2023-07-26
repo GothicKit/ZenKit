@@ -43,8 +43,18 @@ namespace phoenix {
 		return std::get<std::vector<VfsNode>>(_m_data);
 	}
 
+	std::string_view trim_trailing_whitespace(std::string_view s) {
+		while (std::isspace(s.back())) {
+			s = s.substr(0, s.size() - 1);
+		}
+
+		return s;
+	}
+
 	VfsNode const* VfsNode::child(std::string_view name) const {
 		auto& children = std::get<std::vector<VfsNode>>(_m_data);
+
+		name = trim_trailing_whitespace(name);
 		auto it = std::lower_bound(children.begin(), children.end(), name, VfsNodeComparator {});
 		if (it == children.end() || !iequals(it->name(), name))
 			return nullptr;
@@ -53,6 +63,8 @@ namespace phoenix {
 
 	VfsNode* VfsNode::child(std::string_view name) {
 		auto& children = std::get<std::vector<VfsNode>>(_m_data);
+
+		name = trim_trailing_whitespace(name);
 		auto it = std::lower_bound(children.begin(), children.end(), name, VfsNodeComparator {});
 		if (it == children.end() || !iequals(it->name(), name))
 			return nullptr;
@@ -68,6 +80,8 @@ namespace phoenix {
 
 	bool VfsNode::remove(std::string_view name) {
 		auto& children = std::get<std::vector<VfsNode>>(_m_data);
+
+		name = trim_trailing_whitespace(name);
 		auto it = std::lower_bound(children.begin(), children.end(), name, VfsNodeComparator {});
 		if (it == children.end() || !iequals(it->name(), name))
 			return false;
