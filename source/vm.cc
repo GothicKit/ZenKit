@@ -80,12 +80,6 @@ namespace phoenix {
 		_m_hero_sym = find_symbol_by_name("HERO");
 		_m_item_sym = find_symbol_by_name("ITEM");
 		_m_temporary_strings = add_temporary_strings_symbol();
-
-		if (_m_flags & execution_flag::vm_allow_loop_traps) {
-			_m_loop_end_sym = find_symbol_by_name("END");
-			_m_loop_break_sym = find_symbol_by_name("BREAK");
-			_m_loop_continue_sym = find_symbol_by_name("CONTINUE");
-		}
 	}
 
 	void vm::unsafe_call(const symbol* sym) {
@@ -267,8 +261,8 @@ namespace phoenix {
 				if (sym == nullptr) {
 					throw vm_exception {"pushv: no symbol found for index"};
 				}
-				if ((_m_loop_end_sym == sym || _m_loop_break_sym==sym || _m_loop_continue_sym==sym) && _m_loop_trap) {
-					_m_loop_trap(*sym);
+				if (sym->has_access_trap() && _m_access_trap) {
+					_m_access_trap(*sym);
 				} else {
 					push_reference(sym, 0);
 				}
@@ -671,10 +665,10 @@ namespace phoenix {
 		_m_default_external = callback;
 	}
 
-	void vm::register_loop_trap(const std::function<void (symbol &)> &callback) {
-		if (!(_m_flags & execution_flag::vm_allow_loop_traps))
-			throw vm_exception {"Loop traps are not enabled"};
-		_m_loop_trap = callback;
+	void vm::register_access_trap(const std::function<void (symbol &)> &callback) {
+		_m_access_trap = callback;
+	}
+
 	}
 
 	void vm::register_exception_handler(

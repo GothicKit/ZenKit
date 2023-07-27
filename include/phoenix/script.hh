@@ -40,11 +40,12 @@ namespace phoenix {
 
 	/// \brief Flags of symbols.
 	namespace symbol_flag {
-		static constexpr auto const_ = 1U << 0U;   ///< The symbol is not mutable.
-		static constexpr auto return_ = 1U << 1U;  ///< The symbol is a function and has a return value.
-		static constexpr auto member = 1U << 2U;   ///< The symbol is a class member.
-		static constexpr auto external = 1U << 3U; ///< The symbol refers to an external function.
-		static constexpr auto merged = 1U << 4U;   ///< Unused.
+		static constexpr auto const_ = 1U << 0U;      ///< The symbol is not mutable.
+		static constexpr auto return_ = 1U << 1U;     ///< The symbol is a function and has a return value.
+		static constexpr auto member = 1U << 2U;      ///< The symbol is a class member.
+		static constexpr auto external = 1U << 3U;    ///< The symbol refers to an external function.
+		static constexpr auto merged = 1U << 4U;      ///< Unused.
+		static constexpr auto access_trap = 1U << 6U; ///< VM should call trap callback, when symbol accessed.
 	}                                              // namespace symbol_flag
 
 	/// \brief All opcodes supported by the daedalus interpreter.
@@ -447,6 +448,10 @@ namespace phoenix {
 			    this->get_instance()->_m_type == &typeid(T);
 		}
 
+		/// \brief Allows VM traps on access to this symbol
+		/// \param enable true to enable and false to disable
+		PHOENIX_API void set_access_trap_enable(bool enable) noexcept;
+
 		/// \brief Tests whether the symbol is a constant.
 		/// \return `true` if the symbol is a constant, `false` if not.
 		[[nodiscard]] PHOENIX_API inline bool is_const() const noexcept {
@@ -472,6 +477,11 @@ namespace phoenix {
 			return (_m_flags & symbol_flag::merged) != 0;
 		}
 
+		/// \brief Tests whether the symbol has access trap.
+		/// \return `true` if the symbol has trap enabled, `false` if not.
+		[[nodiscard]] PHOENIX_API inline bool has_access_trap() const noexcept {
+			return (_m_flags & symbol_flag::access_trap) != 0;
+		}
 		/// \brief brief Tests whether the symbol is a compiler-generated symbol
 		/// \return return `true` if the symbol is generated, `false` if not.
 		[[nodiscard]] PHOENIX_API inline bool is_generated() const noexcept {

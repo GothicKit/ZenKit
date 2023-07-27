@@ -456,4 +456,11 @@ namespace phoenix {
 
 		std::get<std::shared_ptr<instance>>(_m_value) = inst;
 	}
+
+	void symbol::set_access_trap_enable(bool enable) noexcept {
+		if (enable)
+			_m_flags |= symbol_flag::access_trap;
+		else
+			_m_flags &= ~symbol_flag::access_trap;
+	}
 } // namespace phoenix

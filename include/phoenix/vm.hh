@@ -85,7 +85,6 @@ namespace phoenix {
 		static constexpr std::uint8_t none = 0;
 		static constexpr std::uint8_t vm_allow_null_instance_access = 1 << 1;
 		static constexpr std::uint8_t vm_ignore_const_specifier = 1 << 2;
-		static constexpr std::uint8_t vm_allow_loop_traps = 1 << 3;
 	} // namespace execution_flag
 
 	class vm : public script {
@@ -609,7 +608,7 @@ namespace phoenix {
 
 		PHOENIX_API void register_default_external_custom(const std::function<void(vm&, symbol&)>& callback);
 
-		PHOENIX_API void register_loop_trap(const std::function<void (symbol &)> &callback);
+		PHOENIX_API void register_access_trap(const std::function<void (symbol &)> &callback);
 
 		/// \brief Registers a function to be called when script execution fails.
 		///
@@ -931,7 +930,7 @@ namespace phoenix {
 		std::unordered_map<symbol*, std::function<void(vm&)>> _m_externals;
 		std::unordered_map<uint32_t, std::function<void(vm&)>> _m_function_overrides;
 		std::optional<std::function<void(vm&, symbol&)>> _m_default_external {std::nullopt};
-		std::function<void(symbol&)> _m_loop_trap;
+		std::function<void(symbol&)> _m_access_trap;
 		std::optional<std::function<vm_exception_strategy(vm&, const script_error&, const instruction&)>>
 		    _m_exception_handler {std::nullopt};
 
@@ -942,10 +941,6 @@ namespace phoenix {
 		symbol* _m_item_sym;
 
 		symbol* _m_temporary_strings;
-
-		symbol* _m_loop_end_sym {};
-		symbol* _m_loop_break_sym {};
-		symbol* _m_loop_continue_sym {};
 
 		std::shared_ptr<instance> _m_instance;
 		std::uint32_t _m_pc {0};
