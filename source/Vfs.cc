@@ -44,7 +44,7 @@ namespace phoenix {
 	}
 
 	std::string_view trim_trailing_whitespace(std::string_view s) {
-		while (std::isspace(s.back())) {
+		while (s.length() > 0 && std::isspace(s.back())) {
 			s = s.substr(0, s.size() - 1);
 		}
 
