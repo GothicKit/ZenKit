@@ -532,7 +532,7 @@ namespace phoenix {
 				} else {
 					throw vm_exception {"unsupported return type"};
 				}
-			} else if (!std::is_same_v<naked_call, R>){
+			} else if (!std::is_same_v<naked_call, R>) {
 				if (sym->has_return())
 					throw illegal_external_rtype(sym, "void");
 			}

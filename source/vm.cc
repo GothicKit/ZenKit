@@ -669,8 +669,6 @@ namespace phoenix {
 		_m_access_trap = callback;
 	}
 
-	}
-
 	void vm::register_exception_handler(
 	    const std::function<vm_exception_strategy(vm&, const script_error&, const instruction&)>& callback) {
 		_m_exception_handler = callback;
