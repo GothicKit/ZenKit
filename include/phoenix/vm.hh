@@ -556,26 +556,22 @@ namespace phoenix {
 
 			// *evil template hacking ensues*
 			_m_function_overrides[sym->address()] = [callback, sym](vm& machine) {
+				machine.push_call(sym);
 				if constexpr (std::is_same_v<void, R>) {
-					machine.push_call(sym);
 					if constexpr (sizeof...(P) > 0) {
 						auto v = machine.pop_values_for_external<P...>();
 						std::apply(callback, v);
 					} else {
 						callback();
 					}
-					machine.pop_call();
-				} else if constexpr (std::is_same_v<phoenix::naked_call, R>){
-					callback(machine);
 				} else {
-					machine.push_call(sym);
 					if constexpr (sizeof...(P) > 0) {
 						machine.push_value_from_external(std::apply(callback, machine.pop_values_for_external<P...>()));
 					} else {
 						machine.push_value_from_external(callback());
 					}
-					machine.pop_call();
 				}
+				machine.pop_call();
 			};
 
 			PX_LOGD("vm: overrode function ", sym->name());
