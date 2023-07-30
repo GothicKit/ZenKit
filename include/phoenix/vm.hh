@@ -883,7 +883,7 @@ namespace phoenix {
 		                            std::is_same_v<std::remove_reference_t<P>, symbol*>,
 		                        void>::type
 		push_call_parameters(const std::vector<symbol*>& defined, P value, Px... more) { // clang-format on
-			if constexpr (is_instance_ptr_v<P> || std::is_same_v<symbol*, P>) {
+			if constexpr (is_instance_ptr_v<P> || std::is_same_v<symbol*, P> || is_raw_instance_ptr_v<P>) {
 				if (defined[i]->type() != datatype::instance)
 					throw illegal_external_param(defined[i], "instance", i + 1);
 
