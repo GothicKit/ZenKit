@@ -15,6 +15,8 @@
 namespace phoenix {
 	struct _ignore_return_value {};
 
+	struct naked_call {};
+
 	template <typename T>
 	static constexpr bool is_instance_ptr_v = false;
 
@@ -553,7 +555,8 @@ namespace phoenix {
 			}
 
 			// *evil template hacking ensues*
-			_m_function_overrides[sym->address()] = [callback](vm& machine) {
+			_m_function_overrides[sym->address()] = [callback, sym](vm& machine) {
+				machine.push_call(sym);
 				if constexpr (std::is_same_v<void, R>) {
 					if constexpr (sizeof...(P) > 0) {
 						auto v = machine.pop_values_for_external<P...>();
@@ -568,6 +571,28 @@ namespace phoenix {
 						machine.push_value_from_external(callback());
 					}
 				}
+				machine.pop_call();
+			};
+
+			PX_LOGD("vm: overrode function ", sym->name());
+		}
+
+		/// \brief Overrides a function in Daedalus code with an external naked call.
+		///
+		/// Whenever the function with the given name would be called from within Daedalus code, redirect the call
+		/// to the given external callback handler instead.
+		///
+		/// \param name The name of the function to override.
+		/// \param callback The C++ function to register as the external.
+		void override_function(std::string_view name, const std::function<naked_call(vm&)>& callback) {
+			auto* sym = find_symbol_by_name(name);
+			if (sym == nullptr)
+				throw vm_exception {"symbol not found"};
+			if (sym->is_external())
+				throw vm_exception {"symbol is already an external"};
+
+			_m_function_overrides[sym->address()] = [callback](vm& machine) {
+				callback(machine);
 			};
 
 			PX_LOGD("vm: overrode function ", sym->name());
@@ -600,6 +625,8 @@ namespace phoenix {
 
 		PHOENIX_API void register_default_external_custom(const std::function<void(vm&, symbol&)>& callback);
 
+		PHOENIX_API void register_access_trap(const std::function<void (symbol &)> &callback);
+
 		/// \brief Registers a function to be called when script execution fails.
 		///
 		/// A variety of exceptions can occur within the VM while executing. The function passed to this handler can
@@ -619,6 +646,8 @@ namespace phoenix {
 		///
 		/// \param sym The symbol to unsafe_call.
 		PHOENIX_API void unsafe_call(const symbol* sym);
+
+		PHOENIX_API void unsafe_jump(uint32_t address);
 
 		/// \return the symbol referring to the global <tt>var C_NPC self</tt>.
 		PHOENIX_API inline symbol* global_self() {
@@ -918,6 +947,7 @@ namespace phoenix {
 		std::unordered_map<symbol*, std::function<void(vm&)>> _m_externals;
 		std::unordered_map<uint32_t, std::function<void(vm&)>> _m_function_overrides;
 		std::optional<std::function<void(vm&, symbol&)>> _m_default_external {std::nullopt};
+		std::function<void(symbol&)> _m_access_trap;
 		std::optional<std::function<vm_exception_strategy(vm&, const script_error&, const instruction&)>>
 		    _m_exception_handler {std::nullopt};
 

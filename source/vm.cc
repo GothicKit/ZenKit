@@ -93,6 +93,10 @@ namespace phoenix {
 		pop_call();
 	}
 
+	void vm::unsafe_jump(uint32_t address) {
+		this->jump(address);
+	}
+
 	bool vm::exec() {
 		auto instr = instruction_at(_m_pc);
 
@@ -206,11 +210,8 @@ namespace phoenix {
 				if (cb != _m_function_overrides.end()) {
 					// Guard against exceptions during external invocation.
 					stack_guard guard {this, sym->rtype()};
-
-					push_call(sym);
+					// Call maybe naked.
 					cb->second(*this);
-					pop_call();
-
 					// The stack is left intact.
 					guard.inhibit();
 				} else {
@@ -260,7 +261,11 @@ namespace phoenix {
 				if (sym == nullptr) {
 					throw vm_exception {"pushv: no symbol found for index"};
 				}
-				push_reference(sym, 0);
+				if (sym->has_access_trap() && _m_access_trap) {
+					_m_access_trap(*sym);
+				} else {
+					push_reference(sym, 0);
+				}
 				break;
 			case opcode::movi:
 			case opcode::movvf: {
@@ -658,6 +663,10 @@ namespace phoenix {
 
 	void vm::register_default_external_custom(const std::function<void(vm&, symbol&)>& callback) {
 		_m_default_external = callback;
+	}
+
+	void vm::register_access_trap(const std::function<void (symbol &)> &callback) {
+		_m_access_trap = callback;
 	}
 
 	void vm::register_exception_handler(
