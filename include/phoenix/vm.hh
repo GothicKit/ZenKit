@@ -514,7 +514,7 @@ namespace phoenix {
 			if (sym->is_external())
 				throw vm_exception {"symbol is already an external"};
 
-			if constexpr (!std::is_same_v<void, R> && !std::is_same_v<naked_call, R>) {
+			if constexpr (!std::is_same_v<void, R>) {
 				if (!sym->has_return())
 					throw illegal_external_rtype(sym, "<non-void>");
 				if constexpr (is_instance_ptr_v<R>) {
@@ -532,25 +532,25 @@ namespace phoenix {
 				} else {
 					throw vm_exception {"unsupported return type"};
 				}
-			} else if (!std::is_same_v<naked_call, R>) {
+			} else {
 				if (sym->has_return())
 					throw illegal_external_rtype(sym, "void");
 			}
 
 			std::vector<symbol*> params = find_parameters_for_function(sym);
-			if (params.size() < sizeof...(P) && !std::is_same_v<naked_call, R>)
+			if (params.size() < sizeof...(P))
 				throw illegal_external_definition {sym,
 				                                   "too many arguments declared for function override " + sym->name() +
 				                                       ": declared " + std::to_string(sizeof...(P)) + " expected " +
 				                                       std::to_string(params.size())};
 
-			if (params.size() > sizeof...(P) && !std::is_same_v<naked_call, R>)
+			if (params.size() > sizeof...(P))
 				throw illegal_external_definition {sym,
 				                                   "not enough arguments declared for function override " +
 				                                       sym->name() + ": declared " + std::to_string(sizeof...(P)) +
 				                                       " expected " + std::to_string(params.size())};
 
-			if constexpr (sizeof...(P) > 0 && !std::is_same_v<naked_call, R>) {
+			if constexpr (sizeof...(P) > 0) {
 				check_external_params<0, P...>(params);
 			}
 
@@ -576,6 +576,27 @@ namespace phoenix {
 					}
 					machine.pop_call();
 				}
+			};
+
+			PX_LOGD("vm: overrode function ", sym->name());
+		}
+
+		/// \brief Overrides a function in Daedalus code with an external naked call.
+		///
+		/// Whenever the function with the given name would be called from within Daedalus code, redirect the call
+		/// to the given external callback handler instead.
+		///
+		/// \param name The name of the function to override.
+		/// \param callback The C++ function to register as the external.
+		void override_function(std::string_view name, const std::function<naked_call(vm&)>& callback) {
+			auto* sym = find_symbol_by_name(name);
+			if (sym == nullptr)
+				throw vm_exception {"symbol not found"};
+			if (sym->is_external())
+				throw vm_exception {"symbol is already an external"};
+
+			_m_function_overrides[sym->address()] = [callback](vm& machine) {
+				callback(machine);
 			};
 
 			PX_LOGD("vm: overrode function ", sym->name());
