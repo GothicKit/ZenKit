@@ -330,6 +330,13 @@ namespace phoenix {
 		[[nodiscard]] PHOENIX_API const std::string& pop_string();
 		[[nodiscard]] PHOENIX_API std::tuple<symbol*, std::uint8_t, std::shared_ptr<instance>> pop_reference();
 
+		[[nodiscard]] PHOENIX_API std::int32_t get_int(std::shared_ptr<instance>& context,
+													   std::variant<int32_t, float, symbol*, std::shared_ptr<instance> >& value,
+													   uint16_t index);
+
+		PHOENIX_API void set_int(std::shared_ptr<instance>& context, symbol* ref, uint16_t index, std::int32_t value);
+		PHOENIX_API void set_string(std::shared_ptr<instance>& context, symbol* ref, uint16_t index, std::string_view value);
+
 		/// \brief Registers a Daedalus external function.
 		///
 		/// <p>External functions are a way for Daedalus scripts to execute more complicated code in the C++ world
@@ -626,6 +633,12 @@ namespace phoenix {
 		PHOENIX_API void register_default_external_custom(const std::function<void(vm&, symbol&)>& callback);
 
 		PHOENIX_API void register_access_trap(const std::function<void (symbol &)> &callback);
+
+		PHOENIX_API void register_memory_trap(const std::function<void(std::int32_t, std::size_t, const std::shared_ptr<instance>&, symbol&)> &callback);
+		PHOENIX_API void register_memory_trap(const std::function<std::int32_t(std::size_t, const std::shared_ptr<instance>&, symbol&)>& callback);
+
+		PHOENIX_API void register_memory_trap(const std::function<void(std::string_view, std::size_t, const std::shared_ptr<instance>&, symbol&)> &callback);
+		PHOENIX_API void register_memory_trap(const std::function<const std::string&(std::size_t, const std::shared_ptr<instance>&, symbol&)> &callback);
 
 		/// \brief Registers a function to be called when script execution fails.
 		///
@@ -950,6 +963,11 @@ namespace phoenix {
 		std::function<void(symbol&)> _m_access_trap;
 		std::optional<std::function<vm_exception_strategy(vm&, const script_error&, const instruction&)>>
 		    _m_exception_handler {std::nullopt};
+
+		std::function<void(std::int32_t, std::size_t, const std::shared_ptr<instance>&, symbol&)> _m_memory_trap;
+		std::function<std::int32_t(std::size_t, const std::shared_ptr<instance>&, symbol&)> _m_memory_trap_read;
+		std::function<void(std::string_view, std::size_t, const std::shared_ptr<instance>&, symbol&)> _m_memory_trap_s;
+		std::function<const std::string&(std::size_t, const std::shared_ptr<instance>&, symbol&)> _m_memory_trap_read_s;
 
 		symbol* _m_self_sym;
 		symbol* _m_other_sym;
