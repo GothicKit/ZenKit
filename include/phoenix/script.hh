@@ -46,7 +46,7 @@ namespace phoenix {
 		static constexpr auto external = 1U << 3U;    ///< The symbol refers to an external function.
 		static constexpr auto merged = 1U << 4U;      ///< Unused.
 		static constexpr auto access_trap = 1U << 6U; ///< VM should call trap callback, when symbol accessed.
-	}                                              // namespace symbol_flag
+	}                                                 // namespace symbol_flag
 
 	/// \brief All opcodes supported by the daedalus interpreter.
 	///

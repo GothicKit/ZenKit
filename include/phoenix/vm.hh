@@ -17,6 +17,10 @@ namespace phoenix {
 
 	struct naked_call {};
 
+	struct func {
+		symbol* value;
+	};
+
 	template <typename T>
 	static constexpr bool is_instance_ptr_v = false;
 
@@ -632,7 +636,7 @@ namespace phoenix {
 
 		PHOENIX_API void register_default_external_custom(const std::function<void(vm&, symbol&)>& callback);
 
-		PHOENIX_API void register_access_trap(const std::function<void (symbol &)> &callback);
+		PHOENIX_API void register_access_trap(const std::function<void(symbol&)>& callback);
 
 		PHOENIX_API void register_memory_trap(const std::function<void(std::int32_t, std::size_t, const std::shared_ptr<instance>&, symbol&)> &callback);
 		PHOENIX_API void register_memory_trap(const std::function<std::int32_t(std::size_t, const std::shared_ptr<instance>&, symbol&)>& callback);
@@ -739,9 +743,9 @@ namespace phoenix {
 			} else if constexpr (std::is_same_v<float, P>) {
 				if (defined[i]->type() != datatype::float_)
 					throw illegal_external_param(defined[i], "float", i + 1);
-			} else if constexpr (std::is_same_v<int32_t, P> || std::is_same_v<bool, P>) {
+			} else if constexpr (std::is_same_v<int32_t, P> || std::is_same_v<bool, P> || std::is_same_v<func, P>) {
 				if (defined[i]->type() != datatype::integer && defined[i]->type() != datatype::function)
-					throw illegal_external_param(defined[i], "int", i + 1);
+					throw illegal_external_param(defined[i], "int/func", i + 1);
 			} else if constexpr (std::is_same_v<std::string_view, P>) {
 				if (defined[i]->type() != datatype::string)
 					throw illegal_external_param(defined[i], "string", i + 1);
@@ -763,7 +767,7 @@ namespace phoenix {
 		template <typename T>
 		typename std::enable_if<is_instance_ptr_v<T> || std::is_same_v<T, float> || std::is_same_v<T, std::int32_t> ||
 		                            std::is_same_v<T, bool> || std::is_same_v<T, std::string_view> ||
-		                            std::is_same_v<T, symbol*> || is_raw_instance_ptr_v<T>,
+		                            std::is_same_v<T, symbol*> || is_raw_instance_ptr_v<T> || std::is_same_v<T, func>,
 		                        T>::type
 		pop_value_for_external() {
 			if constexpr (is_instance_ptr_v<T>) {
@@ -812,6 +816,22 @@ namespace phoenix {
 				return pop_string();
 			} else if constexpr (std::is_same_v<symbol*, T>) {
 				return std::get<0>(pop_reference());
+			} else if constexpr (std::is_same_v<func, T>) {
+				auto symbol_id = static_cast<uint32_t>(pop_int());
+
+				auto* sym = find_symbol_by_index(symbol_id);
+				while (sym != nullptr && sym->type() == datatype::function && !sym->is_const()) {
+					symbol_id = static_cast<uint32_t>(sym->get_int());
+					sym = find_symbol_by_index(symbol_id);
+				}
+
+				if (sym != nullptr && sym->type() != datatype::function) {
+					PX_LOGW("Failed to resolve external function parameter (func): Reference chain leads to a "
+					        "non-function symbol!");
+					return func {nullptr};
+				}
+
+				return func {sym};
 			} else {
 				throw vm_exception {"pop: unsupported stack frame type"};
 			}
@@ -827,7 +847,7 @@ namespace phoenix {
 		template <typename T>
 		typename std::enable_if<is_instance_ptr_v<T> || std::is_convertible_v<T, float> ||
 		                            std::is_convertible_v<T, std::int32_t> || std::is_same_v<T, std::string> ||
-		                            std::is_same_v<T, std::string_view>,
+		                            std::is_same_v<T, std::string_view> || std::is_same_v<T, func>,
 		                        void>::type
 		push_value_from_external(T v) { // clang-format on
 			if constexpr (is_instance_ptr_v<T>) {
@@ -836,6 +856,8 @@ namespace phoenix {
 				push_float(static_cast<float>(v));
 			} else if constexpr (std::is_convertible_v<std::int32_t, T>) {
 				push_int(static_cast<std::int32_t>(v));
+			} else if constexpr (std::is_same_v<func, T>) {
+				push_int(static_cast<std::int32_t>(v.value->index()));
 			} else if constexpr (std::is_same_v<T, std::string> || std::is_same_v<T, std::string_view>) {
 				push_string(v);
 			} else {
@@ -867,7 +889,8 @@ namespace phoenix {
 
 		template <typename R>
 		typename std::enable_if<is_instance_ptr_v<R> || std::is_same_v<R, float> || std::is_same_v<R, std::int32_t> ||
-		                            std::is_same_v<R, std::string> || std::is_same_v<R, void>,
+		                            std::is_same_v<R, func> || std::is_same_v<R, std::string> ||
+		                            std::is_same_v<R, void>,
 		                        void>::type
 		check_call_return_type(const symbol* sym) {
 			if constexpr (is_instance_ptr_v<R>) {
@@ -876,7 +899,7 @@ namespace phoenix {
 			} else if constexpr (std::is_same_v<float, R>) {
 				if (sym->rtype() != datatype::float_)
 					throw vm_exception {"invalid return type for function " + sym->name()};
-			} else if constexpr (std::is_same_v<int32_t, R>) {
+			} else if constexpr (std::is_same_v<int32_t, R> || std::is_same_v<func, R>) {
 				if (sym->rtype() != datatype::integer && sym->rtype() != datatype::function)
 					throw vm_exception {"invalid return type for function " + sym->name()};
 			} else if constexpr (std::is_same_v<std::string, R>) {

@@ -722,7 +722,7 @@ namespace phoenix {
 		_m_default_external = callback;
 	}
 
-	void vm::register_access_trap(const std::function<void (symbol &)> &callback) {
+	void vm::register_access_trap(const std::function<void(symbol&)>& callback) {
 		_m_access_trap = callback;
 	}
 
