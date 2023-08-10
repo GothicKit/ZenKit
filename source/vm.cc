@@ -304,7 +304,7 @@ namespace phoenix {
 
 				if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
 					throw illegal_const_access(ref);
-        }
+				}
 
 				if (!ref->is_member() || context != nullptr ||
 				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
@@ -617,8 +617,7 @@ namespace phoenix {
 			throw illegal_const_access(ref);
 		}
 
-		if (!ref->is_member() || context != nullptr ||
-			!(_m_flags & execution_flag::vm_allow_null_instance_access)) {
+		if (!ref->is_member() || context != nullptr || !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
 			ref->set_int(value, index, context);
 		} else if (ref->is_member()) {
 			PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");

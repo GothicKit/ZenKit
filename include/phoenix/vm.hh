@@ -347,7 +347,8 @@ namespace phoenix {
 
 		PHOENIX_API void set_int(std::shared_ptr<instance>& context, symbol* ref, uint16_t index, std::int32_t value);
 		PHOENIX_API void set_float(std::shared_ptr<instance>& context, symbol* ref, uint16_t index, float value);
-		PHOENIX_API void set_string(std::shared_ptr<instance>& context, symbol* ref, uint16_t index, std::string_view value);
+		PHOENIX_API void
+		set_string(std::shared_ptr<instance>& context, symbol* ref, uint16_t index, std::string_view value);
 
 		/// \brief Registers a Daedalus external function.
 		///
