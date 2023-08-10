@@ -82,6 +82,17 @@ namespace phoenix {
 		_m_temporary_strings = add_temporary_strings_symbol();
 	}
 
+	std::shared_ptr<instance> vm::init_opaque_instance(symbol* sym) {
+		auto cls = sym;
+		if (cls->type() == datatype::instance) {
+			cls = find_symbol_by_index(cls->parent());
+		}
+		// create the instance
+		auto inst = std::make_shared<opaque_instance>(*cls, find_class_members(*cls));
+		init_instance(inst, sym);
+		return inst;
+	}
+
 	void vm::unsafe_call(const symbol* sym) {
 		push_call(sym);
 		jump(sym->address());
@@ -218,7 +229,6 @@ namespace phoenix {
 					if (sym == nullptr) {
 						throw vm_exception {"bl: no symbol found for address " + std::to_string(instr.address)};
 					}
-
 					unsafe_call(sym);
 				}
 
@@ -294,16 +304,7 @@ namespace phoenix {
 
 				if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
 					throw illegal_const_access(ref);
-				}
-
-				if (context != nullptr && context->symbol_index() == unset && ref->is_member() &&
-				    _m_memory_trap_get32 && _m_memory_trap_set32) {
-					int32_t result = 0;
-					_m_memory_trap_get32(&result, idx, context, *ref);
-					result += value;
-					_m_memory_trap_set32(&result, idx, context, *ref);
-					break;
-				}
+        }
 
 				if (!ref->is_member() || context != nullptr ||
 				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
@@ -323,15 +324,6 @@ namespace phoenix {
 					throw illegal_const_access(ref);
 				}
 
-				if (context != nullptr && context->symbol_index() == unset && ref->is_member() &&
-				    _m_memory_trap_get32 && _m_memory_trap_set32) {
-					int32_t result = 0;
-					_m_memory_trap_get32(&result, idx, context, *ref);
-					result -= value;
-					_m_memory_trap_set32(&result, idx, context, *ref);
-					break;
-				}
-
 				if (!ref->is_member() || context != nullptr ||
 				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
 					auto result = ref->get_int(idx, context) - value;
@@ -347,15 +339,6 @@ namespace phoenix {
 
 				if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
 					throw illegal_const_access(ref);
-				}
-
-				if (context != nullptr && context->symbol_index() == unset && ref->is_member() &&
-				    _m_memory_trap_get32 && _m_memory_trap_set32) {
-					int32_t result = 0;
-					_m_memory_trap_get32(&result, idx, context, *ref);
-					result *= value;
-					_m_memory_trap_set32(&result, idx, context, *ref);
-					break;
 				}
 
 				if (!ref->is_member() || context != nullptr ||
@@ -378,15 +361,6 @@ namespace phoenix {
 
 				if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
 					throw illegal_const_access(ref);
-				}
-
-				if (context != nullptr && context->symbol_index() == unset && ref->is_member() &&
-				    _m_memory_trap_get32 && _m_memory_trap_set32) {
-					int32_t result = 0;
-					_m_memory_trap_get32(&result, idx, context, *ref);
-					result /= value;
-					_m_memory_trap_set32(&result, idx, context, *ref);
-					break;
 				}
 
 				if (!ref->is_member() || context != nullptr ||
@@ -597,23 +571,13 @@ namespace phoenix {
 			return empty;
 		}
 
-		if (context != nullptr && context->symbol_index() == unset && s->is_member() && _m_memory_trap_get_s) {
-			return _m_memory_trap_get_s(i, context, *s);
-		}
-
 		return s->get_string(i, context);
 	}
 
 	std::int32_t vm::get_int(std::shared_ptr<instance>& context,
-							 std::variant<int32_t, float, symbol*, std::shared_ptr<instance>>& value,
-							 uint16_t index) {
+	                         std::variant<int32_t, float, symbol*, std::shared_ptr<instance>>& value,
+	                         uint16_t index) {
 		auto* sym = std::get<symbol*>(value);
-
-		if (context != nullptr && context->symbol_index() == unset && sym->is_member() && _m_memory_trap_get32) {
-			int32_t result = 0;
-			_m_memory_trap_get32(&result, index, context, *sym);
-			return result;
-		}
 
 		// compatibility: sometimes the context might be zero, but we can't fail so when
 		//                the compatibility flag is set, we just return 0
@@ -634,12 +598,6 @@ namespace phoenix {
 	                    uint16_t index) {
 		auto* sym = std::get<symbol*>(value);
 
-		if (context != nullptr && context->symbol_index() == unset && sym->is_member() && _m_memory_trap_get32) {
-			float result = 0;
-			_m_memory_trap_get32(&result, index, context, *sym);
-			return result;
-		}
-
 		// compatibility: sometimes the context might be zero, but we can't fail so when
 		//                the compatibility flag is set, we just return 0
 		if (sym->is_member() && context == nullptr) {
@@ -659,11 +617,6 @@ namespace phoenix {
 			throw illegal_const_access(ref);
 		}
 
-		if (context != nullptr && context->symbol_index() == unset && ref->is_member() && _m_memory_trap_set32) {
-			_m_memory_trap_set32(&value, index, context, *ref);
-			return;
-		}
-
 		if (!ref->is_member() || context != nullptr ||
 			!(_m_flags & execution_flag::vm_allow_null_instance_access)) {
 			ref->set_int(value, index, context);
@@ -675,11 +628,6 @@ namespace phoenix {
 	void vm::set_float(std::shared_ptr<instance>& context, symbol* ref, uint16_t index, float value) {
 		if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
 			throw illegal_const_access(ref);
-		}
-
-		if (context != nullptr && context->symbol_index() == unset && ref->is_member() && _m_memory_trap_set32) {
-			_m_memory_trap_set32(&value, index, context, *ref);
-			return;
 		}
 
 		if (!ref->is_member() || context != nullptr || !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
@@ -694,13 +642,7 @@ namespace phoenix {
 			throw illegal_const_access(ref);
 		}
 
-		if (context != nullptr && context->symbol_index() == unset && ref->is_member() && _m_memory_trap_set_s) {
-			_m_memory_trap_set_s(value, index, context, *ref);
-			return;
-		}
-
-		if (!ref->is_member() || context != nullptr ||
-			!(_m_flags & execution_flag::vm_allow_null_instance_access)) {
+		if (!ref->is_member() || context != nullptr || !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
 			ref->set_string(value, index, context);
 		} else if (ref->is_member()) {
 			PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
@@ -751,26 +693,6 @@ namespace phoenix {
 
 	void vm::register_access_trap(const std::function<void(symbol&)>& callback) {
 		_m_access_trap = callback;
-	}
-
-	void vm::register_memory_trap_write(
-	    const std::function<void(const void*, std::size_t, const std::shared_ptr<instance>&, symbol&)>& callback) {
-		_m_memory_trap_set32 = callback;
-	}
-
-	void vm::register_memory_trap_read(
-	    const std::function<void(void*, std::size_t, const std::shared_ptr<instance>&, symbol&)>& callback) {
-		_m_memory_trap_get32 = callback;
-	}
-
-	void vm::register_memory_trap_write(
-	    const std::function<void(std::string_view, std::size_t, const std::shared_ptr<instance>&, symbol&)>& callback) {
-		_m_memory_trap_set_s = callback;
-	}
-
-	void vm::register_memory_trap_read(
-	    const std::function<const std::string&(std::size_t, const std::shared_ptr<instance>&, symbol&)>& callback) {
-		_m_memory_trap_get_s = callback;
 	}
 
 	void vm::register_exception_handler(

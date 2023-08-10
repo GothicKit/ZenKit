@@ -205,6 +205,8 @@ namespace phoenix {
 			return inst;
 		}
 
+		std::shared_ptr<instance> init_opaque_instance(symbol* sym);
+
 		/// \brief Initializes an instance with the given type into \p instance
 		/// \tparam _instance_t The type of the instance to initialize (ie. C_NPC).
 		/// \param instance The instance to initialize.
@@ -644,17 +646,6 @@ namespace phoenix {
 
 		PHOENIX_API void register_access_trap(const std::function<void(symbol&)>& callback);
 
-		PHOENIX_API void register_memory_trap_write(
-		    const std::function<void(const void*, std::size_t, const std::shared_ptr<instance>&, symbol&)>& callback);
-		PHOENIX_API void register_memory_trap_read(
-		    const std::function<void(void*, std::size_t, const std::shared_ptr<instance>&, symbol&)>& callback);
-
-		PHOENIX_API void register_memory_trap_write(
-		    const std::function<void(std::string_view, std::size_t, const std::shared_ptr<instance>&, symbol&)>&
-		        callback);
-		PHOENIX_API void register_memory_trap_read(
-		    const std::function<const std::string&(std::size_t, const std::shared_ptr<instance>&, symbol&)>& callback);
-
 		/// \brief Registers a function to be called when script execution fails.
 		///
 		/// A variety of exceptions can occur within the VM while executing. The function passed to this handler can
@@ -997,13 +988,6 @@ namespace phoenix {
 		std::function<void(symbol&)> _m_access_trap;
 		std::optional<std::function<vm_exception_strategy(vm&, const script_error&, const instruction&)>>
 		    _m_exception_handler {std::nullopt};
-
-		std::function<void(const void* data32, std::size_t, const std::shared_ptr<instance>&, symbol&)>
-		    _m_memory_trap_set32;
-		std::function<void(void* data32, std::size_t, const std::shared_ptr<instance>&, symbol&)> _m_memory_trap_get32;
-		std::function<void(std::string_view, std::size_t, const std::shared_ptr<instance>&, symbol&)>
-		    _m_memory_trap_set_s;
-		std::function<const std::string&(std::size_t, const std::shared_ptr<instance>&, symbol&)> _m_memory_trap_get_s;
 
 		symbol* _m_self_sym;
 		symbol* _m_other_sym;

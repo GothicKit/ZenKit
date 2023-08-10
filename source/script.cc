@@ -211,6 +211,58 @@ namespace phoenix {
 		return syms;
 	}
 
+	std::vector<symbol*> script::find_class_members(const symbol& cls) {
+		std::vector<symbol*> members {};
+
+		for (auto& sym : _m_symbols) {
+			if (!sym.is_member() || sym.parent() != cls.index())
+				continue;
+			members.push_back(&sym);
+		}
+
+		return members;
+	}
+
+	void script::register_as_opaque(symbol* sym) {
+		auto members = find_class_members(*sym);
+
+		auto registered_to = &typeid(opaque_instance);
+		size_t class_size = 0;
+
+		for (auto* member : members) {
+			member->_m_registered_to = registered_to;
+
+			switch (member->type()) {
+			case datatype::void_:
+			case datatype::float_:
+			case datatype::integer:
+			case datatype::class_:
+			case datatype::function:
+			case datatype::prototype:
+			case datatype::instance:
+				member->_m_member_offset = class_size;
+				class_size += 4 * member->count();
+				break;
+			case datatype::string: {
+				auto align = alignof(std::string);
+				auto offset = class_size;
+
+				auto remain = offset % align;
+				auto offset_remain = remain == 0 ? 0 : align - remain;
+
+				class_size += offset_remain;
+				member->_m_member_offset = class_size;
+
+				class_size += sizeof(std::string) * member->count();
+				break;
+			}
+			}
+		}
+
+		sym->_m_registered_to = registered_to;
+		sym->_m_class_size = class_size;
+	}
+
 	symbol* script::add_temporary_strings_symbol() {
 		symbol sym {};
 		sym._m_name = "$PHOENIX_FAKE_STRINGS";
@@ -345,6 +397,11 @@ namespace phoenix {
 			if (context == nullptr) {
 				throw no_context(this);
 			}
+
+			if (context->symbol_index() == unset && context->_m_type == &typeid(transient_instance)) {
+				return reinterpret_cast<transient_instance&>(*context).read(*this, index);
+			}
+
 			return *get_member_ptr<std::string>(index, context);
 		} else {
 			return std::get<std::unique_ptr<std::string[]>>(_m_value)[index];
@@ -363,6 +420,13 @@ namespace phoenix {
 			if (context == nullptr) {
 				throw no_context(this);
 			}
+
+			if (context->symbol_index() == unset && context->_m_type == &typeid(transient_instance)) {
+				int32_t value = 0;
+				reinterpret_cast<transient_instance&>(*context).read32(&value, *this, index);
+				return value;
+			}
+
 			return *get_member_ptr<float>(index, context);
 		} else {
 			return std::get<std::unique_ptr<float[]>>(_m_value)[index];
@@ -381,6 +445,13 @@ namespace phoenix {
 			if (context == nullptr) {
 				throw no_context(this);
 			}
+
+			if (context->symbol_index() == unset && context->_m_type == &typeid(transient_instance)) {
+				int32_t value = 0;
+				reinterpret_cast<transient_instance&>(*context).read32(&value, *this, index);
+				return value;
+			}
+
 			return *get_member_ptr<std::int32_t>(index, context);
 		} else {
 			return std::get<std::unique_ptr<std::int32_t[]>>(_m_value)[index];
@@ -399,6 +470,12 @@ namespace phoenix {
 			if (context == nullptr) {
 				throw no_context(this);
 			}
+
+			if (context->symbol_index() == unset && context->_m_type == &typeid(transient_instance)) {
+				reinterpret_cast<transient_instance&>(*context).write(value, *this, index);
+				return;
+			}
+
 			*get_member_ptr<std::string>(index, context) = value;
 		} else {
 			std::get<std::unique_ptr<std::string[]>>(_m_value).get()[index] = value;
@@ -417,6 +494,12 @@ namespace phoenix {
 			if (context == nullptr) {
 				throw no_context(this);
 			}
+
+			if (context->symbol_index() == unset && context->_m_type == &typeid(transient_instance)) {
+				reinterpret_cast<transient_instance&>(*context).write32(&value, *this, index);
+				return;
+			}
+
 			*get_member_ptr<float>(index, context) = value;
 		} else {
 			std::get<std::unique_ptr<float[]>>(_m_value)[index] = value;
@@ -435,6 +518,12 @@ namespace phoenix {
 			if (context == nullptr) {
 				throw no_context(this);
 			}
+
+			if (context->symbol_index() == unset && context->_m_type == &typeid(transient_instance)) {
+				reinterpret_cast<transient_instance&>(*context).write32(&value, *this, index);
+				return;
+			}
+
 			*get_member_ptr<std::int32_t>(index, context) = value;
 		} else {
 			std::get<std::unique_ptr<std::int32_t[]>>(_m_value)[index] = value;
@@ -463,4 +552,70 @@ namespace phoenix {
 		else
 			_m_flags &= ~symbol_flag::access_trap;
 	}
+
+	opaque_instance::opaque_instance(const symbol& sym, const std::vector<symbol*>& members) {
+		size_t str_count = 0;
+		for (auto* member : members) {
+			if (member->type() != datatype::string)
+				continue;
+			str_count += member->count();
+		}
+
+		_m_storage.reset(new uint8_t[sym.class_size()]());
+		_m_strings.reset(new std::string*[str_count]());
+
+		_m_str_count = 0;
+		for (auto* member : members) {
+			unsigned offset = member->offset_as_member();
+
+			for (auto i = 0U; i < member->count(); ++i) {
+				switch (member->type()) {
+				case datatype::float_:
+					this->construct_at<float>(offset, 0);
+					offset += 4;
+					break;
+				case datatype::integer:
+					this->construct_at<int>(offset, 0);
+					offset += 4;
+					break;
+				case datatype::string:
+					_m_strings[_m_str_count] = this->construct_at<std::string>(offset, "");
+					_m_str_count++;
+					offset += sizeof(std::string);
+					break;
+				case datatype::function:
+					this->construct_at<int>(offset, 0);
+					offset += 4;
+					break;
+				case datatype::class_:
+				case datatype::prototype:
+				case datatype::instance:
+				case datatype::void_:
+					this->construct_at<int>(offset);
+					offset += 4;
+					break;
+				}
+			}
+		}
+	}
+
+	opaque_instance::~opaque_instance() {
+		for (size_t i = 0; i < _m_str_count; ++i)
+			_m_strings[i]->std::string::~string();
+	}
+
+	template <typename T, typename... Args>
+	T* opaque_instance::construct_at(size_t offset, Args&&... args) {
+		auto align = alignof(T);
+		auto remain = offset % align;
+		auto real_offset = remain == 0 ? offset : offset + (align - remain);
+		return new (static_cast<void*>(&_m_storage[real_offset])) T(std::forward<Args>(args)...);
+	}
+
+	transient_instance::transient_instance() {
+		_m_type = &typeid(transient_instance);
+	}
+
+	transient_instance::~transient_instance() {}
+
 } // namespace phoenix
