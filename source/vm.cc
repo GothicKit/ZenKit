@@ -84,7 +84,7 @@ namespace phoenix {
 
 	std::shared_ptr<instance> vm::init_opaque_instance(symbol* sym) {
 		auto cls = sym;
-		while (cls != nullptr && cls->type() == datatype::class_) {
+		while (cls != nullptr && cls->type() != datatype::class_) {
 			cls = find_symbol_by_index(cls->parent());
 		}
 		if (cls == nullptr) {
