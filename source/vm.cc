@@ -84,8 +84,13 @@ namespace phoenix {
 
 	std::shared_ptr<instance> vm::init_opaque_instance(symbol* sym) {
 		auto cls = sym;
-		if (cls->type() == datatype::instance) {
+		while (cls != nullptr && cls->type() == datatype::class_) {
 			cls = find_symbol_by_index(cls->parent());
+		}
+		if (cls == nullptr) {
+			// We're probably trying to initialize $INSTANCE_HELP which is not permitted
+			throw vm_exception {"Cannot init " + sym->name() +
+			                    ": parent class not found (did you try to initialize $INSTANCE_HELP?)"};
 		}
 		// create the instance
 		auto inst = std::make_shared<opaque_instance>(*cls, find_class_members(*cls));

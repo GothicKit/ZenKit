@@ -399,7 +399,7 @@ namespace phoenix {
 			}
 
 			if (context->symbol_index() == unset && context->_m_type == &typeid(transient_instance)) {
-				return reinterpret_cast<transient_instance&>(*context).read(*this, index);
+				return reinterpret_cast<transient_instance&>(*context).read_string(*this, index);
 			}
 
 			return *get_member_ptr<std::string>(index, context);
@@ -472,7 +472,7 @@ namespace phoenix {
 			}
 
 			if (context->symbol_index() == unset && context->_m_type == &typeid(transient_instance)) {
-				reinterpret_cast<transient_instance&>(*context).write(value, *this, index);
+				reinterpret_cast<transient_instance&>(*context).write_string(value, *this, index);
 				return;
 			}
 
@@ -562,9 +562,9 @@ namespace phoenix {
 		}
 
 		_m_storage.reset(new uint8_t[sym.class_size()]());
-		_m_strings.reset(new std::string*[str_count]());
+		_m_strings.resize(str_count, nullptr);
 
-		_m_str_count = 0;
+		str_count = 0;
 		for (auto* member : members) {
 			unsigned offset = member->offset_as_member();
 
@@ -579,8 +579,8 @@ namespace phoenix {
 					offset += 4;
 					break;
 				case datatype::string:
-					_m_strings[_m_str_count] = this->construct_at<std::string>(offset, "");
-					_m_str_count++;
+					_m_strings[str_count] = this->construct_at<std::string>(offset, "");
+					str_count++;
 					offset += sizeof(std::string);
 					break;
 				case datatype::function:
@@ -600,8 +600,8 @@ namespace phoenix {
 	}
 
 	opaque_instance::~opaque_instance() {
-		for (size_t i = 0; i < _m_str_count; ++i)
-			_m_strings[i]->std::string::~string();
+		for (auto& i : _m_strings)
+			i->std::string::~string();
 	}
 
 	template <typename T, typename... Args>
