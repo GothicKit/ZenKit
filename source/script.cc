@@ -399,7 +399,7 @@ namespace phoenix {
 			}
 
 			if (context->symbol_index() == unset && context->_m_type == &typeid(transient_instance)) {
-				return reinterpret_cast<transient_instance&>(*context).read_string(*this, index);
+				return reinterpret_cast<transient_instance&>(*context).get_string(*this, index);
 			}
 
 			return *get_member_ptr<std::string>(index, context);
@@ -422,9 +422,7 @@ namespace phoenix {
 			}
 
 			if (context->symbol_index() == unset && context->_m_type == &typeid(transient_instance)) {
-				int32_t value = 0;
-				reinterpret_cast<transient_instance&>(*context).read32(&value, *this, index);
-				return value;
+				return reinterpret_cast<transient_instance&>(*context).get_float(*this, index);
 			}
 
 			return *get_member_ptr<float>(index, context);
@@ -447,9 +445,7 @@ namespace phoenix {
 			}
 
 			if (context->symbol_index() == unset && context->_m_type == &typeid(transient_instance)) {
-				int32_t value = 0;
-				reinterpret_cast<transient_instance&>(*context).read32(&value, *this, index);
-				return value;
+				return reinterpret_cast<transient_instance&>(*context).get_int(*this, index);
 			}
 
 			return *get_member_ptr<std::int32_t>(index, context);
@@ -472,7 +468,7 @@ namespace phoenix {
 			}
 
 			if (context->symbol_index() == unset && context->_m_type == &typeid(transient_instance)) {
-				reinterpret_cast<transient_instance&>(*context).write_string(value, *this, index);
+				reinterpret_cast<transient_instance&>(*context).set_string(*this, index, value);
 				return;
 			}
 
@@ -496,7 +492,7 @@ namespace phoenix {
 			}
 
 			if (context->symbol_index() == unset && context->_m_type == &typeid(transient_instance)) {
-				reinterpret_cast<transient_instance&>(*context).write32(&value, *this, index);
+				reinterpret_cast<transient_instance&>(*context).set_float(*this, index, value);
 				return;
 			}
 
@@ -520,7 +516,7 @@ namespace phoenix {
 			}
 
 			if (context->symbol_index() == unset && context->_m_type == &typeid(transient_instance)) {
-				reinterpret_cast<transient_instance&>(*context).write32(&value, *this, index);
+				reinterpret_cast<transient_instance&>(*context).set_int(*this, index, value);
 				return;
 			}
 

@@ -274,11 +274,14 @@ namespace phoenix {
 	protected:
 		friend class symbol;
 
-		virtual void read32(void* data32, symbol const& sym, size_t index) = 0;
-		virtual void write32(const void* data32, symbol const& sym, size_t index) = 0;
+		virtual void set_int(symbol const& sym, uint16_t index, std::int32_t value) = 0;
+		virtual std::int32_t get_int(symbol const& sym, uint16_t index) = 0;
 
-		virtual void write_string(std::string_view str, symbol const& sym, size_t index) = 0;
-		virtual const std::string& read_string(symbol const& sym, size_t index) = 0;
+		virtual void set_float(symbol const& sym, uint16_t index, float value) = 0;
+		virtual float get_float(symbol const& sym, uint16_t index) = 0;
+
+		virtual void set_string(symbol const& sym, uint16_t index, std::string_view value) = 0;
+		virtual const std::string& get_string(symbol const& sym, uint16_t index) = 0;
 	};
 
 	/// \brief The base class for all exceptions thrown by interacting with a script.
