@@ -205,6 +205,8 @@ namespace phoenix {
 			return inst;
 		}
 
+		std::shared_ptr<instance> init_opaque_instance(symbol* sym);
+
 		/// \brief Initializes an instance with the given type into \p instance
 		/// \tparam _instance_t The type of the instance to initialize (ie. C_NPC).
 		/// \param instance The instance to initialize.
@@ -961,6 +963,20 @@ namespace phoenix {
 				return pop_string();
 			}
 		}
+
+		[[nodiscard]] PHOENIX_API std::int32_t
+		get_int(std::shared_ptr<instance>& context,
+		        std::variant<int32_t, float, symbol*, std::shared_ptr<instance>>& value,
+		        uint16_t index);
+		[[nodiscard]] PHOENIX_API float
+		get_float(std::shared_ptr<instance>& context,
+		          std::variant<int32_t, float, symbol*, std::shared_ptr<instance>>& value,
+		          uint16_t index);
+
+		PHOENIX_API void set_int(std::shared_ptr<instance>& context, symbol* ref, uint16_t index, std::int32_t value);
+		PHOENIX_API void set_float(std::shared_ptr<instance>& context, symbol* ref, uint16_t index, float value);
+		PHOENIX_API void
+		set_string(std::shared_ptr<instance>& context, symbol* ref, uint16_t index, std::string_view value);
 
 	private:
 		std::array<daedalus_stack_frame, stack_size> _m_stack;

@@ -82,6 +82,22 @@ namespace phoenix {
 		_m_temporary_strings = add_temporary_strings_symbol();
 	}
 
+	std::shared_ptr<instance> vm::init_opaque_instance(symbol* sym) {
+		auto cls = sym;
+		while (cls != nullptr && cls->type() != datatype::class_) {
+			cls = find_symbol_by_index(cls->parent());
+		}
+		if (cls == nullptr) {
+			// We're probably trying to initialize $INSTANCE_HELP which is not permitted
+			throw vm_exception {"Cannot init " + sym->name() +
+			                    ": parent class not found (did you try to initialize $INSTANCE_HELP?)"};
+		}
+		// create the instance
+		auto inst = std::make_shared<opaque_instance>(*cls, find_class_members(*cls));
+		init_instance(inst, sym);
+		return inst;
+	}
+
 	void vm::unsafe_call(const symbol* sym) {
 		push_call(sym);
 		jump(sym->address());
@@ -218,7 +234,6 @@ namespace phoenix {
 					if (sym == nullptr) {
 						throw vm_exception {"bl: no symbol found for address " + std::to_string(instr.address)};
 					}
-
 					unsafe_call(sym);
 				}
 
@@ -271,52 +286,19 @@ namespace phoenix {
 			case opcode::movvf: {
 				auto [ref, idx, context] = pop_reference();
 				auto value = pop_int();
-
-				if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
-					throw illegal_const_access(ref);
-				}
-
-				if (!ref->is_member() || context != nullptr ||
-				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
-					ref->set_int(value, idx, context);
-				} else if (ref->is_member()) {
-					PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
-				}
-
+				set_int(context, ref, idx, value);
 				break;
 			}
 			case opcode::movf: {
 				auto [ref, idx, context] = pop_reference();
 				auto value = pop_float();
-
-				if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
-					throw illegal_const_access(ref);
-				}
-
-				if (!ref->is_member() || context != nullptr ||
-				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
-					ref->set_float(value, idx, context);
-				} else if (ref->is_member()) {
-					PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
-				}
-
+				set_float(context, ref, idx, value);
 				break;
 			}
 			case opcode::movs: {
 				auto [target, target_idx, context] = pop_reference();
 				auto source = pop_string();
-
-				if (target->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
-					throw illegal_const_access(target);
-				}
-
-				if (!target->is_member() || context != nullptr ||
-				    !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
-					target->set_string(source, target_idx, context);
-				} else if (target->is_member()) {
-					PX_LOGE("vm: accessing member \"", target->name(), "\" without an instance set");
-				}
-
+				set_string(context, target, target_idx, source);
 				break;
 			}
 			case opcode::movss:
@@ -518,20 +500,7 @@ namespace phoenix {
 		daedalus_stack_frame v = std::move(_m_stack[--_m_stack_ptr]);
 
 		if (v.reference) {
-			auto* sym = std::get<symbol*>(v.value);
-
-			// compatibility: sometimes the context might be zero, but we can't fail so when
-			//                the compatibility flag is set, we just return 0
-			if (sym->is_member() && v.context == nullptr) {
-				if (!(_m_flags & execution_flag::vm_allow_null_instance_access)) {
-					throw no_context {sym};
-				}
-
-				PX_LOGE("vm: accessing member \"", sym->name(), "\" without an instance set");
-				return 0;
-			}
-
-			return sym->get_int(v.index, v.context);
+			return get_int(v.context, v.value, v.index);
 		} else if (std::holds_alternative<int32_t>(v.value)) {
 			return std::get<int32_t>(v.value);
 		} else {
@@ -547,20 +516,7 @@ namespace phoenix {
 		daedalus_stack_frame v = std::move(_m_stack[--_m_stack_ptr]);
 
 		if (v.reference) {
-			auto* sym = std::get<symbol*>(v.value);
-
-			// compatibility: sometimes the context might be zero, but we can't fail so when
-			//                the compatibility flag is set, we just return 0
-			if (sym->is_member() && v.context == nullptr) {
-				if (!(_m_flags & execution_flag::vm_allow_null_instance_access)) {
-					throw no_context {sym};
-				}
-
-				PX_LOGE("vm: accessing member \"", sym->name(), "\" without an instance set");
-				return 0;
-			}
-
-			return sym->get_float(v.index, v.context);
+			return get_float(v.context, v.value, v.index);
 		} else if (std::holds_alternative<float>(v.value)) {
 			return std::get<float>(v.value);
 		} else if (std::holds_alternative<std::int32_t>(v.value)) {
@@ -621,6 +577,80 @@ namespace phoenix {
 		}
 
 		return s->get_string(i, context);
+	}
+
+	std::int32_t vm::get_int(std::shared_ptr<instance>& context,
+	                         std::variant<int32_t, float, symbol*, std::shared_ptr<instance>>& value,
+	                         uint16_t index) {
+		auto* sym = std::get<symbol*>(value);
+
+		// compatibility: sometimes the context might be zero, but we can't fail so when
+		//                the compatibility flag is set, we just return 0
+		if (sym->is_member() && context == nullptr) {
+			if (!(_m_flags & execution_flag::vm_allow_null_instance_access)) {
+				throw no_context {sym};
+			}
+
+			PX_LOGE("vm: accessing member \"", sym->name(), "\" without an instance set");
+			return 0;
+		}
+
+		return sym->get_int(index, context);
+	}
+
+	float vm::get_float(std::shared_ptr<instance>& context,
+	                    std::variant<int32_t, float, symbol*, std::shared_ptr<instance>>& value,
+	                    uint16_t index) {
+		auto* sym = std::get<symbol*>(value);
+
+		// compatibility: sometimes the context might be zero, but we can't fail so when
+		//                the compatibility flag is set, we just return 0
+		if (sym->is_member() && context == nullptr) {
+			if (!(_m_flags & execution_flag::vm_allow_null_instance_access)) {
+				throw no_context {sym};
+			}
+
+			PX_LOGE("vm: accessing member \"", sym->name(), "\" without an instance set");
+			return 0;
+		}
+
+		return sym->get_float(index, context);
+	}
+
+	void vm::set_int(std::shared_ptr<instance>& context, symbol* ref, uint16_t index, std::int32_t value) {
+		if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
+			throw illegal_const_access(ref);
+		}
+
+		if (!ref->is_member() || context != nullptr || !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
+			ref->set_int(value, index, context);
+		} else if (ref->is_member()) {
+			PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
+		}
+	}
+
+	void vm::set_float(std::shared_ptr<instance>& context, symbol* ref, uint16_t index, float value) {
+		if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
+			throw illegal_const_access(ref);
+		}
+
+		if (!ref->is_member() || context != nullptr || !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
+			ref->set_float(value, index, context);
+		} else if (ref->is_member()) {
+			PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
+		}
+	}
+
+	void vm::set_string(std::shared_ptr<instance>& context, symbol* ref, uint16_t index, std::string_view value) {
+		if (ref->is_const() && !(_m_flags & execution_flag::vm_ignore_const_specifier)) {
+			throw illegal_const_access(ref);
+		}
+
+		if (!ref->is_member() || context != nullptr || !(_m_flags & execution_flag::vm_allow_null_instance_access)) {
+			ref->set_string(value, index, context);
+		} else if (ref->is_member()) {
+			PX_LOGE("vm: accessing member \"", ref->name(), "\" without an instance set");
+		}
 	}
 
 	void vm::jump(std::uint32_t address) {

@@ -217,13 +217,71 @@ namespace phoenix {
 		/// \brief A pointer which may be used by the user of this API
 		void* user_ptr = nullptr;
 
+	protected:
+		PHOENIX_INTERNAL virtual std::uint8_t* data() {
+			return reinterpret_cast<std::uint8_t*>(this);
+		}
+
+		PHOENIX_INTERNAL virtual const std::uint8_t* data() const {
+			return reinterpret_cast<const std::uint8_t*>(this);
+		}
+
 	private:
+		friend class transient_instance;
 		friend class symbol;
 		friend class script;
 		friend class vm;
 
 		uint32_t _m_symbol_index {unset};
 		const std::type_info* _m_type {nullptr};
+	};
+
+	/// \brief Represents an object associated with an instance in the script.
+	///
+	/// Instances allocated with init_opaque will be backed up by this class with plain memory storage
+	class opaque_instance final : public instance {
+	public:
+		PHOENIX_INTERNAL opaque_instance(symbol const& sym, std::vector<symbol*> const& members);
+		PHOENIX_INTERNAL ~opaque_instance();
+
+	protected:
+		friend class symbol;
+
+		PHOENIX_INTERNAL std::uint8_t* data() override {
+			return _m_storage.get();
+		}
+
+		PHOENIX_INTERNAL const std::uint8_t* data() const override {
+			return _m_storage.get();
+		}
+
+	private:
+		template <typename T, typename... Args>
+		PHOENIX_INTERNAL T* construct_at(size_t offset, Args&&... args);
+
+		std::unique_ptr<std::uint8_t[]> _m_storage;
+		std::vector<std::string*> _m_strings;
+	};
+
+	/// \brief Represents object instance in the script with no defined backing to memory.
+	///
+	/// Expected to be used for DMA mods or to emulate variable-like access to engine-functions.
+	class transient_instance : public instance {
+	public:
+		transient_instance();
+		~transient_instance();
+
+	protected:
+		friend class symbol;
+
+		virtual void set_int(symbol const& sym, uint16_t index, std::int32_t value) = 0;
+		virtual std::int32_t get_int(symbol const& sym, uint16_t index) = 0;
+
+		virtual void set_float(symbol const& sym, uint16_t index, float value) = 0;
+		virtual float get_float(symbol const& sym, uint16_t index) = 0;
+
+		virtual void set_string(symbol const& sym, uint16_t index, std::string_view value) = 0;
+		virtual const std::string& get_string(symbol const& sym, uint16_t index) = 0;
 	};
 
 	/// \brief The base class for all exceptions thrown by interacting with a script.
@@ -573,8 +631,9 @@ namespace phoenix {
 			if (*_m_registered_to != *context->_m_type)
 				throw illegal_context_type {this, *context->_m_type};
 
+			auto data_ptr = context->data();
 			std::uint32_t target_offset = offset_as_member() + index * sizeof(T);
-			return reinterpret_cast<const T*>(reinterpret_cast<const char*>(context.get()) + target_offset);
+			return reinterpret_cast<const T*>(data_ptr + target_offset);
 		}
 
 		template <typename T>
@@ -584,8 +643,9 @@ namespace phoenix {
 			if (*_m_registered_to != *context->_m_type)
 				throw illegal_context_type {this, *context->_m_type};
 
+			auto data_ptr = context->data();
 			std::uint32_t target_offset = offset_as_member() + index * sizeof(T);
-			return reinterpret_cast<T*>(reinterpret_cast<char*>(context.get()) + target_offset);
+			return reinterpret_cast<T*>(data_ptr + target_offset);
 		}
 
 	private:
@@ -791,6 +851,14 @@ namespace phoenix {
 		        const std::shared_ptr<T>& inst) {
 			return find_symbol_by_index(inst->_m_symbol_index);
 		}
+
+		[[nodiscard]] PHOENIX_API std::vector<symbol*> find_class_members(symbol const& cls);
+
+		inline void register_as_opaque(std::string_view class_name) {
+			return register_as_opaque(find_symbol_by_name(class_name));
+		}
+
+		void register_as_opaque(symbol* sym);
 
 	protected:
 		PHOENIX_INTERNAL script() = default;
