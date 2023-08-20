@@ -6,6 +6,55 @@ found in [readme.md](readme.md#versioning).
 
 ---
 
+## v1.2.0
+
+Update 1.2 introduces a host of new features, mostly for the VM, to support modding frameworks like Ikarus and LeGo.
+There are also many bugfixes, which mostly address issues with games files provided by mods. Notably, there is one
+small breaking change which only affects users who have been manually passing `include_polygons` to `mesh::parse()` ,
+as described below.
+
+### Breaking Changes
+* [33f6f6da] For performance reasons, `mesh::parse()` now takes a vector of ints instead of an `unordered_set`. Thanks, @Try!
+
+### Features
+* [69f1df07] You can now call script functions manually, pushing values onto the stack as required, by using
+  `vm::unsafe_call()`. This addition was made for compatibility with the [C interface](https://github.com/GothicKit/phoenix-shared-interface).
+* [637b8888] You can now register a custom default external function for manually handling the stack. This addition was
+  made for compatibility with the [C interface](https://github.com/GothicKit/phoenix-shared-interface).
+* [78a1c828] Added a new implementation of the VFS in the form of `Vfs`. This will fully replace the old `vdf_file`
+  implementation in *phoenix 2.0*.
+* [5230465d] Meshes can now be parsed without passing `include_polygons`.
+* [bbec4cc1,f46144fa] Added named constants for Gothic 1/2 specific enum values in `npc_type`.
+* [e481bcae] The VM now supports overriding functions in a way which will not push a call stack frame ("naked functions"). Thanks, @Try!
+* [e481bcae] The VM can now report accesses of specific symbols by calling a registered callback. This is required for
+  supporting the Ikarus modding framework as well as debugging support. Thanks, @Try!
+* [13c929b6] Daedalus function parameters for externals can now be explicitly passed using a new `func` type,
+  instead of a plain `int`.
+* [a348a389] The VM now supports two new instance types, `opaque_instance` and `transient_instance`, which can be used
+  to support modding frameworks like Ikarus. Thanks, @Try!
+
+### Bugfixes
+* [2c2a099c] `vm::call_function()` now properly compiles when building a shared library.
+* [b4af7ed0] The `camera_trajectory` enum now contains the correct enum value for `camera_trajectory::object`.
+* [fee2dd16] Added support for semicolons in model script source files.
+* [ed37464c] The buffer now no longer segfaults when loading empty files.
+* [68714dfa] When reading a line at EOF, the buffer no longer throws an exception, but rather returns the empty string.
+* [356647d8] `light_preset` and `light` VObs now correctly support greyscale color transitions.
+* [3fe0f7be] Parsing of model scripts now features improved compatibility for modded installations.
+* [0e7e507d] For compatibility with mods, values of Daedalus string symbols are now parsed using a special algorithm
+  to avoid data corruption.
+* [9e8458ed,7e447c3e,bcb47c1b] The Vfs now correctly handles trailing whitespace in node names.
+
+### Misc
+* [4ac598e8] `texture`s can now be copied and moved.
+* [1d6a3b7a] `script`s can now be copied and moved.
+* [19ab9ac2] Buffer exception constructors are now public.
+* [d6566d5d,bee00d13] VM stack traces are now printed using the logger.
+* [3b6825b7] The element count of `c_item::{text, count}` has been extracted as a constant. Thanks, @JucanAndreiDaniel!
+
+### Deprecations
+* [78a1c828] Deprecated the old VFS implementation in `vdfs.hh`.
+
 ## v1.1.1
 
 This update again brings many bugfixes and smaller improvements in addition to updates to the documentation.
