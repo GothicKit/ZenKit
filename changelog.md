@@ -6,6 +6,19 @@ found in [readme.md](readme.md#versioning).
 
 ---
 
+## v1.1.2
+
+### Bugfixes
+* [a0574b7e] `vm::call_function()` now properly compiles when building a shared library.
+* [6adfc908] The `camera_trajectory` enum now contains the correct enum value for `camera_trajectory::object`.
+* [efe212a8] Added support for semicolons in model script source files.
+* [b55206c5] The buffer now no longer segfaults when loading empty files.
+* [89bb2430] When reading a line at EOF, the buffer no longer throws an exception, but rather returns the empty string.
+* [5d8b5116] `light_preset` and `light` VObs now correctly support greyscale color transitions.
+* [4b512fa3] Parsing of model scripts now features improved compatibility for modded installations.
+* [090dc1be] For compatibility with mods, values of Daedalus string symbols are now parsed using a special algorithm
+  to avoid data corruption.
+
 ## v1.1.1
 
 This update again brings many bugfixes and smaller improvements in addition to updates to the documentation.
