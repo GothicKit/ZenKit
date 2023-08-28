@@ -87,7 +87,7 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&, const std::vector<std::uint32_t>&)
-		[[nodiscard]] PHOENIX_API static mesh parse(buffer& buf, std::vector<uint32_t> const& include_polygons = {});
+		[[nodiscard]] PHOENIX_API static mesh parse(buffer& buf, std::vector<uint32_t> const& include_polygons = {}, bool isXzen = false);
 
 		/// \brief Parses a mesh from the data in the given buffer.
 		///

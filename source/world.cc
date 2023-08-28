@@ -84,7 +84,7 @@ namespace phoenix {
 					} while (chunk_type != 0xB060);
 
 					wld.world_bsp_tree = bsp_tree::parse(in, bsp_version);
-					wld.world_mesh = mesh::parse(mesh_data, wld.world_bsp_tree.leaf_polygons);
+					wld.world_mesh = mesh::parse(mesh_data, wld.world_bsp_tree.leaf_polygons, archive->get_header().user == "XZEN");
 				} else if (chnk.object_name == "VobTree") {
 					auto count = archive->read_int();
 					wld.world_vobs.reserve(count);
