@@ -19,7 +19,7 @@ namespace phoenix {
 		end = 0xB060
 	};
 
-	mesh mesh::parse(buffer& buf, std::vector<std::uint32_t> const& leaf_polygons) {
+	mesh mesh::parse(buffer& buf, std::vector<std::uint32_t> const& leaf_polygons, bool force_wide_indices) {
 		mesh msh {};
 
 		std::uint16_t version {};
@@ -117,6 +117,7 @@ namespace phoenix {
 					}
 
 					auto vertex_count = chunk.get();
+					auto has_wide_indices = (version == mesh_version_g2) || force_wide_indices;
 
 					// TODO: For meshes built for Gothic II, the `is_lod` flag can be used to determine whether a
 					//       polygon is a leaf-polygon or not. Gothic I does not have this luxury, so the leaf polygons
@@ -127,18 +128,17 @@ namespace phoenix {
 					//       this extra data which would grant the user more freedom in how they use _phoenix_.
 					if (!leaf_polygons.empty() && !std::binary_search(leaf_polygons.begin(), leaf_polygons.end(), i)) {
 						// If the current polygon is not a leaf polygon, skip it.
-						chunk.skip((version == mesh_version_g2 ? 8 : 6) * vertex_count);
+						chunk.skip((has_wide_indices ? 8 : 6) * vertex_count);
 						continue;
 					} else if (vertex_count == 0 || pflags.is_portal || pflags.is_ghost_occluder || pflags.is_outdoor) {
 						// There is no actual geometry associated with this vertex; ignore it.
-						chunk.skip((version == mesh_version_g2 ? 8 : 6) * vertex_count);
+						chunk.skip((has_wide_indices ? 8 : 6) * vertex_count);
 					} else if (vertex_count == 3) {
 						// If we have 3 vertices, we are sure that this is already a triangle,
 						// so we can just read it in
 						for (int32_t j = 0; j < vertex_count; ++j) {
-							msh.polygons.vertex_indices.push_back(version == mesh_version_g2 ? chunk.get_uint()
-							                                                                 : chunk.get_ushort());
-
+							msh.polygons.vertex_indices.push_back(has_wide_indices ? chunk.get_uint()
+							                                                       : chunk.get_ushort());
 							msh.polygons.feature_indices.push_back(chunk.get_uint());
 						}
 
@@ -148,14 +148,14 @@ namespace phoenix {
 					} else {
 						// If we don't have 3 vertices, we need to calculate a triangle fan.
 
-						auto vertex_index_root = version == mesh_version_g2 ? chunk.get_uint() : chunk.get_ushort();
+						auto vertex_index_root = has_wide_indices ? chunk.get_uint() : chunk.get_ushort();
 						auto feature_index_root = chunk.get_uint();
 
-						auto vertex_index_a = version == mesh_version_g2 ? chunk.get_uint() : chunk.get_ushort();
+						auto vertex_index_a = has_wide_indices ? chunk.get_uint() : chunk.get_ushort();
 						auto feature_index_a = chunk.get_uint();
 
 						for (int32_t j = 0; j < vertex_count - 2; ++j) {
-							auto vertex_index_b = version == mesh_version_g2 ? chunk.get_uint() : chunk.get_ushort();
+							auto vertex_index_b = has_wide_indices ? chunk.get_uint() : chunk.get_ushort();
 							auto feature_index_b = chunk.get_uint();
 
 							msh.polygons.vertex_indices.push_back(vertex_index_root);

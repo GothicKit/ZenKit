@@ -81,13 +81,17 @@ namespace phoenix {
 		/// \param include_polygons A list of polygon indices to include in the final mesh. All other polygons are
 		///                         discarded. This is mainly used for world meshes which include level-of-detail
 		///                         polygons.
+		/// \param force_wide_indices Set to true to force 32-bit vertex indices. Useful for parsing world meshes
+		///                           with the XZEN extension (see
+		///                           https://github.com/ThielHater/GRMFixes_Union/blob/master/GRMFixes/XZenFileFormat/Plugin_Source.hpp#L86).
 		/// \return The parsed mesh object.
 		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
 		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&, const std::vector<std::uint32_t>&)
-		[[nodiscard]] PHOENIX_API static mesh parse(buffer& buf, std::vector<uint32_t> const& include_polygons = {});
+		[[nodiscard]] PHOENIX_API static mesh
+		parse(buffer& buf, std::vector<uint32_t> const& include_polygons = {}, bool force_wide_indices = false);
 
 		/// \brief Parses a mesh from the data in the given buffer.
 		///
