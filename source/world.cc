@@ -83,8 +83,13 @@ namespace phoenix {
 						in.skip(in.get_uint());
 					} while (chunk_type != 0xB060);
 
+					auto is_xzen = archive->get_header().user == "XZEN";
+					if (is_xzen) {
+						PX_LOGI("world: XZEN world detected, forcing wide vertex indices");
+					}
+
 					wld.world_bsp_tree = bsp_tree::parse(in, bsp_version);
-					wld.world_mesh = mesh::parse(mesh_data, wld.world_bsp_tree.leaf_polygons, archive->get_header().user == "XZEN");
+					wld.world_mesh = mesh::parse(mesh_data, wld.world_bsp_tree.leaf_polygons, is_xzen);
 				} else if (chnk.object_name == "VobTree") {
 					auto count = archive->read_int();
 					wld.world_vobs.reserve(count);
