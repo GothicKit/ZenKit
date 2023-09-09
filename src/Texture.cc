@@ -1,13 +1,18 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/texture.hh>
+#include "zenkit/Texture.hh"
+#include "zenkit/Stream.hh"
 
-#include <squish.h>
+#include "phoenix/phoenix.hh"
 
-namespace phoenix {
+#include "squish.h"
+
+namespace zenkit {
+	constexpr const std::string_view ZTEX_SIGNATURE = "ZTEX";
+
 	/// \brief Calculates the size in bytes of a texture at the given mipmap level.
 	/// \return The size in bytes of a texture at the given mipmap level.
-	std::uint32_t _ztex_mipmap_size(texture_format format, std::uint32_t width, std::uint32_t height, uint32_t level) {
+	std::uint32_t _ztex_mipmap_size(TextureFormat format, std::uint32_t width, std::uint32_t height, uint32_t level) {
 		std::uint32_t x = std::max(1u, width);
 		std::uint32_t y = std::max(1u, height);
 
@@ -19,73 +24,82 @@ namespace phoenix {
 		}
 
 		switch (format) {
-		case tex_B8G8R8A8:
-		case tex_R8G8B8A8:
-		case tex_A8B8G8R8:
-		case tex_A8R8G8B8:
+		case TextureFormat::B8G8R8A8:
+		case TextureFormat::R8G8B8A8:
+		case TextureFormat::A8B8G8R8:
+		case TextureFormat::A8R8G8B8:
 			return x * y * 4;
-		case tex_B8G8R8:
-		case tex_R8G8B8:
+		case TextureFormat::B8G8R8:
+		case TextureFormat::R8G8B8:
 			return x * y * 3;
-		case tex_A4R4G4B4:
-		case tex_A1R5G5B5:
-		case tex_R5G6B5:
+		case TextureFormat::A4R4G4B4:
+		case TextureFormat::A1R5G5B5:
+		case TextureFormat::R5G6B5:
 			return x * y * 2;
-		case tex_p8:
+		case TextureFormat::P8:
 			return x * y;
-		case tex_dxt1:
+		case TextureFormat::DXT1:
 			return std::max(1u, x / 4) * std::max(1u, y / 4) * 8;
-		case tex_dxt2:
-		case tex_dxt3:
-		case tex_dxt4:
-		case tex_dxt5:
+		case TextureFormat::DXT2:
+		case TextureFormat::DXT3:
+		case TextureFormat::DXT4:
+		case TextureFormat::DXT5:
 			return std::max(1u, x / 4) * std::max(1u, y / 4) * 16;
 		default:
 			return 0;
 		}
 	}
 
-	texture texture::parse(buffer& in) {
-		texture tex;
+	Texture Texture::parse(phoenix::buffer& in) {
+		Texture tex;
 
-		if (in.get_string(4) != ZTEX_SIGNATURE) {
-			throw parser_error {"texture", "invalid signature"};
+		auto r = Read::from(&in);
+		tex.load(r.get());
+
+		return tex;
+	}
+
+	Texture Texture::parse(phoenix::buffer&& in) {
+		return Texture::parse(in);
+	}
+
+	void Texture::load(Read* r) {
+		if (r->read_string(4) != ZTEX_SIGNATURE) {
+			throw zenkit::ParserError {"texture", "invalid signature"};
 		}
 
-		auto version = in.get_uint();
+		auto version = r->read_uint();
 		if (version != 0) {
-			throw parser_error {"texture", "invalid version"};
+			throw zenkit::ParserError {"texture", "invalid version"};
 		}
 
-		tex._m_format = static_cast<texture_format>(in.get_uint());
-		tex._m_width = in.get_uint();
-		tex._m_height = in.get_uint();
-		tex._m_mipmap_count = std::max(1u, in.get_uint());
-		tex._m_reference_width = in.get_uint();
-		tex._m_reference_height = in.get_uint();
-		tex._m_average_color = in.get_uint();
+		this->_m_format = static_cast<TextureFormat>(r->read_uint());
+		this->_m_width = r->read_uint();
+		this->_m_height = r->read_uint();
+		this->_m_mipmap_count = std::max(1u, r->read_uint());
+		this->_m_reference_width = r->read_uint();
+		this->_m_reference_height = r->read_uint();
+		this->_m_average_color = r->read_uint();
 
-		if (tex._m_format == tex_p8) {
-			for (auto& i : tex._m_palette) {
-				i.b = in.get();
-				i.g = in.get();
-				i.r = in.get();
-				i.a = in.get();
+		if (this->_m_format == TextureFormat::P8) {
+			for (auto& i : this->_m_palette) {
+				i.b = r->read_ubyte();
+				i.g = r->read_ubyte();
+				i.r = r->read_ubyte();
+				i.a = r->read_ubyte();
 			}
 		}
 
 		// Lowest mipmap-level first
-		for (std::int64_t level = tex._m_mipmap_count - 1; level >= 0; --level) {
-			auto size = _ztex_mipmap_size(tex._m_format, tex._m_width, tex._m_height, level);
+		for (std::int64_t level = this->_m_mipmap_count - 1; level >= 0; --level) {
+			auto size = _ztex_mipmap_size(this->_m_format, this->_m_width, this->_m_height, level);
 
 			std::vector<std::uint8_t> mipmap;
 			mipmap.resize(size);
-			in.get(mipmap.data(), size);
+			r->read(mipmap.data(), size);
 
-			tex._m_textures.emplace_back(std::move(mipmap));
+			this->_m_textures.emplace_back(std::move(mipmap));
 		}
-
-		return tex;
 	}
 
 #pragma pack(push, 1)
@@ -104,24 +118,26 @@ namespace phoenix {
 
 	static_assert(sizeof(r5g5b5) == 2);
 
-	std::vector<std::uint8_t> texture::as_rgba8(std::uint32_t mipmap_level) const {
+	std::vector<std::uint8_t> Texture::as_rgba8(std::uint32_t mipmap_level) const {
 		std::vector<std::uint8_t> conv;
 
 		switch (_m_format) {
-		case tex_dxt1:
-		case tex_dxt3:
-		case tex_dxt5: {
+		case TextureFormat::DXT1:
+		case TextureFormat::DXT3:
+		case TextureFormat::DXT5: {
 			const auto& map = data(mipmap_level);
 			auto w = mipmap_width(mipmap_level);
 			auto h = mipmap_height(mipmap_level);
 			conv.resize(w * h * 4);
 
-			auto flag = _m_format == tex_dxt1 ? squish::kDxt1 : (_m_format == tex_dxt3 ? squish::kDxt3 : squish::kDxt5);
+			auto flag = _m_format == TextureFormat::DXT1
+			    ? squish::kDxt1
+			    : (_m_format == TextureFormat::DXT3 ? squish::kDxt3 : squish::kDxt5);
 
 			squish::DecompressImage(conv.data(), static_cast<int>(w), static_cast<int>(h), map.data(), flag);
 			return conv;
 		}
-		case tex_B8G8R8A8: {
+		case TextureFormat::B8G8R8A8: {
 			const auto& map = data(mipmap_level);
 			conv.resize(map.size());
 
@@ -134,9 +150,9 @@ namespace phoenix {
 
 			return conv;
 		}
-		case tex_R8G8B8A8:
+		case TextureFormat::R8G8B8A8:
 			return data(mipmap_level);
-		case tex_A8B8G8R8: {
+		case TextureFormat::A8B8G8R8: {
 			const auto& map = data(mipmap_level);
 			conv.resize(map.size());
 
@@ -149,7 +165,7 @@ namespace phoenix {
 
 			return conv;
 		}
-		case tex_A8R8G8B8: {
+		case TextureFormat::A8R8G8B8: {
 			const auto& map = data(mipmap_level);
 			conv.resize(map.size());
 
@@ -162,7 +178,7 @@ namespace phoenix {
 
 			return conv;
 		}
-		case tex_B8G8R8: {
+		case TextureFormat::B8G8R8: {
 			const auto& map = data(mipmap_level);
 			conv.resize(map.size());
 
@@ -175,7 +191,7 @@ namespace phoenix {
 
 			return conv;
 		}
-		case tex_R8G8B8: {
+		case TextureFormat::R8G8B8: {
 			const auto& map = data(mipmap_level);
 			conv.resize(map.size());
 
@@ -188,7 +204,7 @@ namespace phoenix {
 
 			return conv;
 		}
-		case tex_R5G6B5: {
+		case TextureFormat::R5G6B5: {
 			const auto& map = data(mipmap_level);
 			conv.resize(map.size() * 2);
 
@@ -203,7 +219,7 @@ namespace phoenix {
 
 			return conv;
 		}
-		case tex_p8: {
+		case TextureFormat::P8: {
 			const auto& map = data(mipmap_level);
 			conv.resize(map.size() * sizeof(std::uint8_t) * 4);
 
@@ -218,8 +234,9 @@ namespace phoenix {
 			return conv;
 		}
 		default:
-			throw parser_error {"texture",
-			                    "cannot convert format to rgba: " + std::to_string(static_cast<int32_t>(_m_format))};
+			throw zenkit::ParserError {"texture",
+			                           "cannot convert format to rgba: " +
+			                               std::to_string(static_cast<int32_t>(_m_format))};
 		}
 	}
-} // namespace phoenix
+} // namespace zenkit

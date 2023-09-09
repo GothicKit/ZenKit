@@ -1,12 +1,14 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include "../Api.hh"
-#include <phoenix/texture.hh>
+#include "zenkit/Library.hh"
+#include "zenkit/Texture.hh"
 
-namespace phoenix {
+#include <vector>
+
+namespace zenkit {
 	/// \brief Converts a texture to the DDS format.
 	/// \param tex The texture to convert.
 	/// \return A buffer containing the DDS file.
-	[[nodiscard]] PHOENIX_API buffer texture_to_dds(const texture& tex);
-} // namespace phoenix
+	[[nodiscard]] ZKAPI std::vector<std::byte> to_dds(const zenkit::Texture& tex);
+} // namespace zenkit

@@ -1,14 +1,14 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include <doctest/doctest.h>
-#include <phoenix/texture.hh>
+#include <zenkit/Stream.hh>
+#include <zenkit/Texture.hh>
 
-using namespace phoenix;
-
-TEST_SUITE("texture") {
-	TEST_CASE("texture(parse:?)") {
-		auto in = buffer::mmap("./samples/erz.tex");
-		auto texture = texture::parse(in);
+TEST_SUITE("Texture") {
+	TEST_CASE("Texture.load(GOTHIC?)") {
+		auto in = zenkit::Read::from("./samples/erz.tex");
+		zenkit::Texture texture {};
+		texture.load(in.get());
 
 		CHECK_EQ(texture.height(), 128);
 		CHECK_EQ(texture.width(), 128);
@@ -25,14 +25,14 @@ TEST_SUITE("texture") {
 		CHECK_EQ(texture.ref_width(), 128);
 
 		CHECK_EQ(texture.mipmaps(), 5);
-		CHECK_EQ(texture.format(), phoenix::tex_dxt1);
+		CHECK_EQ(texture.format(), zenkit::TextureFormat::DXT1);
 	}
 
-	TEST_CASE("texture(parse:g1)" * doctest::skip()) {
+	TEST_CASE("Texture.load(GOTHIC1)" * doctest::skip()) {
 		// TODO: Stub
 	}
 
-	TEST_CASE("texture(parse:g2)" * doctest::skip()) {
+	TEST_CASE("Texture.load(GOTHIC2)" * doctest::skip()) {
 		// TODO: Stub
 	}
 }

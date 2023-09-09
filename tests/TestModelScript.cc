@@ -1,13 +1,16 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include <doctest/doctest.h>
-#include <phoenix/model_script.hh>
+#include <zenkit/Logger.hh>
+#include <zenkit/ModelScript.hh>
+#include <zenkit/Stream.hh>
 
-TEST_SUITE("model_script") {
-	TEST_CASE("model_script(parse:?)") {
-		phoenix::logging::use_default_logger();
-		auto buf = phoenix::buffer::mmap("./samples/waran.mds");
-		auto script = phoenix::model_script::parse(buf);
+TEST_SUITE("ModelScript") {
+	TEST_CASE("ModelScript.load(GOTHIC?)") {
+		zenkit::Logger::set_default(zenkit::LogLevel::INFO);
+		auto r = zenkit::Read::from("./samples/waran.mds");
+		zenkit::ModelScript script {};
+		script.load(r.get());
 
 		CHECK_EQ(script.skeleton.disable_mesh, true);
 		CHECK_EQ(script.skeleton.name, "TestModelMesh.asc");
@@ -18,9 +21,9 @@ TEST_SUITE("model_script") {
 		CHECK_EQ(script.animations[0].next, "aniNext1");
 		CHECK_EQ(script.animations[0].blend_in, 4.2f);
 		CHECK_EQ(script.animations[0].blend_out, 0.5f);
-		CHECK_EQ(script.animations[0].flags, (phoenix::mds::af_move | phoenix::mds::af_idle));
+		CHECK_EQ(script.animations[0].flags, (zenkit::AnimationFlags::MOVE | zenkit::AnimationFlags::IDLE));
 		CHECK_EQ(script.animations[0].model, "aniModel1");
-		CHECK_EQ(script.animations[0].direction, phoenix::mds::animation_direction::forward);
+		CHECK_EQ(script.animations[0].direction, zenkit::AnimationDirection::FORWARD);
 		CHECK_EQ(script.animations[0].first_frame, 221);
 		CHECK_EQ(script.animations[0].last_frame, -331);
 		CHECK_EQ(script.animations[0].fps, 25.0f);
@@ -39,9 +42,9 @@ TEST_SUITE("model_script") {
 		CHECK_EQ(script.animations[1].next, "aniNext2");
 		CHECK_EQ(script.animations[1].blend_in, 9.0f);
 		CHECK_EQ(script.animations[1].blend_out, 0.0f);
-		CHECK_EQ(script.animations[1].flags, phoenix::mds::af_move);
+		CHECK_EQ(script.animations[1].flags, zenkit::AnimationFlags::MOVE);
 		CHECK_EQ(script.animations[1].model, "aniModel2");
-		CHECK_EQ(script.animations[1].direction, phoenix::mds::animation_direction::backward);
+		CHECK_EQ(script.animations[1].direction, zenkit::AnimationDirection::BACKWARD);
 		CHECK_EQ(script.animations[1].first_frame, 222);
 		CHECK_EQ(script.animations[1].last_frame, 332);
 		CHECK_EQ(script.animations[1].fps, 25.0f);
@@ -50,14 +53,14 @@ TEST_SUITE("model_script") {
 
 		CHECK_EQ(script.animations[1].events.size(), 3);
 		CHECK_EQ(script.animations[1].events[0].frame, 0);
-		CHECK_EQ(script.animations[1].events[0].type, phoenix::mds::event_tag_type::drop_torch);
+		CHECK_EQ(script.animations[1].events[0].type, zenkit::MdsEventType::TORCH_DROP);
 		CHECK_EQ(script.animations[1].events[0].attached, true);
 		CHECK_EQ(script.animations[1].events[1].frame, 1);
-		CHECK_EQ(script.animations[1].events[1].type, phoenix::mds::event_tag_type::window);
+		CHECK_EQ(script.animations[1].events[1].type, zenkit::MdsEventType::COMBO_WINDOW);
 		CHECK_EQ(script.animations[1].events[1].frames, std::vector<int32_t> {1, 2, 3, 4, 5});
 		CHECK_EQ(script.animations[1].events[1].attached, false);
 		CHECK_EQ(script.animations[1].events[2].frame, 0); // Defaulted
-		CHECK_EQ(script.animations[1].events[2].type, phoenix::mds::event_tag_type::create_item);
+		CHECK_EQ(script.animations[1].events[2].type, zenkit::MdsEventType::ITEM_CREATE);
 		CHECK_EQ(script.animations[1].events[2].slot, "eventSlot");
 		CHECK_EQ(script.animations[1].events[2].item, "eventItem");
 		CHECK_EQ(script.animations[1].events[2].attached, false);
@@ -128,17 +131,17 @@ TEST_SUITE("model_script") {
 		CHECK_EQ(script.aliases[0].next, "aliasNext1");
 		CHECK_EQ(script.aliases[0].blend_in, 100.1f);
 		CHECK_EQ(script.aliases[0].blend_out, 200.2f);
-		CHECK_EQ(script.aliases[0].flags, (phoenix::mds::af_rotate | phoenix::mds::af_queue));
+		CHECK_EQ(script.aliases[0].flags, (zenkit::AnimationFlags::ROTATE | zenkit::AnimationFlags::QUEUE));
 		CHECK_EQ(script.aliases[0].alias, "aliasAlias1");
-		CHECK_EQ(script.aliases[0].direction, phoenix::mds::animation_direction::forward);
+		CHECK_EQ(script.aliases[0].direction, zenkit::AnimationDirection::FORWARD);
 		CHECK_EQ(script.aliases[1].name, "aliasName2");
 		CHECK_EQ(script.aliases[1].layer, 115);
 		CHECK_EQ(script.aliases[1].next, "aliasNext2");
 		CHECK_EQ(script.aliases[1].blend_in, 101.1f);
 		CHECK_EQ(script.aliases[1].blend_out, 201.2f);
-		CHECK_EQ(script.aliases[1].flags, phoenix::mds::af_fly);
+		CHECK_EQ(script.aliases[1].flags, zenkit::AnimationFlags::FLY);
 		CHECK_EQ(script.aliases[1].alias, "aliasAlias2");
-		CHECK_EQ(script.aliases[1].direction, phoenix::mds::animation_direction::backward);
+		CHECK_EQ(script.aliases[1].direction, zenkit::AnimationDirection::BACKWARD);
 
 		CHECK_EQ(script.combinations.size(), 2);
 		CHECK_EQ(script.combinations[0].name, "combName1");
@@ -146,7 +149,7 @@ TEST_SUITE("model_script") {
 		CHECK_EQ(script.combinations[0].next, "combNext1");
 		CHECK_EQ(script.combinations[0].blend_in, 102.1f);
 		CHECK_EQ(script.combinations[0].blend_out, 202.2f);
-		CHECK_EQ(script.combinations[0].flags, phoenix::mds::af_move);
+		CHECK_EQ(script.combinations[0].flags, zenkit::AnimationFlags::MOVE);
 		CHECK_EQ(script.combinations[0].model, "combModel1");
 		CHECK_EQ(script.combinations[0].last_frame, 226);
 		CHECK_EQ(script.combinations[1].name, "combName2");
@@ -154,7 +157,7 @@ TEST_SUITE("model_script") {
 		CHECK_EQ(script.combinations[1].next, "combNext2");
 		CHECK_EQ(script.combinations[1].blend_in, 103.1f);
 		CHECK_EQ(script.combinations[1].blend_out, 203.2f);
-		CHECK_EQ(script.combinations[1].flags, phoenix::mds::af_idle);
+		CHECK_EQ(script.combinations[1].flags, zenkit::AnimationFlags::IDLE);
 		CHECK_EQ(script.combinations[1].model, "combModel2");
 		CHECK_EQ(script.combinations[1].last_frame, 227);
 
@@ -167,9 +170,10 @@ TEST_SUITE("model_script") {
 		CHECK_EQ(script.model_tags[1].bone, "tag2");
 	}
 
-	TEST_CASE("model_script(parse:?/binary") {
-		auto buf = phoenix::buffer::mmap("./samples/waran.msb");
-		auto script = phoenix::model_script::parse(buf);
+	TEST_CASE("ModelScript.load(GOTHIC?,BINARY)") {
+		auto buf = zenkit::Read::from("./samples/waran.msb");
+		zenkit::ModelScript script {};
+		script.load(buf.get());
 
 		CHECK_EQ(script.skeleton.disable_mesh, true);
 		CHECK_EQ(script.skeleton.name, "WAR_BODY");
@@ -180,9 +184,9 @@ TEST_SUITE("model_script") {
 		CHECK_EQ(script.animations[0].next, "S_FISTRUNL");
 		CHECK_EQ(script.animations[0].blend_in, 0.0f);
 		CHECK_EQ(script.animations[0].blend_out, 0.0f);
-		CHECK_EQ(script.animations[0].flags, phoenix::mds::af_move);
+		CHECK_EQ(script.animations[0].flags, zenkit::AnimationFlags::MOVE);
 		CHECK_EQ(script.animations[0].model, "WARAN_RUN_KM01.ASC");
-		CHECK_EQ(script.animations[0].direction, phoenix::mds::animation_direction::forward);
+		CHECK_EQ(script.animations[0].direction, zenkit::AnimationDirection::FORWARD);
 		CHECK_EQ(script.animations[0].first_frame, 1);
 		CHECK_EQ(script.animations[0].last_frame, 8);
 		CHECK_EQ(script.animations[0].fps, 25.0f);
@@ -195,9 +199,9 @@ TEST_SUITE("model_script") {
 		CHECK_EQ(script.aliases[0].next, "S_FISTRUN");
 		CHECK_EQ(script.aliases[0].blend_in, 0.0f);
 		CHECK_EQ(script.aliases[0].blend_out, 0.0f);
-		CHECK_EQ(script.aliases[0].flags, (phoenix::mds::af_move | phoenix::mds::af_idle));
+		CHECK_EQ(script.aliases[0].flags, (zenkit::AnimationFlags::MOVE | zenkit::AnimationFlags::IDLE));
 		CHECK_EQ(script.aliases[0].alias, "S_FISTWALK");
-		CHECK_EQ(script.aliases[0].direction, phoenix::mds::animation_direction::forward);
+		CHECK_EQ(script.aliases[0].direction, zenkit::AnimationDirection::FORWARD);
 
 		CHECK_EQ(script.blends.size(), 17);
 		CHECK_EQ(script.blends[0].name, "T_FISTRUNR_2_FISTRUN");
@@ -211,7 +215,7 @@ TEST_SUITE("model_script") {
 		CHECK_EQ(script.combinations[0].next, "T_LOOK");
 		CHECK_EQ(script.combinations[0].blend_in, 0.3f);
 		CHECK_EQ(script.combinations[0].blend_out, 0.3f);
-		CHECK_EQ(script.combinations[0].flags, phoenix::mds::af_move);
+		CHECK_EQ(script.combinations[0].flags, zenkit::AnimationFlags::MOVE);
 		CHECK_EQ(script.combinations[0].model, "C_LOOK_");
 		CHECK_EQ(script.combinations[0].last_frame, 9);
 
@@ -233,25 +237,25 @@ TEST_SUITE("model_script") {
 
 		CHECK_EQ(script.animations[47].events.size(), 4);
 		CHECK_EQ(script.animations[47].events[3].frame, 0);
-		CHECK_EQ(script.animations[47].events[3].type, phoenix::mds::event_tag_type::window);
+		CHECK_EQ(script.animations[47].events[3].type, zenkit::MdsEventType::COMBO_WINDOW);
 		CHECK_EQ(script.animations[47].events[3].frames.size(), 2);
 		CHECK_EQ(script.animations[47].events[3].frames[0], 8);
 		CHECK_EQ(script.animations[47].events[3].frames[1], 15);
 	}
 
-	TEST_CASE("model_script(parse:g1)" * doctest::skip()) {
+	TEST_CASE("ModelScript.load(GOTHIC1)" * doctest::skip()) {
 		// TODO: Stub
 	}
 
-	TEST_CASE("model_script(parse:g1/binary)" * doctest::skip()) {
+	TEST_CASE("ModelScript.load(GOTHIC1,BINARY)" * doctest::skip()) {
 		// TODO: Stub
 	}
 
-	TEST_CASE("model_script(parse:g2)" * doctest::skip()) {
+	TEST_CASE("ModelScript.load(GOTHIC2)" * doctest::skip()) {
 		// TODO: Stub
 	}
 
-	TEST_CASE("model_script(parse:g2/binary)" * doctest::skip()) {
+	TEST_CASE("ModelScript.load(GOTHIC2,BINARY)" * doctest::skip()) {
 		// TODO: Stub
 	}
 }

@@ -1,26 +1,37 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include <phoenix/buffer.hh>
-#include <phoenix/material.hh>
-#include <phoenix/math.hh>
-#include <phoenix/phoenix.hh>
-#include <phoenix/proto_mesh.hh>
-#include <phoenix/texture.hh>
+#include "zenkit/Boxes.hh"
+#include "zenkit/Date.hh"
+#include "zenkit/Library.hh"
+#include "zenkit/Material.hh"
+#include "zenkit/Texture.hh"
 
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+
+#include <memory>
 #include <optional>
+#include <string>
 #include <unordered_set>
+#include <vector>
 
 namespace phoenix {
+	class buffer;
+}
+
+namespace zenkit {
+	class Read;
+
 	/// \brief Represents a light map.
-	struct light_map {
-		std::shared_ptr<texture> image;
+	struct LightMap {
+		std::shared_ptr<Texture> image;
 		glm::vec3 normals[2];
 		glm::vec3 origin;
 	};
 
 	/// \brief Represents a vertex feature.
-	struct vertex_feature {
+	struct VertexFeature {
 		/// \brief The texture coordinates of the polygon.
 		glm::vec2 texture;
 
@@ -32,7 +43,7 @@ namespace phoenix {
 	};
 
 	/// \brief Flags set for a polygon of a mesh.
-	struct polygon_flags {
+	struct PolygonFlagSet {
 		std::uint8_t is_portal : 2;
 		std::uint8_t is_occluder : 1;
 		std::uint8_t is_sector : 1;
@@ -45,11 +56,11 @@ namespace phoenix {
 		uint8_t is_lod : 1;
 		uint8_t normal_axis : 2;
 
-		PHOENIX_API bool operator==(const polygon_flags& b) const;
+		ZKAPI bool operator==(PolygonFlagSet const& b) const;
 	};
 
 	/// \brief List of data indices for polygons of meshes.
-	struct polygon_list {
+	struct PolygonList {
 		/// \brief The index of the material for each polygon in mesh::materials
 		std::vector<uint32_t> material_indices {};
 
@@ -63,14 +74,14 @@ namespace phoenix {
 		std::vector<uint32_t> vertex_indices {};
 
 		/// \brief The flags for each polygon.
-		std::vector<polygon_flags> flags {};
+		std::vector<PolygonFlagSet> flags {};
 	};
 
 	/// \brief Represents a *ZenGin* basic mesh.
 	///
 	/// <p>Found in files with the `MSH` extension and as the world meshes in world archives, these meshes contain a
 	/// set of polygons and accompanying data describing a static mesh in three dimensions.</p>
-	class mesh {
+	class Mesh {
 	public:
 		/// \brief Parses a mesh from the data in the given buffer.
 		///
@@ -90,8 +101,9 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&, const std::vector<std::uint32_t>&)
-		[[nodiscard]] PHOENIX_API static mesh
-		parse(buffer& buf, std::vector<uint32_t> const& include_polygons = {}, bool force_wide_indices = false);
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Mesh parse(phoenix::buffer& buf,
+		                                                            std::vector<uint32_t> const& include_polygons = {},
+		                                                            bool force_wide_indices = false);
 
 		/// \brief Parses a mesh from the data in the given buffer.
 		///
@@ -105,37 +117,37 @@ namespace phoenix {
 		/// \return The parsed mesh object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&, const std::vector<std::uint32_t>&)
-		[[nodiscard]] PHOENIX_API inline static mesh parse(buffer&& buf,
-		                                                   std::vector<std::uint32_t> const& include_polygons = {}) {
-			return mesh::parse(buf, include_polygons);
-		}
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Mesh
+		    parse(phoenix::buffer&& buf, std::vector<std::uint32_t> const& include_polygons = {});
+
+		ZKAPI void load(Read* r, std::vector<std::uint32_t> const& leaf_polygons, bool force_wide_indices);
 
 	public:
 		/// \brief The creation date of this mesh.
-		phoenix::date date {};
+		Date date {};
 
 		/// \brief The name of this mesh
 		std::string name {};
 
 		/// \brief The bounding box of this mesh.
-		bounding_box bbox {};
+		AxisAlignedBoundingBox bbox {};
 
 		/// \brief The oriented bbox tree of this mesh.
-		phoenix::obb obb {};
+		OrientedBoundingBox obb {};
 
 		/// \brief A list of materials used by this mesh.
-		std::vector<material> materials {};
+		std::vector<Material> materials {};
 
 		/// \brief A list of vertices of this mesh.
 		std::vector<glm::vec3> vertices {};
 
 		/// \brief A list of vertex features of this mesh.
-		std::vector<vertex_feature> features {};
+		std::vector<VertexFeature> features {};
 
-		/// \brief All shared lightmaps associated with this mesh
-		std::vector<light_map> lightmaps {};
+		/// \brief All shared light-maps associated with this mesh
+		std::vector<LightMap> lightmaps {};
 
 		/// \brief A list of polygons of this mesh.
-		polygon_list polygons {};
+		PolygonList polygons {};
 	};
-} // namespace phoenix
+} // namespace zenkit

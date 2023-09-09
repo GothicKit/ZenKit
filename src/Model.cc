@@ -1,13 +1,24 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/model.hh>
+#include "zenkit/Model.hh"
+#include "zenkit/Stream.hh"
 
-namespace phoenix {
-	model model::parse(buffer& buf) {
-		model tmp {};
+namespace zenkit {
+	Model Model::parse(phoenix::buffer& buf) {
+		Model tmp {};
 
-		tmp.hierarchy = model_hierarchy::parse(buf);
-		tmp.mesh = model_mesh::parse(buf);
+		auto r = Read::from(&buf);
+		tmp.load(r.get());
+
 		return tmp;
 	}
-} // namespace phoenix
+
+	void Model::load(Read* r) {
+		this->hierarchy.load(r);
+		this->mesh.load(r);
+	}
+
+	Model Model::parse(phoenix::buffer&& buf) {
+		return Model::parse(buf);
+	}
+} // namespace zenkit

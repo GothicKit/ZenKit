@@ -1,127 +1,132 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include "archive_binary.hh"
+#include "ArchiveBinary.hh"
+
+#include "phoenix/buffer.hh"
+#include "phoenix/phoenix.hh"
 
 #include <stdexcept>
 
-namespace phoenix {
-	void archive_reader_binary::read_header() {
+namespace zenkit {
+	void ReadArchiveBinary::read_header() {
 		{
-			std::string objects = input.get_line();
+			std::string objects = read->read_line(true);
 			if (objects.find("objects ") != 0) {
-				throw parser_error {"archive_reader_binary", "objects header field missing"};
+				throw zenkit::ParserError {"ReadArchiveBinary", "objects header field missing"};
 			}
 
 			try {
 				_m_objects = std::stoi(objects.substr(objects.find(' ') + 1));
 			} catch (std::invalid_argument const& e) {
-				throw parser_error {"archive_reader_binary", e, "reading int"};
+				throw zenkit::ParserError {"ReadArchiveBinary", e, "reading int"};
 			}
 		}
 
-		if (input.get_line_and_ignore("\n") != "END") {
-			throw parser_error {"archive_reader_binary", "second END missing"};
+		if (read->read_line_then_ignore("\n") != "END") {
+			throw zenkit::ParserError {"ReadArchiveBinary", "second END missing"};
 		}
 	}
 
-	bool archive_reader_binary::read_object_begin(archive_object& obj) {
-		if (input.remaining() < 12)
+	bool ReadArchiveBinary::read_object_begin(ArchiveObject& obj) {
+		if (read->eof())
 			return false;
 
-		auto pos = input.position();
-		_m_object_end.push(pos + input.get_uint());
+		auto pos = read->tell();
+		_m_object_end.push(pos + read->read_uint());
 
-		obj.version = input.get_ushort();
-		obj.index = input.get_uint();
-		obj.object_name = input.get_line(false);
-		obj.class_name = input.get_line(false);
+		obj.version = read->read_ushort();
+		obj.index = read->read_uint();
+		obj.object_name = read->read_line(false);
+		obj.class_name = read->read_line(false);
 		return true;
 	}
 
-	bool archive_reader_binary::read_object_end() {
-		if (input.position() == _m_object_end.top()) {
+	bool ReadArchiveBinary::read_object_end() {
+		if (read->tell() == _m_object_end.top()) {
 			_m_object_end.pop();
 			return true;
 		}
 
-		return input.remaining() == 0;
+		return read->eof();
 	}
 
-	std::string archive_reader_binary::read_string() {
-		return input.get_line(false);
+	std::string ReadArchiveBinary::read_string() {
+		return read->read_line(false);
 	}
 
-	std::int32_t archive_reader_binary::read_int() {
-		return input.get_int();
+	std::int32_t ReadArchiveBinary::read_int() {
+		return read->read_int();
 	}
 
-	float archive_reader_binary::read_float() {
-		return input.get_float();
+	float ReadArchiveBinary::read_float() {
+		return read->read_float();
 	}
 
-	std::uint8_t archive_reader_binary::read_byte() {
-		return input.get();
+	std::uint8_t ReadArchiveBinary::read_byte() {
+		return read->read_ubyte();
 	}
 
-	std::uint16_t archive_reader_binary::read_word() {
-		return input.get_ushort();
+	std::uint16_t ReadArchiveBinary::read_word() {
+		return read->read_ushort();
 	}
 
-	std::uint32_t archive_reader_binary::read_enum() {
-		return input.get();
+	std::uint32_t ReadArchiveBinary::read_enum() {
+		return read->read_ubyte();
 	}
 
-	bool archive_reader_binary::read_bool() {
-		return input.get() != 0;
+	bool ReadArchiveBinary::read_bool() {
+		return read->read_ubyte() != 0;
 	}
 
-	glm::u8vec4 archive_reader_binary::read_color() {
-		auto b = input.get();
-		auto g = input.get();
-		auto r = input.get();
-		auto a = input.get();
+	glm::u8vec4 ReadArchiveBinary::read_color() {
+		auto b = read->read_ubyte();
+		auto g = read->read_ubyte();
+		auto r = read->read_ubyte();
+		auto a = read->read_ubyte();
 
 		return {r, g, b, a};
 	}
 
-	glm::vec3 archive_reader_binary::read_vec3() {
-		return input.get_vec3();
+	glm::vec3 ReadArchiveBinary::read_vec3() {
+		return read->read_vec3();
 	}
 
-	glm::vec2 archive_reader_binary::read_vec2() {
-		return input.get_vec2();
+	glm::vec2 ReadArchiveBinary::read_vec2() {
+		return read->read_vec2();
 	}
 
-	bounding_box archive_reader_binary::read_bbox() {
-		return bounding_box::parse(input);
+	AxisAlignedBoundingBox ReadArchiveBinary::read_bbox() {
+		AxisAlignedBoundingBox aabb {};
+		aabb.load(read);
+		return aabb;
 	}
 
-	glm::mat3x3 archive_reader_binary::read_mat3x3() {
-		return input.get_mat3x3();
+	glm::mat3x3 ReadArchiveBinary::read_mat3x3() {
+		return read->read_mat3();
 	}
 
-	buffer archive_reader_binary::read_raw_bytes() {
-		return input.slice();
+	phoenix::buffer ReadArchiveBinary::read_raw_bytes(uint32_t size) {
+		std::vector<std::byte> bytes(size, std::byte {});
+		read->read(bytes.data(), bytes.size());
+		return phoenix::buffer::of(std::move(bytes));
 	}
 
-	buffer archive_reader_binary::read_raw_bytes(uint32_t size) {
-		return input.extract(size);
+	std::unique_ptr<Read> ReadArchiveBinary::read_raw(uint32_t size) {
+		std::vector<std::byte> bytes(size, std::byte {});
+		read->read(bytes.data(), bytes.size());
+		return Read::from(std::move(bytes));
 	}
 
-	void archive_reader_binary::skip_entry() {
-		throw parser_error {"archive_reader", "cannot skip entry in binary archive"};
+	void ReadArchiveBinary::skip_entry() {
+		throw zenkit::ParserError {"archive_reader", "cannot skip entry in binary archive"};
 	}
 
-	void archive_reader_binary::skip_object(bool skip_current) {
+	void ReadArchiveBinary::skip_object(bool skip_current) {
 		if (skip_current) {
-			input.position(_m_object_end.top());
+			read->seek(static_cast<ssize_t>(_m_object_end.top()), Whence::BEG);
 			_m_object_end.pop();
 		} else {
-			input.skip(input.get_uint() - 4);
+			read->seek(read->read_uint() - 4, Whence::CUR);
 		}
 	}
-
-	std::variant<archive_object, archive_object_end, archive_entry> archive_reader_binary::unstable__next() {
-		throw parser_error {"archive_reader", "next() doesn't work for binary archives"};
-	}
-} // namespace phoenix
+} // namespace zenkit

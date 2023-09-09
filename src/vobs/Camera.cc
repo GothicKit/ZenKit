@@ -1,71 +1,81 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/vobs/camera.hh>
+#include "zenkit/vobs/Camera.hh"
+#include "zenkit/Archive.hh"
 
-namespace phoenix::vobs {
-	std::unique_ptr<camera_trj_frame> camera_trj_frame::parse(archive_reader& ctx, game_version version) {
-		auto obj = std::make_unique<camera_trj_frame>();
+#include "../Internal.hh"
 
-		vob::parse(*obj, ctx, version);
-		obj->time = ctx.read_float();                                              // time
-		obj->roll_angle = ctx.read_float();                                        // angleRollDeg
-		obj->fov_scale = ctx.read_float();                                         // camFOVScale
-		obj->motion_type = static_cast<camera_motion>(ctx.read_enum());            // motionType
-		obj->motion_type_fov = static_cast<camera_motion>(ctx.read_enum());        // motionTypeFOV
-		obj->motion_type_roll = static_cast<camera_motion>(ctx.read_enum());       // motionTypeRoll
-		obj->motion_type_time_scale = static_cast<camera_motion>(ctx.read_enum()); // motionTypeTimeScale
-		obj->tension = ctx.read_float();                                           // tension
-		obj->cam_bias = ctx.read_float();                                          // bias
-		obj->continuity = ctx.read_float();                                        // continuity
-		obj->time_scale = ctx.read_float();                                        // timeScale
-		obj->time_fixed = ctx.read_bool();                                         // timeIsFixed
-
-		auto buf = ctx.read_raw_bytes(sizeof(float) * 4 * 4); // originalPose
-		obj->original_pose = buf.get_mat4x4();
+namespace zenkit::vobs {
+	std::unique_ptr<CameraTrajectoryFrame> CameraTrajectoryFrame::parse(ReadArchive& r, GameVersion version) {
+		auto obj = std::make_unique<CameraTrajectoryFrame>();
+		obj->load(r, version);
 		return obj;
 	}
 
-	void cs_camera::parse(cs_camera& obj, archive_reader& ctx, game_version version) {
-		vob::parse(obj, ctx, version);
-		obj.trajectory_for = static_cast<camera_trajectory>(ctx.read_enum());        // camTrjFOR
-		obj.target_trajectory_for = static_cast<camera_trajectory>(ctx.read_enum()); // targetTrjFOR
-		obj.loop_mode = static_cast<camera_loop>(ctx.read_enum());                   // loopMode
-		obj.lerp_mode = static_cast<camera_lerp_mode>(ctx.read_enum());              // splLerpMode
-		obj.ignore_for_vob_rotation = ctx.read_bool();                               // ignoreFORVobRotCam
-		obj.ignore_for_vob_rotation_target = ctx.read_bool();                        // ignoreFORVobRotTarget
-		obj.adapt = ctx.read_bool();                                                 // adaptToSurroundings
-		obj.ease_first = ctx.read_bool();                                            // easeToFirstKey
-		obj.ease_last = ctx.read_bool();                                             // easeFromLastKey
-		obj.total_duration = ctx.read_float();                                       // totalTime
-		obj.auto_focus_vob = ctx.read_string();                                      // autoCamFocusVobName
-		obj.auto_player_movable = ctx.read_bool();                                   // autoCamPlayerMovable
-		obj.auto_untrigger_last = ctx.read_bool();                                   // autoCamUntriggerOnLastKey
-		obj.auto_untrigger_last_delay = ctx.read_float();                            // autoCamUntriggerOnLastKeyDelay
-		obj.position_count = ctx.read_int();                                         // numPos
-		obj.target_count = ctx.read_int();                                           // numTargets
+	void CameraTrajectoryFrame::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+		VirtualObject::load(r, version);
+		this->time = r.read_float();                                             // time
+		this->roll_angle = r.read_float();                                       // angleRollDeg
+		this->fov_scale = r.read_float();                                        // camFOVScale
+		this->motion_type = static_cast<CameraMotion>(r.read_enum());            // motionType
+		this->motion_type_fov = static_cast<CameraMotion>(r.read_enum());        // motionTypeFOV
+		this->motion_type_roll = static_cast<CameraMotion>(r.read_enum());       // motionTypeRoll
+		this->motion_type_time_scale = static_cast<CameraMotion>(r.read_enum()); // motionTypeTimeScale
+		this->tension = r.read_float();                                          // tension
+		this->cam_bias = r.read_float();                                         // bias
+		this->continuity = r.read_float();                                       // continuity
+		this->time_scale = r.read_float();                                       // timeScale
+		this->time_fixed = r.read_bool();                                        // timeIsFixed
 
-		archive_object frame_obj {};
-		while (ctx.read_object_begin(frame_obj)) {
+		auto buf = r.read_raw(sizeof(float) * 4 * 4); // originalPose
+		this->original_pose = buf->read_mat4();
+	}
+
+	void CutsceneCamera::parse(CutsceneCamera& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
+	}
+
+	void CutsceneCamera::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+		VirtualObject::load(r, version);
+		this->trajectory_for = static_cast<CameraTrajectory>(r.read_enum());        // camTrjFOR
+		this->target_trajectory_for = static_cast<CameraTrajectory>(r.read_enum()); // targetTrjFOR
+		this->loop_mode = static_cast<CameraLoop>(r.read_enum());                   // loopMode
+		this->lerp_mode = static_cast<CameraLerpType>(r.read_enum());               // splLerpMode
+		this->ignore_for_vob_rotation = r.read_bool();                              // ignoreFORVobRotCam
+		this->ignore_for_vob_rotation_target = r.read_bool();                       // ignoreFORVobRotTarget
+		this->adapt = r.read_bool();                                                // adaptToSurroundings
+		this->ease_first = r.read_bool();                                           // easeToFirstKey
+		this->ease_last = r.read_bool();                                            // easeFromLastKey
+		this->total_duration = r.read_float();                                      // totalTime
+		this->auto_focus_vob = r.read_string();                                     // autoCamFocusVobName
+		this->auto_player_movable = r.read_bool();                                  // autoCamPlayerMovable
+		this->auto_untrigger_last = r.read_bool();                                  // autoCamUntriggerOnLastKey
+		this->auto_untrigger_last_delay = r.read_float();                           // autoCamUntriggerOnLastKeyDelay
+		this->position_count = r.read_int();                                        // numPos
+		this->target_count = r.read_int();                                          // numTargets
+
+		ArchiveObject frame_obj {};
+		while (r.read_object_begin(frame_obj)) {
 			if (frame_obj.class_name != "zCCamTrj_KeyFrame:zCVob") {
-				PX_LOGW("cs_camera: unexpected \"", frame_obj.class_name, "\" in \"zCCSCamera:zCVob\"");
-				ctx.skip_object(true);
+				ZKLOGW("VOb.CutsceneCamera", "Unexpected \"%s\" in \"zCCSCamera:zCVob\"", frame_obj.class_name.c_str());
+				r.skip_object(true);
 				continue;
 			}
 
-			obj.frames.emplace_back(camera_trj_frame::parse(ctx, version));
+			this->frames.emplace_back(std::make_unique<CameraTrajectoryFrame>())->load(r, version);
 
-			if (!ctx.read_object_end()) {
-				PX_LOGW("cs_camera: \"zCCamTrj_KeyFrame\" not fully parsed");
-				ctx.skip_object(true);
+			if (!r.read_object_end()) {
+				ZKLOGW("VOb.CutsceneCamera", "\"zCCamTrj_KeyFrame\" not fully parsed");
+				r.skip_object(true);
 			}
 		}
 
-		if (ctx.is_save_game() && version == game_version::gothic_2) {
+		if (r.is_save_game() && version == GameVersion::GOTHIC_2) {
 			// In save-games, cutscene cameras contain extra variables
-			obj.s_paused = ctx.read_bool();         // paused
-			obj.s_started = ctx.read_bool();        // started
-			obj.s_goto_time_mode = ctx.read_bool(); // gotoTimeMode
-			obj.s_cs_time = ctx.read_float();       // csTime
+			this->s_paused = r.read_bool();         // paused
+			this->s_started = r.read_bool();        // started
+			this->s_goto_time_mode = r.read_bool(); // gotoTimeMode
+			this->s_cs_time = r.read_float();       // csTime
 		}
 	}
-} // namespace phoenix::vobs
+} // namespace zenkit::vobs

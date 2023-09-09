@@ -1,24 +1,26 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include <doctest/doctest.h>
-#include <phoenix/proto_mesh.hh>
+#include <zenkit/MultiResolutionMesh.hh>
+#include <zenkit/Stream.hh>
 
-static bool compare_triangle(phoenix::triangle a, phoenix::triangle b) {
+static bool compare_triangle(zenkit::MeshTriangle a, zenkit::MeshTriangle b) {
 	return a.wedges[0] == b.wedges[0] && a.wedges[1] == b.wedges[1] && a.wedges[2] == b.wedges[2];
 }
 
-static bool compare_wedge(phoenix::wedge a, phoenix::wedge b) {
+static bool compare_wedge(zenkit::MeshWedge a, zenkit::MeshWedge b) {
 	return a.normal == b.normal && a.texture == b.texture && a.index == b.index;
 }
 
-static bool compare_plane(phoenix::plane a, phoenix::plane b) {
+static bool compare_plane(zenkit::MeshPlane a, zenkit::MeshPlane b) {
 	return a.normal == b.normal && a.distance == b.distance;
 }
 
-TEST_SUITE("proto_mesh") {
-	TEST_CASE("proto_mesh(parse:?)") {
-		auto in = phoenix::buffer::mmap("./samples/mesh0.mrm");
-		auto mesh = phoenix::proto_mesh::parse(in);
+TEST_SUITE("MultiResolutionMesh") {
+	TEST_CASE("MultiResolutionMesh.load(GOTHIC?)") {
+		auto in = zenkit::Read::from("./samples/mesh0.mrm");
+		zenkit::MultiResolutionMesh mesh {};
+		mesh.load(in.get());
 
 		const auto& positions = mesh.positions;
 		CHECK_EQ(positions.size(), 8);
@@ -76,11 +78,11 @@ TEST_SUITE("proto_mesh") {
 		CHECK_EQ(submesh.wedge_map[31], 0);
 	}
 
-	TEST_CASE("proto_mesh(parse:g1)" * doctest::skip()) {
+	TEST_CASE("MultiResolutionMesh.load(GOTHIC1)" * doctest::skip()) {
 		// TODO: Stub
 	}
 
-	TEST_CASE("proto_mesh(parse:g2)" * doctest::skip()) {
+	TEST_CASE("MultiResolutionMesh.load(GOTHIC2)" * doctest::skip()) {
 		// TODO: Stub
 	}
 }

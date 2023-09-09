@@ -1,18 +1,27 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include "Api.hh"
-#include <phoenix/proto_mesh.hh>
-#include <phoenix/softskin_mesh.hh>
+#include "zenkit/Library.hh"
+#include "zenkit/MultiResolutionMesh.hh"
+#include "zenkit/SoftSkinMesh.hh"
 
+#include <cstdint>
+#include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace phoenix {
+	class buffer;
+}
+
+namespace zenkit {
+	class Read;
+
 	/// \brief Represents a *ZenGin* model mesh.
 	///
 	/// <p>Model meshes contain multiple phoenix::softskin_mesh instances as well as a set of phoenix::proto_mesh
 	/// attachments. They can be found within `MDM` files and are embedded within phoenix::model objects.</p>
-	class model_mesh {
+	class ModelMesh {
 	public:
 		/// \brief Parses a model mesh from the data in the given buffer.
 		///
@@ -26,25 +35,25 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] PHOENIX_API static model_mesh parse(buffer& buf);
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelMesh parse(phoenix::buffer& buf);
 
 		/// \brief Parses a model mesh from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed model mesh object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] PHOENIX_API inline static model_mesh parse(buffer&& buf) {
-			return model_mesh::parse(buf);
-		}
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelMesh parse(phoenix::buffer&& buf);
+
+		ZKAPI void load(Read* r);
 
 	public:
 		/// \brief A list of soft-skin meshes associated with this model mesh.
-		std::vector<softskin_mesh> meshes {};
+		std::vector<SoftSkinMesh> meshes {};
 
 		/// \brief A map of attachment names to attachment meshes of this model mesh.
-		std::unordered_map<std::string, proto_mesh> attachments {};
+		std::unordered_map<std::string, MultiResolutionMesh> attachments {};
 
 		/// \brief The checksum of the model hierarchy this model was made for.
 		std::uint32_t checksum;
 	};
-} // namespace phoenix
+} // namespace zenkit

@@ -1,43 +1,51 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/font.hh>
+#include "zenkit/Font.hh"
+#include "zenkit/Stream.hh"
 
-namespace phoenix {
-	font::font(std::string font_name, std::uint32_t font_height, std::vector<glyph> font_glyphs)
+#include "phoenix/phoenix.hh"
+
+namespace zenkit {
+	bool FontGlyph::operator==(FontGlyph const& g) const noexcept {
+		return this->width == g.width && this->uv[0] == g.uv[0] && this->uv[1] == g.uv[1];
+	}
+
+	Font::Font(std::string font_name, std::uint32_t font_height, std::vector<FontGlyph> font_glyphs)
 	    : name(std::move(font_name)), height(font_height), glyphs(std::move(font_glyphs)) {}
 
-	font font::parse(buffer& in) {
-		try {
-			auto version = in.get_line();
-			if (version != "1") {
-				throw parser_error {"font", "version mismatch: expected version 1, got " + version};
-			}
+	Font Font::parse(phoenix::buffer& in) {
+		Font fnt {};
 
-			auto name = in.get_line(false);
-			auto height = in.get_uint();
+		auto r = Read::from(&in);
+		fnt.load(r.get());
 
-			std::vector<glyph> glyphs {};
-			glyphs.resize(in.get_uint());
+		return fnt;
+	}
 
-			for (auto& glyph : glyphs) {
-				glyph.width = in.get();
-			}
+	Font Font::parse(phoenix::buffer&& in) {
+		return Font::parse(in);
+	}
 
-			for (auto& glyph : glyphs) {
-				glyph.uv[0] = in.get_vec2();
-			}
+	void Font::load(Read* r) {
+		auto version = r->read_line(true);
+		if (version != "1") {
+			throw zenkit::ParserError {"Font", "version mismatch: expected version 1, got " + version};
+		}
 
-			for (auto& glyph : glyphs) {
-				glyph.uv[1] = in.get_vec2();
-			}
+		this->name = r->read_line(false);
+		this->height = r->read_uint();
 
-			return font {
-			    name,
-			    height,
-			    std::move(glyphs),
-			};
-		} catch (const buffer_error& exc) {
-			throw parser_error {"font", exc, "eof reached"};
+		this->glyphs.resize(r->read_uint());
+		for (auto& glyph : glyphs) {
+			glyph.width = r->read_ubyte();
+		}
+
+		for (auto& glyph : glyphs) {
+			glyph.uv[0] = r->read_vec2();
+		}
+
+		for (auto& glyph : glyphs) {
+			glyph.uv[1] = r->read_vec2();
 		}
 	}
-} // namespace phoenix
+} // namespace zenkit

@@ -1,91 +1,91 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/softskin_mesh.hh>
+#include "zenkit/SoftSkinMesh.hh"
+#include "zenkit/Stream.hh"
 
-namespace phoenix {
-	enum class softmesh_chunk { unknown, header = 0xE100, end = 0xE110, proto = 0xB100, nodes = 0xB1FF };
+#include "Internal.hh"
 
-	softskin_mesh softskin_mesh::parse(buffer& in) {
-		softskin_mesh msh {};
-		softmesh_chunk type = softmesh_chunk::unknown;
-		bool end_mesh = false;
+namespace zenkit {
+	enum class SoftSkinMeshChunkType : std::uint16_t {
+		HEADER = 0xE100,
+		END = 0xE110,
+		PROTO = 0xB100,
+		NODES = 0xB1FF,
+	};
 
-		do {
-			type = static_cast<softmesh_chunk>(in.get_ushort());
+	SoftSkinMesh SoftSkinMesh::parse(phoenix::buffer& in) {
+		SoftSkinMesh msh {};
 
-			auto length = in.get_uint();
-			auto chunk = in.extract(length);
+		auto r = Read::from(&in);
+		msh.load(r.get());
 
+		return msh;
+	}
+
+	void SoftSkinMesh::load(Read* r) {
+		proto::read_chunked<SoftSkinMeshChunkType>(r, "SoftSkinMesh", [this](Read* c, SoftSkinMeshChunkType type) {
 			switch (type) {
-			case softmesh_chunk::header:
-				(void) /* version = */ chunk.get_uint();
+			case SoftSkinMeshChunkType::HEADER:
+				(void) /* version = */ c->read_uint();
 				break;
-			case softmesh_chunk::proto:
-				msh.mesh = proto_mesh::parse_from_section(chunk);
+			case SoftSkinMeshChunkType::PROTO:
+				mesh.load_from_section(c);
 				break;
-			case softmesh_chunk::nodes: {
+			case SoftSkinMeshChunkType::NODES: {
 				// weights
-				auto weight_buffer_size = chunk.get_uint();
-				auto weight_buffer_end = chunk.position() + weight_buffer_size;
+				auto weight_buffer_size = c->read_uint();
+				auto weight_buffer_end = c->tell() + weight_buffer_size;
 
-				msh.weights.resize(msh.mesh.positions.size());
-				for (uint32_t i = 0; i < msh.mesh.positions.size(); ++i) {
-					auto count = chunk.get_uint();
-					msh.weights[i].resize(count);
+				this->weights.resize(this->mesh.positions.size());
+				for (uint32_t i = 0; i < this->mesh.positions.size(); ++i) {
+					auto count = c->read_uint();
+					this->weights[i].resize(count);
 
 					for (std::uint32_t j = 0; j < count; ++j) {
-						auto& weight = msh.weights[i][j];
-						weight.weight = chunk.get_float();
-						weight.position = chunk.get_vec3();
-						weight.node_index = chunk.get();
+						auto& weight = this->weights[i][j];
+						weight.weight = c->read_float();
+						weight.position = c->read_vec3();
+						weight.node_index = c->read_ubyte();
 					}
 				}
 
-				if (chunk.position() != weight_buffer_end) {
-					PX_LOGW("softskin_mesh: ",
-					        weight_buffer_end - chunk.position(),
-					        " bytes remaining in weight section");
-					chunk.position(weight_buffer_end);
+				if (c->tell() != weight_buffer_end) {
+					ZKLOGW("SoftSkinMesh", "%zu bytes remaining in weight section", weight_buffer_end - c->tell());
+					c->seek(static_cast<ssize_t>(weight_buffer_end), Whence::BEG);
 				}
 
 				// wedge normals
-				msh.wedge_normals.resize(chunk.get_uint());
-
-				for (std::uint32_t i = 0; i < msh.wedge_normals.size(); ++i) {
-					auto& normal = msh.wedge_normals[i];
-					normal.normal = chunk.get_vec3();
-					normal.index = chunk.get_uint();
+				this->wedge_normals.resize(c->read_uint());
+				for (auto& normal : this->wedge_normals) {
+					normal.normal = c->read_vec3();
+					normal.index = c->read_uint();
 				}
 
 				// nodes
-				msh.nodes.resize(chunk.get_ushort());
-
-				for (std::uint32_t i = 0; i < msh.nodes.size(); ++i) {
-					msh.nodes[i] = chunk.get_int();
+				this->nodes.resize(c->read_ushort());
+				for (auto& node : this->nodes) {
+					node = c->read_int();
 				}
 
-				for (std::uint32_t i = 0; i < msh.nodes.size(); ++i) {
-					msh.bboxes.push_back(obb::parse(chunk));
+				// bounding boxes
+				this->bboxes.resize(this->nodes.size());
+				for (auto& bbox : this->bboxes) {
+					bbox.load(c);
 				}
 
 				break;
 			}
-			case softmesh_chunk::end:
-				end_mesh = true;
-				break;
+			case SoftSkinMeshChunkType::END:
+				return true;
 			default:
 				break;
 			}
 
-			if (chunk.remaining() != 0) {
-				PX_LOGW("softskin_mesh: ",
-				        chunk.remaining(),
-				        " bytes remaining in section ",
-				        std::hex,
-				        std::uint16_t(type));
-			}
-		} while (!end_mesh);
-
-		return msh;
+			return false;
+		});
 	}
-} // namespace phoenix
+
+	SoftSkinMesh SoftSkinMesh::parse(phoenix::buffer&& in) {
+		return SoftSkinMesh::parse(in);
+	}
+} // namespace zenkit

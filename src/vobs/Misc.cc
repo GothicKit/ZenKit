@@ -1,289 +1,369 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/vobs/misc.hh>
+#include "zenkit/vobs/Misc.hh"
+#include "zenkit/Archive.hh"
 
-namespace phoenix::vobs {
-	void animate::parse(animate& obj, archive_reader& ctx, game_version version) {
-		vob::parse(obj, ctx, version);
-		obj.start_on = ctx.read_bool(); // startOn
+#include "../Internal.hh"
 
-		if (ctx.is_save_game()) {
+namespace zenkit::vobs {
+	void Animate::parse(Animate& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
+	}
+
+	void Animate::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+		VirtualObject::load(r, version);
+		this->start_on = r.read_bool(); // startOn
+
+		if (r.is_save_game()) {
 			// In save-games, animated VObs contain extra variables
-			obj.s_is_running = ctx.read_bool(); // isRunning
+			this->s_is_running = r.read_bool(); // isRunning
 		}
 	}
 
-	void item::parse(item& obj, archive_reader& ctx, game_version version) {
-		vob::parse(obj, ctx, version);
-		obj.instance = ctx.read_string(); // itemInstance
+	void Item::parse(Item& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
+	}
 
-		if (ctx.is_save_game()) {
+	void Item::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+		VirtualObject::load(r, version);
+		this->instance = r.read_string(); // itemInstance
+
+		if (r.is_save_game()) {
 			// In save-games, items contain extra variables
-			obj.s_amount = ctx.read_int(); // amount
-			obj.s_flags = ctx.read_int();  // flags
+			this->s_amount = r.read_int(); // amount
+			this->s_flags = r.read_int();  // flags
 		}
 	}
 
-	void lens_flare::parse(lens_flare& obj, archive_reader& ctx, game_version version) {
-		vob::parse(obj, ctx, version);
-		obj.fx = ctx.read_string(); // lensflareFX
+	void LensFlare::parse(LensFlare& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
 	}
 
-	void pfx_controller::parse(pfx_controller& obj, archive_reader& ctx, game_version version) {
-		vob::parse(obj, ctx, version);
-		obj.pfx_name = ctx.read_string();        // pfxName
-		obj.kill_when_done = ctx.read_bool();    // killVobWhenDone
-		obj.initially_running = ctx.read_bool(); // pfxStartOn
+	void LensFlare::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+		VirtualObject::load(r, version);
+		this->fx = r.read_string(); // lensflareFX
 	}
 
-	void message_filter::parse(message_filter& obj, archive_reader& ctx, game_version version) {
-		vob::parse(obj, ctx, version);
-		obj.target = ctx.read_string();                                         // triggerTarget
-		obj.on_trigger = static_cast<message_filter_action>(ctx.read_enum());   // onTrigger
-		obj.on_untrigger = static_cast<message_filter_action>(ctx.read_enum()); // onUntrigger
+	void ParticleEffectController::parse(ParticleEffectController& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
 	}
 
-	void code_master::parse(code_master& obj, archive_reader& ctx, game_version version) {
-		vob::parse(obj, ctx, version);
-		obj.target = ctx.read_string();               // triggerTarget
-		obj.ordered = ctx.read_bool();                // orderRelevant
-		obj.first_false_is_failure = ctx.read_bool(); // firstFalseIsFailure
-		obj.failure_target = ctx.read_string();       // triggerTargetFailure
-		obj.untriggered_cancels = ctx.read_bool();    // untriggerCancels
+	void ParticleEffectController::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+		VirtualObject::load(r, version);
+		this->pfx_name = r.read_string();        // pfxName
+		this->kill_when_done = r.read_bool();    // killVobWhenDone
+		this->initially_running = r.read_bool(); // pfxStartOn
+	}
 
-		auto slave_count = ctx.read_byte(); // numSlaves
+	void MessageFilter::parse(MessageFilter& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
+	}
+
+	void MessageFilter::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+		VirtualObject::load(r, version);
+		this->target = r.read_string();                                       // triggerTarget
+		this->on_trigger = static_cast<MessageFilterAction>(r.read_enum());   // onTrigger
+		this->on_untrigger = static_cast<MessageFilterAction>(r.read_enum()); // onUntrigger
+	}
+
+	void CodeMaster::parse(CodeMaster& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
+	}
+
+	void CodeMaster::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+		VirtualObject::load(r, version);
+		this->target = r.read_string();               // triggerTarget
+		this->ordered = r.read_bool();                // orderRelevant
+		this->first_false_is_failure = r.read_bool(); // firstFalseIsFailure
+		this->failure_target = r.read_string();       // triggerTargetFailure
+		this->untriggered_cancels = r.read_bool();    // untriggerCancels
+
+		auto slave_count = r.read_byte(); // numSlaves
 		for (int32_t i = 0; i < slave_count; ++i) {
-			obj.slaves.emplace_back(ctx.read_string()); // slaveVobName[i]
+			this->slaves.emplace_back(r.read_string()); // slaveVobName[i]
 		}
 
-		if (obj.saved && version == game_version::gothic_2) {
+		if (this->saved && version == GameVersion::GOTHIC_2) {
 			// In Gothic II save-games, code masters contain extra variables
-			obj.s_num_triggered_slaves = ctx.read_byte(); // numSlavesTriggered
+			this->s_num_triggered_slaves = r.read_byte(); // numSlavesTriggered
 
 			for (auto i = 0; i < slave_count; ++i) {
 				// TODO: Figure out how to parse these correctly.
-				ctx.skip_object(false); // [slaveTriggered1 % 0 0]
+				r.skip_object(false); // [slaveTriggered1 % 0 0]
 			}
 		}
 	}
 
-	void mover_controller::parse(mover_controller& obj, archive_reader& ctx, game_version version) {
-		vob::parse(obj, ctx, version);
-		obj.target = ctx.read_string(); // triggerTarget
+	void MoverController::parse(MoverController& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
+	}
 
-		if (version == game_version::gothic_1) {
-			obj.message = static_cast<mover_message_type>(ctx.read_enum()); // moverMessage
+	void MoverController::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+		VirtualObject::load(r, version);
+		this->target = r.read_string(); // triggerTarget
+
+		if (version == GameVersion::GOTHIC_1) {
+			this->message = static_cast<MoverMessageType>(r.read_enum()); // moverMessage
 		} else {
-			obj.message = static_cast<mover_message_type>(ctx.read_byte()); // moverMessage
+			this->message = static_cast<MoverMessageType>(r.read_byte()); // moverMessage
 		}
 
-		obj.key = ctx.read_int(); // gotoFixedKey
+		this->key = r.read_int(); // gotoFixedKey
 	}
 
-	void touch_damage::parse(touch_damage& obj, archive_reader& ctx, game_version version) {
-		vob::parse(obj, ctx, version);
-		obj.damage = ctx.read_float();                                // damage
-		obj.barrier = ctx.read_bool();                                // Barrier
-		obj.blunt = ctx.read_bool();                                  // Blunt
-		obj.edge = ctx.read_bool();                                   // Edge
-		obj.fire = ctx.read_bool();                                   // Fire
-		obj.fly = ctx.read_bool();                                    // Fly
-		obj.magic = ctx.read_bool();                                  // Magic
-		obj.point = ctx.read_bool();                                  // Point
-		obj.fall = ctx.read_bool();                                   // Fall
-		obj.repeat_delay_sec = ctx.read_float();                      // damageRepeatDelaySec
-		obj.volume_scale = ctx.read_float();                          // damageVolDownScale
-		obj.collision = static_cast<collision_type>(ctx.read_enum()); // damageCollType
+	void TouchDamage::parse(TouchDamage& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
 	}
 
-	void earthquake::parse(earthquake& obj, archive_reader& ctx, game_version version) {
-		vob::parse(obj, ctx, version);
-		obj.radius = ctx.read_float();   // radius
-		obj.duration = ctx.read_float(); // timeSec
-		obj.amplitude = ctx.read_vec3(); // amplitudeCM
+	void TouchDamage::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+		VirtualObject::load(r, version);
+		this->damage = r.read_float();                                    // damage
+		this->barrier = r.read_bool();                                    // Barrier
+		this->blunt = r.read_bool();                                      // Blunt
+		this->edge = r.read_bool();                                       // Edge
+		this->fire = r.read_bool();                                       // Fire
+		this->fly = r.read_bool();                                        // Fly
+		this->magic = r.read_bool();                                      // Magic
+		this->point = r.read_bool();                                      // Point
+		this->fall = r.read_bool();                                       // Fall
+		this->repeat_delay_sec = r.read_float();                          // damageRepeatDelaySec
+		this->volume_scale = r.read_float();                              // damageVolDownScale
+		this->collision = static_cast<TouchCollisionType>(r.read_enum()); // damageCollType
 	}
 
-	void vobs::npc::parse(vobs::npc& obj, archive_reader& ctx, game_version version) {
-		vob::parse(obj, ctx, version);
+	void Earthquake::parse(Earthquake& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
+	}
 
-		obj.npc_instance = ctx.read_string(); // npcInstance
-		obj.model_scale = ctx.read_vec3();    // modelScale
-		obj.model_fatness = ctx.read_float(); // modelFatness
+	void Earthquake::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+		VirtualObject::load(r, version);
+		this->radius = r.read_float();   // radius
+		this->duration = r.read_float(); // timeSec
+		this->amplitude = r.read_vec3(); // amplitudeCM
+	}
 
-		auto overlay_count = ctx.read_int(); // numOverlays
+	void Npc::parse(vobs::Npc& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
+	}
+
+	void Npc::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+		VirtualObject::load(r, version);
+
+		this->npc_instance = r.read_string(); // npcInstance
+		this->model_scale = r.read_vec3();    // modelScale
+		this->model_fatness = r.read_float(); // modelFatness
+
+		auto overlay_count = r.read_int(); // numOverlays
 		for (auto i = 0; i < overlay_count; ++i) {
-			obj.overlays.push_back(ctx.read_string()); // overlay
+			this->overlays.push_back(r.read_string()); // overlay
 		}
 
-		obj.flags = ctx.read_int();         // flags
-		obj.guild = ctx.read_int();         // guild
-		obj.guild_true = ctx.read_int();    // guildTrue
-		obj.level = ctx.read_int();         // level
-		obj.xp = ctx.read_int();            // xp
-		obj.xp_next_level = ctx.read_int(); // xpnl
-		obj.lp = ctx.read_int();            // lp
+		this->flags = r.read_int();         // flags
+		this->guild = r.read_int();         // guild
+		this->guild_true = r.read_int();    // guildTrue
+		this->level = r.read_int();         // level
+		this->xp = r.read_int();            // xp
+		this->xp_next_level = r.read_int(); // xpnl
+		this->lp = r.read_int();            // lp
 
-		auto talent_count = ctx.read_int(); // numTalents
-		obj.talents.resize(talent_count);
+		auto talent_count = r.read_int(); // numTalents
+		this->talents.resize(talent_count);
 
-		archive_object hdr;
+		ArchiveObject hdr;
 		for (auto i = 0; i < talent_count; ++i) {
-			if (!ctx.read_object_begin(hdr)) // [% oCNpcTalent 0 0]
-				throw parser_error {"vobs::npc"};
+			if (!r.read_object_begin(hdr)) // [% oCNpcTalent 0 0]
+				throw zenkit::ParserError {"vobs::Npc"};
 
 			// empty object
 			if (hdr.class_name == "%") {
-				ctx.skip_object(true);
+				r.skip_object(true);
 				continue;
 			}
 
-			obj.talents[i].talent = ctx.read_int(); // talent
-			obj.talents[i].value = ctx.read_int();  // value
-			obj.talents[i].skill = ctx.read_int();  // skill
+			this->talents[i].talent = r.read_int(); // talent
+			this->talents[i].value = r.read_int();  // value
+			this->talents[i].skill = r.read_int();  // skill
 
-			if (!ctx.read_object_end()) {
-				PX_LOGW("vob_tree: oCNpcTalent object not fully parsed");
-				ctx.skip_object(true);
+			if (!r.read_object_end()) {
+				ZKLOGW("VOb.Npc", "oCNpcTalent object not fully parsed");
+				r.skip_object(true);
 			}
 		}
 
-		obj.fight_tactic = ctx.read_int(); // fightTactic
-		obj.fight_mode = ctx.read_int();   // fightMode
-		obj.wounded = ctx.read_bool();     // wounded
-		obj.mad = ctx.read_bool();         // mad
-		obj.mad_time = ctx.read_int();     // madTime
-		obj.player = ctx.read_bool();      // player
+		this->fight_tactic = r.read_int(); // fightTactic
+		this->fight_mode = r.read_int();   // fightMode
+		this->wounded = r.read_bool();     // wounded
+		this->mad = r.read_bool();         // mad
+		this->mad_time = r.read_int();     // madTime
+		this->player = r.read_bool();      // player
 
-		for (auto i = 0; i < 8; ++i) {
-			obj.attributes[i] = ctx.read_int(); // atr0
+		for (int& attribute : this->attributes) {
+			attribute = r.read_int(); // atr0
 		}
 
-		if (version == game_version::gothic_2) {
+		if (version == GameVersion::GOTHIC_2) {
 			// TODO: what are these (hc<n>)?
-			for (auto i = 0; i < 4; ++i) {
-				obj.hcs[i] = ctx.read_int(); // hc1
+			for (int& hc : this->hcs) {
+				hc = r.read_int(); // hc1
 			}
 		}
 
-		for (auto i = 0; i < 5; ++i) {
-			obj.missions[i] = ctx.read_int(); // mission0
+		for (int& mission : this->missions) {
+			mission = r.read_int(); // mission0
 		}
 
-		obj.start_ai_state = ctx.read_string(); // startAIState
+		this->start_ai_state = r.read_string(); // startAIState
 
-		auto vars = ctx.read_raw_bytes((version == game_version::gothic_1 ? 50 : 100) * 4); // scriptVars
-		for (auto i = 0u; i < vars.limit() / 4; ++i) {
-			obj.aivar[i] = vars.get_int();
+		auto var_count = version == GameVersion::GOTHIC_1 ? 50 : 100;
+		auto vars = r.read_raw(var_count * 4); // scriptVars
+		for (auto i = 0; i < var_count / 4; ++i) {
+			this->aivar[i] = vars->read_int();
 		}
 
-		obj.script_waypoint = ctx.read_string(); // scriptWp
-		obj.attitude = ctx.read_int();           // attitude
-		obj.attitude_temp = ctx.read_int();      // tmpAttitude
-		obj.name_nr = ctx.read_int();            // nameNr
+		this->script_waypoint = r.read_string(); // scriptWp
+		this->attitude = r.read_int();           // attitude
+		this->attitude_temp = r.read_int();      // tmpAttitude
+		this->name_nr = r.read_int();            // nameNr
 
 		// unknown.
-		[[maybe_unused]] auto spells = ctx.read_raw_bytes(4); // spells
+		[[maybe_unused]] auto spells = r.read_raw(4); // spells
 
 		// TODO: News (I don't have a sample.).
-		auto news_count = ctx.read_int(); // NumOfEntries
+		auto news_count = r.read_int(); // NumOfEntries
 		if (news_count != 0) {
-			PX_LOGE("!!! IMPORTANT !!! This save-game contains news entries and cannot be loaded currently. Please "
-			        "open an issue at https://github.com/lmichaelis/phoenix providing your save-game as a ZIP file.");
-			throw parser_error {"vobs::npc"};
+			ZKLOGE("VOb.Npc",
+			       "!!! IMPORTANT !!! This save-game contains news entries and cannot be loaded currently. Please "
+			       "open an issue at https://github.com/GothicKit/phoenix providing your save-game as a ZIP file.");
+			throw zenkit::ParserError {"vobs::Npc"};
 		}
 
-		ctx.skip_object(false); // [carryVob % 0 0]
-		ctx.skip_object(false); // [enemy % 0 0]
+		r.skip_object(false); // [carryVob % 0 0]
+		r.skip_object(false); // [enemy % 0 0]
 
-		obj.move_lock = ctx.read_bool(); // moveLock
+		this->move_lock = r.read_bool(); // moveLock
 
-		if (version == game_version::gothic_1) {
-			for (auto i = 0; i < 9; ++i) {
-				obj.packed[i] = ctx.read_string(); // packed
+		if (version == GameVersion::GOTHIC_1) {
+			for (auto& i : this->packed) {
+				i = r.read_string(); // packed
 			}
 		} else {
-			auto packed = ctx.read_string(); // packed
-			auto it = packed.begin();
+			auto pack = r.read_string(); // packed
+			auto it = pack.begin();
 			auto idx = 0;
 
 			do {
-				auto next = std::find(it, packed.end(), ';');
-				obj.packed[idx++].assign(it, next);
+				auto next = std::find(it, pack.end(), ';');
+				this->packed[idx++].assign(it, next);
 				it = next;
-			} while (it != packed.end() && idx < 9);
+			} while (it != pack.end() && idx < 9);
 		}
 
-		auto item_count = ctx.read_int(); // itemCount
-		obj.items.resize(item_count);
+		auto item_count = r.read_int(); // itemCount
+		this->items.resize(item_count);
 
 		for (auto i = 0; i < item_count; ++i) {
-			if (!ctx.read_object_begin(hdr))
-				throw parser_error {"vobs::npc"};
+			if (!r.read_object_begin(hdr))
+				throw zenkit::ParserError {"vobs::Npc"};
 
-			obj.items[i] = std::make_unique<item>();
-			item::parse(*obj.items[i], ctx, version);
-			obj.items[i]->id = hdr.index;
+			this->items[i] = std::make_unique<Item>();
+			this->items[i]->load(r, version);
+			this->items[i]->id = hdr.index;
 
-			if (!ctx.read_object_end()) {
-				PX_LOGW("vob_tree: oCItem:zCVob object not fully parsed");
-				ctx.skip_object(true);
+			if (!r.read_object_end()) {
+				ZKLOGW("VOb.Npc", "oCItem:zCVob object not fully parsed");
+				r.skip_object(true);
+			}
+
+			if ((this->items[i]->s_flags & 0x200) != 0) {
+				(void) r.read_int(); // shortKey<n> // TODO
 			}
 		}
 
-		auto inv_slot_count = ctx.read_int(); // numInvSlots
-		obj.slots.resize(inv_slot_count);
+		auto inv_slot_count = r.read_int(); // numInvSlots
+		this->slots.resize(inv_slot_count);
 		for (auto i = 0; i < inv_slot_count; ++i) {
-			obj.slots[i].used = ctx.read_bool();   // used
-			obj.slots[i].name = ctx.read_string(); // name
+			this->slots[i].used = r.read_bool();   // used
+			this->slots[i].name = r.read_string(); // name
 
-			if (obj.slots[i].used) {
+			if (this->slots[i].used) {
 				// [vob § 0 0]
-				if (!ctx.read_object_begin(hdr) || !ctx.read_object_end())
-					throw parser_error {"vobs::npc"};
-
-				// TODO: Warn if not found.
-				for (auto j = 0u; j < obj.items.size(); ++j) {
-					if (obj.items[j]->id == hdr.index) {
-						obj.slots[i].item_index = j;
-						break;
-					}
+				if (!r.read_object_begin(hdr)) {
+					throw zenkit::ParserError {"VOb.Npc"};
 				}
 
-				obj.slots[i].in_inventory = ctx.read_bool(); // inInv
+				if (hdr.class_name == "\xA7") {
+					// This item is a reference.
+					// TODO: Warn if not found.
+					for (const auto& item : this->items) {
+						if (item->id == hdr.index) {
+							this->slots[i].item = item.get();
+							break;
+						}
+					}
+				} else {
+					// This item is embedded.
+					this->items.push_back(std::make_unique<Item>());
+
+					auto& item = this->items.back();
+					item->load(r, version);
+					item->id = hdr.index;
+
+					this->slots[i].item = item.get();
+				}
+
+				if (!r.read_object_end()) {
+					ZKLOGW("VOb.Npc", "Inventory slot not fully parsed.");
+					r.skip_object(true);
+				}
+
+				this->slots[i].in_inventory = r.read_bool(); // inInv
 			}
 		}
 
-		obj.current_state_valid = ctx.read_bool();      // curState.valid
-		obj.current_state_name = ctx.read_string();     // curState.name
-		obj.current_state_index = ctx.read_int();       // curState.prgIndex
-		obj.current_state_is_routine = ctx.read_bool(); // curState.isRtnState
-		obj.next_state_valid = ctx.read_bool();         // nextState.valid
-		obj.next_state_name = ctx.read_string();        // nextState.name
-		obj.next_state_index = ctx.read_int();          // nextState.prgIndex
-		obj.next_state_is_routine = ctx.read_bool();    // nextState.isRtnState
-		obj.last_ai_state = ctx.read_int();             // lastAIState
-		obj.has_routine = ctx.read_bool();              // hasRoutine
-		obj.routine_changed = ctx.read_bool();          // rtnChanged
-		obj.routine_overlay = ctx.read_bool();          // rtnOverlay
-		obj.routine_overlay_count = ctx.read_int();     // rtnOverlayCount
-		obj.walkmode_routine = ctx.read_int();          // walkmode_routine
-		obj.weaponmode_routine = ctx.read_bool();       // weaponmode_routine
-		obj.start_new_routine = ctx.read_bool();        // startNewRoutine
-		obj.ai_state_driven = ctx.read_int();           // aiStateDriven
-		obj.ai_state_pos = ctx.read_vec3();             // aiStatePos
-		obj.current_routine = ctx.read_string();        // curRoutine
-		obj.respawn = ctx.read_bool();                  // respawn
-		obj.respawn_time = ctx.read_int();              // respawnTime
+		this->current_state_valid = r.read_bool();      // curState.valid
+		this->current_state_name = r.read_string();     // curState.name
+		this->current_state_index = r.read_int();       // curState.prgIndex
+		this->current_state_is_routine = r.read_bool(); // curState.isRtnState
+		this->next_state_valid = r.read_bool();         // nextState.valid
+		this->next_state_name = r.read_string();        // nextState.name
+		this->next_state_index = r.read_int();          // nextState.prgIndex
+		this->next_state_is_routine = r.read_bool();    // nextState.isRtnState
+		this->last_ai_state = r.read_int();             // lastAIState
+		this->has_routine = r.read_bool();              // hasRoutine
+		this->routine_changed = r.read_bool();          // rtnChanged
+		this->routine_overlay = r.read_bool();          // rtnOverlay
+		this->routine_overlay_count = r.read_int();     // rtnOverlayCount
+		this->walkmode_routine = r.read_int();          // walkmode_routine
+		this->weaponmode_routine = r.read_bool();       // weaponmode_routine
+		this->start_new_routine = r.read_bool();        // startNewRoutine
+		this->ai_state_driven = r.read_int();           // aiStateDriven
+		this->ai_state_pos = r.read_vec3();             // aiStatePos
+		this->current_routine = r.read_string();        // curRoutine
+		this->respawn = r.read_bool();                  // respawn
+		this->respawn_time = r.read_int();              // respawnTime
 
-		auto protection = ctx.read_raw_bytes(sizeof(int32_t) * 8); // protection
-		for (auto i = 0; i < 8; ++i) {
-			obj.protection[i] = protection.get_int();
+		auto prot = r.read_raw(sizeof(int32_t) * 8); // protection
+		for (int& i : this->protection) {
+			i = prot->read_int();
 		}
 
-		if (version == game_version::gothic_2) {
-			obj.bs_interruptable_override = ctx.read_int(); // bsInterruptableOverride
-			obj.npc_type = ctx.read_int();                  // npcType
-			obj.spell_mana = ctx.read_int();                // spellMana
+		if (version == GameVersion::GOTHIC_2) {
+			this->bs_interruptable_override = r.read_int(); // bsInterruptableOverride
+			this->npc_type = r.read_int();                  // npcType
+			this->spell_mana = r.read_int();                // spellMana
 		}
 	}
-} // namespace phoenix::vobs
+
+	void ScreenEffect::load(ReadArchive& r, GameVersion version) {
+		VirtualObject::load(r, version);
+
+		if (r.is_save_game()) {
+			auto count = version == GameVersion::GOTHIC_1 ? 5 : 12;
+			(void) r.read_raw(count * 4); // blend
+			(void) r.read_raw(count * 4); // cinema
+			(void) r.read_raw(count * 4); // fovMorph
+			(void) r.read_vec2();         // fovSaved
+			(void) r.read_vec2();         // fovSaved1st
+		}
+	}
+} // namespace zenkit::vobs

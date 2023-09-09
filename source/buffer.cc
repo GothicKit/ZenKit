@@ -1,11 +1,10 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <cctype>
-#include <cstddef>
 #include <phoenix/buffer.hh>
 
 #include <mio/mmap.hpp>
 
+#include <cstddef>
 #include <fstream>
 
 namespace phoenix {
@@ -491,7 +490,7 @@ namespace phoenix {
 	}
 
 	template <typename T, typename>
-	PHOENIX_INTERNAL void buffer::_put_t(T value) {
+	void buffer::_put_t(T value) {
 		if (this->remaining() < sizeof(T)) {
 			throw buffer_overflow {this->position(), sizeof(T)};
 		}
@@ -501,7 +500,7 @@ namespace phoenix {
 	}
 
 	template <typename T, typename>
-	PHOENIX_INTERNAL T buffer::_get_t(std::uint64_t pos) const {
+	T buffer::_get_t(std::uint64_t pos) const {
 		if (pos + sizeof(T) > limit()) {
 			throw buffer_underflow {pos, sizeof(T)};
 		}
@@ -512,7 +511,7 @@ namespace phoenix {
 	}
 
 	template <typename T, typename>
-	PHOENIX_INTERNAL T buffer::_get_t() {
+	T buffer::_get_t() {
 		auto tmp = this->_get_t<T>(this->position());
 		_m_position += sizeof(T);
 		return tmp;

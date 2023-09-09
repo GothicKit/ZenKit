@@ -1,15 +1,15 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/vdfs.hh>
+#include <zenkit/Vfs.hh>
 
 #include <iostream>
 
-void print_entries(const std::set<phoenix::vdf_entry, phoenix::vdf_entry_comparator>& entries) {
+void print_entries(const std::set<zenkit::VfsNode, zenkit::VfsNodeComparator>& entries) {
 	for (auto& e : entries) {
-		if (e.is_directory()) {
-			print_entries(e.children);
+		if (e.type() == zenkit::VfsNodeType::DIRECTORY) {
+			print_entries(e.children());
 		} else {
-			std::cout << "    " << e.name << ": " << e.size << " bytes\n";
+			std::cout << e.name() << "\n";
 		}
 	}
 }
@@ -20,12 +20,8 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 
-	auto vdf = phoenix::vdf_file::open(argv[1]);
-	auto& header = vdf.header;
-
-	std::cout << "Description: " << header.comment << "\n"
-	          << "Timestamp (Unix): " << header.timestamp << "\nEntries:\n";
-
-	print_entries(vdf.entries);
+	zenkit::Vfs vfs {};
+	vfs.mount_disk(argv[1]);
+	print_entries(vfs.root().children());
 	return 0;
 }

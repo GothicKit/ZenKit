@@ -1,35 +1,50 @@
-// Copyright © 2023 Luis Michaelis <me@lmichaelis.de>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/buffer.hh>
-#include <phoenix/math.hh>
+#include "zenkit/Boxes.hh"
+#include "zenkit/Stream.hh"
+
+#include "phoenix/buffer.hh"
 
 #include <limits>
 
-namespace phoenix {
-	bounding_box bounding_box::parse(buffer& in) {
-		bounding_box bbox {};
-		bbox.min = in.get_vec3();
-		bbox.max = in.get_vec3();
+namespace zenkit {
+	AxisAlignedBoundingBox AxisAlignedBoundingBox::parse(phoenix::buffer& in) {
+		AxisAlignedBoundingBox bbox {};
+
+		auto r = Read::from(&in);
+		bbox.load(r.get());
+
 		return bbox;
 	}
 
-	obb obb::parse(buffer& in) {
-		obb bbox {};
-		bbox.center = in.get_vec3();
-		bbox.axes[0] = in.get_vec3();
-		bbox.axes[1] = in.get_vec3();
-		bbox.axes[2] = in.get_vec3();
-		bbox.half_width = in.get_vec3();
+	void AxisAlignedBoundingBox::load(Read* r) {
+		this->min = r->read_vec3();
+		this->max = r->read_vec3();
+	}
 
-		auto child_count = in.get_ushort();
-		for (int i = 0; i < child_count; ++i) {
-			bbox.children.push_back(parse(in));
+	OrientedBoundingBox OrientedBoundingBox::parse(phoenix::buffer& in) {
+		OrientedBoundingBox bbox {};
+
+		auto r = Read::from(&in);
+		bbox.load(r.get());
+
+		return bbox;
+	}
+
+	void OrientedBoundingBox::load(zenkit::Read* r) {
+		center = r->read_vec3();
+		axes[0] = r->read_vec3();
+		axes[1] = r->read_vec3();
+		axes[2] = r->read_vec3();
+		half_width = r->read_vec3();
+
+		children.resize(r->read_ushort());
+		for (auto& child : children) {
+			child.load(r);
 		}
-
-		return bbox;
 	}
 
-	bounding_box obb::as_bbox() const {
+	AxisAlignedBoundingBox OrientedBoundingBox::as_bbox() const {
 		const float sign[8][3] = {{-1, -1, -1},
 		                          {-1, -1, +1},
 		                          {-1, +1, -1},
@@ -39,7 +54,7 @@ namespace phoenix {
 		                          {+1, +1, -1},
 		                          {+1, +1, +1}};
 
-		bounding_box box {};
+		AxisAlignedBoundingBox box {};
 		box.min = {std::numeric_limits<float>::max(),
 		           std::numeric_limits<float>::max(),
 		           std::numeric_limits<float>::max()};
@@ -69,4 +84,4 @@ namespace phoenix {
 
 		return box;
 	}
-} // namespace phoenix
+} // namespace zenkit

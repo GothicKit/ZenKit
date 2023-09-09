@@ -1,19 +1,24 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include "Api.hh"
-#include <phoenix/buffer.hh>
-#include <phoenix/mesh.hh>
-#include <phoenix/world/bsp_tree.hh>
-#include <phoenix/world/vob_tree.hh>
-#include <phoenix/world/way_net.hh>
+#include "zenkit/Library.hh"
+#include "zenkit/Mesh.hh"
+#include "zenkit/Misc.hh"
+
+#include "zenkit/world/BspTree.hh"
+#include "zenkit/world/VobTree.hh"
+#include "zenkit/world/WayNet.hh"
 
 #include <memory>
 #include <vector>
 
 namespace phoenix {
+	class buffer;
+}
+
+namespace zenkit {
 	/// \brief Represents a ZenGin world.
-	class world {
+	class World {
 	public:
 		/// \brief Parses a world from the data in the given buffer.
 		///
@@ -28,7 +33,7 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] PHOENIX_API static world parse(buffer& buf, game_version version);
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static World parse(phoenix::buffer& buf, GameVersion version);
 
 		/// \brief Parses a world from the data in the given buffer.
 		///
@@ -49,7 +54,7 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] PHOENIX_API static world parse(buffer& buf);
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static World parse(phoenix::buffer& buf);
 
 		/// \brief Parses a world from the data in the given buffer.
 		/// \param[in,out] buf The buffer to read from (by rvalue-reference).
@@ -57,29 +62,29 @@ namespace phoenix {
 		/// \return The parsed world object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] PHOENIX_API inline static world parse(buffer&& buf, game_version version) {
-			return world::parse(buf, version);
-		}
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static World parse(phoenix::buffer&& buf, GameVersion version);
 
 		/// \brief Parses a world from the data in the given buffer.
 		/// \param[in,out] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed world object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] PHOENIX_API inline static world parse(buffer&& buf) {
-			return world::parse(buf);
-		}
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static World parse(phoenix::buffer&& buf);
 
+		ZKAPI void load(Read* r);
+		ZKAPI void load(Read* r, GameVersion version);
+
+	public:
 		/// \brief The list of VObs defined in this world.
-		std::vector<std::unique_ptr<vob>> world_vobs;
+		std::vector<std::unique_ptr<VirtualObject>> world_vobs;
 
 		/// \brief The mesh of the world.
-		mesh world_mesh;
+		Mesh world_mesh;
 
 		/// \brief The BSP-tree of this world.
-		bsp_tree world_bsp_tree;
+		BspTree world_bsp_tree;
 
 		/// \brief The way-net of this world.
-		way_net world_way_net;
+		WayNet world_way_net;
 	};
-} // namespace phoenix
+} // namespace zenkit

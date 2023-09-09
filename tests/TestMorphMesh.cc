@@ -1,12 +1,14 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include <doctest/doctest.h>
-#include <phoenix/morph_mesh.hh>
+#include <zenkit/MorphMesh.hh>
+#include <zenkit/Stream.hh>
 
-TEST_SUITE("morph_mesh") {
-	TEST_CASE("morph_mesh(parse:?)") {
-		auto in = phoenix::buffer::mmap("./samples/morph0.mmb");
-		auto mesh = phoenix::morph_mesh::parse(in);
+TEST_SUITE("MorphMesh") {
+	TEST_CASE("MorphMesh.load(GOTHIC?)") {
+		auto in = zenkit::Read::from("./samples/morph0.mmb");
+		zenkit::MorphMesh mesh {};
+		mesh.load(in.get());
 
 		CHECK_EQ(mesh.name, "ITRWSMALLBOW");
 		CHECK_EQ(mesh.morph_positions.size(), 28);
@@ -47,11 +49,11 @@ TEST_SUITE("morph_mesh") {
 		CHECK_EQ(mesh.sources[1].file_name, "ITRWSMALLBOWSHOOT.ASC");
 	}
 
-	TEST_CASE("model_mesh(parse:g1)" * doctest::skip()) {
+	TEST_CASE("MorphMesh.load(GOTHIC1)" * doctest::skip()) {
 		// TODO: Stub
 	}
 
-	TEST_CASE("model_mesh(parse:g2)" * doctest::skip()) {
+	TEST_CASE("MorphMesh.load(GOTHIC2)" * doctest::skip()) {
 		// TODO: Stub
 	}
 }

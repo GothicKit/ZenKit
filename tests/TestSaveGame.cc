@@ -1,14 +1,14 @@
-// Copyright © 2022 Luis Michaelis <me@lmichaelis.de>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include <doctest/doctest.h>
-#include <phoenix/save_game.hh>
-#include <phoenix/world.hh>
+#include <zenkit/SaveGame.hh>
+#include <zenkit/World.hh>
 
-using namespace phoenix::unstable;
+TEST_SUITE("SaveGame") {
+	TEST_CASE("SaveGame.load(GOTHIC1)") {
+		zenkit::unstable::SaveGame save {};
+		save.load("./samples/G1/Save");
 
-TEST_SUITE("save_game") {
-	TEST_CASE("save_game(parse:g1)") {
-		auto save = save_game::parse("./samples/G1/Save");
 		CHECK_EQ(save.metadata.title, "sds");
 		CHECK_EQ(save.metadata.world, "WORLD");
 		CHECK_EQ(save.metadata.time_day, 0);
@@ -24,13 +24,16 @@ TEST_SUITE("save_game") {
 		CHECK_EQ(save.script.minute, 6);
 
 		// Try to parse the world data.
-		(void) phoenix::world::parse(*save.open_world_save(save.current_world), phoenix::game_version::gothic_1);
+		zenkit::World wld {};
+		wld.load(save.open_world(save.current_world)->get(), zenkit::GameVersion::GOTHIC_1);
 
 		// TODO: Add more checks
 	}
 
-	TEST_CASE("save_game(parse:g1/fast)") {
-		auto save = save_game::parse("./samples/G1/SaveFast");
+	TEST_CASE("SaveGame.load(GOTHIC1,BINARY)") {
+		zenkit::unstable::SaveGame save {};
+		save.load("./samples/G1/SaveFast");
+
 		CHECK_EQ(save.metadata.title, "sds_fast");
 		CHECK_EQ(save.metadata.world, "WORLD");
 		CHECK_EQ(save.metadata.time_day, 0);
@@ -46,13 +49,16 @@ TEST_SUITE("save_game") {
 		CHECK_EQ(save.script.minute, 6);
 
 		// Try to parse the world data.
-		(void) phoenix::world::parse(*save.open_world_save(save.current_world), phoenix::game_version::gothic_1);
+		zenkit::World wld {};
+		wld.load(save.open_world(save.current_world)->get(), zenkit::GameVersion::GOTHIC_1);
 
 		// TODO: Add more checks
 	}
 
-	TEST_CASE("save_game(parse:g2)") {
-		auto save = save_game::parse("./samples/G2/Save");
+	TEST_CASE("SaveGame.load(GOTHIC2)") {
+		zenkit::unstable::SaveGame save {};
+		save.load("./samples/G2/Save");
+
 		CHECK_EQ(save.metadata.title, "uwuowo");
 		CHECK_EQ(save.metadata.world, "NEWWORLD");
 		CHECK_EQ(save.metadata.time_day, 0);
@@ -70,12 +76,15 @@ TEST_SUITE("save_game") {
 		CHECK_EQ(save.script.hour, 12);
 		CHECK_EQ(save.script.minute, 28);
 
-		(void) phoenix::world::parse(*save.open_world_save(save.current_world), phoenix::game_version::gothic_2);
+		zenkit::World wld {};
+		wld.load(save.open_world(save.current_world)->get(), zenkit::GameVersion::GOTHIC_2);
 		// TODO: Add more checks
 	}
 
-	TEST_CASE("save_game(parse:g2/fast)") {
-		auto save = save_game::parse("./samples/G2/SaveFast");
+	TEST_CASE("SaveGame.load(GOTHIC2,BINARY)") {
+		zenkit::unstable::SaveGame save {};
+		save.load("./samples/G2/SaveFast");
+
 		CHECK_EQ(save.metadata.title, "inminevalley");
 		CHECK_EQ(save.metadata.world, "OLDWORLD");
 		CHECK_EQ(save.metadata.time_day, 0);
@@ -93,7 +102,8 @@ TEST_SUITE("save_game") {
 		CHECK_EQ(save.script.hour, 0);
 		CHECK_EQ(save.script.minute, 0);
 
-		(void) phoenix::world::parse(*save.open_world_save(save.current_world), phoenix::game_version::gothic_2);
+		zenkit::World wld {};
+		wld.load(save.open_world(save.current_world)->get(), zenkit::GameVersion::GOTHIC_2);
 		// TODO: Add more checks
 	}
 }

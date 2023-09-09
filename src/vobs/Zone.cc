@@ -1,40 +1,53 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/vobs/zone.hh>
+#include "zenkit/vobs/Zone.hh"
+#include "zenkit/Archive.hh"
 
-namespace phoenix::vobs {
-	void zone_music::parse(zone_music& obj, archive_reader& ctx, game_version version) {
-		vob::parse(obj, ctx, version);
-		obj.enabled = ctx.read_bool();   // enabled
-		obj.priority = ctx.read_int();   // priority
-		obj.ellipsoid = ctx.read_bool(); // ellipsoid
-		obj.reverb = ctx.read_float();   // reverbLevel
-		obj.volume = ctx.read_float();   // volumeLevel
-		obj.loop = ctx.read_bool();      // loop
+namespace zenkit::vobs {
+	void ZoneMusic::parse(ZoneMusic& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
+	}
 
-		if (ctx.is_save_game()) {
+	void ZoneMusic::load(ReadArchive& r, GameVersion version) {
+		VirtualObject::load(r, version);
+		this->enabled = r.read_bool();   // enabled
+		this->priority = r.read_int();   // priority
+		this->ellipsoid = r.read_bool(); // ellipsoid
+		this->reverb = r.read_float();   // reverbLevel
+		this->volume = r.read_float();   // volumeLevel
+		this->loop = r.read_bool();      // loop
+
+		if (r.is_save_game()) {
 			// In save-games, zones contain extra variables
-			obj.s_local_enabled = ctx.read_bool();       // local_enabled
-			obj.s_day_entrance_done = ctx.read_bool();   // dayEntranceDone
-			obj.s_night_entrance_done = ctx.read_bool(); // nightEntranceDone
+			this->s_local_enabled = r.read_bool();       // local_enabled
+			this->s_day_entrance_done = r.read_bool();   // dayEntranceDone
+			this->s_night_entrance_done = r.read_bool(); // nightEntranceDone
 		}
 	}
 
-	void zone_far_plane::parse(zone_far_plane& obj, archive_reader& ctx, game_version version) {
-		vob::parse(obj, ctx, version);
-		obj.vob_far_plane_z = ctx.read_float();        // vobFarPlaneZ
-		obj.inner_range_percentage = ctx.read_float(); // innerRangePerc
+	void ZoneFarPlane::parse(ZoneFarPlane& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
 	}
 
-	void zone_fog::parse(zone_fog& obj, archive_reader& ctx, game_version version) {
-		vob::parse(obj, ctx, version);
-		obj.range_center = ctx.read_float();           // fogRangeCenter
-		obj.inner_range_percentage = ctx.read_float(); // innerRangePerc
-		obj.color = ctx.read_color();                  // fogColor
+	void ZoneFarPlane::load(ReadArchive& r, GameVersion version) {
+		VirtualObject::load(r, version);
+		this->vob_far_plane_z = r.read_float();        // vobFarPlaneZ
+		this->inner_range_percentage = r.read_float(); // innerRangePerc
+	}
 
-		if (version == game_version::gothic_2) {
-			obj.fade_out_sky = ctx.read_bool();   // fadeOutSky
-			obj.override_color = ctx.read_bool(); // overrideColor
+	void ZoneFog::parse(ZoneFog& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
+	}
+
+	void ZoneFog::load(ReadArchive& r, GameVersion version) {
+		VirtualObject::load(r, version);
+		this->range_center = r.read_float();           // fogRangeCenter
+		this->inner_range_percentage = r.read_float(); // innerRangePerc
+		this->color = r.read_color();                  // fogColor
+
+		if (version == GameVersion::GOTHIC_2) {
+			this->fade_out_sky = r.read_bool();   // fadeOutSky
+			this->override_color = r.read_bool(); // overrideColor
 		}
 	}
-} // namespace phoenix::vobs
+} // namespace zenkit::vobs

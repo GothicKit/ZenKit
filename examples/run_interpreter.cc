@@ -1,7 +1,9 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include <phoenix/ext/daedalus_classes.hh>
+#include <phoenix/script.hh>
 #include <phoenix/vm.hh>
+#include <zenkit/Logger.hh>
 
 #include <iostream>
 
@@ -10,6 +12,8 @@ int main(int argc, char** argv) {
 		std::cerr << "Please provide a path to GOTHIC.DAT.";
 		return -1;
 	}
+
+	zenkit::Logger::set_default(zenkit::LogLevel::DEBUG);
 
 	phoenix::vm vm {phoenix::script::parse(argv[1])};
 	phoenix::register_all_script_classes(vm); // needed for Gothic scripts

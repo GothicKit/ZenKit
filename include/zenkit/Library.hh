@@ -1,30 +1,34 @@
-// Copyright © 2023 Luis Michaelis <me@lmichaelis.de>
+// Copyright © 2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 
-#ifndef PHOENIX_STATIC
+#ifdef ZKDYN
 	#if defined(_WIN32) || defined(__CYGWIN__)
-		#ifdef PHOENIX_EXPORTS
+		#ifdef _ZKEXPORT
 			#ifdef __GNUC__
-				#define PHOENIX_API __attribute__((dllexport))
+				#define ZKAPI __attribute__((dllexport))
 			#else
-				#define PHOENIX_API __declspec(dllexport)
+				#define ZKAPI __declspec(dllexport)
 			#endif
 		#else
 			#ifdef __GNUC__
-				#define PHOENIX_API __attribute__((dllimport))
+				#define ZKAPI __attribute__((dllimport))
 			#else
-				#define PHOENIX_API __declspec(dllimport)
+				#define ZKAPI __declspec(dllimport)
 			#endif
 		#endif
-		#define PHOENIX_INTERNAL
+		#define ZKINT
 	#else
-		#define PHOENIX_API __attribute__((visibility("default")))
-		#define PHOENIX_INTERNAL __attribute__((visibility("hidden")))
+		#define ZKAPI __attribute__((visibility("default")))
+		#define ZKINT __attribute__((visibility("hidden")))
 	#endif
 #else
-	#define PHOENIX_API
-	#define PHOENIX_INTERNAL
+	#define ZKAPI
+	#define ZKINT
 #endif
 
-#define PHOENIX_DEPRECATED(reason) [[deprecated(reason)]]
+#ifndef ZKNO_REM
+	#define ZKREM(reason) [[deprecated(reason)]]
+#else
+	#define ZKREM(reason)
+#endif

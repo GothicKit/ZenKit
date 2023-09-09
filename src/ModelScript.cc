@@ -1,136 +1,136 @@
-// Copyright © 2023 Luis Michaelis <me@lmichaelis.de>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/model_script.hh>
-#include <phoenix/phoenix.hh>
+#include "zenkit/ModelScript.hh"
+#include "zenkit/Date.hh"
+#include "zenkit/Stream.hh"
 
-#include "model_script_dsl.hh"
+#include "Internal.hh"
+#include "ModelScriptDsl.hh"
 
-#include <iostream>
 #include <unordered_map>
 
-namespace phoenix {
+namespace zenkit {
+	enum class ModelScriptBinaryChunkType : uint16_t {
+		// model_mesh = 0xD000,
+		ROOT = 0xF000,
+		END = 0xFFFF,
+		SOURCE = 0xF100,
+		// model = 0xF200,
+		// model_end = 0xF2FF,
+		MESH_AND_TREE = 0xF300,
+		REGISTER_MESH = 0xF400,
+		// animation_enum = 0xF500,
+		// animation_enum_end = 0xF5FF,
+		// CHUNK_ANI_MAX_FPS           = 0xF510,
+		ANIMATION = 0xF520,
+		ANIMATION_ALIAS = 0xF530,
+		ANIMATION_BLEND = 0xF540,
+		// CHUNK_ANI_SYNC              = 0xF550,
+		// CHUNK_ANI_BATCH             = 0xF560,
+		ANIMATION_COMBINE = 0xF570,
+		ANIMATION_DISABLE = 0xF580,
+		MODEL_TAG = 0xF590,
+		ANIMATION_EVENTS = 0xF5A0,
+		// animation_events_end = 0xF5AF,
+		EVENT_SFX = 0xF5A1,
+		EVENT_SFX_GROUND = 0xF5A2,
+		EVENT_TAG = 0xF5A3,
+		EVENT_PFX = 0xF5A4,
+		EVENT_PFX_STOP = 0xF5A5,
+		// CHUNK_EVENT_PFX_GRND        = 0xF5A6,
+		// CHUNK_EVENT_SET_MESH        = 0xF5A7,
+		// CHUNK_EVENT_SWAP_MESH       = 0xF5A8,
+		EVENT_MM_ANI = 0xF5A9,
+		EVENT_CAMERA_TREMOR = 0xF5AA,
+		UNKNOWN,
+	};
+
+	static const std::unordered_map<std::string, MdsEventType> event_types {
+	    {"DEF_CREATE_ITEM", MdsEventType::ITEM_CREATE},
+	    {"DEF_INSERT_ITEM", MdsEventType::ITEM_INSERT},
+	    {"DEF_REMOVE_ITEM", MdsEventType::ITEM_REMOVE},
+	    {"DEF_DESTROY_ITEM", MdsEventType::ITEM_DESTROY},
+	    {"DEF_PLACE_ITEM", MdsEventType::ITEM_PLACE},
+	    {"DEF_EXCHANGE_ITEM", MdsEventType::ITEM_EXCHANGE},
+	    {"DEF_FIGHTMODE", MdsEventType::SET_FIGHT_MODE},
+	    {"DEF_PLACE_MUNITION", MdsEventType::MUNITION_PLACE},
+	    {"DEF_REMOVE_MUNITION", MdsEventType::MUNITION_REMOVE},
+	    {"DEF_DRAWSOUND", MdsEventType::SOUND_DRAW},
+	    {"DEF_UNDRAWSOUND", MdsEventType::SOUND_UNDRAW},
+	    {"DEF_SWAPMESH", MdsEventType::MESH_SWAP},
+	    {"DEF_DRAWTORCH", MdsEventType::TORCH_DRAW},
+	    {"DEF_INV_TORCH", MdsEventType::TORCH_INVENTORY},
+	    {"DEF_DROP_TORCH", MdsEventType::TORCH_DROP},
+	    {"DEF_HIT_LIMB", MdsEventType::HIT_LIMB},
+	    {"HIT_LIMB", MdsEventType::HIT_LIMB},
+	    {"DEF_HIT_DIR", MdsEventType::HIT_DIRECTION},
+	    {"DEF_DIR", MdsEventType::HIT_DIRECTION}, // TODO: Validate this!
+	    {"DEF_DAM_MULTIPLY", MdsEventType::DAMAGE_MULTIPLIER},
+	    {"DEF_PAR_FRAME", MdsEventType::PARRY_FRAME},
+	    {"DEF_OPT_FRAME", MdsEventType::OPTIMAL_FRAME},
+	    {"DEF_HIT_END", MdsEventType::HIT_END},
+	    {"DEF_WINDOW", MdsEventType::COMBO_WINDOW},
+	};
+
 	namespace mds {
-		enum class parser_chunk : uint16_t {
-			model_mesh = 0xD000,
-			model_script = 0xF000,
-			model_script_end = 0xFFFF,
-			source = 0xF100,
-			model = 0xF200,
-			model_end = 0xF2FF,
-			mesh_and_tree = 0xF300,
-			register_mesh = 0xF400,
-			animation_enum = 0xF500,
-			animation_enum_end = 0xF5FF,
-			// CHUNK_ANI_MAX_FPS           = 0xF510,
-			animation = 0xF520,
-			animation_alias = 0xF530,
-			animation_blend = 0xF540,
-			// CHUNK_ANI_SYNC              = 0xF550,
-			// CHUNK_ANI_BATCH             = 0xF560,
-			animation_combination = 0xF570,
-			animation_disable = 0xF580,
-			model_tag = 0xF590,
-			animation_events = 0xF5A0,
-			animation_events_end = 0xF5AF,
-			event_sfx = 0xF5A1,
-			event_sfx_ground = 0xF5A2,
-			event_tag = 0xF5A3,
-			event_pfx = 0xF5A4,
-			event_pfx_stop = 0xF5A5,
-			// CHUNK_EVENT_PFX_GRND        = 0xF5A6,
-			// CHUNK_EVENT_SET_MESH        = 0xF5A7,
-			// CHUNK_EVENT_SWAP_MESH       = 0xF5A8,
-			event_morph_mesh_animation = 0xF5A9,
-			event_camera_tremor = 0xF5AA,
-			error,
-			unknown,
-		};
-
-		static const std::unordered_map<std::string, mds::event_tag_type> event_types {
-		    {"DEF_CREATE_ITEM", event_tag_type::create_item},
-		    {"DEF_INSERT_ITEM", event_tag_type::insert_item},
-		    {"DEF_REMOVE_ITEM", event_tag_type::remove_item},
-		    {"DEF_DESTROY_ITEM", event_tag_type::destroy_item},
-		    {"DEF_PLACE_ITEM", event_tag_type::place_item},
-		    {"DEF_EXCHANGE_ITEM", event_tag_type::exchange_item},
-		    {"DEF_FIGHTMODE", event_tag_type::fight_mode},
-		    {"DEF_PLACE_MUNITION", event_tag_type::place_munition},
-		    {"DEF_REMOVE_MUNITION", event_tag_type::remove_munition},
-		    {"DEF_DRAWSOUND", event_tag_type::draw_sound},
-		    {"DEF_UNDRAWSOUND", event_tag_type::undraw_sound},
-		    {"DEF_SWAPMESH", event_tag_type::swap_mesh},
-		    {"DEF_DRAWTORCH", event_tag_type::draw_torch},
-		    {"DEF_INV_TORCH", event_tag_type::inventory_torch},
-		    {"DEF_DROP_TORCH", event_tag_type::drop_torch},
-		    {"DEF_HIT_LIMB", event_tag_type::hit_limb},
-		    {"HIT_LIMB", event_tag_type::hit_limb},
-		    {"DEF_HIT_DIR", event_tag_type::hit_direction},
-		    {"DEF_DIR", event_tag_type::hit_direction}, // TODO: Validate this!
-		    {"DEF_DAM_MULTIPLY", event_tag_type::dam_multiply},
-		    {"DEF_PAR_FRAME", event_tag_type::par_frame},
-		    {"DEF_OPT_FRAME", event_tag_type::opt_frame},
-		    {"DEF_HIT_END", event_tag_type::hit_end},
-		    {"DEF_WINDOW", event_tag_type::window},
-		};
-
-		event_tag make_event_tag(int32_t frame,
-		                         std::string&& type,
-		                         std::optional<std::string>&& a,
-		                         std::optional<std::string>&& b,
-		                         bool attached) {
-			event_tag evt {};
+		MdsEventTag make_event_tag(int32_t frame,
+		                           std::string&& type,
+		                           std::optional<std::string>&& a,
+		                           std::optional<std::string>&& b,
+		                           bool attached) {
+			MdsEventTag evt {};
 			evt.frame = frame;
 
 			auto tp = event_types.find(type);
 			if (tp == event_types.end()) {
-				evt.type = mds::event_tag_type::unknown;
-				PX_LOGW("model_script: unexpected value for event_tag_type: \"", type, "\"");
+				evt.type = MdsEventType::UNKNOWN;
+				ZKLOGW("ModelScript", "Unexpected value for MdsEventType: \"%s\"", type.c_str());
 			} else {
 				evt.type = tp->second;
 			}
 
 			switch (evt.type) {
-			case mds::event_tag_type::create_item:
-			case mds::event_tag_type::exchange_item:
+			case MdsEventType::ITEM_CREATE:
+			case MdsEventType::ITEM_EXCHANGE:
 				evt.slot = a.value_or("");
 				evt.item = b.value_or("");
 				break;
-			case mds::event_tag_type::insert_item:
-			case mds::event_tag_type::place_munition:
+			case MdsEventType::ITEM_INSERT:
+			case MdsEventType::MUNITION_PLACE:
 				evt.slot = a.value_or("");
 				break;
-			case mds::event_tag_type::fight_mode: {
+			case MdsEventType::SET_FIGHT_MODE: {
 				auto mode = a.value_or("");
 
 				if (mode == "FIST") {
-					evt.fight_mode = mds::event_fight_mode::fist;
+					evt.fight_mode = MdsFightMode::FIST;
 				} else if (mode == "1H" || mode == "1h") {
-					evt.fight_mode = mds::event_fight_mode::one_handed;
+					evt.fight_mode = MdsFightMode::SINGLE_HANDED;
 				} else if (mode == "2H" || mode == "2h") {
-					evt.fight_mode = mds::event_fight_mode::two_handed;
+					evt.fight_mode = MdsFightMode::DUAL_HANDED;
 				} else if (mode == "BOW") {
-					evt.fight_mode = mds::event_fight_mode::bow;
+					evt.fight_mode = MdsFightMode::BOW;
 				} else if (mode == "CBOW") {
-					evt.fight_mode = mds::event_fight_mode::crossbow;
+					evt.fight_mode = MdsFightMode::CROSSBOW;
 				} else if (mode == "MAG") {
-					evt.fight_mode = mds::event_fight_mode::magic;
+					evt.fight_mode = MdsFightMode::MAGIC;
 				} else {
-					evt.fight_mode = mds::event_fight_mode::none;
+					evt.fight_mode = MdsFightMode::NONE;
 				}
 				break;
 			}
-			case mds::event_tag_type::swap_mesh:
+			case MdsEventType::MESH_SWAP:
 				evt.slot = a.value_or("");
 				evt.slot2 = b.value_or("");
 				break;
-			case mds::event_tag_type::hit_limb:
+			case MdsEventType::HIT_LIMB:
 				(void) a.value_or("");
 				break;
-			case mds::event_tag_type::dam_multiply:
-			case mds::event_tag_type::par_frame:
-			case mds::event_tag_type::opt_frame:
-			case mds::event_tag_type::hit_end:
-			case mds::event_tag_type::window: {
+			case MdsEventType::DAMAGE_MULTIPLIER:
+			case MdsEventType::PARRY_FRAME:
+			case MdsEventType::OPTIMAL_FRAME:
+			case MdsEventType::HIT_END:
+			case MdsEventType::COMBO_WINDOW: {
 				auto frames = a.value_or("");
 				std::istringstream stream {frames};
 
@@ -149,323 +149,339 @@ namespace phoenix {
 			return evt;
 		}
 
-		animation_flags animation_flags_from_string(std::string_view str) {
-			uint8_t flags = animation_flags::af_none;
+		AnimationFlags animation_flags_from_string(std::string_view str) {
+			AnimationFlags flags = AnimationFlags::NONE;
 
 			for (char c : str) {
 				switch (c) {
 				case 'M':
-					flags |= animation_flags::af_move;
+					flags |= AnimationFlags::MOVE;
 					break;
 				case 'R':
-					flags |= animation_flags::af_rotate;
+					flags |= AnimationFlags::ROTATE;
 					break;
 				case 'E':
-					flags |= animation_flags::af_queue;
+					flags |= AnimationFlags::QUEUE;
 					break;
 				case 'F':
-					flags |= animation_flags::af_fly;
+					flags |= AnimationFlags::FLY;
 					break;
 				case 'I':
-					flags |= animation_flags::af_idle;
+					flags |= AnimationFlags::IDLE;
+					break;
+				case 'P':
+					flags |= AnimationFlags::INPLACE;
 					break;
 				default:
 					break;
 				}
 			}
 
-			return static_cast<animation_flags>(flags);
+			return flags;
 		}
 	} // namespace mds
 
-	static model_script parse_binary_script(buffer& buf) {
-		model_script script {};
-		mds::parser_chunk type = mds::parser_chunk::unknown;
+	void parse_binary_script(ModelScript& script, Read* r) {
 		int32_t ani_index = -1;
+		proto::read_chunked<ModelScriptBinaryChunkType>(
+		    r,
+		    "ModelScript.Binary",
+		    [&script, &ani_index](Read* c, ModelScriptBinaryChunkType type) {
+			    switch (type) {
+			    case ModelScriptBinaryChunkType::MESH_AND_TREE: {
+				    MdsSkeleton mat {};
+				    mat.disable_mesh = c->read_uint() != 0;
+				    mat.name = c->read_line(false);
+				    script.skeleton = mat;
+				    break;
+			    }
+			    case ModelScriptBinaryChunkType::REGISTER_MESH:
+				    script.meshes.push_back(c->read_line(true));
+				    break;
+			    case ModelScriptBinaryChunkType::ANIMATION: {
+				    MdsAnimation anim {};
+				    anim.name = c->read_line(false);
+				    anim.layer = c->read_uint();
+				    anim.next = c->read_line(false);
+				    anim.blend_in = c->read_float();
+				    anim.blend_out = c->read_float();
+				    anim.flags = mds::animation_flags_from_string(c->read_line(false));
+				    anim.model = c->read_line(false);
+				    anim.direction =
+				        c->read_line(false).find('R') == 0 ? AnimationDirection::BACKWARD : AnimationDirection::FORWARD;
+				    anim.first_frame = c->read_int();
+				    anim.last_frame = c->read_int();
+				    anim.fps = c->read_float();
+				    anim.speed = c->read_float();
+				    anim.collision_volume_scale = c->read_float();
+				    script.animations.push_back(std::move(anim));
+				    ++ani_index;
+				    break;
+			    }
+			    case ModelScriptBinaryChunkType::ANIMATION_ALIAS: {
+				    MdsAnimationAlias alias {};
+				    alias.name = c->read_line(false);
+				    alias.layer = c->read_uint();
+				    alias.next = c->read_line(false);
+				    alias.blend_in = c->read_float();
+				    alias.blend_out = c->read_float();
+				    alias.flags = mds::animation_flags_from_string(c->read_line(false));
+				    alias.alias = c->read_line(false);
+				    alias.direction =
+				        c->read_line(false).find('R') == 0 ? AnimationDirection::BACKWARD : AnimationDirection::FORWARD;
+				    script.aliases.push_back(std::move(alias));
+				    break;
+			    }
+			    case ModelScriptBinaryChunkType::ANIMATION_BLEND: {
+				    MdsAnimationBlend blend {};
+				    blend.name = c->read_line(false);
+				    blend.next = c->read_line(false);
+				    blend.blend_in = c->read_float();
+				    blend.blend_out = c->read_float();
+				    script.blends.push_back(std::move(blend));
+				    break;
+			    }
+			    case ModelScriptBinaryChunkType::ANIMATION_COMBINE: {
+				    MdsAnimationCombine combo {};
+				    combo.name = c->read_line(false);
+				    combo.layer = c->read_uint();
+				    combo.next = c->read_line(false);
+				    combo.blend_in = c->read_float();
+				    combo.blend_out = c->read_float();
+				    combo.flags = mds::animation_flags_from_string(c->read_line(false));
+				    combo.model = c->read_line(false);
+				    combo.last_frame = c->read_int();
+				    script.combinations.push_back(std::move(combo));
+				    break;
+			    }
+			    case ModelScriptBinaryChunkType::ANIMATION_DISABLE:
+				    script.disabled_animations.push_back(c->read_line(false));
+				    break;
+			    case ModelScriptBinaryChunkType::EVENT_CAMERA_TREMOR: {
+				    MdsCameraTremor trem {};
+				    trem.frame = c->read_int();
+				    trem.field1 = c->read_int();
+				    trem.field2 = c->read_int();
+				    trem.field3 = c->read_int();
+				    trem.field4 = c->read_int();
+				    script.animations[ani_index].tremors.push_back(trem);
+				    break;
+			    }
+			    case ModelScriptBinaryChunkType::EVENT_SFX: {
+				    MdsSoundEffect effect {};
+				    effect.frame = c->read_int();
+				    effect.name = c->read_line(false);
+				    effect.range = c->read_float();
+				    effect.empty_slot = c->read_uint() != 0;
+				    script.animations[ani_index].sfx.push_back(std::move(effect));
+				    break;
+			    }
+			    case ModelScriptBinaryChunkType::EVENT_SFX_GROUND: {
+				    MdsSoundEffectGround effect {};
+				    effect.frame = c->read_int();
+				    effect.name = c->read_line(false);
+				    effect.range = c->read_float();
+				    effect.empty_slot = c->read_uint() != 0;
+				    script.animations[ani_index].sfx_ground.push_back(std::move(effect));
+				    break;
+			    }
+			    case ModelScriptBinaryChunkType::MODEL_TAG: {
+				    MdsModelTag tag {};
+				    (void) c->read_int();
 
-		do {
-			type = static_cast<mds::parser_chunk>(buf.get_ushort());
+				    auto event_type = c->read_line(false);
+				    if (event_type != "DEF_HIT_LIMB" && event_type != "HIT_LIMB") {
+					    ZKLOGW("ModelScript", "Unexpected type for modelTag: \"%s\"", event_type.c_str());
+				    }
 
-			auto length = buf.get_uint();
-			auto chunk = buf.extract(length);
+				    tag.bone = c->read_line(true);
+				    script.model_tags.push_back(std::move(tag));
+				    break;
+			    }
+			    case ModelScriptBinaryChunkType::EVENT_TAG: {
+				    MdsEventTag event {};
+				    event.frame = c->read_int();
 
-			switch (type) {
-			case mds::parser_chunk::mesh_and_tree: {
-				mds::skeleton mat {};
-				mat.disable_mesh = chunk.get_uint() != 0;
-				mat.name = chunk.get_line(false);
-				script.skeleton = mat;
-				break;
-			}
-			case mds::parser_chunk::register_mesh:
-				script.meshes.push_back(chunk.get_line());
-				break;
-			case mds::parser_chunk::animation: {
-				mds::animation anim {};
-				anim.name = chunk.get_line(false);
-				anim.layer = chunk.get_uint();
-				anim.next = chunk.get_line(false);
-				anim.blend_in = chunk.get_float();
-				anim.blend_out = chunk.get_float();
-				anim.flags = mds::animation_flags_from_string(chunk.get_line(false));
-				anim.model = chunk.get_line(false);
-				anim.direction = chunk.get_line(false).find('R') == 0 ? mds::animation_direction::backward
-				                                                      : mds::animation_direction::forward;
-				anim.first_frame = chunk.get_int();
-				anim.last_frame = chunk.get_int();
-				anim.fps = chunk.get_float();
-				anim.speed = chunk.get_float();
-				anim.collision_volume_scale = chunk.get_float();
-				script.animations.push_back(std::move(anim));
-				++ani_index;
-				break;
-			}
-			case mds::parser_chunk::animation_alias: {
-				mds::animation_alias alias {};
-				alias.name = chunk.get_line(false);
-				alias.layer = chunk.get_uint();
-				alias.next = chunk.get_line(false);
-				alias.blend_in = chunk.get_float();
-				alias.blend_out = chunk.get_float();
-				alias.flags = mds::animation_flags_from_string(chunk.get_line(false));
-				alias.alias = chunk.get_line(false);
-				alias.direction = chunk.get_line(false).find('R') == 0 ? mds::animation_direction::backward
-				                                                       : mds::animation_direction::forward;
-				script.aliases.push_back(std::move(alias));
-				break;
-			}
-			case mds::parser_chunk::animation_blend: {
-				mds::animation_blending blend {};
-				blend.name = chunk.get_line(false);
-				blend.next = chunk.get_line(false);
-				blend.blend_in = chunk.get_float();
-				blend.blend_out = chunk.get_float();
-				script.blends.push_back(std::move(blend));
-				break;
-			}
-			case mds::parser_chunk::animation_combination: {
-				mds::animation_combination combo {};
-				combo.name = chunk.get_line(false);
-				combo.layer = chunk.get_uint();
-				combo.next = chunk.get_line(false);
-				combo.blend_in = chunk.get_float();
-				combo.blend_out = chunk.get_float();
-				combo.flags = mds::animation_flags_from_string(chunk.get_line(false));
-				combo.model = chunk.get_line(false);
-				combo.last_frame = chunk.get_int();
-				script.combinations.push_back(std::move(combo));
-				break;
-			}
-			case mds::parser_chunk::animation_disable:
-				script.disabled_animations.push_back(chunk.get_line(false));
-				break;
-			case mds::parser_chunk::event_camera_tremor: {
-				mds::event_camera_tremor trem {};
-				trem.frame = chunk.get_int();
-				trem.field1 = chunk.get_int();
-				trem.field2 = chunk.get_int();
-				trem.field3 = chunk.get_int();
-				trem.field4 = chunk.get_int();
-				script.animations[ani_index].tremors.push_back(std::move(trem));
-				break;
-			}
-			case mds::parser_chunk::event_sfx: {
-				mds::event_sfx effect {};
-				effect.frame = chunk.get_int();
-				effect.name = chunk.get_line(false);
-				effect.range = chunk.get_float();
-				effect.empty_slot = chunk.get_uint() != 0;
-				script.animations[ani_index].sfx.push_back(std::move(effect));
-				break;
-			}
-			case mds::parser_chunk::event_sfx_ground: {
-				mds::event_sfx_ground effect {};
-				effect.frame = chunk.get_int();
-				effect.name = chunk.get_line(false);
-				effect.range = chunk.get_float();
-				effect.empty_slot = chunk.get_uint() != 0;
-				script.animations[ani_index].sfx_ground.push_back(std::move(effect));
-				break;
-			}
-			case mds::parser_chunk::model_tag: {
-				mds::model_tag tag {};
-				(void) chunk.get_int();
+				    auto event_type = c->read_line(false);
+				    auto tp = event_types.find(event_type);
+				    if (tp == event_types.end()) {
+					    event.type = MdsEventType::UNKNOWN;
+					    ZKLOGW("ModelScript", "Unexpected value for MdsEventType: \"%s\"", event_type.c_str());
+				    } else {
+					    event.type = tp->second;
+				    }
 
-				auto event_type = chunk.get_line(false);
-				if (event_type != "DEF_HIT_LIMB" && event_type != "HIT_LIMB") {
-					PX_LOGW("model_script: unexpected type for modelTag: \"", event_type, "\"");
-				}
+				    switch (event.type) {
+				    case MdsEventType::ITEM_CREATE:
+				    case MdsEventType::ITEM_EXCHANGE:
+					    event.slot = c->read_line(true);
+					    event.item = c->read_line(true);
+					    break;
+				    case MdsEventType::ITEM_INSERT:
+				    case MdsEventType::MUNITION_PLACE:
+					    event.slot = c->read_line(true);
+					    break;
+				    case MdsEventType::SET_FIGHT_MODE: {
+					    auto mode = c->read_line(true);
 
-				tag.bone = chunk.get_line(true);
-				script.model_tags.push_back(std::move(tag));
-				break;
-			}
-			case mds::parser_chunk::event_tag: {
-				mds::event_tag event {};
-				event.frame = chunk.get_int();
+					    if (mode == "FIST") {
+						    event.fight_mode = MdsFightMode::FIST;
+					    } else if (mode == "1H" || mode == "1h") {
+						    event.fight_mode = MdsFightMode::SINGLE_HANDED;
+					    } else if (mode == "2H" || mode == "2h") {
+						    event.fight_mode = MdsFightMode::DUAL_HANDED;
+					    } else if (mode == "BOW") {
+						    event.fight_mode = MdsFightMode::BOW;
+					    } else if (mode == "CBOW") {
+						    event.fight_mode = MdsFightMode::CROSSBOW;
+					    } else if (mode == "MAG") {
+						    event.fight_mode = MdsFightMode::MAGIC;
+					    } else {
+						    event.fight_mode = MdsFightMode::NONE;
+					    }
+					    break;
+				    }
+				    case MdsEventType::MESH_SWAP:
+					    event.slot = c->read_line(true);
+					    event.slot2 = c->read_line(true);
+					    break;
+				    case MdsEventType::HIT_LIMB:
+					    (void) c->read_line(true); // TODO
+					    break;
+				    case MdsEventType::HIT_DIRECTION:
+					    (void) c->read_line(true); // TODO
+					    break;
+				    case MdsEventType::SOUND_DRAW:
+				    case MdsEventType::SOUND_UNDRAW:
+				    case MdsEventType::MUNITION_REMOVE:
+				    case MdsEventType::ITEM_DESTROY:
+				    case MdsEventType::TORCH_INVENTORY:
+				    case MdsEventType::ITEM_REMOVE:
+					    (void) c->read_line(true); // TODO
+					    break;
+				    case MdsEventType::DAMAGE_MULTIPLIER:
+				    case MdsEventType::PARRY_FRAME:
+				    case MdsEventType::OPTIMAL_FRAME:
+				    case MdsEventType::HIT_END:
+				    case MdsEventType::COMBO_WINDOW: {
+					    auto frames = c->read_line(true);
+					    std::istringstream stream {frames};
 
-				auto event_type = chunk.get_line(false);
-				auto tp = mds::event_types.find(event_type);
-				if (tp == mds::event_types.end()) {
-					event.type = mds::event_tag_type::unknown;
-					PX_LOGW("model_script: unexpected value for event_tag_type: \"", event_type, "\"");
-				} else {
-					event.type = tp->second;
-				}
+					    int32_t frame = 0;
+					    while (!stream.eof()) {
+						    stream >> frame;
+						    event.frames.push_back(frame);
+					    }
+					    break;
+				    }
+				    default:
+					    break;
+				    }
 
-				switch (event.type) {
-				case mds::event_tag_type::create_item:
-				case mds::event_tag_type::exchange_item:
-					event.slot = chunk.get_line(true);
-					event.item = chunk.get_line(true);
-					break;
-				case mds::event_tag_type::insert_item:
-				case mds::event_tag_type::place_munition:
-					event.slot = chunk.get_line(true);
-					break;
-				case mds::event_tag_type::fight_mode: {
-					auto mode = chunk.get_line(true);
+				    script.animations[ani_index].events.push_back(std::move(event));
+				    break;
+			    }
+			    case ModelScriptBinaryChunkType::EVENT_PFX: {
+				    MdsParticleEffect effect {};
+				    effect.frame = c->read_int();
+				    effect.index = c->read_int();
+				    effect.name = c->read_line(false);
+				    effect.position = c->read_line(false);
+				    effect.attached = c->read_uint() != 0;
+				    script.animations[ani_index].pfx.push_back(std::move(effect));
+				    break;
+			    }
+			    case ModelScriptBinaryChunkType::EVENT_PFX_STOP: {
+				    MdsParticleEffectStop effect {};
+				    effect.frame = c->read_int();
+				    effect.index = c->read_int();
+				    script.animations[ani_index].pfx_stop.push_back(effect);
+				    break;
+			    }
+			    case ModelScriptBinaryChunkType::EVENT_MM_ANI: {
+				    MdsMorphAnimation anim {};
+				    anim.frame = c->read_int();
+				    anim.animation = c->read_line(false);
+				    anim.node = c->read_line(false);
+				    (void) c->read_float();
+				    (void) c->read_float();
+				    script.animations[ani_index].morph.push_back(std::move(anim));
+				    break;
+			    }
+			    case ModelScriptBinaryChunkType::ROOT:
+				    (void) c->read_uint();      // bool
+				    (void) c->read_line(false); // path
+				    break;
+			    case ModelScriptBinaryChunkType::SOURCE: {
+				    Date d {};
+				    d.load(c);
 
-					if (mode == "FIST") {
-						event.fight_mode = mds::event_fight_mode::fist;
-					} else if (mode == "1H" || mode == "1h") {
-						event.fight_mode = mds::event_fight_mode::one_handed;
-					} else if (mode == "2H" || mode == "2h") {
-						event.fight_mode = mds::event_fight_mode::two_handed;
-					} else if (mode == "BOW") {
-						event.fight_mode = mds::event_fight_mode::bow;
-					} else if (mode == "CBOW") {
-						event.fight_mode = mds::event_fight_mode::crossbow;
-					} else if (mode == "MAG") {
-						event.fight_mode = mds::event_fight_mode::magic;
-					} else {
-						event.fight_mode = mds::event_fight_mode::none;
-					}
-					break;
-				}
-				case mds::event_tag_type::swap_mesh:
-					event.slot = chunk.get_line(true);
-					event.slot2 = chunk.get_line(true);
-					break;
-				case mds::event_tag_type::hit_limb:
-					(void) chunk.get_line(true); // TODO
-					break;
-				case mds::event_tag_type::hit_direction:
-					(void) chunk.get_line(true); // TODO
-					break;
-				case mds::event_tag_type::draw_sound:
-				case mds::event_tag_type::undraw_sound:
-				case mds::event_tag_type::remove_munition:
-				case mds::event_tag_type::destroy_item:
-				case mds::event_tag_type::inventory_torch:
-				case mds::event_tag_type::remove_item:
-					(void) chunk.get_line(true); // TODO
-					break;
-				case mds::event_tag_type::dam_multiply:
-				case mds::event_tag_type::par_frame:
-				case mds::event_tag_type::opt_frame:
-				case mds::event_tag_type::hit_end:
-				case mds::event_tag_type::window: {
-					auto frames = chunk.get_line(true);
-					std::istringstream stream {frames};
-
-					int32_t frame = 0;
-					while (!stream.eof()) {
-						stream >> frame;
-						event.frames.push_back(frame);
-					}
-					break;
-				}
-				default:
-					break;
-				}
-
-				script.animations[ani_index].events.push_back(std::move(event));
-				break;
-			}
-			case mds::parser_chunk::event_pfx: {
-				mds::event_pfx effect {};
-				effect.frame = chunk.get_int();
-				effect.index = chunk.get_int();
-				effect.name = chunk.get_line(false);
-				effect.position = chunk.get_line(false);
-				effect.attached = chunk.get_uint() != 0;
-				script.animations[ani_index].pfx.push_back(std::move(effect));
-				break;
-			}
-			case mds::parser_chunk::event_pfx_stop: {
-				mds::event_pfx_stop effect {};
-				effect.frame = chunk.get_int();
-				effect.index = chunk.get_int();
-				script.animations[ani_index].pfx_stop.push_back(effect);
-				break;
-			}
-			case mds::parser_chunk::event_morph_mesh_animation: {
-				mds::event_morph_animate anim {};
-				anim.frame = chunk.get_int();
-				anim.animation = chunk.get_line(false);
-				anim.node = chunk.get_line(false);
-				(void) chunk.get_float();
-				(void) chunk.get_float();
-				script.animations[ani_index].morph.push_back(std::move(anim));
-				break;
-			}
-			case mds::parser_chunk::model_script:
-				(void) chunk.get_uint();      // bool
-				(void) chunk.get_line(false); // path
-				break;
-			case mds::parser_chunk::source: {
-				(void) date::parse(chunk);    // date
-				(void) chunk.get_line(false); // path
-				break;
-			}
-			case mds::parser_chunk::model:
-			case mds::parser_chunk::animation_enum:
-			case mds::parser_chunk::animation_events_end:
-			case mds::parser_chunk::animation_enum_end:
-			case mds::parser_chunk::model_end:
-			case mds::parser_chunk::model_script_end:
-				// empty
-				break;
-			case mds::parser_chunk::animation_events:
-				(void) chunk.get_uint(); // bool
-				break;
-			case mds::parser_chunk::model_mesh:
-			case mds::parser_chunk::unknown:
-			default:
-				break;
-			}
-
-			if (chunk.remaining() != 0) {
-				PX_LOGW("model_script: ",
-				        chunk.remaining(),
-				        " bytes remaining in section ",
-				        std::hex,
-				        std::uint16_t(type));
-			}
-		} while (buf.remaining() > 0);
-
-		return script;
+				    (void) c->read_line(false); // path
+				    break;
+			    }
+				    // case ModelScriptBinaryChunkType::model:
+				    // case ModelScriptBinaryChunkType::animation_enum:
+				    // case ModelScriptBinaryChunkType::animation_events_end:
+				    // case ModelScriptBinaryChunkType::animation_enum_end:
+				    // case ModelScriptBinaryChunkType::model_end:
+			    case ModelScriptBinaryChunkType::END:
+				    // empty
+				    break;
+			    case ModelScriptBinaryChunkType::ANIMATION_EVENTS:
+				    (void) c->read_uint(); // bool
+				    break;
+			    case ModelScriptBinaryChunkType::UNKNOWN:
+			    default:
+				    break;
+			    }
+			    return false;
+		    });
 	}
 
-	static model_script parse_source_script(buffer& buf) {
-		parser::parser p {buf.duplicate()};
-		return p.parse_script();
+	ModelScript ModelScript::parse(phoenix::buffer& buf) {
+		ModelScript mds {};
+
+		auto r = Read::from(&buf);
+		mds.load(r.get());
+
+		return mds;
 	}
 
-	model_script model_script::parse(buffer& buf) {
-		auto peek = buf.position();
-		auto potential_chunk_type = buf.get_ushort();
-		buf.position(peek);
+	ModelScript ModelScript::parse(phoenix::buffer&& buf) {
+		return ModelScript::parse(buf);
+	}
+
+	void ModelScript::load(Read* r) {
+		auto potential_chunk_type = r->read_ushort();
+		r->seek(-2, Whence::CUR);
 
 		if (potential_chunk_type >= 0xF000 || potential_chunk_type == 0xD000) {
-			return parse_binary_script(buf);
+			this->load_binary(r);
+			return;
 		}
 
-		return parse_source_script(buf);
+		this->load_source(r);
 	}
 
-	model_script model_script::parse_binary(buffer& buf) {
-		return model_script::parse(buf);
+	void ModelScript::load_binary(Read* r) {
+		parse_binary_script(*this, r);
 	}
-} // namespace phoenix
+
+	void ModelScript::load_source(Read* r) {
+		MdsParser p {r};
+		p.parse_script(*this);
+	}
+
+	bool operator&(AnimationFlags a, AnimationFlags b) {
+		return static_cast<bool>(static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
+	}
+
+	AnimationFlags operator|(AnimationFlags a, AnimationFlags b) {
+		return static_cast<AnimationFlags>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
+	}
+
+	AnimationFlags& operator|=(AnimationFlags& a, AnimationFlags b) {
+		a = a | b;
+		return a;
+	}
+} // namespace zenkit
