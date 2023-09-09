@@ -1,15 +1,18 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/archive.hh>
+#include <zenkit/Archive.hh>
+#include <zenkit/Stream.hh>
 
 #include <doctest/doctest.h>
 
-TEST_SUITE("archive") {
-	TEST_CASE("archive(open:ASCII)") {
-		auto in = phoenix::buffer::mmap("./samples/ascii.zen");
-		auto reader = phoenix::archive_reader::open(in);
+TEST_SUITE("ReadArchive") {
+	TEST_CASE("ReadArchive.open(ASCII)") {
+		zenkit::Logger::set_default(zenkit::LogLevel::DEBUG);
 
-		phoenix::archive_object obj;
+		auto in = zenkit::Read::from("./samples/ascii.zen");
+		auto reader = zenkit::ReadArchive::from(in.get());
+
+		zenkit::ArchiveObject obj;
 
 		CHECK(reader->read_object_begin(obj));
 		CHECK_FALSE(reader->read_object_begin(obj));
@@ -23,7 +26,7 @@ TEST_SUITE("archive") {
 
 		// This failure will skip the offending entry. I am not yet sure if this is the correct behavior
 		// or if it should just revert to the beginning of the line to enable re-parsing it.
-		REQUIRE_THROWS_AS(reader->read_string(), phoenix::parser_error);
+		REQUIRE_THROWS_AS(reader->read_string(), zenkit::ParserError);
 
 		reader->skip_object(false);
 
@@ -68,11 +71,11 @@ TEST_SUITE("archive") {
 		CHECK_EQ(mat3[1][2], 0.0f);
 		CHECK_EQ(mat3[2][2], 0.994702816f);
 
-		auto raw = reader->read_raw_bytes(4);
-		CHECK_EQ(raw.get(), 0xf2);
-		CHECK_EQ(raw.get(), 0x42);
-		CHECK_EQ(raw.get(), 0xa7);
-		CHECK_EQ(raw.get(), 0x10);
+		auto raw = reader->read_raw(4);
+		CHECK_EQ(raw->read_ubyte(), 0xf2);
+		CHECK_EQ(raw->read_ubyte(), 0x42);
+		CHECK_EQ(raw->read_ubyte(), 0xa7);
+		CHECK_EQ(raw->read_ubyte(), 0x10);
 
 		CHECK(reader->read_object_begin(obj));
 		CHECK_FALSE(reader->read_object_begin(obj));
@@ -84,15 +87,15 @@ TEST_SUITE("archive") {
 
 		CHECK(reader->read_object_end());
 		CHECK(reader->read_object_end());
-		REQUIRE_THROWS_AS(reader->read_float(), phoenix::parser_error);
+		REQUIRE_THROWS_AS(reader->read_float(), zenkit::ParserError);
 	}
 
-	TEST_CASE("archive(open:BINARY)") {
-		auto in = phoenix::buffer::mmap("./samples/binary.zen");
-		auto reader = phoenix::archive_reader::open(in);
+	TEST_CASE("ReadArchive.open(BINARY)") {
+		auto in = zenkit::Read::from("./samples/binary.zen");
+		auto reader = zenkit::ReadArchive::from(in.get());
 		CHECK_EQ(reader->read_string(), "DT_BOOKSHELF_V1_1");
 
-		phoenix::archive_object obj;
+		zenkit::ArchiveObject obj;
 		CHECK(reader->read_object_begin(obj));
 
 		CHECK_EQ(obj.object_name, "%");
@@ -115,7 +118,7 @@ TEST_SUITE("archive") {
 		CHECK_EQ(reader->read_float(), 0.0f);
 	}
 
-	TEST_CASE("archive(open:BIN_SAFE)" * doctest::skip()) {
+	TEST_CASE("ReadArchive.open(BIN_SAFE)" * doctest::skip()) {
 		// FIXME: Stub
 	}
 }

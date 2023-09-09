@@ -1,18 +1,24 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include "Api.hh"
-#include <phoenix/buffer.hh>
-#include <phoenix/math.hh>
+#include "zenkit/Boxes.hh"
+#include "zenkit/Date.hh"
+#include "zenkit/Library.hh"
 
-#include <glm/mat4x4.hpp>
+#include "glm/mat4x4.hpp"
 
-#include <tuple>
+#include <string>
 #include <vector>
 
 namespace phoenix {
+	class buffer;
+}
+
+namespace zenkit {
+	class Read;
+
 	/// \brief A node in the hierarchy tree.
-	struct model_hierarchy_node {
+	struct ModelHierarchyNode {
 		/// \brief The index of this node's parent node.
 		std::int16_t parent_index;
 
@@ -27,7 +33,7 @@ namespace phoenix {
 	///
 	/// <p>Model hierarchy files represent the skeletal structure of a mesh. These skeletons are used to animate mostly
 	/// animals and humans in the game which is commonly referred to as rigging.</p>
-	class model_hierarchy {
+	class ModelHierarchy {
 	public:
 		/// \brief Parses a model hierarchy from the data in the given buffer.
 		///
@@ -41,7 +47,7 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] PHOENIX_API static model_hierarchy parse(buffer& in);
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelHierarchy parse(phoenix::buffer& in);
 
 		/// \brief Parses a model hierarchy from the data in the given buffer.
 		///
@@ -52,24 +58,27 @@ namespace phoenix {
 		/// \return The parsed model hierarchy object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] PHOENIX_API inline static model_hierarchy parse(buffer&& in) {
-			return model_hierarchy::parse(in);
-		}
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelHierarchy parse(phoenix::buffer&& in);
+
+		ZKAPI void load(Read* r);
 
 	public:
 		/// \brief The list of nodes this hierarchy consists of.
-		std::vector<model_hierarchy_node> nodes {};
+		std::vector<ModelHierarchyNode> nodes {};
 
 		/// \brief The bounding box of this hierarchy.
-		bounding_box bbox {};
+		AxisAlignedBoundingBox bbox {};
 
 		/// \brief The collision bounding box of this hierarchy.
-		bounding_box collision_bbox {};
+		AxisAlignedBoundingBox collision_bbox {};
 
 		/// \brief The translation of the root node of this hierarchy.
 		glm::vec3 root_translation {};
 
 		/// \brief The checksum of this hierarchy.
 		std::uint32_t checksum;
+
+		Date source_date;
+		std::string source_path;
 	};
-} // namespace phoenix
+} // namespace zenkit

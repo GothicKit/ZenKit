@@ -1,16 +1,23 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include "Api.hh"
-#include <phoenix/buffer.hh>
+#include "zenkit/Library.hh"
 
 #include <glm/vec2.hpp>
 
+#include <cstdint>
+#include <string>
 #include <vector>
 
 namespace phoenix {
+	class buffer;
+}
+
+namespace zenkit {
+	class Read;
+
 	/// \brief A single font glyph.
-	struct glyph {
+	struct FontGlyph {
 		/// \brief The width of the glyph in pixels.
 		std::uint8_t width;
 
@@ -20,9 +27,7 @@ namespace phoenix {
 		///       one multiplies `uv[0].x` by the width of the font texture and `uv[0].y` by its height.
 		glm::vec2 uv[2];
 
-		[[nodiscard]] PHOENIX_API inline bool operator==(const glyph& g) const noexcept {
-			return this->width == g.width && this->uv[0] == g.uv[0] && this->uv[1] == g.uv[1];
-		}
+		[[nodiscard]] ZKAPI bool operator==(FontGlyph const& g) const noexcept;
 	};
 
 	/// \brief Represents a *ZenGin* font file.
@@ -32,8 +37,10 @@ namespace phoenix {
 	/// [Windows-1252](https://en.wikipedia.org/wiki/Windows-1252) encoded character within the font texture file. Font
 	/// files can be identified most easily by their `.FNT` extension or alternatively through the `"1\n"` string at the
 	/// beginning of the file.</p>
-	class font {
+	class Font {
 	public:
+		ZKAPI Font() = default;
+
 		/// \brief Creates a new font from the given values.
 		/// \param name The name of the font.
 		/// \param height The height of each glyph in pixels.
@@ -41,7 +48,7 @@ namespace phoenix {
 		/// \warning While *phoenix* supports an arbitrary number of glyphs for fonts, Gothic and Gothic II always
 		///          expect 256 glyphs for all fonts. Should you create a font a number of glyphs not equal to 256 and
 		///          try to load it into *ZenGin*, it will fail.
-		PHOENIX_API font(std::string name, std::uint32_t height, std::vector<glyph> glyphs);
+		ZKAPI Font(std::string name, std::uint32_t height, std::vector<FontGlyph> glyphs);
 
 		/// \brief Parses a font from the data in the given buffer.
 		///
@@ -57,23 +64,23 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] PHOENIX_API static font parse(buffer& buf);
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Font parse(phoenix::buffer& buf);
 
 		/// \brief Parses a font from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed font object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] PHOENIX_API inline static font parse(buffer&& in) {
-			return font::parse(in);
-		}
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Font parse(phoenix::buffer&& in);
+
+		ZKAPI void load(Read* r);
 
 	public:
 		/// \brief The name of this font.
 		std::string name;
 
 		/// \brief The height of glyphs of this font in pixels.
-		std::uint32_t height;
+		std::uint32_t height {};
 
 		/// \brief All glyphs of this font.
 		///
@@ -86,6 +93,6 @@ namespace phoenix {
 		///
 		/// \note The glyphs UV-coordinates are not straightforward. Refer to glyph::uv for an explanation about to
 		///       how to use them
-		std::vector<glyph> glyphs;
+		std::vector<FontGlyph> glyphs {};
 	};
-} // namespace phoenix
+} // namespace zenkit

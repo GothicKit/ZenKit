@@ -1,13 +1,15 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include <doctest/doctest.h>
-#include <phoenix/model_mesh.hh>
+#include <zenkit/ModelMesh.hh>
+#include <zenkit/Stream.hh>
 
-TEST_SUITE("model_mesh") {
+TEST_SUITE("ModelMesh") {
 	// TODO: find a mesh with multiple attachments
-	TEST_CASE("model_mesh(parse:?)") {
-		auto in = phoenix::buffer::mmap("./samples/secretdoor.mdm");
-		auto mesh = phoenix::model_mesh::parse(in);
+	TEST_CASE("ModelMesh.load(GOTHIC?)") {
+		auto in = zenkit::Read::from("./samples/secretdoor.mdm");
+		zenkit::ModelMesh mesh {};
+		mesh.load(in.get());
 
 		CHECK_EQ(mesh.attachments.size(), 1);
 		CHECK_NE(mesh.attachments.find("BIP01 DOOR"), mesh.attachments.end());
@@ -15,9 +17,10 @@ TEST_SUITE("model_mesh") {
 	}
 
 	// TODO: find a mesh which has actual vertex weights
-	TEST_CASE("model_mesh(parse:?)") {
-		auto in = phoenix::buffer::mmap("./samples/smoke_waterpipe.mdm");
-		auto mesh = phoenix::model_mesh::parse(in);
+	TEST_CASE("ModelMesh.load(GOTHIC?)") {
+		auto in = zenkit::Read::from("./samples/smoke_waterpipe.mdm");
+		zenkit::ModelMesh mesh {};
+		mesh.load(in.get());
 
 		auto& meshes = mesh.meshes;
 		CHECK_EQ(meshes.size(), 1);
@@ -58,11 +61,11 @@ TEST_SUITE("model_mesh") {
 		CHECK_EQ(sk.bboxes[0].children.size(), 0);
 	}
 
-	TEST_CASE("model_mesh(parse:g1)" * doctest::skip()) {
+	TEST_CASE("ModelMesh.load(GOTHIC1)" * doctest::skip()) {
 		// TODO: Stub
 	}
 
-	TEST_CASE("model_mesh(parse:g2)" * doctest::skip()) {
+	TEST_CASE("ModelMesh.load(GOTHIC2)" * doctest::skip()) {
 		// TODO: Stub
 	}
 }

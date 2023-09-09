@@ -1,11 +1,13 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include <phoenix/archive.hh>
+#include "zenkit/Archive.hh"
+#include "zenkit/Stream.hh"
+
 #include <unordered_map>
 #include <vector>
 
-namespace phoenix {
+namespace zenkit {
 	static constexpr const std::uint8_t type_sizes[] = {
 	    0,                        // ?            = 0x00
 	    0,                        // bs_string    = 0x01,
@@ -33,12 +35,15 @@ namespace phoenix {
 		std::uint32_t hash; // TODO: I don't know what this is.
 	};
 
-	class archive_reader_binsafe final : public archive_reader {
+	class ReadArchiveBinsafe final : public ReadArchive {
 	public:
-		inline archive_reader_binsafe(buffer& in, archive_header&& parent_header)
-		    : archive_reader(in, std::move(parent_header)) {}
+		inline ReadArchiveBinsafe(ArchiveHeader&& parent_header, Read* r, std::unique_ptr<Read> owned)
+		    : ReadArchive(std::forward<ArchiveHeader>(parent_header), r, std::move(owned)) {}
 
-		bool read_object_begin(archive_object& obj) override;
+		inline ReadArchiveBinsafe(ArchiveHeader&& parent_header, Read* r)
+		    : ReadArchive(std::forward<ArchiveHeader>(parent_header), r) {}
+
+		bool read_object_begin(ArchiveObject& obj) override;
 		bool read_object_end() override;
 		std::string read_string() override;
 		std::int32_t read_int() override;
@@ -50,12 +55,10 @@ namespace phoenix {
 		glm::u8vec4 read_color() override;
 		glm::vec3 read_vec3() override;
 		glm::vec2 read_vec2() override;
-		bounding_box read_bbox() override;
+		AxisAlignedBoundingBox read_bbox() override;
 		glm::mat3x3 read_mat3x3() override;
-		buffer read_raw_bytes() override;
-		buffer read_raw_bytes(uint32_t size) override;
-
-		std::variant<archive_object, archive_object_end, archive_entry> unstable__next() override;
+		ZKREM("Deprecated") phoenix::buffer read_raw_bytes(uint32_t size) override;
+		std::unique_ptr<Read> read_raw(uint32_t size) override;
 
 	protected:
 		void read_header() override;
@@ -63,30 +66,8 @@ namespace phoenix {
 
 		const std::string& get_entry_key();
 
-		template <archive_entry_type tp>
-		std::uint16_t ensure_entry_meta() {
-			auto type = static_cast<archive_entry_type>(input.get());
-
-			if (type != archive_entry_type::hash) {
-				throw parser_error {"archive_reader_binsafe", "invalid format"};
-			}
-
-			input.skip(sizeof(uint32_t));
-			type = static_cast<archive_entry_type>(input.get());
-
-			if (type != tp) {
-				throw parser_error {"archive_reader_binsafe: type mismatch: expected " +
-				                    std::to_string(static_cast<uint8_t>(tp)) +
-				                    ", got: " + std::to_string(static_cast<uint32_t>(type))};
-			}
-
-			if constexpr (tp == archive_entry_type::string || tp == archive_entry_type::raw ||
-			              tp == archive_entry_type::raw_float) {
-				return input.get_ushort();
-			} else {
-				return type_sizes[static_cast<uint8_t>(type)];
-			}
-		}
+		template <ArchiveEntryType tp>
+		std::uint16_t ensure_entry_meta();
 
 	private:
 		std::uint32_t _m_object_count {0};

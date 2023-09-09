@@ -1,72 +1,95 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/vobs/mob.hh>
+#include "zenkit/vobs/MovableObject.hh"
+#include "zenkit/Archive.hh"
 
-namespace phoenix::vobs {
-	void mob::parse(mob& obj, archive_reader& ctx, game_version version) {
-		vob::parse(obj, ctx, version);
-		obj.name = ctx.read_string();                                // focusName
-		obj.hp = ctx.read_int();                                     // hitpoints
-		obj.damage = ctx.read_int();                                 // damage
-		obj.movable = ctx.read_bool();                               // moveable
-		obj.takable = ctx.read_bool();                               // takeable
-		obj.focus_override = ctx.read_bool();                        // focusOverride
-		obj.material = static_cast<sound_material>(ctx.read_enum()); // soundMaterial
-		obj.visual_destroyed = ctx.read_string();                    // visualDestroyed
-		obj.owner = ctx.read_string();                               // owner
-		obj.owner_guild = ctx.read_string();                         // ownerGuild
-		obj.destroyed = ctx.read_bool();                             // isDestroyed
+#include "../Internal.hh"
+
+namespace zenkit::vobs {
+	void MovableObject::parse(MovableObject& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
 	}
 
-	void mob_inter::parse(mob_inter& obj, archive_reader& ctx, game_version version) {
-		mob::parse(obj, ctx, version);
-		obj.state = ctx.read_int();                       // stateNum
-		obj.target = ctx.read_string();                   // triggerTarget
-		obj.item = ctx.read_string();                     // useWithItem
-		obj.condition_function = ctx.read_string();       // conditionFunc
-		obj.on_state_change_function = ctx.read_string(); // onStateFunc
-		obj.rewind = ctx.read_bool();                     // rewind
+	void MovableObject::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+		VirtualObject::load(r, version);
+		this->name = r.read_string();                                   // focusName
+		this->hp = r.read_int();                                        // hitpoints
+		this->damage = r.read_int();                                    // damage
+		this->movable = r.read_bool();                                  // moveable
+		this->takable = r.read_bool();                                  // takeable
+		this->focus_override = r.read_bool();                           // focusOverride
+		this->material = static_cast<SoundMaterialType>(r.read_enum()); // soundMaterial
+		this->visual_destroyed = r.read_string();                       // visualDestroyed
+		this->owner = r.read_string();                                  // owner
+		this->owner_guild = r.read_string();                            // ownerGuild
+		this->destroyed = r.read_bool();                                // isDestroyed
 	}
 
-	void mob_container::parse(mob_container& obj, archive_reader& ctx, game_version version) {
-		mob_inter::parse(obj, ctx, version);
-		obj.locked = ctx.read_bool();        // locked
-		obj.key = ctx.read_string();         // keyInstance
-		obj.pick_string = ctx.read_string(); // pickLockStr
-		obj.contents = ctx.read_string();    // contains
+	void InteractiveObject::parse(InteractiveObject& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
+	}
 
-		if (ctx.is_save_game()) {
+	void InteractiveObject::load(ReadArchive& r, zenkit::GameVersion version) {
+		MovableObject::load(r, version);
+		this->state = r.read_int();                       // stateNum
+		this->target = r.read_string();                   // triggerTarget
+		this->item = r.read_string();                     // useWithItem
+		this->condition_function = r.read_string();       // conditionFunc
+		this->on_state_change_function = r.read_string(); // onStateFunc
+		this->rewind = r.read_bool();                     // rewind
+	}
+
+	void Container::parse(Container& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
+	}
+
+	void Container::load(ReadArchive& r, zenkit::GameVersion version) {
+		InteractiveObject::load(r, version);
+		this->locked = r.read_bool();        // locked
+		this->key = r.read_string();         // keyInstance
+		this->pick_string = r.read_string(); // pickLockStr
+		this->contents = r.read_string();    // contains
+
+		if (r.is_save_game()) {
 			// In save-games, containers contain extra variables
-			auto item_count = ctx.read_int(); // NumOfEntries
-			obj.s_items.resize(item_count);
+			auto item_count = r.read_int(); // NumOfEntries
+			this->s_items.resize(item_count);
 
-			archive_object itm;
+			ArchiveObject itm;
 			for (auto i = 0; i < item_count; ++i) {
-				if (!ctx.read_object_begin(itm) || itm.class_name != "oCItem:zCVob") {
-					throw parser_error {"vobs::mob_container"};
+				if (!r.read_object_begin(itm) || itm.class_name != "oCItem:zCVob") {
+					throw zenkit::ParserError {"VOb.Container"};
 				}
 
-				obj.s_items[i] = std::make_unique<vobs::item>();
-				item::parse(*obj.s_items[i], ctx, version);
+				this->s_items[i] = std::make_unique<Item>();
+				this->s_items[i]->load(r, version);
 
-				if (!ctx.read_object_end()) {
-					PX_LOGW("vob_tree: oCItem:zCVob object not fully parsed");
-					ctx.skip_object(true);
+				if (!r.read_object_end()) {
+					ZKLOGW("VOb.Container", "oCItem:zCVob object not fully parsed");
+					r.skip_object(true);
 				}
 			}
 		}
 	}
 
-	void mob_door::parse(mob_door& obj, archive_reader& ctx, game_version version) {
-		mob_inter::parse(obj, ctx, version);
-		obj.locked = ctx.read_bool();        // locked
-		obj.key = ctx.read_string();         // keyInstance
-		obj.pick_string = ctx.read_string(); // pickLockStr
+	void Door::parse(Door& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
 	}
 
-	void mob_fire::parse(mob_fire& obj, archive_reader& ctx, game_version version) {
-		mob_inter::parse(obj, ctx, version);
-		obj.slot = ctx.read_string();     // fireSlot
-		obj.vob_tree = ctx.read_string(); // fireVobtreeName
+	void Door::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+		InteractiveObject::load(r, version);
+		this->locked = r.read_bool();        // locked
+		this->key = r.read_string();         // keyInstance
+		this->pick_string = r.read_string(); // pickLockStr
 	}
-} // namespace phoenix::vobs
+
+	void Fire::parse(Fire& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
+	}
+
+	void Fire::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+		InteractiveObject::load(r, version);
+		this->slot = r.read_string();     // fireSlot
+		this->vob_tree = r.read_string(); // fireVobtreeName
+	}
+} // namespace zenkit::vobs

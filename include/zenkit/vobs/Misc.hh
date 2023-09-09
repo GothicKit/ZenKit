@@ -1,35 +1,64 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include "../Api.hh"
-#include <phoenix/vobs/vob.hh>
+#include "zenkit/Library.hh"
+#include "zenkit/Misc.hh"
+#include "zenkit/vobs/VirtualObject.hh"
 
-namespace phoenix {
-	enum class message_filter_action : uint32_t {
-		none = 0,
-		trigger = 1,
-		untrigger = 2,
-		enable = 3,
-		disable = 4,
-		toggle = 5,
+#include <glm/vec3.hpp>
+
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <vector>
+
+namespace zenkit {
+	class ReadArchive;
+
+	enum class MessageFilterAction : uint32_t {
+		NONE = 0,
+		TRIGGER = 1,
+		UNTRIGGER = 2,
+		ENABLE = 3,
+		DISABLE = 4,
+		TOGGLE = 5,
+
+		// Deprecated entries.
+		none ZKREM("renamed to MessageFilterAction::NONE") = NONE,
+		trigger ZKREM("renamed to MessageFilterAction::TRIGGER") = TRIGGER,
+		untrigger ZKREM("renamed to MessageFilterAction::UNTRIGGER") = UNTRIGGER,
+		enable ZKREM("renamed to MessageFilterAction::ENABLE") = ENABLE,
+		disable ZKREM("renamed to MessageFilterAction::DISABLE") = DISABLE,
+		toggle ZKREM("renamed to MessageFilterAction::TOGGLE") = TOGGLE,
 	};
 
-	enum class mover_message_type : uint32_t {
-		fixed_direct = 0,
-		fixed_order = 1,
-		next = 2,
-		previous = 3,
+	enum class MoverMessageType : uint32_t {
+		FIXED_DIRECT = 0,
+		FIXED_ORDER = 1,
+		NEXT = 2,
+		PREVIOUS = 3,
+
+		// Deprecated entries.
+		fixed_direct ZKREM("renamed to MoverMessageType::FIXED_DIRECT") = FIXED_DIRECT,
+		fixed_order ZKREM("renamed to MoverMessageType::FIXED_ORDER") = FIXED_ORDER,
+		next ZKREM("renamed to MoverMessageType::NEXT") = NEXT,
+		previous ZKREM("renamed to MoverMessageType::PREVIOUS") = PREVIOUS,
 	};
 
-	enum class collision_type : std::uint32_t {
-		none = 0,
-		box = 1,
-		point = 2,
+	enum class TouchCollisionType : std::uint32_t {
+		NONE = 0,
+		BOX = 1,
+		POINT = 2,
+
+		// Deprecated entries.
+		none ZKREM("renamed to TouchCollisionType::NONE") = NONE,
+		box ZKREM("renamed to TouchCollisionType::BOX") = BOX,
+		point ZKREM("renamed to TouchCollisionType::POINT") = POINT,
 	};
 
 	namespace vobs {
 		/// \brief An animated VOb.
-		struct animate : public vob {
+		struct Animate : public VirtualObject {
 			bool start_on {false};
 
 			// Save-game only variables
@@ -39,13 +68,15 @@ namespace phoenix {
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws parser_error if parsing fails.
+			/// \throws ParserError if parsing fails.
 			/// \see vob::parse
-			PHOENIX_API static void parse(animate& obj, archive_reader& ctx, game_version version);
+			ZKREM("use ::load()") ZKAPI static void parse(Animate& obj, ReadArchive& ctx, GameVersion version);
+
+			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
 		/// \brief A VOb representing an in-game item.
-		struct item : public vob {
+		struct Item : public VirtualObject {
 			std::string instance;
 
 			// Save-game only variables
@@ -56,26 +87,30 @@ namespace phoenix {
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws parser_error if parsing fails.
+			/// \throws ParserError if parsing fails.
 			/// \see vob::parse
-			PHOENIX_API static void parse(item& obj, archive_reader& ctx, game_version version);
+			ZKREM("use ::load()") ZKAPI static void parse(Item& obj, ReadArchive& ctx, GameVersion version);
+
+			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
 		/// \brief A VOb representing a [lens flare](https://en.wikipedia.org/wiki/Lens_flare).
-		struct lens_flare : public vob {
+		struct LensFlare : public VirtualObject {
 			std::string fx;
 
 			/// \brief Parses a lens flare VOb the given *ZenGin* archive.
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws parser_error if parsing fails.
+			/// \throws ParserError if parsing fails.
 			/// \see vob::parse
-			PHOENIX_API static void parse(lens_flare& obj, archive_reader& ctx, game_version version);
+			ZKREM("use ::load()") ZKAPI static void parse(LensFlare& obj, ReadArchive& ctx, GameVersion version);
+
+			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
 		/// \brief A VOb representing a particle system controller.
-		struct pfx_controller : public vob {
+		struct ParticleEffectController : public VirtualObject {
 			std::string pfx_name;
 			bool kill_when_done;
 			bool initially_running;
@@ -84,26 +119,31 @@ namespace phoenix {
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws parser_error if parsing fails.
+			/// \throws ParserError if parsing fails.
 			/// \see vob::parse
-			PHOENIX_API static void parse(pfx_controller& obj, archive_reader& ctx, game_version version);
+			ZKREM("use ::load()")
+			ZKAPI static void parse(ParticleEffectController& obj, ReadArchive& ctx, GameVersion version);
+
+			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
-		struct message_filter : public vob {
+		struct MessageFilter : public VirtualObject {
 			std::string target;
-			message_filter_action on_trigger;
-			message_filter_action on_untrigger;
+			MessageFilterAction on_trigger;
+			MessageFilterAction on_untrigger;
 
 			/// \brief Parses a message filter VOb the given *ZenGin* archive.
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws parser_error if parsing fails.
+			/// \throws ParserError if parsing fails.
 			/// \see vob::parse
-			PHOENIX_API static void parse(message_filter& obj, archive_reader& ctx, game_version version);
+			ZKREM("use ::load()") ZKAPI static void parse(MessageFilter& obj, ReadArchive& ctx, GameVersion version);
+
+			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
-		struct code_master : public vob {
+		struct CodeMaster : public VirtualObject {
 			std::string target;
 			bool ordered;
 			bool first_false_is_failure;
@@ -118,27 +158,31 @@ namespace phoenix {
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws parser_error if parsing fails.
+			/// \throws ParserError if parsing fails.
 			/// \see vob::parse
-			PHOENIX_API static void parse(code_master& obj, archive_reader& ctx, game_version version);
+			ZKREM("use ::load()") ZKAPI static void parse(CodeMaster& obj, ReadArchive& ctx, GameVersion version);
+
+			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
-		struct mover_controller : public vob {
+		struct MoverController : public VirtualObject {
 			std::string target;
-			mover_message_type message;
+			MoverMessageType message;
 			std::int32_t key;
 
 			/// \brief Parses a mover controller VOb the given *ZenGin* archive.
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws parser_error if parsing fails.
+			/// \throws ParserError if parsing fails.
 			/// \see vob::parse
-			PHOENIX_API static void parse(mover_controller& obj, archive_reader& ctx, game_version version);
+			ZKREM("use ::load()") ZKAPI static void parse(MoverController& obj, ReadArchive& ctx, GameVersion version);
+
+			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
 		/// \brief A VOb which represents a damage source.
-		struct touch_damage : public vob {
+		struct TouchDamage : public VirtualObject {
 			float damage;
 
 			bool barrier;
@@ -152,19 +196,21 @@ namespace phoenix {
 
 			float repeat_delay_sec;
 			float volume_scale;
-			collision_type collision;
+			TouchCollisionType collision;
 
 			/// \brief Parses a touch damage VOb the given *ZenGin* archive.
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws parser_error if parsing fails.
+			/// \throws ParserError if parsing fails.
 			/// \see vob::parse
-			PHOENIX_API static void parse(touch_damage& obj, archive_reader& ctx, game_version version);
+			ZKREM("use ::load()") ZKAPI static void parse(TouchDamage& obj, ReadArchive& ctx, GameVersion version);
+
+			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
 		/// \brief A VOb which represents an earthquake-like effect.
-		struct earthquake : public vob {
+		struct Earthquake : public VirtualObject {
 			float radius;
 			float duration;
 			glm::vec3 amplitude;
@@ -173,12 +219,14 @@ namespace phoenix {
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws parser_error if parsing fails.
+			/// \throws ParserError if parsing fails.
 			/// \see vob::parse
-			PHOENIX_API static void parse(earthquake& obj, archive_reader& ctx, game_version version);
+			ZKREM("use ::load()") ZKAPI static void parse(Earthquake& obj, ReadArchive& ctx, GameVersion version);
+
+			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
-		struct npc : public vob {
+		struct Npc : public VirtualObject {
 			static const std::uint32_t attribute_count = 8;
 			static const std::uint32_t hcs_count = 4;
 			static const std::uint32_t missions_count = 5;
@@ -186,18 +234,22 @@ namespace phoenix {
 			static const std::uint32_t packed_count = 9;
 			static const std::uint32_t protection_count = 8;
 
-			struct talent {
+			struct Talent {
 				int talent;
 				int value;
 				int skill;
 			};
 
-			struct slot {
+			using talent ZKREM("renamed to Talent") = Talent;
+
+			struct Slot {
 				bool used;
 				std::string name;
-				int item_index;
+				Item* item {};
 				bool in_inventory;
 			};
+
+			using slot ZKREM("renamed to Slot") = Slot;
 
 			std::string npc_instance;
 			glm::vec3 model_scale;
@@ -213,7 +265,7 @@ namespace phoenix {
 			int xp_next_level;
 			int lp;
 
-			std::vector<talent> talents;
+			std::vector<Talent> talents;
 
 			int fight_tactic;
 			int fight_mode;
@@ -235,8 +287,8 @@ namespace phoenix {
 			bool move_lock;
 
 			std::string packed[packed_count];
-			std::vector<std::unique_ptr<item>> items;
-			std::vector<slot> slots;
+			std::vector<std::unique_ptr<Item>> items;
+			std::vector<Slot> slots;
 
 			bool current_state_valid;
 			std::string current_state_name;
@@ -272,9 +324,15 @@ namespace phoenix {
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws parser_error if parsing fails.
+			/// \throws ParserError if parsing fails.
 			/// \see vob::parse
-			PHOENIX_API static void parse(npc& obj, archive_reader& ctx, game_version version);
+			ZKREM("use ::load()") ZKAPI static void parse(Npc& obj, ReadArchive& ctx, GameVersion version);
+
+			ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		};
+
+		struct ScreenEffect : public VirtualObject {
+			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 	} // namespace vobs
-} // namespace phoenix
+} // namespace zenkit

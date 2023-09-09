@@ -1,79 +1,28 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/messages.hh>
+#include "zenkit/CutsceneLibrary.hh"
+#include "zenkit/Archive.hh"
+#include "zenkit/Stream.hh"
 
-namespace phoenix {
-	messages messages::parse(buffer& buf) {
-		auto archive = archive_reader::open(buf);
-		messages msgs {};
+#include "Internal.hh"
 
-		archive_object obj;
-		if (!archive->read_object_begin(obj)) {
-			throw parser_error {"messages", "root object missing"};
-		}
+#include "phoenix/buffer.hh"
 
-		if (obj.class_name != "zCCSLib") {
-			throw parser_error {"messages", "root object is not 'zCCSLib'"};
-		}
+namespace zenkit {
+	CutsceneLibrary CutsceneLibrary::parse(phoenix::buffer& buf) {
+		CutsceneLibrary msgs {};
 
-		auto item_count = archive->read_int(); // NumOfItems
-		msgs.blocks.reserve(static_cast<std::uint64_t>(item_count));
+		auto r = Read::from(&buf);
+		msgs.load(r.get());
 
-		for (int32_t i = 0; i < item_count; ++i) {
-			if (!archive->read_object_begin(obj) || obj.class_name != "zCCSBlock") {
-				throw parser_error {"messages", "expected 'zCCSBlock' but didn't find it"};
-			}
-
-			auto& itm = msgs.blocks.emplace_back();
-			itm.name = archive->read_string();      // blockName
-			auto block_count = archive->read_int(); // numOfBlocks
-			(void) archive->read_float();           // subBlock0
-
-			if (block_count != 1) {
-				throw parser_error {"messages",
-				                    "expected only one block but got " + std::to_string(block_count) + " for " +
-				                        itm.name};
-			}
-
-			if (!archive->read_object_begin(obj) || obj.class_name != "zCCSAtomicBlock") {
-				throw parser_error {"messages", "expected atomic block not found for " + itm.name};
-			}
-
-			if (!archive->read_object_begin(obj) || obj.class_name != "oCMsgConversation:oCNpcMessage:zCEventMessage") {
-				throw parser_error {"messages", "expected oCMsgConversation not found for " + itm.name};
-			}
-
-			itm.message.type = archive->read_enum();
-			itm.message.text = archive->read_string();
-			itm.message.name = archive->read_string();
-
-			if (!archive->read_object_end()) {
-				archive->skip_object(true);
-				PX_LOGW("messages: oCMsgConversation(\"", itm.name, "\") not fully parsed");
-			}
-
-			if (!archive->read_object_end()) {
-				// FIXME: in Gothic I cutscene libraries, there is a `synchronized` attribute here
-				archive->skip_object(true);
-				PX_LOGW("messages: zCCSAtomicBlock(\"", itm.name, "\") not fully parsed");
-			}
-
-			if (!archive->read_object_end()) {
-				archive->skip_object(true);
-				PX_LOGW("messages: zCCSBlock(\"", itm.name, "\") not fully parsed");
-			}
-		}
-
-		if (!archive->read_object_end()) {
-			PX_LOGW("messages: not fully parsed");
-		}
-
-		// Prepare blocks for binary search in block_by_name
-		std::sort(msgs.blocks.begin(), msgs.blocks.end(), [](const auto& a, const auto& b) { return a.name < b.name; });
 		return msgs;
 	}
 
-	const message_block* messages::block_by_name(std::string_view name) const {
+	CutsceneLibrary CutsceneLibrary::parse(phoenix::buffer&& path) {
+		return CutsceneLibrary::parse(path);
+	}
+
+	const CutsceneBlock* CutsceneLibrary::block_by_name(std::string_view name) const {
 		auto result = std::lower_bound(this->blocks.begin(), this->blocks.end(), name, [](const auto& it, auto n) {
 			return it.name < n;
 		});
@@ -84,4 +33,73 @@ namespace phoenix {
 
 		return &*result;
 	}
-} // namespace phoenix
+
+	void CutsceneLibrary::load(Read* r) {
+		auto archive = ReadArchive::from(r);
+
+		ArchiveObject obj;
+		if (!archive->read_object_begin(obj)) {
+			throw zenkit::ParserError {"CutsceneLibrary", "root object missing"};
+		}
+
+		if (obj.class_name != "zCCSLib") {
+			throw zenkit::ParserError {"CutsceneLibrary", "root object is not 'zCCSLib'"};
+		}
+
+		auto item_count = archive->read_int(); // NumOfItems
+		this->blocks.resize(static_cast<std::uint64_t>(item_count));
+
+		for (auto& itm : this->blocks) {
+			if (!archive->read_object_begin(obj) || obj.class_name != "zCCSBlock") {
+				throw zenkit::ParserError {"CutsceneLibrary", "expected 'zCCSBlock' but didn't find it"};
+			}
+
+			itm.name = archive->read_string();      // blockName
+			auto block_count = archive->read_int(); // numOfBlocks
+			(void) archive->read_float();           // subBlock0
+
+			if (block_count != 1) {
+				throw zenkit::ParserError {"CutsceneLibrary",
+				                           "expected only one block but got " + std::to_string(block_count) + " for " +
+				                               itm.name};
+			}
+
+			if (!archive->read_object_begin(obj) || obj.class_name != "zCCSAtomicBlock") {
+				throw zenkit::ParserError {"CutsceneLibrary", "Expected atomic block not found for " + itm.name};
+			}
+
+			if (!archive->read_object_begin(obj) || obj.class_name != "oCMsgConversation:oCNpcMessage:zCEventMessage") {
+				throw zenkit::ParserError {"CutsceneLibrary", "Expected oCMsgConversation not found for " + itm.name};
+			}
+
+			itm.message.type = archive->read_enum();   // subType
+			itm.message.text = archive->read_string(); // text
+			itm.message.name = archive->read_string(); // name
+
+			if (!archive->read_object_end()) {
+				archive->skip_object(true);
+				ZKLOGW("CutsceneLibrary", "oCMsgConversation(\"%s\") not fully parsed", itm.name.c_str());
+			}
+
+			if (!archive->read_object_end()) {
+				// FIXME: in Gothic I cutscene libraries, there is a `synchronized` attribute here
+				archive->skip_object(true);
+				ZKLOGW("CutsceneLibrary", "zCCSAtomicBlock(\"%s\") not fully parsed", itm.name.c_str());
+			}
+
+			if (!archive->read_object_end()) {
+				archive->skip_object(true);
+				ZKLOGW("CutsceneLibrary", "zCCSBlock(\"%s\") not fully parsed", itm.name.c_str());
+			}
+		}
+
+		if (!archive->read_object_end()) {
+			ZKLOGW("CutsceneLibrary", "Not fully parsed");
+		}
+
+		// Prepare blocks for binary search in block_by_name
+		std::sort(this->blocks.begin(), this->blocks.end(), [](const auto& a, const auto& b) {
+			return a.name < b.name;
+		});
+	}
+} // namespace zenkit

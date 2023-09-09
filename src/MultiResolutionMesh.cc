@@ -1,198 +1,190 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/proto_mesh.hh>
+#include "zenkit/MultiResolutionMesh.hh"
+#include "zenkit/Archive.hh"
+#include "zenkit/Stream.hh"
 
-namespace phoenix {
+namespace zenkit {
 	[[maybe_unused]] static constexpr auto version_g1 = 0x305;
 	static constexpr auto version_g2 = 0x905;
 
-	enum class proto_chunk { unknown, mesh = 0xB100, end = 0xB1FF };
+	enum class MrmChunkType : std::uint16_t { MESH = 0xB100, END = 0xB1FF };
 
-	proto_mesh proto_mesh::parse(buffer& in) {
-		proto_mesh msh {};
-		proto_chunk type = proto_chunk::unknown;
-		bool end_mesh = false;
+	MultiResolutionMesh MultiResolutionMesh::parse(phoenix::buffer& in) {
+		MultiResolutionMesh msh {};
 
-		do {
-			type = static_cast<proto_chunk>(in.get_ushort());
+		auto r = Read::from(&in);
+		msh.load(r.get());
 
-			auto length = in.get_uint();
-			auto chunk = in.extract(length);
+		return msh;
+	}
 
+	MultiResolutionMesh MultiResolutionMesh::parse(phoenix::buffer&& in) {
+		return MultiResolutionMesh::parse(in);
+	}
+
+	void MultiResolutionMesh::load(zenkit::Read* r) {
+		proto::read_chunked<MrmChunkType>(r, "MultiResolutionMesh", [this](Read* c, MrmChunkType type) {
 			switch (type) {
-			case proto_chunk::mesh:
-				msh = parse_from_section(chunk);
+			case MrmChunkType::MESH:
+				this->load_from_section(c);
 				break;
-			case proto_chunk::end:
-				end_mesh = true;
-				break;
+			case MrmChunkType::END:
+				return true;
 			default:
 				break;
 			}
 
-			if (chunk.remaining() != 0) {
-				PX_LOGW("proto_mesh: ",
-				        chunk.remaining(),
-				        " bytes remaining in section ",
-				        std::hex,
-				        std::uint16_t(type));
-			}
-		} while (!end_mesh);
-
-		return msh;
+			return false;
+		});
 	}
 
-	proto_mesh proto_mesh::parse_from_section(buffer& chunk) {
-		proto_mesh msh {};
+	void MultiResolutionMesh::load_from_section(zenkit::Read* r) {
+		auto version = r->read_ushort();
+		auto content_size = r->read_uint();
+		auto content_offset = r->tell();
 
-		auto version = chunk.get_ushort();
-		auto content_size = chunk.get_uint();
-		auto content = chunk.extract(content_size);
+		r->seek(content_size, Whence::CUR);
 
-		auto submesh_count = chunk.get();
-		auto vertices_index = chunk.get_uint();
-		auto vertices_size = chunk.get_uint();
-		auto normals_index = chunk.get_uint();
-		auto normals_size = chunk.get_uint();
+		auto submesh_count = r->read_byte();
+		auto vertices_offset = r->read_uint() + content_offset;
+		auto vertices_size = r->read_uint();
+		auto normals_offset = r->read_uint() + content_offset;
+		auto normals_size = r->read_uint();
 
-		std::vector<sub_mesh_section> submesh_sections;
+		std::vector<SubMeshSection> submesh_sections;
 		submesh_sections.resize(submesh_count);
 
 		for (int32_t i = 0; i < submesh_count; ++i) {
 			submesh_sections[i] = {
-			    {chunk.get_uint(), chunk.get_uint()},
-			    {chunk.get_uint(), chunk.get_uint()},
-			    {chunk.get_uint(), chunk.get_uint()},
-			    {chunk.get_uint(), chunk.get_uint()},
-			    {chunk.get_uint(), chunk.get_uint()},
-			    {chunk.get_uint(), chunk.get_uint()},
-			    {chunk.get_uint(), chunk.get_uint()},
-			    {chunk.get_uint(), chunk.get_uint()},
-			    {chunk.get_uint(), chunk.get_uint()},
-			    {chunk.get_uint(), chunk.get_uint()},
+			    {r->read_uint() + content_offset, r->read_uint()},
+			    {r->read_uint() + content_offset, r->read_uint()},
+			    {r->read_uint() + content_offset, r->read_uint()},
+			    {r->read_uint() + content_offset, r->read_uint()},
+			    {r->read_uint() + content_offset, r->read_uint()},
+			    {r->read_uint() + content_offset, r->read_uint()},
+			    {r->read_uint() + content_offset, r->read_uint()},
+			    {r->read_uint() + content_offset, r->read_uint()},
+			    {r->read_uint() + content_offset, r->read_uint()},
+			    {r->read_uint() + content_offset, r->read_uint()},
 			};
 		}
 
 		// read all materials
-		auto mats = archive_reader::open(chunk);
-		for (int32_t i = 0; i < submesh_count; ++i) {
-			msh.materials.emplace_back(material::parse(*mats));
+		auto mats = ReadArchive::from(r);
+		this->materials.resize(submesh_count);
+		for (auto& material : this->materials) {
+			material.load(*mats);
 		}
 
 		if (version == version_g2) {
-			msh.alpha_test = chunk.get() != 0;
+			this->alpha_test = r->read_byte() != 0;
 		}
 
-		msh.bbox = bounding_box::parse(chunk);
+		this->bbox.load(r);
+		this->obbox.load(r);
 
-		// read positions and normals
-		msh.positions.resize(vertices_size);
-		auto vertices = content.slice(vertices_index, vertices_size * sizeof(float) * 3);
+		// TODO: this might be a vec4 though the values don't make any sense.
+		r->seek(0x10, Whence::CUR);
+		auto end = r->tell();
 
-		for (std::uint32_t i = 0; i < vertices_size; ++i) {
-			msh.positions[i] = vertices.get_vec3();
+		// read positions
+		this->positions.resize(vertices_size);
+		r->seek((ssize_t) vertices_offset, Whence::BEG);
+		for (auto& pos : this->positions) {
+			pos = r->read_vec3();
 		}
 
-		msh.normals.resize(normals_size);
-		auto normals = content.slice(normals_index, normals_size * sizeof(float) * 3);
-
-		for (std::uint32_t i = 0; i < normals_size; ++i) {
-			msh.normals[i] = normals.get_vec3();
+		// read normals
+		this->normals.resize(normals_size);
+		r->seek((ssize_t) normals_offset, Whence::BEG);
+		for (auto& normal : this->normals) {
+			normal = r->read_vec3();
 		}
 
 		// read submeshes
-		msh.sub_meshes.reserve(submesh_count);
-
+		this->sub_meshes.resize(submesh_count);
 		for (int32_t i = 0; i < submesh_count; ++i) {
-			auto& mesh = msh.sub_meshes.emplace_back(sub_mesh::parse(content, submesh_sections[i]));
-			mesh.mat = msh.materials[i];
+			this->sub_meshes[i].load(r, submesh_sections[i]);
+			this->sub_meshes[i].mat = this->materials[i];
 		}
 
-		msh.obbox = obb::parse(chunk);
-
-		// TODO: this might be a vec4 though the values don't make any sense.
-		chunk.skip(0x10);
-		return msh;
+		r->seek(static_cast<uint32_t>(end), Whence::BEG);
 	}
 
-	sub_mesh sub_mesh::parse(buffer& in, const sub_mesh_section& map) {
-		sub_mesh subm {};
-
+	void SubMesh::load(Read* r, SubMeshSection const& map) {
 		// triangles
-		in.position(map.triangles.offset);
-		subm.triangles.resize(map.triangles.size);
-
+		r->seek((ssize_t) map.triangles.offset, Whence::BEG);
+		this->triangles.resize(map.triangles.size);
 		for (std::uint32_t i = 0; i < map.triangles.size; ++i) {
-			subm.triangles[i] = {{in.get_ushort(), in.get_ushort(), in.get_ushort()}};
+			this->triangles[i] = {{r->read_ushort(), r->read_ushort(), r->read_ushort()}};
 		}
 
 		// wedges
-		in.position(map.wedges.offset);
-		subm.wedges.resize(map.wedges.size);
+		r->seek((ssize_t) map.wedges.offset, Whence::BEG);
+		this->wedges.resize(map.wedges.size);
 
 		for (std::uint32_t i = 0; i < map.wedges.size; ++i) {
-			subm.wedges[i] = {in.get_vec3(), in.get_vec2(), in.get_ushort()};
+			this->wedges[i] = {r->read_vec3(), r->read_vec2(), r->read_ushort()};
 
 			// and this is why you don't just dump raw binary data
-			(void) in.get_ushort();
+			(void) r->read_ushort();
 		}
 
 		// colors
-		in.position(map.colors.offset);
-		subm.colors.resize(map.colors.size);
+		r->seek((ssize_t) map.colors.offset, Whence::BEG);
+		this->colors.resize(map.colors.size);
 
 		for (std::uint32_t i = 0; i < map.colors.size; ++i) {
-			subm.colors[i] = in.get_float();
+			this->colors[i] = r->read_float();
 		}
 
 		// triangle_plane_indices
-		in.position(map.triangle_plane_indices.offset);
-		subm.triangle_plane_indices.resize(map.triangle_plane_indices.size);
+		r->seek((ssize_t) map.triangle_plane_indices.offset, Whence::BEG);
+		this->triangle_plane_indices.resize(map.triangle_plane_indices.size);
 
 		for (std::uint32_t i = 0; i < map.triangle_plane_indices.size; ++i) {
-			subm.triangle_plane_indices[i] = in.get_ushort();
+			this->triangle_plane_indices[i] = r->read_ushort();
 		}
 
 		// triangle_planes
-		in.position(map.triangle_planes.offset);
-		subm.triangle_planes.resize(map.triangle_planes.size);
+		r->seek((ssize_t) map.triangle_planes.offset, Whence::BEG);
+		this->triangle_planes.resize(map.triangle_planes.size);
 
 		for (std::uint32_t i = 0; i < map.triangle_planes.size; ++i) {
-			subm.triangle_planes[i] = {in.get_float(), in.get_vec3()};
+			this->triangle_planes[i] = {r->read_float(), r->read_vec3()};
 		}
 
 		// triangle_edges
-		in.position(map.triangle_edges.offset);
-		subm.triangle_edges.resize(map.triangle_edges.size);
+		r->seek((ssize_t) map.triangle_edges.offset, Whence::BEG);
+		this->triangle_edges.resize(map.triangle_edges.size);
 
 		for (std::uint32_t i = 0; i < map.triangle_edges.size; ++i) {
-			subm.triangle_edges[i] = {{in.get_ushort(), in.get_ushort(), in.get_ushort()}};
+			this->triangle_edges[i] = {{r->read_ushort(), r->read_ushort(), r->read_ushort()}};
 		}
 
 		// edges
-		in.position(map.edges.offset);
-		subm.edges.resize(map.edges.size);
+		r->seek((ssize_t) map.edges.offset, Whence::BEG);
+		this->edges.resize(map.edges.size);
 
 		for (std::uint32_t i = 0; i < map.edges.size; ++i) {
-			subm.edges[i] = {{in.get_ushort(), in.get_ushort()}};
+			this->edges[i] = {{r->read_ushort(), r->read_ushort()}};
 		}
 
 		// edge_scores
-		in.position(map.edge_scores.offset);
-		subm.edge_scores.resize(map.edge_scores.size);
+		r->seek((ssize_t) map.edge_scores.offset, Whence::BEG);
+		this->edge_scores.resize(map.edge_scores.size);
 
 		for (std::uint32_t i = 0; i < map.edge_scores.size; ++i) {
-			subm.edge_scores[i] = in.get_float();
+			this->edge_scores[i] = r->read_float();
 		}
 
 		// wedge_map
-		in.position(map.wedge_map.offset);
-		subm.wedge_map.resize(map.wedge_map.size);
+		r->seek((ssize_t) map.wedge_map.offset, Whence::BEG);
+		this->wedge_map.resize(map.wedge_map.size);
 
 		for (std::uint32_t i = 0; i < map.wedge_map.size; ++i) {
-			subm.wedge_map[i] = in.get_ushort();
+			this->wedge_map[i] = r->read_ushort();
 		}
-
-		return subm;
 	}
-} // namespace phoenix
+} // namespace zenkit

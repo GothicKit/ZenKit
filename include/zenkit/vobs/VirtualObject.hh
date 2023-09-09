@@ -1,15 +1,27 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include "../Api.hh"
-#include <phoenix/archive.hh>
-#include <phoenix/material.hh>
-#include <phoenix/phoenix.hh>
+#include "zenkit/Boxes.hh"
+#include "zenkit/Library.hh"
+#include "zenkit/Material.hh"
+#include "zenkit/Misc.hh"
 
-namespace phoenix {
+#include <glm/mat3x3.hpp>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+
+#include <cstdint>
+#include <memory>
+#include <optional>
+#include <string>
+#include <vector>
+
+namespace zenkit {
+	class ReadArchive;
+
 	/// \brief All possible VOb types.
 	/// \summary Mostly copied from [ZenLib](https://github.com/Try/ZenLib).
-	enum class vob_type : std::uint8_t {
+	enum class VobType : std::uint8_t {
 		zCVob = 0,           ///< The base type for all VObs.
 		zCVobLevelCompo = 1, ///< A basic VOb used for grouping other VObs.
 		oCItem = 2,          ///< A VOb representing an item
@@ -59,48 +71,68 @@ namespace phoenix {
 	};
 
 	/// \brief Ways a VOb can cast shadows.
-	enum class shadow_mode : std::uint8_t {
-		none = 0, ///< The VOb does not cast any shadow.
-		blob = 1, ///< The VOb casts a basic dark circle at its base.
+	enum class ShadowType : std::uint8_t {
+		NONE = 0, ///< The VOb does not cast any shadow.
+		BLOB = 1, ///< The VOb casts a basic dark circle at its base.
+
+		// Deprecated entries.
+		none ZKREM("renamed to ShadowType::NONE") = NONE,
+		blob ZKREM("renamed to ShadowType::BLOB") = BLOB,
 	};
 
 	/// \brief Ways a VOb is seen in the game world.
-	enum class visual_type : std::uint8_t {
-		decal = 0,           ///< The VOb presents as a decal.
-		mesh = 1,            ///< The VOb presents a phoenix::mesh.
-		proto_mesh = 2,      ///< The VOb presents a phoenix::proto_mesh.
-		particle_system = 3, ///< The VOb presents as a particle system.
-		ai_camera = 4,       ///< The VOb is a game-controlled camera.
-		model = 5,           ///< The VOb presents a phoenix::model.
-		morph_mesh = 6,      ///< The VOb presents a phoenix::morph_mesh.
-		unknown = 7,         ///< The VOb presents an unknown visual or no visual at all.
+	enum class VisualType : std::uint8_t {
+		DECAL = 0,                 ///< The VOb presents as a decal.
+		MESH = 1,                  ///< The VOb presents a phoenix::Mesh.
+		MULTI_RESOLUTION_MESH = 2, ///< The VOb presents a phoenix::MultiResolutionMesh.
+		PARTICLE_EFFECT = 3,       ///< The VOb presents as a particle system.
+		AI_CAMERA = 4,             ///< The VOb is a game-controlled camera.
+		MODEL = 5,                 ///< The VOb presents a phoenix::Model.
+		MORPH_MESH = 6,            ///< The VOb presents a phoenix::MorphMesh.
+		UNKNOWN = 7,               ///< The VOb presents an unknown visual or no visual at all.
+
+		// Deprecated entries.
+		decal ZKREM("renamed to VisualType::DECAL") = DECAL,
+		mesh ZKREM("renamed to VisualType::MESH") = MESH,
+		proto_mesh ZKREM("renamed to VisualType::MULTI_RESOLUTION_MESH") = MULTI_RESOLUTION_MESH,
+		particle_system ZKREM("renamed to VisualType::PARTICLE_EFFECT") = PARTICLE_EFFECT,
+		ai_camera ZKREM("renamed to VisualType::AI_CAMERA") = AI_CAMERA,
+		model ZKREM("renamed to VisualType::MODEL") = MODEL,
+		morph_mesh ZKREM("renamed to VisualType::MORPH_MESH") = MORPH_MESH,
+		unknown ZKREM("renamed to VisualType::UNKNOWN") = UNKNOWN,
 	};
 
 	/// \brief Ways the camera may behave with a VOb.
-	enum class sprite_alignment : std::uint8_t {
-		none = 0, ///< The sprite is not affected by the camera's position.
-		yaw = 1,  ///< The sprite rotates with the camera's yaw axis.
-		full = 2, ///< The sprite rotates with camera fully.
+	enum class SpriteAlignment : std::uint8_t {
+		NONE = 0, ///< The sprite is not affected by the camera's position.
+		YAW = 1,  ///< The sprite rotates with the camera's yaw axis.
+		FULL = 2, ///< The sprite rotates with camera fully.
+
+		// Deprecated entries.
+		none ZKREM("renamed to SpriteAlignment::NONE") = NONE,
+		yaw ZKREM("renamed to SpriteAlignment::YAW") = YAW,
+		full ZKREM("renamed to SpriteAlignment::FULL") = FULL,
 	};
 
-	/// \brief Ways the camera may behave with a VOb. Same as sprite_alignment
-	/// \deprecated Use sprite_alignment instead.
-	using camera_lock_mode [[deprecated("use phoenix::sprite_alignment")]] = sprite_alignment;
-
 	/// \brief Types of wavy animation.
-	enum class animation_mode : std::uint8_t {
-		none = 0, ///< No wave animation.
-		wind = 1,
-		wind2 = 2,
+	enum class AnimationType : std::uint8_t {
+		NONE = 0, ///< No wave animation.
+		WIND = 1,
+		WIND_ALT = 2,
+
+		// Deprecated entries.
+		none ZKREM("renamed to AnimationType::NONE") = NONE,
+		wind ZKREM("renamed to AnimationType::WIND") = WIND,
+		wind2 ZKREM("renamed to AnimationType::WIND_ALT") = WIND_ALT,
 	};
 
 	/// \brief Decal visual configuration for VObs.
-	struct decal {
+	struct Decal {
 		std::string name {};
 		glm::vec2 dimension {};
 		glm::vec2 offset {};
 		bool two_sided {};
-		alpha_function alpha_func {};
+		AlphaFunction alpha_func {};
 		float texture_anim_fps {};
 		std::uint8_t alpha_weight {};
 		bool ignore_daylight {};
@@ -109,38 +141,55 @@ namespace phoenix {
 		/// \param[in,out] ctx The archive reader to read from.
 		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 		/// \return The parsed decal.
-		/// \throws parser_error if parsing fails.
-		PHOENIX_API static decal parse(archive_reader& ctx, game_version version);
+		/// \throws ParserError if parsing fails.
+		ZKREM("use ::load()") ZKAPI static Decal parse(ReadArchive& ctx, GameVersion version);
+
+		ZKAPI void load(ReadArchive& r, GameVersion version);
+	};
+
+	struct RigidBody {
+		glm::vec3 vel;
+		std::uint8_t mode;
+		bool gravity_enabled;
+		float gravity_scale;
+		glm::vec3 slide_direction;
+
+		ZKAPI void load(ReadArchive& r, GameVersion version);
+	};
+
+	struct EventManager {
+		bool cleared;
+		bool active;
+
+		ZKAPI void load(ReadArchive& r, GameVersion version);
 	};
 
 	/// \brief The base class for all VObs.
 	///
 	/// <p>Contains parameters all VObs have, like their position, bounding box and model.</p>
-	struct vob {
-		struct save_state {
+	struct VirtualObject {
+		struct SaveState {
 			uint8_t sleep_mode;
 			float next_on_timer;
+			std::optional<RigidBody> rigid_body {};
 		};
 
-		vob_type type; ///< The type of this VOb.
-		uint32_t id;   ///< The index of this VOb in the archive it was read from.
+		using save_state ZKREM("renamed to SaveState") = SaveState;
 
-		bounding_box bbox {};
+		VobType type; ///< The type of this VOb.
+		uint32_t id;  ///< The index of this VOb in the archive it was read from.
+
+		AxisAlignedBoundingBox bbox {};
 		glm::vec3 position {};
 		glm::mat3x3 rotation {};
 		bool show_visual {};
-
-		union {
-			[[deprecated("use phoenix::vob::sprite_camera_facing_mode")]] sprite_alignment camera_alignment;
-			sprite_alignment sprite_camera_facing_mode;
-		};
-
+		SpriteAlignment sprite_camera_facing_mode {SpriteAlignment::NONE};
 		bool cd_static {};
 		bool cd_dynamic {};
 		bool vob_static {};
-		shadow_mode dynamic_shadows {};
+		ShadowType dynamic_shadows {};
 		bool physics_enabled {};
-		animation_mode anim_mode {};
+		AnimationType anim_mode {};
 		std::int32_t bias {};
 		bool ambient {};
 		float anim_strength {};
@@ -150,20 +199,20 @@ namespace phoenix {
 		std::string vob_name {};
 		std::string visual_name {};
 
-		visual_type associated_visual_type {};
-		std::optional<decal> visual_decal {};
+		VisualType associated_visual_type {};
+		std::optional<Decal> visual_decal {};
 
 		/// \brief Contains extra data about the item in the context of a saved game.
-		std::optional<save_state> saved;
+		std::optional<SaveState> saved {};
 
 		/// \brief The children of this VOb.
-		std::vector<std::unique_ptr<vob>> children {};
+		std::vector<std::unique_ptr<VirtualObject>> children {};
 
 		/// \brief Default virtual destructor.
-		virtual ~vob() = default;
+		virtual ~VirtualObject() = default;
 
 		/// \return `true` if this VOb is from a save-game and `false` if not.
-		[[nodiscard]] PHOENIX_API inline bool is_save_game() const noexcept {
+		[[nodiscard]] ZKAPI inline bool is_save_game() const noexcept {
 			return saved.has_value();
 		}
 
@@ -175,7 +224,9 @@ namespace phoenix {
 		/// \param[out] obj The object to read.
 		/// \param[in,out] ctx The archive reader to read from.
 		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \throws parser_error if parsing fails.
-		PHOENIX_API static void parse(vob& obj, archive_reader& ctx, game_version version);
+		/// \throws ParserError if parsing fails.
+		ZKREM("use ::load()") ZKAPI static void parse(VirtualObject& obj, ReadArchive& ctx, GameVersion version);
+
+		ZKAPI virtual void load(ReadArchive& r, GameVersion version);
 	};
-} // namespace phoenix
+} // namespace zenkit

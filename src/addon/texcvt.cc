@@ -1,14 +1,16 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/ext/dds_convert.hh>
+#include "zenkit/addon/texcvt.hh"
+#include "zenkit/Stream.hh"
+
+#include "phoenix/buffer.hh"
 
 #define MAKEFOURCC(ch0, ch1, ch2, ch3)                                                                                 \
 	((uint32_t) (uint8_t) (ch0) | ((uint32_t) (uint8_t) (ch1) << 8) | ((uint32_t) (uint8_t) (ch2) << 16) |             \
 	 ((uint32_t) (uint8_t) (ch3) << 24))
 
-namespace phoenix {
-	extern std::uint32_t
-	_ztex_mipmap_size(texture_format format, std::uint32_t width, std::uint32_t height, uint32_t level);
+namespace zenkit {
+	extern std::uint32_t _ztex_mipmap_size(TextureFormat, std::uint32_t, std::uint32_t, uint32_t);
 
 	enum {
 		DDSD_CAPS = 0x00000001l,
@@ -68,7 +70,7 @@ namespace phoenix {
 		uint32_t dwReserved2;
 	} DDSURFACEDESC2;
 
-	static void write_dds_header(buffer& out, const texture& tex) {
+	static void write_dds_header(Write* w, zenkit::Texture const& tex) {
 		DDSURFACEDESC2 header {};
 		header.dwSize = sizeof(DDSURFACEDESC2);
 		header.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT | DDSD_CAPS;
@@ -76,8 +78,9 @@ namespace phoenix {
 		header.dwHeight = tex.height();
 		header.dwWidth = tex.width();
 
-		if (tex.format() != tex_dxt1 && tex.format() != tex_dxt2 && tex.format() != tex_dxt3 &&
-		    tex.format() != tex_dxt4 && tex.format() != tex_dxt5) {
+		if (tex.format() != TextureFormat::DXT1 && tex.format() != TextureFormat::DXT2 &&
+		    tex.format() != TextureFormat::DXT3 && tex.format() != TextureFormat::DXT4 &&
+		    tex.format() != TextureFormat::DXT5) {
 			header.dwFlags |= DDSD_PITCH;
 			header.dwPitchOrLinearSize = _ztex_mipmap_size(tex.format(), header.dwWidth, 1, 0);
 		} else {
@@ -93,7 +96,7 @@ namespace phoenix {
 
 		header.ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
 		switch (tex.format()) {
-		case tex_B8G8R8A8:
+		case TextureFormat::B8G8R8A8:
 			header.ddpfPixelFormat.dwFlags = DDPF_RGB | DDPF_ALPHAPIXELS;
 			header.ddpfPixelFormat.dwRGBBitCount = 32;
 			header.ddpfPixelFormat.dwRBitMask = 0x0000FF00;
@@ -101,7 +104,7 @@ namespace phoenix {
 			header.ddpfPixelFormat.dwBBitMask = 0xFF000000;
 			header.ddpfPixelFormat.dwRGBAlphaBitMask = 0x000000FF;
 			break;
-		case tex_R8G8B8A8:
+		case TextureFormat::R8G8B8A8:
 			header.ddpfPixelFormat.dwFlags = DDPF_RGB | DDPF_ALPHAPIXELS;
 			header.ddpfPixelFormat.dwRGBBitCount = 32;
 			header.ddpfPixelFormat.dwRBitMask = 0xFF000000;
@@ -109,7 +112,7 @@ namespace phoenix {
 			header.ddpfPixelFormat.dwBBitMask = 0x0000FF00;
 			header.ddpfPixelFormat.dwRGBAlphaBitMask = 0x000000FF;
 			break;
-		case tex_A8B8G8R8:
+		case TextureFormat::A8B8G8R8:
 			header.ddpfPixelFormat.dwFlags = DDPF_RGB | DDPF_ALPHAPIXELS;
 			header.ddpfPixelFormat.dwRGBBitCount = 32;
 			header.ddpfPixelFormat.dwRBitMask = 0x000000FF;
@@ -117,7 +120,7 @@ namespace phoenix {
 			header.ddpfPixelFormat.dwBBitMask = 0x00FF0000;
 			header.ddpfPixelFormat.dwRGBAlphaBitMask = 0xFF000000;
 			break;
-		case tex_A8R8G8B8:
+		case TextureFormat::A8R8G8B8:
 			header.ddpfPixelFormat.dwFlags = DDPF_RGB | DDPF_ALPHAPIXELS;
 			header.ddpfPixelFormat.dwRGBBitCount = 32;
 			header.ddpfPixelFormat.dwRBitMask = 0x00FF0000;
@@ -125,21 +128,21 @@ namespace phoenix {
 			header.ddpfPixelFormat.dwBBitMask = 0x000000FF;
 			header.ddpfPixelFormat.dwRGBAlphaBitMask = 0xFF000000;
 			break;
-		case tex_B8G8R8:
+		case TextureFormat::B8G8R8:
 			header.ddpfPixelFormat.dwFlags = DDPF_RGB;
 			header.ddpfPixelFormat.dwRGBBitCount = 24;
 			header.ddpfPixelFormat.dwRBitMask = 0x000000FF;
 			header.ddpfPixelFormat.dwGBitMask = 0x0000FF00;
 			header.ddpfPixelFormat.dwBBitMask = 0x00FF0000;
 			break;
-		case tex_R8G8B8:
+		case TextureFormat::R8G8B8:
 			header.ddpfPixelFormat.dwFlags = DDPF_RGB;
 			header.ddpfPixelFormat.dwRGBBitCount = 24;
 			header.ddpfPixelFormat.dwRBitMask = 0x00FF0000;
 			header.ddpfPixelFormat.dwGBitMask = 0x0000FF00;
 			header.ddpfPixelFormat.dwBBitMask = 0x000000FF;
 			break;
-		case tex_A4R4G4B4:
+		case TextureFormat::A4R4G4B4:
 			header.ddpfPixelFormat.dwFlags = DDPF_RGB | DDPF_ALPHAPIXELS;
 			header.ddpfPixelFormat.dwRGBBitCount = 16;
 			header.ddpfPixelFormat.dwRBitMask = 0x00000F00;
@@ -147,7 +150,7 @@ namespace phoenix {
 			header.ddpfPixelFormat.dwBBitMask = 0x0000000F;
 			header.ddpfPixelFormat.dwRGBAlphaBitMask = 0x0000F000;
 			break;
-		case tex_A1R5G5B5:
+		case TextureFormat::A1R5G5B5:
 			header.ddpfPixelFormat.dwFlags = DDPF_RGB | DDPF_ALPHAPIXELS;
 			header.ddpfPixelFormat.dwRGBBitCount = 16;
 			header.ddpfPixelFormat.dwRBitMask = 0x00007C00;
@@ -155,101 +158,93 @@ namespace phoenix {
 			header.ddpfPixelFormat.dwBBitMask = 0x0000001F;
 			header.ddpfPixelFormat.dwRGBAlphaBitMask = 0x00008000;
 			break;
-		case tex_R5G6B5:
+		case TextureFormat::R5G6B5:
 			header.ddpfPixelFormat.dwFlags = DDPF_RGB;
 			header.ddpfPixelFormat.dwRGBBitCount = 16;
 			header.ddpfPixelFormat.dwRBitMask = 0x0000F800;
 			header.ddpfPixelFormat.dwGBitMask = 0x000007E0;
 			header.ddpfPixelFormat.dwBBitMask = 0x0000001F;
 			break;
-		case tex_p8:
+		case TextureFormat::P8:
 			header.ddpfPixelFormat.dwFlags = DDPF_PALETTEINDEXED8;
 			break;
-		case tex_dxt1:
+		case TextureFormat::DXT1:
 			header.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
 			header.ddpfPixelFormat.dwFourCC = MAKEFOURCC('D', 'X', 'T', '1');
 			break;
-		case tex_dxt2:
+		case TextureFormat::DXT2:
 			header.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
 			header.ddpfPixelFormat.dwFourCC = MAKEFOURCC('D', 'X', 'T', '2');
 			break;
-		case tex_dxt3:
+		case TextureFormat::DXT3:
 			header.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
 			header.ddpfPixelFormat.dwFourCC = MAKEFOURCC('D', 'X', 'T', '3');
 			break;
-		case tex_dxt4:
+		case TextureFormat::DXT4:
 			header.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
 			header.ddpfPixelFormat.dwFourCC = MAKEFOURCC('D', 'X', 'T', '4');
 			break;
-		case tex_dxt5:
+		case TextureFormat::DXT5:
 			header.ddpfPixelFormat.dwFlags = DDPF_FOURCC;
 			header.ddpfPixelFormat.dwFourCC = MAKEFOURCC('D', 'X', 'T', '5');
 			break;
 		}
 
-		out.put_uint(header.dwSize);
-		out.put_uint(header.dwFlags);
-		out.put_uint(header.dwHeight);
-		out.put_uint(header.dwWidth);
-		out.put_uint(header.dwPitchOrLinearSize);
-		out.put_uint(header.dwDepth);
-		out.put_uint(header.dwMipMapCount);
+		w->write_uint(header.dwSize);
+		w->write_uint(header.dwFlags);
+		w->write_uint(header.dwHeight);
+		w->write_uint(header.dwWidth);
+		w->write_uint(header.dwPitchOrLinearSize);
+		w->write_uint(header.dwDepth);
+		w->write_uint(header.dwMipMapCount);
 
-		for (auto i : header.dwReserved1)
-			out.put_uint(i);
+		for (auto i : header.dwReserved1) {
+			w->write_uint(i);
+		}
 
-		out.put_uint(header.ddpfPixelFormat.dwSize);
-		out.put_uint(header.ddpfPixelFormat.dwFlags);
-		out.put_uint(header.ddpfPixelFormat.dwFourCC);
-		out.put_uint(header.ddpfPixelFormat.dwRGBBitCount);
-		out.put_uint(header.ddpfPixelFormat.dwRBitMask);
-		out.put_uint(header.ddpfPixelFormat.dwGBitMask);
-		out.put_uint(header.ddpfPixelFormat.dwBBitMask);
-		out.put_uint(header.ddpfPixelFormat.dwRGBAlphaBitMask);
-		out.put_uint(header.ddsCaps.dwCaps1);
-		out.put_uint(header.ddsCaps.dwCaps2);
-		out.put_uint(header.ddsCaps.dwReserved[0]);
-		out.put_uint(header.ddsCaps.dwReserved[1]);
-		out.put_uint(header.dwReserved2);
+		w->write_uint(header.ddpfPixelFormat.dwSize);
+		w->write_uint(header.ddpfPixelFormat.dwFlags);
+		w->write_uint(header.ddpfPixelFormat.dwFourCC);
+		w->write_uint(header.ddpfPixelFormat.dwRGBBitCount);
+		w->write_uint(header.ddpfPixelFormat.dwRBitMask);
+		w->write_uint(header.ddpfPixelFormat.dwGBitMask);
+		w->write_uint(header.ddpfPixelFormat.dwBBitMask);
+		w->write_uint(header.ddpfPixelFormat.dwRGBAlphaBitMask);
+		w->write_uint(header.ddsCaps.dwCaps1);
+		w->write_uint(header.ddsCaps.dwCaps2);
+		w->write_uint(header.ddsCaps.dwReserved[0]);
+		w->write_uint(header.ddsCaps.dwReserved[1]);
+		w->write_uint(header.dwReserved2);
 	}
 
-	void write_dds_palette(buffer& out, const texture& tex) {
+	static void write_dds_palette(Write* w, zenkit::Texture const& tex) {
 		for (auto i = 0; i < ZTEX_PALETTE_ENTRIES; ++i) {
-			out.put(tex.palette()[i].b);
-			out.put(tex.palette()[i].g);
-			out.put(tex.palette()[i].r);
-			out.put(tex.palette()[i].a);
+			w->write_ubyte(tex.palette()[i].b);
+			w->write_ubyte(tex.palette()[i].g);
+			w->write_ubyte(tex.palette()[i].r);
+			w->write_ubyte(tex.palette()[i].a);
 		}
 	}
 
-	void write_dds_data(buffer& out, const texture& tex) {
+	static void write_dds_data(Write* w, zenkit::Texture const& tex) {
 		for (uint32_t level = 0; level < tex.mipmaps(); ++level) {
 			auto& data = tex.data(level);
-			out.put(data.data(), data.size());
+			w->write(data.data(), data.size());
 		}
 	}
 
-	uint32_t calculate_total_buffer_size(const texture& tex) {
-		uint32_t size = 0;
+	std::vector<std::byte> to_dds(zenkit::Texture const& tex) {
+		std::vector<std::byte> buf {};
+		auto w = Write::to(&buf);
 
-		for (int32_t level = static_cast<int32_t>(tex.mipmaps()) - 1; level >= 0; --level)
-			size += _ztex_mipmap_size(tex.format(), tex.width(), tex.height(), level);
+		w->write_string("DDS ");
+		write_dds_header(w.get(), tex);
 
-		return size;
-	}
-
-	buffer texture_to_dds(const texture& tex) {
-		auto buf = buffer::allocate(4 + // FOURCC
-		                            sizeof(DDSURFACEDESC2) + (tex.format() == tex_p8 ? ZTEX_PALETTE_ENTRIES * 4 : 0) +
-		                            calculate_total_buffer_size(tex));
-		buf.put_string("DDS ");
-		write_dds_header(buf, tex);
-
-		if (tex.format() == tex_p8) {
-			write_dds_palette(buf, tex);
+		if (tex.format() == TextureFormat::P8) {
+			write_dds_palette(w.get(), tex);
 		}
 
-		write_dds_data(buf, tex);
+		write_dds_data(w.get(), tex);
 		return buf;
 	}
-} // namespace phoenix
+} // namespace zenkit

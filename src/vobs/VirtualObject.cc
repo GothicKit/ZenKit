@@ -1,69 +1,78 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/material.hh>
-#include <phoenix/vobs/vob.hh>
+#include "zenkit/vobs/VirtualObject.hh"
+#include "zenkit/Archive.hh"
+
+#include "../Internal.hh"
 
 #include <unordered_map>
 
-namespace phoenix {
+namespace zenkit {
 	/// \brief A mapping of archive class names to visual_type values.
-	static std::unordered_map<std::string, visual_type> visual_type_map = {
-	    {"zCDecal", visual_type::decal},
-	    {"zCMesh", visual_type::mesh},
-	    {"zCProgMeshProto", visual_type::proto_mesh},
-	    {"zCParticleFX", visual_type::particle_system},
-	    {"zCModel", visual_type::model},
-	    {"zCAICamera", visual_type::ai_camera},
-	    {"zCMorphMesh", visual_type::morph_mesh},
-	    {"\xA7", visual_type::unknown},
-	    {"%", visual_type::unknown},
+	static std::unordered_map<std::string, VisualType> visual_type_map = {
+	    {"zCDecal", VisualType::DECAL},
+	    {"zCMesh", VisualType::MESH},
+	    {"zCProgMeshProto", VisualType::MULTI_RESOLUTION_MESH},
+	    {"zCParticleFX", VisualType::PARTICLE_EFFECT},
+	    {"zCModel", VisualType::MODEL},
+	    {"zCAICamera", VisualType::AI_CAMERA},
+	    {"zCMorphMesh", VisualType::MORPH_MESH},
+	    {"\xA7", VisualType::UNKNOWN},
+	    {"%", VisualType::UNKNOWN},
 	};
 
-	decal decal::parse(archive_reader& in, game_version version) {
-		decal dc {};
-		dc.name = in.read_string();                                  // name
-		dc.dimension = in.read_vec2();                               // decalDim
-		dc.offset = in.read_vec2();                                  // decalOffset
-		dc.two_sided = in.read_bool();                               // decal2Sided
-		dc.alpha_func = static_cast<alpha_function>(in.read_enum()); // decalAlphaFunc
-		dc.texture_anim_fps = in.read_float();                       // decalTexAniFPS
-
-		if (version == game_version::gothic_2) {
-			dc.alpha_weight = in.read_byte();    // decalAlphaWeight
-			dc.ignore_daylight = in.read_bool(); // ignoreDayLight
-		}
-
+	Decal Decal::parse(ReadArchive& in, GameVersion version) {
+		Decal dc {};
+		dc.load(in, version);
 		return dc;
 	}
 
-	void vob::parse(vob& obj, archive_reader& in, game_version version) {
-		auto packed = in.read_int() != 0; // pack
+	void Decal::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+		this->name = r.read_string();                                 // name
+		this->dimension = r.read_vec2();                              // decalDim
+		this->offset = r.read_vec2();                                 // decalOffset
+		this->two_sided = r.read_bool();                              // decal2Sided
+		this->alpha_func = static_cast<AlphaFunction>(r.read_enum()); // decalAlphaFunc
+		this->texture_anim_fps = r.read_float();                      // decalTexAniFPS
+
+		if (version == GameVersion::GOTHIC_2) {
+			this->alpha_weight = r.read_byte();    // decalAlphaWeight
+			this->ignore_daylight = r.read_bool(); // ignoreDayLight
+		}
+	}
+
+	void VirtualObject::parse(VirtualObject& obj, ReadArchive& in, GameVersion version) {
+		obj.load(in, version);
+	}
+
+	void VirtualObject::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+		auto packed = r.read_int() != 0; // pack
 		bool has_visual_object = true;
 		bool has_ai_object = true;
 		bool has_event_manager_object = false;
 
 		if (packed) {
-			auto bin = in.read_raw_bytes(version == game_version::gothic_1 ? 74 : 83); // dataRaw
+			auto bin = r.read_raw(version == GameVersion::GOTHIC_1 ? 74 : 83); // dataRaw
 
-			obj.bbox = bounding_box::parse(bin);
-			obj.position = bin.get_vec3();
-			obj.rotation = bin.get_mat3x3();
+			this->bbox.load(bin.get());
+			this->position = bin->read_vec3();
+			this->rotation = bin->read_mat3();
 
-			std::uint8_t bit0 = bin.get();
+			std::uint8_t bit0 = bin->read_ubyte();
 			std::uint16_t bit1;
 
-			if (version == game_version::gothic_1) {
-				bit1 = bin.get();
+			if (version == GameVersion::GOTHIC_1) {
+				bit1 = bin->read_ubyte();
 			} else {
-				bit1 = bin.get_ushort();
+				bit1 = bin->read_ushort();
 			}
 
-			obj.show_visual = static_cast<bool>((bit0 & 0b00000001) >> 0);
-			obj.sprite_camera_facing_mode = static_cast<sprite_alignment>((bit0 & 0b00000110) >> 1);
-			obj.cd_static = static_cast<bool>((bit0 & 0b00001000) >> 3);
-			obj.cd_dynamic = static_cast<bool>((bit0 & 0b00010000) >> 4);
-			obj.vob_static = static_cast<bool>((bit0 & 0b00100000) >> 5);
-			obj.dynamic_shadows = static_cast<shadow_mode>((bit0 & 0b11000000) >> 6);
+			this->show_visual = static_cast<bool>((bit0 & 0b00000001) >> 0);
+			this->sprite_camera_facing_mode = static_cast<SpriteAlignment>((bit0 & 0b00000110) >> 1);
+			this->cd_static = static_cast<bool>((bit0 & 0b00001000) >> 3);
+			this->cd_dynamic = static_cast<bool>((bit0 & 0b00010000) >> 4);
+			this->vob_static = static_cast<bool>((bit0 & 0b00100000) >> 5);
+			this->dynamic_shadows = static_cast<ShadowType>((bit0 & 0b11000000) >> 6);
 
 			bool has_preset_name = static_cast<bool>((bit1 & 0b000000000000001u) >> 0u);
 			bool has_vob_name = static_cast<bool>((bit1 & 0b000000000000010u) >> 1u);
@@ -73,90 +82,162 @@ namespace phoenix {
 
 			// Quirk: bit 5 of this bitfield specifies whether an event manger object is
 			// present but this is only relevant in save-games.
-			has_event_manager_object = static_cast<bool>((bit1 & 0b000000000100000u) >> 5u) && in.get_header().save;
+			has_event_manager_object = static_cast<bool>((bit1 & 0b000000000100000u) >> 5u) && r.get_header().save;
 
-			obj.physics_enabled = static_cast<bool>((bit1 & 0b000000001000000u) >> 6u);
+			this->physics_enabled = static_cast<bool>((bit1 & 0b000000001000000u) >> 6u);
 
-			if (version == game_version::gothic_2) {
-				obj.anim_mode = static_cast<animation_mode>(bit1 & 0b000000110000000u >> 7u);
-				obj.bias = static_cast<std::int32_t>((bit1 & 0b011111000000000u) >> 9u);
-				obj.ambient = static_cast<bool>((bit1 & 0b100000000000000u) >> 14u);
+			if (version == GameVersion::GOTHIC_2) {
+				this->anim_mode = static_cast<AnimationType>(bit1 & 0b000000110000000u >> 7u);
+				this->bias = static_cast<std::int32_t>((bit1 & 0b011111000000000u) >> 9u);
+				this->ambient = static_cast<bool>((bit1 & 0b100000000000000u) >> 14u);
 
-				obj.anim_strength = bin.get_float();
-				obj.far_clip_scale = bin.get_float();
+				this->anim_strength = bin->read_float();
+				this->far_clip_scale = bin->read_float();
 			}
 
 			if (has_preset_name) {
-				obj.preset_name = in.read_string(); // presetName
+				this->preset_name = r.read_string(); // presetName
 			}
 
 			if (has_vob_name) {
-				obj.vob_name = in.read_string(); // vobName
+				this->vob_name = r.read_string(); // vobName
 			}
 
 			if (has_visual_name) {
-				obj.visual_name = in.read_string(); // visual
+				this->visual_name = r.read_string(); // visual
 			}
 		} else {
-			obj.preset_name = in.read_string();
-			obj.bbox = in.read_bbox(); // bbox3DWS
+			this->preset_name = r.read_string();
+			this->bbox = r.read_bbox(); // bbox3DWS
 
-			obj.rotation = in.read_mat3x3(); // trafoOSToWSRot
-			obj.position = in.read_vec3();   // trafoOSToWSPos
+			this->rotation = r.read_mat3x3(); // trafoOSToWSRot
+			this->position = r.read_vec3();   // trafoOSToWSPos
 
-			obj.vob_name = in.read_string();                                               // vobName
-			obj.visual_name = in.read_string();                                            // visual
-			obj.show_visual = in.read_bool();                                              // showVisual
-			obj.sprite_camera_facing_mode = static_cast<sprite_alignment>(in.read_enum()); // visualCamAlign
+			this->vob_name = r.read_string();                                              // vobName
+			this->visual_name = r.read_string();                                           // visual
+			this->show_visual = r.read_bool();                                             // showVisual
+			this->sprite_camera_facing_mode = static_cast<SpriteAlignment>(r.read_enum()); // visualCamAlign
 
-			if (version == game_version::gothic_1) {
-				obj.cd_static = in.read_bool();                                 // cdStatic
-				obj.cd_dynamic = in.read_bool();                                // cdDyn
-				obj.vob_static = in.read_bool();                                // staticVob
-				obj.dynamic_shadows = static_cast<shadow_mode>(in.read_enum()); // dynShadow
+			if (version == GameVersion::GOTHIC_1) {
+				this->cd_static = r.read_bool();                                // cdStatic
+				this->cd_dynamic = r.read_bool();                               // cdDyn
+				this->vob_static = r.read_bool();                               // staticVob
+				this->dynamic_shadows = static_cast<ShadowType>(r.read_enum()); // dynShadow
 			} else {
-				obj.anim_mode = static_cast<animation_mode>(in.read_enum());    // visualAniMode
-				obj.anim_strength = in.read_float();                            // visualAniModeStrength
-				obj.far_clip_scale = in.read_float();                           // vobFarClipZScale
-				obj.cd_static = in.read_bool();                                 // cdStatic
-				obj.cd_dynamic = in.read_bool();                                // cdDyn
-				obj.vob_static = in.read_bool();                                // staticVob
-				obj.dynamic_shadows = static_cast<shadow_mode>(in.read_enum()); // dynShadow
-				obj.bias = in.read_int();                                       // zbias
-				obj.ambient = in.read_bool();                                   // isAmbient
+				this->anim_mode = static_cast<AnimationType>(r.read_enum());    // visualAniMode
+				this->anim_strength = r.read_float();                           // visualAniModeStrength
+				this->far_clip_scale = r.read_float();                          // vobFarClipZScale
+				this->cd_static = r.read_bool();                                // cdStatic
+				this->cd_dynamic = r.read_bool();                               // cdDyn
+				this->vob_static = r.read_bool();                               // staticVob
+				this->dynamic_shadows = static_cast<ShadowType>(r.read_enum()); // dynShadow
+				this->bias = r.read_int();                                      // zbias
+				this->ambient = r.read_bool();                                  // isAmbient
 			}
 		}
 
+		ArchiveObject hdr {};
 		if (has_visual_object) {
-			archive_object visual {};
-			in.read_object_begin(visual);
-			obj.associated_visual_type = visual_type_map[visual.class_name];
+			ArchiveObject visual {};
+			r.read_object_begin(visual);
+			this->associated_visual_type = visual_type_map[visual.class_name];
 
-			if (obj.associated_visual_type == visual_type::decal) {
-				obj.visual_decal = decal::parse(in, version);
+			if (this->associated_visual_type == VisualType::DECAL) {
+				this->visual_decal = Decal {};
+				this->visual_decal->load(r, version);
 			}
 
-			if (!in.read_object_end()) {
-				PX_LOGW("vob_tree: visual \"", visual.class_name, "\" not fully parsed");
-				in.skip_object(true);
+			if (!r.read_object_end()) {
+				ZKLOGW("VirtualObject", "visual \"%s\" not fully parsed", visual.class_name.c_str());
+				r.skip_object(true);
 			}
 		}
 
 		// TODO
-		if (has_ai_object) {
-			in.skip_object(false);
+		if (has_ai_object && r.read_object_begin(hdr)) {
+			if (hdr.class_name == "oCAIHuman:oCAniCtrl_Human:zCAIPlayer") {
+				(void) r.read_int();   // waterLevel
+				(void) r.read_float(); // floorY
+				(void) r.read_float(); // waterY
+				(void) r.read_float(); // ceilY
+				(void) r.read_float(); // feetY
+				(void) r.read_float(); // headY
+				(void) r.read_float(); // fallDistY
+				(void) r.read_float(); // fallStartY
+
+				// TODO: aiNpc
+				if (r.read_object_begin(hdr)) {
+					r.skip_object(true);
+				} else {
+					ZKLOGW("VirtualObject.Ai", "aiNpc not found");
+				}
+
+				(void) r.read_int();  // walkMode
+				(void) r.read_int();  // weaponMode
+				(void) r.read_int();  // wmodeLast
+				(void) r.read_int();  // wmodeSelect
+				(void) r.read_bool(); // changeWeapon
+				(void) r.read_int();  // actionMode
+			} else if (hdr.class_name == "oCAIVobMove") {
+				// TODO: vob
+				if (r.read_object_begin(hdr)) {
+					r.skip_object(true);
+				}
+
+				// TODO: owner
+				if (r.read_object_begin(hdr)) {
+					r.skip_object(true);
+				}
+			}
+
+			if (!r.read_object_end()) {
+				ZKLOGW("VirtualObject.Ai", "\"%s\" not fully parsed.", hdr.class_name.c_str());
+				r.skip_object(true);
+			}
 		}
 
-		// TODO
-		if (has_event_manager_object) {
-			in.skip_object(false);
+		if (has_event_manager_object && r.read_object_begin(hdr)) {
+			if (hdr.class_name != "zCEventManager") {
+				throw ParserError {"VirtualObject"};
+			}
+
+			EventManager em {};
+			em.load(r, version);
+
+			r.read_object_end();
 		}
 
-		if (in.get_header().save) {
+		if (r.get_header().save) {
 			// save-games contain two extra values for each VOb
-			obj.saved = save_state {};
-			obj.saved->sleep_mode = in.read_byte();     // sleepMode
-			obj.saved->next_on_timer = in.read_float(); // nextOnTimer
+			// TODO: These are technically from oCVob!
+			this->saved = SaveState {};
+			this->saved->sleep_mode = r.read_byte();     // sleepMode
+			this->saved->next_on_timer = r.read_float(); // nextOnTimer
+
+			if (this->physics_enabled) {
+				this->saved->rigid_body.emplace().load(r, version);
+			}
 		}
 	}
-} // namespace phoenix
+
+	void RigidBody::load(ReadArchive& r, GameVersion) {
+		this->vel = r.read_vec3();
+		this->mode = r.read_byte();
+		this->gravity_enabled = r.read_bool();
+		this->gravity_scale = r.read_float();
+		this->slide_direction = r.read_vec3();
+	}
+
+	void EventManager::load(ReadArchive& r, GameVersion) {
+		this->cleared = r.read_bool();
+		this->active = r.read_bool();
+
+		ArchiveObject obj;
+		if (r.read_object_begin(obj) && !r.read_object_end()) {
+			ZKLOGW("VirtualObject.EventManager", "emCutscene not fully parsed!");
+			r.skip_object(true);
+		}
+
+		// TODO: this->cutscene.load(r, version);
+	}
+} // namespace zenkit

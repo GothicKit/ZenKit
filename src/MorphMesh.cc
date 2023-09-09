@@ -1,78 +1,84 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/morph_mesh.hh>
+#include "zenkit/MorphMesh.hh"
+#include "zenkit/Stream.hh"
 
-namespace phoenix {
-	enum class morph_mesh_chunk {
-		unknown,
-		sources = 0xE010,
-		header = 0xE020,
-		animations = 0xE030,
-		proto = 0xB100,
-		morph = 0xB1FF
+namespace zenkit {
+	enum class MorphMeshChunkType : std::uint16_t {
+		SOURCES = 0xE010,
+		HEADER = 0xE020,
+		ANIMATIONS = 0xE030,
+		PROTO = 0xB100,
+		MORPH = 0xB1FF
 	};
 
-	morph_mesh morph_mesh::parse(buffer& in) {
-		morph_mesh msh {};
-		morph_mesh_chunk type = morph_mesh_chunk::unknown;
+	MorphMesh MorphMesh::parse(phoenix::buffer& in) {
+		MorphMesh msh {};
 
-		do {
-			type = static_cast<morph_mesh_chunk>(in.get_ushort());
+		auto r = Read::from(&in);
+		msh.load(r.get());
 
-			auto length = in.get_uint();
-			auto chunk = in.extract(length);
+		return msh;
+	}
 
+	MorphMesh MorphMesh::parse(phoenix::buffer&& buf) {
+		return MorphMesh::parse(buf);
+	}
+
+	void MorphMesh::load(Read* r) {
+		proto::read_chunked<MorphMeshChunkType>(r, "MorphMesh", [this](Read* c, MorphMeshChunkType type) {
 			switch (type) {
-			case morph_mesh_chunk::sources: {
-				auto count = chunk.get_ushort();
-				msh.sources.resize(count);
+			case MorphMeshChunkType::SOURCES: {
+				auto count = c->read_ushort();
+				this->sources.resize(count);
 
 				for (int32_t i = 0; i < count; ++i) {
-					msh.sources[i].file_date = date::parse(chunk);
-					msh.sources[i].file_name = chunk.get_line();
+					this->sources[i].file_date.load(c);
+					this->sources[i].file_name = c->read_line(true);
 				}
 
 				break;
 			}
-			case morph_mesh_chunk::header:
-				/* version = */ (void) chunk.get_uint();
-				msh.name = chunk.get_line();
+			case MorphMeshChunkType::HEADER:
+				/* version = */ (void) c->read_uint();
+				this->name = c->read_line(true);
 				break;
-			case morph_mesh_chunk::proto:
-				msh.mesh = proto_mesh::parse_from_section(chunk);
-				msh.morph_positions.resize(msh.mesh.positions.size());
+			case MorphMeshChunkType::PROTO: {
+				this->mesh.load_from_section(c);
+				this->morph_positions.resize(this->mesh.positions.size());
 				break;
-			case morph_mesh_chunk::morph:
-				for (std::uint32_t i = 0; i < msh.morph_positions.size(); ++i) {
-					msh.morph_positions[i] = chunk.get_vec3();
+			}
+			case MorphMeshChunkType::MORPH:
+				for (std::uint32_t i = 0; i < this->morph_positions.size(); ++i) {
+					this->morph_positions[i] = c->read_vec3();
 				}
 				break;
-			case morph_mesh_chunk::animations: {
-				auto animation_count = chunk.get_ushort();
-				msh.animations.reserve(animation_count);
+			case MorphMeshChunkType::ANIMATIONS: {
+				auto animation_count = c->read_ushort();
+				this->animations.reserve(animation_count);
 
 				for (int32_t i = 0; i < animation_count; ++i) {
-					auto& anim = msh.animations.emplace_back();
-					anim.name = chunk.get_line(false);
-					anim.blend_in = chunk.get_float();
-					anim.blend_out = chunk.get_float();
-					anim.duration = chunk.get_float();
-					anim.layer = chunk.get_int();
-					anim.speed = chunk.get_float();
-					anim.flags = chunk.get();
+					auto& anim = this->animations.emplace_back();
+					anim.name = c->read_line(false);
+					anim.blend_in = c->read_float();
+					anim.blend_out = c->read_float();
+					anim.duration = c->read_float();
+					anim.layer = c->read_int();
+					anim.speed = c->read_float();
+					anim.flags = c->read_ubyte();
 
-					auto vertex_count = chunk.get_uint();
-					anim.frame_count = chunk.get_uint();
+					auto vertex_count = c->read_uint();
+					anim.frame_count = c->read_uint();
 
 					anim.vertices.resize(vertex_count);
 					anim.samples.resize(anim.frame_count * vertex_count);
 
 					for (std::uint32_t j = 0; j < vertex_count; ++j) {
-						anim.vertices[j] = chunk.get_uint();
+						anim.vertices[j] = c->read_uint();
 					}
 
 					for (std::uint32_t j = 0; j < vertex_count * anim.frame_count; ++j) {
-						anim.samples[j] = chunk.get_vec3();
+						anim.samples[j] = c->read_vec3();
 					}
 				}
 				break;
@@ -81,15 +87,7 @@ namespace phoenix {
 				break;
 			}
 
-			if (chunk.remaining() != 0) {
-				PX_LOGW("morph_mesh: ",
-				        chunk.remaining(),
-				        " bytes remaining in section ",
-				        std::hex,
-				        std::uint16_t(type));
-			}
-		} while (in.remaining() != 0);
-
-		return msh;
+			return false;
+		});
 	}
-} // namespace phoenix
+} // namespace zenkit

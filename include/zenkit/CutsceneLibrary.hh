@@ -1,16 +1,22 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include "Api.hh"
-#include <phoenix/archive.hh>
+#include "zenkit/Library.hh"
 
+#include <cstdint>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 namespace phoenix {
+	class buffer;
+}
+
+namespace zenkit {
+	class Read;
+
 	/// \brief A single cutscene message.
-	struct atomic_message {
+	struct CutsceneMessage {
 		uint32_t type = 0;
 
 		/// \brief The text associated with the message.
@@ -21,7 +27,7 @@ namespace phoenix {
 	};
 
 	/// \brief A block containing a cutscene message and a unique name.
-	struct message_block {
+	struct CutsceneBlock {
 		/// \brief The unique name of the message.
 		std::string name;
 
@@ -29,7 +35,7 @@ namespace phoenix {
 		/// \details It seems like it was possible to specify multiple atomic_message object for each message_block.
 		///          This seems to have been abandoned, however, so this implementation only supports one atomic_message
 		///          per message block.
-		atomic_message message;
+		CutsceneMessage message;
 	};
 
 	/// \brief Represents a cutscene library.
@@ -40,7 +46,7 @@ namespace phoenix {
 	/// of Gothic and Gothic II installations. Cutscene libraries are *ZenGin* archives in either binary or ASCII
 	/// format. They have either the `.DAT` or `.BIN` extension for binary files or the `.CSL` or `.LSC` extension for
 	/// text files</p>
-	class messages {
+	class CutsceneLibrary {
 	public:
 		/// \brief Parses a message database from the data in the given buffer.
 		///
@@ -54,24 +60,24 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] PHOENIX_API static messages parse(buffer& path);
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static CutsceneLibrary parse(phoenix::buffer& path);
 
 		/// \brief Parses a message database from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed message database object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] PHOENIX_API inline static messages parse(buffer&& path) {
-			return messages::parse(path);
-		}
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static CutsceneLibrary parse(phoenix::buffer&& path);
 
 		/// \brief Retrieves a message block by it's name.
 		/// \param name The name of the block to get
 		/// \return A pointer to the block or `nullptr` if the block was not found.
-		[[nodiscard]] PHOENIX_API const message_block* block_by_name(std::string_view name) const;
+		[[nodiscard]] ZKAPI const CutsceneBlock* block_by_name(std::string_view name) const;
+
+		ZKAPI void load(Read* r);
 
 	public:
 		/// \brief A list of all message blocks in the database.
-		std::vector<message_block> blocks {};
+		std::vector<CutsceneBlock> blocks {};
 	};
-} // namespace phoenix
+} // namespace zenkit

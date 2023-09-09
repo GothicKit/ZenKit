@@ -1,26 +1,30 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include "phoenix/Api.hh"
-#include <phoenix/archive.hh>
+#include "zenkit/Library.hh"
 
+#include <glm/vec3.hpp>
+
+#include <cstdint>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
-namespace phoenix {
+namespace zenkit {
+	class ReadArchive;
+
 	/// \brief Represents a single waypoint.
-	struct way_point {
+	struct WayPoint {
 		std::string name;
 		std::int32_t water_depth;
 		bool under_water;
 		glm::vec3 position;
 		glm::vec3 direction;
-
 		bool free_point {false};
 	};
 
 	/// \brief Represents a connection between two waypoints.
-	struct way_edge {
+	struct WayEdge {
 		/// \brief The index of the first waypoint of the connection.
 		std::uint32_t a;
 
@@ -31,28 +35,18 @@ namespace phoenix {
 	/// \brief Represents a way-net.
 	///
 	/// Way-nets are used for NPC navigation and path finding.
-	class way_net {
+	class WayNet {
 	public:
 		/// \brief PParses a way-net from the given reader.
 		/// \param in The reader to read from.
 		/// \return The way-net parsed.
-		PHOENIX_INTERNAL static way_net parse(archive_reader& in);
-
-		/// \brief Get the waypoint with the given name.
-		/// \param name The name of the waypoint to get.
-		/// \return A pointer to the waypoint or `nullptr` if the waypoint was not fount.
-		[[nodiscard]] PHOENIX_DEPRECATED("unsupported API")
-		    PHOENIX_API const way_point* waypoint(const std::string& name) const;
+		ZKINT void load(ReadArchive& in);
 
 	public:
 		/// \brief All waypoints of this way-net.
-		std::vector<way_point> waypoints;
+		std::vector<WayPoint> waypoints;
 
 		/// \brief All edges of this way-net.
-		std::vector<way_edge> edges;
-
-	private:
-		std::unordered_map<std::string, std::uint32_t> _m_name_to_waypoint;
+		std::vector<WayEdge> edges;
 	};
-
-} // namespace phoenix
+} // namespace zenkit

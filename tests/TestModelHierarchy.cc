@@ -1,12 +1,15 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include <doctest/doctest.h>
-#include <phoenix/model_hierarchy.hh>
+#include <zenkit/ModelHierarchy.hh>
+#include <zenkit/Stream.hh>
 
-TEST_SUITE("model_hierarchy") {
-	TEST_CASE("model_hierarchy(parse:?)") {
-		auto in = phoenix::buffer::mmap("./samples/hierarchy0.mdh");
-		auto mesh = phoenix::model_hierarchy::parse(in);
+TEST_SUITE("ModelHierarchy") {
+	TEST_CASE("ModelHierarchy.load(GOTHIC?)") {
+		auto in = zenkit::Read::from("./samples/hierarchy0.mdh");
+
+		zenkit::ModelHierarchy mesh {};
+		mesh.load(in.get());
 
 		CHECK_EQ(mesh.nodes.size(), 7);
 		CHECK_EQ(mesh.nodes[0].name, "BIP01 MUEHLE");
@@ -28,11 +31,11 @@ TEST_SUITE("model_hierarchy") {
 		CHECK_EQ(mesh.root_translation, glm::vec3 {0, 0, -394.040466});
 	}
 
-	TEST_CASE("model_hierarchy(parse:g1)" * doctest::skip()) {
+	TEST_CASE("ModelHierarchy.load(GOTHIC1)" * doctest::skip()) {
 		// TODO: Stub
 	}
 
-	TEST_CASE("model_hierarchy(parse:g2)" * doctest::skip()) {
+	TEST_CASE("ModelHierarchy.load(GOTHIC2)" * doctest::skip()) {
 		// TODO: Stub
 	}
 }

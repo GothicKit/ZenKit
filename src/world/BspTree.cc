@@ -1,23 +1,25 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/world/bsp_tree.hh>
+#include "zenkit/world/BspTree.hh"
+#include "zenkit/Stream.hh"
 
-namespace phoenix {
+#include "../Internal.hh"
+
+namespace zenkit {
 	static constexpr auto version_g1 = 0x2090000;
 	[[maybe_unused]] static constexpr auto version_g2 = 0x4090000;
 
-	enum class bsp_chunk : std::uint16_t {
-		unknown,
-		header = 0xC000,
-		polygons = 0xC010,
-		tree = 0xC040,
-		outdoors = 0xC050,
-		light = 0xC045,
-		end = 0xC0FF
+	enum class BspChunkType : std::uint16_t {
+		HEADER = 0xC000,
+		POLYGONS = 0xC010,
+		TREE = 0xC040,
+		OUTDOORS = 0xC050,
+		LIGHT = 0xC045,
+		END = 0xC0FF
 	};
 
-	static void _parse_bsp_nodes(buffer& in,
-	                             std::vector<bsp_node>& nodes,
+	static void _parse_bsp_nodes(Read* in,
+	                             std::vector<BspNode>& nodes,
 	                             std::vector<std::uint64_t>& indices,
 	                             std::uint32_t version,
 	                             std::int32_t parent_index,
@@ -26,23 +28,23 @@ namespace phoenix {
 
 		auto& node = nodes.emplace_back();
 		node.parent_index = parent_index;
-		node.bbox = bounding_box::parse(in);
-		node.polygon_index = in.get_uint();
-		node.polygon_count = in.get_uint();
+		node.bbox.load(in);
+		node.polygon_index = in->read_uint();
+		node.polygon_count = in->read_uint();
 
 		if (leaf) {
 			indices.push_back(self_index);
 		} else {
-			auto flags = in.get();
+			auto flags = in->read_ubyte();
 
 			node.plane = {};
-			node.plane.w = in.get_float();
-			node.plane.x = in.get_float();
-			node.plane.y = in.get_float();
-			node.plane.z = in.get_float();
+			node.plane.w = in->read_float();
+			node.plane.x = in->read_float();
+			node.plane.y = in->read_float();
+			node.plane.z = in->read_float();
 
 			if (version == version_g1) {
-				(void) in.get(); // "lod-flag"
+				(void) in->read_ubyte(); // "lod-flag"
 			}
 
 			if ((flags & 0x01) != 0) {
@@ -57,106 +59,91 @@ namespace phoenix {
 		}
 	}
 
-	bsp_tree bsp_tree::parse(buffer& in, std::uint32_t version) {
-		bsp_tree bsp {};
-		bsp_chunk type = bsp_chunk::unknown;
-		bool finished = false;
-
-		do {
-			type = static_cast<bsp_chunk>(in.get_ushort());
-
-			auto length = in.get_uint();
-			auto chunk = in.extract(length);
-
-			PX_LOGI("bsp_tree: parsing chunk ", std::hex, std::uint16_t(type));
+	void BspTree::load(Read* r, std::uint32_t version) {
+		proto::read_chunked<BspChunkType>(r, "BspTree", [this, version](Read* c, BspChunkType type) {
+			ZKLOGI("BspTree", "Parsing chunk %x", std::uint16_t(type));
 
 			switch (type) {
-			case bsp_chunk::header:
-				(void) chunk.get_ushort();
-				bsp.mode = static_cast<bsp_tree_mode>(chunk.get_uint());
+			case BspChunkType::HEADER:
+				(void) c->read_ushort();
+				this->mode = static_cast<BspTreeType>(c->read_uint());
 				break;
-			case bsp_chunk::polygons:
-				bsp.polygon_indices.resize(chunk.get_uint());
+			case BspChunkType::POLYGONS:
+				this->polygon_indices.resize(c->read_uint());
 
-				for (uint32_t& index : bsp.polygon_indices) {
-					index = chunk.get_uint();
+				for (uint32_t& index : this->polygon_indices) {
+					index = c->read_uint();
 				}
 				break;
-			case bsp_chunk::tree: {
-				uint32_t node_count = chunk.get_uint();
-				uint32_t leaf_count = chunk.get_uint();
+			case BspChunkType::TREE: {
+				uint32_t node_count = c->read_uint();
+				uint32_t leaf_count = c->read_uint();
 
-				bsp.nodes.reserve(node_count);
-				bsp.leaf_node_indices.reserve(leaf_count);
+				this->nodes.reserve(node_count);
+				this->leaf_node_indices.reserve(leaf_count);
 
-				_parse_bsp_nodes(chunk, bsp.nodes, bsp.leaf_node_indices, version, -1);
+				_parse_bsp_nodes(c, this->nodes, this->leaf_node_indices, version, -1);
 
-				for (auto idx : bsp.leaf_node_indices) {
-					auto& node = bsp.nodes[idx];
+				for (auto idx : this->leaf_node_indices) {
+					auto& node = this->nodes[idx];
 
 					for (uint32_t i = 0; i < node.polygon_count; ++i) {
-						bsp.leaf_polygons.push_back(bsp.polygon_indices[node.polygon_index + i]);
+						this->leaf_polygons.push_back(this->polygon_indices[node.polygon_index + i]);
 					}
 				}
-				std::sort(bsp.leaf_polygons.begin(), bsp.leaf_polygons.end());
+				std::sort(this->leaf_polygons.begin(), this->leaf_polygons.end());
 
-				assert(node_count == bsp.nodes.size());
-				assert(leaf_count == bsp.leaf_node_indices.size());
+				assert(node_count == this->nodes.size());
+				assert(leaf_count == this->leaf_node_indices.size());
 				break;
 			}
-			case bsp_chunk::light: {
-				bsp.light_points.resize(bsp.leaf_node_indices.size());
-
-				for (std::uint32_t i = 0; i < bsp.light_points.size(); ++i) {
-					bsp.light_points[i] = chunk.get_vec3();
+			case BspChunkType::LIGHT: {
+				this->light_points.resize(this->leaf_node_indices.size());
+				for (auto& light_point : this->light_points) {
+					light_point = c->read_vec3();
 				}
 				break;
 			}
-			case bsp_chunk::outdoors: {
-				auto sector_count = chunk.get_uint();
-				bsp.sectors.reserve(sector_count);
+			case BspChunkType::OUTDOORS: {
+				auto sector_count = c->read_uint();
+				this->sectors.reserve(sector_count);
 
 				for (std::uint32_t i = 0; i < sector_count; ++i) {
-					auto& sector = bsp.sectors.emplace_back();
+					auto& sector = this->sectors.emplace_back();
 
-					sector.name = chunk.get_line(false);
+					sector.name = c->read_line(false);
 
-					auto node_count = chunk.get_uint();
-					auto polygon_count = chunk.get_uint();
+					auto node_count = c->read_uint();
+					auto polygon_count = c->read_uint();
 
 					sector.node_indices.resize(node_count);
 					sector.portal_polygon_indices.resize(polygon_count);
 
 					for (std::uint32_t j = 0; j < node_count; ++j) {
-						sector.node_indices[j] = chunk.get_uint();
+						sector.node_indices[j] = c->read_uint();
 					}
 
 					for (std::uint32_t j = 0; j < polygon_count; ++j) {
-						sector.portal_polygon_indices[j] = chunk.get_uint();
+						sector.portal_polygon_indices[j] = c->read_uint();
 					}
 				}
 
-				auto portal_count = chunk.get_uint();
-				bsp.portal_polygon_indices.resize(portal_count);
+				auto portal_count = c->read_uint();
+				this->portal_polygon_indices.resize(portal_count);
 
 				for (std::uint32_t i = 0; i < portal_count; ++i) {
-					bsp.portal_polygon_indices[i] = chunk.get_uint();
+					this->portal_polygon_indices[i] = c->read_uint();
 				}
 				break;
 			}
-			case bsp_chunk::end:
-				(void) chunk.get();
-				finished = true;
-				break;
+			case BspChunkType::END:
+				(void) c->read_ubyte();
+				return true;
 			default:
 				break;
 			}
 
-			if (chunk.remaining() != 0) {
-				PX_LOGW("bsp_tree: ", chunk.remaining(), " bytes remaining in section ", std::hex, std::uint16_t(type));
-			}
-		} while (!finished);
-
-		return bsp;
+			return false;
+		});
 	}
-} // namespace phoenix
+} // namespace zenkit

@@ -1,9 +1,12 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/world/way_net.hh>
+#include "zenkit/world/WayNet.hh"
+#include "zenkit/Archive.hh"
 
-namespace phoenix {
-	static void read_waypoint_data(way_point& wp, archive_reader& in) {
+#include "../Internal.hh"
+
+namespace zenkit {
+	static void read_waypoint_data(WayPoint& wp, ReadArchive& in) {
 		wp.name = in.read_string();      // wpName
 		wp.water_depth = in.read_int();  // waterDepth
 		wp.under_water = in.read_bool(); // underWater
@@ -12,91 +15,77 @@ namespace phoenix {
 		wp.free_point = true;
 	}
 
-	way_net way_net::parse(archive_reader& in) {
-		try {
-			way_net net;
-			archive_object obj;
+	void WayNet::load(ReadArchive& in) {
+		ArchiveObject obj;
 
-			if (!in.read_object_begin(obj)) {
-				throw parser_error {"way_net", "root object missing"};
+		if (!in.read_object_begin(obj)) {
+			throw zenkit::ParserError {"WayNet", "root object missing"};
+		}
+
+		(void) /* auto version = */ in.read_int(); // waynetVersion
+		auto count = in.read_int();                // numWaypoints
+		this->waypoints.reserve(count);
+
+		std::unordered_map<std::uint32_t, std::uint32_t> obj_id_to_wp {};
+
+		for (int32_t i = 0; i < count; ++i) {
+			if (!in.read_object_begin(obj) || obj.class_name != "zCWaypoint") {
+				throw zenkit::ParserError {"WayNet", "missing waypoint object #" + std::to_string(i)};
 			}
 
-			(void) /* auto version = */ in.read_int(); // waynetVersion
-			auto count = in.read_int();                // numWaypoints
-			net.waypoints.reserve(count);
+			auto& wp = this->waypoints.emplace_back();
+			read_waypoint_data(wp, in);
+			wp.free_point = true;
+			obj_id_to_wp[obj.index] = this->waypoints.size() - 1;
 
-			std::unordered_map<std::uint32_t, std::uint32_t> obj_id_to_wp {};
+			if (!in.read_object_end()) {
+				ZKLOGE("WayNet", "free point %u not fully parsed", obj.index);
+				in.skip_object(true);
+			}
+		}
 
-			for (int32_t i = 0; i < count; ++i) {
-				if (!in.read_object_begin(obj) || obj.class_name != "zCWaypoint") {
-					throw parser_error {"way_net", "missing waypoint object #" + std::to_string(i)};
+		auto edge_count = in.read_int(); // numWays
+
+		for (int32_t i = 0; i < edge_count; ++i) {
+			auto& edge = this->edges.emplace_back();
+
+			for (int32_t j = 0; j < 2; ++j) {
+				if (!in.read_object_begin(obj)) {
+					throw zenkit::ParserError {"WayNet", "missing edge object #" + std::to_string(i)};
 				}
 
-				auto& wp = net.waypoints.emplace_back();
-				read_waypoint_data(wp, in);
-				wp.free_point = true;
-				net._m_name_to_waypoint[wp.name] = net.waypoints.size() - 1;
-				obj_id_to_wp[obj.index] = net.waypoints.size() - 1;
+				std::uint32_t wp;
+
+				if (obj.class_name == "\xA7" /* zReference */) {
+					wp = obj_id_to_wp[obj.index];
+				} else if (obj.class_name == "zCWaypoint") {
+					auto& new_wp = this->waypoints.emplace_back();
+					read_waypoint_data(new_wp, in);
+					new_wp.free_point = false;
+					obj_id_to_wp[obj.index] = this->waypoints.size() - 1;
+					wp = this->waypoints.size() - 1;
+				} else {
+					throw zenkit::ParserError {"WayNet",
+					                           "failed to parse edge #" + std::to_string(i) + ": unknown class name '" +
+					                               obj.class_name + "'"};
+				}
+
+				if (j == 0) {
+					edge.a = wp;
+				} else {
+					edge.b = wp;
+				}
 
 				if (!in.read_object_end()) {
-					PX_LOGW("way_net: free point ", obj.index, " not fully parsed");
+					ZKLOGW("WayNet", "WayEdge %u at index %u not fully parsed", i * 2 + j, obj.index);
 					in.skip_object(true);
 				}
 			}
+		}
 
-			auto edge_count = in.read_int(); // numWays
-
-			for (int32_t i = 0; i < edge_count; ++i) {
-				auto& edge = net.edges.emplace_back();
-
-				for (int32_t j = 0; j < 2; ++j) {
-					if (!in.read_object_begin(obj)) {
-						throw parser_error {"way_net", "missing edge object #" + std::to_string(i)};
-					}
-
-					std::uint32_t wp;
-
-					if (obj.class_name == "\xA7" /* zReference */) {
-						wp = obj_id_to_wp[obj.index];
-					} else if (obj.class_name == "zCWaypoint") {
-						auto& new_wp = net.waypoints.emplace_back();
-						read_waypoint_data(new_wp, in);
-						new_wp.free_point = false;
-						net._m_name_to_waypoint[new_wp.name] = net.waypoints.size() - 1;
-						obj_id_to_wp[obj.index] = net.waypoints.size() - 1;
-						wp = net.waypoints.size() - 1;
-					} else {
-						throw parser_error {"way_net",
-						                    "failed to parse edge #" + std::to_string(i) + ": unknown class name '" +
-						                        obj.class_name + "'"};
-					}
-
-					if (j == 0) {
-						edge.a = wp;
-					} else {
-						edge.b = wp;
-					}
-
-					if (!in.read_object_end()) {
-						PX_LOGW("way_net: edge ", i * 2 + j, " at index ", obj.index, " not fully parsed");
-						in.skip_object(true);
-					}
-				}
-			}
-
-			if (!in.read_object_end()) {
-				PX_LOGW("way_net: not fully parsed");
-				in.skip_object(true);
-			}
-			return net;
-		} catch (const buffer_error& exc) {
-			throw parser_error {"way_net", exc, "eof reached"};
+		if (!in.read_object_end()) {
+			ZKLOGW("WayNet", "Not fully parsed");
+			in.skip_object(true);
 		}
 	}
-
-	const way_point* way_net::waypoint(const std::string& name) const {
-		if (auto it = _m_name_to_waypoint.find(name); it != _m_name_to_waypoint.end())
-			return &waypoints[it->second];
-		return nullptr;
-	}
-} // namespace phoenix
+} // namespace zenkit

@@ -1,12 +1,14 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include <doctest/doctest.h>
-#include <phoenix/messages.hh>
+#include <zenkit/CutsceneLibrary.hh>
+#include <zenkit/Stream.hh>
 
-TEST_SUITE("messages") {
-	TEST_CASE("messages(parse:g1)") {
-		auto buf = phoenix::buffer::mmap("./samples/ou.proprietary.bin");
-		auto msgs = phoenix::messages::parse(buf);
+TEST_SUITE("CutsceneLibrary") {
+	TEST_CASE("CutsceneLibrary.load(GOTHIC1)") {
+		auto r = zenkit::Read::from("./samples/ou.proprietary.bin");
+		zenkit::CutsceneLibrary msgs {};
+		msgs.load(r.get());
 
 		CHECK_EQ(msgs.blocks.size(), 7360);
 
@@ -33,7 +35,7 @@ TEST_SUITE("messages") {
 		CHECK_EQ(msg200->message.name, "DIA_BAALTARAN_INTOCASTLE_EXACTLY_15_00.WAV");
 	}
 
-	TEST_CASE("messages(parse:g2)" * doctest::skip()) {
+	TEST_CASE("CutsceneLibrary.load(GOTHIC2)" * doctest::skip()) {
 		// TODO: Stub
 	}
 }

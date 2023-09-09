@@ -1,42 +1,75 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include <phoenix/animation.hh>
-#include <phoenix/vobs/vob.hh>
+#include "zenkit/Library.hh"
+#include "zenkit/Misc.hh"
+#include "zenkit/ModelAnimation.hh"
+#include "zenkit/vobs/VirtualObject.hh"
 
-namespace phoenix {
-	enum class mover_behavior : uint32_t {
-		toggle = 0,
-		trigger_control = 1,
-		open_timed = 2,
-		loop = 3,
-		single_keys = 4,
+#include <cstdint>
+#include <string>
+#include <vector>
+
+namespace zenkit {
+	class ReadArchive;
+
+	enum class MoverBehavior : uint32_t {
+		TOGGLE = 0,
+		TRIGGER_CONTROL = 1,
+		OPEN_TIME = 2,
+		LOOP = 3,
+		SINGLE_KEYS = 4,
+
+		// Deprecated entries.
+		toggle ZKREM("renamed to MoverBehavior::TOGGLE") = TOGGLE,
+		trigger_control ZKREM("renamed to MoverBehavior::TRIGGER_CONTROL") = TRIGGER_CONTROL,
+		open_timed ZKREM("renamed to MoverBehavior::OPEN_TIME") = OPEN_TIME,
+		loop ZKREM("renamed to MoverBehavior::LOOP") = LOOP,
+		single_keys ZKREM("renamed to MoverBehavior::SINGLE_KEYS") = SINGLE_KEYS,
 	};
 
-	enum class mover_lerp_mode : uint32_t {
-		curve = 0,
-		linear = 1,
+	enum class MoverLerpType : uint32_t {
+		CURVE = 0,
+		LINEAR = 1,
+
+		// Deprecated entries.
+		curve ZKREM("renamed to MoverLerpType::CURVE") = CURVE,
+		linear ZKREM("renamed to MoverLerpType::LINEAR") = LINEAR,
 	};
 
-	enum class mover_speed_mode : uint32_t {
-		seg_constant = 0,
-		slow_start_end = 1,
-		slow_start = 2,
-		slow_end = 3,
-		seg_slow_start_end = 4,
-		seg_slow_start = 5,
-		seg_slow_end = 6,
+	enum class MoverSpeedType : uint32_t {
+		CONSTANT = 0,
+		SLOW_START_END = 1,
+		SLOW_START = 2,
+		SLOW_END = 3,
+		SEGMENT_SLOW_START_END = 4,
+		SEGMENT_SLOW_START = 5,
+		SEGMENT_SLOW_END = 6,
+
+		// Deprecated entries.
+		seg_constant ZKREM("renamed to MoverSpeedType::CONSTANT") = CONSTANT,
+		slow_start_end ZKREM("renamed to MoverSpeedType::SLOW_START_END") = SLOW_START_END,
+		slow_start ZKREM("renamed to MoverSpeedType::SLOW_START") = SLOW_START,
+		slow_end ZKREM("renamed to MoverSpeedType::SLOW_END") = SLOW_END,
+		seg_slow_start_end ZKREM("renamed to MoverSpeedType::SEGMENT_SLOW_START_END") = SEGMENT_SLOW_START_END,
+		seg_slow_start ZKREM("renamed to MoverSpeedType::SEGMENT_SLOW_START") = SEGMENT_SLOW_START,
+		seg_slow_end ZKREM("renamed to MoverSpeedType::SEGMENT_SLOW_END") = SEGMENT_SLOW_END,
 	};
 
-	enum class trigger_batch_mode {
-		all = 0,
-		next = 1,
-		random = 2,
+	enum class TriggerBatchMode {
+		ALL = 0,
+		NEXT = 1,
+		RANDOM = 2,
+
+		// Deprecated entries.
+		all ZKREM("renamed to TriggerBatchMode::ALL") = ALL,
+		next ZKREM("renamed to TriggerBatchMode::NEXT") = NEXT,
+		random ZKREM("renamed to TriggerBatchMode::RANDOM") = RANDOM,
 	};
 
 	namespace vobs {
 		/// \brief A basic trigger VOb which does something upon the player interacting with it.
-		struct trigger : public vob {
+		struct Trigger : public VirtualObject {
 			std::string target;
 			std::uint8_t flags;
 			std::uint8_t filter_flags;
@@ -55,15 +88,17 @@ namespace phoenix {
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws parser_error if parsing fails.
+			/// \throws ParserError if parsing fails.
 			/// \see vob::parse
 			/// \see trigger::parse
-			PHOENIX_API static void parse(trigger& obj, archive_reader& ctx, game_version version);
+			ZKREM("use ::load()") ZKAPI static void parse(Trigger& obj, ReadArchive& ctx, GameVersion version);
+
+			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
 		/// \brief A VOb which can move upon player interaction.
-		struct trigger_mover : public trigger {
-			mover_behavior behavior {mover_behavior::toggle};
+		struct Mover : public Trigger {
+			MoverBehavior behavior {MoverBehavior::TOGGLE};
 			float touch_blocker_damage {0};
 			float stay_open_time_sec {0};
 			bool locked {true};
@@ -71,10 +106,10 @@ namespace phoenix {
 			bool auto_rotate {false};
 
 			float speed {0};
-			mover_lerp_mode lerp_mode {mover_lerp_mode::curve};
-			mover_speed_mode speed_mode {mover_speed_mode::seg_constant};
+			MoverLerpType lerp_mode {MoverLerpType::CURVE};
+			MoverSpeedType speed_mode {MoverSpeedType::CONSTANT};
 
-			std::vector<animation_sample> keyframes {};
+			std::vector<AnimationSample> keyframes {};
 
 			std::string sfx_open_start {};
 			std::string sfx_open_end {};
@@ -100,25 +135,28 @@ namespace phoenix {
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws parser_error if parsing fails.
+			/// \throws ParserError if parsing fails.
 			/// \see vob::parse
 			/// \see trigger::parse
-			PHOENIX_API static void parse(trigger_mover& obj, archive_reader& ctx, game_version version);
+			ZKREM("use ::load()") ZKAPI static void parse(Mover& obj, ReadArchive& ctx, GameVersion version);
+			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
 		/// \brief A VOb which can call multiple script function upon being triggered.
-		struct trigger_list : public trigger {
-			struct target {
+		struct TriggerList : public Trigger {
+			struct Target {
 				std::string name {};
 				float delay {};
 
-				[[nodiscard]] inline bool operator==(const target& tgt) const noexcept {
+				[[nodiscard]] inline bool operator==(const Target& tgt) const noexcept {
 					return this->name == tgt.name && this->delay == tgt.delay;
 				}
 			};
 
-			trigger_batch_mode mode {};
-			std::vector<target> targets {};
+			using target ZKREM("renamed to Target") = Target;
+
+			TriggerBatchMode mode {};
+			std::vector<Target> targets {};
 
 			// Save-game only variables
 			uint8_t s_act_target {0};
@@ -128,28 +166,30 @@ namespace phoenix {
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws parser_error if parsing fails.
+			/// \throws ParserError if parsing fails.
 			/// \see vob::parse
 			/// \see trigger::parse
-			PHOENIX_API static void parse(trigger_list& obj, archive_reader& ctx, game_version version);
+			ZKREM("use ::load()") ZKAPI static void parse(TriggerList& obj, ReadArchive& ctx, GameVersion version);
+			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
 		/// \brief A VOb which calls a script function upon being triggered.
-		struct trigger_script : public trigger {
+		struct TriggerScript : public Trigger {
 			std::string function {};
 
 			/// \brief Parses a script trigger VOb the given *ZenGin* archive.
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws parser_error if parsing fails.
+			/// \throws ParserError if parsing fails.
 			/// \see vob::parse
 			/// \see trigger::parse
-			PHOENIX_API static void parse(trigger_script& obj, archive_reader& ctx, game_version version);
+			ZKREM("use ::load()") ZKAPI static void parse(TriggerScript& obj, ReadArchive& ctx, GameVersion version);
+			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
 		/// \brief A VOb which triggers a level change if the player moves close to it.
-		struct trigger_change_level : public trigger {
+		struct TriggerChangeLevel : public Trigger {
 			std::string level_name {};
 			std::string start_vob {};
 
@@ -157,14 +197,16 @@ namespace phoenix {
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws parser_error if parsing fails.
+			/// \throws ParserError if parsing fails.
 			/// \see vob::parse
 			/// \see trigger::parse
-			PHOENIX_API static void parse(trigger_change_level& obj, archive_reader& ctx, game_version version);
+			ZKREM("use ::load()")
+			ZKAPI static void parse(TriggerChangeLevel& obj, ReadArchive& ctx, GameVersion version);
+			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
 		/// \brief A VOb which triggers a world start event.
-		struct trigger_world_start : public vob {
+		struct TriggerWorldStart : public VirtualObject {
 			std::string target;
 			bool fire_once;
 
@@ -175,21 +217,24 @@ namespace phoenix {
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws parser_error if parsing fails.
+			/// \throws ParserError if parsing fails.
 			/// \see vob::parse
-			PHOENIX_API static void parse(trigger_world_start& obj, archive_reader& ctx, game_version version);
+			ZKREM("use ::load()")
+			ZKAPI static void parse(TriggerWorldStart& obj, ReadArchive& ctx, GameVersion version);
+			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
-		struct trigger_untouch : public vob {
+		struct TriggerUntouch : public VirtualObject {
 			std::string target;
 
 			/// \brief Parses an untouch trigger VOb the given *ZenGin* archive.
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.
 			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws parser_error if parsing fails.
+			/// \throws ParserError if parsing fails.
 			/// \see vob::parse
-			PHOENIX_API static void parse(trigger_untouch& obj, archive_reader& ctx, game_version version);
+			ZKREM("use ::load()") ZKAPI static void parse(TriggerUntouch& obj, ReadArchive& ctx, GameVersion version);
+			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 	} // namespace vobs
-} // namespace phoenix
+} // namespace zenkit

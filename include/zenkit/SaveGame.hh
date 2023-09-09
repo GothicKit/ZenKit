@@ -1,21 +1,31 @@
-// Copyright © 2022 Luis Michaelis <me@lmichaelis.de>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include "Api.hh"
-#include <phoenix/buffer.hh>
-#include <phoenix/texture.hh>
+#include "zenkit/Library.hh"
+#include "zenkit/Stream.hh"
+#include "zenkit/Texture.hh"
 
+#include <cstdint>
 #include <filesystem>
 #include <optional>
 #include <string>
+#include <vector>
 
-namespace phoenix::unstable {
+namespace phoenix {
+	class buffer;
+}
+
+namespace zenkit {
+	class Read;
+}
+
+namespace zenkit::unstable {
 	/// \brief Contains general information about a save-game.
 	///
 	/// The information contained within this struct is found in the `SAVEINFO.SAV` file within
 	/// the save-game folder. It contains metadata about the save-game, like a title and the game
 	/// version it was created with.
-	struct save_info {
+	struct SaveInfo {
 		std::string title;
 		std::string world;
 		std::int32_t time_day;
@@ -32,70 +42,65 @@ namespace phoenix::unstable {
 		/// \brief Parses a save-game info structure from the data in the given buffer.
 		/// \param buf The buffer to read from.
 		/// \return The parsed save-game info structure.
-		/// \throws parser_error if parsing fails.
+		/// \throws ParserError if parsing fails.
 		/// \note Instead of calling this directly, you probably want to parse a whole save-game.
 		///       Use save_game::parse for that instead.
-		PHOENIX_API static save_info parse(buffer&& buf);
+		ZKREM("use ::load()") ZKAPI static SaveInfo parse(phoenix::buffer&& buf);
+
+		ZKAPI void load(Read* r);
 	};
 
 	/// \brief The section log entries are in.
-	enum class topic_section : std::uint32_t {
-		quests = 0x00,
-		infos = 0x01,
+	enum class SaveTopicSection : std::uint32_t {
+		QUESTS = 0x00,
+		INFOS = 0x01,
 	};
 
 	/// \brief The status of a single log entry.
-	enum class topic_status : std::uint32_t {
-		active = 0x01,
-		completed = 0x02,
-		failed = 0x03,
-		obsolete = 0x04,
+	enum class SaveTopicStatus : std::uint32_t {
+		ACTIVE = 0x01,
+		COMPLETED = 0x02,
+		FAILED = 0x03,
+		OBSOLETE = 0x04,
 	};
 
-	struct log_topic {
+	struct SaveLogTopic {
 		std::string description;
-		topic_section section;
-		topic_status status;
+		SaveTopicSection section;
+		SaveTopicStatus status;
 		std::vector<std::string> entries;
 	};
 
-	struct info_state {
+	struct SaveInfoState {
 		std::string name;
 		bool told;
 	};
 
-	struct symbol_state {
+	struct SaveSymbolState {
 		std::string name;
 		std::vector<std::uint32_t> values;
 	};
 
-	struct script_state {
+	struct SaveScriptState {
 		std::int32_t day;
 		std::int32_t hour;
 		std::int32_t minute;
 
-		std::vector<info_state> infos;
-		std::vector<symbol_state> symbols;
-		std::vector<log_topic> log;
+		std::vector<SaveInfoState> infos;
+		std::vector<SaveSymbolState> symbols;
+		std::vector<SaveLogTopic> log;
 		std::uint8_t guild_attitudes[42][42];
 
-		/// \brief Parses a save-game script state structure from the data in the given buffer.
-		/// \param buf The buffer to read from.
-		/// \param g2 Set to true if a Gothic II save-game is being parsed.
-		/// \return The parsed save-game script state structure.
-		/// \throws parser_error if parsing fails.
-		/// \note Instead of calling this directly, you probably want to parse a whole save-game.
-		///       Use save_game::parse for that instead.
-		PHOENIX_INTERNAL static script_state parse(buffer&& buf, bool g2);
+		ZKINT void load(Read* r, bool g2);
 	};
 
-	struct save_game {
+	struct SaveGame {
 	public:
 		/// \brief Parses a save-game from the data in the given directory.
 		/// \param path The path of the save-game folder.
 		/// \return The parsed save-game.
-		/// \throws parser_error if parsing fails.
-		PHOENIX_API static save_game parse(const std::filesystem::path& path);
+		/// \throws ParserError if parsing fails.
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static SaveGame parse(const std::filesystem::path& path);
 
 		/// \brief Opens the saved world file with the given world name as a buffer and returns it.
 		///
@@ -104,11 +109,20 @@ namespace phoenix::unstable {
 		///
 		/// \param world_name The name of the world to open, including the `.ZEN` extension.
 		/// \return A buffer containing the world's data or std::nullopt if the world is not present in this save.
-		PHOENIX_API std::optional<buffer> open_world_save(std::string_view world_name) const;
+		[[nodiscard]] ZKREM("use ::load_world()") ZKAPI std::optional<phoenix::buffer> open_world_save(
+		    std::string_view world_name) const;
+
+		[[nodiscard]] ZKAPI std::optional<std::unique_ptr<Read>> open_world(std::string_view world_name) const;
+
+		/// \brief Parses a save-game from the data in the given directory.
+		/// \param path The path of the save-game folder.
+		/// \return The parsed save-game.
+		/// \throws ParserError if parsing fails.
+		ZKAPI void load(const std::filesystem::path& path);
 
 	public:
 		/// \brief Contains metadata about the save-game, like its name and version numbers.
-		save_info metadata;
+		SaveInfo metadata;
 
 		/// \brief The name of the world file the player is currently in.
 		std::string current_world;
@@ -118,12 +132,12 @@ namespace phoenix::unstable {
 		/// Contains the states of relevant script symbols, the state of the quest log,
 		/// as well as the state of each piece of in-game information and the attitudes
 		/// of guilds towards each other.
-		script_state script;
+		SaveScriptState script;
 
 		/// \brief The thumbnail image of the save-game. Not present if `THUMB.SAV` is missing from the save-game.
-		std::optional<texture> thumbnail;
+		std::optional<Texture> thumbnail;
 
 	private:
 		std::filesystem::path _m_root_path;
 	};
-} // namespace phoenix::unstable
+} // namespace zenkit::unstable

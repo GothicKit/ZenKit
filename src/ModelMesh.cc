@@ -1,80 +1,81 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/model_mesh.hh>
+#include "zenkit/ModelMesh.hh"
+#include "zenkit/Date.hh"
+#include "zenkit/Stream.hh"
 
-namespace phoenix {
-	enum class model_mesh_chunk {
-		unknown,
-		header = 0xD000,
-		source = 0xD010,
-		nodes = 0xD020,
-		softskins = 0xD030,
-		end = 0xD040,
-		proto = 0xB100,
+namespace zenkit {
+	enum class ModelMeshChunkType : std::uint16_t {
+		HEADER = 0xD000,
+		SOURCE = 0xD010,
+		NODES = 0xD020,
+		SOFTSKINS = 0xD030,
+		END = 0xD040,
+		PROTO = 0xB100,
 	};
 
-	model_mesh model_mesh::parse(buffer& in) {
-		model_mesh msh {};
-		model_mesh_chunk type = model_mesh_chunk::unknown;
-		bool end_mesh = false;
+	ModelMesh ModelMesh::parse(phoenix::buffer& in) {
+		ModelMesh msh {};
 
-		std::vector<std::string> attachment_names {};
-
-		do {
-			type = static_cast<model_mesh_chunk>(in.get_ushort());
-
-			auto length = in.get_uint();
-			auto chunk = in.extract(length);
-
-			switch (type) {
-			case model_mesh_chunk::header:
-				(void) /* version = */ chunk.get_uint();
-				break;
-			case model_mesh_chunk::source: {
-				// supposedly a date? weird values
-				(void) /* date = */ date::parse(chunk);
-				(void) /* source file = */ chunk.get_line(false);
-				break;
-			}
-			case model_mesh_chunk::nodes: {
-				auto node_count = chunk.get_ushort();
-
-				for (std::uint32_t i = 0; i < node_count; ++i) {
-					attachment_names.push_back(chunk.get_line());
-				}
-				break;
-			}
-			case model_mesh_chunk::proto:
-				msh.attachments[attachment_names[msh.attachments.size()]] = proto_mesh::parse_from_section(chunk);
-				break;
-			case model_mesh_chunk::softskins: {
-				msh.checksum = chunk.get_uint();
-				auto count = chunk.get_ushort();
-				msh.meshes.reserve(count);
-
-				// Quirk: the meshes are not embedded within the chunk (as in: the stored length does not contain
-				//        the size of these meshes) so they have to be read directly from `in`.
-				for (int32_t i = 0; i < count; ++i) {
-					msh.meshes.push_back(softskin_mesh::parse(in));
-				}
-				break;
-			}
-			case model_mesh_chunk::end:
-				end_mesh = true;
-				break;
-			default:
-				break;
-			}
-
-			if (chunk.remaining() != 0) {
-				PX_LOGW("model_mesh: ",
-				        chunk.remaining(),
-				        " bytes remaining in section ",
-				        std::hex,
-				        std::uint16_t(type));
-			}
-		} while (!end_mesh);
+		auto r = Read::from(&in);
+		msh.load(r.get());
 
 		return msh;
 	}
-} // namespace phoenix
+
+	void ModelMesh::load(Read* r) {
+		std::vector<std::string> attachment_names {};
+		proto::read_chunked<ModelMeshChunkType>(
+		    r,
+		    "ModelMesh",
+		    [this, &attachment_names](Read* c, ModelMeshChunkType type, size_t& end) {
+			    switch (type) {
+			    case ModelMeshChunkType::HEADER:
+				    (void) /* version = */ c->read_uint();
+				    break;
+			    case ModelMeshChunkType::SOURCE: {
+				    // supposedly a date? weird values
+				    Date date {};
+				    date.load(c);
+
+				    (void) /* source file = */ c->read_line(false);
+				    break;
+			    }
+			    case ModelMeshChunkType::NODES: {
+				    auto node_count = c->read_ushort();
+
+				    for (std::uint32_t i = 0; i < node_count; ++i) {
+					    attachment_names.push_back(c->read_line(true));
+				    }
+				    break;
+			    }
+			    case ModelMeshChunkType::PROTO:
+				    this->attachments[attachment_names[this->attachments.size()]].load_from_section(c);
+				    break;
+			    case ModelMeshChunkType::SOFTSKINS: {
+				    this->checksum = c->read_uint();
+
+				    // Quirk: the meshes are not embedded within the chunk (as in: the stored length does not contain
+				    //        the size of these meshes) so they have to be read directly from `in`.
+				    this->meshes.resize(c->read_ushort());
+				    for (auto& mesh : this->meshes) {
+					    mesh.load(c);
+				    }
+
+				    end = c->tell();
+				    break;
+			    }
+			    case ModelMeshChunkType::END:
+				    return true;
+			    default:
+				    break;
+			    }
+
+			    return false;
+		    });
+	}
+
+	ModelMesh ModelMesh::parse(phoenix::buffer&& buf) {
+		return ModelMesh::parse(buf);
+	}
+} // namespace zenkit

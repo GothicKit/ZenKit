@@ -1,17 +1,22 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include <string>
-
-#include <phoenix/model_hierarchy.hh>
-#include <phoenix/model_mesh.hh>
+#include "zenkit/Library.hh"
+#include "zenkit/ModelHierarchy.hh"
+#include "zenkit/ModelMesh.hh"
 
 namespace phoenix {
+	class buffer;
+}
+
+namespace zenkit {
+	class Read;
+
 	/// \brief Represents a *ZenGin* model.
 	///
 	/// <p>*ZenGin* models contain a phoenix::model_mesh and a phoenix::model_hierarchy bundled into one file. Try are
 	/// typically found in files with the `MDL` extension.</p>
-	class model {
+	class Model {
 	public:
 		/// \brief Parses a model from the data in the given buffer.
 		/// \param[in,out] buf The buffer to read from.
@@ -21,22 +26,22 @@ namespace phoenix {
 		///       using buffer::duplicate.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] PHOENIX_API static model parse(buffer& buf);
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Model parse(phoenix::buffer& buf);
 
 		/// \brief Parses a model from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed model object.
 		/// \throws parser_error if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] PHOENIX_API inline static model parse(buffer&& buf) {
-			return model::parse(buf);
-		}
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Model parse(phoenix::buffer&& buf);
+
+		ZKAPI void load(Read* r);
 
 	public:
 		/// \brief The phoenix::model_hierarchy associated with this model.
-		model_hierarchy hierarchy {};
+		ModelHierarchy hierarchy {};
 
 		/// \brief The phoenix::model_mesh associated with this model.
-		model_mesh mesh {};
+		ModelMesh mesh {};
 	};
-} // namespace phoenix
+} // namespace zenkit

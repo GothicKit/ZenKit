@@ -1,33 +1,42 @@
-// Copyright © 2022 Luis Michaelis <lmichaelis.all+dev@gmail.com>
+// Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/vobs/sound.hh>
+#include "zenkit/vobs/Sound.hh"
+#include "zenkit/Archive.hh"
 
-namespace phoenix::vobs {
-	void sound::parse(sound& obj, archive_reader& ctx, game_version version) {
-		vob::parse(obj, ctx, version);
-		obj.volume = ctx.read_float();                                        // sndVolume
-		obj.mode = static_cast<sound_mode>(ctx.read_enum());                  // sndMode
-		obj.random_delay = ctx.read_float();                                  // sndRandDelay
-		obj.random_delay_var = ctx.read_float();                              // sndRandDelayVar
-		obj.initially_playing = ctx.read_bool();                              // sndStartOn
-		obj.ambient3d = ctx.read_bool();                                      // sndAmbient3D
-		obj.obstruction = ctx.read_bool();                                    // sndObstruction
-		obj.cone_angle = ctx.read_float();                                    // sndConeAngle
-		obj.volume_type = static_cast<sound_trigger_volume>(ctx.read_enum()); // sndVolType
-		obj.radius = ctx.read_float();                                        // sndRadius
-		obj.sound_name = ctx.read_string();                                   // sndName
+namespace zenkit::vobs {
+	void Sound::parse(Sound& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
+	}
 
-		if (ctx.is_save_game()) {
+	void Sound::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+		VirtualObject::load(r, version);
+		this->volume = r.read_float();                                          // sndVolume
+		this->mode = static_cast<SoundMode>(r.read_enum());                     // sndMode
+		this->random_delay = r.read_float();                                    // sndRandDelay
+		this->random_delay_var = r.read_float();                                // sndRandDelayVar
+		this->initially_playing = r.read_bool();                                // sndStartOn
+		this->ambient3d = r.read_bool();                                        // sndAmbient3D
+		this->obstruction = r.read_bool();                                      // sndObstruction
+		this->cone_angle = r.read_float();                                      // sndConeAngle
+		this->volume_type = static_cast<SoundTriggerVolumeType>(r.read_enum()); // sndVolType
+		this->radius = r.read_float();                                          // sndRadius
+		this->sound_name = r.read_string();                                     // sndName
+
+		if (r.is_save_game()) {
 			// In save-games, sounds contain extra variables
-			obj.s_is_running = ctx.read_bool();        // soundIsRunning
-			obj.s_is_allowed_to_run = ctx.read_bool(); // soundAllowedToRun
+			this->s_is_running = r.read_bool();        // soundIsRunning
+			this->s_is_allowed_to_run = r.read_bool(); // soundAllowedToRun
 		}
 	}
 
-	void sound_daytime::parse(sound_daytime& obj, archive_reader& ctx, game_version version) {
-		sound::parse(obj, ctx, version);
-		obj.start_time = ctx.read_float();   // sndStartTime
-		obj.end_time = ctx.read_float();     // sndEndTime
-		obj.sound_name2 = ctx.read_string(); // sndName2
+	void SoundDaytime::parse(SoundDaytime& obj, ReadArchive& r, GameVersion version) {
+		obj.load(r, version);
 	}
-} // namespace phoenix::vobs
+
+	void SoundDaytime::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+		Sound::load(r, version);
+		this->start_time = r.read_float();   // sndStartTime
+		this->end_time = r.read_float();     // sndEndTime
+		this->sound_name2 = r.read_string(); // sndName2
+	}
+} // namespace zenkit::vobs
