@@ -34,7 +34,7 @@ namespace zenkit {
 			return _m_size;
 		}
 
-		[[nodiscard]] const std::byte* array() const override {
+		[[nodiscard]] std::byte const* array() const override {
 			return _m_buffer;
 		}
 
@@ -55,22 +55,22 @@ namespace zenkit {
 		uint64_t _m_size;
 	};
 
-	VfsBrokenDiskError::VfsBrokenDiskError(const std::string& signature)
+	VfsBrokenDiskError::VfsBrokenDiskError(std::string const& signature)
 	    : Error("VFS disk signature not recognized: \"" + signature + "\"") {}
 
-	VfsFileExistsError::VfsFileExistsError(const std::string& name) : Error("file exists: \"" + name + "\"") {}
+	VfsFileExistsError::VfsFileExistsError(std::string const& name) : Error("file exists: \"" + name + "\"") {}
 
-	VfsNotFoundError::VfsNotFoundError(const std::string& name) : Error("not found: \"" + name + "\"") {}
+	VfsNotFoundError::VfsNotFoundError(std::string const& name) : Error("not found: \"" + name + "\"") {}
 
-	bool VfsNodeComparator::operator()(const VfsNode& a, const VfsNode& b) const noexcept {
+	bool VfsNodeComparator::operator()(VfsNode const& a, VfsNode const& b) const noexcept {
 		return phoenix::icompare(a.name(), b.name());
 	}
 
-	bool VfsNodeComparator::operator()(const VfsNode& a, std::string_view b) const noexcept {
+	bool VfsNodeComparator::operator()(VfsNode const& a, std::string_view b) const noexcept {
 		return phoenix::icompare(a.name(), b);
 	}
 
-	bool VfsNodeComparator::operator()(std::string_view a, const VfsNode& b) const noexcept {
+	bool VfsNodeComparator::operator()(std::string_view a, VfsNode const& b) const noexcept {
 		return phoenix::icompare(a, b.name());
 	}
 
@@ -99,8 +99,7 @@ namespace zenkit {
 
 		name = trim_trailing_whitespace(name);
 		auto it = children.find(name);
-		if (it == children.end() || !phoenix::iequals(it->name(), name))
-			return nullptr;
+		if (it == children.end() || !phoenix::iequals(it->name(), name)) return nullptr;
 		return &*it;
 	}
 
@@ -109,8 +108,7 @@ namespace zenkit {
 
 		name = trim_trailing_whitespace(name);
 		auto it = children.find(name);
-		if (it == children.end() || !phoenix::iequals(it->name(), name))
-			return nullptr;
+		if (it == children.end() || !phoenix::iequals(it->name(), name)) return nullptr;
 		return const_cast<VfsNode*>(&*it);
 	}
 
@@ -125,8 +123,7 @@ namespace zenkit {
 
 		name = trim_trailing_whitespace(name);
 		auto it = children.find(name);
-		if (it == children.end() || !phoenix::iequals(it->name(), name))
-			return false;
+		if (it == children.end() || !phoenix::iequals(it->name(), name)) return false;
 
 		children.erase(it);
 		return true;
@@ -204,8 +201,7 @@ namespace zenkit {
 			auto name = path.substr(0, next);
 			context = context->child(name);
 
-			if (next == std::string_view::npos)
-				break;
+			if (next == std::string_view::npos) break;
 
 			path = path.substr(next + 1);
 		}
@@ -221,13 +217,11 @@ namespace zenkit {
 			tree.pop();
 
 			auto* child = node->child(name);
-			if (child != nullptr)
-				return child;
+			if (child != nullptr) return child;
 
 			auto& children = node->children();
 			for (auto const& x : children) {
-				if (x.type() == VfsNodeType::FILE)
-					continue;
+				if (x.type() == VfsNodeType::FILE) continue;
 
 				tree.push(&x);
 			}
@@ -244,7 +238,7 @@ namespace zenkit {
 		return const_cast<VfsNode*>(const_cast<Vfs const*>(this)->find(name));
 	}
 
-	void Vfs::mount_disk(const std::filesystem::path& host, VfsOverwriteBehavior overwrite) {
+	void Vfs::mount_disk(std::filesystem::path const& host, VfsOverwriteBehavior overwrite) {
 		auto& mem = _m_data_mapped.emplace_back(host.c_str());
 		this->mount_disk(mem.data(), mem.size(), overwrite);
 	}
@@ -318,12 +312,10 @@ namespace zenkit {
 				case VfsOverwriteBehavior::ALL:
 					break;
 				case VfsOverwriteBehavior::NEWER:
-					if (existing->time() <= source->time())
-						continue;
+					if (existing->time() <= source->time()) continue;
 					break;
 				case VfsOverwriteBehavior::OLDER:
-					if (existing->time() >= source->time())
-						continue;
+					if (existing->time() >= source->time()) continue;
 					break;
 				}
 
@@ -361,8 +353,7 @@ namespace zenkit {
 				context = it;
 			}
 
-			if (next == std::string_view::npos)
-				break;
+			if (next == std::string_view::npos) break;
 			path = path.substr(next + 1);
 		}
 
@@ -375,8 +366,7 @@ namespace zenkit {
 		auto childName = path.substr(lastSlash + 1);
 
 		VfsNode* pNode = this->resolve(parentPath);
-		if (pNode == nullptr)
-			return false;
+		if (pNode == nullptr) return false;
 		return pNode->remove(childName);
 	}
 

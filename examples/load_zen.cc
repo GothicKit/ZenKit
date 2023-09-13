@@ -14,8 +14,7 @@ void print_entries(std::unique_ptr<phoenix::archive_reader>& reader) {
 			std::cout << "    Object(class=" << obj.class_name << ", name=" << obj.object_name
 			          << ", index=" << obj.index << ", version=" << obj.version << ")\n";
 		} else {
-			if (level == 0)
-				break;
+			if (level == 0) break;
 			// Reading the entries requires knowing their type. See `phoenix/source/world/vob_tree.cc for examples.
 			reader->skip_object(true);
 			level--;

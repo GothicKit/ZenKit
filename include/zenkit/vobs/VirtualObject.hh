@@ -83,12 +83,12 @@ namespace zenkit {
 	/// \brief Ways a VOb is seen in the game world.
 	enum class VisualType : std::uint8_t {
 		DECAL = 0,                 ///< The VOb presents as a decal.
-		MESH = 1,                  ///< The VOb presents a phoenix::Mesh.
-		MULTI_RESOLUTION_MESH = 2, ///< The VOb presents a phoenix::MultiResolutionMesh.
+		MESH = 1,                  ///< The VOb presents a zenkit::Mesh.
+		MULTI_RESOLUTION_MESH = 2, ///< The VOb presents a zenkit::MultiResolutionMesh.
 		PARTICLE_EFFECT = 3,       ///< The VOb presents as a particle system.
 		AI_CAMERA = 4,             ///< The VOb is a game-controlled camera.
-		MODEL = 5,                 ///< The VOb presents a phoenix::Model.
-		MORPH_MESH = 6,            ///< The VOb presents a phoenix::MorphMesh.
+		MODEL = 5,                 ///< The VOb presents a zenkit::Model.
+		MORPH_MESH = 6,            ///< The VOb presents a zenkit::MorphMesh.
 		UNKNOWN = 7,               ///< The VOb presents an unknown visual or no visual at all.
 
 		// Deprecated entries.

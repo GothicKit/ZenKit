@@ -1,16 +1,30 @@
-site_name: 'phoenix'
-copyright: 'Copyright © 2022 Luis Michaelis'
-repo_url: 'https://github.com/lmichaelis/phoenix'
+site_name: 'ZenKit'
+copyright: 'Copyright © 2022-2023 GothicKit Contributors.'
+repo_url: 'https://github.com/GothicKit/phoenix'
 edit_uri: 'edit/main/docs/'
 nav:
   - 'Library Reference':
       - 'Overview': 'library/overview.md'
       - 'Getting Started': 'library/quickstart.md'
       - 'File Type Reference': 'library/reference.md'
-      - 'File Parsers':
-          - 'ZenGin Archive': 'library/formats/archive.md'
-          - 'Font': 'library/formats/font.md'
-          - 'Virtual File System': 'library/formats/vdf.md'
+      - 'ZenKit Concepts':
+          - 'Archive': 'library/api/archive.md'
+          - 'Cutscene Library': 'library/api/cutscene-library.md'
+          - 'Daedalus Script': 'library/api/daedalus-script.md'
+          - 'Daedalus VM': 'library/api/daedalus-vm.md'
+          - 'Font': 'library/api/font.md'
+          - 'Mesh': 'library/api/mesh.md'
+          - 'Model': 'library/api/model.md'
+          - 'Model Animation': 'library/api/model-animation.md'
+          - 'Model Hierarchy': 'library/api/model-hierarchy.md'
+          - 'Model Mesh': 'library/api/model-mesh.md'
+          - 'Model Script': 'library/api/model-script.md'
+          - 'Morph Mesh': 'library/api/morph-mesh.md'
+          - 'Multi-Resolution Mesh': 'library/api/multi-resolution-mesh.md'
+          - 'Save Game': 'library/api/save-game.md'
+          - 'Texture': 'library/api/texture.md'
+          - 'Virtual File System': 'library/api/virtual-file-system.md'
+          - 'World': 'library/api/world.md'
   - 'ZenGin Reference':
       - 'Overview': 'engine/overview.md'
       - 'Datatypes': 'engine/datatypes.md'
@@ -26,8 +40,8 @@ nav:
 theme:
   name: 'material'
   language: 'en'
-  logo: 'assets/logo-small.png'
-  favicon: 'assets/logo-small.png'
+  logo: 'assets/logo-square.png'
+  favicon: 'assets/logo-square.png'
   icon:
     repo: 'fontawesome/brands/github'
   palette:
@@ -40,6 +54,9 @@ theme:
     - 'navigation.expand'
     - 'search.suggest'
     - 'search.highlight'
+    - 'content.tabs.link'
+    - 'content.code.copy'
+    - 'content.code.annotate'
 extra_css:
   - 'assets/stylesheets/extra.css'
 extra_javascript:

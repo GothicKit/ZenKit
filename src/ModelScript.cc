@@ -45,7 +45,7 @@ namespace zenkit {
 		UNKNOWN,
 	};
 
-	static const std::unordered_map<std::string, MdsEventType> event_types {
+	static std::unordered_map<std::string, MdsEventType> const event_types {
 	    {"DEF_CREATE_ITEM", MdsEventType::ITEM_CREATE},
 	    {"DEF_INSERT_ITEM", MdsEventType::ITEM_INSERT},
 	    {"DEF_REMOVE_ITEM", MdsEventType::ITEM_REMOVE},

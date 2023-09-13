@@ -8,7 +8,7 @@
 #include "squish.h"
 
 namespace zenkit {
-	constexpr const std::string_view ZTEX_SIGNATURE = "ZTEX";
+	constexpr std::string_view const ZTEX_SIGNATURE = "ZTEX";
 
 	/// \brief Calculates the size in bytes of a texture at the given mipmap level.
 	/// \return The size in bytes of a texture at the given mipmap level.
@@ -17,10 +17,8 @@ namespace zenkit {
 		std::uint32_t y = std::max(1u, height);
 
 		for (uint32_t i = 0; i < level; i++) {
-			if (x > 1)
-				x >>= 1;
-			if (y > 1)
-				y >>= 1;
+			if (x > 1) x >>= 1;
+			if (y > 1) y >>= 1;
 		}
 
 		switch (format) {
@@ -125,7 +123,7 @@ namespace zenkit {
 		case TextureFormat::DXT1:
 		case TextureFormat::DXT3:
 		case TextureFormat::DXT5: {
-			const auto& map = data(mipmap_level);
+			auto const& map = data(mipmap_level);
 			auto w = mipmap_width(mipmap_level);
 			auto h = mipmap_height(mipmap_level);
 			conv.resize(w * h * 4);
@@ -138,7 +136,7 @@ namespace zenkit {
 			return conv;
 		}
 		case TextureFormat::B8G8R8A8: {
-			const auto& map = data(mipmap_level);
+			auto const& map = data(mipmap_level);
 			conv.resize(map.size());
 
 			for (std::uint32_t i = 0; i < map.size(); i += 4) {
@@ -153,7 +151,7 @@ namespace zenkit {
 		case TextureFormat::R8G8B8A8:
 			return data(mipmap_level);
 		case TextureFormat::A8B8G8R8: {
-			const auto& map = data(mipmap_level);
+			auto const& map = data(mipmap_level);
 			conv.resize(map.size());
 
 			for (std::uint32_t i = 0; i < map.size(); i += 4) {
@@ -166,7 +164,7 @@ namespace zenkit {
 			return conv;
 		}
 		case TextureFormat::A8R8G8B8: {
-			const auto& map = data(mipmap_level);
+			auto const& map = data(mipmap_level);
 			conv.resize(map.size());
 
 			for (std::uint32_t i = 0; i < map.size(); i += 4) {
@@ -179,7 +177,7 @@ namespace zenkit {
 			return conv;
 		}
 		case TextureFormat::B8G8R8: {
-			const auto& map = data(mipmap_level);
+			auto const& map = data(mipmap_level);
 			conv.resize(map.size());
 
 			for (std::uint32_t i = 0; i < map.size(); i += 3) {
@@ -192,7 +190,7 @@ namespace zenkit {
 			return conv;
 		}
 		case TextureFormat::R8G8B8: {
-			const auto& map = data(mipmap_level);
+			auto const& map = data(mipmap_level);
 			conv.resize(map.size());
 
 			for (std::uint32_t i = 0; i < map.size(); i += 3) {
@@ -205,7 +203,7 @@ namespace zenkit {
 			return conv;
 		}
 		case TextureFormat::R5G6B5: {
-			const auto& map = data(mipmap_level);
+			auto const& map = data(mipmap_level);
 			conv.resize(map.size() * 2);
 
 			std::uint32_t idx = 0;
@@ -220,7 +218,7 @@ namespace zenkit {
 			return conv;
 		}
 		case TextureFormat::P8: {
-			const auto& map = data(mipmap_level);
+			auto const& map = data(mipmap_level);
 			conv.resize(map.size() * sizeof(std::uint8_t) * 4);
 
 			for (std::uint32_t i = 0; i < map.size(); ++i) {

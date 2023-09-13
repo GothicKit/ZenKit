@@ -38,8 +38,8 @@ namespace phoenix {
 		ZKAPI buffer_underflow(std::uint64_t byte, std::string&& context);
 
 	public:
-		const std::uint64_t byte, size;
-		const std::optional<std::string> context;
+		std::uint64_t const byte, size;
+		std::optional<std::string> const context;
 	};
 
 	/// \brief Exception thrown when writing too many bytes to a buffer.
@@ -52,8 +52,8 @@ namespace phoenix {
 		ZKAPI buffer_overflow(std::uint64_t byte, std::uint64_t size, std::string&& context);
 
 	public:
-		const std::uint64_t byte, size;
-		const std::optional<std::string> context;
+		std::uint64_t const byte, size;
+		std::optional<std::string> const context;
 	};
 
 	/// \brief Exception thrown if a write is attempted on a readonly buffer.
@@ -92,7 +92,7 @@ namespace phoenix {
 
 		/// \brief Retrieves a read-only raw byte array of this backing.
 		/// \return A read-only raw byte array into this backing.
-		[[nodiscard]] ZKAPI virtual const std::byte* array() const = 0;
+		[[nodiscard]] ZKAPI virtual std::byte const* array() const = 0;
 
 		/// \brief Fills the given \p buf with bytes from this backing starting at \p offset.
 		///
@@ -113,7 +113,7 @@ namespace phoenix {
 		/// \param offset The offset at which to start writing.
 		/// \throws buffer_overflow if writing all bytes of \p buf starting at \p offset fails.
 		/// \throws buffer_readonly if this backing is readonly.
-		ZKAPI virtual void write([[maybe_unused]] const std::byte* buf,
+		ZKAPI virtual void write([[maybe_unused]] std::byte const* buf,
 		                         [[maybe_unused]] std::uint64_t size,
 		                         [[maybe_unused]] std::uint64_t offset) {
 			throw buffer_readonly {};
@@ -321,7 +321,7 @@ namespace phoenix {
 		}
 
 		/// \return A read-only view into the raw contents of this buffer.
-		[[nodiscard]] ZKAPI inline const std::byte* array() const noexcept {
+		[[nodiscard]] ZKAPI inline std::byte const* array() const noexcept {
 			return _m_backing->array() + _m_backing_begin;
 		}
 
@@ -451,7 +451,7 @@ namespace phoenix {
 		/// \return This buffer.
 		/// \throws buffer_overflow if the value can't be written.
 		/// \throws buffer_readonly if the buffer is read-only.
-		ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI void put(const std::byte* buf, std::uint64_t size);
+		ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI void put(std::byte const* buf, std::uint64_t size);
 
 		/// \brief Put bytes from buf into the buffer and advance the position accordingly.
 		/// \param buf The data to write.
@@ -459,7 +459,7 @@ namespace phoenix {
 		/// \return This buffer.
 		/// \throws buffer_overflow if the value can't be written.
 		/// \throws buffer_readonly if the buffer is read-only.
-		ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI void put(const std::uint8_t* buf, std::uint64_t size);
+		ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI void put(std::uint8_t const* buf, std::uint64_t size);
 
 		/// \brief Put a value of type std::uint8_t into the buffer and advance the position accordingly
 		/// \param value The value to put into the buffer
@@ -573,7 +573,7 @@ namespace phoenix {
 		/// \param readonly Set to `false` to be able to write to the buffer.
 		/// \return The newly created buffer.
 		ZKREM("Deprecated. Use zenkit::Read instead.")
-		ZKAPI static buffer mmap(const std::filesystem::path& path, bool readonly = true);
+		ZKAPI static buffer mmap(std::filesystem::path const& path, bool readonly = true);
 
 		/// \brief Opens the given file as an indirect buffer.
 		///
@@ -586,7 +586,7 @@ namespace phoenix {
 		///       instead.
 		/// \return The newly created buffer.
 		ZKREM("Deprecated. Use zenkit::Read instead.")
-		ZKAPI static buffer read(const std::filesystem::path& path, bool readonly = true);
+		ZKAPI static buffer read(std::filesystem::path const& path, bool readonly = true);
 
 		/// \brief Returns a duplicate of the empty buffer.
 		/// \return The empty buffer.
@@ -594,7 +594,7 @@ namespace phoenix {
 
 	private:
 		static std::unique_ptr<buffer> _m_empty;
-		ZKAPI friend bool operator==(const buffer&, const buffer&);
+		ZKAPI friend bool operator==(buffer const&, buffer const&);
 
 		std::shared_ptr<buffer_backing> _m_backing;
 		std::uint64_t _m_backing_begin, _m_backing_end;
@@ -604,5 +604,5 @@ namespace phoenix {
 		std::optional<std::uint64_t> _m_mark;
 	};
 
-	ZKREM("Deprecated") ZKAPI bool operator==(const buffer&, const buffer&);
+	ZKREM("Deprecated") ZKAPI bool operator==(buffer const&, buffer const&);
 } // namespace phoenix

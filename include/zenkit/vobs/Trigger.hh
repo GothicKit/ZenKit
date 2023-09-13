@@ -148,7 +148,7 @@ namespace zenkit {
 				std::string name {};
 				float delay {};
 
-				[[nodiscard]] inline bool operator==(const Target& tgt) const noexcept {
+				[[nodiscard]] inline bool operator==(Target const& tgt) const noexcept {
 					return this->name == tgt.name && this->delay == tgt.delay;
 				}
 			};

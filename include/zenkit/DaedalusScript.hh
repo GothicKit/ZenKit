@@ -45,7 +45,7 @@ namespace zenkit {
 		instance ZKREM("renamed to DaedalusDataType::INSTANCE") = INSTANCE,
 	};
 
-	constexpr const char* const DAEDALUS_DATA_TYPE_NAMES[] = {
+	constexpr char const* const DAEDALUS_DATA_TYPE_NAMES[] = {
 	    "void",
 	    "float",
 	    "int",
@@ -291,8 +291,8 @@ namespace zenkit {
 			return reinterpret_cast<std::uint8_t*>(this);
 		}
 
-		[[nodiscard]] virtual const std::uint8_t* data() const {
-			return reinterpret_cast<const std::uint8_t*>(this);
+		[[nodiscard]] virtual std::uint8_t const* data() const {
+			return reinterpret_cast<std::uint8_t const*>(this);
 		}
 
 	private:
@@ -302,7 +302,7 @@ namespace zenkit {
 		friend class DaedalusVm;
 
 		uint32_t _m_symbol_index {static_cast<uint32_t>(-1)};
-		const std::type_info* _m_type {nullptr};
+		std::type_info const* _m_type {nullptr};
 	};
 
 	/// \brief Represents an object associated with an instance in the script.
@@ -350,7 +350,7 @@ namespace zenkit {
 		virtual float get_float(DaedalusSymbol const& sym, uint16_t index) = 0;
 
 		virtual void set_string(DaedalusSymbol const& sym, uint16_t index, std::string_view value) = 0;
-		virtual const std::string& get_string(DaedalusSymbol const& sym, uint16_t index) = 0;
+		virtual std::string const& get_string(DaedalusSymbol const& sym, uint16_t index) = 0;
 	};
 
 	/// \brief The base class for all exceptions thrown by interacting with a script.
@@ -380,7 +380,7 @@ namespace zenkit {
 	/// \brief An exception thrown if the type of the member being registered does not match the type provided.
 	struct DaedalusInvalidRegistrationDataType final : public DaedalusMemberRegistrationError {
 	public:
-		ZKAPI explicit DaedalusInvalidRegistrationDataType(const DaedalusSymbol* sym, std::string&& given);
+		ZKAPI explicit DaedalusInvalidRegistrationDataType(DaedalusSymbol const* sym, std::string&& given);
 
 	public:
 		std::string given;
@@ -411,7 +411,7 @@ namespace zenkit {
 
 	public:
 		/// \brief The symbol being accessed.
-		const DaedalusSymbol* sym;
+		DaedalusSymbol const* sym;
 
 		/// \brief The index being accessed
 		std::uint8_t index;
@@ -463,14 +463,14 @@ namespace zenkit {
 	/// \brief An exception thrown if a member symbol is being accessed with a context instance it is not bound to.
 	struct DaedalusIllegalContextType final : public DaedalusIllegalAccess {
 	public:
-		ZKAPI DaedalusIllegalContextType(DaedalusSymbol const* sym, const std::type_info& context_type);
+		ZKAPI DaedalusIllegalContextType(DaedalusSymbol const* sym, std::type_info const& context_type);
 
 	public:
 		/// \brief The symbol being accessed.
 		DaedalusSymbol const* sym;
 
 		/// \brief The type of context currently set.
-		const std::type_info& context_type;
+		std::type_info const& context_type;
 	};
 
 	/// \brief Represents a compiled daedalus symbol.
@@ -494,8 +494,8 @@ namespace zenkit {
 		/// \throws DaedalusUnboundMemberAccess if this symbol has not been registered yet
 		/// \throws DaedalusIllegalContextType if this symbol #is_registered_to a different type than the type of \p
 		/// context.
-		[[nodiscard]] ZKAPI const std::string&
-		get_string(std::size_t index = 0, const std::shared_ptr<DaedalusInstance>& context = nullptr) const;
+		[[nodiscard]] ZKAPI std::string const&
+		get_string(std::size_t index = 0, std::shared_ptr<DaedalusInstance> const& context = nullptr) const;
 
 		/// \brief Validates that the symbol is a float and retrieves it's value in the given context.
 		/// \param index The index of the value to get.
@@ -508,7 +508,7 @@ namespace zenkit {
 		/// \throws DaedalusIllegalContextType if this symbol #is_registered_to a different type than the type of \p
 		/// context.
 		[[nodiscard]] ZKAPI float get_float(std::size_t index = 0,
-		                                    const std::shared_ptr<DaedalusInstance>& context = nullptr) const;
+		                                    std::shared_ptr<DaedalusInstance> const& context = nullptr) const;
 
 		/// \brief Validates that the symbol is an int and retrieves it's value in the given context.
 		/// \param index The index of the value to get.
@@ -521,12 +521,12 @@ namespace zenkit {
 		/// \throws DaedalusIllegalContextType if this symbol #is_registered_to a different type than the type of \p
 		/// context.
 		[[nodiscard]] ZKAPI std::int32_t get_int(std::size_t index = 0,
-		                                         const std::shared_ptr<DaedalusInstance>& context = nullptr) const;
+		                                         std::shared_ptr<DaedalusInstance> const& context = nullptr) const;
 
 		/// \brief Validates that the symbol is an instance and retrieves it's value
 		/// \return The instance associated with the symbol.
 		/// \throws DaedalusIllegalTypeAccess if the #type of this symbol is not dt_instance
-		[[nodiscard]] ZKAPI const std::shared_ptr<DaedalusInstance>& get_instance();
+		[[nodiscard]] ZKAPI std::shared_ptr<DaedalusInstance> const& get_instance();
 
 		// -=-= Value setters =-=- //
 
@@ -542,7 +542,7 @@ namespace zenkit {
 		/// context.
 		ZKAPI void set_string(std::string_view value,
 		                      std::size_t index = 0,
-		                      const std::shared_ptr<DaedalusInstance>& context = nullptr);
+		                      std::shared_ptr<DaedalusInstance> const& context = nullptr);
 
 		/// \brief Validates that the symbol is a float and not constant and sets it's value in the given context.
 		/// \param value The new value to set.
@@ -555,7 +555,7 @@ namespace zenkit {
 		/// \throws DaedalusIllegalContextType if this symbol #is_registered_to a different type than the type of \p
 		/// context.
 		ZKAPI void
-		set_float(float value, std::size_t index = 0, const std::shared_ptr<DaedalusInstance>& context = nullptr);
+		set_float(float value, std::size_t index = 0, std::shared_ptr<DaedalusInstance> const& context = nullptr);
 
 		/// \brief Validates that the symbol is an int and not constant and sets it's value in the given context.
 		/// \param value The new value to set.
@@ -568,12 +568,12 @@ namespace zenkit {
 		/// \throws DaedalusIllegalContextType if this symbol #is_registered_to a different type than the type of \p
 		/// context.
 		ZKAPI void
-		set_int(std::int32_t value, std::size_t index = 0, const std::shared_ptr<DaedalusInstance>& context = nullptr);
+		set_int(std::int32_t value, std::size_t index = 0, std::shared_ptr<DaedalusInstance> const& context = nullptr);
 
 		/// \brief Validates that the symbol is an instance and sets it's value
 		/// \param inst The instance value to set
 		/// \throws DaedalusIllegalTypeAccess if the #type of this symbol is not dt_instance.
-		ZKAPI void set_instance(const std::shared_ptr<DaedalusInstance>& inst);
+		ZKAPI void set_instance(std::shared_ptr<DaedalusInstance> const& inst);
 
 		/// \brief Tests whether this symbol holds an instance of the given type.
 		/// \tparam T The type of instance to check for.
@@ -632,7 +632,7 @@ namespace zenkit {
 		}
 
 		/// \return The name of the symbol.
-		[[nodiscard]] ZKAPI inline const std::string& name() const noexcept {
+		[[nodiscard]] ZKAPI inline std::string const& name() const noexcept {
 			return _m_name;
 		}
 
@@ -696,29 +696,25 @@ namespace zenkit {
 			return _m_class_size;
 		}
 
-		[[nodiscard]] ZKAPI inline const std::type_info& registered_to() const noexcept {
+		[[nodiscard]] ZKAPI inline std::type_info const& registered_to() const noexcept {
 			return *_m_registered_to;
 		};
 
 	protected:
 		template <typename T>
-		inline const T* get_member_ptr(std::uint8_t index, const std::shared_ptr<DaedalusInstance>& context) const {
-			if (!_m_registered_to)
-				throw DaedalusUnboundMemberAccess(this);
-			if (*_m_registered_to != *context->_m_type)
-				throw DaedalusIllegalContextType {this, *context->_m_type};
+		inline T const* get_member_ptr(std::uint8_t index, std::shared_ptr<DaedalusInstance> const& context) const {
+			if (!_m_registered_to) throw DaedalusUnboundMemberAccess(this);
+			if (*_m_registered_to != *context->_m_type) throw DaedalusIllegalContextType {this, *context->_m_type};
 
 			auto data_ptr = context->data();
 			std::uint32_t target_offset = offset_as_member() + index * sizeof(T);
-			return reinterpret_cast<const T*>(data_ptr + target_offset);
+			return reinterpret_cast<T const*>(data_ptr + target_offset);
 		}
 
 		template <typename T>
-		inline T* get_member_ptr(std::uint8_t index, const std::shared_ptr<DaedalusInstance>& context) {
-			if (!_m_registered_to)
-				throw DaedalusUnboundMemberAccess(this);
-			if (*_m_registered_to != *context->_m_type)
-				throw DaedalusIllegalContextType {this, *context->_m_type};
+		inline T* get_member_ptr(std::uint8_t index, std::shared_ptr<DaedalusInstance> const& context) {
+			if (!_m_registered_to) throw DaedalusUnboundMemberAccess(this);
+			if (*_m_registered_to != *context->_m_type) throw DaedalusIllegalContextType {this, *context->_m_type};
 
 			auto data_ptr = context->data();
 			std::uint32_t target_offset = offset_as_member() + index * sizeof(T);
@@ -752,7 +748,7 @@ namespace zenkit {
 		std::uint32_t _m_class_size {static_cast<uint32_t>(-1)};
 		DaedalusDataType _m_return_type {DaedalusDataType::VOID};
 		std::uint32_t _m_index {static_cast<uint32_t>(-1)};
-		const std::type_info* _m_registered_to {nullptr};
+		std::type_info const* _m_registered_to {nullptr};
 	};
 
 	/// \brief Represents a daedalus VM instruction.
@@ -771,17 +767,16 @@ namespace zenkit {
 	};
 
 	/// \brief Represents a compiled daedalus script
-
 	class DaedalusScript {
 	public:
 		ZKAPI DaedalusScript() = default;
-		ZKAPI DaedalusScript(const DaedalusScript& copy) = delete;
+		ZKAPI DaedalusScript(DaedalusScript const& copy) = delete;
 		ZKAPI DaedalusScript(DaedalusScript&& move) = default;
 
 		/// \brief Parses in a compiled daedalus script.
 		/// \param path The path of the script file.
 		/// \return The script parsed
-		[[nodiscard]] ZKREM("use ::load") ZKAPI static DaedalusScript parse(const std::string& path);
+		[[nodiscard]] ZKREM("use ::load") ZKAPI static DaedalusScript parse(std::string const& path);
 
 		/// \brief Parses in a compiled daedalus script.
 		/// \param buf A buffer containing the script data.
@@ -835,30 +830,30 @@ namespace zenkit {
 		}
 
 		/// \return All symbols in the script
-		[[nodiscard]] ZKAPI inline const std::vector<DaedalusSymbol>& symbols() const noexcept {
+		[[nodiscard]] ZKAPI inline std::vector<DaedalusSymbol> const& symbols() const noexcept {
 			return _m_symbols;
 		}
 
 		/// \brief Retrieves the symbol with the given \p index
 		/// \param index The index of the symbol to get
 		/// \return The symbol or `nullptr` if the index was out-of-range.
-		[[nodiscard]] ZKAPI const DaedalusSymbol* find_symbol_by_index(std::uint32_t index) const;
+		[[nodiscard]] ZKAPI DaedalusSymbol const* find_symbol_by_index(std::uint32_t index) const;
 
 		/// \brief Looks for parameters of the given function symbol. Only works for external functions.
 		/// \param parent The function symbol to get the parameter symbols for.
 		/// \return A list of function parameter symbols.
-		[[nodiscard]] ZKAPI std::vector<const DaedalusSymbol*>
-		find_parameters_for_function(const DaedalusSymbol* parent) const;
+		[[nodiscard]] ZKAPI std::vector<DaedalusSymbol const*>
+		find_parameters_for_function(DaedalusSymbol const* parent) const;
 
 		/// \brief Retrieves the symbol with the given \p address set
 		/// \param index The address of the symbol to get
 		/// \return The symbol or `nullptr` if no symbol with that address was found.
-		[[nodiscard]] ZKAPI const DaedalusSymbol* find_symbol_by_address(std::uint32_t address) const;
+		[[nodiscard]] ZKAPI DaedalusSymbol const* find_symbol_by_address(std::uint32_t address) const;
 
 		/// \brief Retrieves the symbol with the given \p name.
 		/// \param name The name of the symbol to get.
 		/// \return The symbol or `nullptr` if no symbol with that name was found.
-		[[nodiscard]] ZKAPI const DaedalusSymbol* find_symbol_by_name(std::string_view name) const;
+		[[nodiscard]] ZKAPI DaedalusSymbol const* find_symbol_by_name(std::string_view name) const;
 
 		/// \brief Retrieves the symbol with the given \p index
 		/// \param index The index of the symbol to get
@@ -873,7 +868,7 @@ namespace zenkit {
 		/// \brief Looks for parameters of the given function symbol. Only works for external functions.
 		/// \param parent The function symbol to get the parameter symbols for.
 		/// \return A list of function parameter symbols.
-		[[nodiscard]] ZKAPI std::vector<DaedalusSymbol*> find_parameters_for_function(const DaedalusSymbol* parent);
+		[[nodiscard]] ZKAPI std::vector<DaedalusSymbol*> find_parameters_for_function(DaedalusSymbol const* parent);
 
 		/// \brief Retrieves the symbol with the given \p name.
 		/// \param name The name of the symbol to get.
@@ -885,7 +880,7 @@ namespace zenkit {
 		/// \param name The name of the parent class.
 		/// \param callback The function to call with each instance symbol.
 		ZKAPI void enumerate_instances_by_class_name(std::string_view name,
-		                                             const std::function<void(DaedalusSymbol&)>& callback);
+		                                             std::function<void(DaedalusSymbol&)> const& callback);
 
 		/// \brief Decodes the instruction at \p address and returns it.
 		/// \param address The address of the instruction to decode
@@ -899,7 +894,7 @@ namespace zenkit {
 		/// \param inst The instance to get the symbol for.
 		/// \return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
 		///         with any instance.
-		ZKAPI inline const DaedalusSymbol* find_symbol_by_instance(const DaedalusInstance& inst) const {
+		ZKAPI inline DaedalusSymbol const* find_symbol_by_instance(DaedalusInstance const& inst) const {
 			return find_symbol_by_index(inst._m_symbol_index);
 		}
 
@@ -907,7 +902,7 @@ namespace zenkit {
 		/// \param inst The instance to get the symbol for.
 		/// \return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
 		///         with any instance.
-		ZKAPI inline DaedalusSymbol* find_symbol_by_instance(const DaedalusInstance& inst) {
+		ZKAPI inline DaedalusSymbol* find_symbol_by_instance(DaedalusInstance const& inst) {
 			return find_symbol_by_index(inst._m_symbol_index);
 		}
 
@@ -916,8 +911,8 @@ namespace zenkit {
 		/// \return The symbol associated with that instance or <tt>nullptr</tt> if the symbol is not associated
 		///         with any instance.
 		template <typename T>
-		ZKAPI typename std::enable_if<std::is_base_of_v<DaedalusInstance, T>, const DaedalusSymbol*>::
-		    type inline find_symbol_by_instance(const std::shared_ptr<T>& inst) const { // clang-format on
+		ZKAPI typename std::enable_if<std::is_base_of_v<DaedalusInstance, T>, DaedalusSymbol const*>::
+		    type inline find_symbol_by_instance(std::shared_ptr<T> const& inst) const { // clang-format on
 			return find_symbol_by_index(inst->_m_symbol_index);
 		}
 
@@ -927,7 +922,7 @@ namespace zenkit {
 		///         with any instance.
 		template <typename T>
 		ZKAPI typename std::enable_if<std::is_base_of_v<DaedalusInstance, T>, DaedalusSymbol*>::
-		    type inline find_symbol_by_instance(const std::shared_ptr<T>& inst) {
+		    type inline find_symbol_by_instance(std::shared_ptr<T> const& inst) {
 			return find_symbol_by_index(inst->_m_symbol_index);
 		}
 
@@ -941,13 +936,11 @@ namespace zenkit {
 
 	protected:
 		template <typename _class, typename _member, int N>
-		DaedalusSymbol* _check_member(std::string_view name, const std::type_info* type) {
+		DaedalusSymbol* _check_member(std::string_view name, std::type_info const* type) {
 			auto* sym = find_symbol_by_name(name);
 
-			if (sym == nullptr)
-				throw DaedalusSymbolNotFound {std::string {name}};
-			if (!sym->is_member())
-				throw DaedalusMemberRegistrationError {sym, "not a member"};
+			if (sym == nullptr) throw DaedalusSymbolNotFound {std::string {name}};
+			if (!sym->is_member()) throw DaedalusMemberRegistrationError {sym, "not a member"};
 			if (sym->count() > N)
 				throw DaedalusMemberRegistrationError {sym,
 				                                       "incorrect number of elements: given " + std::to_string(N) +
@@ -955,8 +948,7 @@ namespace zenkit {
 
 			// check class registration
 			auto* parent = find_symbol_by_index(sym->parent());
-			if (parent == nullptr)
-				throw DaedalusMemberRegistrationError {sym, "no parent found"};
+			if (parent == nullptr) throw DaedalusMemberRegistrationError {sym, "no parent found"};
 
 			if (parent->_m_registered_to == nullptr) {
 				parent->_m_registered_to = type;
@@ -968,11 +960,9 @@ namespace zenkit {
 
 			// check type matches
 			if constexpr (std::is_same_v<std::string, _member>) {
-				if (sym->type() != DaedalusDataType::STRING)
-					throw DaedalusInvalidRegistrationDataType {sym, "string"};
+				if (sym->type() != DaedalusDataType::STRING) throw DaedalusInvalidRegistrationDataType {sym, "string"};
 			} else if constexpr (std::is_same_v<float, _member>) {
-				if (sym->type() != DaedalusDataType::FLOAT)
-					throw DaedalusInvalidRegistrationDataType {sym, "float"};
+				if (sym->type() != DaedalusDataType::FLOAT) throw DaedalusInvalidRegistrationDataType {sym, "float"};
 			} else if constexpr (std::is_same_v<int32_t, _member> || std::is_enum_v<_member>) {
 				if (sym->type() != DaedalusDataType::INT && sym->type() != DaedalusDataType::FUNCTION)
 					throw DaedalusInvalidRegistrationDataType {sym, "int"};

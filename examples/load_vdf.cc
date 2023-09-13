@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-void print_entries(const std::set<zenkit::VfsNode, zenkit::VfsNodeComparator>& entries) {
+void print_entries(std::set<zenkit::VfsNode, zenkit::VfsNodeComparator> const& entries) {
 	for (auto& e : entries) {
 		if (e.type() == zenkit::VfsNodeType::DIRECTORY) {
 			print_entries(e.children());

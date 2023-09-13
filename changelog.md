@@ -1,7 +1,7 @@
-# changelog
+# Changelog
 
-This file contains all changes made to _phoenix_ in reverse order, meaning the newest change is listed first. This
-file is updated whenever a new version of _phoenix_ is released. More information about how versioning works can be
+This file contains all changes made to _ZenKit_ in reverse order, meaning the newest change is listed first. This
+file is updated whenever a new version of _ZenKit is released. More information about how versioning works can be
 found in [readme.md](readme.md#versioning).
 
 ---

@@ -45,7 +45,7 @@ namespace zenkit {
 	}
 
 	AxisAlignedBoundingBox OrientedBoundingBox::as_bbox() const {
-		const float sign[8][3] = {{-1, -1, -1},
+		float const sign[8][3] = {{-1, -1, -1},
 		                          {-1, -1, +1},
 		                          {-1, +1, -1},
 		                          {-1, +1, +1},

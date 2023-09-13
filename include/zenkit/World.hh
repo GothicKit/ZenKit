@@ -31,7 +31,7 @@ namespace zenkit {
 		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
 		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
 		///       using buffer::duplicate.
-		/// \throws parser_error if parsing fails.
+		/// \throws ParserError if parsing fails.
 		/// \see #parse(buffer&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static World parse(phoenix::buffer& buf, GameVersion version);
 
@@ -39,12 +39,12 @@ namespace zenkit {
 		///
 		/// <p>This implementation is heavily based on the implementation found in
 		/// [ZenLib](https://github.com/Try/ZenLib). This function will try to determine the world version
-		/// automatically. If it can't be detected, _phoenix_ will assume `game_version::gothic_1` and log
+		/// automatically. If it can't be detected, _ZenKit_ will assume `GameVersion::GOTHIC_1` and log
 		/// an error message.
 		///
-		/// Using this function over #parse(buffer&, game_version) has the potential to lead to longer load times
-		/// but it has not been proven that such a case actually exists. If you absolutely need the performance and
-		/// you already know the game version you are trying to load, consider using #parse(buffer&, game_version)
+		/// Using this function over #parse(phoenix::buffer&, GameVersion) has the potential to lead to longer load
+		/// times but it has not been proven that such a case actually exists. If you absolutely need the performance
+		/// and you already know the game version you are trying to load, consider using #parse(buffer&, game_version)
 		/// instead.
 		///
 		/// \param[in,out] buf The buffer to read from.
@@ -52,7 +52,7 @@ namespace zenkit {
 		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
 		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
 		///       using buffer::duplicate.
-		/// \throws parser_error if parsing fails.
+		/// \throws ParserError if parsing fails.
 		/// \see #parse(buffer&&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static World parse(phoenix::buffer& buf);
 
@@ -60,14 +60,14 @@ namespace zenkit {
 		/// \param[in,out] buf The buffer to read from (by rvalue-reference).
 		/// \param version The Gothic version to assume when loading the world
 		/// \return The parsed world object.
-		/// \throws parser_error if parsing fails.
+		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static World parse(phoenix::buffer&& buf, GameVersion version);
 
 		/// \brief Parses a world from the data in the given buffer.
 		/// \param[in,out] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed world object.
-		/// \throws parser_error if parsing fails.
+		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static World parse(phoenix::buffer&& buf);
 

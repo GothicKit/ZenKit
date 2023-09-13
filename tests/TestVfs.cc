@@ -7,37 +7,37 @@
 void check_vfs(zenkit::Vfs const& vdf) {
 	// Checks if all entries are here
 
-	const auto& roots = vdf.root().children();
+	auto const& roots = vdf.root().children();
 	CHECK_EQ(roots.size(), 3);
 
-	const auto* config_yml = vdf.find("config.yml");
+	auto const* config_yml = vdf.find("config.yml");
 	CHECK_NE(config_yml, nullptr);
 	CHECK(config_yml->type() == zenkit::VfsNodeType::FILE);
 
-	const auto* readme_md = vdf.find("readme.md");
+	auto const* readme_md = vdf.find("readme.md");
 	CHECK_NE(readme_md, nullptr);
 	CHECK(readme_md->type() == zenkit::VfsNodeType::FILE);
 
-	const auto* licenses_dir = vdf.find("licenses");
+	auto const* licenses_dir = vdf.find("licenses");
 	CHECK_NE(licenses_dir, nullptr);
 	CHECK(licenses_dir->type() == zenkit::VfsNodeType::DIRECTORY);
 	CHECK_EQ(licenses_dir->children().size(), 2);
 
-	const auto* mit_md = vdf.find("MIT.MD");
+	auto const* mit_md = vdf.find("MIT.MD");
 	CHECK_NE(mit_md, nullptr);
 	CHECK(mit_md->type() == zenkit::VfsNodeType::FILE);
 
-	const auto* gpl_dir = licenses_dir->child("gpl");
+	auto const* gpl_dir = licenses_dir->child("gpl");
 	CHECK_NE(gpl_dir, nullptr);
 	CHECK(gpl_dir->type() == zenkit::VfsNodeType::DIRECTORY);
 	CHECK_EQ(gpl_dir->children().size(), 2);
 
-	const auto* lgpl_md = gpl_dir->child("lgpl-3.0.md");
+	auto const* lgpl_md = gpl_dir->child("lgpl-3.0.md");
 	CHECK_EQ(gpl_dir->child("lgpl"), nullptr);
 	CHECK_NE(lgpl_md, nullptr);
 	CHECK(lgpl_md->type() == zenkit::VfsNodeType::FILE);
 
-	const auto* gpl_md = vdf.find("gpl-3.0.MD");
+	auto const* gpl_md = vdf.find("gpl-3.0.MD");
 	CHECK_NE(gpl_md, nullptr);
 	CHECK(gpl_md->type() == zenkit::VfsNodeType::FILE);
 

@@ -178,8 +178,7 @@ namespace zenkit {
 	}
 
 	std::optional<std::string> MdsParser::maybe_keyword() {
-		if (this->maybe<MdsToken::KEYWORD>())
-			return _m_stream.token_value();
+		if (this->maybe<MdsToken::KEYWORD>()) return _m_stream.token_value();
 		return std::nullopt;
 	}
 

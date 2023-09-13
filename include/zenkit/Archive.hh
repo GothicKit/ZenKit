@@ -35,25 +35,53 @@ namespace zenkit {
 	};
 
 	/// \brief Represents the header of a ZenGin archive.
+	///
+	/// <p>The header contains general information about the archive, some of which is used during selection of the
+	/// backend parser used to load the archive. Potentially interesting are the #save, #user and #date fields which
+	/// can be used to attribute game saves.</p>
+	///
+	/// <p>If you only want to parse an archive's header without constructing an entire zenkit::ReadArchive, you can
+	/// use #load to manually do so. It is recommended however, to prefer ReadArchive#load instead since the behaviour
+	/// of #load might change without warning due to it being an internal API.</p>
 	struct ArchiveHeader {
+		/// \brief The format version of the archive.
+		///
+		/// <p>The version is always "1". Any other version identifiers are rejected.</p>
 		int32_t version;
 
-		/// \brief The type of archiver used to create the archive. Either `zCArchiverGeneric` or `zCArchiverBinSafe`.
+		/// \brief The type of archiver used to create the archive.
+		///
+		/// <p>Original Gothic archives contain either `"zCArchiverGeneric"` or `"zCArchiverBinSafe"`. Was originally
+		/// used to determine which class should be used to load the archive, however *ZenKit* uses the
+		/// #format to determine the backend parser implementation, which is more reliable.</p>
 		std::string archiver;
 
 		/// \brief The format of the archive.
 		ArchiveFormat format;
 
 		/// \brief Whether the archive contains a save-game or not.
-		bool save {false};
+		bool save;
 
 		/// \brief The user who created the archive.
+		///
+		/// <p>Originally, this contained the name of the Windows user logged in while creating the archive. Save-games,
+		/// for example, contain the name of the Windows user account which performed the save.</p>
 		std::string user;
 
-		/// \brief The date this archive was created at.
+		/// \brief The date the archive was created at.
+		///
+		/// <p>This date is formatted according to German date formatting rules. The `strftime` format string would be
+		/// `"%Y.%m.%d %H:%M:%S"`, however leading zeroes are stripped out.</p>
 		std::string date;
 
-		void load(Read* r);
+		/// \brief Load an archive header from a stream.
+		///
+		/// <p>After loading finishes, the stream position of \p r is left at the end of the header. Parsing the
+		/// header is a fallible operation which will throw an exception on failure (see below).</p>
+		///
+		/// \param[in] r The stream to read from.
+		/// \throws zenkit::ParserError The header does not have a valid format.
+		ZKAPI void load(Read* r);
 	};
 
 	/// \brief Represents the header of an object stored in a ZenGin archive.
@@ -64,8 +92,7 @@ namespace zenkit {
 		/// \brief The original class name of the object in the ZenGin. Used to identify the type of object.
 		std::string class_name;
 
-		/// \brief A version identifier for the object. A way of determining the Gothic version from
-		///        this has yet to be discovered.
+		/// \brief A version identifier for the object.
 		std::uint16_t version;
 
 		/// \brief The index of the object in the archive. Unique for each object in an archive.
@@ -105,11 +132,12 @@ namespace zenkit {
 	public:
 		virtual ~ReadArchive() = default;
 
-		/// \brief Creates a new archive_reader from the given buffer.
+		/// \brief Create a new archive reader from the given buffer.
 		/// \param[in] in The buffer to use.
-		/// \return The new archive_reader.
-		/// \throws zenkit::ParserError
-		ZKREM("use ::from(Read*)") static std::unique_ptr<ReadArchive> open(phoenix::buffer& in);
+		/// \return A unique pointer containing an archive reader.
+		/// \throws zenkit::ParserError If the archive's header is invalid.
+		/// \sa ArchiveHeader#load
+		ZKREM("use ::from") static std::unique_ptr<ReadArchive> open(phoenix::buffer& in);
 
 		/// \brief Creates a new archive_reader from the given buffer.
 		/// \param[in] r The buffer to use.
@@ -136,57 +164,57 @@ namespace zenkit {
 
 		/// \brief Reads a string value from the reader.
 		/// \return The value read.
-		/// \throws parser_error if the value actually present is not a string
+		/// \throws zenkit::ParserError if the value actually present is not a string
 		virtual std::string read_string() = 0;
 
 		/// \brief Reads an integer value from the reader.
 		/// \return The value read.
-		/// \throws parser_error if the value actually present is not an integer
+		/// \throws zenkit::ParserError if the value actually present is not an integer
 		virtual std::int32_t read_int() = 0;
 
 		/// \brief Reads a float value from the reader.
 		/// \return The value read.
-		/// \throws parser_error if the value actually present is not a float
+		/// \throws zenkit::ParserError if the value actually present is not a float
 		virtual float read_float() = 0;
 
 		/// \brief Reads a byte value from the reader.
 		/// \return The value read.
-		/// \throws parser_error if the value actually present is not a byte
+		/// \throws zenkit::ParserError if the value actually present is not a byte
 		virtual std::uint8_t read_byte() = 0;
 
 		/// \brief Reads a word (`uint16_t`) value from the reader.
 		/// \return The value read.
-		/// \throws parser_error if the value actually present is not a word
+		/// \throws zenkit::ParserError if the value actually present is not a word
 		virtual std::uint16_t read_word() = 0;
 
 		/// \brief Reads a enum (`uint32_t`) value from the reader.
 		/// \return The value read.
-		/// \throws parser_error if the value actually present is not a enum
+		/// \throws zenkit::ParserError if the value actually present is not a enum
 		virtual std::uint32_t read_enum() = 0;
 
 		/// \brief Reads a bool value from the reader.
 		/// \return The value read.
-		/// \throws parser_error if the value actually present is not a bool
+		/// \throws zenkit::ParserError if the value actually present is not a bool
 		virtual bool read_bool() = 0;
 
 		/// \brief Reads a RGBA color value from the reader.
 		/// \return The value read.
-		/// \throws parser_error if the value actually present is not a color
+		/// \throws zenkit::ParserError if the value actually present is not a color
 		virtual glm::u8vec4 read_color() = 0;
 
 		/// \brief Reads a vec3 value from the reader.
 		/// \return The value read.
-		/// \throws parser_error if the value actually present is not a vec3
+		/// \throws zenkit::ParserError if the value actually present is not a vec3
 		virtual glm::vec3 read_vec3() = 0;
 
 		/// \brief Reads a vec2 value from the reader.
 		/// \return The value read.
-		/// \throws parser_error if the value actually present is not a vec2
+		/// \throws zenkit::ParserError if the value actually present is not a vec2
 		virtual glm::vec2 read_vec2() = 0;
 
 		/// \brief Reads a bounding box consisting of two consecutive vec3's from the reader.
 		/// \return The value read.
-		/// \throws parser_error if the value actually present is not a bounding box
+		/// \throws zenkit::ParserError if the value actually present is not a bounding box
 		virtual AxisAlignedBoundingBox read_bbox() = 0;
 
 		/// \brief Reads a 3-by-3 matrix from the reader.
@@ -196,7 +224,7 @@ namespace zenkit {
 		/// \brief Reads a raw entry and returns the raw bytes stored within.
 		/// \param size The number of bytes to read (checked at runtime for ASCII and BIN_SAFE archives)
 		/// \return A vector containing the raw bytes of the entry.
-		/// \throws parser_error if the value actually present is not raw
+		/// \throws zenkit::ParserError if the value actually present is not raw
 		ZKREM("use ::read_raw()") virtual phoenix::buffer read_raw_bytes(uint32_t size) = 0;
 
 		virtual std::unique_ptr<Read> read_raw(uint32_t size) = 0;
@@ -207,7 +235,7 @@ namespace zenkit {
 		virtual void skip_object(bool skip_current);
 
 		/// \return The header of the archive
-		[[nodiscard]] const ArchiveHeader& get_header() const noexcept {
+		[[nodiscard]] ArchiveHeader const& get_header() const noexcept {
 			return header;
 		}
 

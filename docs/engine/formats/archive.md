@@ -328,7 +328,7 @@ name information. The hash table is a binary structure as well; it looks like th
 struct zen_binsafe_hashtable_entry {
     uint16_t name_length; // The length of the name string at the end of the structure
     uint16_t insertion_index; // The index of this entry in the hashtable `entries` member array
-    uint32_t hash_value; // The hash value of the entry. Its purpose is currently unknown.
+    uint32_t bucket_index; // The bucket index of this entry. See below.
     char name[]; // The name of the entry. This name is the field name of the entry as explained below
 };
 
@@ -337,6 +337,24 @@ struct zen_binsafe_hashtable {
     zen_binsafe_hashtable_entry entries[]; // An array of all hash table entries; unordered.
 };
 #pragma pack(pop)
+```
+
+The bucket_index is calculated using the following algorithm:
+
+```c
+/* The capacity of the hash table was always the same: 0x61 buckets. */
+#define HARDCODED_HASHTABLE_CAPACITY 0x61
+
+int zen_calculate_bucket_index(char const* key) {
+    int hash = 0;
+    
+    while (*key != '\0') {
+       hash = hash * 0x21 + (int) *key;
+       key += 1;
+    }
+    
+    return hash % HARDCODED_HASHTABLE_CAPACITY;
+}
 ```
 
 ### Objects

@@ -15,7 +15,7 @@ namespace phoenix {
 namespace zenkit {
 	class Read;
 
-	constexpr const std::uint16_t ZTEX_PALETTE_ENTRIES = 0x100;
+	constexpr std::uint16_t const ZTEX_PALETTE_ENTRIES = 0x100;
 
 	/// \brief Texture formats used by the ZenGin.
 	enum class TextureFormat {
@@ -62,14 +62,14 @@ namespace zenkit {
 		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
 		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
 		///       using buffer::duplicate.
-		/// \throws parser_error if parsing fails.
+		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&&)
 		[[nodiscard]] ZKREM("use ::load") ZKAPI static Texture parse(phoenix::buffer& in);
 
 		/// \brief Parses a texture from the data in the given buffer.
 		/// \param[in,out] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed texture.
-		/// \throws parser_error if parsing fails.
+		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&)
 		[[nodiscard]] ZKREM("use ::load") ZKAPI static Texture parse(phoenix::buffer&& in);
 
@@ -129,7 +129,7 @@ namespace zenkit {
 
 		/// \param mipmap_level The mipmap level to get.
 		/// \return The texture data at the given mipmap level.
-		[[nodiscard]] ZKAPI inline const std::vector<std::uint8_t>&
+		[[nodiscard]] ZKAPI inline std::vector<std::uint8_t> const&
 		data(std::uint32_t mipmap_level = 0) const noexcept {
 			return _m_textures.at(_m_mipmap_count - 1 - mipmap_level);
 		}

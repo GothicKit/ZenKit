@@ -10,5 +10,5 @@ namespace zenkit {
 	/// \brief Converts a texture to the DDS format.
 	/// \param tex The texture to convert.
 	/// \return A buffer containing the DDS file.
-	[[nodiscard]] ZKAPI std::vector<std::byte> to_dds(const zenkit::Texture& tex);
+	[[nodiscard]] ZKAPI std::vector<std::byte> to_dds(zenkit::Texture const& tex);
 } // namespace zenkit

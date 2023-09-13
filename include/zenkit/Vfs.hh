@@ -47,9 +47,9 @@ namespace zenkit {
 	struct VfsNodeComparator {
 		using is_transparent = std::true_type;
 
-		ZKAPI [[nodiscard]] bool operator()(const VfsNode& a, const VfsNode& b) const noexcept;
-		ZKAPI [[nodiscard]] bool operator()(const VfsNode& a, std::string_view b) const noexcept;
-		ZKAPI [[nodiscard]] bool operator()(std::string_view a, const VfsNode& b) const noexcept;
+		ZKAPI [[nodiscard]] bool operator()(VfsNode const& a, VfsNode const& b) const noexcept;
+		ZKAPI [[nodiscard]] bool operator()(VfsNode const& a, std::string_view b) const noexcept;
+		ZKAPI [[nodiscard]] bool operator()(std::string_view a, VfsNode const& b) const noexcept;
 	};
 
 	class VfsNode {

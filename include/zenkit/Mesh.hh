@@ -99,7 +99,7 @@ namespace zenkit {
 		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
 		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
 		///       using buffer::duplicate.
-		/// \throws parser_error if parsing fails.
+		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&&, const std::vector<std::uint32_t>&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Mesh parse(phoenix::buffer& buf,
 		                                                            std::vector<uint32_t> const& include_polygons = {},
@@ -115,7 +115,7 @@ namespace zenkit {
 		///                         discarded. This is mainly used for world meshes which include level-of-detail
 		///                         polygons.
 		/// \return The parsed mesh object.
-		/// \throws parser_error if parsing fails.
+		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&, const std::vector<std::uint32_t>&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Mesh
 		    parse(phoenix::buffer&& buf, std::vector<std::uint32_t> const& include_polygons = {});

@@ -8,7 +8,7 @@
 #include <vector>
 
 namespace zenkit {
-	static constexpr const std::uint8_t type_sizes[] = {
+	static constexpr std::uint8_t const type_sizes[] = {
 	    0,                        // ?            = 0x00
 	    0,                        // bs_string    = 0x01,
 	    sizeof(std::int32_t),     // bs_int       = 0x02,
@@ -64,7 +64,7 @@ namespace zenkit {
 		void read_header() override;
 		void skip_entry() override;
 
-		const std::string& get_entry_key();
+		std::string const& get_entry_key();
 
 		template <ArchiveEntryType tp>
 		std::uint16_t ensure_entry_meta();
@@ -75,4 +75,4 @@ namespace zenkit {
 
 		std::vector<hash_table_entry> _m_hash_table_entries;
 	};
-} // namespace phoenix
+} // namespace zenkit

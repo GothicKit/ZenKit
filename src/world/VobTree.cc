@@ -74,7 +74,7 @@ namespace zenkit {
 
 		VobType type;
 
-		if (const auto& it = TYPES.find(obj.class_name); it != TYPES.end()) {
+		if (auto const& it = TYPES.find(obj.class_name); it != TYPES.end()) {
 			type = it->second;
 		} else {
 			type = VobType::unknown;
@@ -232,8 +232,7 @@ namespace zenkit {
 
 		for (int32_t i = 0; i < child_count; ++i) {
 			auto child = parse_vob_tree(in, version);
-			if (child == nullptr)
-				continue;
+			if (child == nullptr) continue;
 
 			object->children.push_back(std::move(child));
 		}

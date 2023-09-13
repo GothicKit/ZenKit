@@ -100,7 +100,7 @@ namespace zenkit::unstable {
 		/// \param path The path of the save-game folder.
 		/// \return The parsed save-game.
 		/// \throws ParserError if parsing fails.
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static SaveGame parse(const std::filesystem::path& path);
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static SaveGame parse(std::filesystem::path const& path);
 
 		/// \brief Opens the saved world file with the given world name as a buffer and returns it.
 		///
@@ -118,7 +118,7 @@ namespace zenkit::unstable {
 		/// \param path The path of the save-game folder.
 		/// \return The parsed save-game.
 		/// \throws ParserError if parsing fails.
-		ZKAPI void load(const std::filesystem::path& path);
+		ZKAPI void load(std::filesystem::path const& path);
 
 	public:
 		/// \brief Contains metadata about the save-game, like its name and version numbers.

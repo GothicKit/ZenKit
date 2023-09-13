@@ -11,43 +11,43 @@ namespace zenkit {
 	DaedalusSymbolNotFound::DaedalusSymbolNotFound(std::string&& sym_name)
 	    : DaedalusScriptError("symbol not found: " + sym_name), name(sym_name) {}
 
-	DaedalusMemberRegistrationError::DaedalusMemberRegistrationError(const DaedalusSymbol* s, std::string&& msg)
+	DaedalusMemberRegistrationError::DaedalusMemberRegistrationError(DaedalusSymbol const* s, std::string&& msg)
 	    : DaedalusScriptError("cannot register member " + s->name() + ": " + msg), sym(s) {}
 
-	DaedalusInvalidRegistrationDataType::DaedalusInvalidRegistrationDataType(const DaedalusSymbol* s,
+	DaedalusInvalidRegistrationDataType::DaedalusInvalidRegistrationDataType(DaedalusSymbol const* s,
 	                                                                         std::string&& provided)
 	    : DaedalusMemberRegistrationError(s,
 	                                      "wrong datatype: provided '" + provided + "' expected " +
 	                                          DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) s->type()]) {}
 
-	DaedalusIllegalTypeAccess::DaedalusIllegalTypeAccess(const DaedalusSymbol* s, DaedalusDataType expected_dt)
+	DaedalusIllegalTypeAccess::DaedalusIllegalTypeAccess(DaedalusSymbol const* s, DaedalusDataType expected_dt)
 	    : DaedalusIllegalAccess("illegal access of type " + std::to_string(static_cast<int32_t>(expected_dt)) +
 	                            " on DaedalusSymbol " + s->name() + " which is another type (" +
 	                            std::to_string(static_cast<int32_t>(s->type())) + ")"),
 	      sym(s), expected(expected_dt) {}
 
-	DaedalusIllegalIndexAccess::DaedalusIllegalIndexAccess(const DaedalusSymbol* s, std::uint8_t idx)
+	DaedalusIllegalIndexAccess::DaedalusIllegalIndexAccess(DaedalusSymbol const* s, std::uint8_t idx)
 	    : DaedalusIllegalAccess("illegal access of out-of-bounds index " + std::to_string(idx) + " while reading " +
 	                            s->name()),
 	      sym(s), index(idx) {}
 
-	DaedalusIllegalConstAccess::DaedalusIllegalConstAccess(const DaedalusSymbol* s)
+	DaedalusIllegalConstAccess::DaedalusIllegalConstAccess(DaedalusSymbol const* s)
 	    : DaedalusIllegalAccess("illegal mutable access of const symbol " + s->name()), sym(s) {}
 
-	DaedalusIllegalInstanceAccess::DaedalusIllegalInstanceAccess(const DaedalusSymbol* s, std::uint32_t parent)
+	DaedalusIllegalInstanceAccess::DaedalusIllegalInstanceAccess(DaedalusSymbol const* s, std::uint32_t parent)
 	    : DaedalusIllegalAccess("illegal access of member " + s->name() +
 	                            " which does not have the same parent "
 	                            "class as the context instance (" +
 	                            std::to_string(s->parent()) + " != " + std::to_string(parent) + ")"),
 	      sym(s), expected_parent(parent) {}
 
-	DaedalusUnboundMemberAccess::DaedalusUnboundMemberAccess(const DaedalusSymbol* s)
+	DaedalusUnboundMemberAccess::DaedalusUnboundMemberAccess(DaedalusSymbol const* s)
 	    : DaedalusIllegalAccess("illegal access of unbound member " + s->name()), sym(s) {}
 
-	DaedalusNoContextError::DaedalusNoContextError(const DaedalusSymbol* s)
+	DaedalusNoContextError::DaedalusNoContextError(DaedalusSymbol const* s)
 	    : DaedalusIllegalAccess("illegal access of member " + s->name() + " without a context set."), sym(s) {}
 
-	DaedalusIllegalContextType::DaedalusIllegalContextType(const DaedalusSymbol* s, const std::type_info& ctx)
+	DaedalusIllegalContextType::DaedalusIllegalContextType(DaedalusSymbol const* s, std::type_info const& ctx)
 	    : DaedalusIllegalAccess("cannot access member " + s->name() + " on context instance of type " + ctx.name() +
 	                            " because this symbol is registered to instances of type " + s->registered_to().name()),
 	      sym(s), context_type(ctx) {}
@@ -87,7 +87,7 @@ namespace zenkit {
 		return s;
 	}
 
-	DaedalusScript DaedalusScript::parse(const std::string& file) {
+	DaedalusScript DaedalusScript::parse(std::string const& file) {
 		DaedalusScript scr {};
 
 		auto r = Read::from(file);
@@ -141,14 +141,14 @@ namespace zenkit {
 		return DaedalusInstruction::decode(_m_text.get());
 	}
 
-	const DaedalusSymbol* DaedalusScript::find_symbol_by_index(std::uint32_t index) const {
+	DaedalusSymbol const* DaedalusScript::find_symbol_by_index(std::uint32_t index) const {
 		if (index > _m_symbols.size()) {
 			return nullptr;
 		}
 		return &_m_symbols[index];
 	}
 
-	const DaedalusSymbol* DaedalusScript::find_symbol_by_name(std::string_view name) const {
+	DaedalusSymbol const* DaedalusScript::find_symbol_by_name(std::string_view name) const {
 		std::string up {name};
 		std::transform(up.begin(), up.end(), up.begin(), ::toupper);
 
@@ -159,7 +159,7 @@ namespace zenkit {
 		return nullptr;
 	}
 
-	const DaedalusSymbol* DaedalusScript::find_symbol_by_address(std::uint32_t address) const {
+	DaedalusSymbol const* DaedalusScript::find_symbol_by_address(std::uint32_t address) const {
 		if (auto it = _m_symbols_by_address.find(address); it != _m_symbols_by_address.end()) {
 			return find_symbol_by_index(it->second);
 		}
@@ -194,10 +194,9 @@ namespace zenkit {
 	}
 
 	void DaedalusScript::enumerate_instances_by_class_name(std::string_view name,
-	                                                       const std::function<void(DaedalusSymbol&)>& callback) {
+	                                                       std::function<void(DaedalusSymbol&)> const& callback) {
 		auto* cls = find_symbol_by_name(name);
-		if (cls == nullptr)
-			return;
+		if (cls == nullptr) return;
 
 		std::vector<uint32_t> prototypes {};
 		for (auto& sym : _m_symbols) {
@@ -211,7 +210,7 @@ namespace zenkit {
 		}
 	}
 
-	std::vector<DaedalusSymbol*> DaedalusScript::find_parameters_for_function(const DaedalusSymbol* parent) {
+	std::vector<DaedalusSymbol*> DaedalusScript::find_parameters_for_function(DaedalusSymbol const* parent) {
 		std::vector<DaedalusSymbol*> syms {};
 
 		for (uint32_t i = 0; i < parent->count(); ++i) {
@@ -221,9 +220,9 @@ namespace zenkit {
 		return syms;
 	}
 
-	std::vector<const DaedalusSymbol*>
-	DaedalusScript::find_parameters_for_function(const DaedalusSymbol* parent) const {
-		std::vector<const DaedalusSymbol*> syms {};
+	std::vector<DaedalusSymbol const*>
+	DaedalusScript::find_parameters_for_function(DaedalusSymbol const* parent) const {
+		std::vector<DaedalusSymbol const*> syms {};
 
 		for (uint32_t i = 0; i < parent->count(); ++i) {
 			syms.push_back(find_symbol_by_index(parent->index() + i + 1));
@@ -232,12 +231,11 @@ namespace zenkit {
 		return syms;
 	}
 
-	std::vector<DaedalusSymbol*> DaedalusScript::find_class_members(const DaedalusSymbol& cls) {
+	std::vector<DaedalusSymbol*> DaedalusScript::find_class_members(DaedalusSymbol const& cls) {
 		std::vector<DaedalusSymbol*> members {};
 
 		for (auto& sym : _m_symbols) {
-			if (!sym.is_member() || sym.parent() != cls.index())
-				continue;
+			if (!sym.is_member() || sym.parent() != cls.index()) continue;
 			members.push_back(&sym);
 		}
 
@@ -435,8 +433,8 @@ namespace zenkit {
 		}
 	}
 
-	const std::string& DaedalusSymbol::get_string(std::size_t index,
-	                                              const std::shared_ptr<DaedalusInstance>& context) const {
+	std::string const& DaedalusSymbol::get_string(std::size_t index,
+	                                              std::shared_ptr<DaedalusInstance> const& context) const {
 		if (type() != DaedalusDataType::STRING) {
 			throw DaedalusIllegalTypeAccess(this, DaedalusDataType::STRING);
 		}
@@ -460,7 +458,7 @@ namespace zenkit {
 		}
 	}
 
-	float DaedalusSymbol::get_float(std::size_t index, const std::shared_ptr<DaedalusInstance>& context) const {
+	float DaedalusSymbol::get_float(std::size_t index, std::shared_ptr<DaedalusInstance> const& context) const {
 		if (type() != DaedalusDataType::FLOAT) {
 			throw DaedalusIllegalTypeAccess(this, DaedalusDataType::FLOAT);
 		}
@@ -484,7 +482,7 @@ namespace zenkit {
 		}
 	}
 
-	std::int32_t DaedalusSymbol::get_int(std::size_t index, const std::shared_ptr<DaedalusInstance>& context) const {
+	std::int32_t DaedalusSymbol::get_int(std::size_t index, std::shared_ptr<DaedalusInstance> const& context) const {
 		if (type() != DaedalusDataType::INT && type() != DaedalusDataType::FUNCTION) {
 			throw DaedalusIllegalTypeAccess(this, DaedalusDataType::INT);
 		}
@@ -510,7 +508,7 @@ namespace zenkit {
 
 	void DaedalusSymbol::set_string(std::string_view value,
 	                                std::size_t index,
-	                                const std::shared_ptr<DaedalusInstance>& context) {
+	                                std::shared_ptr<DaedalusInstance> const& context) {
 		if (type() != DaedalusDataType::STRING) {
 			throw DaedalusIllegalTypeAccess(this, DaedalusDataType::STRING);
 		}
@@ -535,7 +533,7 @@ namespace zenkit {
 		}
 	}
 
-	void DaedalusSymbol::set_float(float value, std::size_t index, const std::shared_ptr<DaedalusInstance>& context) {
+	void DaedalusSymbol::set_float(float value, std::size_t index, std::shared_ptr<DaedalusInstance> const& context) {
 		if (type() != DaedalusDataType::FLOAT) {
 			throw DaedalusIllegalTypeAccess(this, DaedalusDataType::FLOAT);
 		}
@@ -561,7 +559,7 @@ namespace zenkit {
 	}
 
 	void
-	DaedalusSymbol::set_int(std::int32_t value, std::size_t index, const std::shared_ptr<DaedalusInstance>& context) {
+	DaedalusSymbol::set_int(std::int32_t value, std::size_t index, std::shared_ptr<DaedalusInstance> const& context) {
 		if (type() != DaedalusDataType::INT && type() != DaedalusDataType::FUNCTION) {
 			throw DaedalusIllegalTypeAccess(this, DaedalusDataType::INT);
 		}
@@ -586,7 +584,7 @@ namespace zenkit {
 		}
 	}
 
-	const std::shared_ptr<DaedalusInstance>& DaedalusSymbol::get_instance() {
+	std::shared_ptr<DaedalusInstance> const& DaedalusSymbol::get_instance() {
 		if (type() != DaedalusDataType::INSTANCE) {
 			throw DaedalusIllegalTypeAccess(this, DaedalusDataType::INSTANCE);
 		}
@@ -594,7 +592,7 @@ namespace zenkit {
 		return std::get<std::shared_ptr<DaedalusInstance>>(_m_value);
 	}
 
-	void DaedalusSymbol::set_instance(const std::shared_ptr<DaedalusInstance>& inst) {
+	void DaedalusSymbol::set_instance(std::shared_ptr<DaedalusInstance> const& inst) {
 		if (type() != DaedalusDataType::INSTANCE) {
 			throw DaedalusIllegalTypeAccess(this, DaedalusDataType::INSTANCE);
 		}
@@ -609,12 +607,11 @@ namespace zenkit {
 			_m_flags &= ~DaedalusSymbolFlag::TRAP_ACCESS;
 	}
 
-	DaedalusOpaqueInstance::DaedalusOpaqueInstance(const DaedalusSymbol& sym,
-	                                               const std::vector<DaedalusSymbol*>& members) {
+	DaedalusOpaqueInstance::DaedalusOpaqueInstance(DaedalusSymbol const& sym,
+	                                               std::vector<DaedalusSymbol*> const& members) {
 		size_t str_count = 0;
 		for (auto* member : members) {
-			if (member->type() != DaedalusDataType::STRING)
-				continue;
+			if (member->type() != DaedalusDataType::STRING) continue;
 			str_count += member->count();
 		}
 

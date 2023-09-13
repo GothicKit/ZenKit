@@ -28,8 +28,7 @@ namespace zenkit {
 	}
 
 	bool ReadArchiveBinary::read_object_begin(ArchiveObject& obj) {
-		if (read->eof())
-			return false;
+		if (read->eof()) return false;
 
 		auto pos = read->tell();
 		_m_object_end.push(pos + read->read_uint());

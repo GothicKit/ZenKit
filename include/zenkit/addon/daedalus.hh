@@ -357,7 +357,7 @@ namespace zenkit {
 
 		std::vector<IInfoChoice> choices {};
 
-		ZKAPI void add_choice(const IInfoChoice& ch);
+		ZKAPI void add_choice(IInfoChoice const& ch);
 		ZKAPI void remove_choice(std::size_t index);
 
 		ZKAPI static void register_(DaedalusScript& s);

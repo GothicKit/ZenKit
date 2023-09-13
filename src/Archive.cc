@@ -30,7 +30,12 @@ namespace zenkit {
 			if (ver.find("ver ") != 0) {
 				throw zenkit::ParserError {"ReadArchive", "ver field missing"};
 			}
+
 			this->version = std::stoi(ver.substr(ver.find(' ') + 1));
+			if (this->version != 1) {
+				throw zenkit::ParserError {"ReadArchive", "Unsupported format version: " + ver};
+			}
+
 			this->archiver = r->read_line(true);
 
 			auto fmt = r->read_line(true);
