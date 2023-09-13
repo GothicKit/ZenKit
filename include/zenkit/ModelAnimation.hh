@@ -29,7 +29,7 @@ namespace zenkit {
 		glm::vec3 position;
 		glm::quat rotation;
 
-		[[nodiscard]] ZKAPI bool operator==(const AnimationSample& other) const noexcept;
+		[[nodiscard]] ZKAPI bool operator==(AnimationSample const& other) const noexcept;
 	};
 
 	/// \brief Types of animation events.
@@ -92,7 +92,7 @@ namespace zenkit {
 
 	/// \brief Represents an animation event.
 	struct AnimationEvent {
-		static constexpr const auto VMAX = 4;
+		static constexpr auto const VMAX = 4;
 
 		AnimationEventType type;
 
@@ -120,14 +120,14 @@ namespace zenkit {
 		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
 		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
 		///       using buffer::duplicate.
-		/// \throws parser_error if parsing fails.
+		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelAnimation parse(phoenix::buffer& in);
 
 		/// \brief Parses an animation from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed animation.
-		/// \throws parser_error if parsing fails.
+		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelAnimation parse(phoenix::buffer&& in);
 

@@ -40,4 +40,4 @@ namespace zenkit {
 		int32_t _m_objects {0};
 	};
 
-} // namespace phoenix
+} // namespace zenkit

@@ -122,9 +122,9 @@ namespace zenkit::unstable {
 		}
 	}
 
-	std::optional<std::filesystem::path> find_file_matching(const std::set<std::filesystem::path>& choices,
+	std::optional<std::filesystem::path> find_file_matching(std::set<std::filesystem::path> const& choices,
 	                                                        std::string_view filename) {
-		auto result = std::find_if(choices.begin(), choices.end(), [filename](const std::filesystem::path& path) {
+		auto result = std::find_if(choices.begin(), choices.end(), [filename](std::filesystem::path const& path) {
 			return phoenix::iequals(path.filename().string(), filename);
 		});
 
@@ -135,7 +135,7 @@ namespace zenkit::unstable {
 		return *result;
 	}
 
-	SaveGame SaveGame::parse(const std::filesystem::path& path) {
+	SaveGame SaveGame::parse(std::filesystem::path const& path) {
 		SaveGame sav;
 		sav.load(path);
 		return sav;
@@ -145,8 +145,7 @@ namespace zenkit::unstable {
 		auto path = _m_root_path / world_name;
 		path.replace_extension("SAV");
 
-		if (!std::filesystem::exists(path))
-			return std::nullopt;
+		if (!std::filesystem::exists(path)) return std::nullopt;
 		return phoenix::buffer::mmap(path);
 	}
 
@@ -154,8 +153,7 @@ namespace zenkit::unstable {
 		auto path = _m_root_path / world_name;
 		path.replace_extension("SAV");
 
-		if (!std::filesystem::exists(path))
-			return std::nullopt;
+		if (!std::filesystem::exists(path)) return std::nullopt;
 		return Read::from(path);
 	}
 

@@ -98,4 +98,4 @@ namespace zenkit {
 	private:
 		MdsTokenizer _m_stream;
 	};
-} // namespace phoenix
+} // namespace zenkit

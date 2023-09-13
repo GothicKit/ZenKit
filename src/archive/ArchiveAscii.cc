@@ -33,8 +33,7 @@ namespace zenkit {
 	}
 
 	bool ReadArchiveAscii::read_object_begin(ArchiveObject& obj) {
-		if (read->eof())
-			return false;
+		if (read->eof()) return false;
 
 		auto mark = read->tell();
 		auto line = read->read_line(true);
@@ -63,8 +62,7 @@ namespace zenkit {
 
 	bool ReadArchiveAscii::read_object_end() {
 		// When there are less than 3 bytes left in the input, this must be the end of the archive.
-		if (read->eof())
-			return false;
+		if (read->eof()) return false;
 
 		auto mark = read->tell();
 		auto line = read->read_line(true);

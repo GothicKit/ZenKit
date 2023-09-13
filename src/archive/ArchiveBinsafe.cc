@@ -35,8 +35,7 @@ namespace zenkit {
 	}
 
 	bool ReadArchiveBinsafe::read_object_begin(ArchiveObject& obj) {
-		if (read->eof())
-			return false;
+		if (read->eof()) return false;
 
 		auto mark = read->tell();
 		if (static_cast<ArchiveEntryType>(read->read_ubyte()) != ArchiveEntryType::STRING) {
@@ -76,8 +75,7 @@ namespace zenkit {
 	}
 
 	bool ReadArchiveBinsafe::read_object_end() {
-		if (read->eof())
-			return true;
+		if (read->eof()) return true;
 
 		auto mark = read->tell();
 		if (static_cast<ArchiveEntryType>(read->read_ubyte()) != ArchiveEntryType::STRING) {
@@ -98,7 +96,7 @@ namespace zenkit {
 		return true;
 	}
 
-	const std::string& ReadArchiveBinsafe::get_entry_key() {
+	std::string const& ReadArchiveBinsafe::get_entry_key() {
 		if (static_cast<ArchiveEntryType>(read->read_ubyte()) != ArchiveEntryType::HASH) {
 			throw zenkit::ParserError {"ReadArchive.Binsafe", "invalid format"};
 		}

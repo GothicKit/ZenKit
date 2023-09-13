@@ -1,94 +1,88 @@
-![phoenix logo](assets/logo.png)
+![ZenKit Logo](assets/logo.png)
 
-# the _phoenix_ project
+# The _ZenKit_ Project
 
-[![Build](https://img.shields.io/github/actions/workflow/status/lmichaelis/phoenix/build.yml?label=Build&branch=main)](https://github.com/lmichaelis/phoenix/actions/workflows/build.yml)
-![License](https://img.shields.io/github/license/lmichaelis/phoenix?label=License&color=important)
-![C++](https://img.shields.io/static/v1?label=C%2B%2B&message=17&color=informational)
-![Platforms](https://img.shields.io/static/v1?label=Supports&message=GCC%20|%20Clang%20|%20MSVC%20|%20Apple%20Clang&color=blueviolet)
-![Version](https://img.shields.io/github/v/tag/lmichaelis/phoenix?label=Version&sort=semver)
+[![Build](https://img.shields.io/github/actions/workflow/status/GothicKit/phoenix/build.yml?label=Build&branch=main)](https://github.com/GothicKit/phoenix/actions/workflows/build.yml)
+[![License](https://img.shields.io/github/license/GothicKit/phoenix?label=License&color=important)](https://github.com/GothicKit/phoenix/blob/main/license.md)
+[![C++](https://img.shields.io/static/v1?label=C%2B%2B&message=17&color=informational)]()
+[![Platforms](https://img.shields.io/static/v1?label=Supports&message=GCC%20|%20Clang%20|%20MSVC%20|%20Apple%20Clang&color=blueviolet)]()
+[![Version](https://img.shields.io/github/v/tag/GothicKit/phoenix?label=Version&sort=semver)](https://github.com/GothicKit/phoenix/releases/latest)
 
-**🐲 Here be dragons! _phoenix_ is still changing a lot and might break your code if you choose to update.
-See [versioning](#versioning) for details.**
+**🐲 Here be dragons! _ZenKit_ is still changing a lot and might break your code if you choose to update.
+See [Versioning](#versioning) for details.**
 
-The _phoenix_ project aims to re-implement file formats used by the _ZenGin_ made
-by [Piranha Bytes](https://www.piranha-bytes.com/)
-for their early-2000s games [Gothic](https://en.wikipedia.org/wiki/Gothic_(video_game))
-and [Gothic II](https://en.wikipedia.org/wiki/Gothic_II).
-It is heavily based on [ZenLib](https://github.com/Try/ZenLib) which is used as a reference implementation for the
-different file formats used.
+The _ZenKit_ project aims to re-implement file formats used by the _ZenGin_ made by [Piranha Bytes][] for their
+early-2000s games [Gothic][] and [Gothic II][]. It is heavily based on [ZenLib][] which is used as a reference
+implementation for the different file formats used.
 
-_phoenix_ includes **parsers and basic datastructures** for most file formats used by the _ZenGin_ as well as a
-type-safe **VM for _Daedalus_ scripts** and supporting infrastructure like _Gothic II_ class definitions. Tools for
-inspecting and converting _ZenGin_ files can be found in [phoenix studio](https://github.com/lmichaelis/phoenix-studio).
+_ZenKit_ includes parsers and basic datastructures for most file formats used by the _ZenGin_ as well as a
+type-safe VM for _Daedalus_ scripts and supporting infrastructure like [Gothic II][] class definitions. Tools for
+inspecting and converting _ZenGin_ files can be found in [phoenix studio][].
 
-To get started, take a look in the [Reference Documentation](https://phoenix.lmichaelis.de/library/overview). Don't
-hesitate to open a discussion thread over in [Discussions](https://github.com/lmichaelis/phoenix/discussions) if you
-have a question or need help. Please open an issue for any bug you encounter!
+To get started, take a look in the [Reference Documentation][]. Don't hesitate to open a discussion thread over in
+[Discussions][] if you have a question or need help. Please open an issue for any bug you encounter!
 
-You can also contact me on Discord, ideally by pinging me (lmichaelis#6242) in the [GMC Discord](https://discord.gg/mCpS5b5SUY) in the _tools_ channel.
+You can also contact me directly on Discord, ideally by pinging me (@lmichaelis) in the [GMC Discord](https://discord.gg/mCpS5b5SUY) in the _tools_ channel.
 
-## supported file formats
+## Supported File Formats
+
 Currently, the following file formats are supported.
 
-| Format                   |           Extension            | Description                                                                                                                | _phoenix_ Class Name |
-|--------------------------|:------------------------------:|----------------------------------------------------------------------------------------------------------------------------|----------------------|
-| Model Animation          |             `.MAN`             | Contains animations for a model                                                                                            | `animation`          |
-| Model Hierarchy          |             `.MDH`             | Contains skeletal information for a model                                                                                  | `model_hierarchy`    |
-| Model Mesh               |             `.MDM`             | Contains the mesh of a model                                                                                               | `model_mesh`         |
-| Model                    |             `.MDL`             | Contains a mesh and a hierarchy which make up a model                                                                      | `model`              |
-| Morph Mesh Binary        |             `.MMB`             | Contains a morph mesh with its mesh, skeleton and animation data                                                           | `morph_mesh`         |
-| Multi Resolution Mesh    |             `.MRM`             | Contains a mesh with [CLOD](https://en.wikipedia.org/wiki/Level_of_detail_(computer_graphics)) information                 | `proto_mesh`         |
-| Mesh                     |             `.MSH`             | Contains mesh vertices and vertex features like materials                                                                  | `mesh`               |
-| Daedalus Script Binaries |             `.DAT`             | Contains a compiled _Daedalus_ script                                                                                      | `script`             |
-| Texture                  |             `.TEX`             | Contains texture data in a variety of formats                                                                              | `texture`            |
-| Font                     |             `.FNT`             | Contains font data                                                                                                         | `font`               |
-| ZenGin Archive           |             `.ZEN`             | Contains various structured data. Used mostly for world hierarchy data and object persistence.                             | `archive`            |
-| Text/Cutscenes           | `.BIN`, `.CSL`, `.DAT`, `.LSC` | Contains text and cutscene data                                                                                            | `messages`           |
-| Model Script             |             `.MDS`             | Contains model animation script data and associated hierarchy and mesh information                                         | `model_script`       |
-| Model Script Binary      |             `.MSB`             | Contains model animation script data and associated hierarchy and mesh information (binary form)                           | `model_script`       |
-| Virtual Disk             |             `.VDF`             | Contains a directory structure containing multiple files; similar to [tar](https://en.wikipedia.org/wiki/Tar_(computing)). | `vdf_file`           |
+| Format                    |           Extension            | Description                                                                        | _ZenKit_ Class Name   |
+|---------------------------|:------------------------------:|------------------------------------------------------------------------------------|-----------------------|
+| [Model Animation][]       |             `.MAN`             | Contains animations for a model                                                    | `ModelAnimation`      |
+| [Model Hierarchy][]       |             `.MDH`             | Contains skeletal information for a model                                          | `ModelHierarchy`      |
+| [Model Mesh][]            |             `.MDM`             | Contains the mesh of a model                                                       | `ModelMesh`           |
+| [Model][]                 |             `.MDL`             | Contains a mesh and a hierarchy which make up a model                              | `Model`               |
+| [Morph Mesh][]            |             `.MMB`             | Contains a morph mesh with its mesh, skeleton and animation data                   | `MorphMesh`           |
+| [Multi Resolution Mesh][] |             `.MRM`             | Contains a mesh with [LOD][] information                                           | `MultiResolutionMesh` |
+| [Mesh][]                  |             `.MSH`             | Contains mesh vertices and vertex features like materials                          | `Mesh`                |
+| [Daedalus Script][]       |             `.DAT`             | Contains a compiled _Daedalus_ script                                              | `DaedalusScript`      |
+| [Texture][]               |             `.TEX`             | Contains texture data in a variety of formats                                      | `Texture`             |
+| [Font][]                  |             `.FNT`             | Contains font data                                                                 | `Font`                |
+| [ZenGin Archive][]        |             `.ZEN`             | Contains various structured data (general object persistence).                     | `ReadArchive`         |
+| [Text/Cutscenes][]        | `.BIN`, `.CSL`, `.DAT`, `.LSC` | Contains text and cutscene data                                                    | `CutsceneLibrary`     |
+| [Model Script][]          |         `.MDS`, `.MSB`         | Contains model animation script data and associated hierarchy and mesh information | `ModelScript`         |
+| [Virtual File System][]   |             `.VDF`             | Contains a directory structure containing multiple files; similar to [TAR][].      | `Vfs`                 |
 
-## contributing
+## Contributing
 
-If you'd like to contribute, please read [contributing](contributing.md) first.
+If you'd like to contribute, please read [Contributing](contributing.md) first.
 
-## building
+## Building
 
-_phoenix_ is currently only tested on Linux and while Windows _should_ be supported you might run into issues. If so,
+_ZenKit_ is currently only tested on Linux and while Windows _should_ be supported you might run into issues. If so,
 feel free to create an issue or open a merge request. You will need
 
 * A working compiler which supports C++17, like GCC 9
 * CMake 3.10 or above
 * Git
 
-To build _phoenix_ from scratch, just open a terminal in a directory of your choice and run
+To build _ZenKit_ from scratch, just open a terminal in a directory of your choice and run
 
 ```bash
-git clone --recursive https://github.com/lmichaelis/phoenix
+git clone --recursive https://github.com/GothicKit/phoenix
 cd phoenix
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ```
 
-You will find the library in `build/lib`.
+You will find the library in `build/`.
 
-## using
-Using _phoenix_ in your project is pretty straightforward. Just add `include` to your include directories and link
-against the _phoenix_ library. To start loading files, you just include the header and call `cls::parse(...)` or 
-`cls::open(...)`, depending on the file type on one of the classes from the table above. For example, to load a
-model from a VDF file, you do this:
+## Using
 
 ```cpp
-#include <phoenix/vdfs.hh>
-#include <phoenix/model.hh>
+#include <zenkit/Vfs.hh>
+#include <zenkit/Model.hh>
+#include <zenkit/Stream.hh>
 
 int main(int, char**) {
 	// Open the VDF file for reading
-	auto vdf = phoenix::vdf_file::open("Models.VDF");
+	zenkit::Vfs vfs {};
+	vfs.mount_disk("Models.VDF");
 	
 	// Find the MyModel.MDL within the VDF
-	auto entry = vdf.find_entry("MyModel.MDL");
+	auto entry = vdf.find("MyModel.MDL");
 	
 	if (entry == nullptr) {
 		// MyModel.MDL was not found in the VDF
@@ -96,17 +90,18 @@ int main(int, char**) {
 	}
 	
 	// Open MyModel.MDL for reading
-	auto buf = entry->open();
+	auto buf = entry->open_read();
 	
 	// One could also memory-map a normal file from disk:
-	//   auto buf = phoenix::buffer::mmap("/path/to/file");
+	//   auto buf = zenkit::Read::from("/path/to/file");
 
 	// Or if you have a vector of data:
 	//   std::vector<uint8_t> data { /* ... */ };
-	//   auto buf = phoenix::buffer::of(std::move(data));
+	//   auto buf = zenkit::Read::from(std::move(data));
 	
 	// Parse the model
-	auto mdl = phoenix::model::parse(buf);
+	zeknit::Model mdl {};
+	mdl.load(buf.get());
 	
 	// Do something with mdl ...
 	
@@ -114,12 +109,12 @@ int main(int, char**) {
 }
 ```
 
-_phoenix_ also provides a VM implementation for the _Daedalus_ scripting language used by _ZenGin_:
+_ZenKit_ also provides a VM implementation for the _Daedalus_ scripting language used by _ZenGin_:
 
 ```c++
-#include <phoenix/buffer.hh>
-#include <phoenix/script.hh>
-#include <phoenix/vm.hh>
+#include <zenkit/Stream.hh>
+#include <zenkit/DaedalusScript.hh>
+#include <zenkit/DaedalusVm.hh>
 
 #include <iostream>
 #include <string>
@@ -130,7 +125,7 @@ enum class MyScriptEnum : int {
 };
 
 // Declare a class to be bound to members in a script. This is used in `main`.
-struct MyScriptClass : public phoenix::instance {
+struct MyScriptClass : public zenkit::DaedalusInstance {
     // Declare the members present in the script class.
     // Supported types are:
     //   * int
@@ -171,13 +166,13 @@ std::string MyInternalFunction(int param1) {
 
 int main(int, char**) {
     // Open a buffer containing the script.
-    auto buf = phoenix::buffer::mmap("MyScript.DAT");
+    auto buf = zenkit::Read::from("MyScript.DAT");
     
     // Create the VM instance
-    phoenix::vm vm {phoenix::script::parse(buf)};
+    zenkit::DaedalusScript script {};
+    script.load(buf.get());
     
-    // Alternatively, if you just need to inspect the script itself, you can just:
-    //   auto script = phoenix::script::parse(buf);
+    zenkit::DaedalusVm vm {std::move(script)};
     
     // You can register Daedalus -> C++ shared classes. The `register_member` function will automatically
     // validate that the definitions match at runtime.
@@ -240,23 +235,50 @@ int main(int, char**) {
 }
 ```
 
-For more examples on how to use _phoenix_, take a look into the
-[`examples`](https://github.com/lmichaelis/phoenix/tree/main/examples) directory and
-[`phoenix-studio`](https://github.com/lmichaelis/phoenix-studio) repository. A working example of using the VM can be
-found in [`examples/run_interpreter.cc`](https://github.com/lmichaelis/phoenix/blob/main/examples/run_interpreter.cc).
+For more examples on how to use _ZenKit_, take a look into the [examples][] directory and [phoenix studio][] repository.
 
-## versioning
+## Versioning
 
-_phoenix_ uses [semantic versioning](https://semver.org/). Before updating _phoenix_ in your application, make sure
+_ZenKit_ uses [semantic versioning](https://semver.org/). Before updating _ZenKit_ in your application, make sure
 that you are aware of potential breaking changes to the API. A detailed log of changes can be found in
 [changelog.md](changelog.md) as well as the releases section of the GitHub repository page.
 
-The `main` branch is used for _phoenix_ development and contains potentially breaking changes without any kind of
-warning. Each minor version of _phoenix_ will get its own branch (e.g. `v1.0`). Within these branches API stability is
+The `main` branch is used for _ZenKit_ development and contains potentially breaking changes without any kind of
+warning. Each minor version of _ZenKit_ will get its own branch (e.g. `v1.0`). Within these branches API stability is
 guaranteed and patches will be merged into them as required. Patches will be backported to the last minor as well (i.e.
 if `v1.3.4` is a bugfix-release, its contents will be backported to `v1.2.*` but not `v1.1.*` or any previous version).
 
-## licensing
+## Licensing
 
-While the source code of _phoenix_ is licensed under the [MIT license](license.md), the
-[_phoenix_ logo](assets/logo.svg) is licensed under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/).
+While the source code of _ZenKit_ is licensed under the [MIT license](license.md), the
+[_ZenKit_ logo](assets/logo.svg) is licensed under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/).
+
+---
+
+[Piranha Bytes]: https://www.piranha-bytes.com/
+[Gothic]: https://en.wikipedia.org/wiki/Gothic_(video_game)
+[Gothic II]: https://en.wikipedia.org/wiki/Gothic_II
+[ZenLib]: https://github.com/ataulien/ZenLib
+[phoenix studio]: https://github.com/GothicKit/phoenix-studio
+[examples]: https://github.com/lmichaelis/phoenix/tree/main/examples
+
+[TAR]: https://en.wikipedia.org/wiki/Tar_(computing)
+[LOD]: https://en.wikipedia.org/wiki/Level_of_detail_(computer_graphics)
+
+[Reference Documentation]: https://phoenix.gothickit.dev/library/overview
+[Discussions]: https://github.com/GothicKit/phoenix/discussions
+
+[Model Animation]: https://phoenix.gothickit.dev/library/api/model-animation/
+[Model Hierarchy]: https://phoenix.gothickit.dev/library/api/model-hierarchy/
+[Model Mesh]: https://phoenix.gothickit.dev/library/api/model-mesh/
+[Model]: https://phoenix.gothickit.dev/library/api/model/
+[Morph Mesh]: https://phoenix.gothickit.dev/library/api/morph-mesh/
+[Multi Resolution Mesh]: https://phoenix.gothickit.dev/library/api/multi-resolution-mesh/
+[Mesh]: https://phoenix.gothickit.dev/library/api/mesh/
+[Daedalus Script]: https://phoenix.gothickit.dev/library/api/daedalus-script/
+[Texture]: https://phoenix.gothickit.dev/library/api/texture/
+[Font]: https://phoenix.gothickit.dev/library/api/font/
+[ZenGin Archive]: https://phoenix.gothickit.dev/library/api/archive/
+[Text/Cutscenes]: https://phoenix.gothickit.dev/library/api/cutscene-library/
+[Model Script]: https://phoenix.gothickit.dev/library/api/model-script/
+[Virtual File System]: https://phoenix.gothickit.dev/library/api/virtual-file-system/

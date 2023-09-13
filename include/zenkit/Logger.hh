@@ -31,12 +31,12 @@ namespace zenkit {
 	public:
 		using level ZKREM("renamed to zenkit::LogLevel") = LogLevel;
 
-		/// \brief Supply a custom logger callback to be used for log output from phoenix.
+		/// \brief Supply a custom logger callback to be used for log output from ZenKit.
 		/// \param callback The callback to use.
 		ZKREM("renamed to ::set")
 		ZKAPI static void use_logger(std::function<void(LogLevel, std::string const&)>&& callback);
 
-		/// \brief Use the default logger callback for phoenix.
+		/// \brief Use the default logger callback for ZenKit.
 		ZKREM("renamed to ::set_default") ZKAPI static void use_default_logger();
 
 		ZK_PRINTF_LIKE(3, 4) ZKAPI static void log(LogLevel lvl, char const* name, char const* fmt, ...);

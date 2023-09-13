@@ -36,7 +36,7 @@ namespace phoenix {
 				return _m_data.size();
 			}
 
-			[[nodiscard]] const std::byte* array() const override {
+			[[nodiscard]] std::byte const* array() const override {
 				return _m_data.data();
 			}
 
@@ -44,7 +44,7 @@ namespace phoenix {
 				std::copy_n(_m_data.cbegin() + static_cast<long>(offset), size, buf);
 			}
 
-			void write([[maybe_unused]] const std::byte* buf,
+			void write([[maybe_unused]] std::byte const* buf,
 			           [[maybe_unused]] std::uint64_t size,
 			           [[maybe_unused]] std::uint64_t offset) override {
 				if (this->readonly()) {
@@ -69,7 +69,7 @@ namespace phoenix {
 		public:
 			/// \brief Creates a new memory-mapped buffer backing by mapping the file at the given path into memory
 			/// \param file The path of the file to map
-			explicit mmap_backing(const std::filesystem::path& file) : _m_data(file.c_str()) {}
+			explicit mmap_backing(std::filesystem::path const& file) : _m_data(file.c_str()) {}
 
 			[[nodiscard]] bool direct() const noexcept override {
 				return true;
@@ -83,7 +83,7 @@ namespace phoenix {
 				return _m_data.size();
 			}
 
-			[[nodiscard]] const std::byte* array() const noexcept override {
+			[[nodiscard]] std::byte const* array() const noexcept override {
 				return _m_data.data();
 			}
 
@@ -91,7 +91,7 @@ namespace phoenix {
 				std::copy_n(_m_data.cbegin() + static_cast<long>(offset), size, buf);
 			}
 
-			void write([[maybe_unused]] const std::byte* buf,
+			void write([[maybe_unused]] std::byte const* buf,
 			           [[maybe_unused]] std::uint64_t size,
 			           [[maybe_unused]] std::uint64_t offset) override {
 				if (this->readonly()) {
@@ -161,10 +161,9 @@ namespace phoenix {
 		return buffer {std::make_shared<detail::heap_backing>(std::forward<std::vector<std::byte>>(buf), readonly)};
 	}
 
-	buffer buffer::mmap(const std::filesystem::path& path, bool readonly) {
+	buffer buffer::mmap(std::filesystem::path const& path, bool readonly) {
 		auto file_size = std::filesystem::file_size(path);
-		if (file_size == 0)
-			return buffer::empty();
+		if (file_size == 0) return buffer::empty();
 
 		if (readonly) {
 			return buffer {std::make_shared<detail::mmap_backing<mio::access_mode::read>>(path)};
@@ -173,7 +172,7 @@ namespace phoenix {
 		return buffer {std::make_shared<detail::mmap_backing<mio::access_mode::write>>(path)};
 	}
 
-	buffer buffer::read(const std::filesystem::path& path, bool readonly) {
+	buffer buffer::read(std::filesystem::path const& path, bool readonly) {
 		std::ifstream in {path, std::ios::binary | std::ios::ate};
 		std::vector<std::byte> data {static_cast<size_t>(in.tellg())};
 
@@ -323,7 +322,7 @@ namespace phoenix {
 		return tmp;
 	}
 
-	void buffer::put(const std::byte* buf, std::uint64_t size) {
+	void buffer::put(std::byte const* buf, std::uint64_t size) {
 		if (this->remaining() < size) {
 			throw buffer_overflow {this->position(), size, "relative bulk put"};
 		}
@@ -333,7 +332,7 @@ namespace phoenix {
 	}
 
 	void buffer::put_string(std::string_view str) {
-		this->put((const std::byte*) str.data(), str.size());
+		this->put((std::byte const*) str.data(), str.size());
 	}
 
 	void buffer::put_line(std::string_view str) {
@@ -341,7 +340,7 @@ namespace phoenix {
 		put_char('\n');
 	}
 
-	bool operator==(const buffer& self, const buffer& other) {
+	bool operator==(buffer const& self, buffer const& other) {
 		return &other == &self ||
 		    (other._m_backing == self._m_backing && other._m_backing_begin == self._m_backing_begin &&
 		     other._m_backing_end == self._m_backing_end && other._m_capacity == self._m_capacity &&
@@ -445,8 +444,8 @@ namespace phoenix {
 		return glm::vec4 {content[0], content[1], content[2], content[3]};
 	}
 
-	void buffer::put(const std::uint8_t* buf, std::uint64_t size) {
-		this->put((const std::byte*) buf, size);
+	void buffer::put(std::uint8_t const* buf, std::uint64_t size) {
+		this->put((std::byte const*) buf, size);
 	}
 
 	void buffer::put(std::uint8_t value) {

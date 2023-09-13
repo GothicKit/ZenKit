@@ -29,7 +29,7 @@ namespace zenkit {
 		return msh;
 	}
 
-	bool PolygonFlagSet::operator==(const PolygonFlagSet& b) const {
+	bool PolygonFlagSet::operator==(PolygonFlagSet const& b) const {
 		return is_portal == b.is_portal && is_occluder == b.is_occluder && is_sector == b.is_sector &&
 		    should_relight == b.should_relight && is_outdoor == b.is_outdoor &&
 		    is_ghost_occluder == b.is_ghost_occluder && is_dynamically_lit == b.is_dynamically_lit &&
@@ -139,7 +139,7 @@ namespace zenkit {
 					    //       This presents a problem: Taking the leaf polygons as a parameter makes creating a
 					    //       unified parsing function for world meshes impossible. Instead, there should be a
 					    //       function to remove this extra data which would grant the user more freedom in how they
-					    //       use _phoenix_.
+					    //       use _ZenKit_.
 					    if (!leaf_polygons.empty() &&
 					        !std::binary_search(leaf_polygons.begin(), leaf_polygons.end(), i)) {
 						    // If the current polygon is not a leaf polygon, skip it.

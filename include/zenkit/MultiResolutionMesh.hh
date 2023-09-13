@@ -47,7 +47,7 @@ namespace zenkit {
 	};
 
 	/// \brief Offsets and sizes of binary data sections containing sub-mesh data.
-	/// \note This is only of use phoenix-internally.
+	/// \note This is only of use ZenKit-internally.
 	struct SubMeshSection {
 		MeshSection triangles;
 		MeshSection wedges;
@@ -76,7 +76,7 @@ namespace zenkit {
 		std::vector<float> edge_scores;
 		std::vector<std::uint16_t> wedge_map;
 
-		ZKINT void load(Read* r, const SubMeshSection& map);
+		ZKINT void load(Read* r, SubMeshSection const& map);
 	};
 
 	/// \brief Represents a *ZenGin* proto mesh.
@@ -91,14 +91,14 @@ namespace zenkit {
 		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
 		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
 		///       using buffer::duplicate.
-		/// \throws parser_error if parsing fails.
+		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static MultiResolutionMesh parse(phoenix::buffer& in);
 
 		/// \brief Parses a proto mesh from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed proto mesh.
-		/// \throws parser_error if parsing fails.
+		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static MultiResolutionMesh parse(phoenix::buffer&& in);
 

@@ -13,12 +13,12 @@ namespace zenkit {
 	public:
 		ZKAPI explicit Error(std::string&& message);
 
-		[[nodiscard]] ZKAPI const char* what() const noexcept override {
+		[[nodiscard]] ZKAPI char const* what() const noexcept override {
 			return message.c_str();
 		}
 
 	public:
-		const std::string message;
+		std::string const message;
 	};
 
 	/// \brief An error representing a parsing failure of any kind.
@@ -26,12 +26,12 @@ namespace zenkit {
 	public:
 		ZKINT explicit ParserError(std::string&& resource_type);
 		ZKAPI explicit ParserError(std::string&& resource_type, std::string&& context);
-		ZKINT explicit ParserError(std::string&& resource_type, const std::exception& cause);
-		ZKINT explicit ParserError(std::string&& resource_type, const std::exception& cause, std::string&& context);
+		ZKINT explicit ParserError(std::string&& resource_type, std::exception const& cause);
+		ZKINT explicit ParserError(std::string&& resource_type, std::exception const& cause, std::string&& context);
 
 	public:
-		const std::string resource_type;
-		const std::optional<std::string> context {std::nullopt};
-		const std::optional<std::exception> cause {std::nullopt};
+		std::string const resource_type;
+		std::optional<std::string> const context {std::nullopt};
+		std::optional<std::exception> const cause {std::nullopt};
 	};
 } // namespace zenkit

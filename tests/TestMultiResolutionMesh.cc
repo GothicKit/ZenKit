@@ -22,7 +22,7 @@ TEST_SUITE("MultiResolutionMesh") {
 		zenkit::MultiResolutionMesh mesh {};
 		mesh.load(in.get());
 
-		const auto& positions = mesh.positions;
+		auto const& positions = mesh.positions;
 		CHECK_EQ(positions.size(), 8);
 		CHECK_EQ(positions[0], glm::vec3 {200, 398.503906, 200});
 		CHECK_EQ(positions[1], glm::vec3 {-200, 398.503906, 200});
@@ -35,10 +35,10 @@ TEST_SUITE("MultiResolutionMesh") {
 		CHECK_EQ(box0.min, glm::vec3 {-200, 0, -200});
 		CHECK_EQ(box0.max, glm::vec3 {200, 398.503906, 200});
 
-		const auto& submeshes = mesh.sub_meshes;
+		auto const& submeshes = mesh.sub_meshes;
 		CHECK_EQ(submeshes.size(), 1);
 
-		const auto& submesh = submeshes[0];
+		auto const& submesh = submeshes[0];
 		CHECK_EQ(submesh.mat.name, "EVT_TPL_GITTERKAEFIG_01");
 		CHECK_EQ(submesh.mat.texture, "OCODFLGATELI.TGA");
 

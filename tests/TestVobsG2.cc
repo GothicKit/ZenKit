@@ -84,7 +84,7 @@ TEST_SUITE("vobs") {
 		CHECK_EQ(vob.position_count, 2);
 		CHECK_EQ(vob.target_count, 1);
 
-		const auto& frames = vob.frames;
+		auto const& frames = vob.frames;
 		CHECK_EQ(frames[0]->time, 0.0f);
 		CHECK_EQ(frames[0]->roll_angle, 0.0f);
 		CHECK_EQ(frames[0]->fov_scale, 1.0f);

@@ -58,21 +58,21 @@ namespace zenkit {
 		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
 		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
 		///       using buffer::duplicate.
-		/// \throws parser_error if parsing fails.
+		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static CutsceneLibrary parse(phoenix::buffer& path);
 
 		/// \brief Parses a message database from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed message database object.
-		/// \throws parser_error if parsing fails.
+		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static CutsceneLibrary parse(phoenix::buffer&& path);
 
 		/// \brief Retrieves a message block by it's name.
 		/// \param name The name of the block to get
 		/// \return A pointer to the block or `nullptr` if the block was not found.
-		[[nodiscard]] ZKAPI const CutsceneBlock* block_by_name(std::string_view name) const;
+		[[nodiscard]] ZKAPI CutsceneBlock const* block_by_name(std::string_view name) const;
 
 		ZKAPI void load(Read* r);
 

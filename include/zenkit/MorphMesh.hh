@@ -64,14 +64,14 @@ namespace zenkit {
 		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
 		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
 		///       using buffer::duplicate.
-		/// \throws parser_error if parsing fails.
+		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static MorphMesh parse(phoenix::buffer& buf);
 
 		/// \brief Parses a morph mesh from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed morph mesh.
-		/// \throws parser_error if parsing fails.
+		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static MorphMesh parse(phoenix::buffer&& buf);
 

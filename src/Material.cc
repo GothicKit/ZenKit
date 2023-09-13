@@ -56,7 +56,7 @@ namespace zenkit {
 			this->alpha_func = AlphaFunction::DEFAULT;
 		} else {
 			// This section is specific to G2
-			this->detail_texture_scale = r.read_float();                        // detailObjectScale
+			this->detail_texture_scale = r.read_float();                  // detailObjectScale
 			this->force_occluder = r.read_bool();                         // forceOccluder
 			this->environment_mapping = r.read_bool();                    // environmentalMapping
 			this->environment_mapping_strength = r.read_float();          // environmentalMappingStrength

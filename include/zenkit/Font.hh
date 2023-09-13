@@ -45,7 +45,7 @@ namespace zenkit {
 		/// \param name The name of the font.
 		/// \param height The height of each glyph in pixels.
 		/// \param glyphs A list of glyphs of this font. There should always be 256 glyphs in a font.
-		/// \warning While *phoenix* supports an arbitrary number of glyphs for fonts, Gothic and Gothic II always
+		/// \warning While *ZenKit* supports an arbitrary number of glyphs for fonts, Gothic and Gothic II always
 		///          expect 256 glyphs for all fonts. Should you create a font a number of glyphs not equal to 256 and
 		///          try to load it into *ZenGin*, it will fail.
 		ZKAPI Font(std::string name, std::uint32_t height, std::vector<FontGlyph> glyphs);
@@ -62,14 +62,14 @@ namespace zenkit {
 		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
 		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
 		///       using buffer::duplicate.
-		/// \throws parser_error if parsing fails.
+		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Font parse(phoenix::buffer& buf);
 
 		/// \brief Parses a font from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed font object.
-		/// \throws parser_error if parsing fails.
+		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Font parse(phoenix::buffer&& in);
 

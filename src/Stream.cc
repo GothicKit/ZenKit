@@ -96,16 +96,14 @@ namespace zenkit {
 		}
 
 		// Don't ignore the given chars if we're at the end of a C-style string.
-		if (chars.empty() || c == '\0' || this->eof())
-			return str;
+		if (chars.empty() || c == '\0' || this->eof()) return str;
 
 		do {
 			c = this->read_char();
 		} while (c != '\0' && chars.find(c) != std::string_view::npos);
 
 		// If we're at EOF and read a null-byte, don't backtrack.
-		if (this->eof() && c == '\0')
-			return str;
+		if (this->eof() && c == '\0') return str;
 
 		// Backtrack by one byte since we have definitely consumed one too many.
 		this->seek(-1, Whence::CUR);
@@ -270,8 +268,7 @@ namespace zenkit {
 			void seek(ssize_t off, Whence whence) noexcept override {
 				auto new_position = seek_internal(_m_position, _m_length, off, whence);
 
-				if (new_position > _m_length)
-					return;
+				if (new_position > _m_length) return;
 
 				_m_position = static_cast<size_t>(new_position);
 			}
@@ -405,8 +402,7 @@ namespace zenkit {
 			void seek(ssize_t off, Whence whence) noexcept override {
 				auto new_position = seek_internal(_m_position, _m_length, off, whence);
 
-				if (new_position > _m_length)
-					return;
+				if (new_position > _m_length) return;
 				_m_position = static_cast<size_t>(new_position);
 			}
 

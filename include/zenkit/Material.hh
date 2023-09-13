@@ -119,7 +119,7 @@ namespace zenkit {
 		/// \param[in,out] ctx The archive reader to read from.
 		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 		/// \return The parsed material object.
-		/// \throws parser_error if parsing fails.
+		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(archive_reader&&) for an owning version this function.
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Material parse(ReadArchive& ctx);
 

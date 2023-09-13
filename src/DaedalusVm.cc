@@ -35,8 +35,7 @@ namespace zenkit {
 		/// Unless #inhibit was called, this destructor will push a value of the datatype passed in the
 		/// constructor onto the stack of the VM passed in the constructor.
 		StackGuard() {
-			if (_m_inhibited)
-				return;
+			if (_m_inhibited) return;
 
 			switch (_m_type) {
 			case DaedalusDataType::VOID:
@@ -101,7 +100,7 @@ namespace zenkit {
 		return inst;
 	}
 
-	void DaedalusVm::unsafe_call(const DaedalusSymbol* sym) {
+	void DaedalusVm::unsafe_call(DaedalusSymbol const* sym) {
 		push_call(sym);
 		jump(sym->address());
 
@@ -139,8 +138,7 @@ namespace zenkit {
 				a = pop_int();
 				b = pop_int();
 
-				if (b == 0)
-					throw DaedalusVmException {"vm: division by zero"};
+				if (b == 0) throw DaedalusVmException {"vm: division by zero"};
 
 				push_int(a / b);
 				break;
@@ -148,8 +146,7 @@ namespace zenkit {
 				a = pop_int();
 				b = pop_int();
 
-				if (b == 0)
-					throw DaedalusVmException {"vm: division by zero"};
+				if (b == 0) throw DaedalusVmException {"vm: division by zero"};
 
 				push_int(a % b);
 				break;
@@ -445,12 +442,12 @@ namespace zenkit {
 		return true;
 	}
 
-	void DaedalusVm::push_call(const DaedalusSymbol* sym) {
+	void DaedalusVm::push_call(DaedalusSymbol const* sym) {
 		_m_call_stack.push({sym, _m_pc, _m_instance});
 	}
 
 	void DaedalusVm::pop_call() {
-		const auto& call = _m_call_stack.top();
+		auto const& call = _m_call_stack.top();
 		_m_pc = call.program_counter;
 		_m_instance = call.context;
 		_m_call_stack.pop();
@@ -562,7 +559,7 @@ namespace zenkit {
 		}
 	}
 
-	const std::string& DaedalusVm::pop_string() {
+	std::string const& DaedalusVm::pop_string() {
 		static std::string empty {};
 		auto [s, i, context] = pop_reference();
 
@@ -588,7 +585,7 @@ namespace zenkit {
 		_m_pc = address;
 	}
 
-	void DaedalusVm::register_default_external(const std::function<void(std::string_view)>& callback) {
+	void DaedalusVm::register_default_external(std::function<void(std::string_view)> const& callback) {
 		_m_default_external = [this, callback](DaedalusVm& v, DaedalusSymbol& sym) {
 			// pop all parameters from the stack
 			auto params = find_parameters_for_function(&sym);
@@ -619,18 +616,18 @@ namespace zenkit {
 	}
 
 	void
-	DaedalusVm::register_default_external_custom(const std::function<void(DaedalusVm&, DaedalusSymbol&)>& callback) {
+	DaedalusVm::register_default_external_custom(std::function<void(DaedalusVm&, DaedalusSymbol&)> const& callback) {
 		_m_default_external = callback;
 	}
 
-	void DaedalusVm::register_access_trap(const std::function<void(DaedalusSymbol&)>& callback) {
+	void DaedalusVm::register_access_trap(std::function<void(DaedalusSymbol&)> const& callback) {
 		_m_access_trap = callback;
 	}
 
 	void DaedalusVm::register_exception_handler(
-	    const std::function<DaedalusVmExceptionStrategy(DaedalusVm&,
-	                                                    const DaedalusScriptError&,
-	                                                    const DaedalusInstruction&)>& callback) {
+	    std::function<DaedalusVmExceptionStrategy(DaedalusVm&,
+	                                              DaedalusScriptError const&,
+	                                              DaedalusInstruction const&)> const& callback) {
 		_m_exception_handler = callback;
 	}
 
@@ -714,17 +711,17 @@ namespace zenkit {
 		}
 	}
 
-	DaedalusIllegalExternalDefinition::DaedalusIllegalExternalDefinition(const DaedalusSymbol* s, std::string&& msg)
+	DaedalusIllegalExternalDefinition::DaedalusIllegalExternalDefinition(DaedalusSymbol const* s, std::string&& msg)
 	    : DaedalusScriptError(std::move(msg)), sym(s) {}
 
-	DaedalusIllegalExternalReturnType::DaedalusIllegalExternalReturnType(const DaedalusSymbol* s,
+	DaedalusIllegalExternalReturnType::DaedalusIllegalExternalReturnType(DaedalusSymbol const* s,
 	                                                                     std::string&& provided)
 	    : DaedalusIllegalExternalDefinition(s,
 	                                        "external " + s->name() + " has illegal return type '" + provided +
 	                                            "', expected '" + DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) s->rtype()] +
 	                                            "'") {}
 
-	DaedalusIllegalExternalParameter::DaedalusIllegalExternalParameter(const DaedalusSymbol* s,
+	DaedalusIllegalExternalParameter::DaedalusIllegalExternalParameter(DaedalusSymbol const* s,
 	                                                                   std::string&& provided,
 	                                                                   std::uint8_t i)
 	    : DaedalusIllegalExternalDefinition(s,
@@ -733,7 +730,7 @@ namespace zenkit {
 	                                            DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) s->type()] + "'") {}
 
 	DaedalusVmExceptionStrategy
-	lenient_vm_exception_handler(DaedalusVm& v, const DaedalusScriptError& exc, const DaedalusInstruction& instr) {
+	lenient_vm_exception_handler(DaedalusVm& v, DaedalusScriptError const& exc, DaedalusInstruction const& instr) {
 		ZKLOGE("DaedalusVm", "Internal Exception: %s", exc.what());
 
 		switch (instr.op) {

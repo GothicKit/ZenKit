@@ -55,24 +55,19 @@ namespace zenkit {
 		}
 	}
 
-	/// \brief Supply a custom logger callback to be used for log output from phoenix.
-	/// \param callback The callback to use.
 	void Logger::use_logger(std::function<void(LogLevel, std::string const&)>&& callback) {
 		Logger::set(LogLevel::INFO, [callback](LogLevel lvl, std::string_view name, std::string_view sv) {
 			callback(lvl, std::string {name} + ": " + std::string {sv});
 		});
 	}
 
-	/// \brief Use the default logger callback for phoenix.
 	void Logger::use_default_logger() {
 		Logger::set_default(LogLevel::INFO);
 	}
 
 	void Logger::log(LogLevel lvl, char const* name, char const* fmt, ...) {
-		if (!_s_callback)
-			return;
-		if (lvl > _s_level)
-			return;
+		if (!_s_callback) return;
+		if (lvl > _s_level) return;
 
 		va_list ap;
 		va_start(ap, fmt);

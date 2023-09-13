@@ -22,8 +22,8 @@ namespace zenkit {
 		return CutsceneLibrary::parse(path);
 	}
 
-	const CutsceneBlock* CutsceneLibrary::block_by_name(std::string_view name) const {
-		auto result = std::lower_bound(this->blocks.begin(), this->blocks.end(), name, [](const auto& it, auto n) {
+	CutsceneBlock const* CutsceneLibrary::block_by_name(std::string_view name) const {
+		auto result = std::lower_bound(this->blocks.begin(), this->blocks.end(), name, [](auto const& it, auto n) {
 			return it.name < n;
 		});
 
@@ -98,7 +98,7 @@ namespace zenkit {
 		}
 
 		// Prepare blocks for binary search in block_by_name
-		std::sort(this->blocks.begin(), this->blocks.end(), [](const auto& a, const auto& b) {
+		std::sort(this->blocks.begin(), this->blocks.end(), [](auto const& a, auto const& b) {
 			return a.name < b.name;
 		});
 	}

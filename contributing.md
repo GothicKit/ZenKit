@@ -1,32 +1,25 @@
-# how to contribute to _phoenix_
+# How to contribute to _ZenKit_
 
 If you'd like to add a feature or fix a bug, you're more than welcome to help! You can grab one of the open issues and
 start to work on it, too. 
 
-There are some conventions I'd ask you to keep in mind while writing code for _phoenix_.  I've outlined them below.
+There are some conventions I'd ask you to keep in mind while writing code for _ZenKit_.  I've outlined them below.
 
-## conventions
+## Conventions
 
 There are a few things that should be followed to keep the codebase consistent.
 
-### git
+### Git
 
-Your commits should be small. Avoid bundling multiple changes relating (for example) multiple different issues or bug
+Your commits should be small. Avoid bundling multiple changes relating to (for example) multiple different issues or bugs
 into one commit. Rather, create multiple smaller commits, each self-contained only changing one part of the logic[^1].
 
-Git commits should follow roughly the following format: `<class_name>: <commit_message>`. If you're working on a tool,
-you can use `tools: <tool_name>: <commit_message>`. If your commit affects something about the build system or other
-non-C++ related things, use `project: <commit_message>`. Take a look at existing commits to get a better idea as to
-what I mean.
-
-[^2]: For example, if there is an issue with the VM and you change something, then add a new API to the `script`, 
+[^1]: For example, if there is an issue with the VM and you change something, then add a new API to the `DaedalusScript`, 
 those should be two separate commits.
 
 ### C++ code
 
-_phoenix_ roughly follows the naming convention of the standard library. This includes:
-
-* Class names are `snake_case`
+* Class names are `PascalCase`
 * Function names are `snake_case` and private member functions are prefixed with an underscore
 * Member variables are `snake_case` and private member variables are prefixed with `_m_`
 

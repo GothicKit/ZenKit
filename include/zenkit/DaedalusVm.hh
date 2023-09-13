@@ -34,25 +34,25 @@ namespace zenkit {
 	/// \brief An exception thrown if the definition of an external is incorrect.
 	class DaedalusIllegalExternalDefinition : public DaedalusScriptError {
 	public:
-		ZKAPI DaedalusIllegalExternalDefinition(const DaedalusSymbol* sym, std::string&& message);
+		ZKAPI DaedalusIllegalExternalDefinition(DaedalusSymbol const* sym, std::string&& message);
 
 	public:
 		/// \brief The symbol the external is being registered for.
-		const DaedalusSymbol* sym;
+		DaedalusSymbol const* sym;
 	};
 
 	/// \brief An exception thrown if the return type of a new external registration does not match
 	///        the return type defined in the script.
 	class DaedalusIllegalExternalReturnType : public DaedalusIllegalExternalDefinition {
 	public:
-		ZKAPI DaedalusIllegalExternalReturnType(const DaedalusSymbol* sym, std::string&& provided);
+		ZKAPI DaedalusIllegalExternalReturnType(DaedalusSymbol const* sym, std::string&& provided);
 	};
 
 	/// \brief An exception thrown if one of the parameter types of a new external registration does not match
 	///        the type defined in the script.
 	class DaedalusIllegalExternalParameter : public DaedalusIllegalExternalDefinition {
 	public:
-		ZKAPI DaedalusIllegalExternalParameter(const DaedalusSymbol* sym, std::string&& provided, std::uint8_t i);
+		ZKAPI DaedalusIllegalExternalParameter(DaedalusSymbol const* sym, std::string&& provided, std::uint8_t i);
 	};
 
 	class DaedalusVmException : public DaedalusScriptError {
@@ -81,7 +81,7 @@ namespace zenkit {
 
 	/// \brief A call stack frame in the VM.
 	struct DaedalusCallStackFrame {
-		const DaedalusSymbol* function;
+		DaedalusSymbol const* function;
 		std::uint32_t program_counter;
 		std::shared_ptr<DaedalusInstance> context;
 	};
@@ -123,7 +123,7 @@ namespace zenkit {
 		/// \param sym The symbol of the function to call.
 		/// \param args The arguments for the function call.
 		template <typename R = IgnoreReturnValue, typename... P>
-		R call_function(const DaedalusSymbol* sym, P... args) {
+		R call_function(DaedalusSymbol const* sym, P... args) {
 			if (sym == nullptr) {
 				throw DaedalusVmException {"Cannot call function: not found"};
 			}
@@ -192,7 +192,7 @@ namespace zenkit {
 		/// \param name The name of the instance to initialize (ie. 'STT_309_WHISTLER')
 		template <typename _instance_t>
 		typename std::enable_if<std::is_base_of_v<DaedalusInstance, _instance_t>, void>::type
-		init_instance(const std::shared_ptr<_instance_t>& instance, std::string_view name) {
+		init_instance(std::shared_ptr<_instance_t> const& instance, std::string_view name) {
 			init_instance<_instance_t>(instance, find_symbol_by_name(name));
 		}
 
@@ -220,7 +220,7 @@ namespace zenkit {
 		/// \param sym The symbol to initialize.
 		template <typename _instance_t>
 		typename std::enable_if<std::is_base_of_v<DaedalusInstance, _instance_t>, void>::type
-		init_instance(const std::shared_ptr<_instance_t>& instance, DaedalusSymbol* sym) {
+		init_instance(std::shared_ptr<_instance_t> const& instance, DaedalusSymbol* sym) {
 			// Perform initial instance setup
 			this->allocate_instance(instance, sym);
 
@@ -229,15 +229,13 @@ namespace zenkit {
 			auto old_self_instance = _m_self_sym != nullptr ? _m_self_sym->get_instance() : nullptr;
 			_m_instance = instance;
 
-			if (_m_self_sym)
-				_m_self_sym->set_instance(_m_instance);
+			if (_m_self_sym) _m_self_sym->set_instance(_m_instance);
 
 			unsafe_call(sym);
 
 			// reset the VM state
 			_m_instance = old_instance;
-			if (_m_self_sym)
-				_m_self_sym->set_instance(old_self_instance);
+			if (_m_self_sym) _m_self_sym->set_instance(old_self_instance);
 		}
 
 		std::shared_ptr<DaedalusInstance> init_opaque_instance(DaedalusSymbol* sym);
@@ -266,7 +264,7 @@ namespace zenkit {
 		/// \param name The name of the instance to initialize (ie. 'STT_309_WHISTLER')
 		template <typename _instance_t>
 		typename std::enable_if<std::is_base_of_v<DaedalusInstance, _instance_t>, void>::type
-		allocate_instance(const std::shared_ptr<_instance_t>& instance, std::string_view name) {
+		allocate_instance(std::shared_ptr<_instance_t> const& instance, std::string_view name) {
 			allocate_instance<_instance_t>(instance, find_symbol_by_name(name));
 		}
 
@@ -298,7 +296,7 @@ namespace zenkit {
 		/// \param sym The symbol to initialize.
 		template <typename _instance_t>
 		typename std::enable_if<std::is_base_of_v<DaedalusInstance, _instance_t>, void>::type
-		allocate_instance(const std::shared_ptr<_instance_t>& instance, DaedalusSymbol* sym) {
+		allocate_instance(std::shared_ptr<_instance_t> const& instance, DaedalusSymbol* sym) {
 			if (sym == nullptr) {
 				throw DaedalusVmException {"Cannot init instance: not found"};
 			}
@@ -339,7 +337,7 @@ namespace zenkit {
 		[[nodiscard]] ZKAPI std::int32_t pop_int();
 		[[nodiscard]] ZKAPI float pop_float();
 		[[nodiscard]] ZKAPI std::shared_ptr<DaedalusInstance> pop_instance();
-		[[nodiscard]] ZKAPI const std::string& pop_string();
+		[[nodiscard]] ZKAPI std::string const& pop_string();
 		[[nodiscard]] ZKAPI std::tuple<DaedalusSymbol*, std::uint8_t, std::shared_ptr<DaedalusInstance>>
 		pop_reference();
 
@@ -410,7 +408,7 @@ namespace zenkit {
 		/// </table>
 		///
 		/// <p>
-		/// [<sup>1</sup>] instances in the C++-World have to inherit from phoenix::DaedalusInstance.
+		/// [<sup>1</sup>] instances in the C++-World have to inherit from zenkit::DaedalusInstance.
 		/// </p>
 		///
 		/// \tparam R The return type of the external.
@@ -424,26 +422,21 @@ namespace zenkit {
 		/// \throws illegal_external if The number of parameters of the definition and callback is not the same.
 		/// \throws runtime_error if any other error occurs.
 		template <typename R, typename... P>
-		void register_external(std::string_view name, const std::function<R(P...)>& callback) {
+		void register_external(std::string_view name, std::function<R(P...)> const& callback) {
 			auto* sym = find_symbol_by_name(name);
-			if (sym == nullptr)
-				return;
+			if (sym == nullptr) return;
 
-			if (!sym->is_external())
-				throw DaedalusVmException {"symbol is not external"};
+			if (!sym->is_external()) throw DaedalusVmException {"symbol is not external"};
 
 			if constexpr (!std::is_same_v<void, R>) {
-				if (!sym->has_return())
-					throw DaedalusIllegalExternalReturnType(sym, "<non-void>");
+				if (!sym->has_return()) throw DaedalusIllegalExternalReturnType(sym, "<non-void>");
 				if constexpr (is_instance_ptr_v<R>) {
 					if (sym->rtype() != DaedalusDataType::INSTANCE)
 						throw DaedalusIllegalExternalReturnType(sym, "instance");
 				} else if constexpr (std::is_floating_point_v<R>) {
-					if (sym->rtype() != DaedalusDataType::FLOAT)
-						throw DaedalusIllegalExternalReturnType(sym, "float");
+					if (sym->rtype() != DaedalusDataType::FLOAT) throw DaedalusIllegalExternalReturnType(sym, "float");
 				} else if constexpr (std::is_convertible_v<int32_t, R>) {
-					if (sym->rtype() != DaedalusDataType::INT)
-						throw DaedalusIllegalExternalReturnType(sym, "int");
+					if (sym->rtype() != DaedalusDataType::INT) throw DaedalusIllegalExternalReturnType(sym, "int");
 				} else if constexpr (std::is_convertible_v<std::string, R>) {
 					if (sym->rtype() != DaedalusDataType::STRING)
 						throw DaedalusIllegalExternalReturnType(sym, "string");
@@ -451,8 +444,7 @@ namespace zenkit {
 					throw DaedalusVmException {"unsupported return type"};
 				}
 			} else {
-				if (sym->has_return())
-					throw DaedalusIllegalExternalReturnType(sym, "void");
+				if (sym->has_return()) throw DaedalusIllegalExternalReturnType(sym, "void");
 			}
 
 			std::vector<DaedalusSymbol*> params = find_parameters_for_function(sym);
@@ -501,7 +493,7 @@ namespace zenkit {
 		/// \param cb The callback function to register.
 		/// \see #register_external(std::string_view, std::function)
 		template <typename T>
-		void register_external(std::string_view name, const T& cb) {
+		void register_external(std::string_view name, T const& cb) {
 			register_external(name, std::function {cb});
 		}
 
@@ -518,25 +510,20 @@ namespace zenkit {
 		/// \see #register_external(std::string_view, std::function)
 		/// \todo Deduplicate source code!
 		template <typename R, typename... P>
-		void override_function(std::string_view name, const std::function<R(P...)>& callback) {
+		void override_function(std::string_view name, std::function<R(P...)> const& callback) {
 			auto* sym = find_symbol_by_name(name);
-			if (sym == nullptr)
-				throw DaedalusVmException {"symbol not found"};
-			if (sym->is_external())
-				throw DaedalusVmException {"symbol is already an external"};
+			if (sym == nullptr) throw DaedalusVmException {"symbol not found"};
+			if (sym->is_external()) throw DaedalusVmException {"symbol is already an external"};
 
 			if constexpr (!std::is_same_v<void, R>) {
-				if (!sym->has_return())
-					throw DaedalusIllegalExternalReturnType(sym, "<non-void>");
+				if (!sym->has_return()) throw DaedalusIllegalExternalReturnType(sym, "<non-void>");
 				if constexpr (is_instance_ptr_v<R>) {
 					if (sym->rtype() != DaedalusDataType::INSTANCE)
 						throw DaedalusIllegalExternalReturnType(sym, "instance");
 				} else if constexpr (std::is_floating_point_v<R>) {
-					if (sym->rtype() != DaedalusDataType::FLOAT)
-						throw DaedalusIllegalExternalReturnType(sym, "float");
+					if (sym->rtype() != DaedalusDataType::FLOAT) throw DaedalusIllegalExternalReturnType(sym, "float");
 				} else if constexpr (std::is_convertible_v<int32_t, R>) {
-					if (sym->rtype() != DaedalusDataType::INT)
-						throw DaedalusIllegalExternalReturnType(sym, "int");
+					if (sym->rtype() != DaedalusDataType::INT) throw DaedalusIllegalExternalReturnType(sym, "int");
 				} else if constexpr (std::is_convertible_v<std::string, R>) {
 					if (sym->rtype() != DaedalusDataType::STRING)
 						throw DaedalusIllegalExternalReturnType(sym, "string");
@@ -544,8 +531,7 @@ namespace zenkit {
 					throw DaedalusVmException {"unsupported return type"};
 				}
 			} else {
-				if (sym->has_return())
-					throw DaedalusIllegalExternalReturnType(sym, "void");
+				if (sym->has_return()) throw DaedalusIllegalExternalReturnType(sym, "void");
 			}
 
 			std::vector<DaedalusSymbol*> params = find_parameters_for_function(sym);
@@ -593,16 +579,12 @@ namespace zenkit {
 		///
 		/// \param name The name of the function to override.
 		/// \param callback The C++ function to register as the external.
-		void override_function(std::string_view name, const std::function<DaedalusNakedCall(DaedalusVm&)>& callback) {
+		void override_function(std::string_view name, std::function<DaedalusNakedCall(DaedalusVm&)> const& callback) {
 			auto* sym = find_symbol_by_name(name);
-			if (sym == nullptr)
-				throw DaedalusVmException {"symbol not found"};
-			if (sym->is_external())
-				throw DaedalusVmException {"symbol is already an external"};
+			if (sym == nullptr) throw DaedalusVmException {"symbol not found"};
+			if (sym->is_external()) throw DaedalusVmException {"symbol is already an external"};
 
-			_m_function_overrides[sym->address()] = [callback](DaedalusVm& machine) {
-				callback(machine);
-			};
+			_m_function_overrides[sym->address()] = [callback](DaedalusVm& machine) { callback(machine); };
 		}
 
 		/// \brief Overrides a function in Daedalus code with an external definition.
@@ -615,7 +597,7 @@ namespace zenkit {
 		/// \param cb The callback function to register.
 		/// \see #override_function(std::string_view, std::function)
 		template <typename T>
-		void override_function(std::string_view name, const T& cb) {
+		void override_function(std::string_view name, T const& cb) {
 			override_function(name, std::function {cb});
 		}
 
@@ -628,11 +610,11 @@ namespace zenkit {
 		///
 		/// \param callback The function to call. The one parameter of the function is the name of the unresolved
 		/// external.
-		ZKAPI void register_default_external(const std::function<void(std::string_view)>& callback);
+		ZKAPI void register_default_external(std::function<void(std::string_view)> const& callback);
 
-		ZKAPI void register_default_external_custom(const std::function<void(DaedalusVm&, DaedalusSymbol&)>& callback);
+		ZKAPI void register_default_external_custom(std::function<void(DaedalusVm&, DaedalusSymbol&)> const& callback);
 
-		ZKAPI void register_access_trap(const std::function<void(DaedalusSymbol&)>& callback);
+		ZKAPI void register_access_trap(std::function<void(DaedalusSymbol&)> const& callback);
 
 		/// \brief Registers a function to be called when script execution fails.
 		///
@@ -644,9 +626,9 @@ namespace zenkit {
 		///                 continue as normal. If `false` is returned, the VM will re-raise the exception and thus,
 		///                 halt execution.
 		ZKAPI void register_exception_handler(
-		    const std::function<DaedalusVmExceptionStrategy(DaedalusVm&,
-		                                                    const DaedalusScriptError&,
-		                                                    const DaedalusInstruction&)>& callback);
+		    std::function<DaedalusVmExceptionStrategy(DaedalusVm&,
+		                                              DaedalusScriptError const&,
+		                                              DaedalusInstruction const&)> const& callback);
 
 		/// \brief Calls the given symbol as a function.
 		///
@@ -654,7 +636,7 @@ namespace zenkit {
 		/// the caller is required to deal with them appropriately.
 		///
 		/// \param sym The symbol to unsafe_call.
-		ZKAPI void unsafe_call(const DaedalusSymbol* sym);
+		ZKAPI void unsafe_call(DaedalusSymbol const* sym);
 
 		ZKAPI void unsafe_jump(uint32_t address);
 
@@ -724,7 +706,7 @@ namespace zenkit {
 		/// as #pop_call is invoked.
 		///
 		/// \param sym The symbol referring to the function called.
-		ZKINT void push_call(const DaedalusSymbol* sym);
+		ZKINT void push_call(DaedalusSymbol const* sym);
 
 		/// \brief Pops a call stack from from the call stack.
 		///
@@ -746,7 +728,7 @@ namespace zenkit {
 		/// \throws DaedalusIllegalExternalParameter If the types don't match.
 		/// \note Requires that sizeof...(Px) + 1 == defined.size().
 		template <int32_t i, typename P, typename... Px>
-		void check_external_params(const std::vector<DaedalusSymbol*>& defined) {
+		void check_external_params(std::vector<DaedalusSymbol*> const& defined) {
 			if constexpr (is_instance_ptr_v<P> || std::is_same_v<DaedalusSymbol*, P> || is_raw_instance_ptr_v<P>) {
 				if (defined[i]->type() != DaedalusDataType::INSTANCE)
 					throw DaedalusIllegalExternalParameter(defined[i], "instance", i + 1);
@@ -902,7 +884,7 @@ namespace zenkit {
 		                            std::is_same_v<R, DaedalusFunction> || std::is_same_v<R, std::string> ||
 		                            std::is_same_v<R, void>,
 		                        void>::type
-		check_call_return_type(const DaedalusSymbol* sym) {
+		check_call_return_type(DaedalusSymbol const* sym) {
 			if constexpr (is_instance_ptr_v<R>) {
 				if (sym->rtype() != DaedalusDataType::INSTANCE)
 					throw DaedalusVmException {"invalid return type for function " + sym->name()};
@@ -928,7 +910,7 @@ namespace zenkit {
 		                            std::is_same_v<std::remove_reference_t<P>, std::string_view> ||
 		                            std::is_same_v<std::remove_reference_t<P>, DaedalusSymbol*>,
 		                        void>::type
-		push_call_parameters(const std::vector<DaedalusSymbol*>& defined, P value, Px... more) { // clang-format on
+		push_call_parameters(std::vector<DaedalusSymbol*> const& defined, P value, Px... more) { // clang-format on
 			if constexpr (is_instance_ptr_v<P> || std::is_same_v<DaedalusSymbol*, P>) {
 				if (defined[i]->type() != DaedalusDataType::INSTANCE)
 					throw DaedalusIllegalExternalParameter(defined[i], "instance", i + 1);
@@ -995,7 +977,7 @@ namespace zenkit {
 		std::optional<std::function<void(DaedalusVm&, DaedalusSymbol&)>> _m_default_external {std::nullopt};
 		std::function<void(DaedalusSymbol&)> _m_access_trap;
 		std::optional<std::function<
-		    DaedalusVmExceptionStrategy(DaedalusVm&, const DaedalusScriptError&, const DaedalusInstruction&)>>
+		    DaedalusVmExceptionStrategy(DaedalusVm&, DaedalusScriptError const&, DaedalusInstruction const&)>>
 		    _m_exception_handler {std::nullopt};
 
 		DaedalusSymbol* _m_self_sym;
@@ -1020,6 +1002,6 @@ namespace zenkit {
 	/// \param instr The instruction being executed.
 	/// \return DaedalusVmExceptionStrategy::continue_
 	ZKAPI DaedalusVmExceptionStrategy lenient_vm_exception_handler(DaedalusVm& v,
-	                                                               const DaedalusScriptError& exc,
-	                                                               const DaedalusInstruction& instr);
+	                                                               DaedalusScriptError const& exc,
+	                                                               DaedalusInstruction const& instr);
 } // namespace zenkit

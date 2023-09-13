@@ -126,8 +126,7 @@ namespace zenkit {
 
 				for (int32_t i = 0; i < count; ++i) {
 					auto child = parse_vob_tree(*archive, version);
-					if (child == nullptr)
-						continue;
+					if (child == nullptr) continue;
 					this->world_vobs.push_back(std::move(child));
 				}
 			} else if (chnk.object_name == "WayNet") {

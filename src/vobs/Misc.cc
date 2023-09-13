@@ -262,8 +262,7 @@ namespace zenkit::vobs {
 		this->items.resize(item_count);
 
 		for (auto i = 0; i < item_count; ++i) {
-			if (!r.read_object_begin(hdr))
-				throw zenkit::ParserError {"vobs::Npc"};
+			if (!r.read_object_begin(hdr)) throw zenkit::ParserError {"vobs::Npc"};
 
 			this->items[i] = std::make_unique<Item>();
 			this->items[i]->load(r, version);
@@ -294,7 +293,7 @@ namespace zenkit::vobs {
 				if (hdr.class_name == "\xA7") {
 					// This item is a reference.
 					// TODO: Warn if not found.
-					for (const auto& item : this->items) {
+					for (auto const& item : this->items) {
 						if (item->id == hdr.index) {
 							this->slots[i].item = item.get();
 							break;

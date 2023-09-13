@@ -9,13 +9,13 @@
 
 namespace zenkit {
 	/// \brief The highest number representable by a single rotation component.
-	static const float SAMPLE_ROTATION_RANGE = float(1 << 16) - 1.0f;
+	static float const SAMPLE_ROTATION_RANGE = float(1 << 16) - 1.0f;
 
 	/// \brief The scaling factor applied to each rotation component.
-	static const float SAMPLE_ROTATION_SCALE = (1.0f / SAMPLE_ROTATION_RANGE) * 2.1f;
+	static float const SAMPLE_ROTATION_SCALE = (1.0f / SAMPLE_ROTATION_RANGE) * 2.1f;
 
 	/// \brief The number half way to `SAMPLE_ROTATION_RANGE`.
-	static const std::uint16_t SAMPLE_ROTATION_MID = (1 << 15) - 1;
+	static std::uint16_t const SAMPLE_ROTATION_MID = (1 << 15) - 1;
 
 	enum class AnimationChunkType : std::uint16_t {
 		MARKER = 0xa000u,
