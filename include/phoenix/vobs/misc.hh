@@ -179,6 +179,13 @@ namespace phoenix {
 		};
 
 		struct npc : public vob {
+			static const std::uint32_t attribute_count = 8;
+			static const std::uint32_t hcs_count = 4;
+			static const std::uint32_t missions_count = 5;
+			static const std::uint32_t aivar_count = 100;
+			static const std::uint32_t packed_count = 9;
+			static const std::uint32_t protection_count = 8;
+
 			struct talent {
 				int talent;
 				int value;
@@ -215,19 +222,19 @@ namespace phoenix {
 			int mad_time;
 			bool player;
 
-			int attributes[8];
-			int hcs[4];
-			int missions[5];
+			int attributes[attribute_count];
+			int hcs[hcs_count];
+			int missions[missions_count];
 
 			std::string start_ai_state;
-			int aivar[100];
+			int aivar[aivar_count];
 			std::string script_waypoint;
 			int attitude;
 			int attitude_temp;
 			int name_nr;
 			bool move_lock;
 
-			std::string packed[9];
+			std::string packed[packed_count];
 			std::vector<std::unique_ptr<item>> items;
 			std::vector<slot> slots;
 
@@ -255,7 +262,7 @@ namespace phoenix {
 			bool respawn;
 			int respawn_time;
 
-			int protection[8];
+			int protection[protection_count];
 
 			int bs_interruptable_override {0};
 			int npc_type {0};
