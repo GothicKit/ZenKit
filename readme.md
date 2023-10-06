@@ -8,8 +8,8 @@
 [![Platforms](https://img.shields.io/static/v1?label=Supports&message=GCC%20|%20Clang%20|%20MSVC%20|%20Apple%20Clang&color=blueviolet)]()
 [![Version](https://img.shields.io/github/v/tag/GothicKit/phoenix?label=Version&sort=semver)](https://github.com/GothicKit/phoenix/releases/latest)
 
-**🐲 Here be dragons! _ZenKit_ is still changing a lot and might break your code if you choose to update.
-See [Versioning](#versioning) for details.**
+**_ZenKit_ has recently been updated to version 2.0! For information about how to migrate your projects, see the
+[documentation](https://zenkit.gothickit.dev/library/misc/v1-to-v2/).**
 
 The _ZenKit_ project aims to re-implement file formats used by the _ZenGin_ made by [Piranha Bytes][] for their
 early-2000s games [Gothic][] and [Gothic II][]. It is heavily based on [ZenLib][] which is used as a reference
