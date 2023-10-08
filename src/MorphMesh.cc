@@ -32,7 +32,7 @@ namespace zenkit {
 				auto count = c->read_ushort();
 				this->sources.resize(count);
 
-				for (int32_t i = 0; i < count; ++i) {
+				for (auto i = 0u; i < count; ++i) {
 					this->sources[i].file_date.load(c);
 					this->sources[i].file_name = c->read_line(true);
 				}

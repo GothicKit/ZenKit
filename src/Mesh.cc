@@ -98,7 +98,7 @@ namespace zenkit {
 				    this->polygons.flags.reserve(poly_count);
 
 				    for (std::uint32_t i = 0; i < poly_count; ++i) {
-					    auto material_index = c->read_short();
+					    auto material_index = c->read_ushort();
 					    auto lightmap_index = c->read_short();
 
 					    (void) c->read_float();

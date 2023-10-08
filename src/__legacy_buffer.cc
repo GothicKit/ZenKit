@@ -1,8 +1,9 @@
 // Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/buffer.hh>
+#include "phoenix/buffer.hh"
+#include "zenkit/Mmap.hh"
 
-#include <mio/mmap.hpp>
+#include "Internal.hh"
 
 #include <cstddef>
 #include <fstream>
@@ -63,20 +64,20 @@ namespace phoenix {
 			bool _m_readonly;
 		};
 
+#ifdef _ZK_WITH_MMAP
 		/// \brief A buffer backing for memory-mapped files.
-		template <mio::access_mode mode>
 		class mmap_backing : public buffer_backing {
 		public:
 			/// \brief Creates a new memory-mapped buffer backing by mapping the file at the given path into memory
 			/// \param file The path of the file to map
-			explicit mmap_backing(std::filesystem::path const& file) : _m_data(file.c_str()) {}
+			explicit mmap_backing(std::filesystem::path const& file) : _m_data(file) {}
 
 			[[nodiscard]] bool direct() const noexcept override {
 				return true;
 			}
 
 			[[nodiscard]] bool readonly() const noexcept override {
-				return mode == mio::access_mode::read;
+				return true;
 			}
 
 			[[nodiscard]] uint64_t size() const noexcept override {
@@ -88,7 +89,7 @@ namespace phoenix {
 			}
 
 			void read(std::byte* buf, std::uint64_t size, std::uint64_t offset) const override {
-				std::copy_n(_m_data.cbegin() + static_cast<long>(offset), size, buf);
+				std::copy_n(_m_data.data() + static_cast<long>(offset), size, buf);
 			}
 
 			void write([[maybe_unused]] std::byte const* buf,
@@ -106,8 +107,9 @@ namespace phoenix {
 			}
 
 		private:
-			mio::basic_mmap<mode, std::byte> _m_data;
+			zenkit::Mmap _m_data;
 		};
+#endif
 	} // namespace detail
 
 	buffer_underflow::buffer_underflow(std::uint64_t off, std::uint64_t rsize)
@@ -166,10 +168,20 @@ namespace phoenix {
 		if (file_size == 0) return buffer::empty();
 
 		if (readonly) {
-			return buffer {std::make_shared<detail::mmap_backing<mio::access_mode::read>>(path)};
+#ifdef _ZK_WITH_MMAP
+			return buffer {std::make_shared<detail::mmap_backing>(path)};
+#else
+			std::vector<std::byte> data {};
+			std::ifstream stream {path, std::ios::ate};
+			data.resize(static_cast<size_t>(stream.tellg()));
+			stream.seekg(0);
+			stream.read(reinterpret_cast<char*>(data.data()), static_cast<std::streamsize>(data.size()));
+
+			return buffer::of(std::move(data), true);
+#endif
 		}
 
-		return buffer {std::make_shared<detail::mmap_backing<mio::access_mode::write>>(path)};
+		throw error {"Unsupported operation!"};
 	}
 
 	buffer buffer::read(std::filesystem::path const& path, bool readonly) {
@@ -177,7 +189,7 @@ namespace phoenix {
 		std::vector<std::byte> data {static_cast<size_t>(in.tellg())};
 
 		in.seekg(0);
-		in.read((char*) data.data(), data.size());
+		in.read((char*) data.data(), static_cast<std::streamsize>(data.size()));
 
 		return buffer::of(std::move(data), readonly);
 	}

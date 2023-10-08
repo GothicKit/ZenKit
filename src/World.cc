@@ -121,10 +121,10 @@ namespace zenkit {
 
 				r->seek(static_cast<ssize_t>(end), Whence::BEG);
 			} else if (chnk.object_name == "VobTree") {
-				auto count = archive->read_int();
+				auto count = static_cast<size_t>(archive->read_int());
 				this->world_vobs.reserve(count);
 
-				for (int32_t i = 0; i < count; ++i) {
+				for (auto i = 0u; i < count; ++i) {
 					auto child = parse_vob_tree(*archive, version);
 					if (child == nullptr) continue;
 					this->world_vobs.push_back(std::move(child));

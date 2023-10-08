@@ -465,7 +465,7 @@ namespace zenkit {
 	MdsAnimation MdsParser::parse_ani() {
 		MdsAnimation ani {};
 		ani.name = this->expect_string();
-		ani.layer = this->expect_int();
+		ani.layer = static_cast<uint32_t>(this->expect_int());
 		ani.next = this->expect_string();
 		ani.blend_in = this->expect_number();
 		ani.blend_out = this->expect_number();
@@ -496,7 +496,7 @@ namespace zenkit {
 	MdsAnimationCombine MdsParser::parse_aniComb() {
 		MdsAnimationCombine comb {};
 		comb.name = this->expect_string();
-		comb.layer = this->expect_int();
+		comb.layer = static_cast<uint32_t>(this->expect_int());
 		comb.next = this->expect_string();
 		comb.blend_in = this->expect_number();
 		comb.blend_out = this->expect_number();
@@ -516,7 +516,7 @@ namespace zenkit {
 		MdsAnimationAlias alias {};
 		alias.direction = AnimationDirection::FORWARD;
 		alias.name = this->expect_string();
-		alias.layer = this->expect_int();
+		alias.layer = static_cast<uint32_t>(this->expect_int());
 		alias.next = this->expect_string();
 		alias.blend_in = this->expect_number();
 		alias.blend_out = this->expect_number();

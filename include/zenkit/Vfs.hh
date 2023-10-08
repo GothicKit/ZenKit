@@ -2,11 +2,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "Library.hh"
+#include "Mmap.hh"
 
 #include "phoenix/buffer.hh"
 #include "phoenix/phoenix.hh"
-
-#include <mio/mmap.hpp>
 
 #include <filesystem>
 #include <memory>
@@ -192,6 +191,9 @@ namespace zenkit {
 	private:
 		VfsNode _m_root;
 		std::vector<std::unique_ptr<std::byte[]>> _m_data;
-		std::vector<mio::basic_mmap<mio::access_mode::read, std::byte>> _m_data_mapped;
+
+#ifdef _ZK_WITH_MMAP
+		std::vector<Mmap> _m_data_mapped;
+#endif
 	};
 } // namespace zenkit

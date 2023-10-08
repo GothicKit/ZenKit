@@ -232,14 +232,14 @@ namespace zenkit {
 		return phoenix::buffer::of(std::move(out));
 	}
 
-	std::unique_ptr<Read> ReadArchiveAscii::read_raw(uint32_t size) {
+	std::unique_ptr<Read> ReadArchiveAscii::read_raw(std::size_t size) {
 		auto in = read_entry("raw");
 		auto length = in.length() / 2;
 
 		if (length < size) {
 			throw zenkit::ParserError {"ReadArchive.Ascii", "not enough raw bytes to read!"};
 		} else if (length > size) {
-			ZKLOGW("ReadArchive.Ascii", "Reading %d bytes although %zu are actually available", size, length);
+			ZKLOGW("ReadArchive.Ascii", "Reading %zu bytes although %zu are actually available", size, length);
 		}
 
 		std::vector<std::byte> out {};

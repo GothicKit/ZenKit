@@ -46,7 +46,7 @@ namespace zenkit {
 
 		r->seek(content_size, Whence::CUR);
 
-		auto submesh_count = r->read_byte();
+		auto submesh_count = r->read_ubyte();
 		auto vertices_offset = r->read_uint() + content_offset;
 		auto vertices_size = r->read_uint();
 		auto normals_offset = r->read_uint() + content_offset;
@@ -55,7 +55,7 @@ namespace zenkit {
 		std::vector<SubMeshSection> submesh_sections;
 		submesh_sections.resize(submesh_count);
 
-		for (int32_t i = 0; i < submesh_count; ++i) {
+		for (auto i = 0u; i < submesh_count; ++i) {
 			submesh_sections[i] = {
 			    {r->read_uint() + content_offset, r->read_uint()},
 			    {r->read_uint() + content_offset, r->read_uint()},
@@ -104,7 +104,7 @@ namespace zenkit {
 
 		// read submeshes
 		this->sub_meshes.resize(submesh_count);
-		for (int32_t i = 0; i < submesh_count; ++i) {
+		for (auto i = 0u; i < submesh_count; ++i) {
 			this->sub_meshes[i].load(r, submesh_sections[i]);
 			this->sub_meshes[i].mat = this->materials[i];
 		}

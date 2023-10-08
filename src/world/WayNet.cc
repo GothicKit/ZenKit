@@ -22,13 +22,13 @@ namespace zenkit {
 			throw zenkit::ParserError {"WayNet", "root object missing"};
 		}
 
-		(void) /* auto version = */ in.read_int(); // waynetVersion
-		auto count = in.read_int();                // numWaypoints
+		(void) /* auto version = */ in.read_int();            // waynetVersion
+		auto count = static_cast<std::size_t>(in.read_int()); // numWaypoints
 		this->waypoints.reserve(count);
 
 		std::unordered_map<std::uint32_t, std::uint32_t> obj_id_to_wp {};
 
-		for (int32_t i = 0; i < count; ++i) {
+		for (auto i = 0u; i < count; ++i) {
 			if (!in.read_object_begin(obj) || obj.class_name != "zCWaypoint") {
 				throw zenkit::ParserError {"WayNet", "missing waypoint object #" + std::to_string(i)};
 			}
@@ -36,7 +36,7 @@ namespace zenkit {
 			auto& wp = this->waypoints.emplace_back();
 			read_waypoint_data(wp, in);
 			wp.free_point = true;
-			obj_id_to_wp[obj.index] = this->waypoints.size() - 1;
+			obj_id_to_wp[obj.index] = static_cast<uint32_t>(this->waypoints.size() - 1);
 
 			if (!in.read_object_end()) {
 				ZKLOGE("WayNet", "free point %u not fully parsed", obj.index);
@@ -62,8 +62,8 @@ namespace zenkit {
 					auto& new_wp = this->waypoints.emplace_back();
 					read_waypoint_data(new_wp, in);
 					new_wp.free_point = false;
-					obj_id_to_wp[obj.index] = this->waypoints.size() - 1;
-					wp = this->waypoints.size() - 1;
+					obj_id_to_wp[obj.index] = static_cast<uint32_t>(this->waypoints.size() - 1);
+					wp = static_cast<uint32_t>(this->waypoints.size() - 1);
 				} else {
 					throw zenkit::ParserError {"WayNet",
 					                           "failed to parse edge #" + std::to_string(i) + ": unknown class name '" +

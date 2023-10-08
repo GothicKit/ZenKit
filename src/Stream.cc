@@ -2,11 +2,14 @@
 // SPDX-License-Identifier: MIT
 #include "zenkit/Stream.hh"
 #include "phoenix/buffer.hh"
+#include "zenkit/Mmap.hh"
+
+#include "Internal.hh"
 
 #include <glm/gtc/type_ptr.hpp>
-#include <mio/mmap.hpp>
 
 #include <cstring>
+#include <fstream>
 
 namespace zenkit {
 	template <typename T>
@@ -235,7 +238,7 @@ namespace zenkit {
 
 			size_t read(void* buf, size_t len) noexcept override {
 				_m_stream->read(static_cast<char*>(buf), static_cast<long>(len));
-				return _m_stream->gcount();
+				return static_cast<size_t>(_m_stream->gcount());
 			}
 
 			void seek(ssize_t off, Whence whence) noexcept override {
@@ -303,13 +306,13 @@ namespace zenkit {
 				try {
 					switch (whence) {
 					case Whence::BEG:
-						_m_buffer->position(off);
+						_m_buffer->position(static_cast<uint64_t>(off));
 						break;
 					case Whence::CUR:
-						_m_buffer->skip(off);
+						_m_buffer->skip(static_cast<uint64_t>(off));
 						break;
 					case Whence::END:
-						_m_buffer->position(_m_buffer->limit() + off);
+						_m_buffer->position(_m_buffer->limit() + static_cast<uint64_t>(off));
 						break;
 					}
 				} catch (phoenix::buffer_error const&) {}
@@ -336,16 +339,17 @@ namespace zenkit {
 			std::vector<std::byte> _m_vector;
 		};
 
+#ifdef _ZK_WITH_MMAP
 		class ReadMmap ZKINT : public ReadMemory {
 		public:
-			explicit ReadMmap(std::filesystem::path const& path) : ReadMmap(decltype(_m_mmap)(path.c_str())) {}
+			explicit ReadMmap(std::filesystem::path const& path) : ReadMmap(Mmap {path}) {}
 
-			explicit ReadMmap(mio::basic_mmap<mio::access_mode::read, std::byte> mmap)
-			    : ReadMemory(mmap.data(), mmap.size()), _m_mmap(std::move(mmap)) {}
+			explicit ReadMmap(Mmap mmap) : ReadMemory(mmap.data(), mmap.size()), _m_mmap(std::move(mmap)) {}
 
 		private:
-			mio::basic_mmap<mio::access_mode::read, std::byte> _m_mmap;
+			Mmap _m_mmap;
 		};
+#endif
 
 		class WriteFile ZKINT : public Write {
 		public:
@@ -471,7 +475,17 @@ namespace zenkit {
 	}
 
 	std::unique_ptr<Read> Read::from(std::filesystem::path const& path) {
+#ifdef _ZK_WITH_MMAP
 		return std::make_unique<detail::ReadMmap>(path);
+#else
+		std::vector<std::byte> data {};
+		std::ifstream stream {path, std::ios::ate};
+		data.resize(static_cast<size_t>(stream.tellg()));
+		stream.seekg(0);
+		stream.read(reinterpret_cast<char*>(data.data()), static_cast<std::streamsize>(data.size()));
+
+		return Read::from(std::move(data));
+#endif
 	}
 
 	std::unique_ptr<Read> Read::from(phoenix::buffer* buf) {

@@ -182,7 +182,7 @@ namespace zenkit {
 	} // namespace mds
 
 	void parse_binary_script(ModelScript& script, Read* r) {
-		int32_t ani_index = -1;
+		auto ani_index = static_cast<uint32_t>(-1);
 		proto::read_chunked<ModelScriptBinaryChunkType>(
 		    r,
 		    "ModelScript.Binary",
