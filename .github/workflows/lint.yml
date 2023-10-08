@@ -16,4 +16,4 @@ jobs:
           submodules: 'recursive'
       - name: 'clang-format'
         shell: 'bash'
-        run: 'find include source tests examples -iname "*.hh" -or -iname "*.cc" | xargs clang-format --dry-run --style=file --Werror'
+        run: 'find include src tests examples -iname "*.hh" -or -iname "*.cc" | xargs clang-format --dry-run --style=file --Werror'
