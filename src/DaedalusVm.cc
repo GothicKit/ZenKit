@@ -589,7 +589,7 @@ namespace zenkit {
 		_m_default_external = [this, callback](DaedalusVm& v, DaedalusSymbol& sym) {
 			// pop all parameters from the stack
 			auto params = find_parameters_for_function(&sym);
-			for (int32_t i = params.size() - 1; i >= 0; --i) {
+			for (auto i = params.size() - 1; i >= 0; --i) {
 				auto par = params[i];
 
 				if (par->type() == DaedalusDataType::INT)
@@ -668,7 +668,7 @@ namespace zenkit {
 					break;
 				case DaedalusDataType::FUNCTION: {
 					auto index = ref->get_int(v.index, _m_instance);
-					auto sym = find_symbol_by_index(index);
+					auto sym = find_symbol_by_index(static_cast<uint32_t>(index));
 					value = "&" + sym->name();
 					break;
 				}

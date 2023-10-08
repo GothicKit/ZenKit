@@ -30,7 +30,7 @@ namespace zenkit {
 		AxisAlignedBoundingBox read_bbox() override;
 		glm::mat3x3 read_mat3x3() override;
 		ZKREM("use ::read_raw") phoenix::buffer read_raw_bytes(uint32_t size) override;
-		std::unique_ptr<Read> read_raw(uint32_t size) override;
+		std::unique_ptr<Read> read_raw(std::size_t size) override;
 
 		void skip_object(bool skip_current) override;
 

@@ -12,6 +12,7 @@
 #include <chrono>
 #include <cstring>
 #include <filesystem>
+#include <fstream>
 #include <stack>
 
 namespace zenkit {
@@ -239,8 +240,18 @@ namespace zenkit {
 	}
 
 	void Vfs::mount_disk(std::filesystem::path const& host, VfsOverwriteBehavior overwrite) {
-		auto& mem = _m_data_mapped.emplace_back(host.c_str());
+#ifdef _ZK_WITH_MMAP
+		auto& mem = _m_data_mapped.emplace_back(host);
 		this->mount_disk(mem.data(), mem.size(), overwrite);
+#else
+		std::ifstream stream {host, std::ios::ate};
+		auto size = stream.tellg();
+		stream.seekg(0);
+
+		auto& data = _m_data.emplace_back(new std::byte[(size_t) size]);
+		stream.read((char*) data.get(), size);
+		this->mount_disk(data.get(), (size_t) size, overwrite);
+#endif
 	}
 
 	static std::time_t vfs_dos_to_unix_time(std::uint32_t dos) noexcept {
@@ -386,10 +397,23 @@ namespace zenkit {
 					    VfsNode* newP = parent->create(VfsNode::directory(path.filename().string(), time.count()));
 					    load_directory(newP, path);
 				    } else if (ref.file_size() > 0) {
-					    auto& mem = this->_m_data_mapped.emplace_back(path.c_str());
+#ifdef _ZK_WITH_MMAP
+					    auto& mem = this->_m_data_mapped.emplace_back(path);
 					    parent->create(VfsNode::file(path.filename().string(),
 					                                 VfsFileDescriptor {mem.data(), mem.size()},
 					                                 time.count()));
+#else
+					    std::ifstream stream {host, std::ios::ate};
+					    auto size = stream.tellg();
+					    stream.seekg(0);
+
+					    auto& data = _m_data.emplace_back(new std::byte[(size_t) size]);
+					    stream.read((char*) data.get(), size);
+
+					    parent->create(VfsNode::file(path.filename().string(),
+					                                 VfsFileDescriptor {data.get(), static_cast<size_t>(size)},
+					                                 time.count()));
+#endif
 				    }
 			    }
 		    };
@@ -441,7 +465,7 @@ namespace zenkit {
 
 			    if (it != e_name.rend()) {
 				    auto n = e_name.rend() - it;
-				    e_name.resize(n);
+				    e_name.resize(static_cast<unsigned long>(n));
 			    }
 
 			    VfsNode* existing = parent->child(e_name);
@@ -480,7 +504,6 @@ namespace zenkit {
 				    r->seek(static_cast<ssize_t>(self_offset), Whence::BEG);
 			    } else {
 				    if (e_offset + e_size > size) {
-					    ZKLOGE("Vfs", "Unable to mount file \"%s\": invalid offset and size", e_name.c_str());
 					    return last;
 				    }
 

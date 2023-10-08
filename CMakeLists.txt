@@ -11,6 +11,7 @@ option(ZK_BUILD_SHARED "ZenKit: Build a shared library." OFF)
 option(ZK_ENABLE_ASAN "ZenKit: Enable sanitizers in debug builds." ON)
 option(ZK_ENABLE_DEPRECATION "ZenKit: Enable deprecation warnings." ON)
 option(ZK_ENABLE_INSTALL "ZenKit: Enable CMake install target creation." ON)
+option(ZK_ENABLE_MMAP "ZenKit: Build ZenKit with memory-mapping support." ON)
 
 add_subdirectory(vendor)
 
@@ -18,7 +19,7 @@ add_subdirectory(vendor)
 file(GLOB_RECURSE _ZK_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include/**/*.hh")
 
 list(APPEND _ZK_SOURCES
-        source/buffer.cc
+        src/__legacy_buffer.cc
 
         src/world/BspTree.cc
         src/world/VobTree.cc
@@ -103,13 +104,29 @@ if (NOT ZK_ENABLE_DEPRECATION)
 endif ()
 
 bs_select_cflags(${ZK_ENABLE_ASAN} _ZK_COMPILE_FLAGS _ZK_LINK_FLAGS)
+bs_check_posix_mmap(_ZK_HAS_MMAP_POSIX)
+bs_check_win32_mmap(_ZK_HAS_MMAP_WIN32)
+
+if (ZK_ENABLE_MMAP AND (_ZK_HAS_MMAP_POSIX OR _ZK_HAS_MMAP_WIN32))
+    if (_ZK_HAS_MMAP_POSIX)
+        message(STATUS "ZenKit: Building with POSIX memory mapping support")
+        list(APPEND _ZK_SOURCES src/MmapPosix.cc)
+        target_compile_definitions(zenkit PUBLIC _ZK_WITH_MMAP=1)
+    elseif (_ZK_HAS_MMAP_WIN32)
+        message(STATUS "ZenKit: Building with Windows memory mapping support")
+        list(APPEND _ZK_SOURCES src/MmapWin32.cc)
+        target_compile_definitions(zenkit PUBLIC _ZK_WITH_MMAP=1)
+    endif ()
+else ()
+    message(WARNING "ZenKit: Building WITHOUT memory mapping support")
+endif ()
 
 target_sources(zenkit PRIVATE ${_ZK_SOURCES} ${_ZK_HEADERS})
 target_include_directories(zenkit PUBLIC include)
 target_compile_definitions(zenkit PRIVATE _ZKEXPORT=1)
 target_compile_options(zenkit PRIVATE ${_ZK_COMPILE_FLAGS})
 target_link_options(zenkit PUBLIC ${_ZK_LINK_FLAGS})
-target_link_libraries(zenkit PUBLIC glm::glm_static squish mio)
+target_link_libraries(zenkit PUBLIC glm::glm_static squish)
 set_target_properties(zenkit PROPERTIES DEBUG_POSTFIX "d" VERSION ${PROJECT_VERSION})
 
 if (ZK_ENABLE_INSTALL)
@@ -121,7 +138,7 @@ if (ZK_ENABLE_INSTALL)
         # For static linking we'll need to provide the dependency static libraries
         install(DIRECTORY "${glm_SOURCE_DIR}/glm" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl" PATTERN "*.h")
 
-        foreach (lib glm::glm_static squish)
+        foreach (lib glm::glm_static)
             install(FILES "$<TARGET_LINKER_FILE:${lib}>" TYPE LIB)
         endforeach ()
     endif ()

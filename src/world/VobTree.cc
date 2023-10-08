@@ -210,14 +210,14 @@ namespace zenkit {
 			in.skip_object(true);
 		}
 
-		auto child_count = in.read_int();
+		auto child_count = static_cast<size_t>(in.read_int());
 		if (object == nullptr) {
-			std::function<void(int32_t)> skip;
-			skip = [&skip, &in](int32_t count) {
-				for (int32_t i = 0; i < count; ++i) {
+			std::function<void(size_t)> skip;
+			skip = [&skip, &in](size_t count) {
+				for (auto i = 0u; i < count; ++i) {
 					in.skip_object(false);
 
-					auto num_children = in.read_int();
+					auto num_children = static_cast<size_t>(in.read_int());
 					skip(num_children);
 				}
 			};
@@ -230,7 +230,7 @@ namespace zenkit {
 		object->id = obj.index;
 		object->type = type;
 
-		for (int32_t i = 0; i < child_count; ++i) {
+		for (auto i = 0u; i < child_count; ++i) {
 			auto child = parse_vob_tree(in, version);
 			if (child == nullptr) continue;
 

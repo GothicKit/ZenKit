@@ -55,24 +55,24 @@ namespace zenkit::unstable {
 		this->hour = ar->read_int();   // hour
 		this->minute = ar->read_int(); // min
 
-		auto entry_count = ar->read_int(); // NumOfEntries
+		auto entry_count = static_cast<size_t>(ar->read_int()); // NumOfEntries
 		this->infos.resize(entry_count);
 
-		for (auto i = 0; i < entry_count; ++i) {
+		for (auto i = 0u; i < entry_count; ++i) {
 			this->infos[i].told = ar->read_bool();   // Told
 			this->infos[i].name = ar->read_string(); // InstName
 		}
 
-		ar->read_int();                    // NumOfEntries
-		auto topic_count = ar->read_int(); // LOGMANAGERTOPICCOUNT
+		ar->read_int();                                         // NumOfEntries
+		auto topic_count = static_cast<size_t>(ar->read_int()); // LOGMANAGERTOPICCOUNT
 		this->log.resize(topic_count);
 
-		for (auto i = 0; i < topic_count; ++i) {
+		for (auto i = 0u; i < topic_count; ++i) {
 			auto& topic = this->log[i];
 			topic.description = ar->read_string();                          // TOPICDESCRIPTION
 			topic.section = static_cast<SaveTopicSection>(ar->read_enum()); // TOPICSECTION
 			topic.status = static_cast<SaveTopicStatus>(ar->read_enum());   // TOPICSTATUS
-			topic.entries.resize(ar->read_int());                           // LOGTOPICENTRYCOUNT
+			topic.entries.resize(static_cast<size_t>(ar->read_int()));      // LOGTOPICENTRYCOUNT
 
 			(void) ar->read_int(); // LOGMANAGERENTRYCOUNT
 
@@ -93,10 +93,10 @@ namespace zenkit::unstable {
 			ar->skip_object(true);
 		}
 
-		auto symbol_count = ar->read_int(); // numSymbols
+		auto symbol_count = static_cast<size_t>(ar->read_int()); // numSymbols
 		this->symbols.resize(symbol_count);
 
-		for (auto i = 0; i < symbol_count; ++i) {
+		for (auto i = 0u; i < symbol_count; ++i) {
 			SaveSymbolState sym;
 			sym.name = ar->read_string(); // symName0
 
@@ -105,10 +105,10 @@ namespace zenkit::unstable {
 				auto value_count = ar->read_int(); // symName0cnt
 
 				for (auto j = 0; j < value_count; ++j) {
-					sym.values.push_back(ar->read_int()); // symValue0_0
+					sym.values.push_back(static_cast<uint32_t>(ar->read_int())); // symValue0_0
 				}
 			} else {
-				sym.values.push_back(ar->read_int()); // symValue0
+				sym.values.push_back(static_cast<uint32_t>(ar->read_int())); // symValue0
 			}
 		}
 

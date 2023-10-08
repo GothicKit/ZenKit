@@ -90,7 +90,8 @@ namespace zenkit {
 
 		// Lowest mipmap-level first
 		for (std::int64_t level = this->_m_mipmap_count - 1; level >= 0; --level) {
-			auto size = _ztex_mipmap_size(this->_m_format, this->_m_width, this->_m_height, level);
+			auto size =
+			    _ztex_mipmap_size(this->_m_format, this->_m_width, this->_m_height, static_cast<uint32_t>(level));
 
 			std::vector<std::uint8_t> mipmap;
 			mipmap.resize(size);

@@ -52,11 +52,11 @@ namespace zenkit::vobs {
 
 		if (r.is_save_game()) {
 			// In save-games, containers contain extra variables
-			auto item_count = r.read_int(); // NumOfEntries
+			auto item_count = static_cast<size_t>(r.read_int()); // NumOfEntries
 			this->s_items.resize(item_count);
 
 			ArchiveObject itm;
-			for (auto i = 0; i < item_count; ++i) {
+			for (auto i = 0u; i < item_count; ++i) {
 				if (!r.read_object_begin(itm) || itm.class_name != "oCItem:zCVob") {
 					throw zenkit::ParserError {"VOb.Container"};
 				}

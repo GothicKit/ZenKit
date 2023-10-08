@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MIT
 #include "zenkit/Misc.hh"
 
+#include "Internal.hh"
+
 #include <algorithm>
 #include <cctype>
 

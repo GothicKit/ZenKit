@@ -67,8 +67,8 @@ namespace zenkit {
 			return false;
 		}
 
-		obj.version = atoi(version);
-		obj.index = atoi(index);
+		obj.version = static_cast<uint16_t>(atoi(version));
+		obj.index = static_cast<uint32_t>(atoi(index));
 		obj.object_name = object_name;
 		obj.class_name = class_name;
 		return true;
@@ -216,13 +216,13 @@ namespace zenkit {
 		return phoenix::buffer::of(std::move(bytes));
 	}
 
-	std::unique_ptr<Read> ReadArchiveBinsafe::read_raw(uint32_t size) {
+	std::unique_ptr<Read> ReadArchiveBinsafe::read_raw(std::size_t size) {
 		auto length = ensure_entry_meta<ArchiveEntryType::RAW>();
 
 		if (length < size) {
 			throw zenkit::ParserError {"ReadArchive.Binsafe", "not enough raw bytes to read!"};
 		} else if (length > size) {
-			ZKLOGW("ReadArchive.Binsafe", "Reading %d bytes although %d are actually available", size, length);
+			ZKLOGW("ReadArchive.Binsafe", "Reading %zu bytes although %d are actually available", size, length);
 		}
 
 		std::vector<std::byte> bytes(length, std::byte {});

@@ -32,13 +32,11 @@ function(px_add_dependency NAME URL URL_HASH)
 endfunction()
 
 px_add_dependency(doctest https://github.com/doctest/doctest/archive/refs/tags/v2.4.9.zip d1563419fa370c34c90e028c2e903a70c8dc07b2)
-px_add_dependency(mio https://github.com/mandreyel/mio/archive/3f86a95c0784d73ce6815237ec33ed25f233b643.zip 62a0e43b07a6b66e415ad01f4b225c72a3c9935b)
 px_add_dependency(glm https://github.com/g-truc/glm/releases/download/0.9.9.8/glm-0.9.9.8.zip 45408897f419944fb28d8fd835791f237be2ec19)
 px_add_dependency(libsquish https://github.com/lmichaelis/phoenix-libsquish/archive/cc82beff55210816e1bd531fc6057203dc309807.zip 953f5cd072cd6674d1aeaff5ff91225f2197283c)
 
 # msvc: disable -wno-* flags
 if (NOT MSVC)
-    target_compile_options(mio INTERFACE -Wno-conversion)
     target_compile_options(squish PRIVATE -Wno-unused-but-set-variable)
 endif ()
 

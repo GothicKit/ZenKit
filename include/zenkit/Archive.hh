@@ -227,7 +227,7 @@ namespace zenkit {
 		/// \throws zenkit::ParserError if the value actually present is not raw
 		ZKREM("use ::read_raw()") virtual phoenix::buffer read_raw_bytes(uint32_t size) = 0;
 
-		virtual std::unique_ptr<Read> read_raw(uint32_t size) = 0;
+		virtual std::unique_ptr<Read> read_raw(std::size_t size) = 0;
 
 		/// \brief Skips the next object in the reader and all it's children
 		/// \param skip_current If `false` skips the next object in this buffer, otherwise skip the object

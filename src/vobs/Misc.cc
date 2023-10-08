@@ -166,11 +166,11 @@ namespace zenkit::vobs {
 		this->xp_next_level = r.read_int(); // xpnl
 		this->lp = r.read_int();            // lp
 
-		auto talent_count = r.read_int(); // numTalents
+		auto talent_count = static_cast<std::size_t>(r.read_int()); // numTalents
 		this->talents.resize(talent_count);
 
 		ArchiveObject hdr;
-		for (auto i = 0; i < talent_count; ++i) {
+		for (auto i = 0u; i < talent_count; ++i) {
 			if (!r.read_object_begin(hdr)) // [% oCNpcTalent 0 0]
 				throw zenkit::ParserError {"vobs::Npc"};
 
@@ -214,9 +214,9 @@ namespace zenkit::vobs {
 
 		this->start_ai_state = r.read_string(); // startAIState
 
-		auto var_count = version == GameVersion::GOTHIC_1 ? 50 : 100;
+		std::size_t var_count = version == GameVersion::GOTHIC_1 ? 50 : 100;
 		auto vars = r.read_raw(var_count * 4); // scriptVars
-		for (auto i = 0; i < var_count / 4; ++i) {
+		for (auto i = 0u; i < var_count / 4; ++i) {
 			this->aivar[i] = vars->read_int();
 		}
 
@@ -258,10 +258,10 @@ namespace zenkit::vobs {
 			} while (it != pack.end() && idx < 9);
 		}
 
-		auto item_count = r.read_int(); // itemCount
+		auto item_count = static_cast<size_t>(r.read_int()); // itemCount
 		this->items.resize(item_count);
 
-		for (auto i = 0; i < item_count; ++i) {
+		for (auto i = 0u; i < item_count; ++i) {
 			if (!r.read_object_begin(hdr)) throw zenkit::ParserError {"vobs::Npc"};
 
 			this->items[i] = std::make_unique<Item>();
@@ -278,9 +278,9 @@ namespace zenkit::vobs {
 			}
 		}
 
-		auto inv_slot_count = r.read_int(); // numInvSlots
+		auto inv_slot_count = static_cast<uint32_t>(r.read_int()); // numInvSlots
 		this->slots.resize(inv_slot_count);
-		for (auto i = 0; i < inv_slot_count; ++i) {
+		for (auto i = 0u; i < inv_slot_count; ++i) {
 			this->slots[i].used = r.read_bool();   // used
 			this->slots[i].name = r.read_string(); // name
 
@@ -357,7 +357,7 @@ namespace zenkit::vobs {
 		VirtualObject::load(r, version);
 
 		if (r.is_save_game()) {
-			auto count = version == GameVersion::GOTHIC_1 ? 5 : 12;
+			std::size_t count = version == GameVersion::GOTHIC_1 ? 5 : 12;
 			(void) r.read_raw(count * 4); // blend
 			(void) r.read_raw(count * 4); // cinema
 			(void) r.read_raw(count * 4); // fovMorph
