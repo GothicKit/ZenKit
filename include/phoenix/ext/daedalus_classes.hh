@@ -1314,10 +1314,14 @@ namespace phoenix {
 			s.register_member("C_MENU_ITEM.OPENDURATION", &c_menu_item::open_duration);
 			s.register_member("C_MENU_ITEM.USERFLOAT", &c_menu_item::user_float);
 			s.register_member("C_MENU_ITEM.USERSTRING", &c_menu_item::user_string);
-			s.register_member("C_MENU_ITEM.FRAMEPOSX", &c_menu_item::frame_posx);
-			s.register_member("C_MENU_ITEM.FRAMEPOSY", &c_menu_item::frame_posy);
 			s.register_member("C_MENU_ITEM.FRAMESIZEX", &c_menu_item::frame_sizex);
 			s.register_member("C_MENU_ITEM.FRAMESIZEY", &c_menu_item::frame_sizey);
+
+			// switch
+			if (s.find_symbol_by_name("C_MENU_ITEM.FRAMEPOSX") != nullptr) {
+				s.register_member("C_MENU_ITEM.FRAMEPOSX", &c_menu_item::frame_posx);
+				s.register_member("C_MENU_ITEM.FRAMEPOSY", &c_menu_item::frame_posy);
+			}
 
 			// Gothic 2 only
 			if (s.find_symbol_by_name("C_MENU_ITEM.HIDEIFOPTIONSECTIONSET") != nullptr) {
