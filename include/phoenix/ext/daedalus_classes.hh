@@ -1284,6 +1284,8 @@ namespace phoenix {
 		var float open_duration;
 		var float user_float[user_item_count];
 		var string user_string[user_item_count];
+		var int32_t frame_posx;
+		var int32_t frame_posy;
 		var int32_t frame_sizex;
 		var int32_t frame_sizey;
 		var string hide_if_option_section_set;
@@ -1312,6 +1314,8 @@ namespace phoenix {
 			s.register_member("C_MENU_ITEM.OPENDURATION", &c_menu_item::open_duration);
 			s.register_member("C_MENU_ITEM.USERFLOAT", &c_menu_item::user_float);
 			s.register_member("C_MENU_ITEM.USERSTRING", &c_menu_item::user_string);
+			s.register_member("C_MENU_ITEM.FRAMEPOSX", &c_menu_item::frame_posx);
+			s.register_member("C_MENU_ITEM.FRAMEPOSY", &c_menu_item::frame_posy);
 			s.register_member("C_MENU_ITEM.FRAMESIZEX", &c_menu_item::frame_sizex);
 			s.register_member("C_MENU_ITEM.FRAMESIZEY", &c_menu_item::frame_sizey);
 
