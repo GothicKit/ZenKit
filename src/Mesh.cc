@@ -41,12 +41,17 @@ namespace zenkit {
 	}
 
 	void Mesh::load(Read* r, std::vector<std::uint32_t> const& leaf_polygons, bool force_wide_indices) {
+		this->load(r, force_wide_indices);
+		this->triangulate(leaf_polygons);
+	}
+
+	void Mesh::load(Read* r, bool force_wide_indices) {
 		std::uint16_t version {};
 
 		proto::read_chunked<MeshChunkType>(
 		    r,
 		    "Mesh",
-		    [this, &version, &leaf_polygons, force_wide_indices](Read* c, MeshChunkType type) {
+		    [this, &version, force_wide_indices](Read* c, MeshChunkType type) {
 			    switch (type) {
 			    case MeshChunkType::MARKER:
 				    version = c->read_ushort();
@@ -90,21 +95,16 @@ namespace zenkit {
 				    break;
 			    case MeshChunkType::POLYGONS: {
 				    auto poly_count = c->read_uint();
-
-				    this->polygons.material_indices.reserve(poly_count);
-				    this->polygons.lightmap_indices.reserve(poly_count);
-				    this->polygons.feature_indices.reserve(poly_count * 3);
-				    this->polygons.vertex_indices.reserve(poly_count * 3);
-				    this->polygons.flags.reserve(poly_count);
+				    this->geometry.resize(poly_count);
 
 				    for (std::uint32_t i = 0; i < poly_count; ++i) {
-					    auto material_index = c->read_ushort();
-					    auto lightmap_index = c->read_short();
+					    this->geometry[i].material = c->read_ushort();
+					    this->geometry[i].lightmap = c->read_short();
 
 					    (void) c->read_float();
 					    (void) c->read_vec3();
 
-					    PolygonFlagSet pflags {};
+					    PolygonFlagSet& pflags = this->geometry[i].flags;
 					    if (version == MESH_VERSION_G2) {
 						    std::uint8_t flags = c->read_ubyte();
 						    pflags.is_portal = (flags & 0b00000011) >> 0;
@@ -132,62 +132,9 @@ namespace zenkit {
 					    auto vertex_count = c->read_ubyte();
 					    auto has_wide_indices = (version == MESH_VERSION_G2) || force_wide_indices;
 
-					    // TODO: For meshes built for Gothic II, the `is_lod` flag can be used to determine whether a
-					    //       polygon is a leaf-polygon or not. Gothic I does not have this luxury, so the leaf
-					    //       polygons have to be taken from the BSP tree.
-					    //
-					    //       This presents a problem: Taking the leaf polygons as a parameter makes creating a
-					    //       unified parsing function for world meshes impossible. Instead, there should be a
-					    //       function to remove this extra data which would grant the user more freedom in how they
-					    //       use _ZenKit_.
-					    if (!leaf_polygons.empty() &&
-					        !std::binary_search(leaf_polygons.begin(), leaf_polygons.end(), i)) {
-						    // If the current polygon is not a leaf polygon, skip it.
-						    c->seek((has_wide_indices ? 8 : 6) * vertex_count, Whence::CUR);
-						    continue;
-					    } else if (vertex_count == 0 || pflags.is_portal || pflags.is_ghost_occluder ||
-					               pflags.is_outdoor) {
-						    // There is no actual geometry associated with this vertex; ignore it.
-						    c->seek((has_wide_indices ? 8 : 6) * vertex_count, Whence::CUR);
-					    } else if (vertex_count == 3) {
-						    // If we have 3 vertices, we are sure that this is already a triangle,
-						    // so we can just read it in
-						    for (int32_t j = 0; j < vertex_count; ++j) {
-							    this->polygons.vertex_indices.push_back(has_wide_indices ? c->read_uint()
-							                                                             : c->read_ushort());
-							    this->polygons.feature_indices.push_back(c->read_uint());
-						    }
-
-						    this->polygons.material_indices.push_back(material_index);
-						    this->polygons.lightmap_indices.push_back(lightmap_index);
-						    this->polygons.flags.push_back(pflags);
-					    } else {
-						    // If we don't have 3 vertices, we need to calculate a triangle fan.
-
-						    auto vertex_index_root = has_wide_indices ? c->read_uint() : c->read_ushort();
-						    auto feature_index_root = c->read_uint();
-
-						    auto vertex_index_a = has_wide_indices ? c->read_uint() : c->read_ushort();
-						    auto feature_index_a = c->read_uint();
-
-						    for (int32_t j = 0; j < vertex_count - 2; ++j) {
-							    auto vertex_index_b = has_wide_indices ? c->read_uint() : c->read_ushort();
-							    auto feature_index_b = c->read_uint();
-
-							    this->polygons.vertex_indices.push_back(vertex_index_root);
-							    this->polygons.vertex_indices.push_back(vertex_index_a);
-							    this->polygons.vertex_indices.push_back(vertex_index_b);
-							    this->polygons.feature_indices.push_back(feature_index_root);
-							    this->polygons.feature_indices.push_back(feature_index_a);
-							    this->polygons.feature_indices.push_back(feature_index_b);
-
-							    this->polygons.material_indices.push_back(material_index);
-							    this->polygons.lightmap_indices.push_back(lightmap_index);
-							    this->polygons.flags.push_back(pflags);
-
-							    vertex_index_a = vertex_index_b;
-							    feature_index_a = feature_index_b;
-						    }
+					    for (int32_t j = 0; j < vertex_count; ++j) {
+						    this->geometry[i].vertices.push_back(has_wide_indices ? c->read_uint() : c->read_ushort());
+						    this->geometry[i].features.push_back(c->read_uint());
 					    }
 				    }
 
@@ -243,5 +190,42 @@ namespace zenkit {
 
 			    return false;
 		    });
+	}
+
+	void Mesh::triangulate(std::vector<std::uint32_t> const& leaf_polygons) {
+		this->polygons.material_indices.reserve(leaf_polygons.size());
+		this->polygons.lightmap_indices.reserve(leaf_polygons.size());
+		this->polygons.feature_indices.reserve(leaf_polygons.size() * 4);
+		this->polygons.vertex_indices.reserve(leaf_polygons.size() * 4);
+		this->polygons.flags.reserve(leaf_polygons.size());
+
+		for (auto i = 0u; i < this->geometry.size(); ++i) {
+			if (!std::binary_search(leaf_polygons.begin(), leaf_polygons.end(), i)) {
+				continue;
+			}
+
+			auto& polygon = this->geometry[i];
+			if (polygon.vertices.size() < 3 || polygon.flags.is_portal || polygon.flags.is_ghost_occluder ||
+			    polygon.flags.is_outdoor) {
+				continue;
+			}
+
+			auto root = 0u;
+			auto a = 1u;
+
+			// NOTE(lmichaelis): This unpacks triangle fans
+			for (auto b = 2u; b < polygon.vertices.size(); ++b) {
+				this->polygons.vertex_indices.push_back(polygon.vertices[root]);
+				this->polygons.vertex_indices.push_back(polygon.vertices[a]);
+				this->polygons.vertex_indices.push_back(polygon.vertices[b]);
+				this->polygons.feature_indices.push_back(polygon.features[root]);
+				this->polygons.feature_indices.push_back(polygon.features[a]);
+				this->polygons.feature_indices.push_back(polygon.features[b]);
+				this->polygons.material_indices.push_back(polygon.material);
+				this->polygons.lightmap_indices.push_back(polygon.lightmap);
+				this->polygons.flags.push_back(polygon.flags);
+				a = b;
+			}
+		}
 	}
 } // namespace zenkit

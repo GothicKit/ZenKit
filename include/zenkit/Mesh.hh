@@ -77,6 +77,15 @@ namespace zenkit {
 		std::vector<PolygonFlagSet> flags {};
 	};
 
+	struct Polygon {
+		uint32_t material;
+		int32_t lightmap;
+		PolygonFlagSet flags;
+
+		std::vector<uint32_t> vertices;
+		std::vector<uint32_t> features;
+	};
+
 	/// \brief Represents a *ZenGin* basic mesh.
 	///
 	/// <p>Found in files with the `MSH` extension and as the world meshes in world archives, these meshes contain a
@@ -120,7 +129,11 @@ namespace zenkit {
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Mesh
 		    parse(phoenix::buffer&& buf, std::vector<std::uint32_t> const& include_polygons = {});
 
+		ZKAPI void load(Read* r, bool force_wide_indices);
 		ZKAPI void load(Read* r, std::vector<std::uint32_t> const& leaf_polygons, bool force_wide_indices);
+
+	private:
+		ZKINT void triangulate(std::vector<std::uint32_t> const& leaf_polygons);
 
 	public:
 		/// \brief The creation date of this mesh.
@@ -146,6 +159,8 @@ namespace zenkit {
 
 		/// \brief All shared light-maps associated with this mesh
 		std::vector<LightMap> lightmaps {};
+
+		std::vector<Polygon> geometry {};
 
 		/// \brief A list of polygons of this mesh.
 		PolygonList polygons {};
