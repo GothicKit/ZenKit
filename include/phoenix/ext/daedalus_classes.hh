@@ -1221,6 +1221,7 @@ namespace phoenix {
 		needs_apply = 1 << 12,
 		needs_restart = 1 << 13,
 		extended_menu = 1 << 14,
+		hor_selectable = 1 << 15,
 	};
 	FLAG(c_menu_item_flags)
 
