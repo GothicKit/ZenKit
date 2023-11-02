@@ -66,14 +66,16 @@ namespace zenkit {
 	}
 
 	void Logger::log(LogLevel lvl, char const* name, char const* fmt, ...) {
-		if (!_s_callback) return;
-		if (lvl > _s_level) return;
-
 		va_list ap;
 		va_start(ap, fmt);
-		vsnprintf(zk_global_logger_buffer, sizeof zk_global_logger_buffer - 1, fmt, ap);
+		logv(lvl, name, fmt, ap);
 		va_end(ap);
+	}
 
+	void Logger::logv(LogLevel lvl, char const* name, char const* fmt, va_list ap) {
+		if (!_s_callback) return;
+		if (lvl > _s_level) return;
+		vsnprintf(zk_global_logger_buffer, sizeof zk_global_logger_buffer - 1, fmt, ap);
 		_s_callback(lvl, name, zk_global_logger_buffer);
 	}
 

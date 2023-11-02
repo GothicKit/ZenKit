@@ -3,6 +3,7 @@
 #pragma once
 #include "zenkit/Library.hh"
 
+#include <cstdarg>
 #include <cstdint>
 #include <functional>
 #include <string>
@@ -40,6 +41,7 @@ namespace zenkit {
 		ZKREM("renamed to ::set_default") ZKAPI static void use_default_logger();
 
 		ZK_PRINTF_LIKE(3, 4) ZKAPI static void log(LogLevel lvl, char const* name, char const* fmt, ...);
+		ZKAPI static void logv(LogLevel lvl, char const* name, char const* fmt, va_list ap);
 		ZKAPI static void set(LogLevel lvl, std::function<void(LogLevel, char const*, char const*)> const& cb);
 		ZKAPI static void set_default(LogLevel lvl);
 
