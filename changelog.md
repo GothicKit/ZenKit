@@ -1,10 +1,48 @@
 # Changelog
 
 This file contains all changes made to _ZenKit_ in reverse order, meaning the newest change is listed first. This
-file is updated whenever a new version of _ZenKit is released. More information about how versioning works can be
+file is updated whenever a new version of _ZenKit_ is released. More information about how versioning works can be
 found in [readme.md](readme.md#versioning).
 
 ---
+
+## v1.3.0
+
+Version 1.3 re-brands *"phoenix"* as *"ZenKit"* to avoid confusion with [PhoenixTales' Game](https://phoenixthegame.com/main)
+of the same name. Basically all APIs have gotten a new look with more appropriate names and a replacement for 
+`phoenix::buffer` has been introduced. The build system has also been changed and requires manual intervention when
+updating to the new version. A migration guide is available at https://zk.gothickit.dev/library/misc/v1.2-to-v1.3/.
+
+Here are the changes not related to the renamed API.
+
+### Breaking Changes
+* The `phoenix` CMake target has been renamed to `zenkit`
+* The following CMake variables have been renamed:
+  * `PHOENIX_BUILD_EXAMPLES` to `ZK_BUILD_EXAMPLES`
+  * `PHOENIX_BUILD_TESTS` to `ZK_BUILD_TESTS`
+  * `PHOENIX_BUILD_SHARED` to `ZK_BUILD_SHARED`
+  * `PHOENIX_INSTALL` to `ZK_ENABLE_INSTALL`
+  * `PHOENIX_DISABLE_SANIZIZERS` to `ZK_ENABLE_ASAN` (**Danger: The meaning of this variable has been reversed**)
+* `phoenix::vdf_file` has been fully removed. Migrate to `zenkit::Vfs`!
+* `phoenix::way_net::waypoint` has been removed
+* `phoenix::archive_reader::read_raw_bytes` has been removed in favour of `phoenix::archive_reader::read_raw_bytes(size_t)`
+* `phoenix::model_script::parse_binary` has been removed in favour of `phoenix::model_script::parse`
+* `phoenix::vobs::camera_lock_mode` has been removed in favour of `phoenix::vobs::sprite_alignment`
+* `phoenix::vob::camera_alignment` has been removed in favour of `phoenix::vob::sprite_camera_facing_mode`
+
+### Features
+* [cfec0051] XZEN-encoded worlds are now supported. Thanks, @ThielHater!
+* [13dbb6a7] The member array lengths of `vobs::npc` now have names thanks to a patch by @JucanAndreiDaniel
+* [bbf0505f,ad4a3540] @Try added support for the Nintendo Switch port of Gothic 1 by adding `c_menu_item_frame::frame_pos{x,y}` and `c_menu_item_flags::hor_selectable` in the Daedalus support library
+* There are two new interfaces for interacting with data which replace `phoenix::buffer`: `zenkit::Read` and `zenkit::Write`
+* [535ef541] The `phoenix::mesh` now comes with a new API for retrieving raw, un-triangulated polygons from the mesh data
+
+### Misc
+* [6e71a70c] `mio` has been dropped and replaced by a custom, simpler memory mapping implementation (`zenkit::Mmap`)
+
+### Deprecations
+* All APIs in the `phoenix` namespace. Migrate to their analogs in the `zenkit` namespace instead! Also see [the migration guide](https://zk.gothickit.dev/library/misc/v1.2-to-v1.3/.)
+
 
 ## v1.2.0
 
