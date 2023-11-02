@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(ZenKit VERSION 2.0.0)
+project(ZenKit VERSION 1.3.0)
 include(support/BuildSupport.cmake)
 
 set(CMAKE_CXX_STANDARD 17)

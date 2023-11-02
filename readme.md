@@ -8,8 +8,8 @@
 [![Platforms](https://img.shields.io/static/v1?label=Supports&message=GCC%20|%20Clang%20|%20MSVC%20|%20Apple%20Clang&color=blueviolet)]()
 [![Version](https://img.shields.io/github/v/tag/GothicKit/phoenix?label=Version&sort=semver)](https://github.com/GothicKit/phoenix/releases/latest)
 
-**_ZenKit_ has recently been updated to version 2.0! For information about how to migrate your projects, see the
-[documentation](https://zenkit.gothickit.dev/library/misc/v1-to-v2/).**
+**_ZenKit_ has recently been updated to version 1.3! For information about how to migrate your projects, see the
+[documentation](https://zk.gothickit.dev/library/misc/v1.2-to-v1.3/).**
 
 The _ZenKit_ project aims to re-implement file formats used by the _ZenGin_ made by [Piranha Bytes][] for their
 early-2000s games [Gothic][] and [Gothic II][]. It is heavily based on [ZenLib][] which is used as a reference
@@ -236,17 +236,6 @@ int main(int, char**) {
 ```
 
 For more examples on how to use _ZenKit_, take a look into the [examples][] directory and [phoenix studio][] repository.
-
-## Versioning
-
-_ZenKit_ uses [semantic versioning](https://semver.org/). Before updating _ZenKit_ in your application, make sure
-that you are aware of potential breaking changes to the API. A detailed log of changes can be found in
-[changelog.md](changelog.md) as well as the releases section of the GitHub repository page.
-
-The `main` branch is used for _ZenKit_ development and contains potentially breaking changes without any kind of
-warning. Each minor version of _ZenKit_ will get its own branch (e.g. `v1.0`). Within these branches API stability is
-guaranteed and patches will be merged into them as required. Patches will be backported to the last minor as well (i.e.
-if `v1.3.4` is a bugfix-release, its contents will be backported to `v1.2.*` but not `v1.1.*` or any previous version).
 
 ## Licensing
 

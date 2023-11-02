@@ -8,7 +8,7 @@ nav:
       - 'Getting Started': 'library/quickstart.md'
       - 'File Type Reference': 'library/reference.md'
       - 'Miscellaneous':
-          - 'Migration Guide (v1 ➞ v2)': 'library/misc/v1-to-v2.md'
+          - 'Migration Guide (v1.2 ➞ v1.3)': 'library/misc/v1.2-to-v1.3.md'
       - 'ZenKit Concepts':
           - 'Archive': 'library/api/archive.md'
           - 'Cutscene Library': 'library/api/cutscene-library.md'
