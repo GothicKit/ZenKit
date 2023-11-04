@@ -270,8 +270,8 @@ namespace zenkit {
 	void Vfs::mount_disk(phoenix::buffer buf, VfsOverwriteBehavior overwrite) {
 		auto mem = std::make_unique<std::byte[]>(buf.limit());
 		::memcpy(mem.get(), buf.array(), buf.limit());
-		_m_data.push_back(std::move(mem));
 		this->mount_disk(mem.get(), buf.limit(), overwrite);
+		_m_data.push_back(std::move(mem));
 	}
 
 	void Vfs::mount_disk(Read* buf, VfsOverwriteBehavior overwrite) {
@@ -282,8 +282,8 @@ namespace zenkit {
 		auto mem = std::make_unique<std::byte[]>(size);
 		buf->read(mem.get(), size);
 
-		_m_data.push_back(std::move(mem));
 		this->mount_disk(mem.get(), size, overwrite);
+		_m_data.push_back(std::move(mem));
 	}
 
 	VfsNode const& Vfs::root() const noexcept {
