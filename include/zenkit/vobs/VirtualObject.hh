@@ -168,6 +168,10 @@ namespace zenkit {
 	///
 	/// <p>Contains parameters all VObs have, like their position, bounding box and model.</p>
 	struct VirtualObject {
+		VirtualObject() = default;
+		VirtualObject(VirtualObject const&) = delete;
+		VirtualObject(VirtualObject&&) = default;
+
 		struct SaveState {
 			uint8_t sleep_mode;
 			float next_on_timer;
