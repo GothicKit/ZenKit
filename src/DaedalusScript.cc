@@ -433,8 +433,7 @@ namespace zenkit {
 		}
 	}
 
-	std::string const& DaedalusSymbol::get_string(std::uint16_t index,
-	                                              std::shared_ptr<DaedalusInstance> const& context) const {
+	std::string const& DaedalusSymbol::get_string(std::uint16_t index, DaedalusInstance const* context) const {
 		if (type() != DaedalusDataType::STRING) {
 			throw DaedalusIllegalTypeAccess(this, DaedalusDataType::STRING);
 		}
@@ -449,7 +448,7 @@ namespace zenkit {
 
 			if (context->symbol_index() == static_cast<uint32_t>(-1) &&
 			    context->_m_type == &typeid(DaedalusTransientInstance)) {
-				return reinterpret_cast<DaedalusTransientInstance&>(*context).get_string(*this, index);
+				return reinterpret_cast<DaedalusTransientInstance const&>(*context).get_string(*this, index);
 			}
 
 			return *get_member_ptr<std::string>(index, context);
@@ -458,7 +457,7 @@ namespace zenkit {
 		}
 	}
 
-	float DaedalusSymbol::get_float(std::uint16_t index, std::shared_ptr<DaedalusInstance> const& context) const {
+	float DaedalusSymbol::get_float(std::uint16_t index, DaedalusInstance const* context) const {
 		if (type() != DaedalusDataType::FLOAT) {
 			throw DaedalusIllegalTypeAccess(this, DaedalusDataType::FLOAT);
 		}
@@ -473,7 +472,7 @@ namespace zenkit {
 
 			if (context->symbol_index() == static_cast<uint32_t>(-1) &&
 			    context->_m_type == &typeid(DaedalusTransientInstance)) {
-				return reinterpret_cast<DaedalusTransientInstance&>(*context).get_float(*this, index);
+				return reinterpret_cast<DaedalusTransientInstance const&>(*context).get_float(*this, index);
 			}
 
 			return *get_member_ptr<float>(static_cast<uint8_t>(index), context);
@@ -482,7 +481,7 @@ namespace zenkit {
 		}
 	}
 
-	std::int32_t DaedalusSymbol::get_int(std::uint16_t index, std::shared_ptr<DaedalusInstance> const& context) const {
+	std::int32_t DaedalusSymbol::get_int(std::uint16_t index, DaedalusInstance const* context) const {
 		if (type() != DaedalusDataType::INT && type() != DaedalusDataType::FUNCTION) {
 			throw DaedalusIllegalTypeAccess(this, DaedalusDataType::INT);
 		}
@@ -497,7 +496,7 @@ namespace zenkit {
 
 			if (context->symbol_index() == static_cast<uint32_t>(-1) &&
 			    context->_m_type == &typeid(DaedalusTransientInstance)) {
-				return reinterpret_cast<DaedalusTransientInstance&>(*context).get_int(*this, index);
+				return reinterpret_cast<DaedalusTransientInstance const&>(*context).get_int(*this, index);
 			}
 
 			return *get_member_ptr<std::int32_t>(index, context);
@@ -506,9 +505,7 @@ namespace zenkit {
 		}
 	}
 
-	void DaedalusSymbol::set_string(std::string_view value,
-	                                std::uint16_t index,
-	                                std::shared_ptr<DaedalusInstance> const& context) {
+	void DaedalusSymbol::set_string(std::string_view value, std::uint16_t index, DaedalusInstance* context) {
 		if (type() != DaedalusDataType::STRING) {
 			throw DaedalusIllegalTypeAccess(this, DaedalusDataType::STRING);
 		}
@@ -533,7 +530,7 @@ namespace zenkit {
 		}
 	}
 
-	void DaedalusSymbol::set_float(float value, std::uint16_t index, std::shared_ptr<DaedalusInstance> const& context) {
+	void DaedalusSymbol::set_float(float value, std::uint16_t index, DaedalusInstance* context) {
 		if (type() != DaedalusDataType::FLOAT) {
 			throw DaedalusIllegalTypeAccess(this, DaedalusDataType::FLOAT);
 		}
@@ -558,8 +555,7 @@ namespace zenkit {
 		}
 	}
 
-	void
-	DaedalusSymbol::set_int(std::int32_t value, std::uint16_t index, std::shared_ptr<DaedalusInstance> const& context) {
+	void DaedalusSymbol::set_int(std::int32_t value, std::uint16_t index, DaedalusInstance* context) {
 		if (type() != DaedalusDataType::INT && type() != DaedalusDataType::FUNCTION) {
 			throw DaedalusIllegalTypeAccess(this, DaedalusDataType::INT);
 		}
