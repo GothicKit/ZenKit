@@ -202,7 +202,7 @@ namespace zenkit {
 		for (auto& sym : _m_symbols) {
 			if (sym.type() == DaedalusDataType::PROTOTYPE && sym.parent() == cls->index()) {
 				prototypes.push_back(sym.index());
-			} else if (sym.type() == DaedalusDataType::INSTANCE &&
+			} else if (sym.type() == DaedalusDataType::INSTANCE && sym.is_const() &&
 			           (std::find(prototypes.begin(), prototypes.end(), sym.parent()) != prototypes.end() ||
 			            sym.parent() == cls->index())) {
 				callback(sym);
