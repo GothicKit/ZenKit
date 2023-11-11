@@ -589,8 +589,8 @@ namespace zenkit {
 		_m_default_external = [this, callback](DaedalusVm& v, DaedalusSymbol& sym) {
 			// pop all parameters from the stack
 			auto params = find_parameters_for_function(&sym);
-			for (auto i = params.size() - 1; i >= 0; --i) {
-				auto par = params[i];
+			for (int i = static_cast<int>(params.size()) - 1; i >= 0; --i) {
+				auto par = params[static_cast<unsigned>(i)];
 
 				if (par->type() == DaedalusDataType::INT)
 					(void) v.pop_int();
