@@ -283,6 +283,10 @@ namespace zenkit {
 			return _m_symbol_index;
 		}
 
+		[[nodiscard]] std::type_info const* instance_type() const {
+			return _m_type;
+		}
+
 		/// \brief A pointer which may be used by the user of this API
 		void* user_ptr = nullptr;
 
