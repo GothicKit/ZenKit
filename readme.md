@@ -11,6 +11,9 @@
 **_ZenKit_ has recently been updated to version 1.3! For information about how to migrate your projects, see the
 [documentation](https://zk.gothickit.dev/library/misc/v1.2-to-v1.3/).**
 
+> [!IMPORTANT]
+> **NEW: C# and Java bindings for ZenKit are now available! See the [NuGet Package Gallery](https://www.nuget.org/packages/ZenKit) and [Maven Central](https://central.sonatype.com/artifact/dev.gothickit/zenkit).**
+
 The _ZenKit_ project aims to re-implement file formats used by the _ZenGin_ made by [Piranha Bytes][] for their
 early-2000s games [Gothic][] and [Gothic II][]. It is heavily based on [ZenLib][] which is used as a reference
 implementation for the different file formats used.
