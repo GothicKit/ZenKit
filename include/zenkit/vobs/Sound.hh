@@ -38,7 +38,7 @@ namespace zenkit {
 
 	namespace vobs {
 		/// \brief A VOb which emits a sound.
-		struct Sound : public VirtualObject {
+		struct Sound : VirtualObject {
 			float volume {0};
 			SoundMode mode {SoundMode::ONCE};
 			float random_delay {0};
@@ -67,7 +67,7 @@ namespace zenkit {
 		};
 
 		/// \brief A VOb which emits a sound only during certain times of the day.
-		struct SoundDaytime : public Sound {
+		struct SoundDaytime : Sound {
 			float start_time {0};
 			float end_time {0};
 			std::string sound_name2 {};

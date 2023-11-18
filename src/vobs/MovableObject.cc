@@ -55,19 +55,8 @@ namespace zenkit::vobs {
 			auto item_count = static_cast<size_t>(r.read_int()); // NumOfEntries
 			this->s_items.resize(item_count);
 
-			ArchiveObject itm;
 			for (auto i = 0u; i < item_count; ++i) {
-				if (!r.read_object_begin(itm) || itm.class_name != "oCItem:zCVob") {
-					throw zenkit::ParserError {"VOb.Container"};
-				}
-
-				this->s_items[i] = std::make_unique<Item>();
-				this->s_items[i]->load(r, version);
-
-				if (!r.read_object_end()) {
-					ZKLOGW("VOb.Container", "oCItem:zCVob object not fully parsed");
-					r.skip_object(true);
-				}
+				this->s_items[i] = r.read_object<Item>(version);
 			}
 		}
 	}
@@ -76,7 +65,7 @@ namespace zenkit::vobs {
 		obj.load(r, version);
 	}
 
-	void Door::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void Door::load(ReadArchive& r, GameVersion version) {
 		InteractiveObject::load(r, version);
 		this->locked = r.read_bool();        // locked
 		this->key = r.read_string();         // keyInstance
@@ -87,7 +76,7 @@ namespace zenkit::vobs {
 		obj.load(r, version);
 	}
 
-	void Fire::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void Fire::load(ReadArchive& r, GameVersion version) {
 		InteractiveObject::load(r, version);
 		this->slot = r.read_string();     // fireSlot
 		this->vob_tree = r.read_string(); // fireVobtreeName

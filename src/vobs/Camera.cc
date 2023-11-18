@@ -35,7 +35,7 @@ namespace zenkit::vobs {
 		obj.load(r, version);
 	}
 
-	void CutsceneCamera::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void CutsceneCamera::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->trajectory_for = static_cast<CameraTrajectory>(r.read_enum());        // camTrjFOR
 		this->target_trajectory_for = static_cast<CameraTrajectory>(r.read_enum()); // targetTrjFOR
@@ -54,20 +54,9 @@ namespace zenkit::vobs {
 		this->position_count = r.read_int();                                        // numPos
 		this->target_count = r.read_int();                                          // numTargets
 
-		ArchiveObject frame_obj {};
-		while (r.read_object_begin(frame_obj)) {
-			if (frame_obj.class_name != "zCCamTrj_KeyFrame:zCVob") {
-				ZKLOGW("VOb.CutsceneCamera", "Unexpected \"%s\" in \"zCCSCamera:zCVob\"", frame_obj.class_name.c_str());
-				r.skip_object(true);
-				continue;
-			}
-
-			this->frames.emplace_back(std::make_unique<CameraTrajectoryFrame>())->load(r, version);
-
-			if (!r.read_object_end()) {
-				ZKLOGW("VOb.CutsceneCamera", "\"zCCamTrj_KeyFrame\" not fully parsed");
-				r.skip_object(true);
-			}
+		for (auto i = 0; i < this->position_count + this->target_count; ++i) {
+			auto obj = r.read_object<CameraTrajectoryFrame>(version);
+			this->frames.push_back(obj);
 		}
 
 		if (r.is_save_game() && version == GameVersion::GOTHIC_2) {

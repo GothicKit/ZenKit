@@ -6,7 +6,7 @@
 #include "phoenix/vobs/vob.hh"
 
 namespace phoenix {
-	ZKAPI inline std::unique_ptr<zenkit::VirtualObject> parse_vob_tree(zenkit::ReadArchive& in,
+	ZKAPI inline std::shared_ptr<zenkit::VirtualObject> parse_vob_tree(zenkit::ReadArchive& in,
 	                                                                   zenkit::GameVersion version) {
 		return zenkit::parse_vob_tree(in, version);
 	}

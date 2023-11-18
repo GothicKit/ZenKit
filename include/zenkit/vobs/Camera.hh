@@ -69,7 +69,9 @@ namespace zenkit {
 
 	namespace vobs {
 		/// \brief A VOb which describes the trajectory of a camera during a cutscene.
-		struct CameraTrajectoryFrame : public VirtualObject {
+		struct CameraTrajectoryFrame : VirtualObject {
+			static constexpr ObjectType TYPE = ObjectType::zCCamTrj_KeyFrame;
+
 			float time;
 			float roll_angle;
 			float fov_scale;
@@ -93,11 +95,15 @@ namespace zenkit {
 			ZKREM("use ::load()")
 			ZKAPI static std::unique_ptr<CameraTrajectoryFrame> parse(ReadArchive& ctx, GameVersion version);
 
+			[[nodiscard]] ObjectType get_type() const override {
+				return TYPE;
+			}
+
 			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
 		/// \brief A VOb which defined the movement of the camera during a cutscene.
-		struct CutsceneCamera : public VirtualObject {
+		struct CutsceneCamera : VirtualObject {
 			CameraTrajectory trajectory_for;
 			CameraTrajectory target_trajectory_for;
 			CameraLoop loop_mode;
@@ -115,7 +121,7 @@ namespace zenkit {
 			std::int32_t position_count;
 			std::int32_t target_count;
 
-			std::vector<std::unique_ptr<CameraTrajectoryFrame>> frames;
+			std::vector<std::shared_ptr<CameraTrajectoryFrame>> frames;
 
 			// Save-game only variables
 			bool s_paused {false};

@@ -69,7 +69,7 @@ namespace zenkit {
 
 	namespace vobs {
 		/// \brief A basic trigger VOb which does something upon the player interacting with it.
-		struct Trigger : public VirtualObject {
+		struct Trigger : VirtualObject {
 			std::string target;
 			std::uint8_t flags;
 			std::uint8_t filter_flags;
@@ -97,7 +97,7 @@ namespace zenkit {
 		};
 
 		/// \brief A VOb which can move upon player interaction.
-		struct Mover : public Trigger {
+		struct Mover : Trigger {
 			MoverBehavior behavior {MoverBehavior::TOGGLE};
 			float touch_blocker_damage {0};
 			float stay_open_time_sec {0};
@@ -143,12 +143,12 @@ namespace zenkit {
 		};
 
 		/// \brief A VOb which can call multiple script function upon being triggered.
-		struct TriggerList : public Trigger {
+		struct TriggerList : Trigger {
 			struct Target {
 				std::string name {};
 				float delay {};
 
-				[[nodiscard]] inline bool operator==(Target const& tgt) const noexcept {
+				[[nodiscard]] bool operator==(Target const& tgt) const noexcept {
 					return this->name == tgt.name && this->delay == tgt.delay;
 				}
 			};
@@ -174,7 +174,7 @@ namespace zenkit {
 		};
 
 		/// \brief A VOb which calls a script function upon being triggered.
-		struct TriggerScript : public Trigger {
+		struct TriggerScript : Trigger {
 			std::string function {};
 
 			/// \brief Parses a script trigger VOb the given *ZenGin* archive.
@@ -189,7 +189,7 @@ namespace zenkit {
 		};
 
 		/// \brief A VOb which triggers a level change if the player moves close to it.
-		struct TriggerChangeLevel : public Trigger {
+		struct TriggerChangeLevel : Trigger {
 			std::string level_name {};
 			std::string start_vob {};
 
@@ -206,7 +206,7 @@ namespace zenkit {
 		};
 
 		/// \brief A VOb which triggers a world start event.
-		struct TriggerWorldStart : public VirtualObject {
+		struct TriggerWorldStart : VirtualObject {
 			std::string target;
 			bool fire_once;
 
@@ -224,7 +224,7 @@ namespace zenkit {
 			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
-		struct TriggerUntouch : public VirtualObject {
+		struct TriggerUntouch : VirtualObject {
 			std::string target;
 
 			/// \brief Parses an untouch trigger VOb the given *ZenGin* archive.

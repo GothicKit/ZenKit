@@ -58,7 +58,7 @@ namespace zenkit {
 
 	namespace vobs {
 		/// \brief An animated VOb.
-		struct Animate : public VirtualObject {
+		struct Animate : VirtualObject {
 			bool start_on {false};
 
 			// Save-game only variables
@@ -76,7 +76,9 @@ namespace zenkit {
 		};
 
 		/// \brief A VOb representing an in-game item.
-		struct Item : public VirtualObject {
+		struct Item : VirtualObject {
+			static constexpr ObjectType TYPE = ObjectType::oCItem;
+
 			std::string instance;
 
 			// Save-game only variables
@@ -95,7 +97,7 @@ namespace zenkit {
 		};
 
 		/// \brief A VOb representing a [lens flare](https://en.wikipedia.org/wiki/Lens_flare).
-		struct LensFlare : public VirtualObject {
+		struct LensFlare : VirtualObject {
 			std::string fx;
 
 			/// \brief Parses a lens flare VOb the given *ZenGin* archive.
@@ -110,7 +112,7 @@ namespace zenkit {
 		};
 
 		/// \brief A VOb representing a particle system controller.
-		struct ParticleEffectController : public VirtualObject {
+		struct ParticleEffectController : VirtualObject {
 			std::string pfx_name;
 			bool kill_when_done;
 			bool initially_running;
@@ -127,7 +129,7 @@ namespace zenkit {
 			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
-		struct MessageFilter : public VirtualObject {
+		struct MessageFilter : VirtualObject {
 			std::string target;
 			MessageFilterAction on_trigger;
 			MessageFilterAction on_untrigger;
@@ -143,7 +145,7 @@ namespace zenkit {
 			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
-		struct CodeMaster : public VirtualObject {
+		struct CodeMaster : VirtualObject {
 			std::string target;
 			bool ordered;
 			bool first_false_is_failure;
@@ -165,7 +167,7 @@ namespace zenkit {
 			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
-		struct MoverController : public VirtualObject {
+		struct MoverController : VirtualObject {
 			std::string target;
 			MoverMessageType message;
 			std::int32_t key;
@@ -182,7 +184,7 @@ namespace zenkit {
 		};
 
 		/// \brief A VOb which represents a damage source.
-		struct TouchDamage : public VirtualObject {
+		struct TouchDamage : VirtualObject {
 			float damage;
 
 			bool barrier;
@@ -210,7 +212,7 @@ namespace zenkit {
 		};
 
 		/// \brief A VOb which represents an earthquake-like effect.
-		struct Earthquake : public VirtualObject {
+		struct Earthquake : VirtualObject {
 			float radius;
 			float duration;
 			glm::vec3 amplitude;
@@ -226,18 +228,27 @@ namespace zenkit {
 			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
-		struct Npc : public VirtualObject {
-			static const std::uint32_t attribute_count = 8;
-			static const std::uint32_t hcs_count = 4;
-			static const std::uint32_t missions_count = 5;
-			static const std::uint32_t aivar_count = 100;
-			static const std::uint32_t packed_count = 9;
-			static const std::uint32_t protection_count = 8;
+		struct Npc : VirtualObject {
+			static constexpr ObjectType TYPE = ObjectType::oCNpc;
+			static std::uint32_t const attribute_count = 8;
+			static std::uint32_t const hcs_count = 4;
+			static std::uint32_t const missions_count = 5;
+			static std::uint32_t const aivar_count = 100;
+			static std::uint32_t const packed_count = 9;
+			static std::uint32_t const protection_count = 8;
 
-			struct Talent {
+			struct Talent : Object {
+				static constexpr ObjectType TYPE = ObjectType::oCNpcTalent;
+
 				int talent;
 				int value;
 				int skill;
+
+				[[nodiscard]] ObjectType get_type() const override {
+					return TYPE;
+				}
+
+				void load(ReadArchive& r, GameVersion version) override;
 			};
 
 			using talent ZKREM("renamed to Talent") = Talent;
@@ -245,7 +256,7 @@ namespace zenkit {
 			struct Slot {
 				bool used;
 				std::string name;
-				Item* item {};
+				std::shared_ptr<Item> item {};
 				bool in_inventory;
 			};
 
@@ -265,7 +276,7 @@ namespace zenkit {
 			int xp_next_level;
 			int lp;
 
-			std::vector<Talent> talents;
+			std::vector<std::shared_ptr<Talent>> talents;
 
 			int fight_tactic;
 			int fight_mode;
@@ -287,7 +298,7 @@ namespace zenkit {
 			bool move_lock;
 
 			std::string packed[packed_count];
-			std::vector<std::unique_ptr<Item>> items;
+			std::vector<std::shared_ptr<Item>> items;
 			std::vector<Slot> slots;
 
 			bool current_state_valid;
@@ -328,10 +339,14 @@ namespace zenkit {
 			/// \see vob::parse
 			ZKREM("use ::load()") ZKAPI static void parse(Npc& obj, ReadArchive& ctx, GameVersion version);
 
+			[[nodiscard]] ObjectType get_type() const override {
+				return TYPE;
+			}
+
 			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
-		struct ScreenEffect : public VirtualObject {
+		struct ScreenEffect : VirtualObject {
 			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 	} // namespace vobs

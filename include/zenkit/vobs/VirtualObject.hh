@@ -5,6 +5,7 @@
 #include "zenkit/Library.hh"
 #include "zenkit/Material.hh"
 #include "zenkit/Misc.hh"
+#include "zenkit/Object.hh"
 
 #include <glm/mat3x3.hpp>
 #include <glm/vec2.hpp>
@@ -16,59 +17,11 @@
 #include <string>
 #include <vector>
 
+namespace zenkit::vobs {
+	struct Npc;
+}
 namespace zenkit {
 	class ReadArchive;
-
-	/// \brief All possible VOb types.
-	/// \summary Mostly copied from [ZenLib](https://github.com/Try/ZenLib).
-	enum class VobType : std::uint8_t {
-		zCVob = 0,           ///< The base type for all VObs.
-		zCVobLevelCompo = 1, ///< A basic VOb used for grouping other VObs.
-		oCItem = 2,          ///< A VOb representing an item
-		oCNpc = 3,           ///< A VOb representing an NPC
-		zCMoverController = 4,
-		zCVobScreenFX = 5,
-		zCVobStair = 6,
-		zCPFXController = 7,
-		zCVobAnimate = 8,
-		zCVobLensFlare = 9,
-		zCVobLight = 10,
-		zCVobSpot = 11,
-		zCVobStartpoint = 12,
-		zCMessageFilter = 13,
-		zCCodeMaster = 14,
-		zCTriggerWorldStart = 15,
-		zCCSCamera = 16,
-		zCCamTrj_KeyFrame = 17,
-		oCTouchDamage = 18,
-		zCTriggerUntouch = 19,
-		zCEarthquake = 20,
-		oCMOB = 21,                ///< The base VOb type used for dynamic world objects.
-		oCMobInter = 22,           ///< The base VOb type used for interactive world objects.
-		oCMobBed = 23,             ///< A bed the player can sleep in.
-		oCMobFire = 24,            ///< A campfire the player can cook things on.
-		oCMobLadder = 25,          ///< A ladder the player can climb.
-		oCMobSwitch = 26,          ///< A switch or button the player can use.
-		oCMobWheel = 27,           ///< A grindstone the player can sharpen their weapon with.
-		oCMobContainer = 28,       ///< A container the player can open.
-		oCMobDoor = 29,            ///< A door the player can open.
-		zCTrigger = 30,            ///< The base VOb type used for all kinds of triggers.
-		zCTriggerList = 31,        ///< A collection of multiple triggers.
-		oCTriggerScript = 32,      ///< A trigger for calling a script function.
-		oCTriggerChangeLevel = 33, ///< A trigger for changing the game world.
-		oCCSTrigger = 34,          ///< A cutscene trigger.
-		zCMover = 35,
-		zCVobSound = 36,        ///< A VOb which emits a certain sound.
-		zCVobSoundDaytime = 37, ///< A VOb which emits a sound only during a specified time.
-		oCZoneMusic = 38,       ///< A VOb which plays music from the soundtrack.
-		oCZoneMusicDefault = 39,
-		zCZoneZFog = 40, ///< A VOb which indicates a foggy area.
-		zCZoneZFogDefault = 41,
-		zCZoneVobFarPlane = 42,
-		zCZoneVobFarPlaneDefault = 43,
-		ignored = 44,
-		unknown = 45,
-	};
 
 	/// \brief Ways a VOb can cast shadows.
 	enum class ShadowType : std::uint8_t {
@@ -127,7 +80,9 @@ namespace zenkit {
 	};
 
 	/// \brief Decal visual configuration for VObs.
-	struct Decal {
+	struct VisualDecal : Object {
+		static constexpr ObjectType TYPE = ObjectType::zCDecal;
+
 		std::string name {};
 		glm::vec2 dimension {};
 		glm::vec2 offset {};
@@ -142,9 +97,55 @@ namespace zenkit {
 		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
 		/// \return The parsed decal.
 		/// \throws ParserError if parsing fails.
-		ZKREM("use ::load()") ZKAPI static Decal parse(ReadArchive& ctx, GameVersion version);
+		ZKREM("use ::load()") ZKAPI static VisualDecal parse(ReadArchive& ctx, GameVersion version);
+
+		[[nodiscard]] ObjectType get_type() const override {
+			return TYPE;
+		}
 
 		ZKAPI void load(ReadArchive& r, GameVersion version);
+	};
+
+	struct VisualMesh : Object {
+		static constexpr ObjectType TYPE = ObjectType::zCMesh;
+		[[nodiscard]] ObjectType get_type() const override {
+			return TYPE;
+		}
+	};
+
+	struct VisualMultiResolutionMesh : Object {
+		static constexpr ObjectType TYPE = ObjectType::zCProgMeshProto;
+		[[nodiscard]] ObjectType get_type() const override {
+			return TYPE;
+		}
+	};
+
+	struct VisualParticleEffect : Object {
+		static constexpr ObjectType TYPE = ObjectType::zCParticleFX;
+		[[nodiscard]] ObjectType get_type() const override {
+			return TYPE;
+		}
+	};
+
+	struct VisualCamera : Object {
+		static constexpr ObjectType TYPE = ObjectType::zCAICamera;
+		[[nodiscard]] ObjectType get_type() const override {
+			return TYPE;
+		}
+	};
+
+	struct VisualModel : Object {
+		static constexpr ObjectType TYPE = ObjectType::zCModel;
+		[[nodiscard]] ObjectType get_type() const override {
+			return TYPE;
+		}
+	};
+
+	struct VisualMorphMesh : Object {
+		static constexpr ObjectType TYPE = ObjectType::zCMorphMesh;
+		[[nodiscard]] ObjectType get_type() const override {
+			return TYPE;
+		}
 	};
 
 	struct RigidBody {
@@ -157,17 +158,64 @@ namespace zenkit {
 		ZKAPI void load(ReadArchive& r, GameVersion version);
 	};
 
-	struct EventManager {
+	struct EventManager : Object {
+		static constexpr ObjectType TYPE = ObjectType::ignored;
+
 		bool cleared;
 		bool active;
 
+		[[nodiscard]] ObjectType get_type() const override {
+			return TYPE;
+		}
+
 		ZKAPI void load(ReadArchive& r, GameVersion version);
+	};
+
+	struct AiHuman : Object {
+		static constexpr ObjectType TYPE = ObjectType::zCModel;
+
+		int water_level;
+		float floor_y;
+		float water_y;
+		float ceil_y;
+		float feet_y;
+		float head_y;
+		float fall_dist_y;
+		float fall_start_y;
+		std::shared_ptr<vobs::Npc> npc;
+		int walk_mode;
+		int weapon_mode;
+		int wmode_ast;
+		int wmode_select;
+		bool change_weapon;
+		int action_mode;
+
+		[[nodiscard]] ObjectType get_type() const override {
+			return TYPE;
+		}
+
+		void load(ReadArchive& r, GameVersion version) override;
+	};
+
+	struct VirtualObject;
+
+	struct AiMove : Object {
+		static constexpr ObjectType TYPE = ObjectType::zCModel;
+
+		std::shared_ptr<VirtualObject> vob;
+		std::shared_ptr<vobs::Npc> owner;
+
+		[[nodiscard]] ObjectType get_type() const override {
+			return TYPE;
+		}
+
+		void load(ReadArchive& r, GameVersion version) override;
 	};
 
 	/// \brief The base class for all VObs.
 	///
 	/// <p>Contains parameters all VObs have, like their position, bounding box and model.</p>
-	struct VirtualObject {
+	struct VirtualObject : Object {
 		VirtualObject() = default;
 		VirtualObject(VirtualObject const&) = delete;
 		VirtualObject(VirtualObject&&) = default;
@@ -180,8 +228,8 @@ namespace zenkit {
 
 		using save_state ZKREM("renamed to SaveState") = SaveState;
 
-		VobType type; ///< The type of this VOb.
-		uint32_t id;  ///< The index of this VOb in the archive it was read from.
+		ObjectType type; ///< The type of this VOb.
+		uint32_t id;     ///< The index of this VOb in the archive it was read from.
 
 		AxisAlignedBoundingBox bbox {};
 		glm::vec3 position {};
@@ -203,20 +251,24 @@ namespace zenkit {
 		std::string vob_name {};
 		std::string visual_name {};
 
-		VisualType associated_visual_type {};
-		std::optional<Decal> visual_decal {};
+		ZKREM("use ::visual.get_type() instead") VisualType associated_visual_type {};
+		ZKREM("use ::visual instead") std::optional<VisualDecal> visual_decal {};
+		std::shared_ptr<Object> visual = nullptr;
+
+		// One of: AiHuman (oCAIHuman), AiMove (oCAIVobMove)
+		std::shared_ptr<Object> ai = nullptr;
 
 		/// \brief Contains extra data about the item in the context of a saved game.
 		std::optional<SaveState> saved {};
 
 		/// \brief The children of this VOb.
-		std::vector<std::unique_ptr<VirtualObject>> children {};
+		std::vector<std::shared_ptr<VirtualObject>> children {};
 
 		/// \brief Default virtual destructor.
-		virtual ~VirtualObject() = default;
+		~VirtualObject() override = default;
 
 		/// \return `true` if this VOb is from a save-game and `false` if not.
-		[[nodiscard]] ZKAPI inline bool is_save_game() const noexcept {
+		[[nodiscard]] ZKAPI bool is_save_game() const noexcept {
 			return saved.has_value();
 		}
 
@@ -231,6 +283,11 @@ namespace zenkit {
 		/// \throws ParserError if parsing fails.
 		ZKREM("use ::load()") ZKAPI static void parse(VirtualObject& obj, ReadArchive& ctx, GameVersion version);
 
-		ZKAPI virtual void load(ReadArchive& r, GameVersion version);
+		// TODO(lmichaelis): Return a constant value from this!
+		[[nodiscard]] ObjectType get_type() const override {
+			return this->type;
+		}
+
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
 	};
 } // namespace zenkit

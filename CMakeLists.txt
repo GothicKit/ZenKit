@@ -61,6 +61,7 @@ list(APPEND _ZK_SOURCES
         src/ModelScriptDsl.cc
         src/MorphMesh.cc
         src/MultiResolutionMesh.cc
+        src/Object.cc
         src/SaveGame.cc
         src/SoftSkinMesh.cc
         src/Stream.cc

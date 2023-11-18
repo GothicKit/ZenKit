@@ -80,7 +80,7 @@ namespace zenkit {
 		};
 
 		/// \brief A VOb which acts as a light source.
-		struct Light : public VirtualObject, public LightPreset {
+		struct Light : VirtualObject, LightPreset {
 			/// \brief Parses a light VOb the given *ZenGin* archive.
 			/// \param[out] obj The object to read.
 			/// \param[in,out] ctx The archive reader to read from.

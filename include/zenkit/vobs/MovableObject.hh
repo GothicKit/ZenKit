@@ -31,7 +31,7 @@ namespace zenkit {
 	};
 
 	namespace vobs {
-		struct MovableObject : public VirtualObject {
+		struct MovableObject : VirtualObject {
 			std::string name;
 			std::int32_t hp;
 			std::int32_t damage;
@@ -55,7 +55,7 @@ namespace zenkit {
 			ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		};
 
-		struct InteractiveObject : public MovableObject {
+		struct InteractiveObject : MovableObject {
 			std::int32_t state;
 			std::string target;
 			std::string item;
@@ -76,7 +76,7 @@ namespace zenkit {
 		};
 
 		/// \brief A VOb representing a campfire.
-		struct Fire : public InteractiveObject {
+		struct Fire : InteractiveObject {
 			std::string slot;
 			std::string vob_tree;
 
@@ -92,14 +92,14 @@ namespace zenkit {
 		};
 
 		/// \brief A VOb representing a container.
-		struct Container : public InteractiveObject {
+		struct Container : InteractiveObject {
 			bool locked;
 			std::string key;
 			std::string pick_string;
 			std::string contents;
 
 			// Save-game only variables
-			std::vector<std::unique_ptr<Item>> s_items;
+			std::vector<std::shared_ptr<Item>> s_items;
 
 			/// \brief Parses a container VOb the given *ZenGin* archive.
 			/// \param[out] obj The object to read.

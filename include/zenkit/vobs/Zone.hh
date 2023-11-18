@@ -14,7 +14,7 @@ namespace zenkit {
 
 	namespace vobs {
 		/// \brief A VOb which defines the background music in a certain zone.
-		struct ZoneMusic : public VirtualObject {
+		struct ZoneMusic : VirtualObject {
 			bool enabled {false};
 			std::int32_t priority {0};
 			bool ellipsoid {false};
@@ -38,7 +38,7 @@ namespace zenkit {
 		};
 
 		/// \brief A VOb which defines the far plane settings in a certain zone.
-		struct ZoneFarPlane : public VirtualObject {
+		struct ZoneFarPlane : VirtualObject {
 			float vob_far_plane_z;
 			float inner_range_percentage;
 
@@ -53,7 +53,7 @@ namespace zenkit {
 		};
 
 		/// \brief A VOb which defines the fog in a certain zone.
-		struct ZoneFog : public VirtualObject {
+		struct ZoneFog : VirtualObject {
 			float range_center {0};
 			float inner_range_percentage {0};
 			glm::u8vec4 color {};

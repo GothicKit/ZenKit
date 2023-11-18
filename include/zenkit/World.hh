@@ -17,6 +17,54 @@ namespace phoenix {
 }
 
 namespace zenkit {
+	namespace vobs {
+		struct Npc;
+	}
+
+	struct CutscenePlayer : Object {
+		static constexpr ObjectType TYPE = ObjectType::oCCSPlayer;
+
+		int32_t last_process_day;
+		int32_t last_process_hour;
+		int32_t play_list_count;
+
+		[[nodiscard]] ObjectType get_type() const override {
+			return TYPE;
+		}
+
+		void load(ReadArchive& r, GameVersion version) override;
+	};
+
+	struct SkyController : Object {
+		static constexpr ObjectType TYPE = ObjectType::zCSkyControler_Outdoor;
+
+		float master_time;
+		float rain_weight;
+		float rain_start;
+		float rain_stop;
+		float rain_sct_timer;
+		float rain_snd_vol;
+		float day_ctr;
+
+		// Only relevant for G1:
+		float fade_scale;
+		bool render_lightning;
+		bool is_raining;
+		int rain_ctr;
+
+		[[nodiscard]] ObjectType get_type() const override {
+			return TYPE;
+		}
+
+		void load(ReadArchive& r, GameVersion version) override;
+	};
+
+	struct SpawnLocation {
+		std::shared_ptr<vobs::Npc> npc;
+		glm::vec3 position;
+		float timer;
+	};
+
 	/// \brief Represents a ZenGin world.
 	class World {
 	public:
@@ -76,7 +124,7 @@ namespace zenkit {
 
 	public:
 		/// \brief The list of VObs defined in this world.
-		std::vector<std::unique_ptr<VirtualObject>> world_vobs;
+		std::vector<std::shared_ptr<VirtualObject>> world_vobs;
 
 		/// \brief The mesh of the world.
 		Mesh world_mesh;
@@ -86,5 +134,17 @@ namespace zenkit {
 
 		/// \brief The way-net of this world.
 		WayNet world_way_net;
+
+		// \note Only available in save-games, otherwise empty.
+		std::vector<std::shared_ptr<vobs::Npc>> npcs {};
+		std::vector<SpawnLocation> npc_spawns {};
+		bool npc_spawn_enabled = false;
+		int npc_spawn_flags = 0;
+
+		// \note Only available in save-games, otherwise null.
+		std::shared_ptr<CutscenePlayer> player;
+
+		// \note Only available in save-games, otherwise null.
+		std::shared_ptr<SkyController> sky_controller;
 	};
 } // namespace zenkit

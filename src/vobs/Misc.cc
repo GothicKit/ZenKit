@@ -135,18 +135,24 @@ namespace zenkit::vobs {
 		obj.load(r, version);
 	}
 
-	void Earthquake::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void Earthquake::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->radius = r.read_float();   // radius
 		this->duration = r.read_float(); // timeSec
 		this->amplitude = r.read_vec3(); // amplitudeCM
 	}
 
-	void Npc::parse(vobs::Npc& obj, ReadArchive& r, GameVersion version) {
+	void Npc::Talent::load(ReadArchive& r, GameVersion version) {
+		this->talent = r.read_int(); // talent
+		this->value = r.read_int();  // value
+		this->skill = r.read_int();  // skill
+	}
+
+	void Npc::parse(Npc& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void Npc::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void Npc::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 
 		this->npc_instance = r.read_string(); // npcInstance
@@ -171,23 +177,7 @@ namespace zenkit::vobs {
 
 		ArchiveObject hdr;
 		for (auto i = 0u; i < talent_count; ++i) {
-			if (!r.read_object_begin(hdr)) // [% oCNpcTalent 0 0]
-				throw zenkit::ParserError {"vobs::Npc"};
-
-			// empty object
-			if (hdr.class_name == "%") {
-				r.skip_object(true);
-				continue;
-			}
-
-			this->talents[i].talent = r.read_int(); // talent
-			this->talents[i].value = r.read_int();  // value
-			this->talents[i].skill = r.read_int();  // skill
-
-			if (!r.read_object_end()) {
-				ZKLOGW("VOb.Npc", "oCNpcTalent object not fully parsed");
-				r.skip_object(true);
-			}
+			this->talents[i] = r.read_object<Talent>(version);
 		}
 
 		this->fight_tactic = r.read_int(); // fightTactic
@@ -234,7 +224,7 @@ namespace zenkit::vobs {
 			ZKLOGE("VOb.Npc",
 			       "!!! IMPORTANT !!! This save-game contains news entries and cannot be loaded currently. Please "
 			       "open an issue at https://github.com/GothicKit/phoenix providing your save-game as a ZIP file.");
-			throw zenkit::ParserError {"vobs::Npc"};
+			throw ParserError {"vobs::Npc"};
 		}
 
 		r.skip_object(false); // [carryVob % 0 0]
@@ -262,16 +252,7 @@ namespace zenkit::vobs {
 		this->items.resize(item_count);
 
 		for (auto i = 0u; i < item_count; ++i) {
-			if (!r.read_object_begin(hdr)) throw zenkit::ParserError {"vobs::Npc"};
-
-			this->items[i] = std::make_unique<Item>();
-			this->items[i]->load(r, version);
-			this->items[i]->id = hdr.index;
-
-			if (!r.read_object_end()) {
-				ZKLOGW("VOb.Npc", "oCItem:zCVob object not fully parsed");
-				r.skip_object(true);
-			}
+			this->items[i] = r.read_object<Item>(version);
 
 			if ((this->items[i]->s_flags & 0x200) != 0) {
 				(void) r.read_int(); // shortKey<n> // TODO
@@ -285,36 +266,7 @@ namespace zenkit::vobs {
 			this->slots[i].name = r.read_string(); // name
 
 			if (this->slots[i].used) {
-				// [vob § 0 0]
-				if (!r.read_object_begin(hdr)) {
-					throw zenkit::ParserError {"VOb.Npc"};
-				}
-
-				if (hdr.class_name == "\xA7") {
-					// This item is a reference.
-					// TODO: Warn if not found.
-					for (auto const& item : this->items) {
-						if (item->id == hdr.index) {
-							this->slots[i].item = item.get();
-							break;
-						}
-					}
-				} else {
-					// This item is embedded.
-					this->items.push_back(std::make_unique<Item>());
-
-					auto& item = this->items.back();
-					item->load(r, version);
-					item->id = hdr.index;
-
-					this->slots[i].item = item.get();
-				}
-
-				if (!r.read_object_end()) {
-					ZKLOGW("VOb.Npc", "Inventory slot not fully parsed.");
-					r.skip_object(true);
-				}
-
+				this->slots[i].item = r.read_object<Item>(version);
 				this->slots[i].in_inventory = r.read_bool(); // inInv
 			}
 		}

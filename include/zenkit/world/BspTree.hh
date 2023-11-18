@@ -8,7 +8,6 @@
 #include <glm/vec4.hpp>
 
 #include <string>
-#include <unordered_set>
 #include <vector>
 
 namespace zenkit {

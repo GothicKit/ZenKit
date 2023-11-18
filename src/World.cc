@@ -77,14 +77,14 @@ namespace zenkit {
 		this->load(r, version);
 	}
 
-	void World::load(zenkit::Read* r, zenkit::GameVersion version) {
+	void World::load(Read* r, GameVersion version) {
 		auto archive = ReadArchive::from(r);
 
 		ArchiveObject chnk {};
 		archive->read_object_begin(chnk);
 
 		if (chnk.class_name != "oCWorld:zCWorld") {
-			throw zenkit::ParserError {"World", "'oCWorld:zCWorld' chunk expected, got '" + chnk.class_name + "'"};
+			throw ParserError {"World", "'oCWorld:zCWorld' chunk expected, got '" + chnk.class_name + "'"};
 		}
 
 		while (!archive->read_object_end()) {
@@ -132,101 +132,11 @@ namespace zenkit {
 			} else if (chnk.object_name == "WayNet") {
 				this->world_way_net.load(*archive);
 			} else if (chnk.object_name == "CutscenePlayer") {
-				// TODO: only present in save-games
-
-				if (!archive->read_object_begin(chnk)) {
-					ZKLOGW("World",
-					       "Object [%s %s %u %u] encountered but unable to parse",
-					       chnk.object_name.c_str(),
-					       chnk.class_name.c_str(),
-					       chnk.version,
-					       chnk.index);
-					archive->skip_object(true);
-					continue;
-				}
-
-				(void) archive->read_int(); // lastProcessDay
-				(void) archive->read_int(); // lastProcessHour
-				(void) archive->read_int(); // playListCount
-
-				archive->read_object_end();
+				this->player = archive->read_object<CutscenePlayer>(version);
 			} else if (chnk.object_name == "SkyCtrl") {
-				// TODO: only present in save-games
-
-				if (!archive->read_object_begin(chnk)) {
-					ZKLOGW("World",
-					       "Object [%s %s %u %u] encountered but unable to parse",
-					       chnk.object_name.c_str(),
-					       chnk.class_name.c_str(),
-					       chnk.version,
-					       chnk.index);
-					archive->skip_object(true);
-					continue;
-				}
-
-				(void) archive->read_float(); // masterTime
-				(void) archive->read_float(); // rainWeight
-				(void) archive->read_float(); // rainStart
-				(void) archive->read_float(); // rainStop
-				(void) archive->read_float(); // rainSctTimer
-				(void) archive->read_float(); // rainSndVol
-				(void) archive->read_float(); // dayCtr
-
-				if (version == GameVersion::GOTHIC_2) {
-					(void) archive->read_float(); // fadeScale
-					(void) archive->read_bool();  // renderLightning
-					(void) archive->read_bool();  // isRaining
-					(void) archive->read_int();   // rainCtr
-				}
-
+				this->sky_controller = archive->read_object<SkyController>(version);
+			} else if (chnk.object_name == "EndMarker") {
 				archive->read_object_end();
-			} else if (chnk.object_name == "EndMarker" && archive->get_header().save) {
-				// TODO: save games contain a list of NPCs after the end marker
-				// First, Consume the end-maker fully
-				archive->read_object_end();
-
-				// Then, read all the NPCs
-				auto npc_count = archive->read_int(); // npcCount
-				for (auto i = 0; i < npc_count; ++i) {
-					archive->read_object_begin(chnk);
-
-					if (chnk.class_name != "\xA7") {
-						vobs::Npc npc {};
-						npc.load(*archive, version);
-					} else {
-						ZKLOGE("World",
-						       "Cannot load NPC reference [%s %s %d %d]",
-						       chnk.object_name.c_str(),
-						       chnk.class_name.c_str(),
-						       chnk.version,
-						       chnk.index);
-					}
-
-					if (!archive->read_object_end()) {
-						archive->skip_object(true);
-					}
-				}
-
-				// After that, read all NPC spawn locations
-				auto npc_spawn_count = archive->read_int(); // NoOfEntries
-				for (auto i = 0; i < npc_spawn_count; ++i) {
-					archive->skip_object(false);  // npc zReference
-					(void) archive->read_vec3();  // spawnPos
-					(void) archive->read_float(); // timer
-				}
-
-				(void) archive->read_bool(); // spawningEnabled
-
-				if (version == GameVersion::GOTHIC_2) {
-					(void) archive->read_int(); // spawnFlags
-				}
-
-				if (!archive->read_object_end()) {
-					ZKLOGW("World", "Npc-list not fully parsed");
-					archive->skip_object(true);
-				}
-
-				// We have fully consumed the world block. From here we should just die.
 				break;
 			}
 
@@ -239,6 +149,61 @@ namespace zenkit {
 				       chnk.index);
 				archive->skip_object(true);
 			}
+		}
+
+		// TODO: save games contain a list of NPCs after the end marker
+		if (archive->get_header().save) {
+			// Then, read all the NPCs
+			auto npc_count = archive->read_int(); // npcCount
+			this->npcs.resize(npc_count);
+			for (auto i = 0; i < npc_count; ++i) {
+				this->npcs[i] = archive->read_object<vobs::Npc>(version);
+			}
+
+			// After that, read all NPC spawn locations
+			auto npc_spawn_count = archive->read_int(); // NoOfEntries
+			this->npc_spawns.resize(npc_spawn_count);
+
+			for (auto& spawn : this->npc_spawns) {
+				spawn.npc = archive->read_object<vobs::Npc>(version); // npc
+				spawn.position = archive->read_vec3();                // spawnPos
+				spawn.timer = archive->read_float();                  // timer
+			}
+
+			this->npc_spawn_enabled = archive->read_bool(); // spawningEnabled
+
+			if (version == GameVersion::GOTHIC_2) {
+				this->npc_spawn_flags = archive->read_int(); // spawnFlags
+			}
+		}
+
+		if (!archive->read_object_end()) {
+			ZKLOGW("World", "Not fully parsed");
+			archive->skip_object(true);
+		}
+	}
+
+	void CutscenePlayer::load(ReadArchive& r, GameVersion) {
+		this->last_process_day = r.read_int();  // lastProcessDay
+		this->last_process_hour = r.read_int(); // lastProcessHour
+		this->play_list_count = r.read_int();   // playListCount
+	}
+
+	void SkyController::load(ReadArchive& r, GameVersion version) {
+		// TODO
+		master_time = r.read_float();    // masterTime
+		rain_weight = r.read_float();    // rainWeight
+		rain_start = r.read_float();     // rainStart
+		rain_stop = r.read_float();      // rainStop
+		rain_sct_timer = r.read_float(); // rainSctTimer
+		rain_snd_vol = r.read_float();   // rainSndVol
+		day_ctr = r.read_float();        // dayCtr
+
+		if (version == GameVersion::GOTHIC_2) {
+			fade_scale = r.read_float();      // fadeScale
+			render_lightning = r.read_bool(); // renderLightning
+			is_raining = r.read_bool();       // isRaining
+			rain_ctr = r.read_int();          // rainCtr
 		}
 	}
 } // namespace zenkit

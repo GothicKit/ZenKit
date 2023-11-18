@@ -2,32 +2,29 @@
 // SPDX-License-Identifier: MIT
 #include "zenkit/vobs/VirtualObject.hh"
 #include "zenkit/Archive.hh"
-
-#include "../Internal.hh"
+#include "zenkit/vobs/Misc.hh"
 
 #include <unordered_map>
 
 namespace zenkit {
 	/// \brief A mapping of archive class names to visual_type values.
-	static std::unordered_map<std::string, VisualType> visual_type_map = {
-	    {"zCDecal", VisualType::DECAL},
-	    {"zCMesh", VisualType::MESH},
-	    {"zCProgMeshProto", VisualType::MULTI_RESOLUTION_MESH},
-	    {"zCParticleFX", VisualType::PARTICLE_EFFECT},
-	    {"zCModel", VisualType::MODEL},
-	    {"zCAICamera", VisualType::AI_CAMERA},
-	    {"zCMorphMesh", VisualType::MORPH_MESH},
-	    {"\xA7", VisualType::UNKNOWN},
-	    {"%", VisualType::UNKNOWN},
+	static std::unordered_map<ObjectType, VisualType> visual_type_map = {
+	    {ObjectType::zCDecal, VisualType::DECAL},
+	    {ObjectType::zCMesh, VisualType::MESH},
+	    {ObjectType::zCProgMeshProto, VisualType::MULTI_RESOLUTION_MESH},
+	    {ObjectType::zCParticleFX, VisualType::PARTICLE_EFFECT},
+	    {ObjectType::zCModel, VisualType::MODEL},
+	    {ObjectType::zCAICamera, VisualType::AI_CAMERA},
+	    {ObjectType::zCMorphMesh, VisualType::MORPH_MESH},
 	};
 
-	Decal Decal::parse(ReadArchive& in, GameVersion version) {
-		Decal dc {};
+	VisualDecal VisualDecal::parse(ReadArchive& in, GameVersion version) {
+		VisualDecal dc {};
 		dc.load(in, version);
 		return dc;
 	}
 
-	void Decal::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void VisualDecal::load(ReadArchive& r, GameVersion version) {
 		this->name = r.read_string();                                 // name
 		this->dimension = r.read_vec2();                              // decalDim
 		this->offset = r.read_vec2();                                 // decalOffset
@@ -45,7 +42,7 @@ namespace zenkit {
 		obj.load(in, version);
 	}
 
-	void VirtualObject::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void VirtualObject::load(ReadArchive& r, GameVersion version) {
 		auto packed = r.read_int() != 0; // pack
 		bool has_visual_object = true;
 		bool has_ai_object = true;
@@ -136,75 +133,29 @@ namespace zenkit {
 			}
 		}
 
-		ArchiveObject hdr {};
 		if (has_visual_object) {
-			ArchiveObject visual {};
-			r.read_object_begin(visual);
-			this->associated_visual_type = visual_type_map[visual.class_name];
+			this->visual = r.read_object(version);
 
-			if (this->associated_visual_type == VisualType::DECAL) {
-				this->visual_decal = Decal {};
-				this->visual_decal->load(r, version);
-			}
-
-			if (!r.read_object_end()) {
-				ZKLOGW("VirtualObject", "visual \"%s\" not fully parsed", visual.class_name.c_str());
-				r.skip_object(true);
-			}
-		}
-
-		// TODO
-		if (has_ai_object && r.read_object_begin(hdr)) {
-			if (hdr.class_name == "oCAIHuman:oCAniCtrl_Human:zCAIPlayer") {
-				(void) r.read_int();   // waterLevel
-				(void) r.read_float(); // floorY
-				(void) r.read_float(); // waterY
-				(void) r.read_float(); // ceilY
-				(void) r.read_float(); // feetY
-				(void) r.read_float(); // headY
-				(void) r.read_float(); // fallDistY
-				(void) r.read_float(); // fallStartY
-
-				// TODO: aiNpc
-				if (r.read_object_begin(hdr)) {
-					r.skip_object(true);
+			if (visual != nullptr) {
+				auto it = visual_type_map.find(visual->get_type());
+				if (it == visual_type_map.end()) {
+					this->associated_visual_type = VisualType::UNKNOWN;
 				} else {
-					ZKLOGW("VirtualObject.Ai", "aiNpc not found");
+					this->associated_visual_type = it->second;
 				}
 
-				(void) r.read_int();  // walkMode
-				(void) r.read_int();  // weaponMode
-				(void) r.read_int();  // wmodeLast
-				(void) r.read_int();  // wmodeSelect
-				(void) r.read_bool(); // changeWeapon
-				(void) r.read_int();  // actionMode
-			} else if (hdr.class_name == "oCAIVobMove") {
-				// TODO: vob
-				if (r.read_object_begin(hdr)) {
-					r.skip_object(true);
+				if (this->visual->get_type() == ObjectType::zCDecal) {
+					this->visual_decal.emplace(*std::reinterpret_pointer_cast<VisualDecal>(this->visual));
 				}
-
-				// TODO: owner
-				if (r.read_object_begin(hdr)) {
-					r.skip_object(true);
-				}
-			}
-
-			if (!r.read_object_end()) {
-				ZKLOGW("VirtualObject.Ai", "\"%s\" not fully parsed.", hdr.class_name.c_str());
-				r.skip_object(true);
 			}
 		}
 
-		if (has_event_manager_object && r.read_object_begin(hdr)) {
-			if (hdr.class_name != "zCEventManager") {
-				throw ParserError {"VirtualObject"};
-			}
+		if (has_ai_object) {
+			this->ai = r.read_object(version);
+		}
 
-			EventManager em {};
-			em.load(r, version);
-
-			r.read_object_end();
+		if (has_event_manager_object) {
+			(void) /* em = */ r.read_object<EventManager>(version);
 		}
 
 		if (r.get_header().save) {
@@ -228,16 +179,35 @@ namespace zenkit {
 		this->slide_direction = r.read_vec3();
 	}
 
-	void EventManager::load(ReadArchive& r, GameVersion) {
+	void EventManager::load(ReadArchive& r, GameVersion version) {
 		this->cleared = r.read_bool();
 		this->active = r.read_bool();
 
-		ArchiveObject obj;
-		if (r.read_object_begin(obj) && !r.read_object_end()) {
-			ZKLOGW("VirtualObject.EventManager", "emCutscene not fully parsed!");
-			r.skip_object(true);
-		}
+		(void) /* TODO: emCutscene = */ r.read_object(version);
+	}
 
-		// TODO: this->cutscene.load(r, version);
+	void AiHuman::load(ReadArchive& r, GameVersion version) {
+		water_level = r.read_int();    // waterLevel
+		floor_y = r.read_float();      // floorY
+		water_y = r.read_float();      // waterY
+		ceil_y = r.read_float();       // ceilY
+		feet_y = r.read_float();       // feetY
+		head_y = r.read_float();       // headY
+		fall_dist_y = r.read_float();  // fallDistY
+		fall_start_y = r.read_float(); // fallStartY
+
+		npc = r.read_object<vobs::Npc>(version); // aiNpc
+
+		walk_mode = r.read_int();      // walkMode
+		weapon_mode = r.read_int();    // weaponMode
+		wmode_ast = r.read_int();      // wmodeLast
+		wmode_select = r.read_int();   // wmodeSelect
+		change_weapon = r.read_bool(); // changeWeapon
+		action_mode = r.read_int();    // actionMode
+	}
+
+	void AiMove::load(ReadArchive& r, GameVersion version) {
+		vob = std::reinterpret_pointer_cast<VirtualObject>(r.read_object(version)); // vob
+		owner = r.read_object<vobs::Npc>(version);                                  // owner
 	}
 } // namespace zenkit

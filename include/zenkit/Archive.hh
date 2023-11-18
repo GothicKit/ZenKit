@@ -3,6 +3,7 @@
 #pragma once
 #include "zenkit/Boxes.hh"
 #include "zenkit/Library.hh"
+#include "zenkit/Object.hh"
 #include "zenkit/Stream.hh"
 
 #include "phoenix/buffer.hh"
@@ -11,9 +12,7 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
-#include <functional>
 #include <memory>
-#include <optional>
 #include <string>
 #include <variant>
 
@@ -23,6 +22,7 @@ namespace phoenix {
 
 namespace zenkit {
 	class Read;
+	class ReadArchive;
 
 	enum class ArchiveFormat {
 		BINARY = 0,
@@ -145,6 +145,19 @@ namespace zenkit {
 		/// \throws zenkit::ParserError
 		static std::unique_ptr<ReadArchive> from(Read* r);
 
+		template <typename T>
+		std::enable_if_t<std::is_base_of_v<Object, T>, std::shared_ptr<T>> //
+		read_object(GameVersion version) {
+			auto obj = this->read_object(version);
+			if (obj != nullptr && obj->get_type() != T::TYPE) {
+				throw ParserError {"ReadArchive", "Read unexcected object!"};
+			}
+
+			return std::reinterpret_pointer_cast<T>(std::move(obj));
+		}
+
+		std::shared_ptr<Object> read_object(GameVersion version);
+
 		/// \brief Tries to read the begin of a new object from the archive.
 		///
 		/// If a beginning of an object could not be read, the internal buffer is reverted to the state
@@ -240,7 +253,7 @@ namespace zenkit {
 		}
 
 		/// \return Whether or not this archive represents a save-game.
-		[[nodiscard]] inline bool is_save_game() const noexcept {
+		[[nodiscard]] bool is_save_game() const noexcept {
 			return header.save;
 		}
 
@@ -259,6 +272,7 @@ namespace zenkit {
 		Read* read;
 
 	private:
+		std::unordered_map<uint32_t, std::shared_ptr<Object>> _m_cache {};
 		std::unique_ptr<Read> _m_owned;
 	};
 } // namespace zenkit

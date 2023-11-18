@@ -159,8 +159,8 @@ namespace zenkit {
 		auto unused = static_cast<std::int32_t>(ensure_entry_meta<ArchiveEntryType::RAW_FLOAT>() - 2 * sizeof(float));
 
 		if (unused < 0) {
-			throw zenkit::ParserError {"ReadArchive.Binsafe"
-			                           "cannot read vec2 (2 * float): not enough space in rawFloat entry."};
+			throw ParserError {"ReadArchive.Binsafe"
+			                   "cannot read vec2 (2 * float): not enough space in rawFloat entry."};
 		}
 
 		auto c = read->read_vec2();
@@ -175,8 +175,8 @@ namespace zenkit {
 		    static_cast<std::int32_t>(ensure_entry_meta<ArchiveEntryType::RAW_FLOAT>() - 3 * 2 * sizeof(float));
 
 		if (unused < 0) {
-			throw zenkit::ParserError {"ReadArchive.Binsafe",
-			                           "cannot read bbox (6 * float): not enough space in rawFloat entry."};
+			throw ParserError {"ReadArchive.Binsafe",
+			                   "cannot read bbox (6 * float): not enough space in rawFloat entry."};
 		}
 
 		AxisAlignedBoundingBox aabb {};
@@ -191,8 +191,7 @@ namespace zenkit {
 		auto unused = static_cast<std::int32_t>(ensure_entry_meta<ArchiveEntryType::RAW>() - 3 * 3 * sizeof(float));
 
 		if (unused < 0) {
-			throw zenkit::ParserError(
-			    "ReadArchive.Binsafe: cannot read mat3x3 (9 * float): not enough space in raw entry.");
+			throw ParserError("ReadArchive.Binsafe: cannot read mat3x3 (9 * float): not enough space in raw entry.");
 		}
 
 		auto v = read->read_mat3();
@@ -206,12 +205,12 @@ namespace zenkit {
 		auto length = ensure_entry_meta<ArchiveEntryType::RAW>();
 
 		if (length < size) {
-			throw zenkit::ParserError {"ReadArchive.Binsafe", "not enough raw bytes to read!"};
+			throw ParserError {"ReadArchive.Binsafe", "not enough raw bytes to read!"};
 		} else if (length > size) {
 			ZKLOGW("ReadArchive.Binsafe", "Reading %d bytes although %d are actually available", size, length);
 		}
 
-		std::vector<std::byte> bytes(length, std::byte {});
+		std::vector bytes(length, std::byte {});
 		read->read(bytes.data(), length);
 		return phoenix::buffer::of(std::move(bytes));
 	}
@@ -220,12 +219,12 @@ namespace zenkit {
 		auto length = ensure_entry_meta<ArchiveEntryType::RAW>();
 
 		if (length < size) {
-			throw zenkit::ParserError {"ReadArchive.Binsafe", "not enough raw bytes to read!"};
+			throw ParserError {"ReadArchive.Binsafe", "not enough raw bytes to read!"};
 		} else if (length > size) {
 			ZKLOGW("ReadArchive.Binsafe", "Reading %zu bytes although %d are actually available", size, length);
 		}
 
-		std::vector<std::byte> bytes(length, std::byte {});
+		std::vector bytes(length, std::byte {});
 		read->read(bytes.data(), length);
 		return Read::from(std::move(bytes));
 	}
