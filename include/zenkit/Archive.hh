@@ -149,7 +149,7 @@ namespace zenkit {
 		std::enable_if_t<std::is_base_of_v<Object, T>, std::shared_ptr<T>> //
 		read_object(GameVersion version) {
 			auto obj = this->read_object(version);
-			if (obj != nullptr && obj->get_type() != T::TYPE) {
+			if (obj != nullptr && obj->get_object_type() != T::TYPE) {
 				throw ParserError {"ReadArchive", "Read unexcected object!"};
 			}
 

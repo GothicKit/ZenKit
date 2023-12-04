@@ -36,50 +36,54 @@ namespace zenkit {
 		ellipsoidal ZKREM("renamed to SoundTriggerVolume::ELLIPSOIDAL") = ELLIPSOIDAL,
 	};
 
-	namespace vobs {
-		/// \brief A VOb which emits a sound.
-		struct Sound : VirtualObject {
-			float volume {0};
-			SoundMode mode {SoundMode::ONCE};
-			float random_delay {0};
-			float random_delay_var {0};
-			bool initially_playing {false};
-			bool ambient3d {false};
-			bool obstruction {true};
-			float cone_angle {0};
-			SoundTriggerVolumeType volume_type {SoundTriggerVolumeType::SPHERICAL};
-			float radius {0};
-			std::string sound_name {};
+	/// \brief A VOb which emits a sound.
+	struct VSound : VirtualObject {
+		ZK_OBJECT(ObjectType::zCVobSound);
 
-			// Save-game only variables
-			bool s_is_running;
-			bool s_is_allowed_to_run;
+	public:
+		float volume {0};
+		SoundMode mode {SoundMode::ONCE};
+		float random_delay {0};
+		float random_delay_var {0};
+		bool initially_playing {false};
+		bool ambient3d {false};
+		bool obstruction {true};
+		float cone_angle {0};
+		SoundTriggerVolumeType volume_type {SoundTriggerVolumeType::SPHERICAL};
+		float radius {0};
+		std::string sound_name {};
 
-			/// \brief Parses a sound VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			ZKREM("use ::load()") ZKAPI static void parse(Sound& obj, ReadArchive& ctx, GameVersion version);
+		// Save-game only variables
+		bool s_is_running;
+		bool s_is_allowed_to_run;
 
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
-		};
+		/// \brief Parses a sound VOb the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		ZKREM("use ::load()") ZKAPI static void parse(VSound& obj, ReadArchive& ctx, GameVersion version);
 
-		/// \brief A VOb which emits a sound only during certain times of the day.
-		struct SoundDaytime : Sound {
-			float start_time {0};
-			float end_time {0};
-			std::string sound_name2 {};
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
 
-			/// \brief Parses a timed sound VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			ZKREM("use ::load()") ZKAPI static void parse(SoundDaytime& obj, ReadArchive& ctx, GameVersion version);
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
-		};
-	} // namespace vobs
+	/// \brief A VOb which emits a sound only during certain times of the day.
+	struct VSoundDaytime : VSound {
+		ZK_OBJECT(ObjectType::zCVobSoundDaytime);
+
+	public:
+		float start_time {0};
+		float end_time {0};
+		std::string sound_name2 {};
+
+		/// \brief Parses a timed sound VOb the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		ZKREM("use ::load()") ZKAPI static void parse(VSoundDaytime& obj, ReadArchive& ctx, GameVersion version);
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
 } // namespace zenkit

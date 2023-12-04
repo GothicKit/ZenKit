@@ -12,21 +12,20 @@
 #include <glm/vec3.hpp>
 
 #include <cstdint>
+#include <glm/ext/matrix_transform.hpp>
 #include <memory>
 #include <optional>
 #include <string>
 #include <vector>
 
-namespace zenkit::vobs {
-	struct Npc;
-}
 namespace zenkit {
 	class ReadArchive;
+	struct VNpc;
 
-	/// \brief Ways a VOb can cast shadows.
+	/// \brief Ways VObjects can cast shadows.
 	enum class ShadowType : std::uint8_t {
-		NONE = 0, ///< The VOb does not cast any shadow.
-		BLOB = 1, ///< The VOb casts a basic dark circle at its base.
+		NONE = 0, ///< The VObject does not cast any shadow.
+		BLOB = 1, ///< The VObject casts a basic dark circle at its base.
 
 		// Deprecated entries.
 		none ZKREM("renamed to ShadowType::NONE") = NONE,
@@ -55,9 +54,9 @@ namespace zenkit {
 		unknown ZKREM("renamed to VisualType::UNKNOWN") = UNKNOWN,
 	};
 
-	/// \brief Ways the camera may behave with a VOb.
+	/// \brief Behavior of a VObject's rotation in relation to the camera.
 	enum class SpriteAlignment : std::uint8_t {
-		NONE = 0, ///< The sprite is not affected by the camera's position.
+		NONE = 0, ///< The sprite is not affected by the camera's rotation.
 		YAW = 1,  ///< The sprite rotates with the camera's yaw axis.
 		FULL = 2, ///< The sprite rotates with camera fully.
 
@@ -70,7 +69,21 @@ namespace zenkit {
 	/// \brief Types of wavy animation.
 	enum class AnimationType : std::uint8_t {
 		NONE = 0, ///< No wave animation.
+
+		/// \brief String wind animation.
+		///
+		/// <p>Indicates that the object should be animated as if shifting in strong wind. Used mostly for
+		/// animating grass and other small foliage.</p>
+		///
+		/// \see http://www.gothic-library.ru/publ/class_zcvob/1-1-0-467#visualAniMode
 		WIND = 1,
+
+		/// \brief Light wind animation.
+		///
+		/// <p>Indicates that the object should be animated as if shifting in light wind. Used mostly for
+		/// animating trees.</p>
+		///
+		/// \see http://www.gothic-library.ru/publ/class_zcvob/1-1-0-467#visualAniMode
 		WIND_ALT = 2,
 
 		// Deprecated entries.
@@ -79,10 +92,46 @@ namespace zenkit {
 		wind2 ZKREM("renamed to AnimationType::WIND_ALT") = WIND_ALT,
 	};
 
-	/// \brief Decal visual configuration for VObs.
-	struct VisualDecal : Object {
-		static constexpr ObjectType TYPE = ObjectType::zCDecal;
+	struct Visual : Object {
+		/// \brief The type of this visual.
+		VisualType type = VisualType::UNKNOWN;
 
+		/// \brief The name of this visual, a decal mesh or particle effect.
+		///
+		/// <p>This field conains the name of the source file of the visual. A mesh visual, for example, will end in
+		/// `.3DS` since that is the original file format of the mesh.</p>
+		std::string name;
+	};
+
+	struct VisualMesh final : Visual {
+		ZK_OBJECT(ObjectType::zCMesh);
+	};
+
+	struct VisualMultiResolutionMesh final : Visual {
+		ZK_OBJECT(ObjectType::zCProgMeshProto);
+	};
+
+	struct VisualParticleEffect final : Visual {
+		ZK_OBJECT(ObjectType::zCParticleFX);
+	};
+
+	struct VisualCamera final : Visual {
+		ZK_OBJECT(ObjectType::zCAICamera);
+	};
+
+	struct VisualModel final : Visual {
+		ZK_OBJECT(ObjectType::zCModel);
+	};
+
+	struct VisualMorphMesh final : Visual {
+		ZK_OBJECT(ObjectType::zCMorphMesh);
+	};
+
+	/// \brief Decal visual configuration for VObs.
+	struct VisualDecal final : Visual {
+		ZK_OBJECT(ObjectType::zCDecal);
+
+	public:
 		std::string name {};
 		glm::vec2 dimension {};
 		glm::vec2 offset {};
@@ -99,53 +148,7 @@ namespace zenkit {
 		/// \throws ParserError if parsing fails.
 		ZKREM("use ::load()") ZKAPI static VisualDecal parse(ReadArchive& ctx, GameVersion version);
 
-		[[nodiscard]] ObjectType get_type() const override {
-			return TYPE;
-		}
-
-		ZKAPI void load(ReadArchive& r, GameVersion version);
-	};
-
-	struct VisualMesh : Object {
-		static constexpr ObjectType TYPE = ObjectType::zCMesh;
-		[[nodiscard]] ObjectType get_type() const override {
-			return TYPE;
-		}
-	};
-
-	struct VisualMultiResolutionMesh : Object {
-		static constexpr ObjectType TYPE = ObjectType::zCProgMeshProto;
-		[[nodiscard]] ObjectType get_type() const override {
-			return TYPE;
-		}
-	};
-
-	struct VisualParticleEffect : Object {
-		static constexpr ObjectType TYPE = ObjectType::zCParticleFX;
-		[[nodiscard]] ObjectType get_type() const override {
-			return TYPE;
-		}
-	};
-
-	struct VisualCamera : Object {
-		static constexpr ObjectType TYPE = ObjectType::zCAICamera;
-		[[nodiscard]] ObjectType get_type() const override {
-			return TYPE;
-		}
-	};
-
-	struct VisualModel : Object {
-		static constexpr ObjectType TYPE = ObjectType::zCModel;
-		[[nodiscard]] ObjectType get_type() const override {
-			return TYPE;
-		}
-	};
-
-	struct VisualMorphMesh : Object {
-		static constexpr ObjectType TYPE = ObjectType::zCMorphMesh;
-		[[nodiscard]] ObjectType get_type() const override {
-			return TYPE;
-		}
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
 	};
 
 	struct RigidBody {
@@ -158,22 +161,24 @@ namespace zenkit {
 		ZKAPI void load(ReadArchive& r, GameVersion version);
 	};
 
-	struct EventManager : Object {
-		static constexpr ObjectType TYPE = ObjectType::ignored;
+	struct EventManager final : Object {
+		ZK_OBJECT(ObjectType::zCEventManager);
 
-		bool cleared;
-		bool active;
+	private:
+		bool cleared = false;
+		bool active = false;
 
-		[[nodiscard]] ObjectType get_type() const override {
-			return TYPE;
-		}
-
-		ZKAPI void load(ReadArchive& r, GameVersion version);
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
 	};
 
-	struct AiHuman : Object {
-		static constexpr ObjectType TYPE = ObjectType::zCModel;
+	struct VirtualObject;
 
+	struct Ai : Object {};
+
+	struct AiHuman final : Ai {
+		ZK_OBJECT(ObjectType::oCAIHuman);
+
+	public:
 		int water_level;
 		float floor_y;
 		float water_y;
@@ -182,7 +187,7 @@ namespace zenkit {
 		float head_y;
 		float fall_dist_y;
 		float fall_start_y;
-		std::shared_ptr<vobs::Npc> npc;
+		std::shared_ptr<VNpc> npc;
 		int walk_mode;
 		int weapon_mode;
 		int wmode_ast;
@@ -190,104 +195,231 @@ namespace zenkit {
 		bool change_weapon;
 		int action_mode;
 
-		[[nodiscard]] ObjectType get_type() const override {
-			return TYPE;
-		}
-
 		void load(ReadArchive& r, GameVersion version) override;
 	};
 
-	struct VirtualObject;
+	struct AiMove final : Ai {
+		ZK_OBJECT(ObjectType::oCAIVobMove);
 
-	struct AiMove : Object {
-		static constexpr ObjectType TYPE = ObjectType::zCModel;
-
+	public:
 		std::shared_ptr<VirtualObject> vob;
-		std::shared_ptr<vobs::Npc> owner;
-
-		[[nodiscard]] ObjectType get_type() const override {
-			return TYPE;
-		}
+		std::shared_ptr<VNpc> owner;
 
 		void load(ReadArchive& r, GameVersion version) override;
 	};
 
-	/// \brief The base class for all VObs.
+	enum class VirtualObjectType {
+		UNKNOWN = -1,
+		zCVob = 0,           ///< The base type for all VObs.
+		zCVobLevelCompo = 1, ///< A basic VOb used for grouping other VObs.
+		oCItem = 2,          ///< A VOb representing an item
+		oCNpc = 3,           ///< A VOb representing an NPC
+		zCMoverController = 4,
+		zCVobScreenFX = 5,
+		zCVobStair = 6,
+		zCPFXController = 7,
+		zCVobAnimate = 8,
+		zCVobLensFlare = 9,
+		zCVobLight = 10,
+		zCVobSpot = 11,
+		zCVobStartpoint = 12,
+		zCMessageFilter = 13,
+		zCCodeMaster = 14,
+		zCTriggerWorldStart = 15,
+		zCCSCamera = 16,
+		zCCamTrj_KeyFrame = 17,
+		oCTouchDamage = 18,
+		zCTriggerUntouch = 19,
+		zCEarthquake = 20,
+		oCMOB = 21,                ///< The base VOb type used for dynamic world objects.
+		oCMobInter = 22,           ///< The base VOb type used for interactive world objects.
+		oCMobBed = 23,             ///< A bed the player can sleep in.
+		oCMobFire = 24,            ///< A campfire the player can cook things on.
+		oCMobLadder = 25,          ///< A ladder the player can climb.
+		oCMobSwitch = 26,          ///< A switch or button the player can use.
+		oCMobWheel = 27,           ///< A grindstone the player can sharpen their weapon with.
+		oCMobContainer = 28,       ///< A container the player can open.
+		oCMobDoor = 29,            ///< A door the player can open.
+		zCTrigger = 30,            ///< The base VOb type used for all kinds of triggers.
+		zCTriggerList = 31,        ///< A collection of multiple triggers.
+		oCTriggerScript = 32,      ///< A trigger for calling a script function.
+		oCTriggerChangeLevel = 33, ///< A trigger for changing the game world.
+		oCCSTrigger = 34,          ///< A cutscene trigger.
+		zCMover = 35,
+		zCVobSound = 36,        ///< A VOb which emits a certain sound.
+		zCVobSoundDaytime = 37, ///< A VOb which emits a sound only during a specified time.
+		oCZoneMusic = 38,       ///< A VOb which plays music from the soundtrack.
+		oCZoneMusicDefault = 39,
+		zCZoneZFog = 40, ///< A VOb which indicates a foggy area.
+		zCZoneZFogDefault = 41,
+		zCZoneVobFarPlane = 42,
+		zCZoneVobFarPlaneDefault = 43,
+	};
+
+	/// \brief The base class of all ZenGin virtual objects.
 	///
-	/// <p>Contains parameters all VObs have, like their position, bounding box and model.</p>
+	/// <p>Contains general VObject settings like its position, rotation, visual and much more. Known fields have been
+	/// documented with information about their purpose and additional information may be obtained from the unified
+	/// ZenGin documentation at https://zk.gothickit.dev.</p>
+	///
+	/// <p>ZenGin virtual objects inherit from the base zenkit::Object. Copy and move operations have been
+	/// intentionally deleted, because VObject can reference each other through shared pointers. Moving VObjects
+	/// while this is the case would break parsing.</p>
+	///
+	/// \note Virtual objects should not be loaded manually. They are embedded into world archives and are automatically
+	///       loaded when the world is loaded.
 	struct VirtualObject : Object {
+		ZK_OBJECT(ObjectType::zCVob);
+
+	public:
 		VirtualObject() = default;
+
+		/// \brief Implicit copy-constructor. Disabled for performance reasons.
 		VirtualObject(VirtualObject const&) = delete;
+
+		/// \brief Move-constructor. Disabled for memory safety with shared references.
 		VirtualObject(VirtualObject&&) = default;
-
-		struct SaveState {
-			uint8_t sleep_mode;
-			float next_on_timer;
-			std::optional<RigidBody> rigid_body {};
-		};
-
-		using save_state ZKREM("renamed to SaveState") = SaveState;
-
-		ObjectType type; ///< The type of this VOb.
-		uint32_t id;     ///< The index of this VOb in the archive it was read from.
-
-		AxisAlignedBoundingBox bbox {};
-		glm::vec3 position {};
-		glm::mat3x3 rotation {};
-		bool show_visual {};
-		SpriteAlignment sprite_camera_facing_mode {SpriteAlignment::NONE};
-		bool cd_static {};
-		bool cd_dynamic {};
-		bool vob_static {};
-		ShadowType dynamic_shadows {};
-		bool physics_enabled {};
-		AnimationType anim_mode {};
-		std::int32_t bias {};
-		bool ambient {};
-		float anim_strength {};
-		float far_clip_scale {};
-
-		std::string preset_name {};
-		std::string vob_name {};
-		std::string visual_name {};
-
-		ZKREM("use ::visual.get_type() instead") VisualType associated_visual_type {};
-		ZKREM("use ::visual instead") std::optional<VisualDecal> visual_decal {};
-		std::shared_ptr<Object> visual = nullptr;
-
-		// One of: AiHuman (oCAIHuman), AiMove (oCAIVobMove)
-		std::shared_ptr<Object> ai = nullptr;
-
-		/// \brief Contains extra data about the item in the context of a saved game.
-		std::optional<SaveState> saved {};
-
-		/// \brief The children of this VOb.
-		std::vector<std::shared_ptr<VirtualObject>> children {};
 
 		/// \brief Default virtual destructor.
 		~VirtualObject() override = default;
 
-		/// \return `true` if this VOb is from a save-game and `false` if not.
-		[[nodiscard]] ZKAPI bool is_save_game() const noexcept {
-			return saved.has_value();
-		}
+		/// \brief The type of this VObject.
+		///
+		/// <p>This field holds the type of the virtual object which determines its function in the game world. There
+		/// are lots of virtual objects which are diffentiated by this field. See the type hierarchy diagram of
+		/// zenkit::VirtualObject for an overview of availabe VObject types.</p>
+		VirtualObjectType type = VirtualObjectType::UNKNOWN;
 
-		/// \brief Parses a base VOb from the given *ZenGin* archive.
+		/// \brief The index of this VObject in the archive it was read from.
+		/// \deprecated This value is only relevant with the specific world archive the object was loaded from.
+		///             Essentially, it exposes internal state of the archive parser to the outside. It should no longer
+		///             be used since it is not a real unique identifier of any single object and references internal
+		///             parser state. If you need to check, if two VObjects are equal, you should do a simple pointer
+		///             compare on the shared pointer it's wrapped in.
+		uint32_t id ZKREM("scheduled for removal; refer to documentation") = 0;
+
+		/// \brief The bounding box of this VObject.
+		AxisAlignedBoundingBox bbox = AxisAlignedBoundingBox::zero();
+
+		/// \brief The position of this VObject in virtual space.
+		glm::vec3 position = glm::vec3 {0};
+
+		/// \brief The rotation of this VObject in virtual space.
+		glm::mat3x3 rotation = glm::identity<glm::mat3x3>();
+
+		/// \brief Indicates whether this VObject has should display its associated visual.
+		bool show_visual = false;
+
+		/// \brief Indicates how this VObject should be aligned in relation to the camera.
 		///
-		/// <p>This implementation is heavily based on the implementation found in
-		/// [ZenLib](https://github.com/Try/ZenLib).</p>
+		/// <p>The value of this field indicates, if and how this VObject should align itself with the camera. This may
+		/// be used with grass or flowers which only consist of a 2-dimensional sprite to have it always face the
+		/// camera, for example. See zenkit::SpriteAlignment for additional details.</p>
+		SpriteAlignment sprite_camera_facing_mode = SpriteAlignment::NONE;
+
+		/// \brief Indicates whether this VObject should collide with other VObjects.
 		///
-		/// \param[out] obj The object to read.
-		/// \param[in,out] ctx The archive reader to read from.
-		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \throws ParserError if parsing fails.
+		/// <p>This is used for placing the object in the ZenGin map editor, the <i>Spacer</i>, where it will prevent
+		/// the VObject being placed wither other VObjects. This setting is irrelevant for runtime collision
+		/// detection</p>
+		bool cd_static = true;
+
+		/// \brief Indicates whether this VObject should collide with dynamic objects.
+		///
+		/// <p>For this purpose, dynamic objects are the player, NPCs and items. If this flag is set, implementations
+		/// should apply collision detection to this VObject.</p>
+		bool cd_dynamic = true;
+
+		/// \brief Indicates whether this VObject should be included during static lighting calculations.
+		///
+		/// <p>These lighting calculations are done at compile-time and will bake VObjects with this flag into the
+		/// light-maps available from the world mesh. If set to `true`, this VObject may be excluded from dynamic
+		/// lighting if the light-maps are used.</p>
+		bool vob_static = false;
+
+		/// \brief The type of dynamic shadow to be used.
+		///
+		/// <p>See zenkit::ShadowType for information about available shadow types.</p>
+		ShadowType dynamic_shadows = ShadowType::NONE;
+
+		/// \brief Indicates whether this VObject has enabled physics.
+		///
+		/// <p>This field represents internal state of the ZenGin which is written to disk only for a certain world
+		/// format type. It is not possible to set this field ZenGin's world editor, the <i>Spacer</i>, for example.
+		/// This makes this field unreliable, since it is only available for some VObjects.</p>
+		bool physics_enabled = true;
+
+		/// \brief The type of wind animation to apply to the VObject.
+		AnimationType anim_mode = AnimationType::NONE;
+
+		/// \brief The depth-bias for this VObject.
+		///
+		/// <p>This value is passed directly to Direct3D when rendering the associated visual of this VObject. Sadly,
+		/// because documentation is not really available for the very old Direct3D version used by the ZenGin, the
+		/// exact behavior it would have resulted in are unknown.</p>
+		std::int32_t bias = 0;
+
+		/// \brief Indicates that this VObject is <i>ambient</i>.
+		///
+		/// <p>It looks like this VObject setting was a system used duing development when access to the game's source
+		/// code was available. Basically, the global variable `zCWorld::s_bAmbientVobsEnabled` could be used to hide or
+		/// show VObjects which have the `isAmbient` flag set. In release builds, this variable is always set to `true`,
+		/// thus the `isAmbient` flag does not have any percievable effect on the game.</p>
+		/// <p>It follows, that this field should be ignored by most implementations.</p>
+		bool ambient = false;
+
+		/// \brief Indicates the strength of the animation set through #anim_mode.
+		///
+		/// <p>Essentialy, this controls the strength of the wind to be animated using the given #anim_mode. This value
+		/// is ignored if #anim_mode is AnimationType::NONE</p>
+		float anim_strength = 0;
+		float far_clip_scale = 2.0;
+
+		std::string preset_name;
+
+		/// \brief The name of this VObject.
+		///
+		/// <p>The name of this VObject. VObject names are not necessarily unique but are sometimes helpful for
+		/// identfying them in ZenGin's original map editor, the <i>Spacer</i>.</p>
+		std::string vob_name;
+
+		std::string visual_name ZKREM("use VirtualObject::visual::name instead") {};
+		VisualType associated_visual_type ZKREM("use VirtualObject::visual::type instead") {};
+		std::optional<VisualDecal> visual_decal ZKREM("use VirtualObject::visual instead") {};
+
+		/// \brief The visual data associated with this VObject.
+		///
+		/// <p>All supported visuals except the zenkit::VisualDecal do not contain any additional information. To
+		/// determine the type of attached visual, simply access zenkit::VisualDecal::type</p>
+		std::shared_ptr<Visual> visual = nullptr;
+
+		std::shared_ptr<Ai> ai = nullptr;
+
+		std::uint8_t sleep_mode = 0;
+		float next_on_timer = 0;
+		std::optional<RigidBody> rigid_body {};
+
+		/// \brief The children of this VOb.
+		std::vector<std::shared_ptr<VirtualObject>> children {};
+
 		ZKREM("use ::load()") ZKAPI static void parse(VirtualObject& obj, ReadArchive& ctx, GameVersion version);
 
-		// TODO(lmichaelis): Return a constant value from this!
-		[[nodiscard]] ObjectType get_type() const override {
-			return this->type;
-		}
-
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
+
+	struct VSpot final : VirtualObject {
+		ZK_OBJECT(ObjectType::zCVobSpot);
+	};
+
+	struct VStair final : VirtualObject {
+		ZK_OBJECT(ObjectType::zCVobStair);
+	};
+
+	struct VStartPoint final : VirtualObject {
+		ZK_OBJECT(ObjectType::zCVobStartpoint);
+	};
+
+	struct VLevel final : VirtualObject {
+		ZK_OBJECT(ObjectType::zCVobLevelCompo);
 	};
 } // namespace zenkit

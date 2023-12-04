@@ -5,17 +5,16 @@
 
 namespace phoenix {
 	namespace vobs {
-		using animate ZKREM("renamed to zenkit::vobs::Animate") = zenkit::vobs::Animate;
-		using item ZKREM("renamed to zenkit::vobs::Item") = zenkit::vobs::Item;
-		using lens_flare ZKREM("renamed to zenkit::vobs::LensFlare") = zenkit::vobs::LensFlare;
-		using pfx_controller
-		    ZKREM("renamed to zenkit::vobs::ParticleEffectController") = zenkit::vobs::ParticleEffectController;
-		using code_master ZKREM("renamed to zenkit::vobs::CodeMaster") = zenkit::vobs::CodeMaster;
-		using message_filter ZKREM("renamed to zenkit::vobs::MessageFilter") = zenkit::vobs::MessageFilter;
-		using mover_controller ZKREM("renamed to zenkit::vobs::MoverController") = zenkit::vobs::MoverController;
-		using touch_damage ZKREM("renamed to zenkit::vobs::TouchDamage") = zenkit::vobs::TouchDamage;
-		using earthquake ZKREM("renamed to zenkit::vobs::Earthquake") = zenkit::vobs::Earthquake;
-		using npc ZKREM("renamed to zenkit::vobs::Npc") = zenkit::vobs::Npc;
+		using animate ZKREM("renamed to zenkit::VAnimate") = zenkit::VAnimate;
+		using item ZKREM("renamed to zenkit::VItem") = zenkit::VItem;
+		using lens_flare ZKREM("renamed to zenkit::VLensFlare") = zenkit::VLensFlare;
+		using pfx_controller ZKREM("renamed to zenkit::VParticleEffectController") = zenkit::VParticleEffectController;
+		using code_master ZKREM("renamed to zenkit::VCodeMaster") = zenkit::VCodeMaster;
+		using message_filter ZKREM("renamed to zenkit::VMessageFilter") = zenkit::VMessageFilter;
+		using mover_controller ZKREM("renamed to zenkit::VMoverController") = zenkit::VMoverController;
+		using touch_damage ZKREM("renamed to zenkit::VTouchDamage") = zenkit::VTouchDamage;
+		using earthquake ZKREM("renamed to zenkit::VEarthquake") = zenkit::VEarthquake;
+		using npc ZKREM("renamed to zenkit::VNpc") = zenkit::VNpc;
 	} // namespace vobs
 
 	using message_filter_action ZKREM("renamed to zenkit::MessageFilterAction") = zenkit::MessageFilterAction;

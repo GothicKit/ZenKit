@@ -196,9 +196,17 @@ namespace zenkit {
 
 				auto pos = r->tell();
 				if (pos < target) {
-					Logger::log(LogLevel::WARNING, name, "%zu bytes remaining in section %hx", target - pos, type);
+					Logger::log(LogLevel::WARNING,
+					            name,
+					            "%zu bytes remaining in section %hx",
+					            target - pos,
+					            static_cast<uint16_t>(type));
 				} else if (r->tell() > target) {
-					Logger::log(LogLevel::ERROR, name, "%zu bytes overflowed in section %hx", target - pos, type);
+					Logger::log(LogLevel::ERROR,
+					            name,
+					            "%zu bytes overflowed in section %hx",
+					            target - pos,
+					            static_cast<uint16_t>(type));
 				}
 
 				// Make sure we always place the cursor at the position of the next chunk.

@@ -3,12 +3,12 @@
 #include "zenkit/vobs/Zone.hh"
 #include "zenkit/Archive.hh"
 
-namespace zenkit::vobs {
-	void ZoneMusic::parse(ZoneMusic& obj, ReadArchive& r, GameVersion version) {
+namespace zenkit {
+	void VZoneMusic::parse(VZoneMusic& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void ZoneMusic::load(ReadArchive& r, GameVersion version) {
+	void VZoneMusic::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->enabled = r.read_bool();   // enabled
 		this->priority = r.read_int();   // priority
@@ -25,21 +25,21 @@ namespace zenkit::vobs {
 		}
 	}
 
-	void ZoneFarPlane::parse(ZoneFarPlane& obj, ReadArchive& r, GameVersion version) {
+	void VZoneFarPlane::parse(VZoneFarPlane& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void ZoneFarPlane::load(ReadArchive& r, GameVersion version) {
+	void VZoneFarPlane::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->vob_far_plane_z = r.read_float();        // vobFarPlaneZ
 		this->inner_range_percentage = r.read_float(); // innerRangePerc
 	}
 
-	void ZoneFog::parse(ZoneFog& obj, ReadArchive& r, GameVersion version) {
+	void VZoneFog::parse(VZoneFog& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void ZoneFog::load(ReadArchive& r, GameVersion version) {
+	void VZoneFog::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->range_center = r.read_float();           // fogRangeCenter
 		this->inner_range_percentage = r.read_float(); // innerRangePerc
@@ -50,4 +50,4 @@ namespace zenkit::vobs {
 			this->override_color = r.read_bool(); // overrideColor
 		}
 	}
-} // namespace zenkit::vobs
+} // namespace zenkit

@@ -5,9 +5,8 @@
 
 namespace phoenix {
 	namespace vobs {
-		using camera_trj_frame
-		    ZKREM("renamed to zenkit::vobs::CameraTrajectoryFrame") = zenkit::vobs::CameraTrajectoryFrame;
-		using cs_camera ZKREM("renamed to zenkit::vobs::CutsceneCamera") = zenkit::vobs::CutsceneCamera;
+		using camera_trj_frame ZKREM("renamed to zenkit::VCameraTrajectoryFrame") = zenkit::VCameraTrajectoryFrame;
+		using cs_camera ZKREM("renamed to zenkit::VCutsceneCamera") = zenkit::VCutsceneCamera;
 	} // namespace vobs
 
 	using camera_motion ZKREM("renamed to zenkit::CameraMotion") = zenkit::CameraMotion;

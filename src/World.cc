@@ -154,20 +154,20 @@ namespace zenkit {
 		// TODO: save games contain a list of NPCs after the end marker
 		if (archive->get_header().save) {
 			// Then, read all the NPCs
-			auto npc_count = archive->read_int(); // npcCount
+			auto npc_count = static_cast<size_t>(archive->read_int()); // npcCount
 			this->npcs.resize(npc_count);
-			for (auto i = 0; i < npc_count; ++i) {
-				this->npcs[i] = archive->read_object<vobs::Npc>(version);
+			for (auto i = 0u; i < npc_count; ++i) {
+				this->npcs[i] = archive->read_object<VNpc>(version);
 			}
 
 			// After that, read all NPC spawn locations
-			auto npc_spawn_count = archive->read_int(); // NoOfEntries
+			auto npc_spawn_count = static_cast<size_t>(archive->read_int()); // NoOfEntries
 			this->npc_spawns.resize(npc_spawn_count);
 
 			for (auto& spawn : this->npc_spawns) {
-				spawn.npc = archive->read_object<vobs::Npc>(version); // npc
-				spawn.position = archive->read_vec3();                // spawnPos
-				spawn.timer = archive->read_float();                  // timer
+				spawn.npc = archive->read_object<VNpc>(version); // npc
+				spawn.position = archive->read_vec3();           // spawnPos
+				spawn.timer = archive->read_float();             // timer
 			}
 
 			this->npc_spawn_enabled = archive->read_bool(); // spawningEnabled

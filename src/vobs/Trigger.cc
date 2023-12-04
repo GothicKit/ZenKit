@@ -3,12 +3,12 @@
 #include "zenkit/vobs/Trigger.hh"
 #include "zenkit/Archive.hh"
 
-namespace zenkit::vobs {
-	void Trigger::parse(Trigger& obj, ReadArchive& r, GameVersion version) {
+namespace zenkit {
+	void VTrigger::parse(VTrigger& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void Trigger::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void VTrigger::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->target = r.read_string();                   // triggerTarget
 		this->flags = r.read_raw(1)->read_ubyte();        // flags
@@ -33,12 +33,12 @@ namespace zenkit::vobs {
 		}
 	}
 
-	void Mover::parse(Mover& obj, ReadArchive& r, GameVersion version) {
+	void VMover::parse(VMover& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void Mover::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
-		Trigger::load(r, version);
+	void VMover::load(ReadArchive& r, GameVersion version) {
+		VTrigger::load(r, version);
 		this->behavior = static_cast<MoverBehavior>(r.read_enum()); // moverBehavior
 		this->touch_blocker_damage = r.read_float();                // touchBlockerDamage
 		this->stay_open_time_sec = r.read_float();                  // stayOpenTimeSec
@@ -92,12 +92,12 @@ namespace zenkit::vobs {
 		this->sfx_use_locked = r.read_string();    // sfxUseLocked
 	}
 
-	void TriggerList::parse(TriggerList& obj, ReadArchive& r, GameVersion version) {
+	void VTriggerList::parse(VTriggerList& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void TriggerList::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
-		Trigger::load(r, version);
+	void VTriggerList::load(ReadArchive& r, GameVersion version) {
+		VTrigger::load(r, version);
 		this->mode = static_cast<TriggerBatchMode>(r.read_enum()); // listProcess
 
 		auto target_count = r.read_byte(); // numTarget
@@ -115,30 +115,30 @@ namespace zenkit::vobs {
 		}
 	}
 
-	void TriggerScript::parse(TriggerScript& obj, ReadArchive& r, GameVersion version) {
+	void VTriggerScript::parse(VTriggerScript& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void TriggerScript::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
-		Trigger::load(r, version);
+	void VTriggerScript::load(ReadArchive& r, GameVersion version) {
+		VTrigger::load(r, version);
 		this->function = r.read_string(); // scriptFunc
 	}
 
-	void TriggerChangeLevel::parse(TriggerChangeLevel& obj, ReadArchive& r, GameVersion version) {
+	void VTriggerChangeLevel::parse(VTriggerChangeLevel& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void TriggerChangeLevel::load(zenkit::ReadArchive& r, GameVersion version) {
-		Trigger::load(r, version);
+	void VTriggerChangeLevel::load(ReadArchive& r, GameVersion version) {
+		VTrigger::load(r, version);
 		this->level_name = r.read_string(); // levelName
 		this->start_vob = r.read_string();  // startVobName
 	}
 
-	void TriggerWorldStart::parse(TriggerWorldStart& obj, ReadArchive& r, GameVersion version) {
+	void VTriggerWorldStart::parse(VTriggerWorldStart& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void TriggerWorldStart::load(ReadArchive& r, GameVersion version) {
+	void VTriggerWorldStart::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->target = r.read_string();  // triggerTarget
 		this->fire_once = r.read_bool(); // fireOnlyFirstTime
@@ -149,12 +149,12 @@ namespace zenkit::vobs {
 		}
 	}
 
-	void TriggerUntouch::parse(TriggerUntouch& obj, ReadArchive& r, GameVersion version) {
+	void VTriggerUntouch::parse(VTriggerUntouch& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void TriggerUntouch::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void VTriggerUntouch::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->target = r.read_string(); // triggerTarget
 	}
-} // namespace zenkit::vobs
+} // namespace zenkit

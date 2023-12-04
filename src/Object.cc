@@ -1,5 +1,9 @@
 #include "zenkit/Object.hh"
 
 namespace zenkit {
-	void Object::load(ReadArchive& r, GameVersion version) {}
+	ObjectType Object::get_object_type() const {
+		return ObjectType::unknown;
+	}
+
+	void Object::load(ReadArchive&, GameVersion) {}
 } // namespace zenkit

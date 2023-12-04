@@ -56,298 +56,322 @@ namespace zenkit {
 		point ZKREM("renamed to TouchCollisionType::POINT") = POINT,
 	};
 
-	namespace vobs {
-		/// \brief An animated VOb.
-		struct Animate : VirtualObject {
-			bool start_on {false};
+	/// \brief An animated VOb.
+	struct VAnimate : VirtualObject {
+		ZK_OBJECT(ObjectType::zCVobAnimate);
 
-			// Save-game only variables
-			bool s_is_running {false};
+	public:
+		bool start_on {false};
 
-			/// \brief Parses an animated VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			ZKREM("use ::load()") ZKAPI static void parse(Animate& obj, ReadArchive& ctx, GameVersion version);
+		// Save-game only variables
+		bool s_is_running {false};
 
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
-		};
+		/// \brief Parses an animated VOb the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		ZKREM("use ::load()") ZKAPI static void parse(VAnimate& obj, ReadArchive& ctx, GameVersion version);
 
-		/// \brief A VOb representing an in-game item.
-		struct Item : VirtualObject {
-			static constexpr ObjectType TYPE = ObjectType::oCItem;
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
 
-			std::string instance;
+	/// \brief A VOb representing an in-game item.
+	struct VItem : VirtualObject {
+		ZK_OBJECT(ObjectType::oCItem);
 
-			// Save-game only variables
-			int s_amount;
-			int s_flags;
+	public:
+		std::string instance;
 
-			/// \brief Parses an item VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			ZKREM("use ::load()") ZKAPI static void parse(Item& obj, ReadArchive& ctx, GameVersion version);
+		// Save-game only variables
+		int s_amount;
+		int s_flags;
 
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
-		};
+		/// \brief Parses an item VOb the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		ZKREM("use ::load()") ZKAPI static void parse(VItem& obj, ReadArchive& ctx, GameVersion version);
 
-		/// \brief A VOb representing a [lens flare](https://en.wikipedia.org/wiki/Lens_flare).
-		struct LensFlare : VirtualObject {
-			std::string fx;
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
 
-			/// \brief Parses a lens flare VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			ZKREM("use ::load()") ZKAPI static void parse(LensFlare& obj, ReadArchive& ctx, GameVersion version);
+	/// \brief A VOb representing a [lens flare](https://en.wikipedia.org/wiki/Lens_flare).
+	struct VLensFlare : VirtualObject {
+		ZK_OBJECT(ObjectType::zCVobLensFlare);
 
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
-		};
+	public:
+		std::string fx;
 
-		/// \brief A VOb representing a particle system controller.
-		struct ParticleEffectController : VirtualObject {
-			std::string pfx_name;
-			bool kill_when_done;
-			bool initially_running;
+		/// \brief Parses a lens flare VOb the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		ZKREM("use ::load()") ZKAPI static void parse(VLensFlare& obj, ReadArchive& ctx, GameVersion version);
 
-			/// \brief Parses a particle system controller VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			ZKREM("use ::load()")
-			ZKAPI static void parse(ParticleEffectController& obj, ReadArchive& ctx, GameVersion version);
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
 
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
-		};
+	/// \brief A VOb representing a particle system controller.
+	struct VParticleEffectController : VirtualObject {
+		ZK_OBJECT(ObjectType::zCPFXController);
 
-		struct MessageFilter : VirtualObject {
-			std::string target;
-			MessageFilterAction on_trigger;
-			MessageFilterAction on_untrigger;
+	public:
+		std::string pfx_name;
+		bool kill_when_done;
+		bool initially_running;
 
-			/// \brief Parses a message filter VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			ZKREM("use ::load()") ZKAPI static void parse(MessageFilter& obj, ReadArchive& ctx, GameVersion version);
+		/// \brief Parses a particle system controller VOb the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		ZKREM("use ::load()")
+		ZKAPI static void parse(VParticleEffectController& obj, ReadArchive& ctx, GameVersion version);
 
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
-		};
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
 
-		struct CodeMaster : VirtualObject {
-			std::string target;
-			bool ordered;
-			bool first_false_is_failure;
-			std::string failure_target;
-			bool untriggered_cancels;
-			std::vector<std::string> slaves;
+	struct VMessageFilter : VirtualObject {
+		ZK_OBJECT(ObjectType::zCMessageFilter);
 
-			// Save-game only variables
-			uint8_t s_num_triggered_slaves;
+	public:
+		std::string target;
+		MessageFilterAction on_trigger;
+		MessageFilterAction on_untrigger;
 
-			/// \brief Parses a code master VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			ZKREM("use ::load()") ZKAPI static void parse(CodeMaster& obj, ReadArchive& ctx, GameVersion version);
+		/// \brief Parses a message filter VOb the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		ZKREM("use ::load()") ZKAPI static void parse(VMessageFilter& obj, ReadArchive& ctx, GameVersion version);
 
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
-		};
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
 
-		struct MoverController : VirtualObject {
-			std::string target;
-			MoverMessageType message;
-			std::int32_t key;
+	struct VCodeMaster : VirtualObject {
+		ZK_OBJECT(ObjectType::zCCodeMaster);
 
-			/// \brief Parses a mover controller VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			ZKREM("use ::load()") ZKAPI static void parse(MoverController& obj, ReadArchive& ctx, GameVersion version);
+	public:
+		std::string target;
+		bool ordered;
+		bool first_false_is_failure;
+		std::string failure_target;
+		bool untriggered_cancels;
+		std::vector<std::string> slaves;
 
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
-		};
+		// Save-game only variables
+		uint8_t s_num_triggered_slaves;
 
-		/// \brief A VOb which represents a damage source.
-		struct TouchDamage : VirtualObject {
-			float damage;
+		/// \brief Parses a code master VOb the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		ZKREM("use ::load()") ZKAPI static void parse(VCodeMaster& obj, ReadArchive& ctx, GameVersion version);
 
-			bool barrier;
-			bool blunt;
-			bool edge;
-			bool fire;
-			bool fly;
-			bool magic;
-			bool point;
-			bool fall;
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
 
-			float repeat_delay_sec;
-			float volume_scale;
-			TouchCollisionType collision;
+	struct VMoverController : VirtualObject {
+		ZK_OBJECT(ObjectType::zCMoverController);
 
-			/// \brief Parses a touch damage VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			ZKREM("use ::load()") ZKAPI static void parse(TouchDamage& obj, ReadArchive& ctx, GameVersion version);
+	public:
+		std::string target;
+		MoverMessageType message;
+		std::int32_t key;
 
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
-		};
+		/// \brief Parses a mover controller VOb the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		ZKREM("use ::load()") ZKAPI static void parse(VMoverController& obj, ReadArchive& ctx, GameVersion version);
 
-		/// \brief A VOb which represents an earthquake-like effect.
-		struct Earthquake : VirtualObject {
-			float radius;
-			float duration;
-			glm::vec3 amplitude;
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
 
-			/// \brief Parses an earthquake VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			ZKREM("use ::load()") ZKAPI static void parse(Earthquake& obj, ReadArchive& ctx, GameVersion version);
+	/// \brief A VOb which represents a damage source.
+	struct VTouchDamage : VirtualObject {
+		ZK_OBJECT(ObjectType::oCTouchDamage);
 
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
-		};
+	public:
+		float damage;
 
-		struct Npc : VirtualObject {
-			static constexpr ObjectType TYPE = ObjectType::oCNpc;
-			static std::uint32_t const attribute_count = 8;
-			static std::uint32_t const hcs_count = 4;
-			static std::uint32_t const missions_count = 5;
-			static std::uint32_t const aivar_count = 100;
-			static std::uint32_t const packed_count = 9;
-			static std::uint32_t const protection_count = 8;
+		bool barrier;
+		bool blunt;
+		bool edge;
+		bool fire;
+		bool fly;
+		bool magic;
+		bool point;
+		bool fall;
 
-			struct Talent : Object {
-				static constexpr ObjectType TYPE = ObjectType::oCNpcTalent;
+		float repeat_delay_sec;
+		float volume_scale;
+		TouchCollisionType collision;
 
-				int talent;
-				int value;
-				int skill;
+		/// \brief Parses a touch damage VOb the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		ZKREM("use ::load()") ZKAPI static void parse(VTouchDamage& obj, ReadArchive& ctx, GameVersion version);
 
-				[[nodiscard]] ObjectType get_type() const override {
-					return TYPE;
-				}
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
 
-				void load(ReadArchive& r, GameVersion version) override;
-			};
+	/// \brief A VOb which represents an earthquake-like effect.
+	struct VEarthquake : VirtualObject {
+		ZK_OBJECT(ObjectType::zCEarthquake);
 
-			using talent ZKREM("renamed to Talent") = Talent;
+	public:
+		float radius;
+		float duration;
+		glm::vec3 amplitude;
 
-			struct Slot {
-				bool used;
-				std::string name;
-				std::shared_ptr<Item> item {};
-				bool in_inventory;
-			};
+		/// \brief Parses an earthquake VOb the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		ZKREM("use ::load()") ZKAPI static void parse(VEarthquake& obj, ReadArchive& ctx, GameVersion version);
 
-			using slot ZKREM("renamed to Slot") = Slot;
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
 
-			std::string npc_instance;
-			glm::vec3 model_scale;
-			float model_fatness;
+	struct VNpc : VirtualObject {
+		ZK_OBJECT(ObjectType::oCNpc);
 
-			std::vector<std::string> overlays;
+	public:
+		static std::uint32_t const attribute_count = 8;
+		static std::uint32_t const hcs_count = 4;
+		static std::uint32_t const missions_count = 5;
+		static std::uint32_t const aivar_count = 100;
+		static std::uint32_t const packed_count = 9;
+		static std::uint32_t const protection_count = 8;
 
-			int flags;
-			int guild;
-			int guild_true;
-			int level;
-			int xp;
-			int xp_next_level;
-			int lp;
+		struct Talent : Object {
+			static constexpr ObjectType TYPE = ObjectType::oCNpcTalent;
 
-			std::vector<std::shared_ptr<Talent>> talents;
+			int talent;
+			int value;
+			int skill;
 
-			int fight_tactic;
-			int fight_mode;
-			bool wounded;
-			bool mad;
-			int mad_time;
-			bool player;
-
-			int attributes[attribute_count];
-			int hcs[hcs_count];
-			int missions[missions_count];
-
-			std::string start_ai_state;
-			int aivar[aivar_count];
-			std::string script_waypoint;
-			int attitude;
-			int attitude_temp;
-			int name_nr;
-			bool move_lock;
-
-			std::string packed[packed_count];
-			std::vector<std::shared_ptr<Item>> items;
-			std::vector<Slot> slots;
-
-			bool current_state_valid;
-			std::string current_state_name;
-			int current_state_index;
-			bool current_state_is_routine;
-
-			bool next_state_valid;
-			std::string next_state_name;
-			int next_state_index;
-			bool next_state_is_routine;
-
-			int last_ai_state;
-			bool has_routine;
-			bool routine_changed;
-			bool routine_overlay;
-			int routine_overlay_count;
-			int walkmode_routine;
-			bool weaponmode_routine;
-			bool start_new_routine;
-			int ai_state_driven;
-			glm::vec3 ai_state_pos;
-			std::string current_routine;
-			bool respawn;
-			int respawn_time;
-
-			int protection[protection_count];
-
-			int bs_interruptable_override {0};
-			int npc_type {0};
-			int spell_mana {0};
-
-			/// \brief Parses an NPC VOb from the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			ZKREM("use ::load()") ZKAPI static void parse(Npc& obj, ReadArchive& ctx, GameVersion version);
-
-			[[nodiscard]] ObjectType get_type() const override {
+			[[nodiscard]] ObjectType get_object_type() const override {
 				return TYPE;
 			}
 
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
+			void load(ReadArchive& r, GameVersion version) override;
 		};
 
-		struct ScreenEffect : VirtualObject {
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		using talent ZKREM("renamed to Talent") = Talent;
+
+		struct Slot {
+			bool used;
+			std::string name;
+			std::shared_ptr<VItem> item {};
+			bool in_inventory;
 		};
-	} // namespace vobs
+
+		using slot ZKREM("renamed to Slot") = Slot;
+
+		std::string npc_instance;
+		glm::vec3 model_scale;
+		float model_fatness;
+
+		std::vector<std::string> overlays;
+
+		int flags;
+		int guild;
+		int guild_true;
+		int level;
+		int xp;
+		int xp_next_level;
+		int lp;
+
+		std::vector<std::shared_ptr<Talent>> talents;
+
+		int fight_tactic;
+		int fight_mode;
+		bool wounded;
+		bool mad;
+		int mad_time;
+		bool player;
+
+		int attributes[attribute_count];
+		int hcs[hcs_count];
+		int missions[missions_count];
+
+		std::string start_ai_state;
+		int aivar[aivar_count];
+		std::string script_waypoint;
+		int attitude;
+		int attitude_temp;
+		int name_nr;
+		bool move_lock;
+
+		std::string packed[packed_count];
+		std::vector<std::shared_ptr<VItem>> items;
+		std::vector<Slot> slots;
+
+		bool current_state_valid;
+		std::string current_state_name;
+		int current_state_index;
+		bool current_state_is_routine;
+
+		bool next_state_valid;
+		std::string next_state_name;
+		int next_state_index;
+		bool next_state_is_routine;
+
+		int last_ai_state;
+		bool has_routine;
+		bool routine_changed;
+		bool routine_overlay;
+		int routine_overlay_count;
+		int walkmode_routine;
+		bool weaponmode_routine;
+		bool start_new_routine;
+		int ai_state_driven;
+		glm::vec3 ai_state_pos;
+		std::string current_routine;
+		bool respawn;
+		int respawn_time;
+
+		int protection[protection_count];
+
+		int bs_interruptable_override {0};
+		int npc_type {0};
+		int spell_mana {0};
+
+		/// \brief Parses an NPC VOb from the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		ZKREM("use ::load()") ZKAPI static void parse(VNpc& obj, ReadArchive& ctx, GameVersion version);
+
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
+
+	struct VScreenEffect : VirtualObject {
+		ZK_OBJECT(ObjectType::zCVobScreenFX)
+
+	public:
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
 } // namespace zenkit

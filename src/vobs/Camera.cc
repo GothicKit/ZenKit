@@ -5,14 +5,14 @@
 
 #include "../Internal.hh"
 
-namespace zenkit::vobs {
-	std::unique_ptr<CameraTrajectoryFrame> CameraTrajectoryFrame::parse(ReadArchive& r, GameVersion version) {
-		auto obj = std::make_unique<CameraTrajectoryFrame>();
+namespace zenkit {
+	std::unique_ptr<VCameraTrajectoryFrame> VCameraTrajectoryFrame::parse(ReadArchive& r, GameVersion version) {
+		auto obj = std::make_unique<VCameraTrajectoryFrame>();
 		obj->load(r, version);
 		return obj;
 	}
 
-	void CameraTrajectoryFrame::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void VCameraTrajectoryFrame::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->time = r.read_float();                                             // time
 		this->roll_angle = r.read_float();                                       // angleRollDeg
@@ -31,11 +31,11 @@ namespace zenkit::vobs {
 		this->original_pose = buf->read_mat4();
 	}
 
-	void CutsceneCamera::parse(CutsceneCamera& obj, ReadArchive& r, GameVersion version) {
+	void VCutsceneCamera::parse(VCutsceneCamera& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void CutsceneCamera::load(ReadArchive& r, GameVersion version) {
+	void VCutsceneCamera::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->trajectory_for = static_cast<CameraTrajectory>(r.read_enum());        // camTrjFOR
 		this->target_trajectory_for = static_cast<CameraTrajectory>(r.read_enum()); // targetTrjFOR
@@ -55,16 +55,16 @@ namespace zenkit::vobs {
 		this->target_count = r.read_int();                                          // numTargets
 
 		for (auto i = 0; i < this->position_count + this->target_count; ++i) {
-			auto obj = r.read_object<CameraTrajectoryFrame>(version);
+			auto obj = r.read_object<VCameraTrajectoryFrame>(version);
 			this->frames.push_back(obj);
 		}
 
 		if (r.is_save_game() && version == GameVersion::GOTHIC_2) {
 			// In save-games, cutscene cameras contain extra variables
-			this->s_paused = r.read_bool();         // paused
-			this->s_started = r.read_bool();        // started
-			this->s_goto_time_mode = r.read_bool(); // gotoTimeMode
-			this->s_cs_time = r.read_float();       // csTime
+			this->paused = r.read_bool();         // paused
+			this->started = r.read_bool();        // started
+			this->goto_time_mode = r.read_bool(); // gotoTimeMode
+			this->cs_time = r.read_float();       // csTime
 		}
 	}
-} // namespace zenkit::vobs
+} // namespace zenkit

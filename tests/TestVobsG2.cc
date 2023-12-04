@@ -48,12 +48,10 @@ TEST_SUITE("vobs") {
 		CHECK_EQ(vob.far_clip_scale, 1.0f);
 		CHECK_EQ(vob.preset_name, "");
 		CHECK_EQ(vob.vob_name, "");
-		CHECK_EQ(vob.visual_name, "OW_MISC_WALL_TORCH_01.3DS");
-		CHECK_EQ(vob.associated_visual_type, zenkit::VisualType::MULTI_RESOLUTION_MESH);
+		CHECK_EQ(vob.visual->name, "OW_MISC_WALL_TORCH_01.3DS");
+		CHECK_EQ(vob.visual->type, zenkit::VisualType::MULTI_RESOLUTION_MESH);
 		CHECK_EQ(vob.visual_decal, std::nullopt);
-		CHECK_EQ(vob.saved, std::nullopt);
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -64,7 +62,7 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "zCCSCamera:zCVob");
 
-		zenkit::vobs::CutsceneCamera vob {};
+		zenkit::VCutsceneCamera vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.trajectory_for, zenkit::CameraTrajectory::WORLD);
@@ -145,7 +143,6 @@ TEST_SUITE("vobs") {
 		             {82642.8984f, 3899.0f, 29397.9844f, 1.0f},
 		         });
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -156,12 +153,11 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "zCVobAnimate:zCVob");
 
-		zenkit::vobs::Animate vob {};
+		zenkit::VAnimate vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK(vob.start_on);
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -172,13 +168,12 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "zCZoneVobFarPlane:zCVob");
 
-		zenkit::vobs::ZoneFarPlane vob {};
+		zenkit::VZoneFarPlane vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.vob_far_plane_z, 6500.0f);
 		CHECK_EQ(vob.inner_range_percentage, 0.699999988f);
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -189,7 +184,7 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "zCZoneZFog:zCVob");
 
-		zenkit::vobs::ZoneFog vob {};
+		zenkit::VZoneFog vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.range_center, 16000.0f);
@@ -198,7 +193,6 @@ TEST_SUITE("vobs") {
 		CHECK_FALSE(vob.fade_out_sky);
 		CHECK_FALSE(vob.override_color);
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -209,12 +203,11 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "oCItem:zCVob");
 
-		zenkit::vobs::Item vob {};
+		zenkit::VItem vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.instance, "ITPL_BLUEPLANT");
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -225,7 +218,7 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "zCTrigger:zCVob");
 
-		zenkit::vobs::Trigger vob {};
+		zenkit::VTrigger vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.target, "");
@@ -237,7 +230,6 @@ TEST_SUITE("vobs") {
 		CHECK_EQ(vob.damage_threshold, 0.0f);
 		CHECK_EQ(vob.fire_delay_sec, 0.0f);
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -248,7 +240,7 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "oCMOB:zCVob");
 
-		zenkit::vobs::MovableObject vob {};
+		zenkit::VMovableObject vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.name, "MOBNAME_GRAVE_18");
@@ -263,7 +255,6 @@ TEST_SUITE("vobs") {
 		CHECK_EQ(vob.owner_guild, "");
 		CHECK_FALSE(vob.destroyed);
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -274,7 +265,7 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "oCMobInter:oCMOB:zCVob");
 
-		zenkit::vobs::InteractiveObject vob {};
+		zenkit::VInteractiveObject vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.state, 1);
@@ -284,7 +275,6 @@ TEST_SUITE("vobs") {
 		CHECK_EQ(vob.on_state_change_function, "PRAYIDOL");
 		CHECK_FALSE(vob.rewind);
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -295,13 +285,12 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "oCMobFire:oCMobInter:oCMOB:zCVob");
 
-		zenkit::vobs::Fire vob {};
+		zenkit::VFire vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.slot, "BIP01 FIRE");
 		CHECK_EQ(vob.vob_tree, "FIRETREE_LAMP.ZEN");
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -312,7 +301,7 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "oCMobContainer:oCMobInter:oCMOB:zCVob");
 
-		zenkit::vobs::Container vob {};
+		zenkit::VContainer vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_FALSE(vob.locked);
@@ -320,7 +309,6 @@ TEST_SUITE("vobs") {
 		CHECK_EQ(vob.pick_string, "");
 		CHECK_EQ(vob.contents, "ItMi_Gold:35");
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -331,14 +319,13 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "oCMobDoor:oCMobInter:oCMOB:zCVob");
 
-		zenkit::vobs::Door vob {};
+		zenkit::VDoor vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_FALSE(vob.locked);
 		CHECK_EQ(vob.key, "");
 		CHECK_EQ(vob.pick_string, "");
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -349,19 +336,18 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "zCPFXControler:zCVob");
 
-		zenkit::vobs::ParticleEffectController vob {};
+		zenkit::VParticleEffectController vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.pfx_name, "STARGATE_EDGES.PFX");
 		CHECK_FALSE(vob.kill_when_done);
 		CHECK_FALSE(vob.initially_running);
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
-	static const std::vector<float> G2_LIGHT_RANGE_ANIMATION_SCALE {};
-	static const std::vector<glm::u8vec4> G2_LIGHT_COLOR_ANIMATION_LIST {};
+	static std::vector<float> const G2_LIGHT_RANGE_ANIMATION_SCALE {};
+	static std::vector<glm::u8vec4> const G2_LIGHT_COLOR_ANIMATION_LIST {};
 
 	TEST_CASE("zCVobLight(GOTHIC2)") {
 		auto buf = zenkit::Read::from("./samples/G2/VOb/zCVobLight.zen");
@@ -370,7 +356,7 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "zCVobLight:zCVob");
 
-		zenkit::vobs::Light vob {};
+		zenkit::VLight vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.preset, "NW_STANDART_FIRE_STATIC");
@@ -390,7 +376,6 @@ TEST_SUITE("vobs") {
 		CHECK(vob.color_animation_smooth);
 		CHECK(vob.can_move);
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -401,7 +386,7 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "zCVobSound:zCVob");
 
-		zenkit::vobs::Sound vob {};
+		zenkit::VSound vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.volume, 80.0f);
@@ -416,7 +401,6 @@ TEST_SUITE("vobs") {
 		CHECK_EQ(vob.radius, 3000.0f);
 		CHECK_EQ(vob.sound_name, "OW_CROW");
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -427,14 +411,13 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "zCVobSoundDaytime:zCVobSound:zCVob");
 
-		zenkit::vobs::SoundDaytime vob {};
+		zenkit::VSoundDaytime vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.start_time, 5.0f);
 		CHECK_EQ(vob.end_time, 21.0f);
 		CHECK_EQ(vob.sound_name2, "InsectsFrogs_Night");
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -445,7 +428,7 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "oCZoneMusic:zCVob");
 
-		zenkit::vobs::ZoneMusic vob {};
+		zenkit::VZoneMusic vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK(vob.enabled);
@@ -455,7 +438,6 @@ TEST_SUITE("vobs") {
 		CHECK_EQ(vob.volume, 1.0f);
 		CHECK(vob.loop);
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -466,18 +448,17 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "zCMessageFilter:zCVob");
 
-		zenkit::vobs::MessageFilter vob {};
+		zenkit::VMessageFilter vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.target, "EVT_ADDON_TROLLPORTAL_CAMERA_01");
 		CHECK_EQ(vob.on_trigger, zenkit::MessageFilterAction::UNTRIGGER);
 		CHECK_EQ(vob.on_untrigger, zenkit::MessageFilterAction::UNTRIGGER);
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
-	static const std::vector<std::string> G2_CODE_MASTER_SLAVES {
+	static std::vector<std::string> const G2_CODE_MASTER_SLAVES {
 	    "EVT_ORNAMENT_SWITCH_BIGFARM_01",
 	    "EVT_ORNAMENT_SWITCH_BIGFARM_02",
 	    "EVT_ORNAMENT_SWITCH_BIGFARM_03",
@@ -490,7 +471,7 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "zCCodeMaster:zCVob");
 
-		zenkit::vobs::CodeMaster vob {};
+		zenkit::VCodeMaster vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.target, "EVT_ORNAMENT_TRIGGER_BIGFARM_01");
@@ -500,11 +481,10 @@ TEST_SUITE("vobs") {
 		CHECK_FALSE(vob.untriggered_cancels);
 		CHECK_EQ(vob.slaves, G2_CODE_MASTER_SLAVES);
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
-	static const std::vector<zenkit::vobs::TriggerList::Target> G2_TRIGGER_LIST_TARGETS {
+	static std::vector<zenkit::VTriggerList::Target> const G2_TRIGGER_LIST_TARGETS {
 	    {"EVT_ADDON_TROLLPORTAL_MASTERTRIGGERLIST_ALPHA_01", 0.0f},
 	    {"EVT_ADDON_TROLLPORTAL_TRIGGERSCRIPT_01", 0.0f},
 	};
@@ -516,13 +496,12 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "zCTriggerList:zCTrigger:zCVob");
 
-		zenkit::vobs::TriggerList vob {};
+		zenkit::VTriggerList vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.mode, zenkit::TriggerBatchMode::ALL);
 		CHECK_EQ(vob.targets, G2_TRIGGER_LIST_TARGETS);
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -533,16 +512,15 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "oCTriggerScript:zCTrigger:zCVob");
 
-		zenkit::vobs::TriggerScript vob {};
+		zenkit::VTriggerScript vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.function, "EVT_CAVALORNSGOBBOS_FUNC");
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
-	static const std::vector<zenkit::AnimationSample> G1_MOVER_KEYFRAMES {
+	static std::vector<zenkit::AnimationSample> const G1_MOVER_KEYFRAMES {
 	    {glm::vec3 {29785.9609f, 5140.81982f, -16279.8477f},
 	     glm::quat {0.999809802f, -0.000760567724f, 0.0174517576f, 0.00869333092f}},
 	    {glm::vec3 {29785.9609f, 5720.81982f, -16279.8477f},
@@ -556,7 +534,7 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "zCMover:zCTrigger:zCVob");
 
-		zenkit::vobs::Mover vob {};
+		zenkit::VMover vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.behavior, zenkit::MoverBehavior::TOGGLE);
@@ -578,7 +556,6 @@ TEST_SUITE("vobs") {
 		CHECK_EQ(vob.sfx_unlock, "");
 		CHECK_EQ(vob.sfx_use_locked, "");
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -589,13 +566,12 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "oCTriggerChangeLevel:zCTrigger:zCVob");
 
-		zenkit::vobs::TriggerChangeLevel vob {};
+		zenkit::VTriggerChangeLevel vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.level_name, "ADDON\\ADDONWORLD.ZEN");
 		CHECK_EQ(vob.start_vob, "START_ADDON");
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -606,13 +582,12 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "zCTriggerWorldStart:zCVob");
 
-		zenkit::vobs::TriggerWorldStart vob {};
+		zenkit::VTriggerWorldStart vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.target, "EVT_TROLL_GRAVE_MOVER_01");
 		CHECK(vob.fire_once);
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -623,12 +598,11 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "zCTriggerUntouch:zCVob");
 
-		zenkit::vobs::TriggerUntouch vob {};
+		zenkit::VTriggerUntouch vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.target, "EVT_TROLL_GRAVE_TRIGGERLIST_01");
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -639,14 +613,13 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "zCEarthquake:zCVob");
 
-		zenkit::vobs::Earthquake vob {};
+		zenkit::VEarthquake vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.radius, 1000.0f);
 		CHECK_EQ(vob.duration, 5.0f);
 		CHECK_EQ(vob.amplitude, glm::vec3 {2.0f, 10.0f, 2.0f});
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 
@@ -657,7 +630,7 @@ TEST_SUITE("vobs") {
 		CHECK(ar->read_object_begin(obj));
 		CHECK_EQ(obj.class_name, "oCTouchDamage:zCTouchDamage:zCVob");
 
-		zenkit::vobs::TouchDamage vob {};
+		zenkit::VTouchDamage vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
 		CHECK_EQ(vob.damage, 1000.0f);
@@ -673,7 +646,6 @@ TEST_SUITE("vobs") {
 		CHECK_EQ(vob.volume_scale, 1.0f);
 		CHECK_EQ(vob.collision, zenkit::TouchCollisionType::BOX);
 
-		CHECK_FALSE(vob.is_save_game());
 		CHECK(ar->read_object_end());
 	}
 

@@ -4,6 +4,8 @@
 #include "zenkit/Archive.hh"
 #include "zenkit/vobs/Misc.hh"
 
+#include "../Internal.hh"
+
 #include <unordered_map>
 
 namespace zenkit {
@@ -134,24 +136,27 @@ namespace zenkit {
 		}
 
 		if (has_visual_object) {
-			this->visual = r.read_object(version);
+			this->visual = std::dynamic_pointer_cast<Visual>(r.read_object(version));
 
 			if (visual != nullptr) {
-				auto it = visual_type_map.find(visual->get_type());
+				auto it = visual_type_map.find(visual->get_object_type());
 				if (it == visual_type_map.end()) {
 					this->associated_visual_type = VisualType::UNKNOWN;
 				} else {
 					this->associated_visual_type = it->second;
 				}
 
-				if (this->visual->get_type() == ObjectType::zCDecal) {
+				this->visual->name = this->visual_name;
+				this->visual->type = it->second;
+
+				if (this->visual->type == VisualType::DECAL) {
 					this->visual_decal.emplace(*std::reinterpret_pointer_cast<VisualDecal>(this->visual));
 				}
 			}
 		}
 
 		if (has_ai_object) {
-			this->ai = r.read_object(version);
+			this->ai = std::reinterpret_pointer_cast<Ai>(r.read_object(version));
 		}
 
 		if (has_event_manager_object) {
@@ -161,12 +166,11 @@ namespace zenkit {
 		if (r.get_header().save) {
 			// save-games contain two extra values for each VOb
 			// TODO: These are technically from oCVob!
-			this->saved = SaveState {};
-			this->saved->sleep_mode = r.read_byte();     // sleepMode
-			this->saved->next_on_timer = r.read_float(); // nextOnTimer
+			this->sleep_mode = r.read_byte();     // sleepMode
+			this->next_on_timer = r.read_float(); // nextOnTimer
 
 			if (this->physics_enabled) {
-				this->saved->rigid_body.emplace().load(r, version);
+				this->rigid_body.emplace().load(r, version);
 			}
 		}
 	}
@@ -196,7 +200,7 @@ namespace zenkit {
 		fall_dist_y = r.read_float();  // fallDistY
 		fall_start_y = r.read_float(); // fallStartY
 
-		npc = r.read_object<vobs::Npc>(version); // aiNpc
+		npc = r.read_object<VNpc>(version); // aiNpc
 
 		walk_mode = r.read_int();      // walkMode
 		weapon_mode = r.read_int();    // weaponMode
@@ -208,6 +212,6 @@ namespace zenkit {
 
 	void AiMove::load(ReadArchive& r, GameVersion version) {
 		vob = std::reinterpret_pointer_cast<VirtualObject>(r.read_object(version)); // vob
-		owner = r.read_object<vobs::Npc>(version);                                  // owner
+		owner = r.read_object<VNpc>(version);                                       // owner
 	}
 } // namespace zenkit

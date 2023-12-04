@@ -69,11 +69,22 @@ namespace zenkit {
 		zCSkyControler_Outdoor
 	};
 
+	constexpr bool is_vobject(ObjectType type) {
+		return type < ObjectType::ignored;
+	}
+
+#define ZK_OBJECT(s)                                                                                                   \
+	static constexpr ObjectType TYPE = s;                                                                              \
+	ObjectType get_object_type() const override {                                                                      \
+		return s;                                                                                                      \
+	}
+
 	class Object ZKAPI {
 	public:
 		Object() = default;
 		virtual ~Object() noexcept = default;
-		[[nodiscard]] virtual ObjectType get_type() const = 0;
+
+		[[nodiscard]] virtual ObjectType get_object_type() const;
 
 		virtual void load(ReadArchive& r, GameVersion version);
 	};

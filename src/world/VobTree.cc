@@ -2,18 +2,7 @@
 // SPDX-License-Identifier: MIT
 #include "zenkit/world/VobTree.hh"
 #include "zenkit/Archive.hh"
-#include "zenkit/vobs/Camera.hh"
-#include "zenkit/vobs/Light.hh"
-#include "zenkit/vobs/Misc.hh"
-#include "zenkit/vobs/MovableObject.hh"
-#include "zenkit/vobs/Sound.hh"
-#include "zenkit/vobs/Trigger.hh"
 #include "zenkit/vobs/VirtualObject.hh"
-#include "zenkit/vobs/Zone.hh"
-
-#include "../Internal.hh"
-
-#include <unordered_map>
 
 namespace zenkit {
 	std::shared_ptr<VirtualObject> parse_vob_tree(ReadArchive& in, GameVersion version) {

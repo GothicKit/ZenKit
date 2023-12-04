@@ -28,9 +28,9 @@ int main(int argc, char** argv) {
 		return true;
 	});
 
-	auto xardas = vm.init_instance<phoenix::c_npc>("NONE_100_XARDAS");
-	auto hero = vm.init_instance<phoenix::c_npc>("PC_HERO");
-	auto gold = vm.init_instance<phoenix::c_item>("ITMI_GOLD");
+	auto xardas = vm.init_instance<zenkit::INpc>("NONE_100_XARDAS");
+	auto hero = vm.init_instance<zenkit::INpc>("PC_HERO");
+	auto gold = vm.init_instance<zenkit::IItem>("ITMI_GOLD");
 
 	vm.register_external("NPC_ISPLAYER", [&hero](std::shared_ptr<phoenix::c_npc> npc) { return npc->id == hero->id; });
 

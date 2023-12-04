@@ -19,7 +19,7 @@ namespace zenkit {
 		ArchiveObject obj;
 
 		if (!in.read_object_begin(obj)) {
-			throw zenkit::ParserError {"WayNet", "root object missing"};
+			throw ParserError {"WayNet", "root object missing"};
 		}
 
 		(void) /* auto version = */ in.read_int();            // waynetVersion
@@ -30,7 +30,7 @@ namespace zenkit {
 
 		for (auto i = 0u; i < count; ++i) {
 			if (!in.read_object_begin(obj) || obj.class_name != "zCWaypoint") {
-				throw zenkit::ParserError {"WayNet", "missing waypoint object #" + std::to_string(i)};
+				throw ParserError {"WayNet", "missing waypoint object #" + std::to_string(i)};
 			}
 
 			auto& wp = this->waypoints.emplace_back();
@@ -51,7 +51,7 @@ namespace zenkit {
 
 			for (int32_t j = 0; j < 2; ++j) {
 				if (!in.read_object_begin(obj)) {
-					throw zenkit::ParserError {"WayNet", "missing edge object #" + std::to_string(i)};
+					throw ParserError {"WayNet", "missing edge object #" + std::to_string(i)};
 				}
 
 				std::uint32_t wp;
@@ -65,9 +65,9 @@ namespace zenkit {
 					obj_id_to_wp[obj.index] = static_cast<uint32_t>(this->waypoints.size() - 1);
 					wp = static_cast<uint32_t>(this->waypoints.size() - 1);
 				} else {
-					throw zenkit::ParserError {"WayNet",
-					                           "failed to parse edge #" + std::to_string(i) + ": unknown class name '" +
-					                               obj.class_name + "'"};
+					throw ParserError {"WayNet",
+					                   "failed to parse edge #" + std::to_string(i) + ": unknown class name '" +
+					                       obj.class_name + "'"};
 				}
 
 				if (j == 0) {

@@ -7,14 +7,13 @@
 
 namespace phoenix {
 	namespace vobs {
-		using trigger ZKREM("renamed to zenkit::vobs::Trigger") = zenkit::vobs::Trigger;
-		using trigger_mover ZKREM("renamed to zenkit::vobs::Mover") = zenkit::vobs::Mover;
-		using trigger_list ZKREM("renamed to zenkit::vobs::TriggerList") = zenkit::vobs::TriggerList;
-		using trigger_script ZKREM("renamed to zenkit::vobs::TriggerScript") = zenkit::vobs::TriggerScript;
-		using trigger_change_level
-		    ZKREM("renamed to zenkit::vobs::TriggerChangeLevel") = zenkit::vobs::TriggerChangeLevel;
-		using trigger_world_start ZKREM("renamed to zenkit::vobs::TriggerWorldStart") = zenkit::vobs::TriggerWorldStart;
-		using trigger_untouch ZKREM("renamed to zenkit::vobs::TriggerUntouch") = zenkit::vobs::TriggerUntouch;
+		using trigger ZKREM("renamed to zenkit::VTrigger") = zenkit::VTrigger;
+		using trigger_mover ZKREM("renamed to zenkit::VMover") = zenkit::VMover;
+		using trigger_list ZKREM("renamed to zenkit::VTriggerList") = zenkit::VTriggerList;
+		using trigger_script ZKREM("renamed to zenkit::VTriggerScript") = zenkit::VTriggerScript;
+		using trigger_change_level ZKREM("renamed to zenkit::VTriggerChangeLevel") = zenkit::VTriggerChangeLevel;
+		using trigger_world_start ZKREM("renamed to zenkit::VTriggerWorldStart") = zenkit::VTriggerWorldStart;
+		using trigger_untouch ZKREM("renamed to zenkit::VTriggerUntouch") = zenkit::VTriggerUntouch;
 	} // namespace vobs
 
 	using mover_behavior ZKREM("renamed to zenkit::MoverBehavior") = zenkit::MoverBehavior;

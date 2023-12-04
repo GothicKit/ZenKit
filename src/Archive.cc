@@ -221,11 +221,10 @@ namespace zenkit {
 			type = it->second;
 		}
 
-		// TODO(lmichaelis): The VOb type/id assignment is a hacky workaround! Create separate types!
 		std::shared_ptr<Object> syn;
 		switch (type) {
 		case ObjectType::oCNpcTalent:
-			syn = std::make_shared<vobs::Npc::Talent>();
+			syn = std::make_shared<VNpc::Talent>();
 			break;
 		case ObjectType::zCEventManager:
 			syn = std::make_shared<EventManager>();
@@ -264,180 +263,147 @@ namespace zenkit {
 			syn = std::make_shared<CutscenePlayer>();
 			break;
 		case ObjectType::zCVobLevelCompo:
+			syn = std::make_shared<VLevel>();
+			break;
 		case ObjectType::zCVobStartpoint:
+			syn = std::make_shared<VStartPoint>();
+			break;
 		case ObjectType::zCVobStair:
+			syn = std::make_shared<VStair>();
+			break;
 		case ObjectType::zCVobSpot:
+			syn = std::make_shared<VSpot>();
+			break;
 		case ObjectType::zCVob:
 			syn = std::make_shared<VirtualObject>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
 			break;
 		case ObjectType::zCVobScreenFX:
-			syn = std::make_shared<vobs::ScreenEffect>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VScreenEffect>();
 			break;
 		case ObjectType::zCCSCamera:
-			syn = std::make_shared<vobs::CutsceneCamera>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VCutsceneCamera>();
 			break;
 		case ObjectType::zCCamTrj_KeyFrame:
-			syn = std::make_shared<vobs::CameraTrajectoryFrame>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VCameraTrajectoryFrame>();
 			break;
 		case ObjectType::zCVobAnimate:
-			syn = std::make_shared<vobs::Animate>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VAnimate>();
 			break;
 		case ObjectType::zCZoneVobFarPlane:
+			syn = std::make_shared<VZoneFarPlane>();
+			break;
 		case ObjectType::zCZoneVobFarPlaneDefault:
-			syn = std::make_shared<vobs::ZoneFarPlane>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VZoneFarPlaneDefault>();
 			break;
 		case ObjectType::zCZoneZFogDefault:
+			syn = std::make_shared<VZoneFogDefault>();
+			break;
 		case ObjectType::zCZoneZFog:
-			syn = std::make_shared<vobs::ZoneFog>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VZoneFog>();
 			break;
 		case ObjectType::zCVobLensFlare:
-			syn = std::make_shared<vobs::LensFlare>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VLensFlare>();
 			break;
 		case ObjectType::oCItem:
-			syn = std::make_shared<vobs::Item>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VItem>();
 			break;
 		case ObjectType::zCTrigger:
+			syn = std::make_shared<VTrigger>();
+			break;
 		case ObjectType::oCCSTrigger:
-			syn = std::make_shared<vobs::Trigger>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VCutsceneTrigger>();
 			break;
 		case ObjectType::oCMOB:
-			syn = std::make_shared<vobs::MovableObject>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VMovableObject>();
 			break;
 		case ObjectType::oCMobInter:
+			syn = std::make_shared<VInteractiveObject>();
+			break;
 		case ObjectType::oCMobLadder:
+			syn = std::make_shared<VLadder>();
+			break;
 		case ObjectType::oCMobSwitch:
+			syn = std::make_shared<VSwitch>();
+			break;
 		case ObjectType::oCMobWheel:
+			syn = std::make_shared<VWheel>();
+			break;
 		case ObjectType::oCMobBed:
-			syn = std::make_shared<vobs::InteractiveObject>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VBed>();
 			break;
 		case ObjectType::oCMobFire:
-			syn = std::make_shared<vobs::Fire>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VFire>();
 			break;
 		case ObjectType::oCMobContainer:
-			syn = std::make_shared<vobs::Container>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VContainer>();
 			break;
 		case ObjectType::oCMobDoor:
-			syn = std::make_shared<vobs::Door>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VDoor>();
 			break;
 		case ObjectType::zCPFXController:
-			syn = std::make_shared<vobs::ParticleEffectController>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VParticleEffectController>();
 			break;
 		case ObjectType::zCVobLight:
-			syn = std::make_shared<vobs::Light>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VLight>();
 			break;
 		case ObjectType::zCVobSound:
-			syn = std::make_shared<vobs::Sound>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VSound>();
 			break;
 		case ObjectType::zCVobSoundDaytime:
-			syn = std::make_shared<vobs::SoundDaytime>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VSoundDaytime>();
 			break;
 		case ObjectType::oCZoneMusic:
+			syn = std::make_shared<VZoneMusic>();
+			break;
 		case ObjectType::oCZoneMusicDefault:
-			syn = std::make_shared<vobs::ZoneMusic>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VZoneMusicDefault>();
 			break;
 		case ObjectType::zCMessageFilter:
-			syn = std::make_shared<vobs::MessageFilter>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VMessageFilter>();
 			break;
 		case ObjectType::zCCodeMaster:
-			syn = std::make_shared<vobs::CodeMaster>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VCodeMaster>();
 			break;
 		case ObjectType::zCTriggerList:
-			syn = std::make_shared<vobs::TriggerList>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VTriggerList>();
 			break;
 		case ObjectType::oCTriggerScript:
-			syn = std::make_shared<vobs::TriggerScript>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VTriggerScript>();
 			break;
 		case ObjectType::zCMover:
-			syn = std::make_shared<vobs::Mover>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VMover>();
 			break;
 		case ObjectType::oCTriggerChangeLevel:
-			syn = std::make_shared<vobs::TriggerChangeLevel>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VTriggerChangeLevel>();
 			break;
 		case ObjectType::zCTriggerWorldStart:
-			syn = std::make_shared<vobs::TriggerWorldStart>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VTriggerWorldStart>();
 			break;
 		case ObjectType::oCTouchDamage:
-			syn = std::make_shared<vobs::TouchDamage>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VTouchDamage>();
 			break;
 		case ObjectType::zCTriggerUntouch:
-			syn = std::make_shared<vobs::TriggerUntouch>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VTriggerUntouch>();
 			break;
 		case ObjectType::zCEarthquake:
-			syn = std::make_shared<vobs::Earthquake>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VEarthquake>();
 			break;
 		case ObjectType::zCMoverController:
-			syn = std::make_shared<vobs::MoverController>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VMoverController>();
 			break;
 		case ObjectType::oCNpc:
-			syn = std::make_shared<vobs::Npc>();
-			reinterpret_cast<VirtualObject*>(syn.get())->type = type;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			syn = std::make_shared<VNpc>();
 			break;
 		default:
 			ZKLOGE("ReadArchive", "Unknown object type: %s", obj.class_name.c_str());
 			break;
+		}
+
+		// TODO(lmichaelis): The VOb type/id assignment is a hacky workaround! Create separate types!
+		if (is_vobject(type)) {
+			VirtualObjectType vtype = static_cast<VirtualObjectType>(type);
+			reinterpret_cast<VirtualObject*>(syn.get())->type = vtype;
+			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
 		}
 
 		_m_cache.insert_or_assign(obj.index, syn);

@@ -56,6 +56,7 @@ TEST_SUITE("SaveGame") {
 	}
 
 	TEST_CASE("SaveGame.load(GOTHIC2)") {
+		zenkit::Logger::set_default(zenkit::LogLevel::DEBUG);
 		zenkit::unstable::SaveGame save {};
 		save.load("./samples/G2/Save");
 

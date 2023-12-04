@@ -3,12 +3,12 @@
 #include "zenkit/vobs/Sound.hh"
 #include "zenkit/Archive.hh"
 
-namespace zenkit::vobs {
-	void Sound::parse(Sound& obj, ReadArchive& r, GameVersion version) {
+namespace zenkit {
+	void VSound::parse(VSound& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void Sound::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void VSound::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->volume = r.read_float();                                          // sndVolume
 		this->mode = static_cast<SoundMode>(r.read_enum());                     // sndMode
@@ -29,14 +29,14 @@ namespace zenkit::vobs {
 		}
 	}
 
-	void SoundDaytime::parse(SoundDaytime& obj, ReadArchive& r, GameVersion version) {
+	void VSoundDaytime::parse(VSoundDaytime& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void SoundDaytime::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
-		Sound::load(r, version);
+	void VSoundDaytime::load(ReadArchive& r, GameVersion version) {
+		VSound::load(r, version);
 		this->start_time = r.read_float();   // sndStartTime
 		this->end_time = r.read_float();     // sndEndTime
 		this->sound_name2 = r.read_string(); // sndName2
 	}
-} // namespace zenkit::vobs
+} // namespace zenkit

@@ -17,9 +17,7 @@ namespace phoenix {
 }
 
 namespace zenkit {
-	namespace vobs {
-		struct Npc;
-	}
+	struct VNpc;
 
 	struct CutscenePlayer : Object {
 		static constexpr ObjectType TYPE = ObjectType::oCCSPlayer;
@@ -28,7 +26,7 @@ namespace zenkit {
 		int32_t last_process_hour;
 		int32_t play_list_count;
 
-		[[nodiscard]] ObjectType get_type() const override {
+		[[nodiscard]] ObjectType get_object_type() const override {
 			return TYPE;
 		}
 
@@ -52,7 +50,7 @@ namespace zenkit {
 		bool is_raining;
 		int rain_ctr;
 
-		[[nodiscard]] ObjectType get_type() const override {
+		[[nodiscard]] ObjectType get_object_type() const override {
 			return TYPE;
 		}
 
@@ -60,7 +58,7 @@ namespace zenkit {
 	};
 
 	struct SpawnLocation {
-		std::shared_ptr<vobs::Npc> npc;
+		std::shared_ptr<VNpc> npc;
 		glm::vec3 position;
 		float timer;
 	};
@@ -136,7 +134,7 @@ namespace zenkit {
 		WayNet world_way_net;
 
 		// \note Only available in save-games, otherwise empty.
-		std::vector<std::shared_ptr<vobs::Npc>> npcs {};
+		std::vector<std::shared_ptr<VNpc>> npcs {};
 		std::vector<SpawnLocation> npc_spawns {};
 		bool npc_spawn_enabled = false;
 		int npc_spawn_flags = 0;

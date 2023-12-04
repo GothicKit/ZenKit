@@ -7,12 +7,12 @@
 
 #include <sstream>
 
-namespace zenkit::vobs {
+namespace zenkit {
 	void LightPreset::parse(LightPreset& obj, ReadArchive& in, GameVersion version) {
 		obj.load(in, version);
 	}
 
-	void LightPreset::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void LightPreset::load(ReadArchive& r, GameVersion version) {
 		this->preset = r.read_string();                           // lightPresetInUse
 		this->light_type = static_cast<LightType>(r.read_enum()); // lightType
 		this->range = r.read_float();                             // range
@@ -85,12 +85,12 @@ namespace zenkit::vobs {
 		return preset;
 	}
 
-	void Light::parse(Light& obj, ReadArchive& ctx, GameVersion version) {
+	void VLight::parse(VLight& obj, ReadArchive& ctx, GameVersion version) {
 		obj.load(ctx, version);
 	}
 
-	void Light::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void VLight::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		LightPreset::load(r, version);
 	}
-} // namespace zenkit::vobs
+} // namespace zenkit

@@ -67,77 +67,69 @@ namespace zenkit {
 		pingpong ZKREM("renamed to CameraLoop::PINGPONG") = PINGPONG,
 	};
 
-	namespace vobs {
-		/// \brief A VOb which describes the trajectory of a camera during a cutscene.
-		struct CameraTrajectoryFrame : VirtualObject {
-			static constexpr ObjectType TYPE = ObjectType::zCCamTrj_KeyFrame;
+	/// \brief A VOb which describes the trajectory of a camera during a cutscene.
+	struct VCameraTrajectoryFrame : VirtualObject {
+		ZK_OBJECT(ObjectType::zCCamTrj_KeyFrame);
 
-			float time;
-			float roll_angle;
-			float fov_scale;
-			CameraMotion motion_type;
-			CameraMotion motion_type_fov;
-			CameraMotion motion_type_roll;
-			CameraMotion motion_type_time_scale;
-			float tension;
-			float cam_bias;
-			float continuity;
-			float time_scale;
-			bool time_fixed;
-			glm::mat4 original_pose;
+	public:
+		float time;
+		float roll_angle;
+		float fov_scale;
+		CameraMotion motion_type;
+		CameraMotion motion_type_fov;
+		CameraMotion motion_type_roll;
+		CameraMotion motion_type_time_scale;
+		float tension;
+		float cam_bias;
+		float continuity;
+		float time_scale;
+		bool time_fixed;
+		glm::mat4 original_pose;
 
-			/// \brief Parses a camera trajectory VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			ZKREM("use ::load()")
-			ZKAPI static std::unique_ptr<CameraTrajectoryFrame> parse(ReadArchive& ctx, GameVersion version);
+		/// \brief Parses a camera trajectory VOb the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		ZKREM("use ::load()")
+		ZKAPI static std::unique_ptr<VCameraTrajectoryFrame> parse(ReadArchive& ctx, GameVersion version);
 
-			[[nodiscard]] ObjectType get_type() const override {
-				return TYPE;
-			}
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
 
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
-		};
+	/// \brief A VOb which defined the movement of the camera during a cutscene.
+	struct VCutsceneCamera : VirtualObject {
+		ZK_OBJECT(ObjectType::zCCSCamera);
 
-		/// \brief A VOb which defined the movement of the camera during a cutscene.
-		struct CutsceneCamera : VirtualObject {
-			CameraTrajectory trajectory_for;
-			CameraTrajectory target_trajectory_for;
-			CameraLoop loop_mode;
-			CameraLerpType lerp_mode;
-			bool ignore_for_vob_rotation;
-			bool ignore_for_vob_rotation_target;
-			bool adapt;
-			bool ease_first;
-			bool ease_last;
-			float total_duration;
-			std::string auto_focus_vob;
-			bool auto_player_movable;
-			bool auto_untrigger_last;
-			float auto_untrigger_last_delay;
-			std::int32_t position_count;
-			std::int32_t target_count;
+	public:
+		CameraTrajectory trajectory_for;
+		CameraTrajectory target_trajectory_for;
+		CameraLoop loop_mode;
+		CameraLerpType lerp_mode;
+		bool ignore_for_vob_rotation;
+		bool ignore_for_vob_rotation_target;
+		bool adapt;
+		bool ease_first;
+		bool ease_last;
+		float total_duration;
+		std::string auto_focus_vob;
+		bool auto_player_movable;
+		bool auto_untrigger_last;
+		float auto_untrigger_last_delay;
+		std::int32_t position_count;
+		std::int32_t target_count;
 
-			std::vector<std::shared_ptr<CameraTrajectoryFrame>> frames;
+		std::vector<std::shared_ptr<VCameraTrajectoryFrame>> frames;
 
-			// Save-game only variables
-			bool s_paused {false};
-			bool s_started {false};
-			bool s_goto_time_mode {false};
-			float s_cs_time {0};
+		// Save-game only variables
+		bool paused {false};
+		bool started {false};
+		bool goto_time_mode {false};
+		float cs_time {0};
 
-			/// \brief Parses a cutscene camera VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			ZKREM("use ::load()") ZKAPI static void parse(CutsceneCamera& obj, ReadArchive& ctx, GameVersion version);
+		ZKREM("use ::load()") ZKAPI static void parse(VCutsceneCamera& obj, ReadArchive& ctx, GameVersion version);
 
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
-		};
-	} // namespace vobs
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
 } // namespace zenkit

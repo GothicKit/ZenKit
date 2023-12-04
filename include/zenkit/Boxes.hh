@@ -16,6 +16,10 @@ namespace zenkit {
 
 	/// \brief Represents a axis-aligned bounding box (AABB)
 	struct AxisAlignedBoundingBox {
+		static constexpr AxisAlignedBoundingBox zero() {
+			return {glm::vec3 {0}, glm::vec3 {0}};
+		}
+
 		/// \brief The coordinates of the minimum corner of the bounding box.
 		glm::vec3 min;
 

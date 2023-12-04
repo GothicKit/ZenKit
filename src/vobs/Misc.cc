@@ -5,12 +5,12 @@
 
 #include "../Internal.hh"
 
-namespace zenkit::vobs {
-	void Animate::parse(Animate& obj, ReadArchive& r, GameVersion version) {
+namespace zenkit {
+	void VAnimate::parse(VAnimate& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void Animate::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void VAnimate::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->start_on = r.read_bool(); // startOn
 
@@ -20,11 +20,11 @@ namespace zenkit::vobs {
 		}
 	}
 
-	void Item::parse(Item& obj, ReadArchive& r, GameVersion version) {
+	void VItem::parse(VItem& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void Item::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void VItem::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->instance = r.read_string(); // itemInstance
 
@@ -35,42 +35,42 @@ namespace zenkit::vobs {
 		}
 	}
 
-	void LensFlare::parse(LensFlare& obj, ReadArchive& r, GameVersion version) {
+	void VLensFlare::parse(VLensFlare& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void LensFlare::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void VLensFlare::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->fx = r.read_string(); // lensflareFX
 	}
 
-	void ParticleEffectController::parse(ParticleEffectController& obj, ReadArchive& r, GameVersion version) {
+	void VParticleEffectController::parse(VParticleEffectController& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void ParticleEffectController::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void VParticleEffectController::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->pfx_name = r.read_string();        // pfxName
 		this->kill_when_done = r.read_bool();    // killVobWhenDone
 		this->initially_running = r.read_bool(); // pfxStartOn
 	}
 
-	void MessageFilter::parse(MessageFilter& obj, ReadArchive& r, GameVersion version) {
+	void VMessageFilter::parse(VMessageFilter& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void MessageFilter::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void VMessageFilter::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->target = r.read_string();                                       // triggerTarget
 		this->on_trigger = static_cast<MessageFilterAction>(r.read_enum());   // onTrigger
 		this->on_untrigger = static_cast<MessageFilterAction>(r.read_enum()); // onUntrigger
 	}
 
-	void CodeMaster::parse(CodeMaster& obj, ReadArchive& r, GameVersion version) {
+	void VCodeMaster::parse(VCodeMaster& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void CodeMaster::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void VCodeMaster::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->target = r.read_string();               // triggerTarget
 		this->ordered = r.read_bool();                // orderRelevant
@@ -83,7 +83,7 @@ namespace zenkit::vobs {
 			this->slaves.emplace_back(r.read_string()); // slaveVobName[i]
 		}
 
-		if (this->saved && version == GameVersion::GOTHIC_2) {
+		if (r.is_save_game() && version == GameVersion::GOTHIC_2) {
 			// In Gothic II save-games, code masters contain extra variables
 			this->s_num_triggered_slaves = r.read_byte(); // numSlavesTriggered
 
@@ -94,11 +94,11 @@ namespace zenkit::vobs {
 		}
 	}
 
-	void MoverController::parse(MoverController& obj, ReadArchive& r, GameVersion version) {
+	void VMoverController::parse(VMoverController& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void MoverController::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void VMoverController::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->target = r.read_string(); // triggerTarget
 
@@ -111,11 +111,11 @@ namespace zenkit::vobs {
 		this->key = r.read_int(); // gotoFixedKey
 	}
 
-	void TouchDamage::parse(TouchDamage& obj, ReadArchive& r, GameVersion version) {
+	void VTouchDamage::parse(VTouchDamage& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void TouchDamage::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void VTouchDamage::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->damage = r.read_float();                                    // damage
 		this->barrier = r.read_bool();                                    // Barrier
@@ -131,28 +131,28 @@ namespace zenkit::vobs {
 		this->collision = static_cast<TouchCollisionType>(r.read_enum()); // damageCollType
 	}
 
-	void Earthquake::parse(Earthquake& obj, ReadArchive& r, GameVersion version) {
+	void VEarthquake::parse(VEarthquake& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void Earthquake::load(ReadArchive& r, GameVersion version) {
+	void VEarthquake::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->radius = r.read_float();   // radius
 		this->duration = r.read_float(); // timeSec
 		this->amplitude = r.read_vec3(); // amplitudeCM
 	}
 
-	void Npc::Talent::load(ReadArchive& r, GameVersion version) {
+	void VNpc::Talent::load(ReadArchive& r, GameVersion) {
 		this->talent = r.read_int(); // talent
 		this->value = r.read_int();  // value
 		this->skill = r.read_int();  // skill
 	}
 
-	void Npc::parse(Npc& obj, ReadArchive& r, GameVersion version) {
+	void VNpc::parse(VNpc& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void Npc::load(ReadArchive& r, GameVersion version) {
+	void VNpc::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 
 		this->npc_instance = r.read_string(); // npcInstance
@@ -223,12 +223,12 @@ namespace zenkit::vobs {
 		if (news_count != 0) {
 			ZKLOGE("VOb.Npc",
 			       "!!! IMPORTANT !!! This save-game contains news entries and cannot be loaded currently. Please "
-			       "open an issue at https://github.com/GothicKit/phoenix providing your save-game as a ZIP file.");
-			throw ParserError {"vobs::Npc"};
+			       "open an issue at https://github.com/GothicKit/ZenKit providing your save-game as a ZIP file.");
+			throw ParserError {"VNpc"};
 		}
 
-		r.skip_object(false); // [carryVob % 0 0]
-		r.skip_object(false); // [enemy % 0 0]
+		(void) /* TODO(lmichaelis): carryVob = */ r.read_object(version); // [carryVob % 0 0]
+		(void) /* TODO(lmichaelis): enemy = */ r.read_object(version);    // [enemy % 0 0]
 
 		this->move_lock = r.read_bool(); // moveLock
 
@@ -252,7 +252,7 @@ namespace zenkit::vobs {
 		this->items.resize(item_count);
 
 		for (auto i = 0u; i < item_count; ++i) {
-			this->items[i] = r.read_object<Item>(version);
+			this->items[i] = r.read_object<VItem>(version);
 
 			if ((this->items[i]->s_flags & 0x200) != 0) {
 				(void) r.read_int(); // shortKey<n> // TODO
@@ -266,7 +266,7 @@ namespace zenkit::vobs {
 			this->slots[i].name = r.read_string(); // name
 
 			if (this->slots[i].used) {
-				this->slots[i].item = r.read_object<Item>(version);
+				this->slots[i].item = r.read_object<VItem>(version);
 				this->slots[i].in_inventory = r.read_bool(); // inInv
 			}
 		}
@@ -305,7 +305,7 @@ namespace zenkit::vobs {
 		}
 	}
 
-	void ScreenEffect::load(ReadArchive& r, GameVersion version) {
+	void VScreenEffect::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 
 		if (r.is_save_game()) {
@@ -317,4 +317,4 @@ namespace zenkit::vobs {
 			(void) r.read_vec2();         // fovSaved1st
 		}
 	}
-} // namespace zenkit::vobs
+} // namespace zenkit

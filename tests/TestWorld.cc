@@ -216,7 +216,7 @@ TEST_SUITE("World") {
 			CHECK_EQ(vob0->sprite_camera_facing_mode, zenkit::SpriteAlignment::NONE);
 			CHECK_EQ(vob0->anim_mode, zenkit::AnimationType::NONE);
 			CHECK_EQ(vob0->anim_strength, 0.0f);
-			CHECK_EQ(vob0->far_clip_scale, 0.0f);
+			CHECK_EQ(vob0->far_clip_scale, 2.0f);
 			CHECK(vob0->cd_static);
 			CHECK_FALSE(vob0->cd_dynamic);
 			CHECK_FALSE(vob0->vob_static);
@@ -256,7 +256,7 @@ TEST_SUITE("World") {
 				CHECK_EQ(child1->sprite_camera_facing_mode, zenkit::SpriteAlignment::NONE);
 				CHECK_EQ(child1->anim_mode, zenkit::AnimationType::NONE);
 				CHECK_EQ(child1->anim_strength, 0.0f);
-				CHECK_EQ(child1->far_clip_scale, 0.0f);
+				CHECK_EQ(child1->far_clip_scale, 2.0f);
 				CHECK_FALSE(child1->cd_static);
 				CHECK_FALSE(child1->cd_dynamic);
 				CHECK_FALSE(child1->vob_static);
@@ -293,7 +293,7 @@ TEST_SUITE("World") {
 			CHECK_EQ(vob13->sprite_camera_facing_mode, zenkit::SpriteAlignment::NONE);
 			CHECK_EQ(vob13->anim_mode, zenkit::AnimationType::NONE);
 			CHECK_EQ(vob13->anim_strength, 0.0f);
-			CHECK_EQ(vob13->far_clip_scale, 0.0f);
+			CHECK_EQ(vob13->far_clip_scale, 2.0f);
 			CHECK_FALSE(vob13->cd_static);
 			CHECK_FALSE(vob13->cd_dynamic);
 			CHECK_FALSE(vob13->vob_static);

@@ -67,174 +67,197 @@ namespace zenkit {
 		random ZKREM("renamed to TriggerBatchMode::RANDOM") = RANDOM,
 	};
 
-	namespace vobs {
-		/// \brief A basic trigger VOb which does something upon the player interacting with it.
-		struct Trigger : VirtualObject {
-			std::string target;
-			std::uint8_t flags;
-			std::uint8_t filter_flags;
-			std::string vob_target;
-			std::int32_t max_activation_count;
-			float retrigger_delay_sec;
-			float damage_threshold;
-			float fire_delay_sec;
+	/// \brief A basic trigger VOb which does something upon the player interacting with it.
+	struct VTrigger : VirtualObject {
+		ZK_OBJECT(ObjectType::zCTrigger);
 
-			// Save-game only variables
-			float s_next_time_triggerable {0};
-			int s_count_can_be_activated {0};
-			bool s_is_enabled {true};
+	public:
+		std::string target;
+		std::uint8_t flags;
+		std::uint8_t filter_flags;
+		std::string vob_target;
+		std::int32_t max_activation_count;
+		float retrigger_delay_sec;
+		float damage_threshold;
+		float fire_delay_sec;
 
-			/// \brief Parses a trigger VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			/// \see trigger::parse
-			ZKREM("use ::load()") ZKAPI static void parse(Trigger& obj, ReadArchive& ctx, GameVersion version);
+		// Save-game only variables
+		float s_next_time_triggerable {0};
+		int s_count_can_be_activated {0};
+		bool s_is_enabled {true};
 
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		/// \brief Parses a trigger VOb the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		/// \see trigger::parse
+		ZKREM("use ::load()") ZKAPI static void parse(VTrigger& obj, ReadArchive& ctx, GameVersion version);
+
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
+
+	struct VCutsceneTrigger : VTrigger {
+		ZK_OBJECT(ObjectType::oCCSTrigger);
+	};
+
+	/// \brief A VOb which can move upon player interaction.
+	struct VMover : VTrigger {
+		ZK_OBJECT(ObjectType::zCMover);
+
+	public:
+		MoverBehavior behavior {MoverBehavior::TOGGLE};
+		float touch_blocker_damage {0};
+		float stay_open_time_sec {0};
+		bool locked {true};
+		bool auto_link {false};
+		bool auto_rotate {false};
+
+		float speed {0};
+		MoverLerpType lerp_mode {MoverLerpType::CURVE};
+		MoverSpeedType speed_mode {MoverSpeedType::CONSTANT};
+
+		std::vector<AnimationSample> keyframes {};
+
+		std::string sfx_open_start {};
+		std::string sfx_open_end {};
+		std::string sfx_transitioning {};
+		std::string sfx_close_start {};
+		std::string sfx_close_end {};
+		std::string sfx_lock {};
+		std::string sfx_unlock {};
+		std::string sfx_use_locked {};
+
+		// Save-game only variables
+		glm::vec3 s_act_key_pos_delta;
+		float s_act_keyframe_f;
+		int s_act_keyframe;
+		int s_next_keyframe;
+		float s_move_speed_unit;
+		float s_advance_dir;
+		uint32_t s_mover_state;
+		int s_trigger_event_count;
+		float s_stay_open_time_dest;
+
+		/// \brief Parses a mover trigger VOb the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		/// \see trigger::parse
+		ZKREM("use ::load()") ZKAPI static void parse(VMover& obj, ReadArchive& ctx, GameVersion version);
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
+
+	/// \brief A VOb which can call multiple script function upon being triggered.
+	struct VTriggerList : VTrigger {
+		ZK_OBJECT(ObjectType::zCTriggerList);
+
+	public:
+		struct Target {
+			std::string name {};
+			float delay {};
+
+			[[nodiscard]] bool operator==(Target const& tgt) const noexcept {
+				return this->name == tgt.name && this->delay == tgt.delay;
+			}
 		};
 
-		/// \brief A VOb which can move upon player interaction.
-		struct Mover : Trigger {
-			MoverBehavior behavior {MoverBehavior::TOGGLE};
-			float touch_blocker_damage {0};
-			float stay_open_time_sec {0};
-			bool locked {true};
-			bool auto_link {false};
-			bool auto_rotate {false};
+		using target ZKREM("renamed to Target") = Target;
 
-			float speed {0};
-			MoverLerpType lerp_mode {MoverLerpType::CURVE};
-			MoverSpeedType speed_mode {MoverSpeedType::CONSTANT};
+		TriggerBatchMode mode {};
+		std::vector<Target> targets {};
 
-			std::vector<AnimationSample> keyframes {};
+		// Save-game only variables
+		uint8_t s_act_target {0};
+		bool s_send_on_trigger {false};
 
-			std::string sfx_open_start {};
-			std::string sfx_open_end {};
-			std::string sfx_transitioning {};
-			std::string sfx_close_start {};
-			std::string sfx_close_end {};
-			std::string sfx_lock {};
-			std::string sfx_unlock {};
-			std::string sfx_use_locked {};
+		/// \brief Parses a trigger list VOb the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		/// \see trigger::parse
+		ZKREM("use ::load()") ZKAPI static void parse(VTriggerList& obj, ReadArchive& ctx, GameVersion version);
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
 
-			// Save-game only variables
-			glm::vec3 s_act_key_pos_delta;
-			float s_act_keyframe_f;
-			int s_act_keyframe;
-			int s_next_keyframe;
-			float s_move_speed_unit;
-			float s_advance_dir;
-			uint32_t s_mover_state;
-			int s_trigger_event_count;
-			float s_stay_open_time_dest;
+	/// \brief A VOb which calls a script function upon being triggered.
+	struct VTriggerScript : VTrigger {
+		ZK_OBJECT(ObjectType::oCTriggerScript);
 
-			/// \brief Parses a mover trigger VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			/// \see trigger::parse
-			ZKREM("use ::load()") ZKAPI static void parse(Mover& obj, ReadArchive& ctx, GameVersion version);
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
-		};
+	public:
+		std::string function {};
 
-		/// \brief A VOb which can call multiple script function upon being triggered.
-		struct TriggerList : Trigger {
-			struct Target {
-				std::string name {};
-				float delay {};
+		/// \brief Parses a script trigger VOb the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		/// \see trigger::parse
+		ZKREM("use ::load()") ZKAPI static void parse(VTriggerScript& obj, ReadArchive& ctx, GameVersion version);
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
 
-				[[nodiscard]] bool operator==(Target const& tgt) const noexcept {
-					return this->name == tgt.name && this->delay == tgt.delay;
-				}
-			};
+	/// \brief A VOb which triggers a level change if the player moves close to it.
+	struct VTriggerChangeLevel : VTrigger {
+		ZK_OBJECT(ObjectType::oCTriggerChangeLevel);
 
-			using target ZKREM("renamed to Target") = Target;
+	public:
+		std::string level_name {};
+		std::string start_vob {};
 
-			TriggerBatchMode mode {};
-			std::vector<Target> targets {};
+		/// \brief Parses a change level trigger VOb the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		/// \see trigger::parse
+		ZKREM("use ::load()")
+		ZKAPI static void parse(VTriggerChangeLevel& obj, ReadArchive& ctx, GameVersion version);
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
 
-			// Save-game only variables
-			uint8_t s_act_target {0};
-			bool s_send_on_trigger {false};
+	/// \brief A VOb which triggers a world start event.
+	struct VTriggerWorldStart : VirtualObject {
+		ZK_OBJECT(ObjectType::zCTriggerWorldStart);
 
-			/// \brief Parses a trigger list VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			/// \see trigger::parse
-			ZKREM("use ::load()") ZKAPI static void parse(TriggerList& obj, ReadArchive& ctx, GameVersion version);
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
-		};
+	public:
+		std::string target;
+		bool fire_once;
 
-		/// \brief A VOb which calls a script function upon being triggered.
-		struct TriggerScript : Trigger {
-			std::string function {};
+		// Save-game only variables
+		bool s_has_fired {false};
 
-			/// \brief Parses a script trigger VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			/// \see trigger::parse
-			ZKREM("use ::load()") ZKAPI static void parse(TriggerScript& obj, ReadArchive& ctx, GameVersion version);
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
-		};
+		/// \brief Parses a world load trigger VOb the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		ZKREM("use ::load()")
+		ZKAPI static void parse(VTriggerWorldStart& obj, ReadArchive& ctx, GameVersion version);
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
 
-		/// \brief A VOb which triggers a level change if the player moves close to it.
-		struct TriggerChangeLevel : Trigger {
-			std::string level_name {};
-			std::string start_vob {};
+	struct VTriggerUntouch : VirtualObject {
+		ZK_OBJECT(ObjectType::zCTriggerUntouch);
 
-			/// \brief Parses a change level trigger VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			/// \see trigger::parse
-			ZKREM("use ::load()")
-			ZKAPI static void parse(TriggerChangeLevel& obj, ReadArchive& ctx, GameVersion version);
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
-		};
+	public:
+		std::string target;
 
-		/// \brief A VOb which triggers a world start event.
-		struct TriggerWorldStart : VirtualObject {
-			std::string target;
-			bool fire_once;
-
-			// Save-game only variables
-			bool s_has_fired {false};
-
-			/// \brief Parses a world load trigger VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			ZKREM("use ::load()")
-			ZKAPI static void parse(TriggerWorldStart& obj, ReadArchive& ctx, GameVersion version);
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
-		};
-
-		struct TriggerUntouch : VirtualObject {
-			std::string target;
-
-			/// \brief Parses an untouch trigger VOb the given *ZenGin* archive.
-			/// \param[out] obj The object to read.
-			/// \param[in,out] ctx The archive reader to read from.
-			/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-			/// \throws ParserError if parsing fails.
-			/// \see vob::parse
-			ZKREM("use ::load()") ZKAPI static void parse(TriggerUntouch& obj, ReadArchive& ctx, GameVersion version);
-			ZKAPI void load(ReadArchive& r, GameVersion version) override;
-		};
-	} // namespace vobs
+		/// \brief Parses an untouch trigger VOb the given *ZenGin* archive.
+		/// \param[out] obj The object to read.
+		/// \param[in,out] ctx The archive reader to read from.
+		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
+		/// \throws ParserError if parsing fails.
+		/// \see vob::parse
+		ZKREM("use ::load()") ZKAPI static void parse(VTriggerUntouch& obj, ReadArchive& ctx, GameVersion version);
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+	};
 } // namespace zenkit

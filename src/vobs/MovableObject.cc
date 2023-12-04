@@ -5,12 +5,12 @@
 
 #include "../Internal.hh"
 
-namespace zenkit::vobs {
-	void MovableObject::parse(MovableObject& obj, ReadArchive& r, GameVersion version) {
+namespace zenkit {
+	void VMovableObject::parse(VMovableObject& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void MovableObject::load(zenkit::ReadArchive& r, zenkit::GameVersion version) {
+	void VMovableObject::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->name = r.read_string();                                   // focusName
 		this->hp = r.read_int();                                        // hitpoints
@@ -25,12 +25,12 @@ namespace zenkit::vobs {
 		this->destroyed = r.read_bool();                                // isDestroyed
 	}
 
-	void InteractiveObject::parse(InteractiveObject& obj, ReadArchive& r, GameVersion version) {
+	void VInteractiveObject::parse(VInteractiveObject& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void InteractiveObject::load(ReadArchive& r, zenkit::GameVersion version) {
-		MovableObject::load(r, version);
+	void VInteractiveObject::load(ReadArchive& r, GameVersion version) {
+		VMovableObject::load(r, version);
 		this->state = r.read_int();                       // stateNum
 		this->target = r.read_string();                   // triggerTarget
 		this->item = r.read_string();                     // useWithItem
@@ -39,12 +39,12 @@ namespace zenkit::vobs {
 		this->rewind = r.read_bool();                     // rewind
 	}
 
-	void Container::parse(Container& obj, ReadArchive& r, GameVersion version) {
+	void VContainer::parse(VContainer& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void Container::load(ReadArchive& r, zenkit::GameVersion version) {
-		InteractiveObject::load(r, version);
+	void VContainer::load(ReadArchive& r, GameVersion version) {
+		VInteractiveObject::load(r, version);
 		this->locked = r.read_bool();        // locked
 		this->key = r.read_string();         // keyInstance
 		this->pick_string = r.read_string(); // pickLockStr
@@ -56,29 +56,29 @@ namespace zenkit::vobs {
 			this->s_items.resize(item_count);
 
 			for (auto i = 0u; i < item_count; ++i) {
-				this->s_items[i] = r.read_object<Item>(version);
+				this->s_items[i] = r.read_object<VItem>(version);
 			}
 		}
 	}
 
-	void Door::parse(Door& obj, ReadArchive& r, GameVersion version) {
+	void VDoor::parse(VDoor& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void Door::load(ReadArchive& r, GameVersion version) {
-		InteractiveObject::load(r, version);
+	void VDoor::load(ReadArchive& r, GameVersion version) {
+		VInteractiveObject::load(r, version);
 		this->locked = r.read_bool();        // locked
 		this->key = r.read_string();         // keyInstance
 		this->pick_string = r.read_string(); // pickLockStr
 	}
 
-	void Fire::parse(Fire& obj, ReadArchive& r, GameVersion version) {
+	void VFire::parse(VFire& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
 
-	void Fire::load(ReadArchive& r, GameVersion version) {
-		InteractiveObject::load(r, version);
+	void VFire::load(ReadArchive& r, GameVersion version) {
+		VInteractiveObject::load(r, version);
 		this->slot = r.read_string();     // fireSlot
 		this->vob_tree = r.read_string(); // fireVobtreeName
 	}
-} // namespace zenkit::vobs
+} // namespace zenkit
