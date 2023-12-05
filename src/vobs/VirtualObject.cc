@@ -150,13 +150,15 @@ namespace zenkit {
 				this->visual->type = it->second;
 
 				if (this->visual->type == VisualType::DECAL) {
-					this->visual_decal.emplace(*std::reinterpret_pointer_cast<VisualDecal>(this->visual));
+					this->visual_decal.emplace(*reinterpret_cast<VisualDecal*>(this->visual.get()));
 				}
 			}
 		}
 
 		if (has_ai_object) {
-			this->ai = std::reinterpret_pointer_cast<Ai>(r.read_object(version));
+			// NOTE(lmichaelis): The NDK does not seem to support `reinterpret_pointer_cast`.
+			auto obj = r.read_object(version);
+			this->ai = std::shared_ptr<Ai>(obj, reinterpret_cast<Ai*>(obj.get()));
 		}
 
 		if (has_event_manager_object) {
@@ -211,7 +213,9 @@ namespace zenkit {
 	}
 
 	void AiMove::load(ReadArchive& r, GameVersion version) {
-		vob = std::reinterpret_pointer_cast<VirtualObject>(r.read_object(version)); // vob
-		owner = r.read_object<VNpc>(version);                                       // owner
+		// NOTE(lmichaelis): The NDK does not seem to support `reinterpret_pointer_cast`.
+		auto obj = r.read_object(version);
+		vob = std::shared_ptr<VirtualObject>(obj, reinterpret_cast<VirtualObject*>(obj.get())); // vob
+		owner = r.read_object<VNpc>(version);                                                   // owner
 	}
 } // namespace zenkit

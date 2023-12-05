@@ -9,7 +9,8 @@ namespace zenkit {
 		auto obj = in.read_object(version);
 		if (!is_vobject(obj->get_object_type())) return nullptr;
 
-		auto object = std::reinterpret_pointer_cast<VirtualObject>(obj);
+		// NOTE(lmichaelis): The NDK does not seem to support `reinterpret_pointer_cast`.
+		std::shared_ptr<VirtualObject> object {obj, reinterpret_cast<VirtualObject*>(obj.get())};
 
 		auto child_count = static_cast<size_t>(in.read_int());
 		if (object == nullptr) {

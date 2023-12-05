@@ -14,6 +14,7 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <variant>
 
 namespace phoenix {
@@ -153,7 +154,8 @@ namespace zenkit {
 				throw ParserError {"ReadArchive", "Read unexcected object!"};
 			}
 
-			return std::reinterpret_pointer_cast<T>(std::move(obj));
+			// NOTE(lmichaelis): The NDK does not seem to support `reinterpret_pointer_cast`.
+			return std::shared_ptr<T>(obj, reinterpret_cast<T*>(obj.get()));
 		}
 
 		std::shared_ptr<Object> read_object(GameVersion version);
