@@ -187,7 +187,7 @@ namespace zenkit {
 		float head_y;
 		float fall_dist_y;
 		float fall_start_y;
-		std::shared_ptr<VNpc> npc;
+		std::weak_ptr<VNpc> npc;
 		int walk_mode;
 		int weapon_mode;
 		int wmode_ast;
@@ -202,8 +202,8 @@ namespace zenkit {
 		ZK_OBJECT(ObjectType::oCAIVobMove);
 
 	public:
-		std::shared_ptr<VirtualObject> vob;
-		std::shared_ptr<VNpc> owner;
+		std::weak_ptr<VirtualObject> vob;
+		std::weak_ptr<VNpc> owner;
 
 		void load(ReadArchive& r, GameVersion version) override;
 	};

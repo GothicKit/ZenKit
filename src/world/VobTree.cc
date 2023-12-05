@@ -6,8 +6,10 @@
 
 namespace zenkit {
 	std::shared_ptr<VirtualObject> parse_vob_tree(ReadArchive& in, GameVersion version) {
-		// TODO(lmichaelis): Make this dynamic cast faster!
-		auto object = std::dynamic_pointer_cast<VirtualObject>(in.read_object(version));
+		auto obj = in.read_object(version);
+		if (!is_vobject(obj->get_object_type())) return nullptr;
+
+		auto object = std::reinterpret_pointer_cast<VirtualObject>(obj);
 
 		auto child_count = static_cast<size_t>(in.read_int());
 		if (object == nullptr) {
