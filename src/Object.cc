@@ -5,5 +5,11 @@ namespace zenkit {
 		return ObjectType::unknown;
 	}
 
+	uint16_t Object::get_version_identifier(GameVersion) const {
+		return 0;
+	}
+
 	void Object::load(ReadArchive&, GameVersion) {}
+
+	void Object::save(WriteArchive&, GameVersion) const {}
 } // namespace zenkit

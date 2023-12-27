@@ -85,6 +85,66 @@ namespace zenkit {
 	    {"zCSkyControler_Outdoor", ObjectType::zCSkyControler_Outdoor},
 	};
 
+	static std::unordered_map<ObjectType, std::string> const CLASS_NAMES = {
+	    {ObjectType::zCVob, "zCVob"},
+	    {ObjectType::zCVobLevelCompo, "zCVobLevelCompo:zCVob"},
+	    {ObjectType::oCItem, "oCItem:zCVob"},
+	    {ObjectType::oCNpc, "oCNpc:zCVob"},
+	    {ObjectType::oCMOB, "oCMOB:zCVob"},
+	    {ObjectType::oCMobInter, "oCMobInter:oCMOB:zCVob"},
+	    {ObjectType::oCMobBed, "oCMobBed:oCMobInter:oCMOB:zCVob"},
+	    {ObjectType::oCMobFire, "oCMobFire:oCMobInter:oCMOB:zCVob"},
+	    {ObjectType::oCMobLadder, "oCMobLadder:oCMobInter:oCMOB:zCVob"},
+	    {ObjectType::oCMobSwitch, "oCMobSwitch:oCMobInter:oCMOB:zCVob"},
+	    {ObjectType::oCMobWheel, "oCMobWheel:oCMobInter:oCMOB:zCVob"},
+	    {ObjectType::oCMobContainer, "oCMobContainer:oCMobInter:oCMOB:zCVob"},
+	    {ObjectType::oCMobDoor, "oCMobDoor:oCMobInter:oCMOB:zCVob"},
+	    {ObjectType::zCPFXController, "zCPFXControler:zCVob"},
+	    {ObjectType::zCVobAnimate, "zCVobAnimate:zCVob"},
+	    {ObjectType::zCVobLensFlare, "zCVobLensFlare:zCVob"},
+	    {ObjectType::zCVobLight, "zCVobLight:zCVob"},
+	    {ObjectType::zCVobSpot, "zCVobSpot:zCVob"},
+	    {ObjectType::zCVobStartpoint, "zCVobStartpoint:zCVob"},
+	    {ObjectType::zCVobSound, "zCVobSound:zCVob"},
+	    {ObjectType::zCVobSoundDaytime, "zCVobSoundDaytime:zCVobSound:zCVob"},
+	    {ObjectType::oCZoneMusic, "oCZoneMusic:zCVob"},
+	    {ObjectType::oCZoneMusicDefault, "oCZoneMusicDefault:oCZoneMusic:zCVob"},
+	    {ObjectType::zCZoneZFog, "zCZoneZFog:zCVob"},
+	    {ObjectType::zCZoneZFogDefault, "zCZoneZFogDefault:zCZoneZFog:zCVob"},
+	    {ObjectType::zCZoneVobFarPlane, "zCZoneVobFarPlane:zCVob"},
+	    {ObjectType::zCZoneVobFarPlaneDefault, "zCZoneVobFarPlaneDefault:zCZoneVobFarPlane:zCVob"},
+	    {ObjectType::zCMessageFilter, "zCMessageFilter:zCVob"},
+	    {ObjectType::zCCodeMaster, "zCCodeMaster:zCVob"},
+	    {ObjectType::zCTrigger, "zCTrigger:zCVob"},
+	    {ObjectType::zCTriggerList, "zCTriggerList:zCTrigger:zCVob"},
+	    {ObjectType::oCTriggerScript, "oCTriggerScript:zCTrigger:zCVob"},
+	    {ObjectType::zCMover, "zCMover:zCTrigger:zCVob"},
+	    {ObjectType::oCTriggerChangeLevel, "oCTriggerChangeLevel:zCTrigger:zCVob"},
+	    {ObjectType::zCTriggerWorldStart, "zCTriggerWorldStart:zCVob"},
+	    {ObjectType::zCTriggerUntouch, "zCTriggerUntouch:zCVob"},
+	    {ObjectType::zCCSCamera, "zCCSCamera:zCVob"},
+	    {ObjectType::zCCamTrj_KeyFrame, "zCCamTrj_KeyFrame:zCVob"},
+	    {ObjectType::oCTouchDamage, "oCTouchDamage:zCTouchDamage:zCVob"},
+	    {ObjectType::zCEarthquake, "zCEarthquake:zCVob"},
+	    {ObjectType::zCMoverController, "zCMoverControler:zCVob"},
+	    {ObjectType::zCVobScreenFX, "zCVobScreenFX:zCVob"},
+	    {ObjectType::zCVobStair, "zCVobStair:zCVob"},
+	    {ObjectType::oCCSTrigger, "oCCSTrigger:zCTrigger:zCVob"},
+	    {ObjectType::oCNpcTalent, "oCNpcTalent"},
+	    {ObjectType::zCEventManager, "zCEventManager"},
+	    {ObjectType::zCDecal, "zCDecal"},
+	    {ObjectType::zCMesh, "zCMesh"},
+	    {ObjectType::zCProgMeshProto, "zCProgMeshProto"},
+	    {ObjectType::zCParticleFX, "zCParticleFX"},
+	    {ObjectType::zCAICamera, "zCAICamera"},
+	    {ObjectType::zCModel, "zCModel"},
+	    {ObjectType::zCMorphMesh, "zCMorphMesh"},
+	    {ObjectType::oCAIHuman, "oCAIHuman:oCAniCtrl_Human:zCAIPlayer"},
+	    {ObjectType::oCAIVobMove, "oCAIVobMove"},
+	    {ObjectType::oCCSPlayer, "oCCSPlayer:zCCSPlayer"},
+	    {ObjectType::zCSkyControler_Outdoor, "zCSkyControler_Outdoor"},
+	};
+
 	ReadArchive::ReadArchive(ArchiveHeader head, Read* r) : header(std::move(head)), read(r) {}
 
 	ReadArchive::ReadArchive(ArchiveHeader head, Read* r, std::unique_ptr<Read> owned)
@@ -144,7 +204,7 @@ namespace zenkit {
 	}
 
 	std::unique_ptr<ReadArchive> ReadArchive::open(phoenix::buffer& in) {
-		auto read = zenkit::Read::from(&in);
+		auto read = Read::from(&in);
 
 		ArchiveHeader header {};
 		header.load(read.get());
@@ -433,5 +493,45 @@ namespace zenkit {
 				skip_entry();
 			}
 		} while (level > 0);
+	}
+
+	std::unique_ptr<WriteArchive> WriteArchive::to(Write* w, ArchiveFormat format) {
+		switch (format) {
+		case ArchiveFormat::BINARY:
+			return std::make_unique<WriteArchiveBinary>(w);
+		case ArchiveFormat::BINSAFE:
+			return std::make_unique<WriteArchiveBinsafe>(w);
+		case ArchiveFormat::ASCII:
+			return std::make_unique<WriteArchiveAscii>(w);
+		}
+
+		return nullptr;
+	}
+
+	std::unique_ptr<WriteArchive> WriteArchive::to_save(Write* w, ArchiveFormat format) {
+		auto ar = to(w, format);
+		ar->_m_save = true;
+		return ar;
+	}
+
+	void WriteArchive::write_object(std::shared_ptr<Object> obj, GameVersion version) {
+		this->write_object("%", obj, version);
+	}
+
+	void WriteArchive::write_object(std::string_view name, std::shared_ptr<Object> obj, GameVersion version) {
+		auto it = _m_cache.find(obj.get());
+		if (it != _m_cache.end()) {
+			this->write_ref(name, it->second);
+			return;
+		}
+
+		std::string_view class_name = CLASS_NAMES.at(obj->get_object_type());
+		uint16_t obj_version = obj->get_version_identifier(version);
+
+		auto index = this->write_object_begin(name, class_name, obj_version);
+		_m_cache.insert_or_assign(obj.get(), index);
+
+		obj->save(*this, version);
+		this->write_object_end();
 	}
 } // namespace zenkit

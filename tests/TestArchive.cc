@@ -6,7 +6,7 @@
 #include <doctest/doctest.h>
 
 TEST_SUITE("ReadArchive") {
-	TEST_CASE("ReadArchive.open(ASCII)") {
+	TEST_CASE("ReadArchive.from(ASCII)") {
 		zenkit::Logger::set_default(zenkit::LogLevel::DEBUG);
 
 		auto in = zenkit::Read::from("./samples/ascii.zen");

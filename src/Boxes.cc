@@ -22,6 +22,11 @@ namespace zenkit {
 		this->max = r->read_vec3();
 	}
 
+	void AxisAlignedBoundingBox::save(Write* w) const {
+		w->write_vec3(this->min);
+		w->write_vec3(this->max);
+	}
+
 	OrientedBoundingBox OrientedBoundingBox::parse(phoenix::buffer& in) {
 		OrientedBoundingBox bbox {};
 

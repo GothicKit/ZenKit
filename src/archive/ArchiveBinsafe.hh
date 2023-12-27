@@ -4,7 +4,7 @@
 #include "zenkit/Archive.hh"
 #include "zenkit/Stream.hh"
 
-#include <unordered_map>
+#include <map>
 #include <vector>
 
 namespace zenkit {
@@ -74,5 +74,53 @@ namespace zenkit {
 		std::uint32_t _m_bs_version {0};
 
 		std::vector<hash_table_entry> _m_hash_table_entries;
+	};
+
+	struct BinsafeEq {
+		using is_transparent = std::true_type;
+
+		[[nodiscard]] bool operator()(std::string const& a, std::string_view b) const noexcept {
+			return a == b;
+		}
+
+		[[nodiscard]] bool operator()(std::string const& a, std::string const& b) const noexcept {
+			return a == b;
+		}
+	};
+
+	class WriteArchiveBinsafe : public WriteArchive {
+	public:
+		explicit WriteArchiveBinsafe(Write* w);
+
+		std::uint32_t
+		write_object_begin(std::string_view object_name, std::string_view class_name, std::uint16_t version) override;
+		void write_object_end() override;
+		void write_ref(std::string_view object_name, uint32_t index) override;
+
+		void write_string(std::string_view name, std::string_view v) override;
+		void write_int(std::string_view name, std::int32_t v) override;
+		void write_float(std::string_view name, float v) override;
+		void write_byte(std::string_view name, std::uint8_t v) override;
+		void write_word(std::string_view name, std::uint16_t v) override;
+		void write_enum(std::string_view name, std::uint32_t v) override;
+		void write_bool(std::string_view name, bool v) override;
+		void write_color(std::string_view name, glm::u8vec4 v) override;
+		void write_vec3(std::string_view name, glm::vec3 const& v) override;
+		void write_vec2(std::string_view name, glm::vec2 v) override;
+		void write_bbox(std::string_view name, AxisAlignedBoundingBox const& v) override;
+		void write_mat3x3(std::string_view name, glm::mat3x3 const& v) override;
+		void write_raw(std::string_view name, std::vector<std::byte> const& v) override;
+		void write_raw(std::string_view name, std::byte const* v, std::uint16_t length) override;
+		void write_raw_float(std::string_view name, float const* v, std::uint16_t length) override;
+		void write_header() final;
+
+	private:
+		void write_entry(std::string_view name, ArchiveEntryType type);
+
+	private:
+		Write* _m_write;
+		std::uint32_t _m_index {1};
+		std::map<std::string, std::uint16_t, std::less<>> _m_hash_keys;
+		std::size_t _m_head;
 	};
 } // namespace zenkit

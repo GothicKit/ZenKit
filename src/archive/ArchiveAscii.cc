@@ -6,8 +6,11 @@
 
 #include "../Internal.hh"
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include <charconv>
 #include <cstring>
+#include <ctime>
 #include <stdexcept>
 #include <unordered_map>
 #include <utility>
@@ -253,5 +256,210 @@ namespace zenkit {
 		}
 
 		return Read::from(std::move(out));
+	}
+
+	WriteArchiveAscii::WriteArchiveAscii(Write* w) : _m_write(w) {
+		this->_m_head = this->_m_write->tell();
+		this->write_header();
+	}
+
+	template <typename T, size_t N>
+	std::string_view intosv(std::array<char, N>& buf, T v) {
+		auto r = std::to_chars(buf.begin(), buf.end(), v);
+		return std::string_view {buf.begin(), static_cast<size_t>(r.ptr - buf.begin())};
+	}
+
+	std::uint32_t WriteArchiveAscii::write_object_begin(std::string_view object_name,
+	                                                    std::string_view class_name,
+	                                                    std::uint16_t version) {
+		this->write_indent();
+
+		std::array<char, std::numeric_limits<uint32_t>::digits10 + 1> buf {};
+
+		this->_m_write->write_char('[');
+		this->_m_write->write_string(object_name);
+		this->_m_write->write_char(' ');
+		this->_m_write->write_string(class_name);
+		this->_m_write->write_char(' ');
+		this->_m_write->write_string(intosv(buf, version));
+		this->_m_write->write_char(' ');
+		this->_m_write->write_string(intosv(buf, _m_index));
+		this->_m_write->write_char(']');
+		this->_m_write->write_char('\n');
+
+		this->_m_indent++;
+		return _m_index++;
+	}
+
+	void WriteArchiveAscii::write_object_end() {
+		this->_m_indent--;
+		this->write_indent();
+
+		this->_m_write->write_line("[]");
+	}
+
+	void WriteArchiveAscii::write_ref(std::string_view object_name, uint32_t index) {
+		this->write_indent();
+
+		std::array<char, std::numeric_limits<uint32_t>::digits10 + 1> buf {};
+
+		this->_m_write->write_char('[');
+		this->_m_write->write_string(object_name);
+		this->_m_write->write_string(" \xA7 0 ");
+		this->_m_write->write_string(intosv(buf, index));
+		this->_m_write->write_char(']');
+		this->_m_write->write_char('\n');
+
+		this->write_indent();
+		this->_m_write->write_line("[]");
+	}
+
+	void WriteArchiveAscii::write_string(std::string_view name, std::string_view v) {
+		this->write_entry(name, "string", v);
+	}
+
+	void WriteArchiveAscii::write_int(std::string_view name, std::int32_t v) {
+		std::array<char, std::numeric_limits<int32_t>::digits10 + 1> buf {};
+		this->write_entry(name, "int", intosv(buf, v));
+	}
+
+	void WriteArchiveAscii::write_float(std::string_view name, float v) {
+		std::array<char, std::numeric_limits<float>::max_exponent10 + std::numeric_limits<float>::max_digits10 + 2>
+		    buf {};
+		this->write_entry(name, "float", intosv(buf, v));
+	}
+
+	void WriteArchiveAscii::write_byte(std::string_view name, std::uint8_t v) {
+		std::array<char, std::numeric_limits<uint8_t>::digits10 + 1> buf {};
+		this->write_entry(name, "byte", intosv(buf, v));
+	}
+
+	void WriteArchiveAscii::write_word(std::string_view name, std::uint16_t v) {
+		std::array<char, std::numeric_limits<uint16_t>::digits10 + 1> buf {};
+		this->write_entry(name, "word", intosv(buf, v));
+	}
+
+	void WriteArchiveAscii::write_enum(std::string_view name, std::uint32_t v) {
+		std::array<char, std::numeric_limits<uint32_t>::digits10 + 1> buf {};
+		this->write_entry(name, "enum", intosv(buf, v));
+	}
+
+	void WriteArchiveAscii::write_bool(std::string_view name, bool v) {
+		this->write_entry(name, "bool", v ? "1" : "0");
+	}
+
+	void WriteArchiveAscii::write_color(std::string_view name, glm::u8vec4 v) {
+		std::array<char, (std::numeric_limits<uint8_t>::digits10 + 2) * 4> buf {};
+
+		auto n = std::snprintf(buf.data(), buf.size(), "%d %d %d %d", v.r, v.g, v.b, v.a);
+		this->write_entry(name, "color", {buf.begin(), static_cast<size_t>(n)});
+	}
+
+	void WriteArchiveAscii::write_vec3(std::string_view name, glm::vec3 const& v) {
+		std::array<char,
+		           (std::numeric_limits<float>::max_exponent10 + std::numeric_limits<float>::max_digits10 + 3) * 3>
+		    buf {};
+		auto n = std::snprintf(buf.data(), buf.size(), "%f %f %f", v.x, v.y, v.z);
+		this->write_entry(name, "vec3", {buf.begin(), static_cast<size_t>(n)});
+	}
+
+	void WriteArchiveAscii::write_vec2(std::string_view name, glm::vec2 v) {
+		this->write_raw_float(name, glm::value_ptr(v), 2);
+	}
+
+	void WriteArchiveAscii::write_bbox(std::string_view name, AxisAlignedBoundingBox const& v) {
+		float values[] {v.min.x, v.min.y, v.min.z, v.max.x, v.max.y, v.max.z};
+		this->write_raw_float(name, values, 6);
+	}
+
+	void WriteArchiveAscii::write_mat3x3(std::string_view name, glm::mat3x3 const& v) {
+		auto vT = glm::transpose(v);
+		this->write_raw_float(name, glm::value_ptr(vT), 9);
+	}
+
+	void WriteArchiveAscii::write_raw(std::string_view name, std::vector<std::byte> const& v) {
+		this->write_raw(name, v.data(), static_cast<uint16_t>(v.size()));
+	}
+
+	void WriteArchiveAscii::write_raw(std::string_view name, std::byte const* v, std::uint16_t length) {
+		this->write_indent();
+		this->_m_write->write_string(name);
+		this->_m_write->write_string("=raw:");
+
+		std::array<char, 2> buf {};
+		for (auto i = 0u; i < length; ++i) {
+			std::to_chars(buf.begin(), buf.end(), static_cast<std::uint8_t>(v[i]), 16);
+			this->_m_write->write_string({buf.begin(), 2});
+		}
+
+		this->_m_write->write_char('\n');
+	}
+
+	void WriteArchiveAscii::write_raw_float(std::string_view name, float const* v, std::uint16_t length) {
+		this->write_indent();
+		this->_m_write->write_string(name);
+		this->_m_write->write_string("=rawFloat:");
+
+		std::array<char, std::numeric_limits<float>::max_exponent10 + std::numeric_limits<float>::max_digits10 + 2>
+		    buf {};
+		for (auto i = 0u; i < length; ++i) {
+			this->_m_write->write_string(intosv(buf, v[i]));
+			this->_m_write->write_char(' ');
+		}
+
+		this->_m_write->write_char('\n');
+	}
+
+	void WriteArchiveAscii::write_entry(std::string_view name, std::string_view type, std::string_view value) {
+		this->write_indent();
+		this->_m_write->write_string(name);
+		this->_m_write->write_char('=');
+		this->_m_write->write_string(type);
+		this->_m_write->write_char(':');
+		this->_m_write->write_line(value);
+	}
+
+	void WriteArchiveAscii::write_indent() {
+		for (auto i = 0u; i < _m_indent; ++i) {
+			_m_write->write_char('\t');
+		}
+	}
+
+	void WriteArchiveAscii::write_header() {
+		auto cur = this->_m_write->tell();
+		this->_m_write->seek(static_cast<ssize_t>(this->_m_head), Whence::BEG);
+
+		char const* username = getenv("USER");
+		if (username == nullptr) username = getenv("USERNAME");
+		if (username == nullptr) username = "Anonymous";
+
+		char date_buffer[20];
+		std::time_t clk;
+		std::time(&clk);
+		auto* time = std::localtime(&clk);
+		strftime(date_buffer, 20, "%d.%m.%Y %H:%M:%S", time);
+
+		this->_m_write->write_line("ZenGin Archive");
+		this->_m_write->write_line("ver 1");
+		this->_m_write->write_line("zCArchiverGeneric");
+		this->_m_write->write_line("ASCII");
+		this->_m_write->write_line("saveGame 0");
+		this->_m_write->write_string("date ");
+		this->_m_write->write_line(date_buffer);
+		this->_m_write->write_string("user ");
+		this->_m_write->write_line(username);
+		this->_m_write->write_line("END");
+
+		memset(date_buffer, ' ', 20);
+		date_buffer[11] = '\0';
+		std::to_chars(date_buffer, date_buffer + 10, _m_index - 1);
+
+		this->_m_write->write_string("objects ");
+		this->_m_write->write_line(date_buffer);
+		this->_m_write->write_line("END\n");
+
+		if (cur != _m_head) {
+			this->_m_write->seek(static_cast<ssize_t>(cur), Whence::BEG);
+		}
 	}
 } // namespace zenkit

@@ -6,6 +6,9 @@
 
 #include "../Internal.hh"
 
+#include <glm/gtc/type_ptr.hpp>
+
+#include <charconv>
 #include <cstring>
 
 namespace zenkit {
@@ -283,5 +286,203 @@ namespace zenkit {
 		} else {
 			return type_sizes[static_cast<uint8_t>(type)];
 		}
+	}
+
+	WriteArchiveBinsafe::WriteArchiveBinsafe(Write* w) : _m_write(w) {
+		this->_m_head = this->_m_write->tell();
+		this->write_header();
+	}
+
+	std::uint32_t WriteArchiveBinsafe::write_object_begin(std::string_view object_name,
+	                                                      std::string_view class_name,
+	                                                      std::uint16_t version) {
+		this->_m_write->write_ubyte(static_cast<uint8_t>(ArchiveEntryType::STRING));
+
+		char buf[6 + 127 * 2 + 10 * 2];
+		auto n = snprintf(buf,
+		                  sizeof buf - 1,
+		                  "[%.127s %.127s %d %d]",
+		                  object_name.data(),
+		                  class_name.data(),
+		                  version,
+		                  _m_index);
+
+		this->_m_write->write_ushort(static_cast<uint16_t>(n));
+		this->_m_write->write_string(buf);
+
+		_m_index++;
+		return true;
+	}
+
+	void WriteArchiveBinsafe::write_object_end() {
+		this->_m_write->write_ubyte(static_cast<uint8_t>(ArchiveEntryType::STRING));
+		this->_m_write->write_ushort(2);
+		this->_m_write->write_string("[]");
+	}
+
+	void WriteArchiveBinsafe::write_ref(std::string_view object_name, uint32_t index) {
+		this->_m_write->write_ubyte(static_cast<uint8_t>(ArchiveEntryType::STRING));
+
+		char buf[6 + 127 * 2 + 10 * 2];
+		auto n = snprintf(buf, sizeof buf - 1, "[%.127s %.127s %d %d]", object_name.data(), "\xA7", 0, index);
+
+		this->_m_write->write_ushort(n);
+		this->_m_write->write_string(buf);
+
+		this->_m_write->write_ubyte(static_cast<uint8_t>(ArchiveEntryType::STRING));
+		this->_m_write->write_ushort(2);
+		this->_m_write->write_string("[]");
+	}
+
+	void WriteArchiveBinsafe::write_string(std::string_view name, std::string_view v) {
+		this->write_entry(name, ArchiveEntryType::STRING);
+		this->_m_write->write_ushort(v.length());
+		this->_m_write->write_string(v);
+	}
+
+	void WriteArchiveBinsafe::write_int(std::string_view name, std::int32_t v) {
+		this->write_entry(name, ArchiveEntryType::INTEGER);
+		this->_m_write->write_int(v);
+	}
+
+	void WriteArchiveBinsafe::write_float(std::string_view name, float v) {
+		this->write_entry(name, ArchiveEntryType::FLOAT);
+		this->_m_write->write_float(v);
+	}
+
+	void WriteArchiveBinsafe::write_byte(std::string_view name, std::uint8_t v) {
+		this->write_entry(name, ArchiveEntryType::BYTE);
+		this->_m_write->write_ubyte(v);
+	}
+
+	void WriteArchiveBinsafe::write_word(std::string_view name, std::uint16_t v) {
+		this->write_entry(name, ArchiveEntryType::WORD);
+		this->_m_write->write_ushort(v);
+	}
+
+	void WriteArchiveBinsafe::write_enum(std::string_view name, std::uint32_t v) {
+		this->write_entry(name, ArchiveEntryType::ENUM);
+		this->_m_write->write_uint(v);
+	}
+
+	void WriteArchiveBinsafe::write_bool(std::string_view name, bool v) {
+		this->write_entry(name, ArchiveEntryType::BOOL);
+		this->_m_write->write_uint(v ? 1 : 0);
+	}
+
+	void WriteArchiveBinsafe::write_color(std::string_view name, glm::u8vec4 v) {
+		this->write_entry(name, ArchiveEntryType::COLOR);
+		this->_m_write->write_ubyte(v.b);
+		this->_m_write->write_ubyte(v.g);
+		this->_m_write->write_ubyte(v.r);
+		this->_m_write->write_ubyte(v.a);
+	}
+
+	void WriteArchiveBinsafe::write_vec3(std::string_view name, glm::vec3 const& v) {
+		this->write_raw_float(name, glm::value_ptr(v), 3);
+	}
+
+	void WriteArchiveBinsafe::write_vec2(std::string_view name, glm::vec2 v) {
+		this->write_raw_float(name, glm::value_ptr(v), 2);
+	}
+
+	void WriteArchiveBinsafe::write_bbox(std::string_view name, AxisAlignedBoundingBox const& v) {
+		float values[] {v.min.x, v.min.y, v.min.z, v.max.x, v.max.y, v.max.z};
+		this->write_raw_float(name, values, 6);
+	}
+
+	void WriteArchiveBinsafe::write_mat3x3(std::string_view name, glm::mat3x3 const& v) {
+		auto vT = glm::transpose(v);
+		this->write_raw_float(name, glm::value_ptr(vT), 9);
+	}
+
+	void WriteArchiveBinsafe::write_raw(std::string_view name, std::vector<std::byte> const& v) {
+		this->write_raw(name, v.data(), v.size());
+	}
+
+	void WriteArchiveBinsafe::write_raw(std::string_view name, std::byte const* v, std::uint16_t length) {
+		this->write_entry(name, ArchiveEntryType::RAW);
+		this->_m_write->write_ushort(length);
+		this->_m_write->write(v, length);
+	}
+
+	void WriteArchiveBinsafe::write_raw_float(std::string_view name, float const* v, std::uint16_t length) {
+		this->write_entry(name, ArchiveEntryType::RAW_FLOAT);
+		this->_m_write->write_ushort(length * 4);
+		this->_m_write->write(v, length * 4);
+	}
+
+	void WriteArchiveBinsafe::write_header() {
+		auto cur = this->_m_write->tell();
+		this->_m_write->seek(_m_head, Whence::BEG);
+
+		char const* username = getenv("USER");
+		if (username == nullptr) username = getenv("USERNAME");
+		if (username == nullptr) username = "Anonymous";
+
+		char date_buffer[20];
+		std::time_t clk;
+		std::time(&clk);
+		auto* time = std::localtime(&clk);
+		strftime(date_buffer, 20, "%d.%m.%Y %H:%M:%S", time);
+
+		this->_m_write->write_line("ZenGin Archive");
+		this->_m_write->write_line("ver 1");
+		this->_m_write->write_line("zCArchiverBinSafe");
+		this->_m_write->write_line("BIN_SAFE");
+		this->_m_write->write_line("saveGame 0");
+		this->_m_write->write_string("date ");
+		this->_m_write->write_line(date_buffer);
+		this->_m_write->write_string("user ");
+		this->_m_write->write_line(username);
+		this->_m_write->write_line("END");
+
+		this->_m_write->write_uint(0);
+		this->_m_write->write_uint(_m_index - 1);
+
+		// Write the hash table!
+		this->_m_write->write_uint(cur);
+
+		if (cur != _m_head) {
+			this->_m_write->seek(cur, Whence::BEG);
+		} else {
+			cur = this->_m_write->tell();
+		}
+
+		this->_m_write->write_uint(_m_hash_keys.size());
+
+		std::vector<std::pair<std::string, size_t>> vc {_m_hash_keys.begin(), _m_hash_keys.end()};
+		std::sort(vc.begin(), vc.end(), [](auto const& a, auto const& b) { return a.second < b.second; });
+
+		for (auto const& [key, value] : vc) {
+			this->_m_write->write_ushort(key.length());
+			this->_m_write->write_ushort(value);
+
+			auto hash_value = 0u;
+			for (char c : key) {
+				hash_value = hash_value * 0x21 + c;
+			}
+
+			this->_m_write->write_uint(hash_value & 0x61);
+			this->_m_write->write_string(key);
+		}
+
+		// Place the cursor before the hash table.
+		this->_m_write->seek(cur, Whence::BEG);
+	}
+
+	void WriteArchiveBinsafe::write_entry(std::string_view name, ArchiveEntryType type) {
+		this->_m_write->write_ubyte(static_cast<uint8_t>(ArchiveEntryType::HASH));
+
+		auto it = this->_m_hash_keys.find(name);
+		if (it == this->_m_hash_keys.end()) {
+			auto key = this->_m_hash_keys.size();
+			this->_m_hash_keys.emplace(std::string {name}, key);
+			this->_m_write->write_uint(key);
+		} else {
+			this->_m_write->write_uint(it->second);
+		}
+
+		this->_m_write->write_ubyte(static_cast<uint8_t>(type));
 	}
 } // namespace zenkit

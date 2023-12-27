@@ -277,4 +277,46 @@ namespace zenkit {
 		std::unordered_map<uint32_t, std::shared_ptr<Object>> _m_cache {};
 		std::unique_ptr<Read> _m_owned;
 	};
+
+	class ZKAPI WriteArchive {
+	public:
+		virtual ~WriteArchive() = default;
+
+		static std::unique_ptr<WriteArchive> to(Write* w, ArchiveFormat format);
+		static std::unique_ptr<WriteArchive> to_save(Write* w, ArchiveFormat format);
+
+		void write_object(std::shared_ptr<Object> obj, GameVersion version);
+		void write_object(std::string_view name, std::shared_ptr<Object> obj, GameVersion version);
+		virtual std::uint32_t
+		write_object_begin(std::string_view object_name, std::string_view class_name, std::uint16_t version) = 0;
+		virtual void write_object_end() = 0;
+		virtual void write_ref(std::string_view object_name, uint32_t index) = 0;
+
+		virtual void write_string(std::string_view name, std::string_view) = 0;
+		virtual void write_int(std::string_view name, std::int32_t v) = 0;
+		virtual void write_float(std::string_view name, float v) = 0;
+		virtual void write_byte(std::string_view name, std::uint8_t v) = 0;
+		virtual void write_word(std::string_view name, std::uint16_t v) = 0;
+		virtual void write_enum(std::string_view name, std::uint32_t v) = 0;
+		virtual void write_bool(std::string_view name, bool v) = 0;
+		virtual void write_color(std::string_view name, glm::u8vec4 v) = 0;
+		virtual void write_vec3(std::string_view name, glm::vec3 const& v) = 0;
+		virtual void write_vec2(std::string_view name, glm::vec2 v) = 0;
+		virtual void write_bbox(std::string_view name, AxisAlignedBoundingBox const& v) = 0;
+		virtual void write_mat3x3(std::string_view name, glm::mat3x3 const& v) = 0;
+		virtual void write_raw(std::string_view name, std::vector<std::byte> const& v) = 0;
+		virtual void write_raw(std::string_view name, std::byte const* v, std::uint16_t length) = 0;
+		virtual void write_raw_float(std::string_view name, float const* v, std::uint16_t length) = 0;
+
+		virtual void write_header() = 0;
+
+		/// \return Whether or not this archive represents a save-game.
+		[[nodiscard]] bool is_save_game() const noexcept {
+			return _m_save;
+		}
+
+	private:
+		std::unordered_map<Object*, uint32_t> _m_cache {};
+		bool _m_save {false};
+	};
 } // namespace zenkit

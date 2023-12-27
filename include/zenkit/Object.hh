@@ -3,8 +3,11 @@
 #pragma once
 #include "Misc.hh"
 
+#include <cstdint>
+
 namespace zenkit {
 	class ReadArchive;
+	class WriteArchive;
 
 	enum class ObjectType {
 		zCVob = 0,           ///< The base type for all VObs.
@@ -85,7 +88,9 @@ namespace zenkit {
 		virtual ~Object() noexcept = default;
 
 		[[nodiscard]] virtual ObjectType get_object_type() const;
+		[[nodiscard]] virtual uint16_t get_version_identifier(GameVersion game) const;
 
 		virtual void load(ReadArchive& r, GameVersion version);
+		virtual void save(WriteArchive& w, GameVersion version) const;
 	};
 } // namespace zenkit

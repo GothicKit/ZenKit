@@ -13,6 +13,7 @@ namespace phoenix {
 
 namespace zenkit {
 	class Read;
+	class Write;
 
 	/// \brief Represents a axis-aligned bounding box (AABB)
 	struct AxisAlignedBoundingBox {
@@ -32,6 +33,7 @@ namespace zenkit {
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static AxisAlignedBoundingBox parse(phoenix::buffer& in);
 
 		ZKAPI void load(Read* r);
+		ZKAPI void save(Write* w) const;
 	};
 
 	/// \brief Represents an oriented bounding box.
