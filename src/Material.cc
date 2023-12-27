@@ -75,4 +75,53 @@ namespace zenkit {
 			r.skip_object(true);
 		}
 	}
+
+	void Material::save(WriteArchive& w, GameVersion version) const {
+		w.write_string("", this->name);
+
+		w.write_object_begin("%",
+		                     "zCMaterial",
+		                     version == GameVersion::GOTHIC_1 ? MATERIAL_VERSION_G1 : MATERIAL_VERSION_G2);
+		w.write_string("name", this->name);
+		w.write_enum("matGroup", static_cast<uint32_t>(this->group));
+		w.write_color("color", this->color);
+		w.write_float("smoothAngle", this->smooth_angle);
+		w.write_string("texture", this->texture);
+
+		char buf[100];
+
+		{
+			snprintf(buf, sizeof buf - 1, "%.9g %.9g", this->texture_scale.x, this->texture_scale.y);
+			w.write_string("texScale", buf);
+		}
+
+		w.write_float("texAniFPS", this->texture_anim_fps);
+		w.write_enum("texAniMapMode", static_cast<uint32_t>(this->texture_anim_map_mode));
+
+		{
+			snprintf(buf, sizeof buf - 1, "%.9g %.9g", this->texture_anim_map_dir.x, this->texture_anim_map_dir.y);
+			w.write_string("texAniMapDir", buf);
+		}
+
+		w.write_bool("noCollDet", this->disable_collision);
+		w.write_bool("noLightmap", this->disable_lightmap);
+		w.write_bool("losDontCollapse", this->dont_collapse);
+		w.write_string("detailObject", this->detail_object);
+
+		if (version == GameVersion::GOTHIC_2) {
+			w.write_float("detailObjectScale", this->detail_object_scale);
+			w.write_bool("forceOccluder", this->force_occluder);
+			w.write_bool("environmentalMapping", this->environment_mapping);
+			w.write_float("environmentalMappingStrength", this->environment_mapping_strength);
+			w.write_enum("waveMode", static_cast<uint32_t>(this->wave_mode));
+			w.write_enum("waveSpeed", static_cast<uint32_t>(this->wave_speed));
+			w.write_float("waveMaxAmplitude", this->wave_max_amplitude);
+			w.write_float("waveGridSize", this->wave_grid_size);
+			w.write_bool("ignoreSunLight", this->ignore_sun);
+			w.write_bool("alphaFunc", static_cast<bool>(this->alpha_func));
+		}
+
+		w.write_vec2("defaultMapping", this->default_mapping);
+		w.write_object_end();
+	}
 } // namespace zenkit

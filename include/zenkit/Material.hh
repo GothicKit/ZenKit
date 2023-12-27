@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Library.hh"
+#include "zenkit/Misc.hh"
 
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
@@ -10,6 +11,7 @@
 
 namespace zenkit {
 	class ReadArchive;
+	class WriteArchive;
 
 	/// \brief Alpha compositing modes used by the *ZenGin*.
 	enum class AlphaFunction {
@@ -124,6 +126,7 @@ namespace zenkit {
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Material parse(ReadArchive& ctx);
 
 		ZKAPI void load(ReadArchive& r);
+		ZKAPI void save(WriteArchive& w, GameVersion version) const;
 
 	public:
 		std::string name;
@@ -139,7 +142,12 @@ namespace zenkit {
 		bool disable_lightmap {false};
 		bool dont_collapse {false};
 		std::string detail_object;
-		float detail_texture_scale {0.0f};
+
+		union {
+			ZKREM("use detail_object_scale instead") float detail_texture_scale;
+			float detail_object_scale {0.0f};
+		};
+
 		bool force_occluder {false};
 		bool environment_mapping {false};
 		float environment_mapping_strength {0.0f};
