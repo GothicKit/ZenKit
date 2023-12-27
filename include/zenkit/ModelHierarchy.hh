@@ -61,6 +61,7 @@ namespace zenkit {
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelHierarchy parse(phoenix::buffer&& in);
 
 		ZKAPI void load(Read* r);
+		ZKAPI void save(Write* w) const;
 
 	public:
 		/// \brief The list of nodes this hierarchy consists of.

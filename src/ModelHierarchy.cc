@@ -63,4 +63,29 @@ namespace zenkit {
 			    return false;
 		    });
 	}
+
+	void ModelHierarchy::save(Write* w) const {
+		proto::write_chunk(w, ModelHierarchyChunkType::HIERARCHY, [this](Write* c) {
+			c->write_uint(0x03);
+			c->write_ushort(static_cast<uint16_t>(this->nodes.size()));
+
+			for (auto& node : this->nodes) {
+				c->write_line(node.name);
+				c->write_short(node.parent_index);
+				c->write_mat4(node.transform);
+			}
+
+			this->bbox.save(c);
+			this->collision_bbox.save(c);
+			c->write_vec3(this->root_translation);
+			c->write_uint(this->checksum);
+		});
+
+		proto::write_chunk(w, ModelHierarchyChunkType::SOURCE, [this](Write* c) {
+			this->source_date.dump(c);
+			c->write_line(this->source_path);
+		});
+
+		proto::write_chunk(w, ModelHierarchyChunkType::END, [](Write*) {});
+	}
 } // namespace zenkit
