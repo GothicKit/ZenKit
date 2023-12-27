@@ -15,6 +15,7 @@ namespace phoenix {
 
 namespace zenkit {
 	class Read;
+	class Write;
 
 	/// \brief A single font glyph.
 	struct FontGlyph {
@@ -74,6 +75,7 @@ namespace zenkit {
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Font parse(phoenix::buffer&& in);
 
 		ZKAPI void load(Read* r);
+		ZKAPI void save(Write* w) const;
 
 	public:
 		/// \brief The name of this font.

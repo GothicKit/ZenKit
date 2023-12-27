@@ -48,4 +48,23 @@ namespace zenkit {
 			glyph.uv[1] = r->read_vec2();
 		}
 	}
+
+	void Font::save(Write* w) const {
+		w->write_line("1");
+		w->write_line(this->name);
+		w->write_uint(this->height);
+
+		w->write_uint(static_cast<uint32_t>(this->glyphs.size()));
+		for (auto& glyph : glyphs) {
+			w->write_ubyte(glyph.width);
+		}
+
+		for (auto& glyph : glyphs) {
+			w->write_vec2(glyph.uv[0]);
+		}
+
+		for (auto& glyph : glyphs) {
+			w->write_vec2(glyph.uv[1]);
+		}
+	}
 } // namespace zenkit
