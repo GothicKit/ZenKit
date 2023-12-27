@@ -102,4 +102,32 @@ namespace zenkit {
 			return a.name < b.name;
 		});
 	}
+
+	void CutsceneLibrary::save(Write* r, ArchiveFormat fmt) const {
+		auto archive = WriteArchive::to(r, fmt);
+		archive->write_object_begin("%", "zCCSLib", 0);
+		archive->write_int("NumOfItems", static_cast<int32_t>(this->blocks.size()));
+
+		for (auto& block : this->blocks) {
+			archive->write_object_begin("%", "zCCSBlock", 0);
+			archive->write_string("blockName", block.name);
+			archive->write_int("numOfBlocks", 1);
+			archive->write_float("subBlock0", 0.0f); // TODO(lmichaelis): Purpose unknown.
+
+			archive->write_object_begin("%", "zCCSAtomicBlock", 0);
+			archive->write_object_begin("%", "oCMsgConversation:oCNpcMessage:zCEventMessage", 0);
+
+			archive->write_enum("subType", block.message.type);
+			archive->write_string("text", block.message.text);
+			archive->write_string("name", block.message.name);
+
+			archive->write_object_end();
+			archive->write_object_end();
+
+			archive->write_object_end();
+		}
+
+		archive->write_object_end();
+		archive->write_header();
+	}
 } // namespace zenkit

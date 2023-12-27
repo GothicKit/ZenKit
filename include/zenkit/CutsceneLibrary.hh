@@ -1,11 +1,11 @@
 // Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "zenkit/Archive.hh"
 #include "zenkit/Library.hh"
 
 #include <cstdint>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 namespace phoenix {
@@ -14,6 +14,7 @@ namespace phoenix {
 
 namespace zenkit {
 	class Read;
+	class Write;
 
 	/// \brief A single cutscene message.
 	struct CutsceneMessage {
@@ -75,6 +76,7 @@ namespace zenkit {
 		[[nodiscard]] ZKAPI CutsceneBlock const* block_by_name(std::string_view name) const;
 
 		ZKAPI void load(Read* r);
+		ZKAPI void save(Write* r, ArchiveFormat fmt) const;
 
 	public:
 		/// \brief A list of all message blocks in the database.
