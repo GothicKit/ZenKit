@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
 project(ZenKit VERSION 1.3.0)
-include(support/BuildSupport.cmake)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -104,6 +103,7 @@ if (NOT ZK_ENABLE_DEPRECATION)
     target_compile_definitions(zenkit PUBLIC ZKNO_REM=1)
 endif ()
 
+include(support/BuildSupport.cmake)
 bs_select_cflags(${ZK_ENABLE_ASAN} _ZK_COMPILE_FLAGS _ZK_LINK_FLAGS)
 bs_check_posix_mmap(_ZK_HAS_MMAP_POSIX)
 bs_check_win32_mmap(_ZK_HAS_MMAP_WIN32)
