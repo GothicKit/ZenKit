@@ -30,6 +30,7 @@ Here are the changes not related to the renamed API.
 * `phoenix::vobs::camera_lock_mode` has been removed in favour of `phoenix::vobs::sprite_alignment`
 * `phoenix::vob::camera_alignment` has been removed in favour of `phoenix::vob::sprite_camera_facing_mode`
 * `phoenix::symbol::{get,set}_{string,int,float}` now take a raw pointer as context.
+* `phoenix::cs_camera::frames` has been split into `trajectory_frames` and `target_frames`
 
 ### Features
 * [cfec0051] XZEN-encoded worlds are now supported. Thanks, @ThielHater!

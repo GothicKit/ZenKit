@@ -34,13 +34,20 @@ namespace zenkit {
 		custom ZKREM("renamed to CameraMotion::CUSTOM") = CUSTOM,
 	};
 
-	enum class CameraTrajectory : std::uint32_t {
+	enum class CameraCoordinateReference : std::uint32_t {
+		/// \brief Positions are relative to the global world coordinate system.
 		WORLD = 0,
+
+		/// \brief Positions are relative to the position of the camera object in the previous frame.
+		///
+		/// Essentially, when the camera travels along the keyframes each subsequent keyframe's position is relative
+		/// to the position of the previous keyframe. The position of the first keyframe is relative to the initial
+		/// position of the camera.
 		OBJECT = 1,
 
 		// Deprecated entries.
-		world ZKREM("renamed to CameraTrajectory::WORLD") = WORLD,
-		object ZKREM("renamed to CameraTrajectory::OBJECT") = OBJECT,
+		world ZKREM("renamed to CameraCoordinateReference::WORLD") = WORLD,
+		object ZKREM("renamed to CameraCoordinateReference::OBJECT") = OBJECT,
 	};
 
 	enum class CameraLerpType : std::uint32_t {
@@ -57,8 +64,19 @@ namespace zenkit {
 	};
 
 	enum class CameraLoop : std::uint32_t {
+		/// \brief The camera animation stops after the last frame is reached.
 		NONE = 0,
+
+		/// \brief The camera animation starts from the beginning after the last frame is reached.
+		///
+		/// The ModKit states, that this is only useful if the animation is to be interrupted by scripts
+		/// or triggers.
 		RESTART = 1,
+
+		/// \brief The camera animation re-plays the keyframes in reverse order after reaching the last frame.
+		///
+		/// This causes the camera to infinitely move back and forth along the keyframes. The ModKit states, that
+		/// like CameraLoop::RESTART, this is only useful if the animation will be interrupted by scripts or triggers.
 		PINGPONG = 2,
 
 		// Deprecated entries.
@@ -104,8 +122,15 @@ namespace zenkit {
 		ZK_OBJECT(ObjectType::zCCSCamera);
 
 	public:
-		CameraTrajectory trajectory_for;
-		CameraTrajectory target_trajectory_for;
+		/// \brief The reference coordinate system of camera trajectory keyframes.
+		/// \note FOR stands for "frame of reference".
+		CameraCoordinateReference trajectory_for;
+
+		/// \brief The reference coordinate system of camera target keyframes.
+		/// \note FOR stands for "frame of reference".
+		CameraCoordinateReference target_trajectory_for;
+
+		/// \brief The repetition mode of the camera animation.
 		CameraLoop loop_mode;
 		CameraLerpType lerp_mode;
 		bool ignore_for_vob_rotation;
@@ -121,7 +146,8 @@ namespace zenkit {
 		std::int32_t position_count;
 		std::int32_t target_count;
 
-		std::vector<std::shared_ptr<VCameraTrajectoryFrame>> frames;
+		std::vector<std::shared_ptr<VCameraTrajectoryFrame>> trajectory_frames;
+		std::vector<std::shared_ptr<VCameraTrajectoryFrame>> target_frames;
 
 		// Save-game only variables
 		bool paused {false};

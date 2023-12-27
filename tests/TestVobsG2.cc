@@ -65,8 +65,8 @@ TEST_SUITE("vobs") {
 		zenkit::VCutsceneCamera vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
-		CHECK_EQ(vob.trajectory_for, zenkit::CameraTrajectory::WORLD);
-		CHECK_EQ(vob.target_trajectory_for, zenkit::CameraTrajectory::WORLD);
+		CHECK_EQ(vob.trajectory_for, zenkit::CameraCoordinateReference::WORLD);
+		CHECK_EQ(vob.target_trajectory_for, zenkit::CameraCoordinateReference::WORLD);
 		CHECK_EQ(vob.loop_mode, zenkit::CameraLoop::NONE);
 		CHECK_EQ(vob.lerp_mode, zenkit::CameraLerpType::PATH);
 		CHECK_FALSE(vob.ignore_for_vob_rotation);
@@ -82,7 +82,7 @@ TEST_SUITE("vobs") {
 		CHECK_EQ(vob.position_count, 2);
 		CHECK_EQ(vob.target_count, 1);
 
-		auto const& frames = vob.frames;
+		auto const& frames = vob.trajectory_frames;
 		CHECK_EQ(frames[0]->time, 0.0f);
 		CHECK_EQ(frames[0]->roll_angle, 0.0f);
 		CHECK_EQ(frames[0]->fov_scale, 1.0f);
@@ -123,19 +123,20 @@ TEST_SUITE("vobs") {
 		             {82642.8984f, 3977.64844f, 28358.457f, 1.0f},
 		         });
 
-		CHECK_EQ(frames[2]->time, 0.0f);
-		CHECK_EQ(frames[2]->roll_angle, 0.0f);
-		CHECK_EQ(frames[2]->fov_scale, 1.0f);
-		CHECK_EQ(frames[2]->motion_type, zenkit::CameraMotion::SMOOTH);
-		CHECK_EQ(frames[2]->motion_type_fov, zenkit::CameraMotion::SMOOTH);
-		CHECK_EQ(frames[2]->motion_type_roll, zenkit::CameraMotion::SMOOTH);
-		CHECK_EQ(frames[2]->motion_type_time_scale, zenkit::CameraMotion::SMOOTH);
-		CHECK_EQ(frames[2]->tension, 0.0f);
-		CHECK_EQ(frames[2]->cam_bias, 0.0f);
-		CHECK_EQ(frames[2]->continuity, 0.0f);
-		CHECK_EQ(frames[2]->time_scale, 1.0f);
-		CHECK_FALSE(frames[2]->time_fixed);
-		CHECK_EQ(frames[2]->original_pose,
+		auto const& target_frames = vob.target_frames;
+		CHECK_EQ(target_frames[2]->time, 0.0f);
+		CHECK_EQ(target_frames[2]->roll_angle, 0.0f);
+		CHECK_EQ(target_frames[2]->fov_scale, 1.0f);
+		CHECK_EQ(target_frames[2]->motion_type, zenkit::CameraMotion::SMOOTH);
+		CHECK_EQ(target_frames[2]->motion_type_fov, zenkit::CameraMotion::SMOOTH);
+		CHECK_EQ(target_frames[2]->motion_type_roll, zenkit::CameraMotion::SMOOTH);
+		CHECK_EQ(target_frames[2]->motion_type_time_scale, zenkit::CameraMotion::SMOOTH);
+		CHECK_EQ(target_frames[2]->tension, 0.0f);
+		CHECK_EQ(target_frames[2]->cam_bias, 0.0f);
+		CHECK_EQ(target_frames[2]->continuity, 0.0f);
+		CHECK_EQ(target_frames[2]->time_scale, 1.0f);
+		CHECK_FALSE(target_frames[2]->time_fixed);
+		CHECK_EQ(target_frames[2]->original_pose,
 		         glm::mat4x4 {
 		             {1.0f, 0.0f, 0.0f, 0.0f},
 		             {0.0f, 1.0f, 0.0f, 0.0f},

@@ -55,26 +55,31 @@ namespace zenkit {
 
 	void VCutsceneCamera::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
-		this->trajectory_for = static_cast<CameraTrajectory>(r.read_enum());        // camTrjFOR
-		this->target_trajectory_for = static_cast<CameraTrajectory>(r.read_enum()); // targetTrjFOR
-		this->loop_mode = static_cast<CameraLoop>(r.read_enum());                   // loopMode
-		this->lerp_mode = static_cast<CameraLerpType>(r.read_enum());               // splLerpMode
-		this->ignore_for_vob_rotation = r.read_bool();                              // ignoreFORVobRotCam
-		this->ignore_for_vob_rotation_target = r.read_bool();                       // ignoreFORVobRotTarget
-		this->adapt = r.read_bool();                                                // adaptToSurroundings
-		this->ease_first = r.read_bool();                                           // easeToFirstKey
-		this->ease_last = r.read_bool();                                            // easeFromLastKey
-		this->total_duration = r.read_float();                                      // totalTime
-		this->auto_focus_vob = r.read_string();                                     // autoCamFocusVobName
-		this->auto_player_movable = r.read_bool();                                  // autoCamPlayerMovable
-		this->auto_untrigger_last = r.read_bool();                                  // autoCamUntriggerOnLastKey
-		this->auto_untrigger_last_delay = r.read_float();                           // autoCamUntriggerOnLastKeyDelay
-		this->position_count = r.read_int();                                        // numPos
-		this->target_count = r.read_int();                                          // numTargets
+		this->trajectory_for = static_cast<CameraCoordinateReference>(r.read_enum());        // camTrjFOR
+		this->target_trajectory_for = static_cast<CameraCoordinateReference>(r.read_enum()); // targetTrjFOR
+		this->loop_mode = static_cast<CameraLoop>(r.read_enum());                            // loopMode
+		this->lerp_mode = static_cast<CameraLerpType>(r.read_enum());                        // splLerpMode
+		this->ignore_for_vob_rotation = r.read_bool();                                       // ignoreFORVobRotCam
+		this->ignore_for_vob_rotation_target = r.read_bool();                                // ignoreFORVobRotTarget
+		this->adapt = r.read_bool();                                                         // adaptToSurroundings
+		this->ease_first = r.read_bool();                                                    // easeToFirstKey
+		this->ease_last = r.read_bool();                                                     // easeFromLastKey
+		this->total_duration = r.read_float();                                               // totalTime
+		this->auto_focus_vob = r.read_string();                                              // autoCamFocusVobName
+		this->auto_player_movable = r.read_bool();                                           // autoCamPlayerMovable
+		this->auto_untrigger_last = r.read_bool();        // autoCamUntriggerOnLastKey
+		this->auto_untrigger_last_delay = r.read_float(); // autoCamUntriggerOnLastKeyDelay
+		this->position_count = r.read_int();              // numPos
+		this->target_count = r.read_int();                // numTargets
 
-		for (auto i = 0; i < this->position_count + this->target_count; ++i) {
+		for (auto i = 0; i < this->position_count; ++i) {
 			auto obj = r.read_object<VCameraTrajectoryFrame>(version);
-			this->frames.push_back(obj);
+			this->trajectory_frames.push_back(obj);
+		}
+
+		for (auto i = 0; i < this->target_count; ++i) {
+			auto obj = r.read_object<VCameraTrajectoryFrame>(version);
+			this->target_frames.push_back(obj);
 		}
 
 		if (r.is_save_game() && version == GameVersion::GOTHIC_2) {
@@ -106,8 +111,12 @@ namespace zenkit {
 		w.write_int("numPos", this->position_count);
 		w.write_int("numTargets", this->target_count);
 
-		for (auto i = 0; i < this->position_count + this->target_count; ++i) {
-			w.write_object(this->frames[static_cast<size_t>(i)], version);
+		for (auto i = 0; i < this->position_count; ++i) {
+			w.write_object(this->trajectory_frames[static_cast<size_t>(i)], version);
+		}
+
+		for (auto i = 0; i < this->target_count; ++i) {
+			w.write_object(this->target_frames[static_cast<size_t>(i)], version);
 		}
 
 		if (w.is_save_game() && version == GameVersion::GOTHIC_2) {
