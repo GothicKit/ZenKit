@@ -39,6 +39,7 @@ nav:
       - 'Objects':
           - 'zCVob': 'engine/objects/zCVob.md'
           - 'zCVobSpot': 'engine/objects/zCVobSpot.md'
+          - 'zCVobStair': 'engine/objects/zCVobStair.md'
       - 'Encodings':
           - 'Binary': 'engine/encodings/binary.md'
           - 'Binary, Chunked': 'engine/encodings/binary-chunked.md'
