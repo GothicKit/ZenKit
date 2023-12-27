@@ -71,7 +71,7 @@
 .sp-type {
     margin-top: 0 !important;
     margin-bottom: 0 !important;
-    list-style-image: url('/assets/icons/spacer-type.png');
+    list-style-image: url('/assets/icons/spacer-class.png');
     font-family: monospace;
 }
 
@@ -121,12 +121,5 @@
     margin-top: 0 !important;
     margin-bottom: 0 !important;
     list-style-image: url('/assets/icons/spacer-float.png');
-    font-family: monospace;
-}
-
-.sp-save {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    list-style-image: url('/assets/icons/spacer-save.png');
     font-family: monospace;
 }
