@@ -36,6 +36,8 @@ nav:
           - 'ZenGin Texture': 'engine/formats/texture.md'
           - 'ZenGin Virtual File System': 'engine/formats/vdf.md'
           - 'ZenGin Archive': 'engine/formats/archive.md'
+      - 'Objects':
+          - 'zCVob': 'engine/objects/zCVob.md'
       - 'Encodings':
           - 'Binary': 'engine/encodings/binary.md'
           - 'Binary, Chunked': 'engine/encodings/binary-chunked.md'
@@ -73,9 +75,7 @@ markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
       auto_title: true
-  - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.emoji
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.arithmatex:
@@ -88,3 +88,4 @@ markdown_extensions:
   - 'pymdownx.inlinehilite'
   - 'md_in_html'
   - 'pymdownx.details'
+  - 'def_list'

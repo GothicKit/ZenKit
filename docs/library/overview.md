@@ -5,7 +5,7 @@ hide:
 
 # Library Reference
 
-![](/assets/logo.png)
+![](../assets/logo.png)
 
 Welcome to the *ZenKit* reference documentation. This page contains information about how to use *ZenKit*, a
 C++-library for parsing file formats used by the *ZenGin*, an early 2000's game engine developed by

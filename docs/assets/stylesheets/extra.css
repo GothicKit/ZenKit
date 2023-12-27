@@ -17,3 +17,116 @@
 .md-typeset :focus-within > .md-annotation__index > ::before {
     transform: none;
 }
+
+.sp-list {
+    padding: 0 !important;
+    margin: 0 !important;
+    list-style-type: none;
+}
+
+.sp-prop {
+    margin-top: -1em;
+    margin-bottom: 1em;
+    font-family: monospace;
+    font-size: 0.7em;
+    border: 1px solid #333333;
+    padding: 5px 0.5rem;
+}
+
+.t-int::before {
+    content: url("/assets/icons/spacer-int.png");
+}
+
+.t-float::before {
+    content: url("/assets/icons/spacer-float.png");
+}
+
+.t-str::before {
+    content: url("/assets/icons/spacer-string.png");
+}
+
+.t-raw::before {
+    content: url("/assets/icons/spacer-misc.png");
+}
+
+.t-vec::before {
+    content: url("/assets/icons/spacer-vec.png");
+}
+
+.t-bool::before {
+    content: url("/assets/icons/spacer-bool.png");
+}
+
+.t-enum::before {
+    content: url("/assets/icons/spacer-enum.png");
+}
+
+.sp-folder {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    list-style-image: url('/assets/icons/spacer-folder.png');
+    font-family: monospace;
+}
+
+.sp-type {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    list-style-image: url('/assets/icons/spacer-type.png');
+    font-family: monospace;
+}
+
+.sp-int {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    list-style-image: url('/assets/icons/spacer-int.png');
+    font-family: monospace;
+}
+
+.sp-string {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    list-style-image: url('/assets/icons/spacer-string.png');
+    font-family: monospace;
+}
+
+.sp-misc {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    list-style-image: url('/assets/icons/spacer-misc.png');
+    font-family: monospace;
+}
+
+.sp-bool {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    list-style-image: url('/assets/icons/spacer-bool.png');
+    font-family: monospace;
+}
+
+.sp-enum {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    list-style-image: url('/assets/icons/spacer-enum.png');
+    font-family: monospace;
+}
+
+.sp-vec {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    list-style-image: url('/assets/icons/spacer-vec.png');
+    font-family: monospace;
+}
+
+.sp-float {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    list-style-image: url('/assets/icons/spacer-float.png');
+    font-family: monospace;
+}
+
+.sp-save {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    list-style-image: url('/assets/icons/spacer-save.png');
+    font-family: monospace;
+}

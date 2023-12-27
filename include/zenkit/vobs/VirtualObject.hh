@@ -58,7 +58,7 @@ namespace zenkit {
 	enum class SpriteAlignment : std::uint8_t {
 		NONE = 0, ///< The sprite is not affected by the camera's rotation.
 		YAW = 1,  ///< The sprite rotates with the camera's yaw axis.
-		FULL = 2, ///< The sprite rotates with camera fully.
+		FULL = 2, ///< The sprite rotates alonside the camera.
 
 		// Deprecated entries.
 		none ZKREM("renamed to SpriteAlignment::NONE") = NONE,
@@ -70,20 +70,16 @@ namespace zenkit {
 	enum class AnimationType : std::uint8_t {
 		NONE = 0, ///< No wave animation.
 
-		/// \brief String wind animation.
+		/// \brief Strong wind animation.
 		///
 		/// <p>Indicates that the object should be animated as if shifting in strong wind. Used mostly for
 		/// animating grass and other small foliage.</p>
-		///
-		/// \see http://www.gothic-library.ru/publ/class_zcvob/1-1-0-467#visualAniMode
 		WIND = 1,
 
 		/// \brief Light wind animation.
 		///
 		/// <p>Indicates that the object should be animated as if shifting in light wind. Used mostly for
 		/// animating trees.</p>
-		///
-		/// \see http://www.gothic-library.ru/publ/class_zcvob/1-1-0-467#visualAniMode
 		WIND_ALT = 2,
 
 		// Deprecated entries.
@@ -100,6 +96,8 @@ namespace zenkit {
 		///
 		/// <p>This field conains the name of the source file of the visual. A mesh visual, for example, will end in
 		/// `.3DS` since that is the original file format of the mesh.</p>
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#visual
 		std::string name;
 	};
 
@@ -272,6 +270,7 @@ namespace zenkit {
 	///
 	/// \note Virtual objects should not be loaded manually. They are embedded into world archives and are automatically
 	///       loaded when the world is loaded.
+	/// \see https://zk.gothickit.dev/engine/objects/zCVob/
 	struct VirtualObject : Object {
 		ZK_OBJECT(ObjectType::zCVob);
 
@@ -303,15 +302,19 @@ namespace zenkit {
 		uint32_t id ZKREM("scheduled for removal; refer to documentation") = 0;
 
 		/// \brief The bounding box of this VObject.
+		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#bbox3dws
 		AxisAlignedBoundingBox bbox = AxisAlignedBoundingBox::zero();
 
 		/// \brief The position of this VObject in virtual space.
+		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#trafoostowspos
 		glm::vec3 position = glm::vec3 {0};
 
 		/// \brief The rotation of this VObject in virtual space.
+		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#trafoostowsrot
 		glm::mat3x3 rotation = glm::identity<glm::mat3x3>();
 
-		/// \brief Indicates whether this VObject has should display its associated visual.
+		/// \brief Indicates whether this VObject should display its associated visual.
+		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#showvisual
 		bool show_visual = false;
 
 		/// \brief Indicates how this VObject should be aligned in relation to the camera.
@@ -319,6 +322,8 @@ namespace zenkit {
 		/// <p>The value of this field indicates, if and how this VObject should align itself with the camera. This may
 		/// be used with grass or flowers which only consist of a 2-dimensional sprite to have it always face the
 		/// camera, for example. See zenkit::SpriteAlignment for additional details.</p>
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#visualcamalign
 		SpriteAlignment sprite_camera_facing_mode = SpriteAlignment::NONE;
 
 		/// \brief Indicates whether this VObject should collide with other VObjects.
@@ -326,12 +331,16 @@ namespace zenkit {
 		/// <p>This is used for placing the object in the ZenGin map editor, the <i>Spacer</i>, where it will prevent
 		/// the VObject being placed wither other VObjects. This setting is irrelevant for runtime collision
 		/// detection</p>
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#cdstatic
 		bool cd_static = true;
 
 		/// \brief Indicates whether this VObject should collide with dynamic objects.
 		///
 		/// <p>For this purpose, dynamic objects are the player, NPCs and items. If this flag is set, implementations
 		/// should apply collision detection to this VObject.</p>
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#cddyn
 		bool cd_dynamic = true;
 
 		/// \brief Indicates whether this VObject should be included during static lighting calculations.
@@ -339,11 +348,15 @@ namespace zenkit {
 		/// <p>These lighting calculations are done at compile-time and will bake VObjects with this flag into the
 		/// light-maps available from the world mesh. If set to `true`, this VObject may be excluded from dynamic
 		/// lighting if the light-maps are used.</p>
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#vobstatic
 		bool vob_static = false;
 
 		/// \brief The type of dynamic shadow to be used.
 		///
 		/// <p>See zenkit::ShadowType for information about available shadow types.</p>
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#dynShadow
 		ShadowType dynamic_shadows = ShadowType::NONE;
 
 		/// \brief Indicates whether this VObject has enabled physics.
@@ -351,40 +364,59 @@ namespace zenkit {
 		/// <p>This field represents internal state of the ZenGin which is written to disk only for a certain world
 		/// format type. It is not possible to set this field ZenGin's world editor, the <i>Spacer</i>, for example.
 		/// This makes this field unreliable, since it is only available for some VObjects.</p>
-		bool physics_enabled = true;
+		ZKREM("Unreliable. No alternative available yet.") bool physics_enabled = true;
 
 		/// \brief The type of wind animation to apply to the VObject.
+		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#visualanimode
 		AnimationType anim_mode = AnimationType::NONE;
 
 		/// \brief The depth-bias for this VObject.
 		///
 		/// <p>This value is passed directly to Direct3D when rendering the associated visual of this VObject. Sadly,
-		/// because documentation is not really available for the very old Direct3D version used by the ZenGin, the
+		/// because documentation is not available for the very old Direct3D version used by the ZenGin, the
 		/// exact behavior it would have resulted in are unknown.</p>
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#zbias
 		std::int32_t bias = 0;
 
 		/// \brief Indicates that this VObject is <i>ambient</i>.
 		///
-		/// <p>It looks like this VObject setting was a system used duing development when access to the game's source
+		/// <p>It looks like this VObject setting was a system used during development when access to the game's source
 		/// code was available. Basically, the global variable `zCWorld::s_bAmbientVobsEnabled` could be used to hide or
 		/// show VObjects which have the `isAmbient` flag set. In release builds, this variable is always set to `true`,
-		/// thus the `isAmbient` flag does not have any percievable effect on the game.</p>
+		/// thus the `isAmbient` flag does not have any perceivable effect on the game.</p>
 		/// <p>It follows, that this field should be ignored by most implementations.</p>
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#isambient
 		bool ambient = false;
 
 		/// \brief Indicates the strength of the animation set through #anim_mode.
 		///
 		/// <p>Essentialy, this controls the strength of the wind to be animated using the given #anim_mode. This value
 		/// is ignored if #anim_mode is AnimationType::NONE</p>
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#visualanimodestrength
 		float anim_strength = 0;
+
+		/// \brief Indicates the draw distance of this VObject.
+		///
+		/// <p>Its value should be between 0 and 2. 0 Means, that this object is never drawn on screen but collisions
+		/// are still calculated. A value of 2 means, that the the draw distance of this VObject is the same as the draw
+		/// distance specified in the zenkit::VZoneFarPlane object</p>
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#vobfarclipzscale
 		float far_clip_scale = 2.0;
 
+		/// \brief The name of the template used to create this VObject in the Spacer.
+		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#presetname
 		std::string preset_name;
 
 		/// \brief The name of this VObject.
 		///
-		/// <p>The name of this VObject. VObject names are not necessarily unique but are sometimes helpful for
+		/// <p>VObject names are not necessarily unique but are sometimes helpful for
 		/// identfying them in ZenGin's original map editor, the <i>Spacer</i>.</p>
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#vobname
 		std::string vob_name;
 
 		std::string visual_name ZKREM("use VirtualObject::visual::name instead") {};
@@ -394,7 +426,7 @@ namespace zenkit {
 		/// \brief The visual data associated with this VObject.
 		///
 		/// <p>All supported visuals except the zenkit::VisualDecal do not contain any additional information. To
-		/// determine the type of attached visual, simply access zenkit::VisualDecal::type</p>
+		/// determine the type of attached visual, check zenkit::VisualDecal::type</p>
 		std::shared_ptr<Visual> visual = nullptr;
 
 		std::shared_ptr<Ai> ai = nullptr;

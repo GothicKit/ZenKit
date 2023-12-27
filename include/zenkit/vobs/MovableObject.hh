@@ -31,6 +31,8 @@ namespace zenkit {
 	};
 
 	struct VMovableObject : VirtualObject {
+		ZK_OBJECT(ObjectType::oCMOB);
+
 		std::string name;
 		std::int32_t hp;
 		std::int32_t damage;
@@ -57,6 +59,8 @@ namespace zenkit {
 	};
 
 	struct VInteractiveObject : VMovableObject {
+		ZK_OBJECT(ObjectType::oCMobInter);
+
 		std::int32_t state;
 		std::string target;
 		std::string item;
@@ -80,6 +84,8 @@ namespace zenkit {
 
 	/// \brief A VOb representing a campfire.
 	struct VFire : VInteractiveObject {
+		ZK_OBJECT(ObjectType::oCMobFire);
+
 		std::string slot;
 		std::string vob_tree;
 
@@ -98,6 +104,8 @@ namespace zenkit {
 
 	/// \brief A VOb representing a container.
 	struct VContainer : VInteractiveObject {
+		ZK_OBJECT(ObjectType::oCMobContainer);
+
 		bool locked;
 		std::string key;
 		std::string pick_string;
@@ -122,6 +130,8 @@ namespace zenkit {
 
 	/// \brief A VOb representing a door.
 	struct VDoor : VInteractiveObject {
+		ZK_OBJECT(ObjectType::oCMobDoor);
+
 		bool locked;
 		std::string key;
 		std::string pick_string;
@@ -140,11 +150,21 @@ namespace zenkit {
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
-	struct VLadder : VInteractiveObject {};
-	struct VSwitch : VInteractiveObject {};
-	struct VWheel : VInteractiveObject {};
+	struct VLadder : VInteractiveObject {
+		ZK_OBJECT(ObjectType::oCMobLadder);
+	};
+
+	struct VSwitch : VInteractiveObject {
+		ZK_OBJECT(ObjectType::oCMobSwitch);
+	};
+
+	struct VWheel : VInteractiveObject {
+		ZK_OBJECT(ObjectType::oCMobWheel);
+	};
 
 	struct VBed : VInteractiveObject {
+		ZK_OBJECT(ObjectType::oCMobBed);
+
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 } // namespace zenkit
