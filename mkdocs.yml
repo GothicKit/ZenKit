@@ -38,6 +38,7 @@ nav:
           - 'ZenGin Archive': 'engine/formats/archive.md'
       - 'Objects':
           - 'zCVob': 'engine/objects/zCVob.md'
+          - 'zCVobLevelCompo': 'engine/objects/zCVobLevelCompo.md'
           - 'zCVobSpot': 'engine/objects/zCVobSpot.md'
           - 'zCVobStair': 'engine/objects/zCVobStair.md'
           - 'zCVobStartpoint': 'engine/objects/zCVobStartpoint.md'
