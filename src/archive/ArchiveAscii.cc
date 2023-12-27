@@ -264,7 +264,7 @@ namespace zenkit {
 	}
 
 	template <typename T, size_t N>
-	std::string_view intosv(std::array<char, N>& buf, T v) {
+	std::enable_if_t<!std::is_floating_point_v<T>, std::string_view> intosv(std::array<char, N>& buf, T v) {
 		auto r = std::to_chars(buf.begin(), buf.end(), v);
 		return std::string_view {buf.begin(), static_cast<size_t>(r.ptr - buf.begin())};
 	}
@@ -324,9 +324,7 @@ namespace zenkit {
 	}
 
 	void WriteArchiveAscii::write_float(std::string_view name, float v) {
-		std::array<char, std::numeric_limits<float>::max_exponent10 + std::numeric_limits<float>::max_digits10 + 2>
-		    buf {};
-		this->write_entry(name, "float", intosv(buf, v));
+		this->write_entry(name, "float", std::to_string(v));
 	}
 
 	void WriteArchiveAscii::write_byte(std::string_view name, std::uint8_t v) {
@@ -400,10 +398,8 @@ namespace zenkit {
 		this->_m_write->write_string(name);
 		this->_m_write->write_string("=rawFloat:");
 
-		std::array<char, std::numeric_limits<float>::max_exponent10 + std::numeric_limits<float>::max_digits10 + 2>
-		    buf {};
 		for (auto i = 0u; i < length; ++i) {
-			this->_m_write->write_string(intosv(buf, v[i]));
+			this->_m_write->write_string(std::to_string(v[i]));
 			this->_m_write->write_char(' ');
 		}
 
