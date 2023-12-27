@@ -143,6 +143,7 @@ namespace zenkit {
 		virtual void seek(ssize_t off, Whence whence) noexcept = 0;
 		[[nodiscard]] virtual size_t tell() const noexcept = 0;
 
+		[[nodiscard]] static std::unique_ptr<Write> to(std::filesystem::path const& path);
 		[[nodiscard]] static std::unique_ptr<Write> to(::FILE* stream);
 		[[nodiscard]] static std::unique_ptr<Write> to(std::ostream* stream);
 		[[nodiscard]] static std::unique_ptr<Write> to(std::byte* bytes, size_t len);

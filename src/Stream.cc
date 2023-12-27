@@ -373,7 +373,18 @@ namespace zenkit {
 
 		class WriteStream ZKINT : public Write {
 		public:
-			explicit WriteStream(std::ostream* stream) : _m_stream(stream) {}
+			explicit WriteStream(std::ostream* stream) : _m_stream(stream), _m_own(false) {}
+			explicit WriteStream(std::filesystem::path const& path)
+			    : _m_stream(new std::ofstream(path)), _m_own(true) {}
+
+			~WriteStream() noexcept override {
+				if (_m_own) {
+					delete _m_stream;
+
+					_m_own = false;
+					_m_stream = nullptr;
+				}
+			}
 
 			size_t write(void const* buf, size_t len) noexcept override {
 				_m_stream->write(static_cast<char const*>(buf), static_cast<long>(len));
@@ -390,6 +401,7 @@ namespace zenkit {
 
 		private:
 			std::ostream* _m_stream;
+			bool _m_own;
 		};
 
 		class WriteStatic ZKINT : public Write {
@@ -490,6 +502,10 @@ namespace zenkit {
 
 	std::unique_ptr<Read> Read::from(phoenix::buffer* buf) {
 		return std::make_unique<detail::ReadBuffer>(buf);
+	}
+
+	std::unique_ptr<Write> Write::to(std::filesystem::path const& path) {
+		return std::make_unique<detail::WriteStream>(path);
 	}
 
 	std::unique_ptr<Write> Write::to(::FILE* stream) {
