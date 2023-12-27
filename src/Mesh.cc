@@ -4,6 +4,8 @@
 #include "zenkit/Archive.hh"
 #include "zenkit/Stream.hh"
 
+#include "Internal.hh"
+
 namespace zenkit {
 	[[maybe_unused]] static constexpr auto MESH_VERSION_G1 = 9;
 	static constexpr auto MESH_VERSION_G2 = 265;
@@ -59,10 +61,7 @@ namespace zenkit {
 				    this->name = c->read_line(false);
 				    break;
 			    case MeshChunkType::BBOX:
-				    // first, we find a basic AABB bounding box
 				    this->bbox.load(c);
-
-				    // but second, we find a list of OOBBs with one acting as a parent
 				    this->obb.load(c);
 				    break;
 			    case MeshChunkType::MATERIAL: {
@@ -101,6 +100,7 @@ namespace zenkit {
 					    this->geometry[i].material = c->read_ushort();
 					    this->geometry[i].lightmap = c->read_short();
 
+					    // TODO(lmichaelis): Figure out what these do.
 					    (void) c->read_float();
 					    (void) c->read_vec3();
 
@@ -227,5 +227,110 @@ namespace zenkit {
 				a = b;
 			}
 		}
+	}
+
+	void Mesh::save(Write* w, GameVersion version) const {
+		proto::write_chunk(w, MeshChunkType::MARKER, [this, version](Write* c) {
+			c->write_ushort(version == GameVersion::GOTHIC_1 ? MESH_VERSION_G1 : MESH_VERSION_G2);
+			this->date.dump(c);
+			c->write_line(this->name);
+		});
+
+		proto::write_chunk(w, MeshChunkType::BBOX, [this](Write* c) {
+			this->bbox.save(c);
+			this->obb.save(c);
+		});
+
+		proto::write_chunk(w, MeshChunkType::MATERIAL, [this, version](Write* c) {
+			auto war = WriteArchive::to(c, ArchiveFormat::BINARY);
+			c->write_uint(static_cast<uint32_t>(this->materials.size()));
+
+			for (auto& mat : materials) {
+				mat.save(*war, version);
+			}
+		});
+
+		proto::write_chunk(w, MeshChunkType::VERTICES, [this](Write* c) {
+			c->write_uint(static_cast<uint32_t>(this->vertices.size()));
+
+			for (auto& v : this->vertices) {
+				c->write_vec3(v);
+			}
+		});
+
+		proto::write_chunk(w, MeshChunkType::FEATURES, [this](Write* c) {
+			c->write_uint(static_cast<uint32_t>(this->features.size()));
+
+			for (auto& feat : this->features) {
+				c->write_vec2(feat.texture);
+				c->write_uint(feat.light);
+				c->write_vec3(feat.normal);
+			}
+		});
+
+		proto::write_chunk(w, MeshChunkType::POLYGONS, [this, version](Write* c) {
+			auto poly_count = this->polygons.flags.size();
+			c->write_uint(static_cast<uint32_t>(poly_count));
+
+			for (auto i = 0u; i < poly_count; ++i) {
+				c->write_uint(this->polygons.material_indices[i]);
+				c->write_uint(static_cast<uint32_t>(this->polygons.lightmap_indices[i]));
+
+				// TODO(lmichaelis): Figure these out.
+				c->write_float(0);
+				c->write_vec3({0, 0, 0});
+
+				if (version == GameVersion::GOTHIC_1) {
+					auto& flags = this->polygons.flags[i];
+					c->write_ubyte((flags.is_portal & 3) | ((flags.is_occluder & 1) << 2) |
+					               ((flags.is_sector & 1) << 3) | ((flags.should_relight & 1) << 4) |
+					               ((flags.is_outdoor & 1) << 5) | ((flags.is_ghost_occluder & 1) << 6) |
+					               ((flags.is_dynamically_lit & 1) << 7));
+					c->write_short(flags.sector_index);
+				} else {
+					auto& flags = this->polygons.flags[i];
+					c->write_ubyte((flags.is_portal & 3) | ((flags.is_occluder & 1) << 2) |
+					               ((flags.is_sector & 1) << 3) | ((flags.is_lod & 1) << 4) |
+					               ((flags.is_outdoor & 1) << 5) | ((flags.is_ghost_occluder & 1) << 6) |
+					               ((flags.normal_axis & 1) << 7));
+					c->write_ubyte(flags.normal_axis & 2);
+					c->write_short(flags.sector_index);
+				}
+
+				// TODO: We only support triangles here
+				c->write_ubyte(3);
+				if (version == GameVersion::GOTHIC_1) {
+					c->write_ushort(this->polygons.vertex_indices[i * 3 + 0]);
+					c->write_ushort(this->polygons.feature_indices[i * 3 + 0]);
+					c->write_ushort(this->polygons.vertex_indices[i * 3 + 1]);
+					c->write_uint(this->polygons.feature_indices[i * 3 + 1]);
+					c->write_uint(this->polygons.vertex_indices[i * 3 + 2]);
+					c->write_uint(this->polygons.feature_indices[i * 3 + 2]);
+				} else {
+					c->write_uint(this->polygons.vertex_indices[i * 3 + 0]);
+					c->write_uint(this->polygons.feature_indices[i * 3 + 0]);
+					c->write_uint(this->polygons.vertex_indices[i * 3 + 1]);
+					c->write_uint(this->polygons.feature_indices[i * 3 + 1]);
+					c->write_uint(this->polygons.vertex_indices[i * 3 + 2]);
+					c->write_uint(this->polygons.feature_indices[i * 3 + 2]);
+				}
+			}
+		});
+
+		// TODO(lmichaelis): Fixup shared lightmaps. We need to figure out all lightmaps which share a texture.
+		proto::write_chunk(w, MeshChunkType::LIGHTMAPS_SHARED, [](Write*) {});
+
+		proto::write_chunk(w, MeshChunkType::LIGHTMAPS, [this](Write* c) {
+			c->write_uint(static_cast<uint32_t>(this->lightmaps.size()));
+
+			for (auto& lm : this->lightmaps) {
+				c->write_vec3(lm.origin);
+				c->write_vec3(lm.normals[0]);
+				c->write_vec3(lm.normals[1]);
+				lm.image->save(c);
+			}
+		});
+
+		proto::write_chunk(w, MeshChunkType::END, [](Write*) {});
 	}
 } // namespace zenkit

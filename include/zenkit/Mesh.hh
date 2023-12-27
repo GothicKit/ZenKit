@@ -11,9 +11,7 @@
 #include <glm/vec3.hpp>
 
 #include <memory>
-#include <optional>
 #include <string>
-#include <unordered_set>
 #include <vector>
 
 namespace phoenix {
@@ -22,6 +20,7 @@ namespace phoenix {
 
 namespace zenkit {
 	class Read;
+	class Write;
 
 	/// \brief Represents a light map.
 	struct LightMap {
@@ -131,6 +130,7 @@ namespace zenkit {
 
 		ZKAPI void load(Read* r, bool force_wide_indices);
 		ZKAPI void load(Read* r, std::vector<std::uint32_t> const& leaf_polygons, bool force_wide_indices);
+		ZKAPI void save(Write* w, GameVersion version) const;
 
 	private:
 		ZKINT void triangulate(std::vector<std::uint32_t> const& leaf_polygons);
