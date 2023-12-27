@@ -20,6 +20,15 @@ namespace zenkit {
 		}
 	}
 
+	void VAnimate::save(WriteArchive& w, GameVersion version) const {
+		VirtualObject::save(w, version);
+		w.write_bool("startOn", this->start_on);
+
+		if (w.is_save_game()) {
+			w.write_bool("isRunning", this->s_is_running);
+		}
+	}
+
 	void VItem::parse(VItem& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
@@ -35,6 +44,20 @@ namespace zenkit {
 		}
 	}
 
+	void VItem::save(WriteArchive& w, GameVersion version) const {
+		VirtualObject::save(w, version);
+		w.write_string("itemInstance", this->instance);
+
+		if (w.is_save_game()) {
+			w.write_int("amount", this->s_amount);
+			w.write_int("flags", this->s_flags);
+		}
+	}
+
+	uint16_t VItem::get_version_identifier(GameVersion) const {
+		return 0;
+	}
+
 	void VLensFlare::parse(VLensFlare& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
@@ -42,6 +65,15 @@ namespace zenkit {
 	void VLensFlare::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->fx = r.read_string(); // lensflareFX
+	}
+
+	void VLensFlare::save(WriteArchive& w, GameVersion version) const {
+		VirtualObject::save(w, version);
+		w.write_string("lensflareFX", this->fx);
+	}
+
+	uint16_t VLensFlare::get_version_identifier(GameVersion game) const {
+		return game == GameVersion::GOTHIC_1 ? 64704 : 193;
 	}
 
 	void VParticleEffectController::parse(VParticleEffectController& obj, ReadArchive& r, GameVersion version) {
@@ -55,6 +87,13 @@ namespace zenkit {
 		this->initially_running = r.read_bool(); // pfxStartOn
 	}
 
+	void VParticleEffectController::save(WriteArchive& w, GameVersion version) const {
+		VirtualObject::save(w, version);
+		w.write_string("pfxName", this->pfx_name);
+		w.write_bool("killVobWhenDone", this->kill_when_done);
+		w.write_bool("pfxStartOn", this->initially_running);
+	}
+
 	void VMessageFilter::parse(VMessageFilter& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
@@ -64,6 +103,17 @@ namespace zenkit {
 		this->target = r.read_string();                                       // triggerTarget
 		this->on_trigger = static_cast<MessageFilterAction>(r.read_enum());   // onTrigger
 		this->on_untrigger = static_cast<MessageFilterAction>(r.read_enum()); // onUntrigger
+	}
+
+	void VMessageFilter::save(WriteArchive& w, GameVersion version) const {
+		VirtualObject::save(w, version);
+		w.write_string("triggerTarget", this->target);
+		w.write_enum("onTrigger", static_cast<std::uint32_t>(this->on_trigger));
+		w.write_enum("onUntrigger", static_cast<std::uint32_t>(this->on_untrigger));
+	}
+
+	uint16_t VMessageFilter::get_version_identifier(GameVersion) const {
+		return 0;
 	}
 
 	void VCodeMaster::parse(VCodeMaster& obj, ReadArchive& r, GameVersion version) {
@@ -88,10 +138,32 @@ namespace zenkit {
 			this->s_num_triggered_slaves = r.read_byte(); // numSlavesTriggered
 
 			for (auto i = 0; i < slave_count; ++i) {
-				// TODO: Figure out how to parse these correctly.
+				// FIXME: Figure out how to parse these correctly.
 				r.skip_object(false); // [slaveTriggered1 % 0 0]
 			}
 		}
+	}
+
+	void VCodeMaster::save(WriteArchive& w, GameVersion version) const {
+		VirtualObject::save(w, version);
+		w.write_string("triggerTarget", this->target);
+		w.write_bool("orderRelevant", this->ordered);
+		w.write_bool("firstFalseIsFailure", this->first_false_is_failure);
+		w.write_string("triggerTargetFailure", this->failure_target);
+		w.write_bool("untriggerCancels", this->untriggered_cancels);
+
+		w.write_byte("numSlaves", this->slaves.size());
+		for (auto i = 0u; i < (this->slaves.size() & 0xffu); ++i) {
+			w.write_string("slaveVobName" + std::to_string(i), this->slaves[i]);
+		}
+
+		if (w.is_save_game() && version == GameVersion::GOTHIC_2) {
+			// FIXME: This is not implemented because its behavior is unknown.
+		}
+	}
+
+	uint16_t VCodeMaster::get_version_identifier(GameVersion) const {
+		return 0;
 	}
 
 	void VMoverController::parse(VMoverController& obj, ReadArchive& r, GameVersion version) {
@@ -100,15 +172,20 @@ namespace zenkit {
 
 	void VMoverController::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
-		this->target = r.read_string(); // triggerTarget
+		this->target = r.read_string();                               // triggerTarget
+		this->message = static_cast<MoverMessageType>(r.read_enum()); // moverMessage
+		this->key = r.read_int();                                     // gotoFixedKey
+	}
 
-		if (version == GameVersion::GOTHIC_1) {
-			this->message = static_cast<MoverMessageType>(r.read_enum()); // moverMessage
-		} else {
-			this->message = static_cast<MoverMessageType>(r.read_byte()); // moverMessage
-		}
+	void VMoverController::save(WriteArchive& w, GameVersion version) const {
+		VirtualObject::save(w, version);
+		w.write_string("triggerTarget", this->target);
+		w.write_enum("moverMessage", static_cast<std::uint32_t>(this->message));
+		w.write_int("gotoFixedKey", this->key);
+	}
 
-		this->key = r.read_int(); // gotoFixedKey
+	uint16_t VMoverController::get_version_identifier(GameVersion) const {
+		return 0;
 	}
 
 	void VTouchDamage::parse(VTouchDamage& obj, ReadArchive& r, GameVersion version) {
@@ -131,6 +208,26 @@ namespace zenkit {
 		this->collision = static_cast<TouchCollisionType>(r.read_enum()); // damageCollType
 	}
 
+	void VTouchDamage::save(WriteArchive& w, GameVersion version) const {
+		VirtualObject::save(w, version);
+		w.write_float("damage", this->damage);
+		w.write_bool("Barrier", this->barrier);
+		w.write_bool("Blunt", this->blunt);
+		w.write_bool("Edge", this->edge);
+		w.write_bool("Fire", this->fire);
+		w.write_bool("Fly", this->fly);
+		w.write_bool("Magic", this->magic);
+		w.write_bool("Point", this->point);
+		w.write_bool("Fall", this->fall);
+		w.write_float("damageRepeatDelaySec", this->repeat_delay_sec);
+		w.write_float("damageVolDownScale", this->volume_scale);
+		w.write_enum("damageCollType", static_cast<std::uint32_t>(this->collision));
+	}
+
+	uint16_t VTouchDamage::get_version_identifier(GameVersion) const {
+		return 36865;
+	}
+
 	void VEarthquake::parse(VEarthquake& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
@@ -140,6 +237,17 @@ namespace zenkit {
 		this->radius = r.read_float();   // radius
 		this->duration = r.read_float(); // timeSec
 		this->amplitude = r.read_vec3(); // amplitudeCM
+	}
+
+	void VEarthquake::save(WriteArchive& w, GameVersion version) const {
+		VirtualObject::save(w, version);
+		w.write_float("radius", this->radius);
+		w.write_float("timeSec", this->duration);
+		w.write_vec3("amplitudeCM", this->amplitude);
+	}
+
+	uint16_t VEarthquake::get_version_identifier(GameVersion) const {
+		return 52224;
 	}
 
 	void VNpc::Talent::load(ReadArchive& r, GameVersion) {
@@ -315,6 +423,14 @@ namespace zenkit {
 			(void) r.read_raw(count * 4); // fovMorph
 			(void) r.read_vec2();         // fovSaved
 			(void) r.read_vec2();         // fovSaved1st
+		}
+	}
+
+	void VScreenEffect::save(WriteArchive& w, GameVersion version) const {
+		VirtualObject::save(w, version);
+
+		if (w.is_save_game()) {
+			// FIXME: Not implemented because original not understood.
 		}
 	}
 } // namespace zenkit

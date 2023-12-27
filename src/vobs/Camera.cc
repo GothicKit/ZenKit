@@ -3,7 +3,7 @@
 #include "zenkit/vobs/Camera.hh"
 #include "zenkit/Archive.hh"
 
-#include "../Internal.hh"
+#include <glm/gtc/type_ptr.inl>
 
 namespace zenkit {
 	std::unique_ptr<VCameraTrajectoryFrame> VCameraTrajectoryFrame::parse(ReadArchive& r, GameVersion version) {
@@ -29,6 +29,24 @@ namespace zenkit {
 
 		auto buf = r.read_raw(sizeof(float) * 4 * 4); // originalPose
 		this->original_pose = buf->read_mat4();
+	}
+
+	void VCameraTrajectoryFrame::save(WriteArchive& w, GameVersion version) const {
+		VirtualObject::save(w, version);
+
+		w.write_float("time", this->time);
+		w.write_float("angleRollDeg", this->roll_angle);
+		w.write_float("camFOVScale", this->fov_scale);
+		w.write_enum("motionType", static_cast<uint32_t>(this->motion_type));
+		w.write_enum("motionTypeFOV", static_cast<uint32_t>(this->motion_type_fov));
+		w.write_enum("motionTypeRoll", static_cast<uint32_t>(this->motion_type_roll));
+		w.write_enum("motionTypeTimeScale", static_cast<uint32_t>(this->motion_type_time_scale));
+		w.write_float("tension", this->tension);
+		w.write_float("bias", this->cam_bias);
+		w.write_float("continuity", this->continuity);
+		w.write_float("timeScale", this->time_scale);
+		w.write_bool("timeIsFixed", this->time_fixed);
+		w.write_raw_float("originalPose", glm::value_ptr(this->original_pose), 4 * 4);
 	}
 
 	void VCutsceneCamera::parse(VCutsceneCamera& obj, ReadArchive& r, GameVersion version) {
@@ -66,5 +84,42 @@ namespace zenkit {
 			this->goto_time_mode = r.read_bool(); // gotoTimeMode
 			this->cs_time = r.read_float();       // csTime
 		}
+	}
+
+	void VCutsceneCamera::save(WriteArchive& w, GameVersion version) const {
+		VirtualObject::save(w, version);
+
+		w.write_enum("camTrjFOR", static_cast<uint32_t>(this->trajectory_for));
+		w.write_enum("targetTrjFOR", static_cast<uint32_t>(this->target_trajectory_for));
+		w.write_enum("loopMode", static_cast<uint32_t>(this->loop_mode));
+		w.write_enum("splLerpMode", static_cast<uint32_t>(this->lerp_mode));
+		w.write_bool("ignoreFORVobRotCam", this->ignore_for_vob_rotation);
+		w.write_bool("ignoreFORVobRotTarget", this->ignore_for_vob_rotation_target);
+		w.write_bool("adaptToSurroundings", this->adapt);
+		w.write_bool("easeToFirstKey", this->ease_first);
+		w.write_bool("easeFromLastKey", this->ease_last);
+		w.write_float("totalTime", this->total_duration);
+		w.write_string("autoCamFocusVobName", this->auto_focus_vob);
+		w.write_bool("autoCamPlayerMovable", this->auto_player_movable);
+		w.write_bool("autoCamUntriggerOnLastKey", this->auto_untrigger_last);
+		w.write_float("autoCamUntriggerOnLastKeyDelay", this->auto_untrigger_last_delay);
+		w.write_int("numPos", this->position_count);
+		w.write_int("numTargets", this->target_count);
+
+		for (auto i = 0; i < this->position_count + this->target_count; ++i) {
+			w.write_object(this->frames[static_cast<size_t>(i)], version);
+		}
+
+		if (w.is_save_game() && version == GameVersion::GOTHIC_2) {
+			// In save-games, cutscene cameras contain extra variables
+			w.write_bool("paused", this->paused);
+			w.write_bool("started", this->started);
+			w.write_bool("gotoTimeMode", this->goto_time_mode);
+			w.write_float("csTime", this->cs_time);
+		}
+	}
+
+	uint16_t VCutsceneCamera::get_version_identifier(GameVersion game) const {
+		return game == GameVersion::GOTHIC_1 ? 30720 : 33793;
 	}
 } // namespace zenkit

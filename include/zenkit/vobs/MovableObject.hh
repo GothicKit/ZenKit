@@ -52,6 +52,8 @@ namespace zenkit {
 		ZKREM("use ::load()") ZKAPI static void parse(VMovableObject& obj, ReadArchive& ctx, GameVersion version);
 
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
 	struct VInteractiveObject : VMovableObject {
@@ -72,6 +74,8 @@ namespace zenkit {
 		ZKAPI static void parse(VInteractiveObject& obj, ReadArchive& ctx, GameVersion version);
 
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
 	/// \brief A VOb representing a campfire.
@@ -88,6 +92,8 @@ namespace zenkit {
 		/// \see mob::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VFire& obj, ReadArchive& ctx, GameVersion version);
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
 	/// \brief A VOb representing a container.
@@ -110,6 +116,8 @@ namespace zenkit {
 		/// \see mob_container::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VContainer& obj, ReadArchive& ctx, GameVersion version);
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
 	/// \brief A VOb representing a door.
@@ -128,10 +136,15 @@ namespace zenkit {
 		/// \see mob_container::parse
 		ZKREM("use ::load") ZKAPI static void parse(VDoor& obj, ReadArchive& ctx, GameVersion version);
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
 	struct VLadder : VInteractiveObject {};
 	struct VSwitch : VInteractiveObject {};
 	struct VWheel : VInteractiveObject {};
-	struct VBed : VInteractiveObject {};
+
+	struct VBed : VInteractiveObject {
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
+	};
 } // namespace zenkit

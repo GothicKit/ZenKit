@@ -24,13 +24,44 @@ namespace zenkit {
 		if (r.is_save_game()) {
 			// In save-games, triggers contain extra variables
 			this->s_next_time_triggerable = r.read_float(); // nextTimeTriggerable
-			r.skip_object(false);                           // [savedOtherVob % 0 0]
+			this->s_other_vob = r.read_object(version);     // [savedOtherVob % 0 0]
 			this->s_count_can_be_activated = r.read_int();  // countCanBeActivated
 
 			if (version == GameVersion::GOTHIC_2) {
 				this->s_is_enabled = r.read_bool(); // isEnabled
 			}
 		}
+	}
+
+	void VTrigger::save(WriteArchive& w, GameVersion version) const {
+		VirtualObject::save(w, version);
+		w.write_string("triggerTarget", this->target);
+		w.write_raw("flags", reinterpret_cast<std::byte const*>(&this->flags), 1);
+		w.write_raw("filterFlags", reinterpret_cast<std::byte const*>(&this->filter_flags), 1);
+		w.write_string("respondToVobName", this->vob_target);
+		w.write_int("numCanBeActivated", this->max_activation_count);
+		w.write_float("retriggerWaitSec", this->retrigger_delay_sec);
+		w.write_float("damageThreshold", this->damage_threshold);
+		w.write_float("fireDelaySec", this->fire_delay_sec);
+
+		if (w.is_save_game()) {
+			// In save-games, triggers contain extra variables
+			w.write_float("nextTimeTriggerable", this->s_next_time_triggerable);
+			w.write_object("savedOtherVob", this->s_other_vob, version);
+			w.write_int("countCanBeActivated", this->s_count_can_be_activated);
+
+			if (version == GameVersion::GOTHIC_2) {
+				w.write_bool("isEnabled", this->s_is_enabled);
+			}
+		}
+	}
+
+	uint16_t VTrigger::get_version_identifier(GameVersion) const {
+		return 47105;
+	}
+
+	uint16_t VCutsceneTrigger::get_version_identifier(GameVersion) const {
+		return 24577;
 	}
 
 	void VMover::parse(VMover& obj, ReadArchive& r, GameVersion version) {
@@ -92,6 +123,66 @@ namespace zenkit {
 		this->sfx_use_locked = r.read_string();    // sfxUseLocked
 	}
 
+	void VMover::save(WriteArchive& w, GameVersion version) const {
+		VTrigger::save(w, version);
+		w.write_enum("moverBehavior", static_cast<std::uint32_t>(this->behavior));
+		w.write_float("autoLinkEnabled", this->touch_blocker_damage);
+		w.write_float("autoLinkEnabled", this->stay_open_time_sec);
+		w.write_bool("autoLinkEnabled", this->locked);
+		w.write_bool("autoLinkEnabled", this->auto_link);
+
+		if (version == GameVersion::GOTHIC_2) {
+			w.write_bool("autoRotate", this->auto_rotate);
+		}
+
+		w.write_word("numKeyframes", this->keyframes.size());
+
+		if (!this->keyframes.empty()) {
+			w.write_float("moveSpeed", this->speed);
+			w.write_enum("posLerpType", static_cast<std::uint32_t>(this->lerp_mode));
+			w.write_enum("speedType", static_cast<std::uint32_t>(this->speed_mode));
+
+			std::vector<std::byte> samples;
+			auto sample_writer = Write::to(&samples);
+
+			for (auto& sample : this->keyframes) {
+				sample_writer->write_vec3(sample.position);
+				sample_writer->write_float(sample.rotation.x);
+				sample_writer->write_float(sample.rotation.y);
+				sample_writer->write_float(sample.rotation.z);
+				sample_writer->write_float(sample.rotation.w);
+			}
+
+			w.write_raw("keyframes", samples);
+		}
+
+		if (w.is_save_game()) {
+			// In save-games, movers contain extra variables
+			w.write_vec3("actKeyPosDelta", this->s_act_key_pos_delta);
+			w.write_float("actKeyframeF", this->s_act_keyframe_f);
+			w.write_int("actKeyframe", this->s_act_keyframe);
+			w.write_int("nextKeyframe", this->s_next_keyframe);
+			w.write_float("moveSpeedUnit", this->s_move_speed_unit);
+			w.write_float("advanceDir", this->s_advance_dir);
+			w.write_enum("moverState", this->s_mover_state);
+			w.write_int("numTriggerEvents", this->s_trigger_event_count);
+			w.write_float("stayOpenTimeDest", this->s_stay_open_time_dest);
+		}
+
+		w.write_string("sfxOpenStart", this->sfx_open_start);
+		w.write_string("sfxOpenEnd", this->sfx_open_end);
+		w.write_string("sfxMoving", this->sfx_transitioning);
+		w.write_string("sfxCloseStart", this->sfx_close_start);
+		w.write_string("sfxCloseEnd", this->sfx_close_end);
+		w.write_string("sfxLock", this->sfx_lock);
+		w.write_string("sfxUnlock", this->sfx_unlock);
+		w.write_string("sfxUseLocked", this->sfx_use_locked);
+	}
+
+	uint16_t VMover::get_version_identifier(GameVersion) const {
+		return 39936;
+	}
+
 	void VTriggerList::parse(VTriggerList& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
@@ -115,6 +206,27 @@ namespace zenkit {
 		}
 	}
 
+	void VTriggerList::save(WriteArchive& w, GameVersion version) const {
+		VTrigger::save(w, version);
+		w.write_enum("listProcess", static_cast<std::uint32_t>(this->mode));
+
+		w.write_byte("numTargets", this->targets.size());
+		for (auto i = 0u; i < this->targets.size(); ++i) {
+			w.write_string("triggerTarget" + std::to_string(i), targets[i].name);
+			w.write_float("fireDelay" + std::to_string(i), targets[i].delay);
+		}
+
+		if (w.is_save_game()) {
+			// In save-games, trigger lists contain extra variables
+			w.write_byte("actTarget", this->s_act_target);
+			w.write_bool("sendOnTrigger", this->s_send_on_trigger);
+		}
+	}
+
+	uint16_t VTriggerList::get_version_identifier(GameVersion game) const {
+		return game == GameVersion::GOTHIC_1 ? 59776 : 5505;
+	}
+
 	void VTriggerScript::parse(VTriggerScript& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
@@ -122,6 +234,15 @@ namespace zenkit {
 	void VTriggerScript::load(ReadArchive& r, GameVersion version) {
 		VTrigger::load(r, version);
 		this->function = r.read_string(); // scriptFunc
+	}
+
+	void VTriggerScript::save(WriteArchive& w, GameVersion version) const {
+		VTrigger::save(w, version);
+		w.write_string("scriptFunc", this->function);
+	}
+
+	uint16_t VTriggerScript::get_version_identifier(GameVersion) const {
+		return 24577;
 	}
 
 	void VTriggerChangeLevel::parse(VTriggerChangeLevel& obj, ReadArchive& r, GameVersion version) {
@@ -132,6 +253,16 @@ namespace zenkit {
 		VTrigger::load(r, version);
 		this->level_name = r.read_string(); // levelName
 		this->start_vob = r.read_string();  // startVobName
+	}
+
+	void VTriggerChangeLevel::save(WriteArchive& w, GameVersion version) const {
+		VTrigger::save(w, version);
+		w.write_string("levelName", this->level_name);
+		w.write_string("startVobName", this->start_vob);
+	}
+
+	uint16_t VTriggerChangeLevel::get_version_identifier(GameVersion) const {
+		return 24577;
 	}
 
 	void VTriggerWorldStart::parse(VTriggerWorldStart& obj, ReadArchive& r, GameVersion version) {
@@ -149,6 +280,21 @@ namespace zenkit {
 		}
 	}
 
+	void VTriggerWorldStart::save(WriteArchive& w, GameVersion version) const {
+		VirtualObject::save(w, version);
+		w.write_string("triggerTarget", this->target);
+		w.write_bool("fireOnlyFirstTime", this->fire_once);
+
+		if (w.is_save_game() && version == GameVersion::GOTHIC_2) {
+			// In Gothic 2 save-games, world start triggers contain extra variables
+			w.write_bool("hasFired", this->s_has_fired);
+		}
+	}
+
+	uint16_t VTriggerWorldStart::get_version_identifier(GameVersion) const {
+		return 52224;
+	}
+
 	void VTriggerUntouch::parse(VTriggerUntouch& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
@@ -156,5 +302,14 @@ namespace zenkit {
 	void VTriggerUntouch::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->target = r.read_string(); // triggerTarget
+	}
+
+	void VTriggerUntouch::save(WriteArchive& w, GameVersion version) const {
+		VirtualObject::save(w, version);
+		w.write_string("triggerTarget", this->target);
+	}
+
+	uint16_t VTriggerUntouch::get_version_identifier(GameVersion) const {
+		return 193;
 	}
 } // namespace zenkit

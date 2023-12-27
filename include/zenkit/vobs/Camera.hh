@@ -96,6 +96,7 @@ namespace zenkit {
 		ZKAPI static std::unique_ptr<VCameraTrajectoryFrame> parse(ReadArchive& ctx, GameVersion version);
 
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 	};
 
 	/// \brief A VOb which defined the movement of the camera during a cutscene.
@@ -131,5 +132,7 @@ namespace zenkit {
 		ZKREM("use ::load()") ZKAPI static void parse(VCutsceneCamera& obj, ReadArchive& ctx, GameVersion version);
 
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 } // namespace zenkit

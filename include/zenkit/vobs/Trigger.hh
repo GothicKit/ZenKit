@@ -84,6 +84,7 @@ namespace zenkit {
 		// Save-game only variables
 		float s_next_time_triggerable {0};
 		int s_count_can_be_activated {0};
+		std::shared_ptr<Object> s_other_vob {nullptr};
 		bool s_is_enabled {true};
 
 		/// \brief Parses a trigger VOb the given *ZenGin* archive.
@@ -96,10 +97,13 @@ namespace zenkit {
 		ZKREM("use ::load()") ZKAPI static void parse(VTrigger& obj, ReadArchive& ctx, GameVersion version);
 
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
 	struct VCutsceneTrigger : VTrigger {
 		ZK_OBJECT(ObjectType::oCCSTrigger);
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
 	/// \brief A VOb which can move upon player interaction.
@@ -149,6 +153,8 @@ namespace zenkit {
 		/// \see trigger::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VMover& obj, ReadArchive& ctx, GameVersion version);
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
 	/// \brief A VOb which can call multiple script function upon being triggered.
@@ -183,6 +189,8 @@ namespace zenkit {
 		/// \see trigger::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VTriggerList& obj, ReadArchive& ctx, GameVersion version);
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
 	/// \brief A VOb which calls a script function upon being triggered.
@@ -201,6 +209,8 @@ namespace zenkit {
 		/// \see trigger::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VTriggerScript& obj, ReadArchive& ctx, GameVersion version);
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
 	/// \brief A VOb which triggers a level change if the player moves close to it.
@@ -221,6 +231,8 @@ namespace zenkit {
 		ZKREM("use ::load()")
 		ZKAPI static void parse(VTriggerChangeLevel& obj, ReadArchive& ctx, GameVersion version);
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
 	/// \brief A VOb which triggers a world start event.
@@ -243,6 +255,8 @@ namespace zenkit {
 		ZKREM("use ::load()")
 		ZKAPI static void parse(VTriggerWorldStart& obj, ReadArchive& ctx, GameVersion version);
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
 	struct VTriggerUntouch : VirtualObject {
@@ -259,5 +273,7 @@ namespace zenkit {
 		/// \see vob::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VTriggerUntouch& obj, ReadArchive& ctx, GameVersion version);
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 } // namespace zenkit

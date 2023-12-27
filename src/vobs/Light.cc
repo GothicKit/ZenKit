@@ -79,6 +79,44 @@ namespace zenkit {
 		}
 	}
 
+	void LightPreset::save(WriteArchive& w, GameVersion version) const {
+		w.write_string("lightPresetInUse", this->preset);
+		w.write_enum("lightType", static_cast<std::uint32_t>(this->light_type));
+		w.write_float("range", this->range);
+		w.write_color("color", this->color);
+		w.write_float("spotConeAngle", this->cone_angle);
+		w.write_bool("lightStatic", this->is_static);
+		w.write_enum("lightQuality", static_cast<std::uint32_t>(this->quality));
+		w.write_string("lensflareFX", this->lensflare_fx);
+
+		if (!this->is_static) {
+			w.write_bool("turnedOn", this->on);
+
+			std::ostringstream os;
+			for (auto& r : this->range_animation_scale) {
+				os << r << " ";
+			}
+			w.write_string("rangeAniScale", os.str());
+
+			w.write_float("rangeAniFPS", this->range_animation_fps);
+			w.write_bool("rangeAniSmooth", this->range_animation_smooth);
+
+			os.clear();
+			for (auto& c : this->color_animation_list) {
+				os << "(" << static_cast<int>(c.r) << " " << static_cast<int>(c.g) << " " << static_cast<int>(c.b)
+				   << " " << static_cast<int>(c.a) << ") ";
+			}
+			w.write_string("colorAniList", os.str());
+
+			w.write_float("colorAniFPS", this->color_animation_fps);
+			w.write_bool("colorAniSmooth", this->color_animation_smooth);
+
+			if (version == GameVersion::GOTHIC_2) {
+				w.write_bool("canMove", this->can_move);
+			}
+		}
+	}
+
 	LightPreset LightPreset::parse(ReadArchive& ctx, GameVersion version) {
 		LightPreset preset {};
 		preset.load(ctx, version);
@@ -92,5 +130,14 @@ namespace zenkit {
 	void VLight::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		LightPreset::load(r, version);
+	}
+
+	void VLight::save(WriteArchive& w, GameVersion version) const {
+		VirtualObject::save(w, version);
+		LightPreset::save(w, version);
+	}
+
+	uint16_t VLight::get_version_identifier(GameVersion game) const {
+		return game == GameVersion::GOTHIC_1 ? 46080 : 39168;
 	}
 } // namespace zenkit

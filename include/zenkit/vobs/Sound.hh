@@ -66,6 +66,8 @@ namespace zenkit {
 		ZKREM("use ::load()") ZKAPI static void parse(VSound& obj, ReadArchive& ctx, GameVersion version);
 
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
 	/// \brief A VOb which emits a sound only during certain times of the day.
@@ -85,5 +87,6 @@ namespace zenkit {
 		/// \see vob::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VSoundDaytime& obj, ReadArchive& ctx, GameVersion version);
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 	};
 } // namespace zenkit

@@ -29,6 +29,31 @@ namespace zenkit {
 		}
 	}
 
+	void VSound::save(WriteArchive& w, GameVersion version) const {
+		VirtualObject::save(w, version);
+		w.write_float("sndVolume", this->volume);
+		w.write_enum("sndVolume", static_cast<std::uint32_t>(this->mode));
+		w.write_float("sndVolume", this->random_delay);
+		w.write_float("sndVolume", this->random_delay_var);
+		w.write_bool("sndVolume", this->initially_playing);
+		w.write_bool("sndVolume", this->ambient3d);
+		w.write_bool("sndVolume", this->obstruction);
+		w.write_float("sndVolume", this->cone_angle);
+		w.write_enum("sndVolume", static_cast<std::uint32_t>(this->volume_type));
+		w.write_float("sndVolume", this->radius);
+		w.write_string("sndName", this->sound_name);
+
+		if (w.is_save_game()) {
+			// In save-games, sounds contain extra variables
+			w.write_bool("soundIsRunning", this->s_is_running);
+			w.write_bool("soundAllowedToRun", this->s_is_allowed_to_run);
+		}
+	}
+
+	uint16_t VSound::get_version_identifier(GameVersion) const {
+		return 12289;
+	}
+
 	void VSoundDaytime::parse(VSoundDaytime& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}
@@ -39,4 +64,12 @@ namespace zenkit {
 		this->end_time = r.read_float();     // sndEndTime
 		this->sound_name2 = r.read_string(); // sndName2
 	}
+
+	void VSoundDaytime::save(WriteArchive& w, GameVersion version) const {
+		VSound::save(w, version);
+		w.write_float("sndStartTime", this->start_time);
+		w.write_float("sndEndTime", this->end_time);
+		w.write_string("sndName2", this->sound_name2);
+	}
+
 } // namespace zenkit

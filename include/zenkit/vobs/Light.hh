@@ -76,6 +76,7 @@ namespace zenkit {
 		ZKREM("use ::load()") ZKAPI static LightPreset parse(ReadArchive& in, GameVersion version);
 
 		ZKAPI void load(ReadArchive& r, GameVersion version);
+		ZKAPI void save(WriteArchive& w, GameVersion version) const;
 	};
 
 	/// \brief A VOb which acts as a light source.
@@ -93,5 +94,7 @@ namespace zenkit {
 		ZKREM("use ::load()") ZKAPI static void parse(VLight& obj, ReadArchive& ctx, GameVersion version);
 
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 } // namespace zenkit

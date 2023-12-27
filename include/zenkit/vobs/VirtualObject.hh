@@ -149,6 +149,7 @@ namespace zenkit {
 		ZKREM("use ::load()") ZKAPI static VisualDecal parse(ReadArchive& ctx, GameVersion version);
 
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 	};
 
 	struct RigidBody {
@@ -159,6 +160,7 @@ namespace zenkit {
 		glm::vec3 slide_direction;
 
 		ZKAPI void load(ReadArchive& r, GameVersion version);
+		ZKAPI void save(WriteArchive& w, GameVersion version) const;
 	};
 
 	struct EventManager final : Object {
@@ -195,7 +197,8 @@ namespace zenkit {
 		bool change_weapon;
 		int action_mode;
 
-		void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 	};
 
 	struct AiMove final : Ai {
@@ -205,7 +208,8 @@ namespace zenkit {
 		std::weak_ptr<VirtualObject> vob;
 		std::weak_ptr<VNpc> owner;
 
-		void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 	};
 
 	enum class VirtualObjectType {
@@ -275,7 +279,7 @@ namespace zenkit {
 		VirtualObject() = default;
 
 		/// \brief Implicit copy-constructor. Disabled for performance reasons.
-		VirtualObject(VirtualObject const&) = delete;
+		explicit VirtualObject(VirtualObject const&) = default;
 
 		/// \brief Move-constructor. Disabled for memory safety with shared references.
 		VirtualObject(VirtualObject&&) = default;
@@ -405,6 +409,9 @@ namespace zenkit {
 		ZKREM("use ::load()") ZKAPI static void parse(VirtualObject& obj, ReadArchive& ctx, GameVersion version);
 
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
 	struct VSpot final : VirtualObject {

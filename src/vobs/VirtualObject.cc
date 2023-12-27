@@ -4,8 +4,6 @@
 #include "zenkit/Archive.hh"
 #include "zenkit/vobs/Misc.hh"
 
-#include "../Internal.hh"
-
 #include <unordered_map>
 
 namespace zenkit {
@@ -40,11 +38,29 @@ namespace zenkit {
 		}
 	}
 
+	void VisualDecal::save(WriteArchive& w, GameVersion version) const {
+		Visual::save(w, version);
+
+		w.write_string("name", this->name);
+		w.write_vec2("decalDim", this->dimension);
+		w.write_vec2("decalOffset", this->offset);
+		w.write_bool("decal2Sided", this->two_sided);
+		w.write_enum("decalAlphaFunc", static_cast<std::uint32_t>(this->alpha_func));
+		w.write_float("decalTexAniFPS", this->texture_anim_fps);
+
+		if (version == GameVersion::GOTHIC_2) {
+			w.write_byte("decalAlphaWeight", this->alpha_weight);
+			w.write_bool("ignoreDayLight", this->ignore_daylight);
+		}
+	}
+
 	void VirtualObject::parse(VirtualObject& obj, ReadArchive& in, GameVersion version) {
 		obj.load(in, version);
 	}
 
 	void VirtualObject::load(ReadArchive& r, GameVersion version) {
+		Object::load(r, version);
+
 		auto packed = r.read_int() != 0; // pack
 		bool has_visual_object = true;
 		bool has_ai_object = true;
@@ -177,12 +193,93 @@ namespace zenkit {
 		}
 	}
 
+	void VirtualObject::save(WriteArchive& w, GameVersion version) const {
+		Object::save(w, version);
+
+		w.write_int("pack", 1);
+
+		std::vector<std::byte> packed;
+		auto pw = Write::to(&packed);
+
+		this->bbox.save(pw.get());
+		pw->write_vec3(this->position);
+		pw->write_mat3(this->rotation);
+
+		std::uint8_t bit0 = 0;
+
+		bit0 |= this->show_visual << 0;
+		bit0 |= (static_cast<uint8_t>(this->sprite_camera_facing_mode) & 3) << 2;
+		bit0 |= this->cd_static << 3;
+		bit0 |= this->cd_dynamic << 4;
+		bit0 |= this->vob_static << 5;
+		bit0 |= (static_cast<uint8_t>(this->dynamic_shadows) & 3) << 7;
+
+		pw->write_ubyte(bit0);
+
+		std::uint16_t bit1 = 0;
+		bit1 |= 1u << 0u;
+		bit1 |= 1u << 1u;
+		bit1 |= (!!this->visual) << 2u;
+		bit1 |= (!!this->visual) << 3u;
+		bit1 |= (!!this->ai) << 4u;
+		bit1 |= 0u << 5u; // TODO: Implement zCEventManager
+		bit1 |= this->physics_enabled << 6u;
+
+		if (version == GameVersion::GOTHIC_1) {
+			bit1 |= (static_cast<uint8_t>(this->anim_mode) & 2) << 7u;
+			bit1 |= (static_cast<uint8_t>(this->bias) & 0b11111) << 13u;
+			bit1 |= this->ambient << 14u;
+
+			pw->write_ushort(bit1);
+			pw->write_float(this->anim_strength);
+			pw->write_float(this->far_clip_scale);
+		} else {
+			pw->write_ubyte(bit1 & 0xFF);
+		}
+
+		w.write_raw("dataRaw", packed);
+		w.write_string("presetName", this->preset_name);
+		w.write_string("vobName", this->vob_name);
+		w.write_string("visual", this->visual->name);
+
+		if (this->visual) {
+			w.write_object(this->visual, version);
+		}
+
+		if (this->ai) {
+			w.write_object(this->ai, version);
+		}
+
+		// TODO: Event Manager
+
+		if (w.is_save_game()) {
+			w.write_byte("sleepMode", this->sleep_mode);
+			w.write_float("nextOnTimer", this->next_on_timer);
+
+			if (this->physics_enabled && this->rigid_body) {
+				this->rigid_body->save(w, version);
+			}
+		}
+	}
+
+	uint16_t VirtualObject::get_version_identifier(GameVersion game) const {
+		return game == GameVersion::GOTHIC_1 ? 12289 : 52224;
+	}
+
 	void RigidBody::load(ReadArchive& r, GameVersion) {
-		this->vel = r.read_vec3();
-		this->mode = r.read_byte();
-		this->gravity_enabled = r.read_bool();
-		this->gravity_scale = r.read_float();
-		this->slide_direction = r.read_vec3();
+		this->vel = r.read_vec3();             // vel
+		this->mode = r.read_byte();            // mode
+		this->gravity_enabled = r.read_bool(); // gravOn
+		this->gravity_scale = r.read_float();  // gravScale
+		this->slide_direction = r.read_vec3(); // slideDir
+	}
+
+	void RigidBody::save(WriteArchive& w, GameVersion) const {
+		w.write_vec3("vel", this->vel);
+		w.write_byte("mode", this->mode);
+		w.write_bool("gravOn", this->gravity_enabled);
+		w.write_float("gravScale", this->gravity_scale);
+		w.write_vec3("slideDir", this->slide_direction);
 	}
 
 	void EventManager::load(ReadArchive& r, GameVersion version) {
@@ -212,10 +309,39 @@ namespace zenkit {
 		action_mode = r.read_int();    // actionMode
 	}
 
+	void AiHuman::save(WriteArchive& w, GameVersion version) const {
+		Ai::save(w, version);
+
+		w.write_int("waterLevel", this->water_level);
+		w.write_float("floorY", this->floor_y);
+		w.write_float("waterY", this->water_y);
+		w.write_float("ceilY", this->ceil_y);
+		w.write_float("feetY", this->feet_y);
+		w.write_float("headY", this->head_y);
+		w.write_float("fallDistY", this->fall_dist_y);
+		w.write_float("fallStartY", this->fall_start_y);
+
+		w.write_object("aiNpc", this->npc.lock(), version);
+
+		w.write_int("walkMode", this->walk_mode);
+		w.write_int("weaponMode", this->weapon_mode);
+		w.write_int("wmodeLast", this->wmode_ast);
+		w.write_int("wmodeSelect", this->wmode_select);
+		w.write_bool("changeWeapon", this->change_weapon);
+		w.write_int("actionMode", this->action_mode);
+	}
+
 	void AiMove::load(ReadArchive& r, GameVersion version) {
 		// NOTE(lmichaelis): The NDK does not seem to support `reinterpret_pointer_cast`.
 		auto obj = r.read_object(version);
 		vob = std::shared_ptr<VirtualObject>(obj, reinterpret_cast<VirtualObject*>(obj.get())); // vob
 		owner = r.read_object<VNpc>(version);                                                   // owner
+	}
+
+	void AiMove::save(WriteArchive& w, GameVersion version) const {
+		Ai::save(w, version);
+
+		w.write_object("vob", this->vob.lock(), version);
+		w.write_object("owner", this->owner.lock(), version);
 	}
 } // namespace zenkit
