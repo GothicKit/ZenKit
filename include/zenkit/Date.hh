@@ -11,12 +11,14 @@ namespace phoenix {
 
 namespace zenkit {
 	class Read;
+	class Write;
 
 	/// \brief A basic date and time structure used by the *ZenGin*.
 	struct Date {
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Date parse(phoenix::buffer& buf);
 
 		ZKAPI void load(Read* r);
+		ZKAPI void dump(Write* w) const;
 
 		std::uint32_t year;
 		std::uint16_t month;

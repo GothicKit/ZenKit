@@ -24,4 +24,14 @@ namespace zenkit {
 		this->second = r->read_ushort();
 		(void) r->read_ushort(); // padding
 	}
+
+	void Date::dump(Write* w) const {
+		w->write_uint(this->year);
+		w->write_ushort(this->month);
+		w->write_ushort(this->day);
+		w->write_ushort(this->hour);
+		w->write_ushort(this->minute);
+		w->write_ushort(this->second);
+		w->write_ushort(0); // padding
+	}
 } // namespace zenkit
