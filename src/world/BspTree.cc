@@ -65,6 +65,7 @@ namespace zenkit {
 
 			switch (type) {
 			case BspChunkType::HEADER:
+				// TODO(lmichaelis): Figure out what this is.
 				(void) c->read_ushort();
 				this->mode = static_cast<BspTreeType>(c->read_uint());
 				break;
@@ -144,6 +145,87 @@ namespace zenkit {
 			}
 
 			return false;
+		});
+	}
+
+	void BspTree::save(Write* w, GameVersion version) const {
+		proto::write_chunk(w, BspChunkType::HEADER, [this](Write* c) {
+			c->write_ushort(2);
+			c->write_uint(static_cast<uint32_t>(this->mode));
+		});
+
+		proto::write_chunk(w, BspChunkType::POLYGONS, [this](Write* c) {
+			c->write_uint(static_cast<uint32_t>(this->polygon_indices.size()));
+
+			for (auto i : this->polygon_indices) {
+				c->write_uint(i);
+			}
+		});
+
+		proto::write_chunk(w, BspChunkType::TREE, [this, version](Write* c) {
+			c->write_uint(static_cast<uint32_t>(this->nodes.size()));
+			c->write_uint(static_cast<uint32_t>(this->leaf_node_indices.size()));
+
+			// TODO(lmichaelis): This procedure requires that the node list is ordered correctly, otherwise
+			//                   the conditional back and front nodes will be written out-of-order.
+			for (auto& node : this->nodes) {
+				node.bbox.save(c);
+				c->write_uint(node.polygon_index);
+				c->write_uint(node.polygon_count);
+
+				if (!node.is_leaf()) {
+					std::uint8_t flags {0};
+
+					if (node.front_index != -1) {
+						flags |= 1;
+						flags |= this->nodes[static_cast<uint32_t>(node.front_index)].is_leaf() ? 4 : 0;
+					}
+
+					if (node.back_index != -1) {
+						flags |= 2;
+						flags |= this->nodes[static_cast<uint32_t>(node.front_index)].is_leaf() ? 8 : 0;
+					}
+
+					c->write_ubyte(flags);
+					c->write_float(node.plane.w);
+					c->write_float(node.plane.x);
+					c->write_float(node.plane.y);
+					c->write_float(node.plane.z);
+
+					if (version == GameVersion::GOTHIC_1) {
+						c->write_ubyte(0); // TODO(lmichaelis): lod-flag
+					}
+				}
+			}
+		});
+
+		proto::write_chunk(w, BspChunkType::LIGHT, [this](Write* c) {
+			c->write_uint(static_cast<uint32_t>(this->light_points.size()));
+			for (auto& point : this->light_points) {
+				c->write_vec3(point);
+			}
+		});
+
+		proto::write_chunk(w, BspChunkType::OUTDOORS, [this](Write* c) {
+			c->write_uint(static_cast<uint32_t>(this->sectors.size()));
+
+			for (auto& sector : this->sectors) {
+				c->write_line(sector.name);
+				c->write_uint(static_cast<uint32_t>(sector.node_indices.size()));
+				c->write_uint(static_cast<uint32_t>(sector.portal_polygon_indices.size()));
+
+				for (auto i : sector.node_indices) {
+					c->write_uint(i);
+				}
+
+				for (auto i : sector.portal_polygon_indices) {
+					c->write_uint(i);
+				}
+			}
+		});
+
+		proto::write_chunk(w, BspChunkType::END, [](Write* w) {
+			w->write_ubyte(0); // padding
 		});
 	}
 } // namespace zenkit

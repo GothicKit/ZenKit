@@ -3,6 +3,7 @@
 #pragma once
 #include "zenkit/Boxes.hh"
 #include "zenkit/Library.hh"
+#include "zenkit/Misc.hh"
 
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
@@ -11,6 +12,9 @@
 #include <vector>
 
 namespace zenkit {
+	class Read;
+	class Write;
+
 	enum class BspTreeType : std::uint32_t {
 		INDOOR = 0,
 		OUTDOOR = 1,
@@ -50,6 +54,7 @@ namespace zenkit {
 	class BspTree {
 	public:
 		ZKINT void load(Read* r, std::uint32_t version);
+		ZKINT void save(Write* w, GameVersion version) const;
 
 	public:
 		/// \brief The mode of the tree (either indoor or outdoor).
