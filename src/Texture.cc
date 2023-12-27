@@ -238,4 +238,29 @@ namespace zenkit {
 			                               std::to_string(static_cast<int32_t>(_m_format))};
 		}
 	}
+
+	void Texture::save(Write* w) const {
+		w->write_string(ZTEX_SIGNATURE);
+		w->write_uint(0);
+		w->write_uint(static_cast<uint32_t>(this->format()));
+		w->write_uint(this->width());
+		w->write_uint(this->height());
+		w->write_uint(this->mipmaps());
+		w->write_uint(this->ref_width());
+		w->write_uint(this->ref_height());
+		w->write_uint(this->average_color());
+
+		if (this->format() == TextureFormat::P8) {
+			for (auto& v : this->_m_palette) {
+				w->write_ubyte(v.b);
+				w->write_ubyte(v.g);
+				w->write_ubyte(v.r);
+				w->write_ubyte(v.a);
+			}
+		}
+
+		for (auto& m : this->_m_textures) {
+			w->write(m.data(), m.size());
+		}
+	}
 } // namespace zenkit

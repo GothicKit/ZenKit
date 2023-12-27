@@ -14,6 +14,7 @@ namespace phoenix {
 
 namespace zenkit {
 	class Read;
+	class Write;
 
 	constexpr std::uint16_t const ZTEX_PALETTE_ENTRIES = 0x100;
 
@@ -74,6 +75,7 @@ namespace zenkit {
 		[[nodiscard]] ZKREM("use ::load") ZKAPI static Texture parse(phoenix::buffer&& in);
 
 		ZKAPI void load(Read* r);
+		ZKAPI void save(Write* r) const;
 
 		/// \return The format of the texture.
 		[[nodiscard]] ZKAPI inline TextureFormat format() const noexcept {
