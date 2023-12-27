@@ -49,6 +49,19 @@ namespace zenkit {
 		}
 	}
 
+	void OrientedBoundingBox::save(Write* w) const {
+		w->write_vec3(center);
+		w->write_vec3(axes[0]);
+		w->write_vec3(axes[1]);
+		w->write_vec3(axes[2]);
+		w->write_vec3(half_width);
+
+		w->write_ushort(static_cast<uint16_t>(this->children.size()));
+		for (auto& child : children) {
+			child.save(w);
+		}
+	}
+
 	AxisAlignedBoundingBox OrientedBoundingBox::as_bbox() const {
 		float const sign[8][3] = {{-1, -1, -1},
 		                          {-1, -1, +1},

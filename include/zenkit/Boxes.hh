@@ -49,6 +49,7 @@ namespace zenkit {
 		std::vector<OrientedBoundingBox> children;
 
 		ZKAPI void load(Read* r);
+		ZKAPI void save(Write* w) const;
 
 		/// \brief Calculates an axis-aligned bounding box from this oriented bounding box.
 		/// \todo Write a test for this.
