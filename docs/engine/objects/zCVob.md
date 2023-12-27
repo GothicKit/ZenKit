@@ -5,7 +5,7 @@
     **Format Name:** ZenGin Archive<br/>
     **File Extension:** `.ZEN`<br/>
     **Class Name:** `zCVob`<br/>
-    **Version Identifier:**<br />
+    **Version Identifiers:**<br />
     — Gothic I: `12289`<br/>
     — Gothic II: `52224`<br/>
     **ZenKit Class:** `VirtualObject`

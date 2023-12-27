@@ -123,3 +123,10 @@
     list-style-image: url('/assets/icons/spacer-float.png');
     font-family: monospace;
 }
+
+.sp-none {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    list-style: none;
+    font-family: monospace;
+}
