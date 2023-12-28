@@ -10,9 +10,9 @@
     — Gothic II: `52224`<br/>
     **ZenKit Class:** `VLevel`
 
-Used as root objects of game levels. Only used to group together other VObjects. Only one of the `zCVobLevelCompo` will
-have a visual which corresponds to the mesh of the world it exists in. Generally, it can be ignored and has no relevance
-to other VObjects in the hierarchy.
+Used as root objects of game levels. Only used to group together other VObjects. Only one of the `zCVobLevelCompo`
+objects will have a visual which corresponds to the mesh of the world it exists in. Generally, it can be ignored and
+has no relevance to other VObjects in the hierarchy.
 
 <ul class="sp-list">
     <li class="sp-type"><a href="../zCVob/">zCVob</a></li>
