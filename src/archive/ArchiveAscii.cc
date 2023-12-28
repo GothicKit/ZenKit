@@ -351,7 +351,7 @@ namespace zenkit {
 		std::array<char, (std::numeric_limits<uint8_t>::digits10 + 2) * 4> buf {};
 
 		auto n = std::snprintf(buf.data(), buf.size(), "%d %d %d %d", v.r, v.g, v.b, v.a);
-		this->write_entry(name, "color", std::string_view {buf.begin(), static_cast<size_t>(n)});
+		this->write_entry(name, "color", std::string_view(buf.begin(), static_cast<size_t>(n)));
 	}
 
 	void WriteArchiveAscii::write_vec3(std::string_view name, glm::vec3 const& v) {
@@ -359,7 +359,7 @@ namespace zenkit {
 		           (std::numeric_limits<float>::max_exponent10 + std::numeric_limits<float>::max_digits10 + 3) * 3>
 		    buf {};
 		auto n = std::snprintf(buf.data(), buf.size(), "%f %f %f", v.x, v.y, v.z);
-		this->write_entry(name, "vec3", std::string_view {buf.begin(), static_cast<size_t>(n)});
+		this->write_entry(name, "vec3", std::string_view(buf.begin(), static_cast<size_t>(n)));
 	}
 
 	void WriteArchiveAscii::write_vec2(std::string_view name, glm::vec2 v) {
