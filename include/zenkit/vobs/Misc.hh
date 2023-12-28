@@ -56,25 +56,33 @@ namespace zenkit {
 		point ZKREM("renamed to TouchCollisionType::POINT") = POINT,
 	};
 
-	/// \brief An animated VOb.
+	/// \brief A VObject used to create animated models.
+	///
+	/// The visual of such objects can either be a morph mesh or a model with a skeletal animation. The animation
+	/// of these objects can be started and stopped using `OnTrigger` and `OnUntrigger` events.
+	///
+	/// \see https://zk.gothickit.dev/engine/objects/zCVobAnimate/
 	struct VAnimate : VirtualObject {
 		ZK_OBJECT(ObjectType::zCVobAnimate);
 
 	public:
+		/// \brief Whether to start this animation when loading the level.
+		/// \see https://zk.gothickit.dev/engine/objects/zCVobAnimate/#startOn
 		bool start_on {false};
 
 		// Save-game only variables
 		bool s_is_running {false};
 
-		/// \brief Parses an animated VOb the given *ZenGin* archive.
-		/// \param[out] obj The object to read.
-		/// \param[in,out] ctx The archive reader to read from.
-		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \throws ParserError if parsing fails.
-		/// \see vob::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VAnimate& obj, ReadArchive& ctx, GameVersion version);
 
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 	};
 

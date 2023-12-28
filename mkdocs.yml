@@ -38,6 +38,7 @@ nav:
           - 'ZenGin Archive': 'engine/formats/archive.md'
       - 'Objects':
           - 'zCVob': 'engine/objects/zCVob.md'
+          - 'zCVobAnimate': 'engine/objects/zCVobAnimate.md'
           - 'zCVobLevelCompo': 'engine/objects/zCVobLevelCompo.md'
           - 'zCVobLight': 'engine/objects/zCVobLight.md'
           - 'zCVobSpot': 'engine/objects/zCVobSpot.md'
