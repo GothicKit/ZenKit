@@ -53,7 +53,7 @@ namespace zenkit {
 			char c;
 			uint32_t cr, cg, cb;
 			while (colors >> c) {
-				if (::isdigit(c)) {
+				if (isdigit(c)) {
 					colors.unget();
 					colors >> cr;
 					this->color_animation_list.emplace_back(cr, cr, cr, 255);

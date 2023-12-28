@@ -39,6 +39,7 @@ nav:
       - 'Objects':
           - 'zCVob': 'engine/objects/zCVob.md'
           - 'zCVobLevelCompo': 'engine/objects/zCVobLevelCompo.md'
+          - 'zCVobLight': 'engine/objects/zCVobLight.md'
           - 'zCVobSpot': 'engine/objects/zCVobSpot.md'
           - 'zCVobStair': 'engine/objects/zCVobStair.md'
           - 'zCVobStartpoint': 'engine/objects/zCVobStartpoint.md'
