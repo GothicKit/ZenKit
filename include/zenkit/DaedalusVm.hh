@@ -637,8 +637,9 @@ namespace zenkit {
 		///
 		/// \param sym The symbol to unsafe_call.
 		ZKAPI void unsafe_call(DaedalusSymbol const* sym);
-
 		ZKAPI void unsafe_jump(uint32_t address);
+		ZKAPI std::shared_ptr<DaedalusInstance> unsafe_get_gi();
+		ZKAPI void unsafe_set_gi(std::shared_ptr<DaedalusInstance> i);
 
 		/// \return the symbol referring to the global <tt>var C_NPC self</tt>.
 		ZKAPI inline DaedalusSymbol* global_self() {

@@ -115,6 +115,14 @@ namespace zenkit {
 		this->jump(address);
 	}
 
+	std::shared_ptr<DaedalusInstance> DaedalusVm::unsafe_get_gi() {
+		return _m_instance;
+	}
+
+	void DaedalusVm::unsafe_set_gi(std::shared_ptr<DaedalusInstance> i) {
+		_m_instance = i;
+	}
+
 	bool DaedalusVm::exec() {
 		auto instr = instruction_at(_m_pc);
 
