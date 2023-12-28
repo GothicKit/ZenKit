@@ -86,27 +86,36 @@ namespace zenkit {
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 	};
 
-	/// \brief A VOb representing an in-game item.
+	/// \brief Represents an item in the game world.
+	///
+	/// Items are special VObjects which are tied to a script instance which defines their attributes. They
+	/// have physics enabled and can be targeted and picked up by the player.
+	///
+	/// \see https://zk.gothickit.dev/engine/objects/oCItem/
 	struct VItem : VirtualObject {
 		ZK_OBJECT(ObjectType::oCItem);
 
 	public:
+		/// \brief The name of the script instance representing the item.
+		/// \see https://zk.gothickit.dev/engine/objects/oCItem/#itemInstance
 		std::string instance;
 
 		// Save-game only variables
 		int s_amount;
 		int s_flags;
 
-		/// \brief Parses an item VOb the given *ZenGin* archive.
-		/// \param[out] obj The object to read.
-		/// \param[in,out] ctx The archive reader to read from.
-		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \throws ParserError if parsing fails.
-		/// \see vob::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VItem& obj, ReadArchive& ctx, GameVersion version);
 
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
