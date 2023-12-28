@@ -126,27 +126,64 @@ namespace zenkit {
 	};
 
 	/// \brief Decal visual configuration for VObs.
+	/// \see https://zk.gothickit.dev/engine/objects/zCDecal/
 	struct VisualDecal final : Visual {
 		ZK_OBJECT(ObjectType::zCDecal);
 
 	public:
-		std::string name {};
+		/// \brief The size of the decal texture as a 2-dimensional vector.
+		///
+		/// The `x`-coordinate is the width, and the `y`-coordinate is the height.
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCDecal/#decalDim
 		glm::vec2 dimension {};
+
+		/// \brief The offset of the decal texture relative to the parent VObject's position as a 2-dimensional vector.
+		/// \see https://zk.gothickit.dev/engine/objects/zCDecal/#decalOffset
 		glm::vec2 offset {};
+
+		/// \brief Enables or disables backface culling for the texture.
+		///
+		/// If set to `true`, this decal should be visible from both sides. Otherwise it should only
+		/// be visible from the front.
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCDecal/#decal2Sided
 		bool two_sided {};
+
+		/// \brief The function to use for calculating the texture's alpha channel.
+		/// \see zenkit::AlphaFunction
+		/// \see https://zk.gothickit.dev/engine/objects/zCDecal/#decalAlphaFunc
 		AlphaFunction alpha_func {};
+
+		/// \brief Determines the number of frames per **minute** to use for animated textures.
+		/// \see https://zk.gothickit.dev/engine/objects/zCDecal/#decalTexAniFPS
 		float texture_anim_fps {};
+
+		/// \brief Determines the transparency of the texture between `0` and `255`.
+		///
+		/// This field is only relevant if #alpha_func is set to a value other than AlphaFunction::NONE. A value
+		/// of `255` indicates that the texture is fully visible and a value of `0` indicates that the decal
+		/// is invisible.
+		///
+		/// \note This field is only available in Gothic II.
+		/// \see https://zk.gothickit.dev/engine/objects/zCDecal/#decalAlphaWeight
 		std::uint8_t alpha_weight {};
+
+		/// \brief Determines whether to take daylight into account when calculation the brightness of this decal.
+		/// \note This field is only available in Gothic II.
+		/// \see https://zk.gothickit.dev/engine/objects/zCDecal/#ignoreDaylight
 		bool ignore_daylight {};
 
-		/// \brief Parses a decal the given *ZenGin* archive.
-		/// \param[in,out] ctx The archive reader to read from.
-		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \return The parsed decal.
-		/// \throws ParserError if parsing fails.
 		ZKREM("use ::load()") ZKAPI static VisualDecal parse(ReadArchive& ctx, GameVersion version);
 
+		/// \brief Load this decal from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the decal was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this decal to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 	};
 
@@ -446,18 +483,44 @@ namespace zenkit {
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
+	/// \brief A VObject marking a location an orentation in virtual space.
+	///
+	/// Spot objects are used to mark a position and orientation in virtual space. They are equivalent in function to
+	/// way net free points and can be used in scripts to spawn other objects at their location.
+	///
+	/// \see https://zk.gothickit.dev/engine/objects/zCVobSpot/
 	struct VSpot final : VirtualObject {
 		ZK_OBJECT(ObjectType::zCVobSpot);
 	};
 
+	/// \brief Marks a staircase object.
+	///
+	/// Used to mark staircase models in Gothic I only. This type of VObject was taken into account by the NPC
+	/// pathfinding routines to properly ascend and descend staircases.
+	///
+	/// \note This VObject is only present in Gothic I levels!
+	/// \see https://zk.gothickit.dev/engine/objects/zCVobStair/
 	struct VStair final : VirtualObject {
 		ZK_OBJECT(ObjectType::zCVobStair);
 	};
 
+	/// \brief Marks the initial player position when entering the world.
+	///
+	/// Marks the players initial position when loading in the game level. Behaves like VSpot but causes the game
+	/// to put the player at its location when the world is loaded.
+	///
+	/// \see https://zk.gothickit.dev/engine/objects/zCVobStartpoint/
 	struct VStartPoint final : VirtualObject {
 		ZK_OBJECT(ObjectType::zCVobStartpoint);
 	};
 
+	/// \brief A root "LEVEL-VOB" object.
+	///
+	/// Used as root objects of game levels. Only used to group together other VObjects. Only one of the VLevel objects
+	/// will have a visual which corresponds to the mesh of the world it exists in. Generally, it can be ignored and
+	/// has no relevance to other VObjects in the hierarchy.
+	///
+	/// \see https://zk.gothickit.dev/engine/objects/zCVobLevelCompo/
 	struct VLevel final : VirtualObject {
 		ZK_OBJECT(ObjectType::zCVobLevelCompo);
 	};

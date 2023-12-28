@@ -162,9 +162,7 @@ namespace zenkit {
 					this->associated_visual_type = it->second;
 				}
 
-				this->visual->name = this->visual_name;
 				this->visual->type = it->second;
-
 				if (this->visual->type == VisualType::DECAL) {
 					this->visual_decal.emplace(*reinterpret_cast<VisualDecal*>(this->visual.get()));
 				}

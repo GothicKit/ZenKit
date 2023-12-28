@@ -14,13 +14,27 @@ namespace zenkit {
 	class WriteArchive;
 
 	/// \brief Alpha compositing modes used by the *ZenGin*.
+	/// \todo Explain how these work in more detail
 	enum class AlphaFunction {
+		/// \brief Use the texture's alpha channel as-is.
 		DEFAULT = 0,
+
+		/// \brief Treat the alpha channel as an "on or off" value.
 		NONE = 1,
+
+		/// \brief Mixing.
 		BLEND = 2,
+
+		/// \brief Addition.
 		ADD = 3,
+
+		/// \brief Subtraction
 		SUBTRACT = 4,
+
+		/// \brief Multiplication
 		MULTIPLY = 5,
+
+		/// \brief Multiplication
 		MULTIPLY_ALT = 6,
 
 		// Deprecated entries.
