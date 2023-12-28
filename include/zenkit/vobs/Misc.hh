@@ -147,25 +147,41 @@ namespace zenkit {
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
-	/// \brief A VOb representing a particle system controller.
+	/// \brief A particle system in virtual space.
+	///
+	/// Its effect can be activated and deactivated using the `OnTrigger` and `OnUntrigger` events.
+	///
+	/// \see https://zk.gothickit.dev/engine/objects/zCPFXController/
 	struct VParticleEffectController : VirtualObject {
 		ZK_OBJECT(ObjectType::zCPFXController);
 
 	public:
+		/// \brief The name of the particle effect.
+		///
+		/// Corresponds to a `.ZEN` file containing the particle system definition.
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCPFXController/#pfxName
 		std::string pfx_name;
+
+		/// \brief Disable the particle effect after it runs once.
+		/// \see https://zk.gothickit.dev/engine/objects/zCPFXController/#killVobWhenDone
 		bool kill_when_done;
+
+		/// \brief Whether to start the particle effect when the level is loaded.
+		/// \see https://zk.gothickit.dev/engine/objects/zCPFXController/#pfxStartOn
 		bool initially_running;
 
-		/// \brief Parses a particle system controller VOb the given *ZenGin* archive.
-		/// \param[out] obj The object to read.
-		/// \param[in,out] ctx The archive reader to read from.
-		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \throws ParserError if parsing fails.
-		/// \see vob::parse
 		ZKREM("use ::load()")
 		ZKAPI static void parse(VParticleEffectController& obj, ReadArchive& ctx, GameVersion version);
 
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 	};
 

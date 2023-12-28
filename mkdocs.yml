@@ -45,6 +45,7 @@ nav:
           - 'zCVobSpot': 'engine/objects/zCVobSpot.md'
           - 'zCVobStair': 'engine/objects/zCVobStair.md'
           - 'zCVobStartpoint': 'engine/objects/zCVobStartpoint.md'
+          - 'zCPFXControler': 'engine/objects/zCPFXControler.md'
           - 'oCItem': 'engine/objects/oCItem.md'
           - 'zCVisual': 'engine/objects/zCVisual.md'
           - 'zCDecal': 'engine/objects/zCDecal.md'
