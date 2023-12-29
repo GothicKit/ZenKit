@@ -224,30 +224,65 @@ namespace zenkit {
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
+	/// \brief `zCCodeMaster` VObjects keep a list of 'slave' VObjects and keep track of events received by them.
+	///
+	/// If the master receives an `OnTrigger` event from a slave, it remembers that it did. After it has receives an
+	/// `OnTrigger` message from all slaves, it emits an `OnTrigger` event to the #target. Receiving or sending an
+	/// `OnTrigger` event is also referred to as an 'activation' for this purpose.
+	///
+	/// \see https://zk.gothickit.dev/engine/objects/zCCodeMaster/
 	struct VCodeMaster : VirtualObject {
 		ZK_OBJECT(ObjectType::zCCodeMaster);
 
 	public:
+		/// \brief The name of the VObject to send an `OnTrigger` event to after all slaves have
+		///        fired in the correct order.
+		/// \see https://zk.gothickit.dev/engine/objects/zCCodeMaster/#triggerTarget
 		std::string target;
+
+		/// \brief Controls whether the master should keep track of the order it receives messages from its slaves.
+		/// \see https://zk.gothickit.dev/engine/objects/zCCodeMaster/#orderRelevant
 		bool ordered;
+
+		/// \brief Controls when the slave activation sequence is considered to be incorrect.
+		///
+		/// If set to `true`, the sequence is considered to be incorrect as soon as a single out-of-order slave is
+		/// activated. Otherwise, it is only considered incorrect after all slaves have fired at least once and they
+		/// have been activated out-of-order.
+		///
+		/// \note Only relevant if #ordered is set to `true`.
+		/// \see https://zk.gothickit.dev/engine/objects/zCCodeMaster/#firstFalseIsFailure
 		bool first_false_is_failure;
+
+		/// \brief The name of the VObject to emit an `OnTrigger` event to if the activation sequence fails.
+		/// \note Only relevant if #ordered is set to `true`.
+		/// \see https://zk.gothickit.dev/engine/objects/zCCodeMaster/#triggerTargetFailure
 		std::string failure_target;
+
+		/// \brief Controls whether slaves can emit `OnUntrigger` events to mark themselves as deactivated.
+		/// \note Only relevant if #ordered is set to `false`.
+		/// \see https://zk.gothickit.dev/engine/objects/zCCodeMaster/#untriggerCancels
 		bool untriggered_cancels;
+
+		/// \brief The names of the slave VObjects.
+		/// \see https://zk.gothickit.dev/engine/objects/zCCodeMaster/#slaveVobName
 		std::vector<std::string> slaves;
 
 		// Save-game only variables
 		uint8_t s_num_triggered_slaves;
 
-		/// \brief Parses a code master VOb the given *ZenGin* archive.
-		/// \param[out] obj The object to read.
-		/// \param[in,out] ctx The archive reader to read from.
-		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \throws ParserError if parsing fails.
-		/// \see vob::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VCodeMaster& obj, ReadArchive& ctx, GameVersion version);
 
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
