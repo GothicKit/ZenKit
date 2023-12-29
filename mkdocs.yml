@@ -47,6 +47,7 @@ nav:
           - 'zCVobStartpoint': 'engine/objects/zCVobStartpoint.md'
           - 'zCCodeMaster': 'engine/objects/zCCodeMaster.md'
           - 'zCMessageFilter': 'engine/objects/zCMessageFilter.md'
+          - 'zCMoverControler': 'engine/objects/zCMoverController.md'
           - 'zCPFXControler': 'engine/objects/zCPFXControler.md'
           - 'oCItem': 'engine/objects/oCItem.md'
           - 'zCVisual': 'engine/objects/zCVisual.md'
