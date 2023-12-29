@@ -352,7 +352,7 @@ namespace zenkit {
 
 		auto n = std::snprintf(buf.data(), buf.size(), "%d %d %d %d", v.r, v.g, v.b, v.a);
 
-		std::string_view s(buf.begin(), static_cast<size_t>(n));
+		std::string_view s(buf.data(), static_cast<size_t>(n));
 		this->write_entry(name, "color", s);
 	}
 
@@ -362,7 +362,7 @@ namespace zenkit {
 		    buf {};
 		auto n = std::snprintf(buf.data(), buf.size(), "%f %f %f", v.x, v.y, v.z);
 
-		std::string_view s(buf.begin(), static_cast<size_t>(n));
+		std::string_view s(buf.data(), static_cast<size_t>(n));
 		this->write_entry(name, "vec3", s);
 	}
 
@@ -391,8 +391,8 @@ namespace zenkit {
 
 		std::array<char, 2> buf {};
 		for (auto i = 0u; i < length; ++i) {
-			std::to_chars(buf.begin(), buf.end(), static_cast<unsigned char>(v[i]), 16);
-			this->_m_write->write_string({buf.begin(), 2});
+			std::to_chars(buf.data(), buf.data() + buf.size(), static_cast<unsigned char>(v[i]), 16);
+			this->_m_write->write_string({buf.data(), 2});
 		}
 
 		this->_m_write->write_char('\n');
