@@ -46,6 +46,7 @@ nav:
           - 'zCVobStair': 'engine/objects/zCVobStair.md'
           - 'zCVobStartpoint': 'engine/objects/zCVobStartpoint.md'
           - 'zCCodeMaster': 'engine/objects/zCCodeMaster.md'
+          - 'zCEarthquake': 'engine/objects/zCEarthquake.md'
           - 'zCMessageFilter': 'engine/objects/zCMessageFilter.md'
           - 'zCMoverControler': 'engine/objects/zCMoverController.md'
           - 'zCPFXControler': 'engine/objects/zCPFXControler.md'
