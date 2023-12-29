@@ -49,6 +49,7 @@ nav:
           - 'zCMessageFilter': 'engine/objects/zCMessageFilter.md'
           - 'zCMoverControler': 'engine/objects/zCMoverController.md'
           - 'zCPFXControler': 'engine/objects/zCPFXControler.md'
+          - 'zCTouchDamage': 'engine/objects/zCTouchDamage.md'
           - 'oCItem': 'engine/objects/oCItem.md'
           - 'zCVisual': 'engine/objects/zCVisual.md'
           - 'zCDecal': 'engine/objects/zCDecal.md'

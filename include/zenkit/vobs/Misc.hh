@@ -45,9 +45,24 @@ namespace zenkit {
 		previous ZKREM("renamed to MoverMessageType::PREVIOUS") = PREVIOUS,
 	};
 
+	/// \see https://zk.gothickit.dev/engine/objects/zCTouchDamage/#damageCollType
 	enum class TouchCollisionType : std::uint32_t {
+		/// \brief Disable collision detection and thus damage application.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTouchDamage/#damageCollType
 		NONE = 0,
+
+		/// \brief Scale the bounding box of the VTouchDamage object by VTouchDamage#volume_scale and
+		///        use this new bounding box to calculate collisions with other VObjects.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTouchDamage/#damageCollType
 		BOX = 1,
+
+		/// \brief Scale the bounding box of the colliding object by VTouchDamage#volume_scale and only deal
+		///        damage if it contains the center point of the `zCTouchDamage` object.
+		///
+		/// If the VirtualObject#visual of the `zCTouchDamage` object is a particle effect, test against
+		/// every particle instead.
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCTouchDamage/#damageCollType
 		POINT = 2,
 
 		// Deprecated entries.
@@ -325,36 +340,76 @@ namespace zenkit {
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
-	/// \brief A VOb which represents a damage source.
+	/// \brief A VObject which damages other VObjects colliding with it.
+	/// \see https://zk.gothickit.dev/engine/objects/zCTouchDamage/
 	struct VTouchDamage : VirtualObject {
 		ZK_OBJECT(ObjectType::oCTouchDamage);
 
 	public:
+		/// \brief The amount of damage being dealt.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTouchDamage/#damage
 		float damage;
 
+		/// \brief `TRUE` — Deal barrier damage. `FALSE` — Do not deal barrier damage.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTouchDamage/#Barrier
 		bool barrier;
+
+		/// \brief `TRUE` — Deal blunt damage (blunt weapons). `FALSE` — Do not deal blunt damage.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTouchDamage/#Blunt
 		bool blunt;
+
+		/// \brief `TRUE` — Deal edge damage (sharp weapons). `FALSE` — Do not deal edge damage.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTouchDamage/#Edge
 		bool edge;
+
+		/// \brief TRUE` — Deal fire damage. `FALSE` — Do not deal fire damage.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTouchDamage/#Fire
 		bool fire;
+
+		/// \brief `TRUE` — Deal knockout damage. `FALSE` — Do not deal knockout damage.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTouchDamage/#Fly
 		bool fly;
+
+		/// \brief `TRUE` — Deal magic damage. `FALSE` — Do not deal magic damage.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTouchDamage/#Magic
 		bool magic;
+
+		/// \brief `TRUE` — Deal point damage (bows and crossbows). `FALSE` — Do not deal point damage.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTouchDamage/#Point
 		bool point;
+
+		/// \brief Deal fall damage. `FALSE` — Do not deal fall damage.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTouchDamage/#Fall
 		bool fall;
 
+		/// \brief The delay between damage ticks when applying continuous damage.
+		///
+		/// If set to `0`, only deals the damage once per collision. If set to a value greater than `0`, deals
+		/// damage every `damageRepeatDelaySec` seconds.
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCTouchDamage/#damageRepeatDelaySec
 		float repeat_delay_sec;
+
+		/// \brief A scale value used in conjunction with #collision.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTouchDamage/#damageVolDownScale
 		float volume_scale;
+
+		/// \brief The type of collision detection to use for damage calculations.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTouchDamage/#damageCollType
 		TouchCollisionType collision;
 
-		/// \brief Parses a touch damage VOb the given *ZenGin* archive.
-		/// \param[out] obj The object to read.
-		/// \param[in,out] ctx The archive reader to read from.
-		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \throws ParserError if parsing fails.
-		/// \see vob::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VTouchDamage& obj, ReadArchive& ctx, GameVersion version);
 
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
