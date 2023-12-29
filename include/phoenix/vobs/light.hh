@@ -5,7 +5,7 @@
 
 namespace phoenix {
 	namespace vobs {
-		using light_preset ZKREM("renamed to zenkit::VLightPreset") = zenkit::VLightPreset;
+		using light_preset ZKREM("renamed to zenkit::VLightPreset") = zenkit::LightPreset;
 		using light ZKREM("renamed to zenkit::VLight") = zenkit::VLight;
 	} // namespace vobs
 

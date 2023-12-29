@@ -293,6 +293,8 @@ namespace zenkit {
 		zCZoneZFogDefault = 41,
 		zCZoneVobFarPlane = 42,
 		zCZoneVobFarPlaneDefault = 43,
+
+		unknown ZKREM("renamed to VirtualObjectType::UNKNOWN") = -1,
 	};
 
 	/// \brief The base class of all ZenGin virtual objects.
