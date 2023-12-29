@@ -26,7 +26,7 @@ namespace zenkit {
 		std::byte const* _m_data;
 		std::size_t _m_size;
 
-		[[maybe_unused]] void* _m_platform_handle {nullptr};
+		void* _m_platform_handle {nullptr};
 	};
 #endif
 } // namespace zenkit

@@ -26,6 +26,7 @@ namespace zenkit {
 		}
 
 		_m_size = static_cast<std::size_t>(st.st_size);
+		_m_platform_handle = (void*) _m_data;
 
 		close(handle);
 	}
@@ -42,6 +43,7 @@ namespace zenkit {
 		if (_m_data != nullptr) {
 			::munmap((void*) _m_data, _m_size);
 			_m_data = nullptr;
+			_m_platform_handle = nullptr;
 		}
 	}
 } // namespace zenkit
