@@ -404,6 +404,7 @@ namespace zenkit {
 		ZKREM("Unreliable. No alternative available yet.") bool physics_enabled = true;
 
 		/// \brief The type of wind animation to apply to the VObject.
+		/// \note This property is only available in Gothic II.
 		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#visualanimode
 		AnimationType anim_mode = AnimationType::NONE;
 
@@ -413,6 +414,7 @@ namespace zenkit {
 		/// because documentation is not available for the very old Direct3D version used by the ZenGin, the
 		/// exact behavior it would have resulted in are unknown.</p>
 		///
+		/// \note This property is only available in Gothic II.
 		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#zbias
 		std::int32_t bias = 0;
 
@@ -424,6 +426,7 @@ namespace zenkit {
 		/// thus the `isAmbient` flag does not have any perceivable effect on the game.</p>
 		/// <p>It follows, that this field should be ignored by most implementations.</p>
 		///
+		/// \note This property is only available in Gothic II.
 		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#isambient
 		bool ambient = false;
 
@@ -432,6 +435,7 @@ namespace zenkit {
 		/// <p>Essentialy, this controls the strength of the wind to be animated using the given #anim_mode. This value
 		/// is ignored if #anim_mode is AnimationType::NONE</p>
 		///
+		/// \note This property is only available in Gothic II.
 		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#visualanimodestrength
 		float anim_strength = 0;
 
@@ -441,6 +445,7 @@ namespace zenkit {
 		/// are still calculated. A value of 2 means, that the the draw distance of this VObject is the same as the draw
 		/// distance specified in the zenkit::VZoneFarPlane object</p>
 		///
+		/// \note This property is only available in Gothic II.
 		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#vobfarclipzscale
 		float far_clip_scale = 2.0;
 

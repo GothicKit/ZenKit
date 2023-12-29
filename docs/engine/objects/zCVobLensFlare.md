@@ -10,7 +10,7 @@
     — Gothic II: `193`<br/>
     **ZenKit Class:** `VLensFlare`
 
-Represents a lens flare effect.
+Represents a lens flare effect. Behaves exactly like the base [`zCVob`](zCVob.md) but has a lens flare effect.
 
 <ul class="sp-list">
     <li class="sp-type"><a href="../zCVob/">zCVob</a></li>
@@ -28,3 +28,7 @@ Represents a lens flare effect.
 
 :   The name of the lens flare effect. Must be one of the effects listed in `/_work/data/Presets/Lensflare.zen`.
 
+## Sources
+
+The help file for the Spacer, found [here](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei) and the
+Russian-language knowledge accumulator [gothic-library.ru](http://www.gothic-library.ru/publ/class_zcvoblensflare/1-1-0-524).

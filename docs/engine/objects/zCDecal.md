@@ -73,14 +73,17 @@ waterfall splash effects which don't need to be 3-dimensional objects.
     [`decalAlphaFunc`](#decalAlphaFunc) is set to a value other than `NONE`. A value of `255`
     indicates that the texture is fully visible and a value of `0` indicates that the decal
     is invisible.
-    !!! info
+    !!! warning
         This property is only available in Gothic II.
 
 <a name="ignoreDaylight" class="t-bool"></a> `ignoreDayLight`
 
 :   Determines whether to take the day lighting into account when calculation the brightness of this decal.
     <br />`TRUE` — To take into account daylight. `FALSE` — Do not take into account daylight.
-    !!! info
+    !!! warning
         This property is only available in Gothic II.
 
+## Sources
 
+The help file for the Spacer, found [here](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei) and the
+Russian-language knowledge accumulator [gothic-library.ru](http://www.gothic-library.ru/publ/ocitem_class/1-1-0-502).

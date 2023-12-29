@@ -23,3 +23,7 @@ free points and can be used in scripts to spawn other objects at their location.
     </li>
 </ul>
 
+## Sources
+
+The help file for the Spacer, found [here](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei) and the
+Russian-language knowledge accumulator [gothic-library.ru](http://www.gothic-library.ru/publ/class_zcvobspot/1-1-0-498).

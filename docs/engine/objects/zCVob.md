@@ -119,16 +119,23 @@ invisible trigger objects. They are also referred to as VObjects in this documen
       grass and other small foliage.
     * `WIND2` — Indicates that the object should be animated as if shifting in light wind. Used mostly for animating trees.
 
+    !!! warning
+        This property is only available in Gothic II.
+
 <a name="visualanimodestrength" class="t-float"></a> `visualAniModeStrength`
 
 :   Indicates the strength of the animation set through [`visualAniMode`](#visualanimode). This value is ignored if
     [`visualAniMode`](#visualanimode) is set to `NONE`.
+    !!! warning
+        This property is only available in Gothic II.
 
 <a name="vobfarclipzscale" class="t-float"></a> `vobFarClipZScale`
 
 :   Indicates the draw distance of this VObject. Its value should be between 0 and 2. 0 Means, that this object is
     never drawn on screen but collisions are still calculated. A value of 2 means, that the draw distance of this
     VObject is the same as the draw distance specified in the [`zCZoneVobFarPlane`](zCZoneVobFarPlane.md) object.
+    !!! warning
+        This property is only available in Gothic II.
 
 <a name="cdstatic" class="t-bool"></a> `cdStatic`
 
@@ -168,6 +175,8 @@ invisible trigger objects. They are also referred to as VObjects in this documen
 :   The depth-bias for this VObject. This value is passed directly to Direct3D when rendering the associated visual of
     this VObject. Sadly, because documentation is not available for the very old Direct3D version used by the ZenGin,
     the exact behavior it would have resulted in are unknown.
+    !!! warning
+        This property is only available in Gothic II.
 
 <a name="isambient" class="t-bool"></a> `isAmbient`
 
@@ -176,6 +185,8 @@ invisible trigger objects. They are also referred to as VObjects in this documen
     could be used to hide or show VObjects which have the `isAmbient` flag set. In release builds, this variable is
     always set to `true`, thus the `isAmbient` flag does not have any perceivable effect on the game. It follows, that
     this field should be ignored by most implementations.
+    !!! warning
+        This property is only available in Gothic II.
 
 ## Hierarchy
 
@@ -225,3 +236,8 @@ The following list shows the virtual object class hierarchy. Click on any of the
         * [zCZoneVobFarPlaneDefault](zCZoneVobFarPlaneDefault.md)
     * [zCZoneZFog](zCZoneZFog.md)
         * [zCZoneZFogDefault](zCZoneZFogDefault.md)
+
+## Sources
+
+The help file for the Spacer, found [here](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei) and the
+Russian-language knowledge accumulator [gothic-library.ru](http://www.gothic-library.ru/publ/class_zcvob/1-1-0-467).

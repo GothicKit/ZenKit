@@ -154,3 +154,8 @@ may be animated with different colors and ranges.
 :   Unknown.
     !!! warning
         This value is only valid for dynamic lights in **Gothic II**. Check [`lightStatic`](#lightStatic) before use.
+
+## Sources
+
+The help file for the Spacer, found [here](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei) and the
+Russian-language knowledge accumulator [gothic-library.ru](http://www.gothic-library.ru/publ/class_zcvoblight/1-1-0-497).

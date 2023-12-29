@@ -28,3 +28,8 @@ their attributes. They have physics enabled and can be targeted and picked up by
 <a name="itemInstance" class="t-str"></a> `itemInstance`
 
 :   The name of the script instance representing the item.
+
+
+## Sources
+
+The Russian-language knowledge accumulator [gothic-library.ru](http://www.gothic-library.ru/publ/ocitem_class/1-1-0-502).

@@ -42,3 +42,7 @@ events.
     * `TRUE` — Start the particle effect when loading the world.
     * `FALSE` —  Don't start the particle effect automatically.
 
+## Sources
+
+The help file for the Spacer, found [here](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei) and the
+Russian-language knowledge accumulator [gothic-library.ru](http://www.gothic-library.ru/publ/zcpfxcontroler/1-1-0-518).

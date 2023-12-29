@@ -23,3 +23,7 @@ routines to properly ascend and descend staircases.
     </li>
 </ul>
 
+## Sources
+
+The help file for the Spacer, found [here](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei) and the
+Russian-language knowledge accumulator [gothic-library.ru](http://www.gothic-library.ru/publ/class_zcvobstair/1-1-0-499).

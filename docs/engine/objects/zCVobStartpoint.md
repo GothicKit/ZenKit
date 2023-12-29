@@ -11,7 +11,7 @@
     **ZenKit Class:** `VStartPoint`
 
 Marks the players initial position when loading in the game level. Behaves like [`zCVobSpot`](zCVobSpot.md) but causes
-the game to put the player at its location when the world is loaded.
+the game to put the player at its location and in its orientation when the world is loaded.
 
 <ul class="sp-list">
     <li class="sp-type"><a href="../zCVob/">zCVob</a></li>
@@ -23,3 +23,8 @@ the game to put the player at its location when the world is loaded.
     </li>
 </ul>
 
+
+## Sources
+
+The help file for the Spacer, found [here](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei) and the
+Russian-language knowledge accumulator [gothic-library.ru](http://www.gothic-library.ru/publ/class_zcvobstartpoint/1-1-0-500).

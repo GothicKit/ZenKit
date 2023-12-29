@@ -24,3 +24,7 @@ has no relevance to other VObjects in the hierarchy.
     </li>
 </ul>
 
+
+## Sources
+
+The Russian-language knowledge accumulator [gothic-library.ru](http://www.gothic-library.ru/publ/class_zcvoblevelcompo/1-1-0-496).
