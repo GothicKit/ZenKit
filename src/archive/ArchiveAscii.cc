@@ -267,7 +267,7 @@ namespace zenkit {
 	template <typename T, size_t N>
 	std::enable_if_t<!std::is_floating_point_v<T>, std::string_view> intosv(std::array<char, N>& buf, T v) {
 		auto r = std::to_chars(buf.data(), buf.data() + buf.size(), v);
-		return std::string_view {buf.data(), static_cast<size_t>(r.ptr - buf.begin())};
+		return std::string_view {buf.data(), static_cast<size_t>(r.ptr - buf.data())};
 	}
 
 	std::uint32_t WriteArchiveAscii::write_object_begin(std::string_view object_name,
