@@ -185,24 +185,42 @@ namespace zenkit {
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 	};
 
+	/// \brief Transforms any incoming `OnTrigger` and `OnUntrigger` events before passing
+	///        them on to the trigger target.
+	/// \see https://zk.gothickit.dev/engine/objects/zCMessageFilter/
 	struct VMessageFilter : VirtualObject {
 		ZK_OBJECT(ObjectType::zCMessageFilter);
 
 	public:
+		/// \brief The name of the target VObject.
+		///
+		/// All `OnTrigger` and `OnUntrigger` messages received by this `zCMessageFilter` VObject are transformed
+		/// according to #on_trigger and #on_untrigger and then passed on to the VObject with the name specified in
+		/// this field.
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCMessageFilter/#triggerTarget
 		std::string target;
+
+		/// \brief The type of event to emit to the #target if this VObject receives an `OnTrigger` message.
+		/// \see https://zk.gothickit.dev/engine/objects/zCMessageFilter/#onTrigger
 		MessageFilterAction on_trigger;
+
+		/// \brief The type of event to emit to the #target if this VObject receives an `OnUntrigger` message.
+		/// \see https://zk.gothickit.dev/engine/objects/zCMessageFilter/#onUntrigger
 		MessageFilterAction on_untrigger;
 
-		/// \brief Parses a message filter VOb the given *ZenGin* archive.
-		/// \param[out] obj The object to read.
-		/// \param[in,out] ctx The archive reader to read from.
-		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \throws ParserError if parsing fails.
-		/// \see vob::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VMessageFilter& obj, ReadArchive& ctx, GameVersion version);
 
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
