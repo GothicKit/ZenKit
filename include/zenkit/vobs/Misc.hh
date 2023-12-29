@@ -565,11 +565,24 @@ namespace zenkit {
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
 	};
 
+	/// \brief Screen effect VObjects are used to create special effects.
+	///
+	/// They are used for field-of-view changes, adding black bars for a cinematic feel to the
+	/// game and other post-processing effects.
+	///
+	/// \see https://zk.gothickit.dev/engine/objects/zCVobScreenFX/
 	struct VScreenEffect : VirtualObject {
 		ZK_OBJECT(ObjectType::zCVobScreenFX)
 
 	public:
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 	};
 } // namespace zenkit
