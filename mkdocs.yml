@@ -48,6 +48,7 @@ nav:
           - 'zCVobStair': 'engine/objects/zCVobStair.md'
           - 'zCVobStartpoint': 'engine/objects/zCVobStartpoint.md'
           - 'oCMOB': 'engine/objects/oCMOB.md'
+          - 'oCMobInter': 'engine/objects/oCMobInter.md'
           - 'zCCodeMaster': 'engine/objects/zCCodeMaster.md'
           - 'zCEarthquake': 'engine/objects/zCEarthquake.md'
           - 'zCMessageFilter': 'engine/objects/zCMessageFilter.md'

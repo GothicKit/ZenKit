@@ -101,27 +101,60 @@ namespace zenkit {
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
+	/// \brief Interactive objects can be interacted with by NPCs and the player.
+	///
+	/// Every time the object is interacted with, an `OnTrigger` event is sent to the #target object.
+	///
+	/// \see https://zk.gothickit.dev/engine/objects/oCMobInter/
 	struct VInteractiveObject : VMovableObject {
 		ZK_OBJECT(ObjectType::oCMobInter);
 
+		/// \brief Unknown.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMobInter/#stateNum
 		std::int32_t state;
+
+		/// \brief The name of the VObject(s) to send an `OnTrigger` event to when this object is interacted with.
+		///
+		/// Controlled by the #rewind property.
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/oCMobInter/#triggerTarget
 		std::string target;
+
+		/// \brief  The name of the item which the player or NPC must have in their inventory in order to
+		//          interact with the object. Corresponds to the name of the item instance in the scripts.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMobInter/#useWithItem
 		std::string item;
+
+		/// \brief The name of a script function which, when called, determines whether the object can be interacted
+		/// with.
+		///
+		/// The script function returns an int which is either `0`, if the object should be disabled and `1` if it
+		/// should be enabled.
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/oCMobInter/#conditionFunc
 		std::string condition_function;
+
+		/// \brief The name of a script function to be called when the object is being used.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMobInter/#onStateFunc
 		std::string on_state_change_function;
+
+		/// \brief Determines whether an `OnTrigger` event should be sent every time the object is interacted
+		///        with or only the first time.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMobInter/#rewind
 		bool rewind;
 
-		/// \brief Parses a interactive VOb the given *ZenGin* archive.
-		/// \param[out] obj The object to read.
-		/// \param[in,out] ctx The archive reader to read from.
-		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \throws ParserError if parsing fails.
-		/// \see vob::parse
-		ZKREM("use ::load()")
-		ZKAPI static void parse(VInteractiveObject& obj, ReadArchive& ctx, GameVersion version);
+		ZKREM("use ::load()") ZKAPI static void parse(VInteractiveObject& obj, ReadArchive& ctx, GameVersion version);
 
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
