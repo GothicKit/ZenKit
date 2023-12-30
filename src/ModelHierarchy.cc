@@ -82,7 +82,7 @@ namespace zenkit {
 		});
 
 		proto::write_chunk(w, ModelHierarchyChunkType::SOURCE, [this](Write* c) {
-			this->source_date.dump(c);
+			this->source_date.save(c);
 			c->write_line(this->source_path);
 		});
 

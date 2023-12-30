@@ -18,7 +18,7 @@ namespace zenkit {
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Date parse(phoenix::buffer& buf);
 
 		ZKAPI void load(Read* r);
-		ZKAPI void dump(Write* w) const;
+		ZKAPI void save(Write* w) const;
 
 		std::uint32_t year;
 		std::uint16_t month;

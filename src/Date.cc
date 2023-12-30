@@ -25,7 +25,7 @@ namespace zenkit {
 		(void) r->read_ushort(); // padding
 	}
 
-	void Date::dump(Write* w) const {
+	void Date::save(Write* w) const {
 		w->write_uint(this->year);
 		w->write_ushort(this->month);
 		w->write_ushort(this->day);

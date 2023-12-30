@@ -5,6 +5,9 @@
 #include "zenkit/Stream.hh"
 
 namespace zenkit {
+	static constexpr uint32_t VERSION_G1 = 0x04030506;
+	static constexpr uint32_t VERSION_G2 = 0x04030506;
+
 	enum class ModelMeshChunkType : std::uint16_t {
 		HEADER = 0xD000,
 		SOURCE = 0xD010,
@@ -73,6 +76,44 @@ namespace zenkit {
 
 			    return false;
 		    });
+	}
+
+	void ModelMesh::save(Write* w, GameVersion version) const {
+		proto::write_chunk(w, ModelMeshChunkType::HEADER, [version](Write* w) {
+			w->write_uint(version == GameVersion::GOTHIC_1 ? VERSION_G1 : VERSION_G2);
+		});
+
+		/* TODO: Source Chunk
+		proto::write_chunk(w, ModelMeshChunkType::SOURCE, [](Write* w) {
+		    Date date {};
+		    date.save(w);
+
+		    w->write_line("");
+		}); */
+
+		proto::write_chunk(w, ModelMeshChunkType::NODES, [&](Write* wr) {
+			wr->write_ushort(this->attachments.size());
+
+			for (auto& [key, _] : this->attachments) {
+				wr->write_line(key);
+			}
+		});
+
+		proto::write_chunk(w, ModelMeshChunkType::PROTO, [&](Write* wr) {
+			for (auto& [_, v] : this->attachments) {
+				v.save_to_section(wr, version);
+			}
+		});
+
+		proto::write_chunk(w, ModelMeshChunkType::SOFTSKINS, [&](Write* wr) {
+			wr->write_uint(this->checksum);
+
+			for (auto& msh : this->meshes) {
+				msh.save(wr, version);
+			}
+		});
+
+		proto::write_chunk(w, ModelMeshChunkType::END, [](Write*) {});
 	}
 
 	ModelMesh ModelMesh::parse(phoenix::buffer&& buf) {

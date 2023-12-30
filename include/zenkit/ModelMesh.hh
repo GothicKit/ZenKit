@@ -45,6 +45,7 @@ namespace zenkit {
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelMesh parse(phoenix::buffer&& buf);
 
 		ZKAPI void load(Read* r);
+		ZKAPI void save(Write* w, GameVersion version) const;
 
 	public:
 		/// \brief A list of soft-skin meshes associated with this model mesh.

@@ -232,7 +232,7 @@ namespace zenkit {
 	void Mesh::save(Write* w, GameVersion version) const {
 		proto::write_chunk(w, MeshChunkType::MARKER, [this, version](Write* c) {
 			c->write_ushort(version == GameVersion::GOTHIC_1 ? MESH_VERSION_G1 : MESH_VERSION_G2);
-			this->date.dump(c);
+			this->date.save(c);
 			c->write_line(this->name);
 		});
 
