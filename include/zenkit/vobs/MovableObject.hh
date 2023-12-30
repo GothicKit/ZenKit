@@ -274,6 +274,8 @@ namespace zenkit {
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
+	/// \brief A VObject representing a ladder.
+	/// \see https://zk.gothickit.dev/engine/objects/oCMobLadder/
 	struct VLadder : VInteractiveObject {
 		ZK_OBJECT(ObjectType::oCMobLadder);
 	};
