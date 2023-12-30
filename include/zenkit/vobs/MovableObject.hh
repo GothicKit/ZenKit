@@ -158,23 +158,31 @@ namespace zenkit {
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
-	/// \brief A VOb representing a campfire.
+	/// \brief An object with an integrated fire effect. Only supports rigged models as visuals.
+	/// \see https://zk.gothickit.dev/engine/objects/oCMobFire/
 	struct VFire : VInteractiveObject {
 		ZK_OBJECT(ObjectType::oCMobFire);
 
+		/// \brief The bone of the rigged model to place the fire effect at.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMobFire/#fireSlot
 		std::string slot;
+
+		/// \brief The name of the template file which contains the configuration of the fire effect.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMobFire/#fireVobtreeName
 		std::string vob_tree;
 
-		/// \brief Parses a campfire VOb the given *ZenGin* archive.
-		/// \param[out] obj The object to read.
-		/// \param[in,out] ctx The archive reader to read from.
-		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \throws ParserError if parsing fails.
-		/// \see vob::parse
-		/// \see mob::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VFire& obj, ReadArchive& ctx, GameVersion version);
+
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
