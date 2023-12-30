@@ -280,6 +280,8 @@ namespace zenkit {
 		ZK_OBJECT(ObjectType::oCMobLadder);
 	};
 
+	/// \brief A VObject representing a switch with two states.
+	/// \see https://zk.gothickit.dev/engine/objects/oCMobSwitch/
 	struct VSwitch : VInteractiveObject {
 		ZK_OBJECT(ObjectType::oCMobSwitch);
 	};
