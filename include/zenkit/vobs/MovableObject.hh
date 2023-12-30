@@ -237,24 +237,40 @@ namespace zenkit {
 	};
 
 	/// \brief A VOb representing a door.
+	/// \see https://zk.gothickit.dev/engine/objects/oCMobDoor/
 	struct VDoor : VInteractiveObject {
 		ZK_OBJECT(ObjectType::oCMobDoor);
 
+		/// \brief Determines whether the container is locked.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMobDoor/#locked
 		bool locked;
+
+		/// \brief The name of the item script instance which unlocks the container.
+		/// \note Only relevant if the container is locked.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMobDoor/#keyInstance
 		std::string key;
+
+		/// \brief The combination which unlocks this container when picking the lock.
+		///
+		/// Each character of the string is either `R` or `L` where `R` stands for "Right" and `L` stands for "Left".
+		/// If empty, the lock can not be picked. Example: `LRRLLRL`,
+		///
+		/// \note Only relevant if the container is locked.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMobDoor/#pickLockStr
 		std::string pick_string;
 
-		/// \brief Parses a door VOb the given *ZenGin* archive.
-		/// \param[out] obj The object to read.
-		/// \param[in,out] ctx The archive reader to read from.
-		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \throws ParserError if parsing fails.
-		/// \see vob::parse
-		/// \see mob::parse
-		/// \see mob_container::parse
 		ZKREM("use ::load") ZKAPI static void parse(VDoor& obj, ReadArchive& ctx, GameVersion version);
+
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 

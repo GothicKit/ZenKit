@@ -50,6 +50,7 @@ nav:
           - 'oCMOB': 'engine/objects/oCMOB.md'
           - 'oCMobInter': 'engine/objects/oCMobInter.md'
           - 'oCMobContainer': 'engine/objects/oCMobContainer.md'
+          - 'oCMobDoor': 'engine/objects/oCMobDoor.md'
           - 'oCMobFire': 'engine/objects/oCMobFire.md'
           - 'zCCodeMaster': 'engine/objects/zCCodeMaster.md'
           - 'zCEarthquake': 'engine/objects/zCEarthquake.md'
