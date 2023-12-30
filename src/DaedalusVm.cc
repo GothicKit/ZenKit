@@ -731,7 +731,7 @@ namespace zenkit {
 		for (auto* sym : symbols) {
 			if (sym == nullptr) continue;
 
-			auto instance = _m_self_sym->get_instance();
+			auto instance = sym->get_instance();
 			if (instance != nullptr) {
 				DaedalusSymbol const* instance_symbol = find_symbol_by_instance(instance);
 				ZKLOGE("DaedalusVm",
