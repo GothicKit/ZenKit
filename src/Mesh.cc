@@ -269,26 +269,25 @@ namespace zenkit {
 		});
 
 		proto::write_chunk(w, MeshChunkType::POLYGONS, [this, version](Write* c) {
-			auto poly_count = this->polygons.flags.size();
-			c->write_uint(static_cast<uint32_t>(poly_count));
+			c->write_uint(this->geometry.size());
 
-			for (auto i = 0u; i < poly_count; ++i) {
-				c->write_uint(this->polygons.material_indices[i]);
-				c->write_uint(static_cast<uint32_t>(this->polygons.lightmap_indices[i]));
+			for (auto& poly : this->geometry) {
+				c->write_uint(poly.material);
+				c->write_uint(static_cast<uint32_t>(poly.lightmap));
 
 				// TODO(lmichaelis): Figure these out.
 				c->write_float(0);
 				c->write_vec3({0, 0, 0});
 
 				if (version == GameVersion::GOTHIC_1) {
-					auto& flags = this->polygons.flags[i];
+					auto& flags = poly.flags;
 					c->write_ubyte((flags.is_portal & 3) | ((flags.is_occluder & 1) << 2) |
 					               ((flags.is_sector & 1) << 3) | ((flags.should_relight & 1) << 4) |
 					               ((flags.is_outdoor & 1) << 5) | ((flags.is_ghost_occluder & 1) << 6) |
 					               ((flags.is_dynamically_lit & 1) << 7));
 					c->write_short(flags.sector_index);
 				} else {
-					auto& flags = this->polygons.flags[i];
+					auto& flags = poly.flags;
 					c->write_ubyte((flags.is_portal & 3) | ((flags.is_occluder & 1) << 2) |
 					               ((flags.is_sector & 1) << 3) | ((flags.is_lod & 1) << 4) |
 					               ((flags.is_outdoor & 1) << 5) | ((flags.is_ghost_occluder & 1) << 6) |
@@ -297,22 +296,15 @@ namespace zenkit {
 					c->write_short(flags.sector_index);
 				}
 
-				// TODO: We only support triangles here
-				c->write_ubyte(3);
-				if (version == GameVersion::GOTHIC_1) {
-					c->write_ushort(this->polygons.vertex_indices[i * 3 + 0]);
-					c->write_ushort(this->polygons.feature_indices[i * 3 + 0]);
-					c->write_ushort(this->polygons.vertex_indices[i * 3 + 1]);
-					c->write_uint(this->polygons.feature_indices[i * 3 + 1]);
-					c->write_uint(this->polygons.vertex_indices[i * 3 + 2]);
-					c->write_uint(this->polygons.feature_indices[i * 3 + 2]);
-				} else {
-					c->write_uint(this->polygons.vertex_indices[i * 3 + 0]);
-					c->write_uint(this->polygons.feature_indices[i * 3 + 0]);
-					c->write_uint(this->polygons.vertex_indices[i * 3 + 1]);
-					c->write_uint(this->polygons.feature_indices[i * 3 + 1]);
-					c->write_uint(this->polygons.vertex_indices[i * 3 + 2]);
-					c->write_uint(this->polygons.feature_indices[i * 3 + 2]);
+				c->write_ubyte(poly.vertices.size());
+				for (auto i = 0u; i < poly.vertices.size(); ++i) {
+					if (version == GameVersion::GOTHIC_1) {
+						c->write_ushort(this->polygons.vertex_indices[i]);
+						c->write_uint(this->polygons.feature_indices[i]);
+					} else {
+						c->write_uint(this->polygons.vertex_indices[i]);
+						c->write_uint(this->polygons.feature_indices[i]);
+					}
 				}
 			}
 		});
