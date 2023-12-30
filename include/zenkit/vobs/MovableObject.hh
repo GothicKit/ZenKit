@@ -186,29 +186,53 @@ namespace zenkit {
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
-	/// \brief A VOb representing a container.
+	/// \brief An object which contains items.
+	/// \see https://zk.gothickit.dev/engine/objects/oCMobContainer/
 	struct VContainer : VInteractiveObject {
 		ZK_OBJECT(ObjectType::oCMobContainer);
 
+		/// \brief Determines whether the container is locked.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMobContainer/#locked
 		bool locked;
+
+		/// \brief The name of the item script instance which unlocks the container.
+		/// \note Only relevant if the container is locked.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMobContainer/#keyInstance
 		std::string key;
+
+		/// \brief The combination which unlocks this container when picking the lock.
+		///
+		/// Each character of the string is either `R` or `L` where `R` stands for "Right" and `L` stands for "Left".
+		/// If empty, the lock can not be picked. Example: `LRRLLRL`,
+		///
+		/// \note Only relevant if the container is locked.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMobContainer/#pickLockStr
 		std::string pick_string;
+
+		/// \brief The items found inside the container as a comma-separated list.
+		///
+		/// Each element of the list starts with the name of the item script instance and is optionally followed by
+		/// a colon and a number, indicating the number of that item to be found inside.
+		/// Example: `ItMi_Gold:75, ItFo_Fish:2, ItMi_Quartz`.
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/oCMobContainer/#contents
 		std::string contents;
 
 		// Save-game only variables
 		std::vector<std::shared_ptr<VItem>> s_items;
 
-		/// \brief Parses a container VOb the given *ZenGin* archive.
-		/// \param[out] obj The object to read.
-		/// \param[in,out] ctx The archive reader to read from.
-		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \throws ParserError if parsing fails.
-		/// \see vob::parse
-		/// \see mob::parse
-		/// \see mob_container::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VContainer& obj, ReadArchive& ctx, GameVersion version);
+
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
