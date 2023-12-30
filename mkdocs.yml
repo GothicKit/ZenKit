@@ -54,6 +54,7 @@ nav:
           - 'oCMobFire': 'engine/objects/oCMobFire.md'
           - 'oCMobLadder': 'engine/objects/oCMobLadder.md'
           - 'oCMobSwitch': 'engine/objects/oCMobSwitch.md'
+          - 'oCMobWheel': 'engine/objects/oCMobWheel.md'
           - 'zCCodeMaster': 'engine/objects/zCCodeMaster.md'
           - 'zCEarthquake': 'engine/objects/zCEarthquake.md'
           - 'zCMessageFilter': 'engine/objects/zCMessageFilter.md'

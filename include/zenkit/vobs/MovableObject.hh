@@ -286,6 +286,8 @@ namespace zenkit {
 		ZK_OBJECT(ObjectType::oCMobSwitch);
 	};
 
+	/// \brief A wheel with four different states.
+	/// \see https://zk.gothickit.dev/engine/objects/oCMobWheel/
 	struct VWheel : VInteractiveObject {
 		ZK_OBJECT(ObjectType::oCMobWheel);
 	};
