@@ -13,6 +13,7 @@ namespace zenkit {
 	class ReadArchive;
 
 	/// \brief The different sounds a material can make.
+	/// \see https://zk.gothickit.dev/engine/objects/oCMOB/#soundMaterial
 	enum class SoundMaterialType : std::uint32_t {
 		WOOD = 0,
 		STONE = 1,
@@ -30,31 +31,73 @@ namespace zenkit {
 		glass ZKREM("renamed to SoundMaterialType::GLASS") = GLASS,
 	};
 
+	/// \brief A VObject which can optionally be moved and/or carried.
+	/// \see https://zk.gothickit.dev/engine/objects/oCMOB/
 	struct VMovableObject : VirtualObject {
 		ZK_OBJECT(ObjectType::oCMOB);
 
+		/// \brief The name of the object as seen in-game when focusing it.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMOB/#focusName
 		std::string name;
+
+		/// \brief The number of hitpoints of the object.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMOB/#hitpoints
 		std::int32_t hp;
+
+		/// \brief The damage dealt by the object when being used.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMOB/#damage
 		std::int32_t damage;
+
+		/// \brief Whether the object can be moved by the player.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMOB/#moveable
 		bool movable;
+
+		/// \brief Whether the object can be carried by the player.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMOB/#takeable
 		bool takable;
+
+		/// \brief Unknown.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMOB/#focusOverride
 		bool focus_override;
+
+		/// \brief The sound to play when the object is hit.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMOB/#soundMaterial
 		SoundMaterialType material;
+
+		/// \brief The name of the visual to use when the object is destroyed.
+		///
+		/// Behaves like Visual#name.
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/oCMOB/#visualDestroyed
 		std::string visual_destroyed;
+
+		/// \brief The name of the script instance of the NPC who is the owner of this object.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMOB/#owner
 		std::string owner;
+
+		/// \brief The name of the guild this object belongs to.
+		///
+		/// This name corresponds to the script constant for each guild (i.e. `GIL_BAU`), found in `Constants.d`.
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/oCMOB/#ownerGuild
 		std::string owner_guild;
+
+		/// \brief Unknown.
+		/// \see https://zk.gothickit.dev/engine/objects/oCMOB/#isDestroyed
 		bool destroyed;
 
-		/// \brief Parses an interactive VOb the given *ZenGin* archive.
-		/// \param[out] obj The object to read.
-		/// \param[in,out] ctx The archive reader to read from.
-		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \throws ParserError if parsing fails.
-		/// \see vob::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VMovableObject& obj, ReadArchive& ctx, GameVersion version);
 
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
