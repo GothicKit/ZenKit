@@ -24,7 +24,7 @@ namespace zenkit {
 
 		/// \brief The position of the top left and bottom right corners of the glyph in the font texture.
 		/// \note These values are not stored as absolute pixels but rather in percent of the width and
-		///       height of the image. Thus to calculate the real pixel position of the top right corner,
+		///       height of the image. Thus to calculate the real pixel position of the top left corner,
 		///       one multiplies `uv[0].x` by the width of the font texture and `uv[0].y` by its height.
 		glm::vec2 uv[2];
 
@@ -38,6 +38,8 @@ namespace zenkit {
 	/// [Windows-1252](https://en.wikipedia.org/wiki/Windows-1252) encoded character within the font texture file. Font
 	/// files can be identified most easily by their `.FNT` extension or alternatively through the `"1\n"` string at the
 	/// beginning of the file.</p>
+	///
+	/// \see https://zk.gothickit.dev/library/api/font/
 	class Font {
 	public:
 		ZKAPI Font() = default;
@@ -51,27 +53,7 @@ namespace zenkit {
 		///          try to load it into *ZenGin*, it will fail.
 		ZKAPI Font(std::string name, std::uint32_t height, std::vector<FontGlyph> glyphs);
 
-		/// \brief Parses a font from the data in the given buffer.
-		///
-		/// <p>This implementation is heavily based on the implementation found in
-		/// [ZenLib](https://github.com/Try/ZenLib). The only change to the parsing logic is, that this implementation
-		/// dynamically allocates the number of glyphs from the glyph count stored within the font file. That change is
-		/// incompatible with the original *ZenGin*.</p>
-		///
-		/// \param[in,out] buf The buffer to read from.
-		/// \return The parsed font object.
-		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
-		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
-		///       using buffer::duplicate.
-		/// \throws zenkit::ParserError if parsing fails.
-		/// \see #parse(buffer&&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Font parse(phoenix::buffer& buf);
-
-		/// \brief Parses a font from the data in the given buffer.
-		/// \param[in] buf The buffer to read from (by rvalue-reference).
-		/// \return The parsed font object.
-		/// \throws zenkit::ParserError if parsing fails.
-		/// \see #parse(buffer&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Font parse(phoenix::buffer&& in);
 
 		ZKAPI void load(Read* r);
@@ -81,7 +63,7 @@ namespace zenkit {
 		/// \brief The name of this font.
 		std::string name;
 
-		/// \brief The height of glyphs of this font in pixels.
+		/// \brief The height of each glyph of this font in pixels.
 		std::uint32_t height {};
 
 		/// \brief All glyphs of this font.

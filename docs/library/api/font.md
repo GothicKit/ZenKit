@@ -14,51 +14,61 @@ glyph contains two coordinates which together form a rectangle around the glyph 
 === "C"
 
     ```c title="Example"
-    #include <phoenix/cffi/Font.h>
-    #include <phoenix/cffi/Buffer.h>
+    #include <zenkit-capi/Font.h>
 
-    int main(int, const char** argv) {
-        PxBuffer* buf = pxBufferMmap("FONT_OLD_20.FNT");
-        PxFont* font = pxFntLoad(buf);
-        pxBufferDestroy(buf);
-        
-        // ...
+    int main(int, char**) {
+        // Load from a file on disk:
+        ZkFont* font = ZkFont_loadPath("FONT_OLD_20.FNT");
+        ZkFont_del(font);
 
-        pxFntDestroy(font);
+        // ... or from a VFS:
+        ZkVfs* vfs = ZkVfs_new();
+        ZkVfs_mountDiskHost(vfs, "Textures.vdf", ZkVfsOverwriteBehavior_OLDER);
+        font = ZkFont_loadVfs(vfs, "FONT_OLD_20.FNT");
+        ZkFont_del(font);
+
         return 0;
     }
     ```
-
-    !!! info
-        As with all resources, fonts can also be loaded from a [virtual file system](virtual-file-system.md) by
-        passing a `PxVfs` and the file name to `pxFntLoadFromVfs`.
 
 === "C++"
 
     ```cpp title="Example"
     #include <zenkit/Font.hh>
     #include <zenkit/Stream.hh>
+    #include <zenkit/Vfs.hh>
 
     int main(int, char const** argv) {
         zenkit::Font font {};
         
+        // Load from a file on disk:
         auto r = zenkit::Read::from("FONT_OLD_20.FNT");
         font.load(r.get());
 
-        // ...
+        // ... or from a VFS
+        Vfs vfs;
+        vfs.mount_disk("Textures.vdf", VfsOverwriteBehavior::OLDER)
+
+        r = vfs->find("FONT_OLD_20.FNT")->open_read();
+        font.load(r.get());
 
         return 0;
     }
     ```
 
-    !!! info
-        As with all resources, fonts can also be loaded from a [virtual file system](virtual-file-system.md)
-        by passing the input obtained from `zenkit::VfsNode::open_read` into `zenkit::Font::load`.
-
 === "C#"
 
-    !!! note
-        No documentation available.
+    ```c# title="Example"
+    using ZenKit;
+
+    // Load from a file on disk:
+    var font = new Font("FONT_OLD_20.FNT");
+
+    // ... or from a VFS:
+    var vfs = new Vfs();
+    vfs.MountDisk("Textures.vdf", VfsOverwriteBehavior.Older);
+    font = new Font(vfs, "FONT_OLD_20.FNT");
+    ```
 
 === "Java"
 
@@ -80,54 +90,44 @@ follows  *Windows-1252* encoding.
 === "C"
 
     ```c title="Example"
-    #include <phoenix/cffi/Font.h>
-    #include <phoenix/cffi/Buffer.h>
+    #include <zenkit-capi/Font.h>
+    #include <zenkit-capi/Texture.h>
 
-    int main(int, const char** argv) {
-        PxBuffer* buf = pxBufferMmap("FONT_OLD_20.FNT");
-        PxFont* font = pxFntLoad(buf);
-        pxBufferDestroy(buf);
-        
+    int main(int, char**) {
+        ZkFont* font = ZkFont_loadPath("FONT_OLD_20.FNT");
+
         // The texture (1) must be loaded from some other location,
         // most likely the `Textures.vdf` disk.
-        buf = pxBufferMmap(font.name);
-        PxTexture* font_texture = pxTexLoad(buf);
-        pxBufferDestroy(buf);
+        ZkTexture* tex = ZkTexture_loadPath(ZkFont_getName(font));
 
-        uint8_t glyph_width;
-        PxVec2 glyph_upper, glyph_lower;
-
-        // The second parameter denotes the index of the glyph to
-        // get. There are 256 glyphs in every font but the number of
-        // glyphs can also be retrieved using `pxFntGetGlyphCount`.
-        pxFntGetGlyph(font, 0, &glyph_width, &glyph_upper, &glyph_lower);
+        // The second parameter denotes the index of the glyph to get. There
+        // are usually 256 glyphs in every font but the number of glyphs can
+        // also be retrieved using `ZkFont_getGlyphCount()`.
+        ZkFontGlyph glyph = ZkFont_getGlyph(font, 0);
 
         // To be able to determine the pixel offset of the glyph we
         // need to retrieve the size of the font texture.
-        uint32_t texture_width, texture_height;
-        pxTexGetMeta(font_texture, NULL, &texture_width, &texture_height, NULL, NULL);
+        uint32_t texture_width = ZkTexture_getWidth(tex);
+        uint32_t texture_height = ZkTexture_getHeight(tex);
 
         // Each UV coordinate contains a value from 0 to 1 which is
         // mapped to the actual with and height of the image
-        int actual_top_x = glyph_upper.x * texture_width;
-        int actual_top_y = glyph_upper.y * texture_height;
+        int actual_top_x = glyph.topLeft.x * texture_width;
+        int actual_top_y = glyph.topLeft.y * texture_height;
 
-        int actual_bottom_x = glyph_lower.x * texture_width;
-        int actual_bottom_y = glyph_lower.y * texture_height;
+        int actual_bottom_x = glyph.bottomRight.x * texture_width;
+        int actual_bottom_y = glyph.bottomRight.y * texture_height;
 
         // ...
 
-        pxTexDestroy(font_texture);
-        pxFntDestroy(font);
+        ZkTexture_del(tex);
+        ZkFont_del(font);
+
         return 0;
     }
     ```
 
     1. See [Textures](texture.md) for information about loading texture files.
-
-    !!! info
-        As with all resources, fonts can also be loaded from a [virtual file system](virtual-file-system.md) by
-        passing a `PxVfs` and the file name to `pxFntLoadFromVfs`.
 
 === "C++"
 
@@ -167,8 +167,31 @@ follows  *Windows-1252* encoding.
 
 === "C#"
 
-    !!! note
-        No documentation available.
+    ```c# title="Example"
+    using ZenKit;
+
+    var font = new Font("FONT_OLD_20.FNT");
+
+    // The texture (1) must be loaded from some other location,
+    // most likely the `Textures.vdf` disk.
+    var tex = new Texture(font.Name);
+
+    // The second parameter denotes the index of the glyph to get. There
+    // are usually 256 glyphs in every font but the number of glyphs can
+    // also be retrieved using `Font.GlyphCount`. You can also access all
+    // glyphs at once through `Font.Glyphs`.
+    FontGlyph glyph = font.GetGlyph(0);
+
+    // Each UV coordinate contains a value from 0 to 1 which is
+    // mapped to the actual with and height of the image
+    float actual_top_x = glyph.topLeft.X * tex.Width;
+    float actual_top_y = glyph.topLeft.Y * tex.Height;
+
+    float actual_bottom_x = glyph.bottomRight.X * tex.Width;
+    float actual_bottom_y = glyph.bottomRight.Y * tex.Height;
+
+    // ...
+    ```
 
 === "Java"
 
