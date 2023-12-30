@@ -717,6 +717,39 @@ namespace zenkit {
 				}
 			}
 		}
+
+		ZKLOGE("DaedalusVm", "------- GLOBAL VARIABLES -------");
+
+		DaedalusSymbol* symbols[] = {
+		    _m_hero_sym,
+		    _m_self_sym,
+		    _m_other_sym,
+		    _m_victim_sym,
+		    _m_item_sym,
+		};
+
+		for (auto* sym : symbols) {
+			if (sym == nullptr) continue;
+
+			auto instance = _m_self_sym->get_instance();
+			if (instance != nullptr) {
+				DaedalusSymbol const* instance_symbol = find_symbol_by_instance(instance);
+				ZKLOGE("DaedalusVm",
+				       "%s = %s (%u)",
+				       sym->name().c_str(),
+				       instance_symbol->name().c_str(),
+				       instance->symbol_index());
+			} else {
+				ZKLOGE("DaedalusVm", "%s = NULL", sym->name().c_str());
+			}
+		}
+
+		if (_m_instance != nullptr) {
+			auto instance_symbol = find_symbol_by_instance(_m_instance);
+			ZKLOGE("DaedalusVm", "<__THIS__> = %s (%u)", instance_symbol->name().c_str(), _m_instance->symbol_index());
+		} else {
+			ZKLOGE("DaedalusVm", "<__THIS__> = NULL");
+		}
 	}
 
 	DaedalusIllegalExternalDefinition::DaedalusIllegalExternalDefinition(DaedalusSymbol const* s, std::string&& msg)
