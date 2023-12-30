@@ -77,6 +77,7 @@ namespace zenkit {
 		std::vector<std::uint16_t> wedge_map;
 
 		ZKINT void load(Read* r, SubMeshSection const& map);
+		ZKINT SubMeshSection save(Write* w) const;
 	};
 
 	/// \brief Represents a *ZenGin* proto mesh.
@@ -104,6 +105,8 @@ namespace zenkit {
 
 		ZKAPI void load(Read* r);
 		ZKINT void load_from_section(Read* r);
+		ZKAPI void save(Write* w, GameVersion version) const;
+		ZKINT void save_to_section(Write* w, GameVersion version) const;
 
 	public:
 		/// \brief The vertex positions associated with the mesh.
