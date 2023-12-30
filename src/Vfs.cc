@@ -14,6 +14,7 @@
 #include <filesystem>
 #include <fstream>
 #include <stack>
+#include <unistd.h>
 
 namespace zenkit {
 	static constexpr std::string_view VFS_DISK_SIGNATURE_G1 = "PSVDSC_V2.00\r\n\r\n";
@@ -239,6 +240,86 @@ namespace zenkit {
 		return const_cast<VfsNode*>(const_cast<Vfs const*>(this)->find(name));
 	}
 
+	void Vfs::save(Write* w, GameVersion version) const {
+		std::vector<std::byte> catalog;
+		auto write_catalog = Write::to(&catalog);
+
+		// Skip the header, we'll write it at the end.
+		w->seek(256 + 16 + 6 * 4, Whence::BEG);
+
+		std::vector<std::byte> cache;
+		std::string name;
+		uint32_t index = 0;
+		uint32_t files = 0;
+
+		std::function<void(VfsNode const*)> write_node = [&](VfsNode const* node) {
+			unsigned i = 0;
+			std::vector<std::pair<uint32_t, VfsNode const*>> dirs;
+
+			for (auto& child : node->children()) {
+				name = child.name();
+				name.resize(64, '\x20');
+
+				write_catalog->write_string(name);
+
+				if (child.type() == VfsNodeType::FILE) {
+					auto rd = child.open_read();
+					rd->seek(0, Whence::END);
+					auto sz = rd->tell();
+					rd->seek(0, Whence::BEG);
+
+					write_catalog->write_uint(w->tell());                                         // Offset
+					write_catalog->write_uint(sz);                                                // Size
+					write_catalog->write_uint(i + 1 == node->children().size() ? 0x40000000 : 0); // Type
+
+					cache.resize(sz);
+					rd->read(cache.data(), sz);
+					w->write(cache.data(), sz);
+
+					files += 1;
+				} else {
+					dirs.emplace_back(write_catalog->tell(), &child);
+					write_catalog->write_uint(0);                                                          // Offset
+					write_catalog->write_uint(0);                                                          // Size
+					write_catalog->write_uint(i + 1 == node->children().size() ? 0xC0000000 : 0x80000000); // Type
+				}
+
+				write_catalog->write_uint(0); // Attributes
+
+				i++;
+				index++;
+			}
+
+			for (auto [off, dir] : dirs) {
+				auto here = write_catalog->tell();
+				write_catalog->seek(off, Whence::BEG);
+				write_catalog->write_uint(index);
+				write_catalog->seek(here, Whence::BEG);
+
+				write_node(dir);
+			}
+		};
+
+		write_node(&_m_root);
+
+		// Write the header
+		std::string comment = "Created using ZenKit";
+		comment.resize(256, '\x1A');
+
+		auto off = w->tell();
+		w->seek(0, Whence::BEG);
+		w->write_string(comment);
+		w->write_string(version == GameVersion::GOTHIC_1 ? VFS_DISK_SIGNATURE_G1 : VFS_DISK_SIGNATURE_G2);
+		w->write_uint(files);
+		w->write_uint(index);
+		w->write_uint(0);
+		w->write_uint(off + catalog.size());
+		w->write_uint(off);
+		w->write_uint(80);
+		w->seek(off, Whence::BEG);
+		w->write(catalog.data(), catalog.size());
+	}
+
 	void Vfs::mount_disk(std::filesystem::path const& host, VfsOverwriteBehavior overwrite) {
 #ifdef _ZK_WITH_MMAP
 		auto& mem = _m_data_mapped.emplace_back(host);
@@ -430,8 +511,8 @@ namespace zenkit {
 
 		auto comment = r->read_string(256);
 		auto signature = r->read_string(16);
-		[[maybe_unused]] auto entry_count = r->read_uint();
 		[[maybe_unused]] auto file_count = r->read_uint();
+		[[maybe_unused]] auto entry_count = r->read_uint();
 		auto timestamp = vfs_dos_to_unix_time(r->read_uint());
 		[[maybe_unused]] auto _size = r->read_uint();
 		auto catalog_offset = r->read_uint();
@@ -534,6 +615,7 @@ namespace zenkit {
 			    return last;
 		    };
 
+		r->seek(catalog_offset, Whence::BEG);
 		while (!load_entry(&_m_root))
 			;
 	}
