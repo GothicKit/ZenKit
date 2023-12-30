@@ -292,6 +292,8 @@ namespace zenkit {
 		ZK_OBJECT(ObjectType::oCMobWheel);
 	};
 
+	/// \brief VObject marking beds for NPCs and the player to sleep on.
+	/// \see https://zk.gothickit.dev/engine/objects/oCMobBed/
 	struct VBed : VInteractiveObject {
 		ZK_OBJECT(ObjectType::oCMobBed);
 
