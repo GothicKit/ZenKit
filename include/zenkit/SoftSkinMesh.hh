@@ -49,6 +49,7 @@ namespace zenkit {
 		[[nodiscard]] ZKREM(":: load()") ZKAPI static SoftSkinMesh parse(phoenix::buffer&& in);
 
 		ZKAPI void load(Read* r);
+		ZKAPI void save(Write* w, GameVersion version) const;
 
 	public:
 		/// \brief The embedded proto-mesh.

@@ -6,6 +6,9 @@
 #include "Internal.hh"
 
 namespace zenkit {
+	constexpr uint32_t VERSION_G1 = 0x00000004;
+	constexpr uint32_t VERSION_G2 = 0x00000004;
+
 	enum class SoftSkinMeshChunkType : std::uint16_t {
 		HEADER = 0xE100,
 		END = 0xE110,
@@ -83,6 +86,53 @@ namespace zenkit {
 
 			return false;
 		});
+	}
+
+	void SoftSkinMesh::save(Write* w, GameVersion version) const {
+		proto::write_chunk(w, SoftSkinMeshChunkType::HEADER, [version](Write* w) {
+			w->write_uint(version == GameVersion::GOTHIC_1 ? VERSION_G1 : VERSION_G2);
+		});
+
+		proto::write_chunk(w, SoftSkinMeshChunkType::PROTO, [&, version](Write* wr) {
+			this->mesh.save_to_section(wr, version);
+		});
+
+		proto::write_chunk(w, SoftSkinMeshChunkType::HEADER, [&](Write* wr) {
+			auto off_size = wr->tell();
+			wr->write_uint(0);
+
+			for (auto& w : this->weights) {
+				wr->write_uint(w.size());
+
+				for (auto& i : w) {
+					wr->write_float(i.weight);
+					wr->write_vec3(i.position);
+					wr->write_ubyte(i.node_index);
+				}
+			}
+
+			auto off_end = wr->tell();
+			wr->seek(off_size, Whence::BEG);
+			wr->write_uint(off_end - off_size);
+			wr->seek(off_end, Whence::BEG);
+
+			wr->write_uint(this->wedge_normals.size());
+			for (auto& n : this->wedge_normals) {
+				wr->write_vec3(n.normal);
+				wr->write_uint(n.index);
+			}
+
+			wr->write_ushort(this->nodes.size());
+			for (auto n : this->nodes) {
+				wr->write_int(n);
+			}
+
+			for (auto& bbox : this->bboxes) {
+				bbox.save(wr);
+			}
+		});
+
+		proto::write_chunk(w, SoftSkinMeshChunkType::END, [](Write*) {});
 	}
 
 	SoftSkinMesh SoftSkinMesh::parse(phoenix::buffer&& in) {
