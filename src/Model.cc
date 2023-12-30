@@ -18,7 +18,12 @@ namespace zenkit {
 		this->mesh.load(r);
 	}
 
+	void Model::save(Write* w, GameVersion version) const {
+		this->hierarchy.save(w);
+		this->mesh.save(w, version);
+	}
+
 	Model Model::parse(phoenix::buffer&& buf) {
-		return Model::parse(buf);
+		return parse(buf);
 	}
 } // namespace zenkit

@@ -36,6 +36,7 @@ namespace zenkit {
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Model parse(phoenix::buffer&& buf);
 
 		ZKAPI void load(Read* r);
+		ZKAPI void save(Write* w, GameVersion version) const;
 
 	public:
 		/// \brief The zenkit::ModelHierarchy associated with this model.
