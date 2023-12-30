@@ -16,17 +16,17 @@
 #include <vector>
 
 namespace zenkit {
-	class VfsBrokenDiskError : public zenkit::Error {
+	class VfsBrokenDiskError : public Error {
 	public:
 		ZKINT explicit VfsBrokenDiskError(std::string const& signature);
 	};
 
-	class VfsFileExistsError : public zenkit::Error {
+	class VfsFileExistsError : public Error {
 	public:
 		ZKINT explicit VfsFileExistsError(std::string const& name);
 	};
 
-	class VfsNotFoundError : public zenkit::Error {
+	class VfsNotFoundError : public Error {
 	public:
 		ZKINT explicit VfsNotFoundError(std::string const& name);
 	};
@@ -97,6 +97,7 @@ namespace zenkit {
 	};
 
 	/// \brief An implementation of the virtual file system.
+	/// \see https://zk.gothickit.dev/library/api/virtual-file-system/
 	class Vfs {
 	public:
 		ZKAPI Vfs();
@@ -135,7 +136,7 @@ namespace zenkit {
 		/// The disk contents are mounted at the root node of the file system and existing
 		/// directories are merged together.
 		///
-		/// \param path The path of the disk to mount.
+		/// \param host The path of the disk to mount.
 		/// \param overwrite The behavior of the system when conflicting files are found.
 		/// \throws VfsBrokenDiskError if the disk file is corrupted or invalid and thus, can't be loaded.
 		/// \see #mount_disk(buffer, VfsOverwriteBehavior)

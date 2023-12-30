@@ -16,26 +16,25 @@ by a now defunct company called [TRIACOM Software][].
 === "C"
 
     ```c title="Example"
-    #include <phoenix/cffi/Vfs.h>
+    #include <zenkit-capi/Vfs.h>
 
     #include <stdio.h>
 
-    int main(int, const char** argv) {
-        PxVfs* vfs = pxVfsNew();
-        pxVfsMountDisk(vfs, "Worlds.VDF", PxVfsOverwrite_Older)
+    int main(int, char**) {
+        ZkVfs* vfs = ZkVfs_new();
+        ZkVfs_mountDiskHost(vfs, "Worlds.vdf", ZkVfsOverwriteBehavior_OLDER);
 
-        PxVfsNode const* node = pxVfsGetNodeByName(vfs, "OLDWORLD.ZEN");
+        ZkVfsNode* node = ZkVfs_findNode(vfs, "OLDWORLD.ZEN");
         if (node == NULL) {
-            printf("Error: OLDWORLD.ZEN not found!");
+            printf("Error: OLDWORLD.ZEN not found!\n");
             return -1;
         }
 
-        PxBuffer* buf = pxVfsNodeOpenBuffer(node);
-
+        ZkRead* rd = ZkVfsNode_open(node);
         // ...
+        ZkRead_del(rd);
+        ZkVfs_del(vfs);
 
-        pxBufferDestroy(buf);
-        pxVfsDestroy(tex);
         return 0;
     }
     ```
@@ -50,11 +49,11 @@ by a now defunct company called [TRIACOM Software][].
 
     int main(int, char const** argv) {
         zenkit::Vfs vfs {};
-        vfs.mount_disk("Worlds.VDF");
+        vfs.mount_disk("Worlds.vdf");
 
         zenkit::VfsNode* node = vfs.find("OLDWORLD.ZEN");
         if (node == nullptr) {
-            printf("Error: OLDWORLD.ZEN not found!");
+            std::cerr << "Error: OLDWORLD.ZEN not found!\n";
             return -1;
         }
 
@@ -66,14 +65,27 @@ by a now defunct company called [TRIACOM Software][].
     }
     ```
 
-    !!! info
-        As with all resources, texture can also be loaded from a [virtual file system](virtual-file-system.md)
-        by passing the input obtained from `zenkit::VfsNode::open_read` into `zenkit::Texture::load`.
-
 === "C#"
 
-    !!! note
-        No documentation available.
+    ```c# title="Example"
+    using ZenKit;
+
+    var vfs = new Vfs();
+    vfs.MountDisk("Worlds.vdf", VfsOverwriteBehavior.Older);
+
+    VfsNode? node = vfs.Find("OLDWORLD.ZEN");
+
+    if (node == null)
+    {
+        Console.Error.WriteLine("Error: OLDWORLD.ZEN not found!");
+        return;
+    }
+
+    Read rd = node.Buffer;
+
+    // ...
+    ```
+
 
 === "Java"
 
