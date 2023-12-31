@@ -114,7 +114,7 @@ namespace zenkit {
 
 	void MultiResolutionMesh::save(Write* w, GameVersion version) const {
 		proto::write_chunk(w, MrmChunkType::MESH, [&](Write* wr) { this->save_to_section(wr, version); });
-		proto::write_chunk(w, MrmChunkType::END, [&](Write* wr) {});
+		proto::write_chunk(w, MrmChunkType::END, [&](Write*) {});
 	}
 
 	void MultiResolutionMesh::save_to_section(Write* w, GameVersion version) const {
