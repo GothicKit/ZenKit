@@ -14,7 +14,6 @@
 #include <filesystem>
 #include <fstream>
 #include <stack>
-#include <unistd.h>
 
 namespace zenkit {
 	static constexpr std::string_view VFS_DISK_SIGNATURE_G1 = "PSVDSC_V2.00\r\n\r\n";
