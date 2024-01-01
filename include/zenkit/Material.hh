@@ -1,6 +1,7 @@
 // Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "Object.hh"
 #include "zenkit/Library.hh"
 #include "zenkit/Misc.hh"
 
@@ -124,7 +125,9 @@ namespace zenkit {
 	/// <p>Materials describe the way things look and sound in the *ZenGin*. Among other things, materials control which
 	/// texture is used for a model, if the player can collide with it and even some animations. Materials are normally
 	/// embedded into meshes.</p>
-	class Material {
+	class Material : public Object {
+		ZK_OBJECT(ObjectType::zCMaterial);
+
 	public:
 		/// \brief Parses a material from the given *ZenGin* archive.
 		///
@@ -140,9 +143,11 @@ namespace zenkit {
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Material parse(ReadArchive& ctx);
 
 		ZKAPI void load(ReadArchive& r);
-		ZKAPI void save(WriteArchive& w, GameVersion version) const;
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 
-	public:
+		[[nodiscard]] uint16_t get_version_identifier(GameVersion game) const override;
+
 		std::string name;
 		MaterialGroup group {MaterialGroup::UNDEFINED};
 		glm::u8vec4 color {0, 0, 0, 0};

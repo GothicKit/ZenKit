@@ -291,6 +291,7 @@ namespace zenkit {
 
 		void write_object(std::shared_ptr<Object> obj, GameVersion version);
 		void write_object(std::string_view name, std::shared_ptr<Object> obj, GameVersion version);
+		void write_object(std::string_view name, Object const* obj, GameVersion version);
 		virtual std::uint32_t
 		write_object_begin(std::string_view object_name, std::string_view class_name, std::uint16_t version) = 0;
 		virtual void write_object_end() = 0;
@@ -320,7 +321,7 @@ namespace zenkit {
 		}
 
 	private:
-		std::unordered_map<Object*, uint32_t> _m_cache {};
+		std::unordered_map<Object const*, uint32_t> _m_cache {};
 		bool _m_save {false};
 	};
 } // namespace zenkit

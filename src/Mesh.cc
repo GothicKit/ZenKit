@@ -246,7 +246,8 @@ namespace zenkit {
 			c->write_uint(static_cast<uint32_t>(this->materials.size()));
 
 			for (auto& mat : materials) {
-				mat.save(*war, version);
+				war->write_string("", mat.name);
+				war->write_object("%", &mat, version);
 			}
 		});
 

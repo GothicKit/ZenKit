@@ -85,6 +85,7 @@ namespace zenkit {
 	    {"zCSkyControler_Outdoor", ObjectType::zCSkyControler_Outdoor},
 	    {"zCWayNet", ObjectType::zCWayNet},
 	    {"zCWaypoint", ObjectType::zCWaypoint},
+	    {"zCMaterial", ObjectType::zCMaterial},
 	};
 
 	static std::unordered_map<ObjectType, std::string> const CLASS_NAMES = {
@@ -147,6 +148,7 @@ namespace zenkit {
 	    {ObjectType::zCSkyControler_Outdoor, "zCSkyControler_Outdoor"},
 	    {ObjectType::zCWayNet, "zCWayNet"},
 	    {ObjectType::zCWaypoint, "zCWaypoint"},
+	    {ObjectType::zCMaterial, "zCMaterial"},
 	};
 
 	ReadArchive::ReadArchive(ArchiveHeader head, Read* r) : header(std::move(head)), read(r) {}
@@ -458,6 +460,9 @@ namespace zenkit {
 		case ObjectType::oCNpc:
 			syn = std::make_shared<VNpc>();
 			break;
+		case ObjectType::zCMaterial:
+			syn = std::make_shared<Material>();
+			break;
 #ifdef ZK_FUTURE
 		case ObjectType::zCWayNet:
 			syn = std::make_shared<WayNet>();
@@ -536,11 +541,15 @@ namespace zenkit {
 			return;
 		}
 
+		this->write_object(name, obj.get(), version);
+	}
+
+	void WriteArchive::write_object(std::string_view name, Object const* obj, GameVersion version) {
 		std::string_view class_name = CLASS_NAMES.at(obj->get_object_type());
 		uint16_t obj_version = obj->get_version_identifier(version);
 
 		auto index = this->write_object_begin(name, class_name, obj_version);
-		_m_cache.insert_or_assign(obj.get(), index);
+		_m_cache.insert_or_assign(obj, index);
 
 		obj->save(*this, version);
 		this->write_object_end();

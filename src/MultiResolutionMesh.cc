@@ -184,7 +184,8 @@ namespace zenkit {
 
 		auto ar = WriteArchive::to(w, ArchiveFormat::BINARY);
 		for (auto& mesh : this->sub_meshes) {
-			mesh.mat.save(*ar, version);
+			ar->write_string("", mesh.mat.name);
+			ar->write_object("%", &mesh.mat, version);
 		}
 		ar->write_header();
 

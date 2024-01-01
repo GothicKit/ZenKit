@@ -25,13 +25,22 @@ namespace zenkit {
 
 		ArchiveObject obj {};
 		if (!r.read_object_begin(obj)) {
-			throw zenkit::ParserError {"Material", "expected archive object begin which was not found"};
+			throw ParserError {"Material", "expected archive object begin which was not found"};
 		}
 
 		if (obj.class_name != "zCMaterial") {
-			throw zenkit::ParserError {"Material", "expected archive class zCMaterial; got " + obj.class_name};
+			throw ParserError {"Material", "expected archive class zCMaterial; got " + obj.class_name};
 		}
 
+		this->load(r, obj.version == MATERIAL_VERSION_G1 ? GameVersion::GOTHIC_1 : GameVersion::GOTHIC_2);
+
+		if (!r.read_object_end()) {
+			ZKLOGW("Material", "\"%s\" not fully parsed", this->name.c_str());
+			r.skip_object(true);
+		}
+	}
+
+	void Material::load(ReadArchive& r, GameVersion version) {
 		this->name = r.read_string();                            // name
 		this->group = static_cast<MaterialGroup>(r.read_enum()); // matGroup
 		this->color = r.read_color();                            // color
@@ -52,7 +61,7 @@ namespace zenkit {
 		this->dont_collapse = r.read_bool();     // lodDontCollapse
 		this->detail_object = r.read_string();
 
-		if (obj.version == MATERIAL_VERSION_G1) {
+		if (version == GameVersion::GOTHIC_1) {
 			this->alpha_func = AlphaFunction::DEFAULT;
 		} else {
 			// This section is specific to G2
@@ -69,19 +78,9 @@ namespace zenkit {
 		}
 
 		this->default_mapping = r.read_vec2();
-
-		if (!r.read_object_end()) {
-			ZKLOGW("Material", "\"%s\" not fully parsed", this->name.c_str());
-			r.skip_object(true);
-		}
 	}
 
 	void Material::save(WriteArchive& w, GameVersion version) const {
-		w.write_string("", this->name);
-
-		w.write_object_begin("%",
-		                     "zCMaterial",
-		                     version == GameVersion::GOTHIC_1 ? MATERIAL_VERSION_G1 : MATERIAL_VERSION_G2);
 		w.write_string("name", this->name);
 		w.write_enum("matGroup", static_cast<uint32_t>(this->group));
 		w.write_color("color", this->color);
@@ -122,6 +121,9 @@ namespace zenkit {
 		}
 
 		w.write_vec2("defaultMapping", this->default_mapping);
-		w.write_object_end();
+	}
+
+	uint16_t Material::get_version_identifier(GameVersion game) const {
+		return game == GameVersion::GOTHIC_1 ? MATERIAL_VERSION_G1 : MATERIAL_VERSION_G2;
 	}
 } // namespace zenkit

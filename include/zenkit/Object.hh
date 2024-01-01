@@ -73,6 +73,7 @@ namespace zenkit {
 		oCWorld,
 		zCWayNet,
 		zCWaypoint,
+		zCMaterial,
 	};
 
 	constexpr bool is_vobject(ObjectType type) {

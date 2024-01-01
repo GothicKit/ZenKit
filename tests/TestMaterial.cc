@@ -98,7 +98,8 @@ TEST_SUITE("Material") {
 		auto out_ar = WriteArchive::to(out.get(), ArchiveFormat::BINARY);
 
 		out_ar->write_int("", 1);
-		m1.save(*out_ar, GameVersion::GOTHIC_1);
+		out_ar->write_string("", m1.name);
+		out_ar->write_object("%", &m1, GameVersion::GOTHIC_1);
 		out_ar->write_header();
 
 		auto r = Read::from(&data);
@@ -143,7 +144,8 @@ TEST_SUITE("Material") {
 		auto out_ar = WriteArchive::to(out.get(), ArchiveFormat::BINARY);
 
 		out_ar->write_int("", 1);
-		m1.save(*out_ar, GameVersion::GOTHIC_2);
+		out_ar->write_string("", m1.name);
+		out_ar->write_object("%", &m1, GameVersion::GOTHIC_2);
 		out_ar->write_header();
 
 		auto r = Read::from(&data);
