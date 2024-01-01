@@ -69,7 +69,10 @@ namespace zenkit {
 		oCAIHuman,
 		oCAIVobMove,
 		oCCSPlayer,
-		zCSkyControler_Outdoor
+		zCSkyControler_Outdoor,
+		oCWorld,
+		zCWayNet,
+		zCWaypoint,
 	};
 
 	constexpr bool is_vobject(ObjectType type) {
@@ -77,6 +80,7 @@ namespace zenkit {
 	}
 
 #define ZK_OBJECT(s)                                                                                                   \
+public:                                                                                                                \
 	static constexpr ObjectType TYPE = s;                                                                              \
 	ObjectType get_object_type() const override {                                                                      \
 		return s;                                                                                                      \

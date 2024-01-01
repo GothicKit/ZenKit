@@ -78,109 +78,131 @@ namespace zenkit {
 	}
 
 	void World::load(Read* r, GameVersion version) {
-		auto archive = ReadArchive::from(r);
-
 		ArchiveObject chnk {};
-		archive->read_object_begin(chnk);
+		auto ar = ReadArchive::from(r);
+		ar->read_object_begin(chnk);
 
 		if (chnk.class_name != "oCWorld:zCWorld") {
 			throw ParserError {"World", "'oCWorld:zCWorld' chunk expected, got '" + chnk.class_name + "'"};
 		}
 
-		while (!archive->read_object_end()) {
-			archive->read_object_begin(chnk);
+		this->load(*ar, version);
+
+		if (!ar->read_object_end()) {
+			ZKLOGW("World", "Not fully parsed");
+			ar->skip_object(true);
+		}
+	}
+
+	void World::load(ReadArchive& r, GameVersion version) {
+		ArchiveObject hdr;
+
+		// Load properties of `zCWorld`
+		while (!r.read_object_end()) {
+			if (!r.read_object_begin(hdr)) {
+				throw ParserError {"World", "Failed to load zCWorld: expected object, got field!"};
+			}
+
 			ZKLOGI("World",
 			       "Parsing object [%s %s %u %u]",
-			       chnk.object_name.c_str(),
-			       chnk.class_name.c_str(),
-			       chnk.version,
-			       chnk.index);
+			       hdr.object_name.c_str(),
+			       hdr.class_name.c_str(),
+			       hdr.version,
+			       hdr.index);
 
-			if (chnk.object_name == "MeshAndBsp") {
-				auto bsp_version = r->read_uint();
-				(void) /* size = */ r->read_uint();
+			if (hdr.object_name == "MeshAndBsp") {
+				auto* raw = r.get_stream();
+
+				auto bsp_version = raw->read_uint();
+				(void) /* size = */ raw->read_uint();
 
 				std::uint16_t chunk_type = 0;
-				auto mesh_offset = r->tell();
+				auto mesh_offset = raw->tell();
 
 				do {
-					chunk_type = r->read_ushort();
-					r->seek(r->read_uint(), Whence::CUR);
+					chunk_type = raw->read_ushort();
+					raw->seek(raw->read_uint(), Whence::CUR);
 				} while (chunk_type != 0xB060);
 
-				auto is_xzen = archive->get_header().user == "XZEN";
+				auto is_xzen = r.get_header().user == "XZEN";
 				if (is_xzen) {
 					ZKLOGI("World", "XZEN world detected, forcing wide vertex indices");
 				}
 
-				this->world_bsp_tree.load(r, bsp_version);
-				auto end = r->tell();
+				this->world_bsp_tree.load(raw, bsp_version);
+				auto end = raw->tell();
 
-				r->seek(static_cast<ssize_t>(mesh_offset), Whence::BEG);
-				this->world_mesh.load(r, this->world_bsp_tree.leaf_polygons, is_xzen);
+				raw->seek(static_cast<ssize_t>(mesh_offset), Whence::BEG);
+				this->world_mesh.load(raw, this->world_bsp_tree.leaf_polygons, is_xzen);
 
-				r->seek(static_cast<ssize_t>(end), Whence::BEG);
-			} else if (chnk.object_name == "VobTree") {
-				auto count = static_cast<size_t>(archive->read_int());
-				this->world_vobs.reserve(count);
+				raw->seek(static_cast<ssize_t>(end), Whence::BEG);
+			} else if (hdr.object_name == "VobTree") {
+				auto count = r.read_int(); // childs0
+				for (auto i = 0; i < count; ++i) {
+					auto child = parse_vob_tree(r, version);
 
-				for (auto i = 0u; i < count; ++i) {
-					auto child = parse_vob_tree(*archive, version);
-					if (child == nullptr) continue;
+					// We failed to parse this root VObject.
+					if (child == nullptr) {
+						ZKLOGE("World", "Failed to parse root VOb %d!", i);
+						continue;
+					}
+
 					this->world_vobs.push_back(std::move(child));
 				}
-			} else if (chnk.object_name == "WayNet") {
-				this->world_way_net.load(*archive);
-			} else if (chnk.object_name == "CutscenePlayer") {
-				this->player = archive->read_object<CutscenePlayer>(version);
-			} else if (chnk.object_name == "SkyCtrl") {
-				this->sky_controller = archive->read_object<SkyController>(version);
-			} else if (chnk.object_name == "EndMarker") {
-				archive->read_object_end();
+			} else if (hdr.object_name == "WayNet") {
+#ifndef ZK_FUTURE
+				this->world_way_net.load(r);
+#else
+				this->way_net = r.read_object<WayNet>(version);
+#endif
+			} else if (hdr.object_name == "CutscenePlayer") {
+				this->player = r.read_object<CutscenePlayer>(version);
+			} else if (hdr.object_name == "SkyCtrl") {
+				this->sky_controller = r.read_object<SkyController>(version);
+			} else if (hdr.object_name == "EndMarker") {
+				r.read_object_end();
 				break;
 			}
 
-			if (!archive->read_object_end()) {
+			if (!r.read_object_end()) {
 				ZKLOGW("World",
 				       "Object [%s %s %u %u] not fully parsed",
-				       chnk.object_name.c_str(),
-				       chnk.class_name.c_str(),
-				       chnk.version,
-				       chnk.index);
-				archive->skip_object(true);
+				       hdr.object_name.c_str(),
+				       hdr.class_name.c_str(),
+				       hdr.version,
+				       hdr.index);
+				r.skip_object(true);
 			}
 		}
 
-		// TODO: save games contain a list of NPCs after the end marker
-		if (archive->get_header().save) {
+		if (r.is_save_game()) {
 			// Then, read all the NPCs
-			auto npc_count = static_cast<size_t>(archive->read_int()); // npcCount
+			auto npc_count = r.read_int(); // npcCount
 			this->npcs.resize(npc_count);
-			for (auto i = 0u; i < npc_count; ++i) {
-				this->npcs[i] = archive->read_object<VNpc>(version);
+			for (auto i = 0; i < npc_count; ++i) {
+				this->npcs[i] = r.read_object<VNpc>(version);
 			}
 
 			// After that, read all NPC spawn locations
-			auto npc_spawn_count = static_cast<size_t>(archive->read_int()); // NoOfEntries
+			auto npc_spawn_count = r.read_int(); // NoOfEntries
 			this->npc_spawns.resize(npc_spawn_count);
 
 			for (auto& spawn : this->npc_spawns) {
-				spawn.npc = archive->read_object<VNpc>(version); // npc
-				spawn.position = archive->read_vec3();           // spawnPos
-				spawn.timer = archive->read_float();             // timer
+				spawn.npc = r.read_object<VNpc>(version); // npc
+				spawn.position = r.read_vec3();           // spawnPos
+				spawn.timer = r.read_float();             // timer
 			}
 
-			this->npc_spawn_enabled = archive->read_bool(); // spawningEnabled
+			this->npc_spawn_enabled = r.read_bool(); // spawningEnabled
 
 			if (version == GameVersion::GOTHIC_2) {
-				this->npc_spawn_flags = archive->read_int(); // spawnFlags
+				this->npc_spawn_flags = r.read_int(); // spawnFlags
 			}
 		}
+	}
 
-		if (!archive->read_object_end()) {
-			ZKLOGW("World", "Not fully parsed");
-			archive->skip_object(true);
-		}
+	void World::save(WriteArchive& w, GameVersion version) const {
+		Object::save(w, version);
 	}
 
 	void CutscenePlayer::load(ReadArchive& r, GameVersion) {
@@ -190,7 +212,6 @@ namespace zenkit {
 	}
 
 	void SkyController::load(ReadArchive& r, GameVersion version) {
-		// TODO
 		master_time = r.read_float();    // masterTime
 		rain_weight = r.read_float();    // rainWeight
 		rain_start = r.read_float();     // rainStart

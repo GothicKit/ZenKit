@@ -11,6 +11,7 @@ option(ZK_ENABLE_ASAN "ZenKit: Enable sanitizers in debug builds." ON)
 option(ZK_ENABLE_DEPRECATION "ZenKit: Enable deprecation warnings." ON)
 option(ZK_ENABLE_INSTALL "ZenKit: Enable CMake install target creation." ON)
 option(ZK_ENABLE_MMAP "ZenKit: Build ZenKit with memory-mapping support." ON)
+option(ZK_ENABLE_FUTURE "ZenKit: Enable breaking changes to be release in a future version" OFF)
 
 add_subdirectory(vendor)
 
@@ -101,6 +102,10 @@ endif ()
 
 if (NOT ZK_ENABLE_DEPRECATION)
     target_compile_definitions(zenkit PUBLIC ZKNO_REM=1)
+endif ()
+
+if (ZK_ENABLE_FUTURE)
+    target_compile_definitions(zenkit PUBLIC ZK_FUTURE=1)
 endif ()
 
 include(support/BuildSupport.cmake)

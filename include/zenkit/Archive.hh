@@ -259,6 +259,10 @@ namespace zenkit {
 			return header.save;
 		}
 
+		[[nodiscard]] Read* get_stream() const noexcept {
+			return read;
+		}
+
 	protected:
 		ReadArchive(ArchiveHeader head, Read* read);
 		ReadArchive(ArchiveHeader head, Read* read, std::unique_ptr<Read> owned);

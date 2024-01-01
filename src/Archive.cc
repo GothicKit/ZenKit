@@ -83,6 +83,8 @@ namespace zenkit {
 	    {"oCAIVobMove", ObjectType::oCAIVobMove},
 	    {"oCCSPlayer:zCCSPlayer", ObjectType::oCCSPlayer},
 	    {"zCSkyControler_Outdoor", ObjectType::zCSkyControler_Outdoor},
+	    {"zCWayNet", ObjectType::zCWayNet},
+	    {"zCWaypoint", ObjectType::zCWaypoint},
 	};
 
 	static std::unordered_map<ObjectType, std::string> const CLASS_NAMES = {
@@ -143,6 +145,8 @@ namespace zenkit {
 	    {ObjectType::oCAIVobMove, "oCAIVobMove"},
 	    {ObjectType::oCCSPlayer, "oCCSPlayer:zCCSPlayer"},
 	    {ObjectType::zCSkyControler_Outdoor, "zCSkyControler_Outdoor"},
+	    {ObjectType::zCWayNet, "zCWayNet"},
+	    {ObjectType::zCWaypoint, "zCWaypoint"},
 	};
 
 	ReadArchive::ReadArchive(ArchiveHeader head, Read* r) : header(std::move(head)), read(r) {}
@@ -454,21 +458,28 @@ namespace zenkit {
 		case ObjectType::oCNpc:
 			syn = std::make_shared<VNpc>();
 			break;
+#ifdef ZK_FUTURE
+		case ObjectType::zCWayNet:
+			syn = std::make_shared<WayNet>();
+			break;
+		case ObjectType::zCWaypoint:
+			syn = std::make_shared<WayPoint>();
+			break;
+#endif
 		default:
 			ZKLOGE("ReadArchive", "Unknown object type: %s", obj.class_name.c_str());
 			break;
 		}
 
-		// TODO(lmichaelis): The VOb type/id assignment is a hacky workaround! Create separate types!
-		if (is_vobject(type)) {
-			VirtualObjectType vtype = static_cast<VirtualObjectType>(type);
-			reinterpret_cast<VirtualObject*>(syn.get())->type = vtype;
-			reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
-		}
-
-		_m_cache.insert_or_assign(obj.index, syn);
-
 		if (syn != nullptr) {
+			// TODO(lmichaelis): The VOb type/id assignment is a hacky workaround! Create separate types!
+			if (is_vobject(type)) {
+				VirtualObjectType vtype = static_cast<VirtualObjectType>(type);
+				reinterpret_cast<VirtualObject*>(syn.get())->type = vtype;
+				reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
+			}
+
+			_m_cache.insert_or_assign(obj.index, syn);
 			syn->load(*this, version);
 		}
 

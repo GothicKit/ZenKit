@@ -307,7 +307,7 @@ TEST_SUITE("World") {
 		}
 
 		// Check the waynet
-
+#ifndef ZK_FUTURE
 		auto& waynet = wld.world_way_net;
 		CHECK_EQ(waynet.waypoints.size(), 2784);
 		CHECK_EQ(waynet.edges.size(), 3500);
@@ -346,6 +346,27 @@ TEST_SUITE("World") {
 
 		CHECK_EQ(edge500.a, 521);
 		CHECK_EQ(edge500.b, 515);
+
+#else
+		auto& waynet = *wld.way_net;
+		CHECK_EQ(waynet.points.size(), 2784);
+		CHECK_EQ(waynet.edges.size(), 3500);
+
+		auto& wp0 = *waynet.points[0];
+		auto& wp100 = *waynet.points[100];
+
+		CHECK_EQ(wp0.name, "LOCATION_28_07");
+		CHECK_EQ(wp0.water_depth, 0);
+		CHECK_FALSE(wp0.under_water);
+		CHECK_EQ(wp0.position, glm::vec3 {23871.457, -553.283813, 27821.3516});
+		CHECK_EQ(wp0.direction, glm::vec3 {0.86651814, 0, -0.499145567});
+
+		CHECK_EQ(wp100.name, "CASTLE_MOVEMENT_STRAIGHT3");
+		CHECK_EQ(wp100.water_depth, 0);
+		CHECK_FALSE(wp100.under_water);
+		CHECK_EQ(wp100.position, glm::vec3 {3362.21948, 8275.1709, -21067.9473});
+		CHECK_EQ(wp100.direction, glm::vec3 {-0.342115372, 0, 0.939657927});
+#endif
 	}
 
 	TEST_CASE("World.load(GOTHIC2)" * doctest::skip()) {

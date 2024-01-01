@@ -6,6 +6,7 @@
 #include "../Internal.hh"
 
 namespace zenkit {
+#ifndef ZK_FUTURE
 	static void read_waypoint_data(WayPoint& wp, ReadArchive& in) {
 		wp.name = in.read_string();      // wpName
 		wp.water_depth = in.read_int();  // waterDepth
@@ -88,4 +89,45 @@ namespace zenkit {
 			in.skip_object(true);
 		}
 	}
+#else
+	void WayPoint::load(ReadArchive& r, GameVersion) {
+		this->name = r.read_string();      // wpName
+		this->water_depth = r.read_int();  // waterDepth
+		this->under_water = r.read_bool(); // underWater
+		this->position = r.read_vec3();    // position
+		this->direction = r.read_vec3();   // direction
+	}
+
+	void WayPoint::save(WriteArchive& w, GameVersion version) const {
+		Object::save(w, version);
+	}
+
+	void WayNet::load(ReadArchive& r, GameVersion version) {
+		[[maybe_unused]] auto ver = r.read_int(); // waynetVersion
+		auto count_points = r.read_int();         // numWaypoints
+		this->points.reserve(count_points);
+
+		for (auto i = 0; i < count_points; ++i) {
+			this->points.push_back(r.read_object<WayPoint>(version));
+		}
+
+		auto count_edges = r.read_int(); // numWays
+		this->edges.reserve(count_edges);
+
+		for (auto i = 0; i < count_edges; ++i) {
+			auto wayl = r.read_object<WayPoint>(version);
+			auto wayr = r.read_object<WayPoint>(version);
+
+			if (wayl.use_count() < 3) this->points.push_back(wayl);
+			if (wayr.use_count() < 3) this->points.push_back(wayr);
+
+			this->edges.emplace_back(wayl, wayr);
+		}
+	}
+
+	void WayNet::save(WriteArchive& w, GameVersion version) const {
+		Object::save(w, version);
+	}
+#endif
+
 } // namespace zenkit
