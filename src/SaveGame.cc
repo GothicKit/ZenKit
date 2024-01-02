@@ -46,7 +46,7 @@ namespace zenkit::unstable {
 		}
 	}
 
-	void CutscenePoolItem::load(ReadArchive& r, GameVersion version) {
+	void CutscenePoolItem::load(ReadArchive& r, GameVersion) {
 		this->name = r.read_string();                                                 // itemName
 		this->run_behavior = static_cast<CutscenePoolItemRunBehavior>(r.read_enum()); // runBehaviour
 		this->run_behavior_value = r.read_int();                                      // runBehaviourValue
@@ -55,7 +55,7 @@ namespace zenkit::unstable {
 		this->flags = r.read_int();                                                   // flags
 	}
 
-	void CutscenePoolItem::save(WriteArchive& w, GameVersion version) const {
+	void CutscenePoolItem::save(WriteArchive& w, GameVersion) const {
 		w.write_string("itemName", this->name);
 		w.write_enum("runBehaviour", static_cast<std::uint32_t>(this->run_behavior));
 		w.write_int("runBehaviourValue", this->run_behavior_value);
@@ -86,7 +86,7 @@ namespace zenkit::unstable {
 		// oCInfoManager {
 		auto entry_count = r.read_int(); // NumOfEntries
 		this->infos.resize(entry_count);
-		for (auto i = 0u; i < entry_count; ++i) {
+		for (auto i = 0; i < entry_count; ++i) {
 			// oCInfo {
 			this->infos[i].told = r.read_bool();   // Told
 			this->infos[i].name = r.read_string(); // InstName
@@ -119,7 +119,7 @@ namespace zenkit::unstable {
 		auto topic_count = r.read_int(); // LOGMANAGERTOPICCOUNT
 		this->log.resize(topic_count);
 
-		for (auto i = 0u; i < topic_count; ++i) {
+		for (auto i = 0; i < topic_count; ++i) {
 			// oCLogTopic {
 			auto& topic = this->log[i];
 			topic.description = r.read_string();                          // TOPICDESCRIPTION
@@ -143,7 +143,7 @@ namespace zenkit::unstable {
 		auto symbol_count = r.read_int(); // numSymbols
 		this->symbols.resize(symbol_count);
 
-		for (auto i = 0u; i < symbol_count; ++i) {
+		for (auto i = 0; i < symbol_count; ++i) {
 			SaveSymbolState sym;
 			sym.name = r.read_string(); // symName0
 
@@ -270,9 +270,9 @@ namespace zenkit::unstable {
 		return ar->read_object<World>(version);
 	}
 
-	void SaveGame::load(std::filesystem::path const& path, GameVersion version) {
+	void SaveGame::load(std::filesystem::path const& path, GameVersion ver) {
 		this->_m_root_path = path;
-		this->version = version;
+		this->version = ver;
 
 		if (!std::filesystem::is_directory(path)) {
 			throw ParserError {"SaveGame", "save game path does not exist or is not a directory"};
