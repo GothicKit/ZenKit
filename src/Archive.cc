@@ -20,6 +20,7 @@
 #include "archive/ArchiveBinsafe.hh"
 
 #include "phoenix/buffer.hh"
+#include "zenkit/SaveGame.hh"
 #include "zenkit/World.hh"
 
 #include <iostream>
@@ -85,7 +86,11 @@ namespace zenkit {
 	    {"zCSkyControler_Outdoor", ObjectType::zCSkyControler_Outdoor},
 	    {"zCWayNet", ObjectType::zCWayNet},
 	    {"zCWaypoint", ObjectType::zCWaypoint},
+	    {"oCWorld:zCWorld", ObjectType::oCWorld},
 	    {"zCMaterial", ObjectType::zCMaterial},
+	    {"oCSavegameInfo", ObjectType::oCSavegameInfo},
+	    {"oCCSManager:zCCSManager", ObjectType::oCCSManager},
+	    {"zCCSPoolItem", ObjectType::zCCSPoolItem},
 	};
 
 	static std::unordered_map<ObjectType, std::string> const CLASS_NAMES = {
@@ -148,7 +153,11 @@ namespace zenkit {
 	    {ObjectType::zCSkyControler_Outdoor, "zCSkyControler_Outdoor"},
 	    {ObjectType::zCWayNet, "zCWayNet"},
 	    {ObjectType::zCWaypoint, "zCWaypoint"},
+	    {ObjectType::oCWorld, "oCWorld:zCWorld"},
 	    {ObjectType::zCMaterial, "zCMaterial"},
+	    {ObjectType::oCSavegameInfo, "oCSavegameInfo"},
+	    {ObjectType::oCCSManager, "oCCSManager"},
+	    {ObjectType::zCCSPoolItem, "zCCSPoolItem"},
 	};
 
 	ReadArchive::ReadArchive(ArchiveHeader head, Read* r) : header(std::move(head)), read(r) {}
@@ -460,8 +469,20 @@ namespace zenkit {
 		case ObjectType::oCNpc:
 			syn = std::make_shared<VNpc>();
 			break;
+		case ObjectType::oCWorld:
+			syn = std::make_shared<World>();
+			break;
 		case ObjectType::zCMaterial:
 			syn = std::make_shared<Material>();
+			break;
+		case ObjectType::oCSavegameInfo:
+			syn = std::make_shared<unstable::SaveInfo>();
+			break;
+		case ObjectType::oCCSManager:
+			syn = std::make_shared<unstable::CutsceneManager>();
+			break;
+		case ObjectType::zCCSPoolItem:
+			syn = std::make_shared<unstable::CutscenePoolItem>();
 			break;
 #ifdef ZK_FUTURE
 		case ObjectType::zCWayNet:

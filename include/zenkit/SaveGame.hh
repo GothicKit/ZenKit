@@ -1,6 +1,7 @@
 // Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "Object.hh"
 #include "zenkit/Library.hh"
 #include "zenkit/Stream.hh"
 #include "zenkit/Texture.hh"
@@ -16,8 +17,9 @@ namespace phoenix {
 }
 
 namespace zenkit {
+	class World;
 	class Read;
-}
+} // namespace zenkit
 
 namespace zenkit::unstable {
 	/// \brief Contains general information about a save-game.
@@ -25,7 +27,9 @@ namespace zenkit::unstable {
 	/// The information contained within this struct is found in the `SAVEINFO.SAV` file within
 	/// the save-game folder. It contains metadata about the save-game, like a title and the game
 	/// version it was created with.
-	struct SaveInfo {
+	struct SaveInfo : Object {
+		ZK_OBJECT(ObjectType::oCSavegameInfo);
+
 		std::string title;
 		std::string world;
 		std::int32_t time_day;
@@ -39,15 +43,8 @@ namespace zenkit::unstable {
 		std::int32_t version_int;
 		std::string version_app_name;
 
-		/// \brief Parses a save-game info structure from the data in the given buffer.
-		/// \param buf The buffer to read from.
-		/// \return The parsed save-game info structure.
-		/// \throws ParserError if parsing fails.
-		/// \note Instead of calling this directly, you probably want to parse a whole save-game.
-		///       Use save_game::parse for that instead.
-		ZKREM("use ::load()") ZKAPI static SaveInfo parse(phoenix::buffer&& buf);
-
-		ZKAPI void load(Read* r);
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 	};
 
 	/// \brief The section log entries are in.
@@ -81,48 +78,72 @@ namespace zenkit::unstable {
 		std::vector<std::uint32_t> values;
 	};
 
+	struct Mission {
+		std::string name;
+		int id;
+		bool av;
+		int status_index;
+	};
+
+	enum class CutscenePoolItemRunBehavior : uint32_t {
+		ALWAYS,
+		TIMES,
+		PER_HOUR,
+	};
+
+	struct CutscenePoolItem : Object {
+		ZK_OBJECT(ObjectType::zCCSPoolItem);
+
+		std::string name;
+		CutscenePoolItemRunBehavior run_behavior;
+		int run_behavior_value;
+		int times_played;
+		int deactivated;
+		int flags;
+
+		void load(ReadArchive& r, GameVersion version) override;
+		void save(WriteArchive& w, GameVersion version) const override;
+	};
+
+	struct CutsceneManager : Object {
+		ZK_OBJECT(ObjectType::oCCSManager);
+
+		std::vector<std::shared_ptr<CutscenePoolItem>> pool_items;
+
+		void load(ReadArchive& r, GameVersion version) override;
+		void save(WriteArchive& w, GameVersion version) const override;
+	};
+
 	struct SaveScriptState {
 		std::int32_t day;
 		std::int32_t hour;
 		std::int32_t minute;
+
+		std::vector<Mission> missions;
+		std::shared_ptr<CutsceneManager> cutscene_manager;
 
 		std::vector<SaveInfoState> infos;
 		std::vector<SaveSymbolState> symbols;
 		std::vector<SaveLogTopic> log;
 		std::uint8_t guild_attitudes[42][42];
 
-		ZKINT void load(Read* r, bool g2);
+		ZKINT void load(ReadArchive& r, GameVersion version);
+		ZKINT void save(WriteArchive& w, GameVersion version) const;
 	};
 
 	struct SaveGame {
 	public:
-		/// \brief Parses a save-game from the data in the given directory.
-		/// \param path The path of the save-game folder.
-		/// \return The parsed save-game.
-		/// \throws ParserError if parsing fails.
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static SaveGame parse(std::filesystem::path const& path);
-
-		/// \brief Opens the saved world file with the given world name as a buffer and returns it.
-		///
-		/// To open the world the player was in when creating the save you can use
-		/// `sav.open_world_save(sav.current_world)`.
-		///
-		/// \param world_name The name of the world to open, including the `.ZEN` extension.
-		/// \return A buffer containing the world's data or std::nullopt if the world is not present in this save.
-		[[nodiscard]] ZKREM("use ::load_world()") ZKAPI std::optional<phoenix::buffer> open_world_save(
-		    std::string_view world_name) const;
-
-		[[nodiscard]] ZKAPI std::optional<std::unique_ptr<Read>> open_world(std::string_view world_name) const;
+		[[nodiscard]] ZKAPI std::shared_ptr<World> open_world(std::string_view world_name) const;
 
 		/// \brief Parses a save-game from the data in the given directory.
 		/// \param path The path of the save-game folder.
 		/// \return The parsed save-game.
 		/// \throws ParserError if parsing fails.
-		ZKAPI void load(std::filesystem::path const& path);
+		ZKAPI void load(std::filesystem::path const& path, GameVersion version);
 
 	public:
 		/// \brief Contains metadata about the save-game, like its name and version numbers.
-		SaveInfo metadata;
+		std::shared_ptr<SaveInfo> metadata;
 
 		/// \brief The name of the world file the player is currently in.
 		std::string current_world;
@@ -136,6 +157,8 @@ namespace zenkit::unstable {
 
 		/// \brief The thumbnail image of the save-game. Not present if `THUMB.SAV` is missing from the save-game.
 		std::optional<Texture> thumbnail;
+
+		GameVersion version;
 
 	private:
 		std::filesystem::path _m_root_path;

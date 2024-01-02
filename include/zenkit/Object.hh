@@ -74,6 +74,9 @@ namespace zenkit {
 		zCWayNet,
 		zCWaypoint,
 		zCMaterial,
+		oCSavegameInfo,
+		oCCSManager,
+		zCCSPoolItem,
 	};
 
 	constexpr bool is_vobject(ObjectType type) {

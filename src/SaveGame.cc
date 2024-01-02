@@ -3,123 +3,247 @@
 #include "zenkit/SaveGame.hh"
 #include "zenkit/Archive.hh"
 #include "zenkit/Stream.hh"
+#include "zenkit/World.hh"
 
 #include "Internal.hh"
 
 #include <set>
 
 namespace zenkit::unstable {
-	SaveInfo SaveInfo::parse(phoenix::buffer&& buf) {
-		SaveInfo info;
+	void SaveInfo::load(ReadArchive& r, GameVersion version) {
+		this->title = r.read_string();          // Title
+		this->world = r.read_string();          // WorldName
+		this->time_day = r.read_int();          // TimeDay
+		this->time_hour = r.read_int();         // TimeHour
+		this->time_minute = r.read_int();       // TimeMin
+		this->save_date = r.read_string();      // SaveDate
+		this->version_major = r.read_int();     // VersionMajor
+		this->version_minor = r.read_int();     // VersionMinor
+		this->play_time_seconds = r.read_int(); // PlayTimeSeconds
 
-		auto read = Read::from(&buf);
-		info.load(read.get());
-
-		return info;
-	}
-
-	void SaveInfo::load(Read* r) {
-		auto archive = ReadArchive::from(r);
-
-		ArchiveObject hdr;
-		if (!archive->read_object_begin(hdr) || hdr.class_name != "oCSavegameInfo") {
-			throw zenkit::ParserError {"SaveInfo", "expected oCSavegameInfo object not found"};
-		}
-
-		this->title = archive->read_string();          // Title
-		this->world = archive->read_string();          // WorldName
-		this->time_day = archive->read_int();          // TimeDay
-		this->time_hour = archive->read_int();         // TimeHour
-		this->time_minute = archive->read_int();       // TimeMin
-		this->save_date = archive->read_string();      // SaveDate
-		this->version_major = archive->read_int();     // VersionMajor
-		this->version_minor = archive->read_int();     // VersionMinor
-		this->play_time_seconds = archive->read_int(); // PlayTimeSeconds
-
-		if (!archive->read_object_end()) {
-			// Gothic II stores more information.
-			this->version_point = archive->read_int();       // VersionPoint
-			this->version_int = archive->read_int();         // VersionInt
-			this->version_app_name = archive->read_string(); // VersionAppName
-
-			if (!archive->read_object_end()) {
-				ZKLOGW("SaveInfo", "\"%s\" not fully parsed", hdr.class_name.c_str());
-			}
+		if (version == GameVersion::GOTHIC_2) {
+			this->version_point = r.read_int();       // VersionPoint
+			this->version_int = r.read_int();         // VersionInt
+			this->version_app_name = r.read_string(); // VersionAppName
 		}
 	}
 
-	void SaveScriptState::load(zenkit::Read* r, bool g2) {
-		auto ar = ReadArchive::from(r);
+	void SaveInfo::save(WriteArchive& w, GameVersion version) const {
+		w.write_string("Title", this->title);
+		w.write_string("WorldName", this->world);
+		w.write_int("TimeDay", this->time_day);
+		w.write_int("TimeHour", this->time_hour);
+		w.write_int("TimeMin", this->time_minute);
+		w.write_string("SaveDate", this->save_date);
+		w.write_int("VersionMajor", this->version_major);
+		w.write_int("VersionMinor", this->version_minor);
+		w.write_int("PlayTimeSeconds", this->play_time_seconds);
 
-		this->day = ar->read_int();    // day
-		this->hour = ar->read_int();   // hour
-		this->minute = ar->read_int(); // min
+		if (version == GameVersion::GOTHIC_2) {
+			w.write_int("VersionPoint", this->version_point);
+			w.write_int("VersionInt", this->version_int);
+			w.write_string("VersionAppName", this->version_app_name);
+		}
+	}
 
-		auto entry_count = static_cast<size_t>(ar->read_int()); // NumOfEntries
+	void CutscenePoolItem::load(ReadArchive& r, GameVersion version) {
+		this->name = r.read_string();                                                 // itemName
+		this->run_behavior = static_cast<CutscenePoolItemRunBehavior>(r.read_enum()); // runBehaviour
+		this->run_behavior_value = r.read_int();                                      // runBehaviourValue
+		this->times_played = r.read_int();                                            // numPlayed
+		this->deactivated = r.read_int();                                             // deactivated
+		this->flags = r.read_int();                                                   // flags
+	}
+
+	void CutscenePoolItem::save(WriteArchive& w, GameVersion version) const {
+		w.write_string("itemName", this->name);
+		w.write_enum("runBehaviour", static_cast<std::uint32_t>(this->run_behavior));
+		w.write_int("runBehaviourValue", this->run_behavior_value);
+		w.write_int("numPlayed", this->times_played);
+		w.write_int("deactivated", this->deactivated);
+		w.write_int("flags", this->flags);
+	}
+
+	void CutsceneManager::load(ReadArchive& r, GameVersion version) {
+		auto pool_count = r.read_int(); // poolCount
+		for (auto i = 0; i < pool_count; ++i) {
+			this->pool_items.push_back(r.read_object<CutscenePoolItem>(version));
+		}
+	}
+
+	void CutsceneManager::save(WriteArchive& w, GameVersion version) const {
+		w.write_int("poolCount", this->pool_items.size());
+		for (auto& item : this->pool_items) {
+			w.write_object(item, version);
+		}
+	}
+
+	void SaveScriptState::load(ReadArchive& r, GameVersion version) {
+		this->day = r.read_int();    // day
+		this->hour = r.read_int();   // hour
+		this->minute = r.read_int(); // min
+
+		// oCInfoManager {
+		auto entry_count = r.read_int(); // NumOfEntries
 		this->infos.resize(entry_count);
-
 		for (auto i = 0u; i < entry_count; ++i) {
-			this->infos[i].told = ar->read_bool();   // Told
-			this->infos[i].name = ar->read_string(); // InstName
+			// oCInfo {
+			this->infos[i].told = r.read_bool();   // Told
+			this->infos[i].name = r.read_string(); // InstName
+			                                       // }
 		}
+		// }
 
-		ar->read_int();                                         // NumOfEntries
-		auto topic_count = static_cast<size_t>(ar->read_int()); // LOGMANAGERTOPICCOUNT
+		// oCMissionManager {
+		auto mission_count = r.read_int(); // NumOfEntries
+		for (auto i = 0; i < mission_count; ++i) {
+			// oCMission {
+			auto& mission = this->missions.emplace_back();
+			mission.name = r.read_string(); // name
+			mission.id = r.read_int();      // ID
+			mission.av = r.read_bool();     // Av
+
+			auto unknown_count = r.read_int(); // NumInList
+			for (auto j = 0; j < unknown_count; ++j) {
+				(void) r.read_int();   // VobIDL
+				(void) r.read_int();   // StatusL
+				(void) r.read_float(); // startTimeL
+			}
+
+			mission.status_index = r.read_int(); // StatusIndex
+			                                     // }
+		}
+		// }
+
+		// oCLogManager {
+		auto topic_count = r.read_int(); // LOGMANAGERTOPICCOUNT
 		this->log.resize(topic_count);
 
 		for (auto i = 0u; i < topic_count; ++i) {
+			// oCLogTopic {
 			auto& topic = this->log[i];
-			topic.description = ar->read_string();                          // TOPICDESCRIPTION
-			topic.section = static_cast<SaveTopicSection>(ar->read_enum()); // TOPICSECTION
-			topic.status = static_cast<SaveTopicStatus>(ar->read_enum());   // TOPICSTATUS
-			topic.entries.resize(static_cast<size_t>(ar->read_int()));      // LOGTOPICENTRYCOUNT
+			topic.description = r.read_string();                          // TOPICDESCRIPTION
+			topic.section = static_cast<SaveTopicSection>(r.read_enum()); // TOPICSECTION
+			topic.status = static_cast<SaveTopicStatus>(r.read_enum());   // TOPICSTATUS
+			topic.entries.resize(r.read_int());                           // LOGTOPICENTRYCOUNT
 
-			(void) ar->read_int(); // LOGMANAGERENTRYCOUNT
+			// NOTE(lmichaelis): Always the same as `LOGTOPICENTRYCOUNT`.
+			(void) r.read_int(); // LOGMANAGERENTRYCOUNT
 
 			for (auto& entrie : topic.entries) {
-				entrie = ar->read_string(); // ENTRYDESCRIPTION
+				entrie = r.read_string(); // ENTRYDESCRIPTION
 			}
+			// }
 		}
+		// }
 
-		ArchiveObject obj;
-		if (!ar->read_object_begin(obj) || obj.class_name != "oCCSManager:zCCSManager") {
-			throw zenkit::ParserError {"SaveScriptState", "expected oCCSManager:zCCSManager object not found"};
-		}
+		this->cutscene_manager = r.read_object<CutsceneManager>(version);
 
-		ar->read_int(); // poolCount
-
-		if (!ar->read_object_end()) {
-			ZKLOGW("SaveScriptState", "\"%s\" not fully parsed", obj.class_name.c_str());
-			ar->skip_object(true);
-		}
-
-		auto symbol_count = static_cast<size_t>(ar->read_int()); // numSymbols
+		// zCParser {
+		auto symbol_count = r.read_int(); // numSymbols
 		this->symbols.resize(symbol_count);
 
 		for (auto i = 0u; i < symbol_count; ++i) {
 			SaveSymbolState sym;
-			sym.name = ar->read_string(); // symName0
+			sym.name = r.read_string(); // symName0
 
 			// For Gothic II saves, there is additional data stored
-			if (g2) {
-				auto value_count = ar->read_int(); // symName0cnt
-
-				for (auto j = 0; j < value_count; ++j) {
-					sym.values.push_back(static_cast<uint32_t>(ar->read_int())); // symValue0_0
-				}
+			if (version == GameVersion::GOTHIC_1) {
+				sym.values.push_back(static_cast<uint32_t>(r.read_int())); // symValue0
 			} else {
-				sym.values.push_back(static_cast<uint32_t>(ar->read_int())); // symValue0
+				auto value_count = r.read_int(); // symName0cnt
+				for (auto j = 0; j < value_count; ++j) {
+					sym.values.push_back(static_cast<uint32_t>(r.read_int())); // symValue0_0
+				}
 			}
 		}
+		// }
 
 		// A two-dimensional array of the form int[42][42] containing guild attitudes
-		auto raw = ar->read_raw(42 * 42); // guildTable
+		auto raw = r.read_raw(42 * 42); // guildTable
 
 		for (auto& guild_attitude : this->guild_attitudes) {
 			for (unsigned char& j : guild_attitude) {
 				j = raw->read_ubyte();
 			}
 		}
+	}
+
+	void SaveScriptState::save(WriteArchive& w, GameVersion version) const {
+		w.write_int("day", this->day);
+		w.write_int("hour", this->hour);
+		w.write_int("min", this->minute);
+
+		// oCInfoManager {
+		w.write_int("NumOfEntries", this->infos.size());
+		for (auto& info : this->infos) {
+			// oCInfo {
+			w.write_bool("Told", info.told);
+			w.write_string("InstName", info.name);
+			// }
+		}
+		// }
+
+		// oCMissionManager {
+		w.write_int("NumOfEntries", this->missions.size());
+		for (auto const& mission : this->missions) {
+			// oCMission {
+			w.write_string("name", mission.name);
+			w.write_int("ID", mission.id);
+			w.write_bool("Av", mission.av);
+			w.write_int("NumInList", 0); // TODO: Unknown!
+			w.write_int("StatusIndex", mission.status_index);
+			// }
+		}
+		// }
+
+		// oCLogManager {
+		w.write_int("LOGMANAGERTOPICCOUNT", this->log.size());
+		for (auto& topic : this->log) {
+			// oCLogTopic {
+			w.write_string("TOPICDESCRIPTION", topic.description);
+			w.write_enum("TOPICSECTION", static_cast<std::uint32_t>(topic.section));
+			w.write_enum("TOPICSTATUS", static_cast<std::uint32_t>(topic.status));
+			w.write_int("LOGTOPICENTRYCOUNT", topic.entries.size());
+			w.write_int("LOGMANAGERENTRYCOUNT", topic.entries.size());
+
+			for (auto& entry : topic.entries) {
+				w.write_string("ENTRYDESCRIPTION", entry);
+			}
+			// }
+		}
+		// }
+
+		w.write_object(this->cutscene_manager, version);
+
+		// zCParser {
+		w.write_int("numSymbols", this->symbols.size());
+		for (auto& sym : this->symbols) {
+			w.write_string("symName0", sym.name);
+
+			// For Gothic II saves, there is additional data stored
+			if (version == GameVersion::GOTHIC_1) {
+				w.write_int("symValue0", sym.values[0]);
+			} else {
+				w.write_int("symName0cnt", sym.values.size());
+				for (auto v : sym.values) {
+					w.write_int("symValue0_0", v);
+				}
+			}
+		}
+		// }
+
+		// A two-dimensional array of the form int[42][42] containing guild attitudes
+		std::vector<std::byte> guild_table(42 * 42);
+		auto wrgt = Write::to(&guild_table);
+
+		for (auto& guild_attitude : this->guild_attitudes) {
+			for (auto j : guild_attitude) {
+				wrgt->write_ubyte(j);
+			}
+		}
+
+		w.write_raw("guildTable", guild_table);
 	}
 
 	std::optional<std::filesystem::path> find_file_matching(std::set<std::filesystem::path> const& choices,
@@ -135,33 +259,23 @@ namespace zenkit::unstable {
 		return *result;
 	}
 
-	SaveGame SaveGame::parse(std::filesystem::path const& path) {
-		SaveGame sav;
-		sav.load(path);
-		return sav;
-	}
-
-	std::optional<phoenix::buffer> SaveGame::open_world_save(std::string_view world_name) const {
+	std::shared_ptr<World> SaveGame::open_world(std::string_view world_name) const {
 		auto path = _m_root_path / world_name;
 		path.replace_extension("SAV");
 
-		if (!std::filesystem::exists(path)) return std::nullopt;
-		return phoenix::buffer::mmap(path);
+		if (!std::filesystem::exists(path)) return nullptr;
+
+		auto r = Read::from(path);
+		auto ar = ReadArchive::from(r.get());
+		return ar->read_object<World>(version);
 	}
 
-	std::optional<std::unique_ptr<Read>> SaveGame::open_world(std::string_view world_name) const {
-		auto path = _m_root_path / world_name;
-		path.replace_extension("SAV");
-
-		if (!std::filesystem::exists(path)) return std::nullopt;
-		return Read::from(path);
-	}
-
-	void SaveGame::load(std::filesystem::path const& path) {
+	void SaveGame::load(std::filesystem::path const& path, GameVersion version) {
 		this->_m_root_path = path;
+		this->version = version;
 
 		if (!std::filesystem::is_directory(path)) {
-			throw zenkit::ParserError {"SaveGame", "save game path does not exist or is not a directory"};
+			throw ParserError {"SaveGame", "save game path does not exist or is not a directory"};
 		}
 
 		std::set<std::filesystem::path> entries {};
@@ -174,13 +288,14 @@ namespace zenkit::unstable {
 			ZKLOGI("SaveGame", "Loading SAVEINFO.SAV");
 			auto file_save_info = find_file_matching(entries, "SAVEINFO.SAV");
 			if (!file_save_info) {
-				throw zenkit::ParserError {"SaveGame",
-				                           "expected SAVEINFO.SAV not found. this is probably not a Gothic savegame"};
+				throw ParserError {"SaveGame",
+				                   "expected SAVEINFO.SAV not found. this is probably not a Gothic savegame"};
 			}
 
 			auto r = Read::from(*file_save_info);
-			this->metadata.load(r.get());
-			this->current_world = this->metadata.world + ".ZEN";
+			auto ar = ReadArchive::from(r.get());
+			this->metadata = ar->read_object<SaveInfo>(version);
+			this->current_world = this->metadata->world + ".ZEN";
 		}
 
 		// Load THUMB.SAV
@@ -200,12 +315,13 @@ namespace zenkit::unstable {
 			ZKLOGI("SaveGame", "Loading SAVEDAT.SAV");
 			auto file_save_dat = find_file_matching(entries, "SAVEDAT.SAV");
 			if (!file_save_dat) {
-				throw zenkit::ParserError {"SaveGame",
-				                           "expected SAVEDAT.SAV not found. this is probably not a Gothic savegame"};
+				throw ParserError {"SaveGame",
+				                   "expected SAVEDAT.SAV not found. this is probably not a Gothic savegame"};
 			}
 
 			auto r = Read::from(*file_save_dat);
-			this->script.load(r.get(), !this->metadata.version_app_name.empty());
+			auto ar = ReadArchive::from(r.get());
+			this->script.load(*ar, version);
 		}
 	}
 } // namespace zenkit::unstable
