@@ -67,18 +67,95 @@ namespace zenkit {
 		random ZKREM("renamed to TriggerBatchMode::RANDOM") = RANDOM,
 	};
 
-	/// \brief A basic trigger VOb which does something upon the player interacting with it.
+	/// \brief VObject to process and relay specific filtered events.
+	///
+	/// When a `zCTrigger` receives an `OnTrigger`, `OnDamage`, or `OnTouch` event it checks whether the event
+	/// source (an VNpc, the player or another VObject) should be acknowledged (see #respond_to_npc, #respond_to_pc
+	/// and #respond_to_object respectively). It then verifies if it should react to the specific event by checking
+	/// the #react_to_on_trigger, #react_to_on_touch and #react_to_on_damage properties. If both checks succeed, an
+	/// `OnTrigger` event is sent to the #target. `zCTrigger` objects can be enabled and disabled by firing `OnEnable`,
+	/// `OnDisable` and `OnToggleEnabled` events at them.
+	///
+	/// \see https://zk.gothickit.dev/engine/objects/zCTrigger/
 	struct VTrigger : VirtualObject {
 		ZK_OBJECT(ObjectType::zCTrigger);
 
 	public:
+		/// \brief The name of VObject to send `OnTrigger` and `OnUntrigger` events to after processing.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTrigger/#triggerTarget
 		std::string target;
-		std::uint8_t flags;
-		std::uint8_t filter_flags;
+
+		std::uint8_t ZKREM("replaced by `start_enabled` and `send_untrigger`") flags;
+
+		/// \brief Determines whether the trigger is initially enabled.
+		///
+		/// Enabled triggers will process incoming events and send outgoing events while disabled triggers do not.
+		/// Triggers can be activated and deactivated at runtime by sending them `OnEnable`, `OnDisable` or
+		/// `OnToggleEnabled` events.
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCTrigger/#startEnabled
+		bool start_enabled;
+
+		/// \brief Whether to send and `OnUntrigger` event to the #target after the trigger receives an
+		///       `OnUntrigger` or `OnUntouch` event.
+		///
+		/// Only fires the `OnUntrigger` event if #react_to_on_trigger and #react_to_on_touch are set
+		/// to `TRUE` respectively.
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCTrigger/#sendUntrigger
+		bool send_untrigger;
+
+		std::uint8_t ZKREM("replaced by `react_to_*` and `respond_to_*`") filter_flags;
+
+		/// \brief Whether this trigger should react to `OnTrigger` events.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTrigger/#reactToOnTrigger
+		bool react_to_on_trigger;
+
+		/// \brief Whether this trigger should react to `OnTouch` events.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTrigger/#reactToOnTouch
+		bool react_to_on_touch;
+
+		/// \brief Whether this trigger should react to `OnDamage` events.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTrigger/#reactToOnDamage
+		bool react_to_on_damage;
+
+		/// \brief Whether this trigger should process events coming from inanimate objects.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTrigger/#respondToObject
+		bool respond_to_object;
+
+		/// \brief Whether this trigger should process events coming from the player.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTrigger/#respondToPC
+		bool respond_to_pc;
+
+		/// \brief Whether this trigger should process events coming from NPCs.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTrigger/#respondToNPC
+		bool respond_to_npc;
+
+		/// \brief Whether this trigger should process events coming from VObjects with this name.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTrigger/#respondToVobName
 		std::string vob_target;
+
+		/// \brief The number of times the trigger will process incoming events.
+		///
+		/// If set to `-1` the trigger will process an infinite number of events.
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCTrigger/#numCanBeActivated
 		std::int32_t max_activation_count;
+
+		/// \brief The number of seconds that have to elapse after processing an event before the trigger will
+		///        process additional events.
+		///
+		/// All events received by the trigger during that time are ignored.
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCTrigger/#retriggerWaitSec
 		float retrigger_delay_sec;
+
+		/// \brief The amount of damage which must be dealt for the trigger to react to an `OnDamage` event.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTrigger/#damageThreshold
 		float damage_threshold;
+
+		/// \brief The number of seconds to wait before emitting the `OnTrigger` event after processing.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTrigger/#fireDelaySec
 		float fire_delay_sec;
 
 		// Save-game only variables
@@ -87,17 +164,18 @@ namespace zenkit {
 		std::shared_ptr<Object> s_other_vob {nullptr};
 		bool s_is_enabled {true};
 
-		/// \brief Parses a trigger VOb the given *ZenGin* archive.
-		/// \param[out] obj The object to read.
-		/// \param[in,out] ctx The archive reader to read from.
-		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \throws ParserError if parsing fails.
-		/// \see vob::parse
-		/// \see trigger::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VTrigger& obj, ReadArchive& ctx, GameVersion version);
 
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 

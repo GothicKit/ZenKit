@@ -19,6 +19,15 @@ namespace zenkit {
 		this->damage_threshold = r.read_float();          // damageThreshold
 		this->fire_delay_sec = r.read_float();            // fireDelaySec
 
+		this->start_enabled = this->flags & 1;                    // startEnabled
+		this->send_untrigger = (this->flags & 4) >> 2;            // sendUntrigger
+		this->react_to_on_trigger = this->filter_flags & 1;       // reactToOnTrigger
+		this->react_to_on_touch = (this->filter_flags & 2) >> 1;  // reactToOnTouch
+		this->react_to_on_damage = (this->filter_flags & 4) >> 2; // reactToOnDamage
+		this->respond_to_object = (this->filter_flags & 8) >> 3;  // respondToObject
+		this->respond_to_pc = (this->filter_flags & 16) >> 4;     // respondToPC
+		this->respond_to_npc = (this->filter_flags & 32) >> 5;    // respondToNPC
+
 		this->s_count_can_be_activated = this->max_activation_count;
 
 		if (r.is_save_game()) {
