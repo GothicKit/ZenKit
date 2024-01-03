@@ -10,7 +10,7 @@
     — Gothic II: `0`<br/>
     **ZenKit Class:** `VMoverController`
 
-A VObject used to control [`zCMover`](zCMover.md) objects of type `MB_NSTATE_SINGLE_KEYS` specifically.
+A VObject used to control [`zCMover`](zCMover.md) objects of type `NSTATE_SINGLE_KEYS` specifically.
 `zCMoverControler` objects react to incoming `OnTrigger` events to send a pre-configured event to the target mover
 object, controlling its animation. Mover controllers can make movers go to a specific keyframe in their animation or
 just step one keyframe back and forth at a time.

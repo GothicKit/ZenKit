@@ -13,11 +13,26 @@
 namespace zenkit {
 	class ReadArchive;
 
+	/// \see https://zk.gothickit.dev/engine/objects/zCMover/#moverBehavior
 	enum class MoverBehavior : uint32_t {
+		/// \brief Receiving either event causes the state of the mover to swap. The direction of the animation is
+		///        reversed.
 		TOGGLE = 0,
+
+		/// \brief An `OnTrigger` causes the mover to transition to the "open" state while an `OnUntrigger`
+		//         event causes the mover to transition to the "closed" state.
 		TRIGGER_CONTROL = 1,
+
+		/// \brief An `OnTrigger` event causes the mover to transition to the "open" state. It than transitions
+		///        to the "closed" state after a fixed amount of time.
 		OPEN_TIME = 2,
+
+		/// \brief The mover opens and closes in a loop indefinitely.
 		LOOP = 3,
+
+		/// \brief The mover can transition to each keyframe separately.
+		///
+		/// Often used in conjunction with a VMoverController`.
 		SINGLE_KEYS = 4,
 
 		// Deprecated entries.
@@ -191,31 +206,109 @@ namespace zenkit {
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
-	/// \brief A VOb which can move upon player interaction.
+	/// \brief A VObject which can move along a pre-determined path in response to an event.
+	///
+	/// Movers can be controlled through a set of keyframes or the animation of their visuals. If the visual has an
+	/// attached animation to be used as the mover's animation, it must have the following animations which are run
+	/// depending on the mover's state: `S_OPEN`, `S_CLOSED`, `T_CLOSED_2_OPEN`, `T_OPEN_2_CLOSED`, `S_LOCKED`,
+	/// `S_UNLOCKED`, `T_UNLOCKED_TO_LOCKED`, `T_LOCKED_TO_UNLOCKED`.
+	///
+	/// Each mover is in one of three states, "open", "closed" or "moving". Keyframe `0` (or `S_OPEN` when using the
+	/// visual's animation) corresponds to the "open" state while the last keyframe (or `S_CLOSED`) corresponds to the
+	/// "closed" state. When transitioning between the "open" and "closed" states, the mover is in the "moving" state
+	/// during which it sequentially moves between its keyframes (or runs the `T_CLOSED_2_OPEN` or `T_OPEN_TO_CLOSED`
+	/// animations). Movers with their #behavior set to MoverBehavior::SINGLE_KEYS are an exception to this rule:
+	/// each keyframe can individually be addressed as a state.
+	///
+	/// Movers are specialized triggers. Before beginning their animation, movers first filter the incoming events as
+	/// per the VTrigger's rules and only start the animation if the event passes through the filters. When the the
+	/// mover reaches the "open" state after being activated, it emits an `OnTrigger` event according to the fire
+	/// behavior set for the VTrigger. Similarly, when it reaches the "closed" state it emits an `OnUntrigger` event.
+	///
+	/// Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnToggleDisabled` events.
+	///
+	/// \see https://zk.gothickit.dev/engine/objects/zCMover/
 	struct VMover : VTrigger {
 		ZK_OBJECT(ObjectType::zCMover);
 
 	public:
+		/// \brief Controls how the mover behaves in response to events ("activation")
+		/// \see https://zk.gothickit.dev/engine/objects/zCMover/#moverBehavior
 		MoverBehavior behavior {MoverBehavior::TOGGLE};
+
+		/// \brief The amount of damage to deal to objects in the way of the mover.
+		/// \see https://zk.gothickit.dev/engine/objects/zCMover/#touchBlockerDamage
 		float touch_blocker_damage {0};
+
+		/// \brief The number of seconds a mover with the MoverBehavior::OPEN_TIME #behavior stays in the "open"
+		///        state until transitioning to the "closed" state again.
+		/// \see https://zk.gothickit.dev/engine/objects/zCMover/#stayOpenTimeSec
 		float stay_open_time_sec {0};
+
+		/// \brief Unclear.
+		/// \see https://zk.gothickit.dev/engine/objects/zCMover/#moverLocked
 		bool locked {true};
+
+		/// \brief Determines whether the position of the object triggering the mover should be tied to the mover's
+		///        position.
+		/// \see https://zk.gothickit.dev/engine/objects/zCMover/#autoLinkEnabled
 		bool auto_link {false};
+
+		/// \brief Whether to automatically rotate the mover along its movement trajectory.
+		/// \note Only available in Gothic II.
+		/// \see https://zk.gothickit.dev/engine/objects/zCMover/#autoRotate
 		bool auto_rotate {false};
 
+		/// \brief The movement speed for transitioning between keyframes in units per millisecond.
+		/// \note Only relevant if manually specified keyframes are used. Ignored when using the visual for the
+		///       animation.
+		/// \see https://zk.gothickit.dev/engine/objects/zCMover/#moveSpeed
 		float speed {0};
+
+		/// \brief Defines how the mover should interpolate between the keyframe positions.
+		/// \note Only relevant if manually specified keyframes are used. Ignored when using the visual for the
+		///       animation.
+		/// \see https://zk.gothickit.dev/engine/objects/zCMover/#posLerpType
 		MoverLerpType lerp_mode {MoverLerpType::CURVE};
+
+		/// \brief Controls the acceleration and deceleration behavior of the mover.
+		/// \note Only relevant if manually specified keyframes are used. Ignored when using the visual for the
+		///       animation.
+		/// \see https://zk.gothickit.dev/engine/objects/zCMover/#speedType
 		MoverSpeedType speed_mode {MoverSpeedType::CONSTANT};
 
 		std::vector<AnimationSample> keyframes {};
 
+		/// \brief The name of the sound to play at the beginning of the opening sequence.
+		/// \see https://zk.gothickit.dev/engine/objects/zCMover/#sfxOpenStart
 		std::string sfx_open_start {};
+
+		/// \brief The name of the sound to play at the end of the opening sequence.
+		/// \see https://zk.gothickit.dev/engine/objects/zCMover/#sfxOpenEnd
 		std::string sfx_open_end {};
+
+		/// \brief The name of the sound to play in a loop while the mover is transitioning between keyframes.
+		/// \see https://zk.gothickit.dev/engine/objects/zCMover/#sfxMoving
 		std::string sfx_transitioning {};
+
+		/// \brief The name of the sound to play at the beginning of the closing sequence.
+		/// \see https://zk.gothickit.dev/engine/objects/zCMover/#sfxCloseStart
 		std::string sfx_close_start {};
+
+		/// \brief The name of the sound to play at the end of the closing sequence.
+		/// \see https://zk.gothickit.dev/engine/objects/zCMover/#sfxCloseEnd
 		std::string sfx_close_end {};
+
+		/// \brief The name of the sound to play when locking a mover.
+		/// \see https://zk.gothickit.dev/engine/objects/zCMover/#sfxLock
 		std::string sfx_lock {};
+
+		/// \brief The name of the sound to play when unlocking a mover.
+		/// \see https://zk.gothickit.dev/engine/objects/zCMover/#sfxUnlock
 		std::string sfx_unlock {};
+
+		/// \brief The name of the sound to play when using a locked mover.
+		/// \see https://zk.gothickit.dev/engine/objects/zCMover/#sfxUseLocked
 		std::string sfx_use_locked {};
 
 		// Save-game only variables
@@ -229,16 +322,18 @@ namespace zenkit {
 		int s_trigger_event_count;
 		float s_stay_open_time_dest;
 
-		/// \brief Parses a mover trigger VOb the given *ZenGin* archive.
-		/// \param[out] obj The object to read.
-		/// \param[in,out] ctx The archive reader to read from.
-		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \throws ParserError if parsing fails.
-		/// \see vob::parse
-		/// \see trigger::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VMover& obj, ReadArchive& ctx, GameVersion version);
+
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 

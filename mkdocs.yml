@@ -62,6 +62,7 @@ nav:
           - 'zCCodeMaster': 'engine/objects/zCCodeMaster.md'
           - 'zCEarthquake': 'engine/objects/zCEarthquake.md'
           - 'zCMessageFilter': 'engine/objects/zCMessageFilter.md'
+          - 'zCMover': 'engine/objects/zCMover.md'
           - 'zCMoverControler': 'engine/objects/zCMoverController.md'
           - 'zCPFXControler': 'engine/objects/zCPFXControler.md'
           - 'zCTouchDamage': 'engine/objects/zCTouchDamage.md'
