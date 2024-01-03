@@ -13,6 +13,9 @@
 Used to mark staircase models in Gothic I only. This type of VObject was taken into account by the NPC pathfinding
 routines to properly ascend and descend staircases.
 
+!!! warning
+    This VObject is only available in Gothic I.
+
 <ul class="sp-list">
     <li class="sp-type"><a href="../zCVob/">zCVob</a></li>
     <li class="sp-type">
