@@ -45,6 +45,7 @@ nav:
           - 'zCVobLight': 'engine/objects/zCVobLight.md'
           - 'zCVobScreenFX': 'engine/objects/zCVobScreenFX.md'
           - 'zCVobSound': 'engine/objects/zCVobSound.md'
+          - 'zCVobSoundDaytime': 'engine/objects/zCVobSoundDaytime.md'
           - 'zCVobSpot': 'engine/objects/zCVobSpot.md'
           - 'zCVobStair': 'engine/objects/zCVobStair.md'
           - 'zCVobStartpoint': 'engine/objects/zCVobStartpoint.md'

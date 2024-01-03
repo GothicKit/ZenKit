@@ -118,23 +118,45 @@ namespace zenkit {
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
-	/// \brief A VOb which emits a sound only during certain times of the day.
+	/// \brief Emits a sound defined by a script instance in a given radius during a given time during the day.
+	///
+	/// Optionally, another sound can be defined which is played outside the defined time range (example: birds
+	/// during the day and crickets at night).
+	///
+	/// \see https://zk.gothickit.dev/engine/objects/zCVobSoundDaytime/
 	struct VSoundDaytime : VSound {
 		ZK_OBJECT(ObjectType::zCVobSoundDaytime);
 
 	public:
+		/// \brief The time of day after which the sound can be heard (`13.5` corresponds to `13:30`).
+		///
+		/// Must be less than #start_time.
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCVobSoundDaytime/#sndStartTime
 		float start_time {0};
+
+		/// \brief The time of day after which the sound can no longer be heard (`13.5` corresponds to `13:30`).
+		///
+		/// Must be greater than #end_time.
+		///
+		/// \see https://zk.gothickit.dev/engine/objects/zCVobSoundDaytime/#sndEndTime
 		float end_time {0};
+
+		/// \brief The name of the script instance describing the sound to play outside the hours
+		///        defined by #start_time and #end_time.
+		/// \see https://zk.gothickit.dev/engine/objects/zCVobSoundDaytime/#sndName2
 		std::string sound_name2 {};
 
-		/// \brief Parses a timed sound VOb the given *ZenGin* archive.
-		/// \param[out] obj The object to read.
-		/// \param[in,out] ctx The archive reader to read from.
-		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \throws ParserError if parsing fails.
-		/// \see vob::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VSoundDaytime& obj, ReadArchive& ctx, GameVersion version);
+
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 	};
 } // namespace zenkit
