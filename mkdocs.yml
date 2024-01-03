@@ -44,6 +44,7 @@ nav:
           - 'zCVobLevelCompo': 'engine/objects/zCVobLevelCompo.md'
           - 'zCVobLight': 'engine/objects/zCVobLight.md'
           - 'zCVobScreenFX': 'engine/objects/zCVobScreenFX.md'
+          - 'zCVobSound': 'engine/objects/zCVobSound.md'
           - 'zCVobSpot': 'engine/objects/zCVobSpot.md'
           - 'zCVobStair': 'engine/objects/zCVobStair.md'
           - 'zCVobStartpoint': 'engine/objects/zCVobStartpoint.md'
