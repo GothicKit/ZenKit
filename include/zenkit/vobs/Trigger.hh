@@ -441,27 +441,35 @@ namespace zenkit {
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
-	/// \brief A VOb which triggers a world start event.
+	/// \brief A special trigger which fires an `OnTrigger` event to its #target when the world is loaded and started.
+	/// \see https://zk.gothickit.dev/engine/objects/zCTriggerChangeLevel/
 	struct VTriggerWorldStart : VirtualObject {
 		ZK_OBJECT(ObjectType::zCTriggerWorldStart);
 
 	public:
+		/// \brief The name of VObject to send an `OnTrigger` event to when the world is loaded and started.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTriggerChangeLevel/#triggerTarget
 		std::string target;
+
+		/// \brief Determines whether to fire the `OnTrigger` event only the first time the world is loaded.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTriggerChangeLevel/#fireOnlyFirstTime
 		bool fire_once;
 
 		// Save-game only variables
 		bool s_has_fired {false};
 
-		/// \brief Parses a world load trigger VOb the given *ZenGin* archive.
-		/// \param[out] obj The object to read.
-		/// \param[in,out] ctx The archive reader to read from.
-		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \throws ParserError if parsing fails.
-		/// \see vob::parse
-		ZKREM("use ::load()")
-		ZKAPI static void parse(VTriggerWorldStart& obj, ReadArchive& ctx, GameVersion version);
+		ZKREM("use ::load()") ZKAPI static void parse(VTriggerWorldStart& obj, ReadArchive& ctx, GameVersion version);
+
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
