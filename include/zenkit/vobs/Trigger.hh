@@ -337,13 +337,19 @@ namespace zenkit {
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
-	/// \brief A VOb which can call multiple script function upon being triggered.
+	/// \brief A special trigger which emits the `OnTrigger` events emitted by the VTrigger to multiple targets..
+	/// \see https://zk.gothickit.dev/engine/objects/zCTriggerList/
 	struct VTriggerList : VTrigger {
 		ZK_OBJECT(ObjectType::zCTriggerList);
 
 	public:
 		struct Target {
+			/// \brief The name of the VObject to send events to. Behaves like VTrigger#target`.
+			/// \see https://zk.gothickit.dev/engine/objects/zCTriggerList/#triggerTarget
 			std::string name {};
+
+			/// \brief The delay after which to fire the event to the target. Behaves like VTrigger#fireDelaySec.
+			/// \see https://zk.gothickit.dev/engine/objects/zCTriggerList/#fireDelay
 			float delay {};
 
 			[[nodiscard]] bool operator==(Target const& tgt) const noexcept {
@@ -353,23 +359,28 @@ namespace zenkit {
 
 		using target ZKREM("renamed to Target") = Target;
 
+		/// \brief Controls how events are sent to the targets.
+		/// \see https://zk.gothickit.dev/engine/objects/zCTriggerList/#listProcess
 		TriggerBatchMode mode {};
+
 		std::vector<Target> targets {};
 
 		// Save-game only variables
 		uint8_t s_act_target {0};
 		bool s_send_on_trigger {false};
 
-		/// \brief Parses a trigger list VOb the given *ZenGin* archive.
-		/// \param[out] obj The object to read.
-		/// \param[in,out] ctx The archive reader to read from.
-		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \throws ParserError if parsing fails.
-		/// \see vob::parse
-		/// \see trigger::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VTriggerList& obj, ReadArchive& ctx, GameVersion version);
+
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 

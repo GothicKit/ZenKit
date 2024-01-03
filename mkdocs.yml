@@ -67,6 +67,7 @@ nav:
           - 'zCPFXControler': 'engine/objects/zCPFXControler.md'
           - 'zCTouchDamage': 'engine/objects/zCTouchDamage.md'
           - 'zCTrigger': 'engine/objects/zCTrigger.md'
+          - 'zCTriggerList': 'engine/objects/zCTriggerList.md'
           - 'oCItem': 'engine/objects/oCItem.md'
           - 'zCVisual': 'engine/objects/zCVisual.md'
           - 'zCDecal': 'engine/objects/zCDecal.md'
