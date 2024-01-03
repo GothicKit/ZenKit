@@ -410,25 +410,34 @@ namespace zenkit {
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
-	/// \brief A VOb which triggers a level change if the player moves close to it.
+	/// \brief A special VTrigger which in addition to performing all other trigger actions also causes the
+	//         engine to load another level when activated.
+	/// \see https://zk.gothickit.dev/engine/objects/oCTriggerChangeLevel/
 	struct VTriggerChangeLevel : VTrigger {
 		ZK_OBJECT(ObjectType::oCTriggerChangeLevel);
 
 	public:
+		/// \brief The name of the level to load including the file extension.
+		/// \see https://zk.gothickit.dev/engine/objects/oCTriggerChangeLevel/#levelName
 		std::string level_name {};
+
+		/// \brief The name of the VObject in the new level to place the player at.
+		/// \see https://zk.gothickit.dev/engine/objects/oCTriggerChangeLevel/#startVobName
 		std::string start_vob {};
 
-		/// \brief Parses a change level trigger VOb the given *ZenGin* archive.
-		/// \param[out] obj The object to read.
-		/// \param[in,out] ctx The archive reader to read from.
-		/// \note After this function returns the position of \p ctx will be at the end of the parsed object.
-		/// \throws ParserError if parsing fails.
-		/// \see vob::parse
-		/// \see trigger::parse
 		ZKREM("use ::load()")
 		ZKAPI static void parse(VTriggerChangeLevel& obj, ReadArchive& ctx, GameVersion version);
+
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
