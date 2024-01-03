@@ -1,5 +1,8 @@
 // Copyright © 2022-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
+#include "zenkit/Vfs.hh"
+#include "zenkit/World.hh"
+
 #include <phoenix/archive.hh>
 
 #include <iostream>
@@ -28,15 +31,12 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 
-	auto buf = phoenix::buffer::mmap(argv[1]);
-	auto archive = phoenix::archive_reader::open(buf);
-	auto& header = archive->get_header();
+	zenkit::Vfs vfs;
+	vfs.mount_disk(argv[1]);
 
-	std::cout << "Archiver: " << header.archiver << "\n"
-	          << "User: " << header.user << "\n"
-	          << "Timestamp: " << header.date << "\n"
-	          << "Entries:\n";
+	zenkit::World wld;
 
-	print_entries(archive);
+	auto rd = vfs.find("NEWWORLD.ZEN")->open_read();
+	wld.load(rd.get());
 	return 0;
 }

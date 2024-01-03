@@ -71,6 +71,7 @@ nav:
           - 'oCTriggerScript': 'engine/objects/oCTriggerScript.md'
           - 'oCTriggerChangeLevel': 'engine/objects/oCTriggerChangeLevel.md'
           - 'zCTriggerWorldStart': 'engine/objects/zCTriggerWorldStart.md'
+          - 'zCTriggerUntouch': 'engine/objects/zCTriggerUntouch.md'
           - 'oCItem': 'engine/objects/oCItem.md'
           - 'zCVisual': 'engine/objects/zCVisual.md'
           - 'zCDecal': 'engine/objects/zCDecal.md'
