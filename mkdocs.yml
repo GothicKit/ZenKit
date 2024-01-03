@@ -68,6 +68,7 @@ nav:
           - 'zCTouchDamage': 'engine/objects/zCTouchDamage.md'
           - 'zCTrigger': 'engine/objects/zCTrigger.md'
           - 'zCTriggerList': 'engine/objects/zCTriggerList.md'
+          - 'oCTriggerScript': 'engine/objects/oCTriggerScript.md'
           - 'oCItem': 'engine/objects/oCItem.md'
           - 'zCVisual': 'engine/objects/zCVisual.md'
           - 'zCDecal': 'engine/objects/zCDecal.md'

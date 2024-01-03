@@ -16,8 +16,8 @@ be acknowledged (see [`respondToNPC`](#respondToNPC), [`respondToPC`](#respondTo
 [`respondToObject`](#respondToObject) respectively). It then verifies if it should react to the specific event by
 checking the [`reactToOnTrigger`](#reactToOnTrigger), [`reactToOnDamage`](#reactToOnDamage) and
 [`reactToOnTouch`](#reactToOnTouch) properties. If both checks succeed, an `OnTrigger` event is sent to the
-[`triggerTarget`](#triggerTarget). `zCTrigger` objects can be enabled and disabled by firing `OnEnable`, `OnDisable`
-and `OnToggleEnabled` events at them.
+[`triggerTarget`](#triggerTarget) and the trigger is considered to be *activated*. `zCTrigger` objects can be enabled
+and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at them.
 
 !!! note
     The `respondTo{Object,PC,NPC,VobName}` properties are logically linked by and "or" expression.
