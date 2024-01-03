@@ -179,8 +179,15 @@ namespace zenkit {
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
+	/// \brief A special trigger VObject which can start a cutscene.
+	///
+	/// The VTrigger#target must be the name of the cutscene (without the extension) to be started. For this to work,
+	/// the cutscene must already be loaded. `OnUntrigger` events are ignored by `oCCSTrigger`s.
+	///
+	/// \see https://zk.gothickit.dev/engine/objects/oCCSTrigger/
 	struct VCutsceneTrigger : VTrigger {
 		ZK_OBJECT(ObjectType::oCCSTrigger);
+
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 

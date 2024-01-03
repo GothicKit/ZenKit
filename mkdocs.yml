@@ -49,6 +49,7 @@ nav:
           - 'zCVobSpot': 'engine/objects/zCVobSpot.md'
           - 'zCVobStair': 'engine/objects/zCVobStair.md'
           - 'zCVobStartpoint': 'engine/objects/zCVobStartpoint.md'
+          - 'oCCSTrigger': 'engine/objects/oCCSTrigger.md'
           - 'oCMOB': 'engine/objects/oCMOB.md'
           - 'oCMobInter': 'engine/objects/oCMobInter.md'
           - 'oCMobBed': 'engine/objects/oCMobBed.md'
