@@ -85,7 +85,7 @@ namespace zenkit {
 		/// \see https://zk.gothickit.dev/engine/objects/zCTrigger/#triggerTarget
 		std::string target;
 
-		std::uint8_t ZKREM("replaced by `start_enabled` and `send_untrigger`") flags;
+		ZKREM("replaced by `start_enabled` and `send_untrigger`") std::uint8_t flags;
 
 		/// \brief Determines whether the trigger is initially enabled.
 		///
@@ -105,7 +105,7 @@ namespace zenkit {
 		/// \see https://zk.gothickit.dev/engine/objects/zCTrigger/#sendUntrigger
 		bool send_untrigger;
 
-		std::uint8_t ZKREM("replaced by `react_to_*` and `respond_to_*`") filter_flags;
+		ZKREM("replaced by `react_to_*` and `respond_to_*`") std::uint8_t filter_flags;
 
 		/// \brief Whether this trigger should react to `OnTrigger` events.
 		/// \see https://zk.gothickit.dev/engine/objects/zCTrigger/#reactToOnTrigger
