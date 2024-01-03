@@ -10,7 +10,11 @@
     — Gothic II: `52224`<br/>
     **ZenKit Class:** `VEarthquake`
 
-A VObject used to create an earthquake effect. An earthquake is represented by a shaking camera.
+A VObject used to create an earthquake effect when it receives an `OnTrigger` event. An earthquake is represented
+by a shaking camera.
+
+!!! warning
+    This VObject is only available in Gothic II.
 
 <ul class="sp-list">
     <li class="sp-type"><a href="../zCVob/">zCVob</a></li>
@@ -45,4 +49,5 @@ A VObject used to create an earthquake effect. An earthquake is represented by a
 
 ## Sources
 
-The Russian-language knowledge accumulator [gothic-library.ru](http://www.gothic-library.ru/publ/zcearthquake/1-1-0-516).
+The help file for the Spacer, found [here](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei) and the
+Russian-language knowledge accumulator [gothic-library.ru](http://www.gothic-library.ru/publ/zcearthquake/1-1-0-516).
