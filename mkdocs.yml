@@ -73,6 +73,8 @@ nav:
           - 'zCTriggerWorldStart': 'engine/objects/zCTriggerWorldStart.md'
           - 'zCTriggerUntouch': 'engine/objects/zCTriggerUntouch.md'
           - 'oCItem': 'engine/objects/oCItem.md'
+          - 'oCZoneMusic': 'engine/objects/oCZoneMusic.md'
+          - 'oCZoneMusicDefault': 'engine/objects/oCZoneMusicDefault.md'
           - 'zCVisual': 'engine/objects/zCVisual.md'
           - 'zCDecal': 'engine/objects/zCDecal.md'
       - 'Encodings':
