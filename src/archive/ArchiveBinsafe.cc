@@ -437,8 +437,8 @@ namespace zenkit {
 		this->_m_write->write_line(username);
 		this->_m_write->write_line("END");
 
-		this->_m_write->write_uint(0);
 		this->_m_write->write_uint(_m_index - 1);
+		this->_m_write->write_uint(2);
 
 		// Write the hash table!
 		this->_m_write->write_uint(cur);
