@@ -303,7 +303,7 @@ namespace zenkit {
 		w.write_vec3("slideDir", this->slide_direction);
 	}
 
-	void EventManager::load(ReadArchive& r, GameVersion version) {
+	void EventManager::load(ReadArchive& r, GameVersion) {
 		this->cleared = r.read_bool();
 		this->active = r.read_bool();
 
@@ -313,7 +313,7 @@ namespace zenkit {
 		r.read_object_end();
 	}
 
-	void EventManager::save(WriteArchive& w, GameVersion version) const {
+	void EventManager::save(WriteArchive& w, GameVersion) const {
 		w.write_bool("cleared", this->cleared);
 		w.write_bool("active", this->active);
 

@@ -269,7 +269,7 @@ namespace zenkit {
 		}
 	}
 
-	uint16_t World::get_version_identifier(GameVersion game) const {
+	uint16_t World::get_version_identifier(GameVersion) const {
 		return 64513;
 	}
 
@@ -279,7 +279,7 @@ namespace zenkit {
 		this->play_list_count = r.read_int();   // playListCount
 	}
 
-	void CutscenePlayer::save(WriteArchive& w, GameVersion version) const {
+	void CutscenePlayer::save(WriteArchive& w, GameVersion) const {
 		w.write_int("lastProcessDay", this->last_process_day);
 		w.write_int("lastProcessHour", this->last_process_hour);
 		w.write_int("playListCount", this->play_list_count);

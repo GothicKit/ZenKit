@@ -257,7 +257,7 @@ namespace zenkit {
 		this->skill = r.read_int();  // skill
 	}
 
-	void VNpc::Talent::save(WriteArchive& w, GameVersion version) const {
+	void VNpc::Talent::save(WriteArchive& w, GameVersion) const {
 		w.write_int("talent", this->talent);
 		w.write_int("value", this->value);
 		w.write_int("skill", this->skill);
@@ -503,15 +503,15 @@ namespace zenkit {
 				w.write_string("packed", i);
 			}
 		} else {
-			std::string packed;
+			std::string pack;
 
 			for (auto const& i : this->packed) {
-				packed += i;
-				packed += ";";
+				pack += i;
+				pack += ";";
 			}
 
-			packed.resize(packed.size() - 1);
-			w.write_string("packed", packed);
+			pack.resize(pack.size() - 1);
+			w.write_string("packed", pack);
 		}
 
 		w.write_int("itemCount", this->items.size());
@@ -575,7 +575,7 @@ namespace zenkit {
 		}
 	}
 
-	uint16_t VNpc::get_version_identifier(GameVersion game) const {
+	uint16_t VNpc::get_version_identifier(GameVersion) const {
 		return 52224;
 	}
 
