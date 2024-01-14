@@ -597,6 +597,13 @@ namespace zenkit {
 
 		if (w.is_save_game()) {
 			// FIXME: Not implemented because original not understood.
+			std::size_t count = version == GameVersion::GOTHIC_1 ? 5 : 12;
+			std::vector<std::byte> bytes {count * 4, std::byte {}};
+			w.write_raw("blend", bytes);
+			w.write_raw("cinema", bytes);   //
+			w.write_raw("fovMorph", bytes); //
+			w.write_vec2("fovSaved", {});
+			w.write_vec2("fovSaved1st", {});
 		}
 	}
 } // namespace zenkit
