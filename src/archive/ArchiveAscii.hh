@@ -76,7 +76,7 @@ namespace zenkit {
 
 	private:
 		Write* _m_write;
-		std::uint32_t _m_index {1};
+		std::uint32_t _m_index {0};
 		std::uint32_t _m_indent {0};
 		std::size_t _m_head;
 	};

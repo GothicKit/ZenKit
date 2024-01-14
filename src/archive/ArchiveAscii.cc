@@ -453,7 +453,7 @@ namespace zenkit {
 
 		memset(date_buffer, ' ', 20);
 		date_buffer[11] = '\0';
-		std::to_chars(date_buffer, date_buffer + 10, _m_index - 1);
+		std::to_chars(date_buffer, date_buffer + 10, _m_index);
 
 		this->_m_write->write_string("objects ");
 		this->_m_write->write_line(date_buffer);
