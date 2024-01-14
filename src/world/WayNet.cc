@@ -109,6 +109,7 @@ namespace zenkit {
 
 		for (auto i = 0; i < count_points; ++i) {
 			this->points.push_back(r.read_object<WayPoint>(version));
+			this->points.back()->free_point = true;
 		}
 
 		auto count_edges = r.read_int(); // numWays

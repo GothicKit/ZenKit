@@ -61,6 +61,7 @@ namespace zenkit {
 		bool under_water;
 		glm::vec3 position;
 		glm::vec3 direction;
+		bool free_point {false};
 
 		ZKINT void load(ReadArchive& r, GameVersion version) override;
 		ZKINT void save(WriteArchive& w, GameVersion version) const override;
