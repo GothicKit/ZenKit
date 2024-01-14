@@ -99,7 +99,11 @@ namespace zenkit {
 	}
 
 	void WayPoint::save(WriteArchive& w, GameVersion version) const {
-		Object::save(w, version);
+		w.write_string("wpName", this->name);
+		w.write_int("waterDepth", this->water_depth);
+		w.write_bool("underWater", this->under_water);
+		w.write_vec3("position", this->position);
+		w.write_vec3("direction", this->direction);
 	}
 
 	void WayNet::load(ReadArchive& r, GameVersion version) {
