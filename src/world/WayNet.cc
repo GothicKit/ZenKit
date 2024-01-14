@@ -131,7 +131,28 @@ namespace zenkit {
 	}
 
 	void WayNet::save(WriteArchive& w, GameVersion version) const {
-		Object::save(w, version);
+		w.write_int("waynetVersion", 1);
+
+		int count_free_points = 0;
+		for (auto& point : this->points) {
+			if (point->free_point) count_free_points += 1;
+		}
+
+		w.write_int("numWaypoints", count_free_points);
+		auto i = 0;
+		for (auto& point : this->points) {
+			if (point->free_point) {
+				w.write_object("waypoint" + std::to_string(i), point, version);
+				i += 1;
+			}
+		}
+
+		w.write_int("numWays", this->edges.size());
+		for (auto i = 0u; i < this->edges.size(); ++i) {
+			auto& [wayl, wayr] = this->edges[i];
+			w.write_object("wayl" + std::to_string(i), wayl, version);
+			w.write_object("wayr" + std::to_string(i), wayr, version);
+		}
 	}
 #endif
 
