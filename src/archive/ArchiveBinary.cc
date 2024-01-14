@@ -15,18 +15,18 @@ namespace zenkit {
 		{
 			std::string objects = read->read_line(true);
 			if (objects.find("objects ") != 0) {
-				throw zenkit::ParserError {"ReadArchiveBinary", "objects header field missing"};
+				throw ParserError {"ReadArchiveBinary", "objects header field missing"};
 			}
 
 			try {
 				_m_objects = std::stoi(objects.substr(objects.find(' ') + 1));
 			} catch (std::invalid_argument const& e) {
-				throw zenkit::ParserError {"ReadArchiveBinary", e, "reading int"};
+				throw ParserError {"ReadArchiveBinary", e, "reading int"};
 			}
 		}
 
 		if (read->read_line_then_ignore("\n") != "END") {
-			throw zenkit::ParserError {"ReadArchiveBinary", "second END missing"};
+			throw ParserError {"ReadArchiveBinary", "second END missing"};
 		}
 	}
 
@@ -120,7 +120,7 @@ namespace zenkit {
 	}
 
 	void ReadArchiveBinary::skip_entry() {
-		throw zenkit::ParserError {"archive_reader", "cannot skip entry in binary archive"};
+		throw ParserError {"archive_reader", "cannot skip entry in binary archive"};
 	}
 
 	void ReadArchiveBinary::skip_object(bool skip_current) {

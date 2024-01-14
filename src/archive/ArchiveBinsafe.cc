@@ -268,16 +268,16 @@ namespace zenkit {
 		auto type = static_cast<ArchiveEntryType>(read->read_ubyte());
 
 		if (type != ArchiveEntryType::HASH) {
-			throw zenkit::ParserError {"ReadArchive.Binsafe", "invalid format"};
+			throw ParserError {"ReadArchive.Binsafe", "invalid format"};
 		}
 
 		read->seek(sizeof(uint32_t), Whence::CUR);
 		type = static_cast<ArchiveEntryType>(read->read_ubyte());
 
 		if (type != tp) {
-			throw zenkit::ParserError {"ReadArchive.Binsafe: type mismatch: expected " +
-			                           std::to_string(static_cast<uint8_t>(tp)) +
-			                           ", got: " + std::to_string(static_cast<uint32_t>(type))};
+			throw ParserError {"ReadArchive.Binsafe: type mismatch: expected " +
+			                   std::to_string(static_cast<uint8_t>(tp)) +
+			                   ", got: " + std::to_string(static_cast<uint32_t>(type))};
 		}
 
 		if constexpr (tp == ArchiveEntryType::STRING || tp == ArchiveEntryType::RAW ||
