@@ -555,6 +555,9 @@ namespace zenkit {
 		int npc_type {0};
 		int spell_mana {0};
 
+		std::shared_ptr<VirtualObject> carry_vob;
+		std::shared_ptr<VirtualObject> enemy;
+
 		/// \brief Parses an NPC VOb from the given *ZenGin* archive.
 		/// \param[out] obj The object to read.
 		/// \param[in,out] ctx The archive reader to read from.

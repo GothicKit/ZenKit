@@ -342,8 +342,8 @@ namespace zenkit {
 			throw ParserError {"VNpc"};
 		}
 
-		(void) /* TODO(lmichaelis): carryVob = */ r.read_object(version); // [carryVob % 0 0]
-		(void) /* TODO(lmichaelis): enemy = */ r.read_object(version);    // [enemy % 0 0]
+		carry_vob = std::dynamic_pointer_cast<VirtualObject>(r.read_object(version)); // [carryVob % 0 0]
+		enemy = std::dynamic_pointer_cast<VirtualObject>(r.read_object(version));     // [enemy % 0 0]
 
 		this->move_lock = r.read_bool(); // moveLock
 
