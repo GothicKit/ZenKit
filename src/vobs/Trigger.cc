@@ -33,8 +33,9 @@ namespace zenkit {
 		if (r.is_save_game()) {
 			// In save-games, triggers contain extra variables
 			this->s_next_time_triggerable = r.read_float(); // nextTimeTriggerable
-			this->s_other_vob = r.read_object(version);     // [savedOtherVob % 0 0]
-			this->s_count_can_be_activated = r.read_int();  // countCanBeActivated
+			this->s_other_vob =
+			    std::dynamic_pointer_cast<VirtualObject>(r.read_object(version)); // [savedOtherVob % 0 0]
+			this->s_count_can_be_activated = r.read_int();                        // countCanBeActivated
 
 			if (version == GameVersion::GOTHIC_2) {
 				this->s_is_enabled = r.read_bool(); // isEnabled

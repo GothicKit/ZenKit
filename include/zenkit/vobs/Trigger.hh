@@ -176,7 +176,7 @@ namespace zenkit {
 		// Save-game only variables
 		float s_next_time_triggerable {0};
 		int s_count_can_be_activated {0};
-		std::shared_ptr<Object> s_other_vob {nullptr};
+		std::shared_ptr<VirtualObject> s_other_vob {nullptr};
 		bool s_is_enabled {true};
 
 		ZKREM("use ::load()") ZKAPI static void parse(VTrigger& obj, ReadArchive& ctx, GameVersion version);
