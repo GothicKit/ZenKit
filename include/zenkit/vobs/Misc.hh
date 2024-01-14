@@ -575,6 +575,8 @@ namespace zenkit {
 		/// \param w The archive to save to.
 		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+
+		uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
 	/// \brief Screen effect VObjects are used to create special effects.

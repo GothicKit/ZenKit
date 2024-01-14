@@ -576,6 +576,10 @@ namespace zenkit {
 		}
 	}
 
+	uint16_t VNpc::get_version_identifier(GameVersion game) const {
+		return 52224;
+	}
+
 	void VScreenEffect::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 
