@@ -290,7 +290,6 @@ namespace zenkit {
 		auto talent_count = static_cast<std::size_t>(r.read_int()); // numTalents
 		this->talents.resize(talent_count);
 
-		ArchiveObject hdr;
 		for (auto i = 0u; i < talent_count; ++i) {
 			this->talents[i] = r.read_object<Talent>(version);
 		}
@@ -367,7 +366,7 @@ namespace zenkit {
 		this->items.resize(item_count);
 
 		for (auto i = 0u; i < item_count; ++i) {
-			this->items[i] = r.read_object<VItem>(version);
+			this->items[i] = r.read_object<VItem>(version); // item0
 
 			if ((this->items[i]->s_flags & 0x200) != 0) {
 				(void) r.read_int(); // shortKey<n> // TODO
