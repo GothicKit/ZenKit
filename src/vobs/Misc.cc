@@ -420,6 +420,162 @@ namespace zenkit {
 		}
 	}
 
+	void VNpc::save(WriteArchive& w, GameVersion version) const {
+		VirtualObject::save(w, version);
+
+		w.write_string("npcInstance", this->npc_instance);
+		w.write_vec3("modelScale", this->model_scale);
+		w.write_float("modelFatness", this->model_fatness);
+
+		w.write_int("numOverlays", this->overlays.size());
+		for (auto& overlay : this->overlays) {
+			w.write_string("overlay", overlay);
+		}
+
+		w.write_int("flags", this->flags);
+		w.write_int("guild", this->guild);
+		w.write_int("guildTrue", this->guild_true);
+		w.write_int("level", this->level);
+		w.write_int("xp", this->xp);
+		w.write_int("xpnl", this->xp_next_level);
+		w.write_int("lp", this->lp);
+
+		w.write_int("numTalents", this->talents.size());
+		for (auto& talent : this->talents) {
+			w.write_object(talent, version);
+		}
+
+		w.write_int("fightTactic", this->fight_tactic);
+		w.write_int("fightMode", this->fight_mode);
+		w.write_bool("wounded", this->wounded);
+		w.write_bool("mad", this->mad);
+		w.write_int("madTime", this->mad_time);
+		w.write_bool("player", this->player);
+
+		for (auto i = 0u; i < attribute_count; ++i) {
+			w.write_int("atr" + std::to_string(i), this->attributes[i]);
+		}
+
+		if (version == GameVersion::GOTHIC_2) {
+			for (auto i = 0u; i < hcs_count; ++i) {
+				w.write_int("hc" + std::to_string(i), this->hit_chance[i]);
+			}
+		}
+
+		for (auto i = 0u; i < missions_count; ++i) {
+			w.write_int("mission" + std::to_string(i), this->missions[i]);
+		}
+
+		w.write_string("startAIState", this->start_ai_state);
+
+		{
+			std::vector<std::byte> script_vars;
+			auto script_vars_writer = Write::to(&script_vars);
+
+			std::size_t var_count = version == GameVersion::GOTHIC_1 ? 50 : 100;
+			for (auto i = 0u; i < var_count; ++i) {
+				script_vars_writer->write_int(this->aivar[i]);
+			}
+			w.write_raw("scriptVars", script_vars);
+		}
+
+		w.write_string("scriptWp", this->script_waypoint);
+		w.write_int("attitude", this->attitude);
+		w.write_int("tmpAttitude", this->attitude_temp);
+		w.write_int("nameNr", this->name_nr);
+
+		// TODO: unknown.
+		std::vector<std::byte> spells;
+		spells.push_back({});
+		spells.push_back({});
+		spells.push_back({});
+		spells.push_back({});
+		w.write_raw("spells", spells);
+
+		// TODO: News (I don't have a sample.).
+		w.write_int("NumOfEntries", 0);
+
+		w.write_object("carryVob", this->carry_vob, version);
+		w.write_object("enemy", this->enemy, version);
+		w.write_bool("moveLock", this->move_lock);
+
+		if (version == GameVersion::GOTHIC_1) {
+			for (auto const& i : this->packed) {
+				w.write_string("packed", i);
+			}
+		} else {
+			std::string packed;
+
+			for (auto const& i : this->packed) {
+				packed += i;
+				packed += ";";
+			}
+
+			packed.resize(packed.size() - 1);
+			w.write_string("packed", packed);
+		}
+
+		w.write_int("itemCount", this->items.size());
+		for (auto i = 0u; i < this->items.size(); ++i) {
+			auto& item = this->items[i];
+			w.write_object("item" + std::to_string(i), item, version);
+
+			if ((item->s_flags & 0x200) != 0) {
+				w.write_int("shortKey" + std::to_string(i), 0); // TODO
+			}
+		}
+
+		w.write_int("numInvSlots", this->slots.size());
+		for (auto& slot : this->slots) {
+			w.write_bool("used", slot.used);
+			w.write_string("name", slot.name);
+
+			if (slot.used) {
+				w.write_object("vob", slot.item, version);
+				w.write_bool("inInv", slot.in_inventory);
+			}
+		}
+
+		w.write_bool("curState.valid", this->current_state_valid);
+		w.write_string("curState.name", this->current_state_name);
+		w.write_int("curState.prgIndex", this->current_state_index);
+		w.write_bool("curState.isRtnState", this->current_state_is_routine);
+		w.write_bool("nextState.valid", this->next_state_valid);
+		w.write_string("nextState.name", this->next_state_name);
+		w.write_int("nextState.prgIndex", this->next_state_index);
+		w.write_bool("nextState.isRtnState", this->next_state_is_routine);
+		w.write_int("lastAIState", this->last_ai_state);
+		w.write_bool("hasRoutine", this->has_routine);
+		w.write_bool("rtnChanged", this->routine_changed);
+		w.write_bool("rtnOverlay", this->routine_overlay);
+		w.write_int("rtnOverlayCount", this->routine_overlay_count);
+		w.write_int("walkmode_routine", this->walkmode_routine);
+		w.write_bool("weaponmode_routine", this->weaponmode_routine);
+		w.write_bool("startNewRoutine", this->start_new_routine);
+		w.write_int("aiStateDriven", this->ai_state_driven);
+		w.write_vec3("aiStatePos", this->ai_state_pos);
+		w.write_string("curRoutine", this->current_routine);
+		w.write_bool("respawn", this->respawn);
+		w.write_int("respawnTime", this->respawn_time);
+
+		{
+			std::vector<std::byte> prot;
+			auto prot_writer = Write::to(&prot);
+
+			for (auto p : this->protection) {
+				prot_writer->write_int(p);
+			}
+
+			w.write_raw("protection", prot);
+		}
+
+		if (version == GameVersion::GOTHIC_2) {
+			w.write_int("bsInterruptableOverride", this->bs_interruptable_override);
+			w.write_int("npcType", this->npc_type);
+			w.write_int("spellMana", this->spell_mana);
+		}
+	}
+
 	void VScreenEffect::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 
