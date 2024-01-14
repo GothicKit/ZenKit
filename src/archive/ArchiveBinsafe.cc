@@ -379,7 +379,8 @@ namespace zenkit {
 	}
 
 	void WriteArchiveBinsafe::write_vec3(std::string_view name, glm::vec3 const& v) {
-		this->write_raw_float(name, glm::value_ptr(v), 3);
+		this->write_entry(name, ArchiveEntryType::VEC3);
+		this->_m_write->write_vec3(v);
 	}
 
 	void WriteArchiveBinsafe::write_vec2(std::string_view name, glm::vec2 v) {
