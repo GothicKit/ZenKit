@@ -216,9 +216,9 @@ namespace zenkit {
 		pw->write_ubyte(bit0);
 
 		std::uint16_t bit1 = 0;
-		bit1 |= 1u << 0u;
-		bit1 |= 1u << 1u;
-		bit1 |= (!!this->visual) << 2u;
+		bit1 |= !preset_name.empty() << 0u;
+		bit1 |= !vob_name.empty() << 1u;
+		bit1 |= (this->visual && !this->visual->name.empty()) << 2u;
 		bit1 |= (!!this->visual) << 3u;
 		bit1 |= (!!this->ai) << 4u;
 		bit1 |= this->physics_enabled << 6u;
@@ -237,16 +237,25 @@ namespace zenkit {
 		}
 
 		w.write_raw("dataRaw", packed);
-		w.write_string("presetName", this->preset_name);
-		w.write_string("vobName", this->vob_name);
-		w.write_string("visual", this->visual->name);
+
+		if (!this->preset_name.empty()) {
+			w.write_string("presetName", this->preset_name);
+		}
+
+		if (!this->vob_name.empty()) {
+			w.write_string("vobName", this->vob_name);
+		}
+
+		if (this->visual && !this->visual->name.empty()) {
+			w.write_string("visual", this->visual->name);
+		}
 
 		if (this->visual) {
-			w.write_object(this->visual, version);
+			w.write_object("visual", this->visual, version);
 		}
 
 		if (this->ai) {
-			w.write_object(this->ai, version);
+			w.write_object("ai", this->ai, version);
 		}
 
 		if (this->event_manager) {
