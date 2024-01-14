@@ -104,7 +104,7 @@ namespace zenkit {
 			os.clear();
 			for (auto& c : this->color_animation_list) {
 				os << "(" << static_cast<int>(c.r) << " " << static_cast<int>(c.g) << " " << static_cast<int>(c.b)
-				   << " " << static_cast<int>(c.a) << ") ";
+				   << ") ";
 			}
 			w.write_string("colorAniList", os.str());
 
