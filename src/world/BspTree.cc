@@ -183,7 +183,7 @@ namespace zenkit {
 
 					if (node.back_index != -1) {
 						flags |= 2;
-						flags |= this->nodes[static_cast<uint32_t>(node.front_index)].is_leaf() ? 8 : 0;
+						flags |= this->nodes[static_cast<uint32_t>(node.back_index)].is_leaf() ? 8 : 0;
 					}
 
 					c->write_ubyte(flags);
