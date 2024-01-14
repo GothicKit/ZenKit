@@ -345,7 +345,10 @@ namespace zenkit {
 
 		{
 			auto w = Write::to(path / "THUMB.SAV");
-			this->thumbnail->save(w.get());
+
+			if (this->thumbnail) {
+				this->thumbnail->save(w.get());
+			}
 		}
 
 		{
