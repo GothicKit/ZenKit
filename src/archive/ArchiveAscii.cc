@@ -289,7 +289,11 @@ namespace zenkit {
 		this->_m_write->write_char('\n');
 
 		this->_m_indent++;
-		return _m_index++;
+
+		auto idx = _m_index;
+		_m_index++;
+
+		return idx;
 	}
 
 	void WriteArchiveAscii::write_object_end() {

@@ -148,8 +148,10 @@ namespace zenkit {
 		this->_m_write->write_string0(object_name);
 		this->_m_write->write_string0(class_name);
 
+		auto idx = _m_index;
 		_m_index++;
-		return true;
+
+		return idx;
 	}
 
 	void WriteArchiveBinary::write_object_end() {

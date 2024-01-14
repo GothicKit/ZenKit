@@ -310,8 +310,10 @@ namespace zenkit {
 		this->_m_write->write_ushort(static_cast<uint16_t>(n));
 		this->_m_write->write_string(buf);
 
+		auto idx = _m_index;
 		_m_index++;
-		return true;
+
+		return idx;
 	}
 
 	void WriteArchiveBinsafe::write_object_end() {
