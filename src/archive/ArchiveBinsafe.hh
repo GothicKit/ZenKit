@@ -123,7 +123,7 @@ namespace zenkit {
 
 	private:
 		Write* _m_write;
-		std::uint32_t _m_index {1};
+		std::uint32_t _m_index {0};
 		std::map<std::string, std::uint16_t, std::less<>> _m_hash_keys;
 		std::size_t _m_head;
 	};
