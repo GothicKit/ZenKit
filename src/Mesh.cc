@@ -310,20 +310,9 @@ namespace zenkit {
 			}
 		});
 
-		// TODO(lmichaelis): Fixup shared lightmaps. We need to figure out all lightmaps which share a texture.
-		proto::write_chunk(w, MeshChunkType::LIGHTMAPS_SHARED, [](Write*) {});
-
-		proto::write_chunk(w, MeshChunkType::LIGHTMAPS, [this](Write* c) {
-			c->write_uint(static_cast<uint32_t>(this->lightmaps.size()));
-
-			for (auto& lm : this->lightmaps) {
-				c->write_vec3(lm.origin);
-				c->write_vec3(lm.normals[0]);
-				c->write_vec3(lm.normals[1]);
-				lm.image->save(c);
-			}
-		});
-
+		// TODO(lmichaelis): Fixup  lightmaps. We need to figure out all lightmaps which share a texture.
+		proto::write_chunk(w, MeshChunkType::LIGHTMAPS_SHARED, [](Write* c) { c->write_uint(0); });
+		proto::write_chunk(w, MeshChunkType::LIGHTMAPS, [](Write* c) { c->write_uint(0); });
 		proto::write_chunk(w, MeshChunkType::END, [](Write*) {});
 	}
 } // namespace zenkit
