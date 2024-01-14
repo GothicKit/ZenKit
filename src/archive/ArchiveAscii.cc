@@ -280,7 +280,7 @@ namespace zenkit {
 		this->_m_write->write_char('[');
 		this->_m_write->write_string(object_name);
 		this->_m_write->write_char(' ');
-		this->_m_write->write_string(class_name);
+		this->_m_write->write_string(class_name.empty() ? "%" : class_name.data());
 		this->_m_write->write_char(' ');
 		this->_m_write->write_string(intosv(buf, version));
 		this->_m_write->write_char(' ');
