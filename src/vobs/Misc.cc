@@ -308,7 +308,7 @@ namespace zenkit {
 
 		if (version == GameVersion::GOTHIC_2) {
 			// TODO: what are these (hc<n>)?
-			for (int& hc : this->hcs) {
+			for (int& hc : this->hit_chance) {
 				hc = r.read_int(); // hc1
 			}
 		}

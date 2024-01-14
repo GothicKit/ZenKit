@@ -510,7 +510,7 @@ namespace zenkit {
 		bool player;
 
 		int attributes[attribute_count];
-		int hcs[hcs_count];
+		int hit_chance[hcs_count];
 		int missions[missions_count];
 
 		std::string start_ai_state;
