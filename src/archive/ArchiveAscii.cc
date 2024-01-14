@@ -276,24 +276,21 @@ namespace zenkit {
 		this->write_indent();
 
 		std::array<char, std::numeric_limits<uint32_t>::digits10 + 1> buf {};
+		bool empty_class = class_name.empty() || class_name == "%";
 
 		this->_m_write->write_char('[');
 		this->_m_write->write_string(object_name);
 		this->_m_write->write_char(' ');
-		this->_m_write->write_string(class_name.empty() ? "%" : class_name.data());
+		this->_m_write->write_string(empty_class ? "%" : class_name.data());
 		this->_m_write->write_char(' ');
 		this->_m_write->write_string(intosv(buf, version));
 		this->_m_write->write_char(' ');
-		this->_m_write->write_string(intosv(buf, _m_index));
+		this->_m_write->write_string(intosv(buf, empty_class ? 0 : _m_index));
 		this->_m_write->write_char(']');
 		this->_m_write->write_char('\n');
 
 		this->_m_indent++;
-
-		auto idx = _m_index;
-		_m_index++;
-
-		return idx;
+		return empty_class ? 0 : _m_index++;
 	}
 
 	void WriteArchiveAscii::write_object_end() {

@@ -141,17 +141,15 @@ namespace zenkit {
 	                                                     std::string_view class_name,
 	                                                     std::uint16_t version) {
 		_m_objects.push(this->_m_write->tell());
+		bool empty_class = class_name.empty() || class_name == "%";
 
 		this->_m_write->write_uint(static_cast<uint32_t>(6 + object_name.length() + class_name.length() + 2));
 		this->_m_write->write_ushort(version);
-		this->_m_write->write_uint(_m_index);
+		this->_m_write->write_uint(empty_class ? 0 : _m_index);
 		this->_m_write->write_string0(object_name);
 		this->_m_write->write_string0(class_name);
 
-		auto idx = _m_index;
-		_m_index++;
-
-		return idx;
+		return empty_class ? 0 : _m_index++;
 	}
 
 	void WriteArchiveBinary::write_object_end() {
@@ -270,7 +268,7 @@ namespace zenkit {
 
 		memset(date_buffer, ' ', 20);
 		date_buffer[10] = '\0';
-		std::to_chars(date_buffer, date_buffer + 9, _m_index - 1);
+		std::to_chars(date_buffer, date_buffer + 9, _m_index);
 
 		this->_m_write->write_string("objects ");
 		this->_m_write->write_line(date_buffer);

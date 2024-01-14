@@ -297,6 +297,7 @@ namespace zenkit {
 	                                                      std::string_view class_name,
 	                                                      std::uint16_t version) {
 		this->_m_write->write_ubyte(static_cast<uint8_t>(ArchiveEntryType::STRING));
+		bool empty_class = class_name.empty() || class_name == "%";
 
 		char buf[6 + 127 * 2 + 10 * 2];
 		auto n = snprintf(buf,
@@ -305,15 +306,12 @@ namespace zenkit {
 		                  object_name.data(),
 		                  class_name.empty() ? "%" : class_name.data(),
 		                  version,
-		                  _m_index);
+		                  empty_class ? 0 : _m_index);
 
 		this->_m_write->write_ushort(static_cast<uint16_t>(n));
 		this->_m_write->write_string(buf);
 
-		auto idx = _m_index;
-		_m_index++;
-
-		return idx;
+		return empty_class ? 0 : _m_index++;
 	}
 
 	void WriteArchiveBinsafe::write_object_end() {
