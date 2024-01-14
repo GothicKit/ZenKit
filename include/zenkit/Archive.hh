@@ -320,6 +320,8 @@ namespace zenkit {
 			return _m_save;
 		}
 
+		[[nodiscard]] virtual Write* get_stream() const noexcept = 0;
+
 	private:
 		std::unordered_map<Object const*, uint32_t> _m_cache {};
 		bool _m_save {false};

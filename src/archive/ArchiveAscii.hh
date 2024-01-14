@@ -66,6 +66,10 @@ namespace zenkit {
 		void write_raw_float(std::string_view name, float const* v, std::uint16_t length) override;
 		void write_header() final;
 
+		[[nodiscard]] Write* get_stream() const noexcept override {
+			return _m_write;
+		}
+
 	private:
 		void write_indent();
 		void write_entry(std::string_view name, std::string_view type, std::string_view value);
