@@ -376,12 +376,13 @@ namespace zenkit {
 		auto inv_slot_count = static_cast<uint32_t>(r.read_int()); // numInvSlots
 		this->slots.resize(inv_slot_count);
 		for (auto i = 0u; i < inv_slot_count; ++i) {
-			this->slots[i].used = r.read_bool();   // used
-			this->slots[i].name = r.read_string(); // name
+			this->slots[i] = std::make_unique<Slot>();
+			this->slots[i]->used = r.read_bool();   // used
+			this->slots[i]->name = r.read_string(); // name
 
-			if (this->slots[i].used) {
-				this->slots[i].item = r.read_object<VItem>(version);
-				this->slots[i].in_inventory = r.read_bool(); // inInv
+			if (this->slots[i]->used) {
+				this->slots[i]->item = r.read_object<VItem>(version);
+				this->slots[i]->in_inventory = r.read_bool(); // inInv
 			}
 		}
 
@@ -526,12 +527,12 @@ namespace zenkit {
 
 		w.write_int("numInvSlots", this->slots.size());
 		for (auto& slot : this->slots) {
-			w.write_bool("used", slot.used);
-			w.write_string("name", slot.name);
+			w.write_bool("used", slot->used);
+			w.write_string("name", slot->name);
 
-			if (slot.used) {
-				w.write_object("vob", slot.item, version);
-				w.write_bool("inInv", slot.in_inventory);
+			if (slot->used) {
+				w.write_object("vob", slot->item, version);
+				w.write_bool("inInv", slot->in_inventory);
 			}
 		}
 

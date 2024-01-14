@@ -523,7 +523,7 @@ namespace zenkit {
 
 		std::string packed[packed_count];
 		std::vector<std::shared_ptr<VItem>> items;
-		std::vector<Slot> slots;
+		std::vector<std::unique_ptr<Slot>> slots;
 
 		bool current_state_valid;
 		std::string current_state_name;
