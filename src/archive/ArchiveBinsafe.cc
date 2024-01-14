@@ -303,7 +303,7 @@ namespace zenkit {
 		                  sizeof buf - 1,
 		                  "[%.127s %.127s %d %d]",
 		                  object_name.data(),
-		                  class_name.data(),
+		                  class_name.empty() ? "%" : class_name.data(),
 		                  version,
 		                  _m_index);
 
