@@ -97,9 +97,13 @@ namespace zenkit {
 
 			// Quirk: bit 5 of this bitfield specifies whether an event manger object is
 			// present but this is only relevant in save-games.
-			has_event_manager_object = static_cast<bool>((bit1 & 0b000000000100000u) >> 5u) && r.get_header().save;
+			has_event_manager_object = static_cast<bool>((bit1 & 0b000000000100000u) >> 5u) && r.is_save_game();
 
-			this->physics_enabled = static_cast<bool>((bit1 & 0b000000001000000u) >> 6u);
+			if (version == GameVersion::GOTHIC_1) {
+				this->physics_enabled = static_cast<bool>((bit1 & 0b000000010000000u) >> 7u);
+			} else {
+				this->physics_enabled = static_cast<bool>((bit1 & 0b000000001000000u) >> 6u);
+			}
 
 			if (version == GameVersion::GOTHIC_2) {
 				this->anim_mode = static_cast<AnimationType>(bit1 & 0b000000110000000u >> 7u);
@@ -186,7 +190,7 @@ namespace zenkit {
 			this->sleep_mode = r.read_byte();     // sleepMode
 			this->next_on_timer = r.read_float(); // nextOnTimer
 
-			if (this->physics_enabled) {
+			if (this->physics_enabled && version == GameVersion::GOTHIC_2) {
 				this->rigid_body.emplace().load(r, version);
 			}
 		}
@@ -222,7 +226,13 @@ namespace zenkit {
 		bit1 |= (!!this->visual) << 3u;
 		bit1 |= (!!this->ai) << 4u;
 		bit1 |= (!!this->event_manager) << 5u;
-		bit1 |= (this->physics_enabled && this->rigid_body) << 6u;
+
+		// Gothic 1 does not store rigid-body information.
+		if (version == GameVersion::GOTHIC_1) {
+			bit1 |= this->physics_enabled << 7u;
+		} else {
+			bit1 |= (this->physics_enabled && this->rigid_body) << 6u;
+		}
 
 		if (version == GameVersion::GOTHIC_2) {
 			bit1 |= (static_cast<uint8_t>(this->anim_mode) & 2) << 7u;
@@ -266,7 +276,8 @@ namespace zenkit {
 			w.write_byte("sleepMode", this->sleep_mode);
 			w.write_float("nextOnTimer", this->next_on_timer);
 
-			if (this->physics_enabled && this->rigid_body) {
+			// Gothic 1 does not store rigid-body information.
+			if (this->physics_enabled && this->rigid_body && version == GameVersion::GOTHIC_2) {
 				this->rigid_body->save(w, version);
 			}
 		}
