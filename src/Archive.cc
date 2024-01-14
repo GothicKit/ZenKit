@@ -566,6 +566,12 @@ namespace zenkit {
 	}
 
 	void WriteArchive::write_object(std::string_view name, Object const* obj, GameVersion version) {
+		if (obj == nullptr) {
+			this->write_object_begin(name, "%", 0);
+			this->write_object_end();
+			return;
+		}
+
 		std::string_view class_name = CLASS_NAMES.at(obj->get_object_type());
 		uint16_t obj_version = obj->get_version_identifier(version);
 
