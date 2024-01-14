@@ -207,11 +207,11 @@ namespace zenkit {
 		std::uint8_t bit0 = 0;
 
 		bit0 |= this->show_visual << 0;
-		bit0 |= (static_cast<uint8_t>(this->sprite_camera_facing_mode) & 3) << 2;
+		bit0 |= (static_cast<uint8_t>(this->sprite_camera_facing_mode) & 3) << 1;
 		bit0 |= this->cd_static << 3;
 		bit0 |= this->cd_dynamic << 4;
 		bit0 |= this->vob_static << 5;
-		bit0 |= (static_cast<uint8_t>(this->dynamic_shadows) & 3) << 7;
+		bit0 |= (static_cast<uint8_t>(this->dynamic_shadows) & 3) << 6;
 
 		pw->write_ubyte(bit0);
 
