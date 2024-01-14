@@ -257,6 +257,12 @@ namespace zenkit {
 		this->skill = r.read_int();  // skill
 	}
 
+	void VNpc::Talent::save(WriteArchive& w, GameVersion version) const {
+		w.write_int("talent", this->talent);
+		w.write_int("value", this->value);
+		w.write_int("skill", this->skill);
+	}
+
 	void VNpc::parse(VNpc& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);
 	}

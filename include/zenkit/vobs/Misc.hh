@@ -472,6 +472,7 @@ namespace zenkit {
 			}
 
 			void load(ReadArchive& r, GameVersion version) override;
+			void save(WriteArchive& w, GameVersion version) const override;
 		};
 
 		using talent ZKREM("renamed to Talent") = Talent;
