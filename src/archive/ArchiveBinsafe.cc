@@ -431,7 +431,7 @@ namespace zenkit {
 		this->_m_write->write_line("ver 1");
 		this->_m_write->write_line("zCArchiverBinSafe");
 		this->_m_write->write_line("BIN_SAFE");
-		this->_m_write->write_line("saveGame 0");
+		this->_m_write->write_line(is_save_game() ? "saveGame 1" : "saveGame 0");
 		this->_m_write->write_string("date ");
 		this->_m_write->write_line(date_buffer);
 		this->_m_write->write_string("user ");
