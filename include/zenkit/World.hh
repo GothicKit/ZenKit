@@ -31,6 +31,7 @@ namespace zenkit {
 		}
 
 		void load(ReadArchive& r, GameVersion version) override;
+		void save(WriteArchive& w, GameVersion version) const override;
 	};
 
 	struct SkyController : Object {
@@ -55,6 +56,7 @@ namespace zenkit {
 		}
 
 		void load(ReadArchive& r, GameVersion version) override;
+		void save(WriteArchive& w, GameVersion version) const override;
 	};
 
 	struct SpawnLocation {
@@ -78,6 +80,7 @@ namespace zenkit {
 
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+		uint16_t get_version_identifier(GameVersion game) const override;
 
 	public:
 		/// \brief The list of VObs defined in this world.

@@ -202,13 +202,87 @@ namespace zenkit {
 	}
 
 	void World::save(WriteArchive& w, GameVersion version) const {
-		Object::save(w, version);
+		if (!w.is_save_game()) {
+			w.write_object_begin("MeshAndBsp", "", 0);
+
+			Write* raw = w.get_stream();
+			raw->write_uint(0); // TODO: version
+			raw->write_uint(0); // TODO: size
+
+			this->world_mesh.save(raw, version);
+			this->world_bsp_tree.save(raw, version);
+
+			w.write_object_end();
+		}
+
+		w.write_object_begin("VobTree", "", 0);
+		w.write_int("childs0", this->world_vobs.size());
+		for (auto& root : this->world_vobs) {
+			save_vob_tree(w, version, root);
+		}
+		w.write_object_end();
+
+		if (w.is_save_game()) {
+			if (this->player) {
+				w.write_object_begin("CutscenePlayer", "", 0);
+				w.write_object(this->player, version);
+				w.write_object_end();
+			}
+
+			if (this->sky_controller) {
+				w.write_object_begin("SkyCtrl", "", 0);
+				w.write_object(this->sky_controller, version);
+				w.write_object_end();
+			}
+		}
+
+#ifdef ZK_FUTURE
+		w.write_object_begin("WayNet", "", 0);
+		w.write_object(this->way_net, version);
+		w.write_object_end();
+#endif
+
+		w.write_object_begin("EndMarker", "", 0);
+		w.write_object_end();
+
+		if (w.is_save_game()) {
+			// Then, read all the NPCs
+			w.write_int("npcCount", this->npcs.size());
+			for (auto i = 0u; i < this->npcs.size(); ++i) {
+				w.write_object("npc" + std::to_string(i), this->npcs[i], version);
+			}
+
+			// After that, read all NPC spawn locations
+			w.write_int("NoOfEntries", this->npc_spawns.size());
+
+			for (auto& spawn : this->npc_spawns) {
+				w.write_object("npc", spawn.npc, version);
+				w.write_vec3("spawnPos", spawn.position);
+				w.write_float("timer", spawn.timer);
+			}
+
+			w.write_bool("spawningEnabled", this->npc_spawn_enabled);
+
+			if (version == GameVersion::GOTHIC_2) {
+				w.write_bool("spawnFlags", this->npc_spawn_flags);
+			}
+		}
+	}
+
+	uint16_t World::get_version_identifier(GameVersion game) const {
+		return 64513;
 	}
 
 	void CutscenePlayer::load(ReadArchive& r, GameVersion) {
 		this->last_process_day = r.read_int();  // lastProcessDay
 		this->last_process_hour = r.read_int(); // lastProcessHour
 		this->play_list_count = r.read_int();   // playListCount
+	}
+
+	void CutscenePlayer::save(WriteArchive& w, GameVersion version) const {
+		w.write_int("lastProcessDay", this->last_process_day);
+		w.write_int("lastProcessHour", this->last_process_hour);
+		w.write_int("playListCount", this->play_list_count);
 	}
 
 	void SkyController::load(ReadArchive& r, GameVersion version) {
@@ -225,6 +299,23 @@ namespace zenkit {
 			render_lightning = r.read_bool(); // renderLightning
 			is_raining = r.read_bool();       // isRaining
 			rain_ctr = r.read_int();          // rainCtr
+		}
+	}
+
+	void SkyController::save(WriteArchive& w, GameVersion version) const {
+		w.write_float("masterTime", master_time);
+		w.write_float("rainWeight", rain_weight);
+		w.write_float("rainStart", rain_start);
+		w.write_float("rainStop", rain_stop);
+		w.write_float("rainSctTimer", rain_sct_timer);
+		w.write_float("rainSndVol", rain_snd_vol);
+		w.write_float("dayCtr", day_ctr);
+
+		if (version == GameVersion::GOTHIC_2) {
+			w.write_float("", fade_scale);      // fadeScale
+			w.write_bool("", render_lightning); // renderLightning
+			w.write_bool("", is_raining);       // isRaining
+			w.write_int("", rain_ctr);          // rainCtr
 		}
 	}
 } // namespace zenkit
