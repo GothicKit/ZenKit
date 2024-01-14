@@ -156,7 +156,7 @@ namespace zenkit {
 	    {ObjectType::oCWorld, "oCWorld:zCWorld"},
 	    {ObjectType::zCMaterial, "zCMaterial"},
 	    {ObjectType::oCSavegameInfo, "oCSavegameInfo"},
-	    {ObjectType::oCCSManager, "oCCSManager"},
+	    {ObjectType::oCCSManager, "oCCSManager:zCCSManager"},
 	    {ObjectType::zCCSPoolItem, "zCCSPoolItem"},
 	};
 
@@ -476,13 +476,13 @@ namespace zenkit {
 			syn = std::make_shared<Material>();
 			break;
 		case ObjectType::oCSavegameInfo:
-			syn = std::make_shared<unstable::SaveInfo>();
+			syn = std::make_shared<SaveMetadata>();
 			break;
 		case ObjectType::oCCSManager:
-			syn = std::make_shared<unstable::CutsceneManager>();
+			syn = std::make_shared<CutsceneManager>();
 			break;
 		case ObjectType::zCCSPoolItem:
-			syn = std::make_shared<unstable::CutscenePoolItem>();
+			syn = std::make_shared<CutscenePoolItem>();
 			break;
 #ifdef ZK_FUTURE
 		case ObjectType::zCWayNet:

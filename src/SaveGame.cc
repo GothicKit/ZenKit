@@ -9,8 +9,8 @@
 
 #include <set>
 
-namespace zenkit::unstable {
-	void SaveInfo::load(ReadArchive& r, GameVersion version) {
+namespace zenkit {
+	void SaveMetadata::load(ReadArchive& r, GameVersion version) {
 		this->title = r.read_string();          // Title
 		this->world = r.read_string();          // WorldName
 		this->time_day = r.read_int();          // TimeDay
@@ -28,7 +28,7 @@ namespace zenkit::unstable {
 		}
 	}
 
-	void SaveInfo::save(WriteArchive& w, GameVersion version) const {
+	void SaveMetadata::save(WriteArchive& w, GameVersion version) const {
 		w.write_string("Title", this->title);
 		w.write_string("WorldName", this->world);
 		w.write_int("TimeDay", this->time_day);
@@ -78,7 +78,7 @@ namespace zenkit::unstable {
 		}
 	}
 
-	void SaveScriptState::load(ReadArchive& r, GameVersion version) {
+	void SaveState::load(ReadArchive& r, GameVersion version) {
 		this->day = r.read_int();    // day
 		this->hour = r.read_int();   // hour
 		this->minute = r.read_int(); // min
@@ -143,8 +143,7 @@ namespace zenkit::unstable {
 		auto symbol_count = r.read_int(); // numSymbols
 		this->symbols.resize(symbol_count);
 
-		for (auto i = 0; i < symbol_count; ++i) {
-			SaveSymbolState sym;
+		for (SaveSymbolState& sym : this->symbols) {
 			sym.name = r.read_string(); // symName0
 
 			// For Gothic II saves, there is additional data stored
@@ -169,7 +168,7 @@ namespace zenkit::unstable {
 		}
 	}
 
-	void SaveScriptState::save(WriteArchive& w, GameVersion version) const {
+	void SaveState::save(WriteArchive& w, GameVersion version) const {
 		w.write_int("day", this->day);
 		w.write_int("hour", this->hour);
 		w.write_int("min", this->minute);
@@ -218,16 +217,18 @@ namespace zenkit::unstable {
 
 		// zCParser {
 		w.write_int("numSymbols", this->symbols.size());
-		for (auto& sym : this->symbols) {
-			w.write_string("symName0", sym.name);
+		for (auto i = 0u; i < this->symbols.size(); ++i) {
+			auto& sym = this->symbols[i];
+			auto iStr = std::to_string(i);
+			w.write_string("symName" + iStr, sym.name);
 
 			// For Gothic II saves, there is additional data stored
 			if (version == GameVersion::GOTHIC_1) {
-				w.write_int("symValue0", sym.values[0]);
+				w.write_int("symValue" + iStr, sym.values[0]);
 			} else {
-				w.write_int("symName0cnt", sym.values.size());
+				w.write_int("symName" + iStr + "cnt", sym.values.size());
 				for (auto v : sym.values) {
-					w.write_int("symValue0_0", v);
+					w.write_int("symValue" + iStr + "_0", v);
 				}
 			}
 		}
@@ -259,20 +260,20 @@ namespace zenkit::unstable {
 		return *result;
 	}
 
-	std::shared_ptr<World> SaveGame::open_world(std::string_view world_name) const {
-		auto path = _m_root_path / world_name;
+	std::shared_ptr<World> SaveGame::load_world(std::string world_name) const {
+		auto path = _m_path / world_name;
 		path.replace_extension("SAV");
 
 		if (!std::filesystem::exists(path)) return nullptr;
 
 		auto r = Read::from(path);
 		auto ar = ReadArchive::from(r.get());
-		return ar->read_object<World>(version);
+		return ar->read_object<World>(_m_version);
 	}
 
-	void SaveGame::load(std::filesystem::path const& path, GameVersion ver) {
-		this->_m_root_path = path;
-		this->version = ver;
+	void SaveGame::load(std::filesystem::path const& path, GameVersion version) {
+		this->_m_path = path;
+		this->_m_version = version;
 
 		if (!std::filesystem::is_directory(path)) {
 			throw ParserError {"SaveGame", "save game path does not exist or is not a directory"};
@@ -294,8 +295,7 @@ namespace zenkit::unstable {
 
 			auto r = Read::from(*file_save_info);
 			auto ar = ReadArchive::from(r.get());
-			this->metadata = ar->read_object<SaveInfo>(version);
-			this->current_world = this->metadata->world + ".ZEN";
+			this->metadata = *ar->read_object<SaveMetadata>(version);
 		}
 
 		// Load THUMB.SAV
@@ -321,7 +321,57 @@ namespace zenkit::unstable {
 
 			auto r = Read::from(*file_save_dat);
 			auto ar = ReadArchive::from(r.get());
-			this->script.load(*ar, version);
+			this->state.load(*ar, version);
 		}
 	}
-} // namespace zenkit::unstable
+
+	void SaveGame::save(std::filesystem::path const& path, World& world, std::string world_name, GameVersion version) {
+		// Copy over the current save if necessary.
+		if (_m_path != path) {
+			if (std::filesystem::exists(path)) {
+				std::filesystem::remove_all(path);
+			}
+
+			std::filesystem::copy(_m_path, path, std::filesystem::copy_options::recursive);
+		}
+
+		{
+			auto w = Write::to(path / "SAVEINFO.SAV");
+			auto ar = WriteArchive::to(w.get(), ArchiveFormat::ASCII);
+
+			ar->write_object("%", &this->metadata, version);
+			ar->write_header();
+		}
+
+		{
+			auto w = Write::to(path / "THUMB.SAV");
+			this->thumbnail->save(w.get());
+		}
+
+		{
+			auto w = Write::to(path / "SAVEHDR.SAV");
+			w->write_string(world_name);
+			w->write_string(".ZEN\n");
+		}
+
+		{
+			auto w = Write::to(path / "SAVEDAT.SAV");
+			auto ar = WriteArchive::to_save(w.get(), ArchiveFormat::BINARY);
+
+			this->state.save(*ar, version);
+			ar->write_header();
+		}
+
+		{
+			auto w = Write::to(path / (world_name + ".SAV"));
+			auto ar = WriteArchive::to_save(w.get(), ArchiveFormat::BINARY);
+
+			ar->write_object("%", &world, version);
+			ar->write_header();
+		}
+	}
+
+	std::shared_ptr<World> SaveGame::load_world() const {
+		return load_world(metadata.world + ".ZEN");
+	}
+} // namespace zenkit
