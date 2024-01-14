@@ -562,7 +562,15 @@ namespace zenkit {
 		/// \see vob::parse
 		ZKREM("use ::load()") ZKAPI static void parse(VNpc& obj, ReadArchive& ctx, GameVersion version);
 
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 	};
 
 	/// \brief Screen effect VObjects are used to create special effects.

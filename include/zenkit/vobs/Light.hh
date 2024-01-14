@@ -144,7 +144,14 @@ namespace zenkit {
 		ZKREM("use ::load()") ZKAPI static void parse(LightPreset& obj, ReadArchive& ctx, GameVersion version);
 		ZKREM("use ::load()") ZKAPI static LightPreset parse(ReadArchive& in, GameVersion version);
 
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version);
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const;
 	};
 
@@ -159,8 +166,16 @@ namespace zenkit {
 	public:
 		ZKREM("use ::load()") ZKAPI static void parse(VLight& obj, ReadArchive& ctx, GameVersion version);
 
+		/// \brief Load this object from the given archive.
+		/// \param r The archive to read from;
+		/// \param version The version of the game the object was made for.
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+
+		/// \brief Save this object to the given archive.
+		/// \param w The archive to save to.
+		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 } // namespace zenkit
