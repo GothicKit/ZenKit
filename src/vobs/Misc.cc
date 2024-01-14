@@ -320,7 +320,7 @@ namespace zenkit {
 
 		std::size_t var_count = version == GameVersion::GOTHIC_1 ? 50 : 100;
 		auto vars = r.read_raw(var_count * 4); // scriptVars
-		for (auto i = 0u; i < var_count / 4; ++i) {
+		for (auto i = 0u; i < var_count; ++i) {
 			this->aivar[i] = vars->read_int();
 		}
 
