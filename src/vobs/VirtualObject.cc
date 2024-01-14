@@ -224,7 +224,7 @@ namespace zenkit {
 		bit1 |= (!!this->event_manager) << 5u;
 		bit1 |= (this->physics_enabled && this->rigid_body) << 6u;
 
-		if (version == GameVersion::GOTHIC_1) {
+		if (version == GameVersion::GOTHIC_2) {
 			bit1 |= (static_cast<uint8_t>(this->anim_mode) & 2) << 7u;
 			bit1 |= (static_cast<uint8_t>(this->bias) & 0b11111) << 13u;
 			bit1 |= this->ambient << 14u;
