@@ -201,11 +201,12 @@ namespace zenkit {
 	struct EventManager final : Object {
 		ZK_OBJECT(ObjectType::zCEventManager);
 
-	private:
+	public:
 		bool cleared = false;
 		bool active = false;
 
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 	};
 
 	struct VirtualObject;
@@ -474,6 +475,7 @@ namespace zenkit {
 		std::shared_ptr<Visual> visual = nullptr;
 
 		std::shared_ptr<Ai> ai = nullptr;
+		std::shared_ptr<EventManager> event_manager = nullptr;
 
 		std::uint8_t sleep_mode = 0;
 		float next_on_timer = 0;

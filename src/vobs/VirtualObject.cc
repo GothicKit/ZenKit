@@ -177,7 +177,7 @@ namespace zenkit {
 		}
 
 		if (has_event_manager_object) {
-			(void) /* em = */ r.read_object<EventManager>(version);
+			this->event_manager = r.read_object<EventManager>(version);
 		}
 
 		if (r.get_header().save) {
@@ -221,8 +221,8 @@ namespace zenkit {
 		bit1 |= (!!this->visual) << 2u;
 		bit1 |= (!!this->visual) << 3u;
 		bit1 |= (!!this->ai) << 4u;
-		bit1 |= 0u << 5u; // TODO: Implement zCEventManager
 		bit1 |= this->physics_enabled << 6u;
+		bit1 |= (!!this->event_manager) << 5u;
 
 		if (version == GameVersion::GOTHIC_1) {
 			bit1 |= (static_cast<uint8_t>(this->anim_mode) & 2) << 7u;
@@ -249,7 +249,9 @@ namespace zenkit {
 			w.write_object(this->ai, version);
 		}
 
-		// TODO: Event Manager
+		if (this->event_manager) {
+			w.write_object(this->event_manager, version);
+		}
 
 		if (w.is_save_game()) {
 			w.write_byte("sleepMode", this->sleep_mode);
@@ -285,7 +287,18 @@ namespace zenkit {
 		this->cleared = r.read_bool();
 		this->active = r.read_bool();
 
-		(void) /* TODO: emCutscene = */ r.read_object(version);
+		/* TODO: emCutscene = */
+		ArchiveObject o;
+		r.read_object_begin(o);
+		r.read_object_end();
+	}
+
+	void EventManager::save(WriteArchive& w, GameVersion version) const {
+		w.write_bool("cleared", this->cleared);
+		w.write_bool("active", this->active);
+
+		w.write_object_begin("emCutscene", "%", 0);
+		w.write_object_end();
 	}
 
 	void AiHuman::load(ReadArchive& r, GameVersion version) {
