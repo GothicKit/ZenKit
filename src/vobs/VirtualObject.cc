@@ -180,7 +180,7 @@ namespace zenkit {
 			this->event_manager = r.read_object<EventManager>(version);
 		}
 
-		if (r.get_header().save) {
+		if (r.is_save_game()) {
 			// save-games contain two extra values for each VOb
 			// TODO: These are technically from oCVob!
 			this->sleep_mode = r.read_byte();     // sleepMode
@@ -331,8 +331,6 @@ namespace zenkit {
 	}
 
 	void AiHuman::save(WriteArchive& w, GameVersion version) const {
-		Ai::save(w, version);
-
 		w.write_int("waterLevel", this->water_level);
 		w.write_float("floorY", this->floor_y);
 		w.write_float("waterY", this->water_y);
