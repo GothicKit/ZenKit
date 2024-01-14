@@ -13,6 +13,7 @@ namespace zenkit {
 	void VAnimate::load(ReadArchive& r, GameVersion version) {
 		VirtualObject::load(r, version);
 		this->start_on = r.read_bool(); // startOn
+		this->s_is_running = this->start_on;
 
 		if (r.is_save_game()) {
 			// In save-games, animated VObs contain extra variables
