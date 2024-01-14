@@ -39,4 +39,15 @@ namespace zenkit {
 
 		return object;
 	}
+
+	void save_vob_tree(WriteArchive& w, GameVersion version, std::shared_ptr<VirtualObject> const& obj) {
+		w.write_object(obj, version);
+
+		// TODO(lmichaelis): replace `0` below with the n of the nth child we're writing
+		w.write_int("childs0", obj->children.size());
+
+		for (auto& child : obj->children) {
+			save_vob_tree(w, version, child);
+		}
+	}
 } // namespace zenkit

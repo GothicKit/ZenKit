@@ -13,4 +13,5 @@ namespace zenkit {
 	/// \param version The version of Gothic being used.
 	/// \return The tree parsed.
 	ZKAPI std::shared_ptr<VirtualObject> parse_vob_tree(ReadArchive& in, GameVersion version);
+	ZKAPI void save_vob_tree(WriteArchive& w, GameVersion version, std::shared_ptr<VirtualObject> const& obj);
 } // namespace zenkit
