@@ -221,8 +221,8 @@ namespace zenkit {
 		bit1 |= (this->visual && !this->visual->name.empty()) << 2u;
 		bit1 |= (!!this->visual) << 3u;
 		bit1 |= (!!this->ai) << 4u;
-		bit1 |= this->physics_enabled << 6u;
 		bit1 |= (!!this->event_manager) << 5u;
+		bit1 |= (this->physics_enabled && this->rigid_body) << 6u;
 
 		if (version == GameVersion::GOTHIC_1) {
 			bit1 |= (static_cast<uint8_t>(this->anim_mode) & 2) << 7u;
