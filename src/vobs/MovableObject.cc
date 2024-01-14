@@ -31,7 +31,7 @@ namespace zenkit {
 		w.write_int("hitpoints", hp);
 		w.write_int("damage", damage);
 		w.write_bool("moveable", movable);
-		w.write_bool("takeable", takable);
+		w.write_bool("takeable", takable); // Quirk: `true` saved as 0xff and `false` as `0`
 		w.write_bool("focusOverride", focus_override);
 		w.write_enum("soundMaterial", static_cast<std::uint32_t>(material));
 		w.write_string("visualDestroyed", visual_destroyed);
@@ -96,7 +96,7 @@ namespace zenkit {
 
 	void VContainer::save(WriteArchive& w, GameVersion version) const {
 		VInteractiveObject::save(w, version);
-		w.write_bool("locked", locked);
+		w.write_bool("locked", locked); // Quirk: `true` saved as 0xff and `false` as `0`
 		w.write_string("keyInstance", key);
 		w.write_string("pickLockStr", pick_string);
 		w.write_string("contains", contents);
