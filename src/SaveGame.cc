@@ -332,7 +332,11 @@ namespace zenkit {
 				std::filesystem::remove_all(path);
 			}
 
-			std::filesystem::copy(_m_path, path, std::filesystem::copy_options::recursive);
+			if (!_m_path.empty() && std::filesystem::exists(_m_path)) {
+				std::filesystem::copy(_m_path, path, std::filesystem::copy_options::recursive);
+			} else {
+				std::filesystem::create_directories(path);
+			}
 		}
 
 		{
@@ -372,6 +376,8 @@ namespace zenkit {
 			ar->write_object("%", &world, version);
 			ar->write_header();
 		}
+
+		_m_path = path;
 	}
 
 	std::shared_ptr<World> SaveGame::load_world() const {
