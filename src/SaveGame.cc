@@ -148,11 +148,11 @@ namespace zenkit {
 
 			// For Gothic II saves, there is additional data stored
 			if (version == GameVersion::GOTHIC_1) {
-				sym.values.push_back(static_cast<uint32_t>(r.read_int())); // symValue0
+				sym.values.push_back(r.read_int()); // symValue0
 			} else {
 				auto value_count = r.read_int(); // symName0cnt
 				for (auto j = 0; j < value_count; ++j) {
-					sym.values.push_back(static_cast<uint32_t>(r.read_int())); // symValue0_0
+					sym.values.push_back(r.read_int()); // symValue0_0
 				}
 			}
 		}

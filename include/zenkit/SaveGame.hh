@@ -73,7 +73,7 @@ namespace zenkit {
 
 	struct SaveSymbolState {
 		std::string name;
-		std::vector<std::uint32_t> values;
+		std::vector<int32_t> values;
 	};
 
 	struct Mission {
