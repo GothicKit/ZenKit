@@ -247,6 +247,8 @@ namespace zenkit {
 		w.write_raw("guildTable", guild_table);
 	}
 
+	SaveGame::SaveGame(GameVersion version) : _m_version(version) {}
+
 	std::optional<std::filesystem::path> find_file_matching(std::set<std::filesystem::path> const& choices,
 	                                                        std::string_view filename) {
 		auto result = std::find_if(choices.begin(), choices.end(), [filename](std::filesystem::path const& path) {
@@ -271,9 +273,8 @@ namespace zenkit {
 		return ar->read_object<World>(_m_version);
 	}
 
-	void SaveGame::load(std::filesystem::path const& path, GameVersion version) {
+	void SaveGame::load(std::filesystem::path const& path) {
 		this->_m_path = path;
-		this->_m_version = version;
 
 		if (!std::filesystem::is_directory(path)) {
 			throw ParserError {"SaveGame", "save game path does not exist or is not a directory"};
@@ -295,7 +296,7 @@ namespace zenkit {
 
 			auto r = Read::from(*file_save_info);
 			auto ar = ReadArchive::from(r.get());
-			this->metadata = *ar->read_object<SaveMetadata>(version);
+			this->metadata = *ar->read_object<SaveMetadata>(_m_version);
 		}
 
 		// Load THUMB.SAV
@@ -321,11 +322,11 @@ namespace zenkit {
 
 			auto r = Read::from(*file_save_dat);
 			auto ar = ReadArchive::from(r.get());
-			this->state.load(*ar, version);
+			this->state.load(*ar, _m_version);
 		}
 	}
 
-	void SaveGame::save(std::filesystem::path const& path, World& world, std::string world_name, GameVersion version) {
+	void SaveGame::save(std::filesystem::path const& path, World& world, std::string world_name) {
 		// Copy over the current save if necessary.
 		if (_m_path != path) {
 			if (std::filesystem::exists(path)) {
@@ -343,7 +344,7 @@ namespace zenkit {
 			auto w = Write::to(path / "SAVEINFO.SAV");
 			auto ar = WriteArchive::to(w.get(), ArchiveFormat::ASCII);
 
-			ar->write_object("%", &this->metadata, version);
+			ar->write_object("%", &this->metadata, _m_version);
 			ar->write_header();
 		}
 
@@ -365,7 +366,7 @@ namespace zenkit {
 			auto w = Write::to(path / "SAVEDAT.SAV");
 			auto ar = WriteArchive::to_save(w.get(), ArchiveFormat::BINARY);
 
-			this->state.save(*ar, version);
+			this->state.save(*ar, _m_version);
 			ar->write_header();
 		}
 
@@ -373,7 +374,7 @@ namespace zenkit {
 			auto w = Write::to(path / (world_name + ".SAV"));
 			auto ar = WriteArchive::to_save(w.get(), ArchiveFormat::BINARY);
 
-			ar->write_object("%", &world, version);
+			ar->write_object("%", &world, _m_version);
 			ar->write_header();
 		}
 

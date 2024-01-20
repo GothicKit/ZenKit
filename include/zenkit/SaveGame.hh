@@ -131,8 +131,10 @@ namespace zenkit {
 
 	class SaveGame {
 	public:
-		void load(std::filesystem::path const& path, GameVersion version);
-		void save(std::filesystem::path const& path, World& world, std::string world_name, GameVersion version);
+		explicit SaveGame(GameVersion version);
+
+		void load(std::filesystem::path const& path);
+		void save(std::filesystem::path const& path, World& world, std::string world_name);
 
 		std::shared_ptr<World> load_world() const;
 		std::shared_ptr<World> load_world(std::string name) const;
@@ -146,5 +148,4 @@ namespace zenkit {
 		GameVersion _m_version;
 		std::filesystem::path _m_path;
 	};
-
 } // namespace zenkit
