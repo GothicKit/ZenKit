@@ -6,8 +6,8 @@
 
 TEST_SUITE("SaveGame") {
 	TEST_CASE("SaveGame.load(GOTHIC1)") {
-		zenkit::SaveGame save {};
-		save.load("./samples/G1/Save", zenkit::GameVersion::GOTHIC_1);
+		zenkit::SaveGame save {zenkit::GameVersion::GOTHIC_1};
+		save.load("./samples/G1/Save");
 
 		CHECK_EQ(save.metadata.title, "sds");
 		CHECK_EQ(save.metadata.world, "WORLD");
@@ -30,8 +30,8 @@ TEST_SUITE("SaveGame") {
 	}
 
 	TEST_CASE("SaveGame.load(GOTHIC1,BINARY)") {
-		zenkit::SaveGame save {};
-		save.load("./samples/G1/SaveFast", zenkit::GameVersion::GOTHIC_1);
+		zenkit::SaveGame save {zenkit::GameVersion::GOTHIC_1};
+		save.load("./samples/G1/SaveFast");
 
 		CHECK_EQ(save.metadata.title, "sds_fast");
 		CHECK_EQ(save.metadata.world, "WORLD");
@@ -55,8 +55,8 @@ TEST_SUITE("SaveGame") {
 
 	TEST_CASE("SaveGame.load(GOTHIC2)") {
 		zenkit::Logger::set_default(zenkit::LogLevel::DEBUG);
-		zenkit::SaveGame save {};
-		save.load("./samples/G2/Save", zenkit::GameVersion::GOTHIC_2);
+		zenkit::SaveGame save {zenkit::GameVersion::GOTHIC_2};
+		save.load("./samples/G2/Save");
 
 		CHECK_EQ(save.metadata.title, "uwuowo");
 		CHECK_EQ(save.metadata.world, "NEWWORLD");
@@ -80,8 +80,8 @@ TEST_SUITE("SaveGame") {
 	}
 
 	TEST_CASE("SaveGame.load(GOTHIC2,BINARY)") {
-		zenkit::SaveGame save {};
-		save.load("./samples/G2/SaveFast", zenkit::GameVersion::GOTHIC_2);
+		zenkit::SaveGame save {zenkit::GameVersion::GOTHIC_2};
+		save.load("./samples/G2/SaveFast");
 
 		CHECK_EQ(save.metadata.title, "inminevalley");
 		CHECK_EQ(save.metadata.world, "OLDWORLD");
