@@ -3,6 +3,8 @@
 #include "zenkit/world/WayNet.hh"
 #include "zenkit/Archive.hh"
 
+#include "../Internal.hh"
+
 namespace zenkit {
 #ifndef ZK_FUTURE
 	static void read_waypoint_data(WayPoint& wp, ReadArchive& in) {

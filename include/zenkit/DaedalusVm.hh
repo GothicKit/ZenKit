@@ -152,17 +152,22 @@ namespace zenkit {
 
 			unsafe_call(sym);
 
-			if constexpr (std::is_same_v<R, IgnoreReturnValue> || std::is_same_v<R, void>) {
+			if constexpr (std::is_same_v<R, IgnoreReturnValue>) {
 				// clear the stack
 				_m_stack_ptr = 0;
+
 				return {};
+			} else if constexpr (!std::is_same_v<R, void>) {
+				auto ret = pop_call_return_value<R>();
+
+				// clear the stack
+				_m_stack_ptr = 0;
+
+				return ret;
+			} else {
+				// clear the stack
+				_m_stack_ptr = 0;
 			}
-
-			auto ret = pop_call_return_value<R>();
-
-			// clear the stack
-			_m_stack_ptr = 0;
-			return ret;
 		}
 
 		/// \brief Initializes an instance with the given type and name and returns it.
