@@ -364,7 +364,7 @@ namespace zenkit {
 
 		{
 			auto w = Write::to(path / "SAVEDAT.SAV");
-			auto ar = WriteArchive::to_save(w.get(), ArchiveFormat::BINARY);
+			auto ar = WriteArchive::to_save(w.get(), ArchiveFormat::ASCII);
 
 			this->state.save(*ar, _m_version);
 			ar->write_header();
