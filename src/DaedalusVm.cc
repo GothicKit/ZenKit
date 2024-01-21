@@ -34,7 +34,7 @@ namespace zenkit {
 		///
 		/// Unless #inhibit was called, this destructor will push a value of the datatype passed in the
 		/// constructor onto the stack of the VM passed in the constructor.
-		StackGuard() {
+		~StackGuard() {
 			if (_m_inhibited) return;
 
 			switch (_m_type) {
