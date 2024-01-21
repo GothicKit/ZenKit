@@ -15,12 +15,13 @@ namespace zenkit {
 			throw std::runtime_error {"Failed to open " + path.string()};
 		}
 
-		struct ::stat st {};
+		struct stat st {};
 		if (fstat(handle, &st) != 0) {
 			throw std::runtime_error {"Failed to stat " + path.string()};
 		}
 
-		_m_data = (std::byte*) ::mmap(nullptr, (::size_t) st.st_size, PROT_READ, MAP_SHARED, handle, 0);
+		_m_data =
+		    static_cast<std::byte*>(mmap(nullptr, static_cast<size_t>(st.st_size), PROT_READ, MAP_SHARED, handle, 0));
 		if (_m_data == nullptr) {
 			throw std::runtime_error {"Failed to mmap " + path.string()};
 		}
@@ -41,7 +42,7 @@ namespace zenkit {
 
 	Mmap::~Mmap() noexcept {
 		if (_m_data != nullptr) {
-			::munmap((void*) _m_data, _m_size);
+			munmap((void*) _m_data, _m_size);
 			_m_data = nullptr;
 			_m_platform_handle = nullptr;
 		}

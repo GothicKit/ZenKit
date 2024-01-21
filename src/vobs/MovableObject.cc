@@ -3,8 +3,6 @@
 #include "zenkit/vobs/MovableObject.hh"
 #include "zenkit/Archive.hh"
 
-#include "../Internal.hh"
-
 namespace zenkit {
 	void VMovableObject::parse(VMovableObject& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);

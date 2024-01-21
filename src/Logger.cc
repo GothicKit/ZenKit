@@ -25,7 +25,7 @@ namespace zenkit {
 
 	ZKINT static void zk_internal_logger_default(LogLevel level, char const* name, char const* message) {
 		time_t now_t = time(nullptr);
-		struct tm* now = gmtime(&now_t);
+		tm* now = gmtime(&now_t);
 
 		fprintf(stderr,
 		        ANSI_GRAY "%04d-%02d-%02d %02d:%02d:%02d " ANSI_RESET,
@@ -56,13 +56,13 @@ namespace zenkit {
 	}
 
 	void Logger::use_logger(std::function<void(LogLevel, std::string const&)>&& callback) {
-		Logger::set(LogLevel::INFO, [callback](LogLevel lvl, std::string_view name, std::string_view sv) {
+		set(LogLevel::INFO, [callback](LogLevel lvl, std::string_view name, std::string_view sv) {
 			callback(lvl, std::string {name} + ": " + std::string {sv});
 		});
 	}
 
 	void Logger::use_default_logger() {
-		Logger::set_default(LogLevel::INFO);
+		set_default(LogLevel::INFO);
 	}
 
 	void Logger::log(LogLevel lvl, char const* name, char const* fmt, ...) {

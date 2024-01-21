@@ -23,13 +23,12 @@ namespace zenkit {
 	}
 
 	Font Font::parse(phoenix::buffer&& in) {
-		return Font::parse(in);
+		return parse(in);
 	}
 
 	void Font::load(Read* r) {
-		auto version = r->read_line(true);
-		if (version != "1") {
-			throw zenkit::ParserError {"Font", "version mismatch: expected version 1, got " + version};
+		if (auto version = r->read_line(true); version != "1") {
+			throw ParserError {"Font", "version mismatch: expected version 1, got " + version};
 		}
 
 		this->name = r->read_line(false);

@@ -80,7 +80,6 @@ namespace zenkit {
 	struct VAnimate : VirtualObject {
 		ZK_OBJECT(ObjectType::zCVobAnimate);
 
-	public:
 		/// \brief Whether to start this animation when loading the level.
 		/// \see https://zk.gothickit.dev/engine/objects/zCVobAnimate/#startOn
 		bool start_on {false};
@@ -110,7 +109,6 @@ namespace zenkit {
 	struct VItem : VirtualObject {
 		ZK_OBJECT(ObjectType::oCItem);
 
-	public:
 		/// \brief The name of the script instance representing the item.
 		/// \see https://zk.gothickit.dev/engine/objects/oCItem/#itemInstance
 		std::string instance;
@@ -139,7 +137,6 @@ namespace zenkit {
 	struct VLensFlare : VirtualObject {
 		ZK_OBJECT(ObjectType::zCVobLensFlare);
 
-	public:
 		/// \brief The name of the lens flare effect.
 		///
 		/// Must be one of the effects listed in `/_work/data/Presets/Lensflare.zen`.
@@ -170,7 +167,6 @@ namespace zenkit {
 	struct VParticleEffectController : VirtualObject {
 		ZK_OBJECT(ObjectType::zCPFXController);
 
-	public:
 		/// \brief The name of the particle effect.
 		///
 		/// Corresponds to a `.ZEN` file containing the particle system definition.
@@ -206,7 +202,6 @@ namespace zenkit {
 	struct VMessageFilter : VirtualObject {
 		ZK_OBJECT(ObjectType::zCMessageFilter);
 
-	public:
 		/// \brief The name of the target VObject.
 		///
 		/// All `OnTrigger` and `OnUntrigger` messages received by this `zCMessageFilter` VObject are transformed
@@ -249,7 +244,6 @@ namespace zenkit {
 	struct VCodeMaster : VirtualObject {
 		ZK_OBJECT(ObjectType::zCCodeMaster);
 
-	public:
 		/// \brief The name of the VObject to send an `OnTrigger` event to after all slaves have
 		///        fired in the correct order.
 		/// \see https://zk.gothickit.dev/engine/objects/zCCodeMaster/#triggerTarget
@@ -311,7 +305,6 @@ namespace zenkit {
 	struct VMoverController : VirtualObject {
 		ZK_OBJECT(ObjectType::zCMoverController);
 
-	public:
 		/// \brief The name of the VMover VOject that is controlled by this VMoverController.
 		/// \see https://zk.gothickit.dev/engine/objects/zCMoverController/#triggerTarget
 		std::string target;
@@ -345,7 +338,6 @@ namespace zenkit {
 	struct VTouchDamage : VirtualObject {
 		ZK_OBJECT(ObjectType::oCTouchDamage);
 
-	public:
 		/// \brief The amount of damage being dealt.
 		/// \see https://zk.gothickit.dev/engine/objects/zCTouchDamage/#damage
 		float damage;
@@ -421,7 +413,6 @@ namespace zenkit {
 	struct VEarthquake : VirtualObject {
 		ZK_OBJECT(ObjectType::zCEarthquake);
 
-	public:
 		/// \brief The radius of the earthquake effect
 		/// \see https://zk.gothickit.dev/engine/objects/zCEarthquake/#radius
 		float radius;
@@ -452,13 +443,12 @@ namespace zenkit {
 	struct VNpc : VirtualObject {
 		ZK_OBJECT(ObjectType::oCNpc);
 
-	public:
-		static std::uint32_t const attribute_count = 8;
-		static std::uint32_t const hcs_count = 4;
-		static std::uint32_t const missions_count = 5;
-		static std::uint32_t const aivar_count = 100;
-		static std::uint32_t const packed_count = 9;
-		static std::uint32_t const protection_count = 8;
+		static constexpr std::uint32_t attribute_count = 8;
+		static constexpr std::uint32_t hcs_count = 4;
+		static constexpr std::uint32_t missions_count = 5;
+		static constexpr std::uint32_t aivar_count = 100;
+		static constexpr std::uint32_t packed_count = 9;
+		static constexpr std::uint32_t protection_count = 8;
 
 		struct Talent : Object {
 			static constexpr ObjectType TYPE = ObjectType::oCNpcTalent;
@@ -576,7 +566,7 @@ namespace zenkit {
 		/// \param version The version of the game to save for.
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 
-		uint16_t get_version_identifier(GameVersion game) const override;
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 	};
 
 	/// \brief Screen effect VObjects are used to create special effects.
@@ -588,7 +578,6 @@ namespace zenkit {
 	struct VScreenEffect : VirtualObject {
 		ZK_OBJECT(ObjectType::zCVobScreenFX)
 
-	public:
 		/// \brief Load this object from the given archive.
 		/// \param r The archive to read from;
 		/// \param version The version of the game the object was made for.

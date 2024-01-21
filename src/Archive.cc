@@ -160,32 +160,31 @@ namespace zenkit {
 	    {ObjectType::zCCSPoolItem, "zCCSPoolItem"},
 	};
 
-	ReadArchive::ReadArchive(ArchiveHeader head, Read* r) : header(std::move(head)), read(r) {}
+	ReadArchive::ReadArchive(ArchiveHeader head, Read* read) : header(std::move(head)), read(read) {}
 
-	ReadArchive::ReadArchive(ArchiveHeader head, Read* r, std::unique_ptr<Read> owned)
-	    : header(std::move(head)), read(r), _m_owned(std::move(owned)) {}
+	ReadArchive::ReadArchive(ArchiveHeader head, Read* read, std::unique_ptr<Read> owned)
+	    : header(std::move(head)), read(read), _m_owned(std::move(owned)) {}
 
 	void ArchiveHeader::load(Read* r) {
 		try {
 			if (r->read_line(true) != "ZenGin Archive") {
 				ZKLOGE("ReadArchive", "Invalid Header");
-				throw zenkit::ParserError {"ReadArchive", "magic missing"};
+				throw ParserError {"ReadArchive", "magic missing"};
 			}
 
 			std::string ver = r->read_line(true);
 			if (ver.find("ver ") != 0) {
-				throw zenkit::ParserError {"ReadArchive", "ver field missing"};
+				throw ParserError {"ReadArchive", "ver field missing"};
 			}
 
 			this->version = std::stoi(ver.substr(ver.find(' ') + 1));
 			if (this->version != 1) {
-				throw zenkit::ParserError {"ReadArchive", "Unsupported format version: " + ver};
+				throw ParserError {"ReadArchive", "Unsupported format version: " + ver};
 			}
 
 			this->archiver = r->read_line(true);
 
-			auto fmt = r->read_line(true);
-			if (fmt == "ASCII") {
+			if (auto fmt = r->read_line(true); fmt == "ASCII") {
 				this->format = ArchiveFormat::ASCII;
 			} else if (fmt == "BINARY") {
 				this->format = ArchiveFormat::BINARY;
@@ -195,7 +194,7 @@ namespace zenkit {
 
 			std::string save_game = r->read_line(true);
 			if (save_game.find("saveGame ") != 0) {
-				throw zenkit::ParserError {"ReadArchive", "saveGame field missing"};
+				throw ParserError {"ReadArchive", "saveGame field missing"};
 			}
 			this->save = std::stoi(save_game.substr(save_game.find(' ') + 1)) != 0;
 
@@ -211,10 +210,10 @@ namespace zenkit {
 			}
 
 			if (optional != "END") {
-				throw zenkit::ParserError {"ReadArchive", "first END missing"};
+				throw ParserError {"ReadArchive", "first END missing"};
 			}
 		} catch (std::invalid_argument const& e) {
-			throw zenkit::ParserError {"ReadArchive", e, "reading int"};
+			throw ParserError {"ReadArchive", e, "reading int"};
 		}
 	}
 
@@ -232,9 +231,9 @@ namespace zenkit {
 		} else if (header.format == ArchiveFormat::BINSAFE) {
 			reader = std::make_unique<ReadArchiveBinsafe>(std::move(header), read.get(), std::move(read));
 		} else {
-			throw zenkit::ParserError {"ReadArchive",
-			                           "format '" + std::to_string(static_cast<uint32_t>(header.format)) +
-			                               "' is not supported"};
+			throw ParserError {"ReadArchive",
+			                   "format '" + std::to_string(static_cast<uint32_t>(header.format)) +
+			                       "' is not supported"};
 		}
 
 		reader->read_header();
@@ -291,7 +290,7 @@ namespace zenkit {
 		}
 
 		auto it = OBJECTS.find(obj.class_name);
-		ObjectType type = ObjectType::unknown;
+		auto type = ObjectType::unknown;
 		if (it != OBJECTS.end()) {
 			type = it->second;
 		}
@@ -500,7 +499,7 @@ namespace zenkit {
 		if (syn != nullptr) {
 			// TODO(lmichaelis): The VOb type/id assignment is a hacky workaround! Create separate types!
 			if (is_vobject(type)) {
-				VirtualObjectType vtype = static_cast<VirtualObjectType>(type);
+				auto vtype = static_cast<VirtualObjectType>(type);
 				reinterpret_cast<VirtualObject*>(syn.get())->type = vtype;
 				reinterpret_cast<VirtualObject*>(syn.get())->id = obj.index;
 			}
@@ -551,13 +550,12 @@ namespace zenkit {
 		return ar;
 	}
 
-	void WriteArchive::write_object(std::shared_ptr<Object> obj, GameVersion version) {
+	void WriteArchive::write_object(std::shared_ptr<Object> const& obj, GameVersion version) {
 		this->write_object("%", obj, version);
 	}
 
-	void WriteArchive::write_object(std::string_view name, std::shared_ptr<Object> obj, GameVersion version) {
-		auto it = _m_cache.find(obj.get());
-		if (it != _m_cache.end()) {
+	void WriteArchive::write_object(std::string_view name, std::shared_ptr<Object> const& obj, GameVersion version) {
+		if (auto it = _m_cache.find(obj.get()); it != _m_cache.end()) {
 			this->write_ref(name, it->second);
 			return;
 		}

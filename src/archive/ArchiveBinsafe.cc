@@ -15,9 +15,9 @@ namespace zenkit {
 	void ReadArchiveBinsafe::read_header() {
 		_m_bs_version = read->read_uint();
 		_m_object_count = read->read_uint();
-		auto hash_table_offset = read->read_uint();
 
 		{
+			auto hash_table_offset = read->read_uint();
 			auto mark = read->tell();
 			read->seek(hash_table_offset, Whence::BEG);
 
@@ -101,7 +101,7 @@ namespace zenkit {
 
 	std::string const& ReadArchiveBinsafe::get_entry_key() {
 		if (static_cast<ArchiveEntryType>(read->read_ubyte()) != ArchiveEntryType::HASH) {
-			throw zenkit::ParserError {"ReadArchive.Binsafe", "invalid format"};
+			throw ParserError {"ReadArchive.Binsafe", "invalid format"};
 		}
 
 		auto hash = read->read_uint();
@@ -209,7 +209,9 @@ namespace zenkit {
 
 		if (length < size) {
 			throw ParserError {"ReadArchive.Binsafe", "not enough raw bytes to read!"};
-		} else if (length > size) {
+		}
+
+		if (length > size) {
 			ZKLOGW("ReadArchive.Binsafe", "Reading %d bytes although %d are actually available", size, length);
 		}
 
@@ -223,7 +225,9 @@ namespace zenkit {
 
 		if (length < size) {
 			throw ParserError {"ReadArchive.Binsafe", "not enough raw bytes to read!"};
-		} else if (length > size) {
+		}
+
+		if (length > size) {
 			ZKLOGW("ReadArchive.Binsafe", "Reading %zu bytes although %d are actually available", size, length);
 		}
 
@@ -233,9 +237,7 @@ namespace zenkit {
 	}
 
 	void ReadArchiveBinsafe::skip_entry() {
-		auto type = static_cast<ArchiveEntryType>(read->read_ubyte());
-
-		switch (type) {
+		switch (static_cast<ArchiveEntryType>(read->read_ubyte())) {
 		case ArchiveEntryType::STRING:
 		case ArchiveEntryType::RAW:
 		case ArchiveEntryType::RAW_FLOAT:
@@ -415,7 +417,7 @@ namespace zenkit {
 
 	void WriteArchiveBinsafe::write_header() {
 		auto cur = this->_m_write->tell();
-		this->_m_write->seek(_m_head, Whence::BEG);
+		this->_m_write->seek(static_cast<ssize_t>(_m_head), Whence::BEG);
 
 		char const* username = getenv("USER");
 		if (username == nullptr) username = getenv("USERNAME");
@@ -445,7 +447,7 @@ namespace zenkit {
 		this->_m_write->write_uint(cur);
 
 		if (cur != _m_head) {
-			this->_m_write->seek(cur, Whence::BEG);
+			this->_m_write->seek(static_cast<ssize_t>(cur), Whence::BEG);
 		} else {
 			cur = this->_m_write->tell();
 		}
@@ -469,7 +471,7 @@ namespace zenkit {
 		}
 
 		// Place the cursor before the hash table.
-		this->_m_write->seek(cur, Whence::BEG);
+		this->_m_write->seek(static_cast<ssize_t>(cur), Whence::BEG);
 	}
 
 	void WriteArchiveBinsafe::write_entry(std::string_view name, ArchiveEntryType type) {

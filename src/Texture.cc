@@ -8,7 +8,7 @@
 #include "squish.h"
 
 namespace zenkit {
-	constexpr std::string_view const ZTEX_SIGNATURE = "ZTEX";
+	constexpr std::string_view ZTEX_SIGNATURE = "ZTEX";
 
 	/// \brief Calculates the size in bytes of a texture at the given mipmap level.
 	/// \return The size in bytes of a texture at the given mipmap level.
@@ -58,17 +58,16 @@ namespace zenkit {
 	}
 
 	Texture Texture::parse(phoenix::buffer&& in) {
-		return Texture::parse(in);
+		return parse(in);
 	}
 
 	void Texture::load(Read* r) {
 		if (r->read_string(4) != ZTEX_SIGNATURE) {
-			throw zenkit::ParserError {"texture", "invalid signature"};
+			throw ParserError {"texture", "invalid signature"};
 		}
 
-		auto version = r->read_uint();
-		if (version != 0) {
-			throw zenkit::ParserError {"texture", "invalid version"};
+		if (r->read_uint() != 0) {
+			throw ParserError {"texture", "invalid version"};
 		}
 
 		this->_m_format = static_cast<TextureFormat>(r->read_uint());
@@ -209,7 +208,7 @@ namespace zenkit {
 
 			std::uint32_t idx = 0;
 			for (std::uint32_t i = 0; i < map.size(); i += 2) {
-				auto* rgb = (r5g6b5*) &map[i];
+				auto* rgb = reinterpret_cast<r5g6b5 const*>(&map[i]);
 				conv[idx++] = static_cast<uint8_t>(static_cast<float>(rgb->b) * 8.225806452f);
 				conv[idx++] = static_cast<uint8_t>(static_cast<float>(rgb->g) * 4.047619048f);
 				conv[idx++] = static_cast<uint8_t>(static_cast<float>(rgb->r) * 8.225806452f);
@@ -233,9 +232,8 @@ namespace zenkit {
 			return conv;
 		}
 		default:
-			throw zenkit::ParserError {"texture",
-			                           "cannot convert format to rgba: " +
-			                               std::to_string(static_cast<int32_t>(_m_format))};
+			throw ParserError {"texture",
+			                   "cannot convert format to rgba: " + std::to_string(static_cast<int32_t>(_m_format))};
 		}
 	}
 

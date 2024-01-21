@@ -90,8 +90,7 @@ namespace zenkit {
 			this->auto_rotate = r.read_bool(); // autoRotate
 		}
 
-		auto keyframe_count = r.read_word(); // numKeyframes
-		if (keyframe_count > 0) {
+		if (auto keyframe_count = r.read_word(); keyframe_count > 0) {
 			this->speed = r.read_float();                                  // moveSpeed
 			this->lerp_mode = static_cast<MoverLerpType>(r.read_enum());   // posLerpType
 			this->speed_mode = static_cast<MoverSpeedType>(r.read_enum()); // speedType

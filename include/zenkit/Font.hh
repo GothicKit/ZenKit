@@ -59,7 +59,6 @@ namespace zenkit {
 		ZKAPI void load(Read* r);
 		ZKAPI void save(Write* w) const;
 
-	public:
 		/// \brief The name of this font.
 		std::string name;
 

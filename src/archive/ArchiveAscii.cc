@@ -13,7 +13,6 @@
 #include <cstring>
 #include <ctime>
 #include <stdexcept>
-#include <unordered_map>
 #include <utility>
 
 namespace zenkit {
@@ -21,18 +20,18 @@ namespace zenkit {
 		{
 			std::string objects = read->read_line(true);
 			if (objects.find("objects ") != 0) {
-				throw zenkit::ParserError {"ReadArchive.Ascii", "objects field missing"};
+				throw ParserError {"ReadArchive.Ascii", "objects field missing"};
 			}
 
 			try {
 				_m_objects = std::stoi(objects.substr(objects.find(' ') + 1));
 			} catch (std::invalid_argument const& e) {
-				throw zenkit::ParserError {"ReadArchive.Ascii", e, "reading int"};
+				throw ParserError {"ReadArchive.Ascii", e, "reading int"};
 			}
 		}
 
 		if (read->read_line(true) != "END") {
-			throw zenkit::ParserError {"ReadArchive.Ascii", "second END missing"};
+			throw ParserError {"ReadArchive.Ascii", "second END missing"};
 		}
 	}
 
@@ -91,9 +90,8 @@ namespace zenkit {
 		auto colon = line.find(':');
 
 		if (line.substr(0, colon) != type) {
-			throw zenkit::ParserError {"ReadArchive.Ascii",
-			                           "type mismatch: expected " + std::string {type} +
-			                               ", got: " + line.substr(0, colon)};
+			throw ParserError {"ReadArchive.Ascii",
+			                   "type mismatch: expected " + std::string {type} + ", got: " + line.substr(0, colon)};
 		}
 
 		return line.substr(colon + 1);
@@ -107,7 +105,7 @@ namespace zenkit {
 		try {
 			return std::stoi(read_entry("int"));
 		} catch (std::invalid_argument const& e) {
-			throw zenkit::ParserError {"ReadArchive.Ascii", e, "reading int"};
+			throw ParserError {"ReadArchive.Ascii", e, "reading int"};
 		}
 	}
 
@@ -115,7 +113,7 @@ namespace zenkit {
 		try {
 			return std::stof(read_entry("float"));
 		} catch (std::invalid_argument const& e) {
-			throw zenkit::ParserError {"ReadArchive.Ascii", e, "reading int"};
+			throw ParserError {"ReadArchive.Ascii", e, "reading int"};
 		}
 	}
 
@@ -123,7 +121,7 @@ namespace zenkit {
 		try {
 			return std::stoul(read_entry("int")) & 0xFF;
 		} catch (std::invalid_argument const& e) {
-			throw zenkit::ParserError {"ReadArchive.Ascii", e, "reading int"};
+			throw ParserError {"ReadArchive.Ascii", e, "reading int"};
 		}
 	}
 
@@ -131,7 +129,7 @@ namespace zenkit {
 		try {
 			return std::stoul(read_entry("int")) & 0xFF'FF;
 		} catch (std::invalid_argument const& e) {
-			throw zenkit::ParserError {"ReadArchive.Ascii", e, "reading int"};
+			throw ParserError {"ReadArchive.Ascii", e, "reading int"};
 		}
 	}
 
@@ -139,7 +137,7 @@ namespace zenkit {
 		try {
 			return std::stoul(read_entry("enum")) & 0xFFFF'FFFF;
 		} catch (std::invalid_argument const& e) {
-			throw zenkit::ParserError {"ReadArchive.Ascii", e, "reading int"};
+			throw ParserError {"ReadArchive.Ascii", e, "reading int"};
 		}
 	}
 
@@ -147,7 +145,7 @@ namespace zenkit {
 		try {
 			return std::stoul(read_entry("bool")) != 0;
 		} catch (std::invalid_argument const& e) {
-			throw zenkit::ParserError {"ReadArchive.Ascii", e, "reading int"};
+			throw ParserError {"ReadArchive.Ascii", e, "reading int"};
 		}
 	}
 
@@ -156,7 +154,10 @@ namespace zenkit {
 
 		std::uint16_t r, g, b, a;
 		in >> r >> g >> b >> a;
-		return glm::u8vec4 {(std::uint8_t) r, (std::uint8_t) g, (std::uint8_t) b, (std::uint8_t) a};
+		return glm::u8vec4 {static_cast<std::uint8_t>(r),
+		                    static_cast<std::uint8_t>(g),
+		                    static_cast<std::uint8_t>(b),
+		                    static_cast<std::uint8_t>(a)};
 	}
 
 	glm::vec3 ReadArchiveAscii::read_vec3() {
@@ -191,16 +192,14 @@ namespace zenkit {
 		auto in = read_entry("raw");
 
 		if (in.length() < 2 /* 2 chars a byte */ * sizeof(float) * 9) {
-			throw zenkit::ParserError {"ReadArchive.Ascii",
-			                           "raw entry does not contain enough bytes to be a 3x3 matrix"};
+			throw ParserError {"ReadArchive.Ascii", "raw entry does not contain enough bytes to be a 3x3 matrix"};
 		}
 
 		auto beg_it = in.data();
 
 		glm::mat3x3 v {};
-		std::uint8_t tmp[4];
-
 		for (int32_t i = 0; i < 9; ++i) {
+			std::uint8_t tmp[4];
 			std::from_chars(beg_it + 0, beg_it + 2, tmp[0], 16);
 			std::from_chars(beg_it + 2, beg_it + 4, tmp[1], 16);
 			std::from_chars(beg_it + 4, beg_it + 6, tmp[2], 16);
@@ -218,8 +217,10 @@ namespace zenkit {
 		auto length = in.length() / 2;
 
 		if (length < size) {
-			throw zenkit::ParserError {"ReadArchive.Ascii", "not enough raw bytes to read!"};
-		} else if (length > size) {
+			throw ParserError {"ReadArchive.Ascii", "not enough raw bytes to read!"};
+		}
+
+		if (length > size) {
 			ZKLOGW("ReadArchive.Ascii", "Reading %d bytes although %zu are actually available", size, length);
 		}
 
@@ -241,8 +242,10 @@ namespace zenkit {
 		auto length = in.length() / 2;
 
 		if (length < size) {
-			throw zenkit::ParserError {"ReadArchive.Ascii", "not enough raw bytes to read!"};
-		} else if (length > size) {
+			throw ParserError {"ReadArchive.Ascii", "not enough raw bytes to read!"};
+		}
+
+		if (length > size) {
 			ZKLOGW("ReadArchive.Ascii", "Reading %zu bytes although %zu are actually available", size, length);
 		}
 

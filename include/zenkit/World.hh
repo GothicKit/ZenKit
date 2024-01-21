@@ -69,7 +69,6 @@ namespace zenkit {
 	class World : public Object {
 		ZK_OBJECT(ObjectType::oCWorld);
 
-	public:
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static World parse(phoenix::buffer& buf, GameVersion version);
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static World parse(phoenix::buffer& buf);
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static World parse(phoenix::buffer&& buf, GameVersion version);
@@ -80,9 +79,8 @@ namespace zenkit {
 
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
-		uint16_t get_version_identifier(GameVersion game) const override;
+		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
 
-	public:
 		/// \brief The list of VObs defined in this world.
 		std::vector<std::shared_ptr<VirtualObject>> world_vobs;
 

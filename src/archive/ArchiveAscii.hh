@@ -7,10 +7,10 @@
 namespace zenkit {
 	class ReadArchiveAscii final : public ReadArchive {
 	public:
-		inline ReadArchiveAscii(ArchiveHeader&& parent_header, Read* r, std::unique_ptr<Read> owned)
+		ReadArchiveAscii(ArchiveHeader&& parent_header, Read* r, std::unique_ptr<Read> owned)
 		    : ReadArchive(std::forward<ArchiveHeader>(parent_header), r, std::move(owned)) {}
 
-		inline ReadArchiveAscii(ArchiveHeader&& parent_header, Read* r)
+		ReadArchiveAscii(ArchiveHeader&& parent_header, Read* r)
 		    : ReadArchive(std::forward<ArchiveHeader>(parent_header), r) {}
 
 		bool read_object_begin(ArchiveObject& obj) override;
@@ -40,7 +40,7 @@ namespace zenkit {
 		int32_t _m_objects {0};
 	};
 
-	class WriteArchiveAscii : public WriteArchive {
+	class WriteArchiveAscii final : public WriteArchive {
 	public:
 		explicit WriteArchiveAscii(Write* w);
 
@@ -64,7 +64,7 @@ namespace zenkit {
 		void write_raw(std::string_view name, std::vector<std::byte> const& v) override;
 		void write_raw(std::string_view name, std::byte const* v, std::uint16_t length) override;
 		void write_raw_float(std::string_view name, float const* v, std::uint16_t length) override;
-		void write_header() final;
+		void write_header() override;
 
 		[[nodiscard]] Write* get_stream() const noexcept override {
 			return _m_write;
@@ -74,7 +74,6 @@ namespace zenkit {
 		void write_indent();
 		void write_entry(std::string_view name, std::string_view type, std::string_view value);
 
-	private:
 		Write* _m_write;
 		std::uint32_t _m_index {0};
 		std::uint32_t _m_indent {0};

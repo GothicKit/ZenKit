@@ -36,7 +36,7 @@ namespace zenkit {
 		return bbox;
 	}
 
-	void OrientedBoundingBox::load(zenkit::Read* r) {
+	void OrientedBoundingBox::load(Read* r) {
 		center = r->read_vec3();
 		axes[0] = r->read_vec3();
 		axes[1] = r->read_vec3();

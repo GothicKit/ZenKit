@@ -56,7 +56,6 @@ namespace zenkit {
 		ZKINT void load(Read* r, std::uint32_t version);
 		ZKINT void save(Write* w, GameVersion version) const;
 
-	public:
 		/// \brief The mode of the tree (either indoor or outdoor).
 		BspTreeType mode;
 

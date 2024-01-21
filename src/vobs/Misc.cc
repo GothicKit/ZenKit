@@ -599,7 +599,7 @@ namespace zenkit {
 		if (w.is_save_game()) {
 			// FIXME: Not implemented because original not understood.
 			std::size_t count = version == GameVersion::GOTHIC_1 ? 5 : 12;
-			std::vector<std::byte> bytes {count * 4, std::byte {}};
+			std::vector bytes {count * 4, std::byte {}};
 			w.write_raw("blend", bytes);
 			w.write_raw("cinema", bytes);   //
 			w.write_raw("fovMorph", bytes); //

@@ -39,19 +39,18 @@ namespace zenkit {
 		///       using buffer::duplicate.
 		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] ZKREM(":: load()") ZKAPI static SoftSkinMesh parse(phoenix::buffer& in);
+		[[nodiscard]] ZKREM(":: load()") ZKAPI static SoftSkinMesh parse(phoenix::buffer& buf);
 
 		/// \brief Parses a soft-skin mesh from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed soft-skin mesh.
 		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] ZKREM(":: load()") ZKAPI static SoftSkinMesh parse(phoenix::buffer&& in);
+		[[nodiscard]] ZKREM(":: load()") ZKAPI static SoftSkinMesh parse(phoenix::buffer&& buf);
 
 		ZKAPI void load(Read* r);
 		ZKAPI void save(Write* w, GameVersion version) const;
 
-	public:
 		/// \brief The embedded proto-mesh.
 		MultiResolutionMesh mesh;
 

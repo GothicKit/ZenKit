@@ -73,11 +73,9 @@ namespace zenkit {
 	class WayNet : public Object {
 		ZK_OBJECT(ObjectType::zCWayNet);
 
-	public:
 		ZKINT void load(ReadArchive& r, GameVersion version) override;
 		ZKINT void save(WriteArchive& w, GameVersion version) const override;
 
-	public:
 		/// \brief All waypoints of this way-net.
 		std::vector<std::shared_ptr<WayPoint>> points;
 

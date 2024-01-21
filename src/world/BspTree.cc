@@ -48,20 +48,30 @@ namespace zenkit {
 			}
 
 			if ((flags & 0x01) != 0) {
-				node.front_index = std::int32_t(nodes.size());
-				_parse_bsp_nodes(in, nodes, indices, version, std::int32_t(self_index), (flags & 0x04) != 0);
+				node.front_index = static_cast<std::int32_t>(nodes.size());
+				_parse_bsp_nodes(in,
+				                 nodes,
+				                 indices,
+				                 version,
+				                 static_cast<std::int32_t>(self_index),
+				                 (flags & 0x04) != 0);
 			}
 
 			if ((flags & 0x02) != 0) {
-				node.back_index = std::int32_t(nodes.size());
-				_parse_bsp_nodes(in, nodes, indices, version, std::int32_t(self_index), (flags & 0x08) != 0);
+				node.back_index = static_cast<std::int32_t>(nodes.size());
+				_parse_bsp_nodes(in,
+				                 nodes,
+				                 indices,
+				                 version,
+				                 static_cast<std::int32_t>(self_index),
+				                 (flags & 0x08) != 0);
 			}
 		}
 	}
 
 	void BspTree::load(Read* r, std::uint32_t version) {
 		proto::read_chunked<BspChunkType>(r, "BspTree", [this, version](Read* c, BspChunkType type) {
-			ZKLOGI("BspTree", "Parsing chunk %x", std::uint16_t(type));
+			ZKLOGI("BspTree", "Parsing chunk %x", static_cast<std::uint16_t>(type));
 
 			switch (type) {
 			case BspChunkType::HEADER:
@@ -224,8 +234,8 @@ namespace zenkit {
 			}
 		});
 
-		proto::write_chunk(w, BspChunkType::END, [](Write* w) {
-			w->write_ubyte(0); // padding
+		proto::write_chunk(w, BspChunkType::END, [](Write* wr) {
+			wr->write_ubyte(0); // padding
 		});
 	}
 } // namespace zenkit

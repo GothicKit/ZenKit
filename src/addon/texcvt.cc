@@ -70,7 +70,7 @@ namespace zenkit {
 		uint32_t dwReserved2;
 	} DDSURFACEDESC2;
 
-	static void write_dds_header(Write* w, zenkit::Texture const& tex) {
+	static void write_dds_header(Write* w, Texture const& tex) {
 		DDSURFACEDESC2 header {};
 		header.dwSize = sizeof(DDSURFACEDESC2);
 		header.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT | DDSD_CAPS;
@@ -217,7 +217,7 @@ namespace zenkit {
 		w->write_uint(header.dwReserved2);
 	}
 
-	static void write_dds_palette(Write* w, zenkit::Texture const& tex) {
+	static void write_dds_palette(Write* w, Texture const& tex) {
 		for (auto i = 0; i < ZTEX_PALETTE_ENTRIES; ++i) {
 			w->write_ubyte(tex.palette()[i].b);
 			w->write_ubyte(tex.palette()[i].g);
@@ -226,14 +226,14 @@ namespace zenkit {
 		}
 	}
 
-	static void write_dds_data(Write* w, zenkit::Texture const& tex) {
+	static void write_dds_data(Write* w, Texture const& tex) {
 		for (uint32_t level = 0; level < tex.mipmaps(); ++level) {
 			auto& data = tex.data(level);
 			w->write(data.data(), data.size());
 		}
 	}
 
-	std::vector<std::byte> to_dds(zenkit::Texture const& tex) {
+	std::vector<std::byte> to_dds(Texture const& tex) {
 		std::vector<std::byte> buf {};
 		auto w = Write::to(&buf);
 

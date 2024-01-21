@@ -9,10 +9,10 @@
 namespace zenkit {
 	class ReadArchiveBinary final : public ReadArchive {
 	public:
-		inline ReadArchiveBinary(ArchiveHeader&& parent_header, Read* r, std::unique_ptr<Read> owned)
+		ReadArchiveBinary(ArchiveHeader&& parent_header, Read* r, std::unique_ptr<Read> owned)
 		    : ReadArchive(std::forward<ArchiveHeader>(parent_header), r, std::move(owned)) {}
 
-		inline ReadArchiveBinary(ArchiveHeader&& parent_header, Read* r)
+		ReadArchiveBinary(ArchiveHeader&& parent_header, Read* r)
 		    : ReadArchive(std::forward<ArchiveHeader>(parent_header), r) {}
 
 		bool read_object_begin(ArchiveObject& obj) override;
@@ -43,7 +43,7 @@ namespace zenkit {
 		int32_t _m_objects {0};
 	};
 
-	class WriteArchiveBinary : public WriteArchive {
+	class WriteArchiveBinary final : public WriteArchive {
 	public:
 		explicit WriteArchiveBinary(Write* w);
 
@@ -67,7 +67,7 @@ namespace zenkit {
 		void write_raw(std::string_view name, std::vector<std::byte> const& v) override;
 		void write_raw(std::string_view name, std::byte const* v, std::uint16_t length) override;
 		void write_raw_float(std::string_view name, float const* v, std::uint16_t length) override;
-		void write_header() final;
+		void write_header() override;
 
 		[[nodiscard]] Write* get_stream() const noexcept override {
 			return _m_write;

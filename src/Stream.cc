@@ -13,14 +13,14 @@
 
 namespace zenkit {
 	template <typename T>
-	ZKINT inline T read_any(Read* r) noexcept {
+	ZKINT T read_any(Read* r) noexcept {
 		T v {};
 		r->read(&v, sizeof v);
 		return v;
 	}
 
 	template <typename T>
-	ZKINT inline void write_any(Write* r, T const& v) noexcept {
+	ZKINT void write_any(Write* r, T const& v) noexcept {
 		r->write(&v, sizeof v);
 	}
 
@@ -178,13 +178,13 @@ namespace zenkit {
 	}
 
 	namespace detail {
-		static int INTO_C_WHENCE[] = {
+		constexpr int INTO_C_WHENCE[] = {
 		    SEEK_SET,
 		    SEEK_CUR,
 		    SEEK_END,
 		};
 
-		static std::ios::seekdir INTO_CXX_WHENCE[] = {
+		constexpr std::ios::seekdir INTO_CXX_WHENCE[] = {
 		    std::ios::beg,
 		    std::ios::cur,
 		    std::ios::end,
@@ -208,31 +208,31 @@ namespace zenkit {
 			return static_cast<size_t>(new_position);
 		}
 
-		class ReadFile ZKINT : public Read {
+		class ReadFile final ZKINT : public Read {
 		public:
-			explicit ReadFile(::FILE* stream) : _m_stream(stream) {}
+			explicit ReadFile(FILE* stream) : _m_stream(stream) {}
 
 			size_t read(void* buf, size_t len) noexcept override {
-				return ::fread(buf, 1, len, _m_stream);
+				return fread(buf, 1, len, _m_stream);
 			}
 
 			void seek(ssize_t off, Whence whence) noexcept override {
-				::fseek(_m_stream, off, INTO_C_WHENCE[static_cast<int>(whence)]);
+				fseek(_m_stream, off, INTO_C_WHENCE[static_cast<int>(whence)]);
 			}
 
 			[[nodiscard]] size_t tell() const noexcept override {
-				return static_cast<size_t>(::ftell(_m_stream));
+				return static_cast<size_t>(ftell(_m_stream));
 			}
 
 			[[nodiscard]] bool eof() const noexcept override {
-				return ::feof(_m_stream);
+				return feof(_m_stream);
 			}
 
 		private:
-			::FILE* _m_stream;
+			FILE* _m_stream;
 		};
 
-		class ReadStream ZKINT : public Read {
+		class ReadStream final ZKINT : public Read {
 		public:
 			explicit ReadStream(std::istream* stream) : _m_stream(stream) {}
 
@@ -246,7 +246,7 @@ namespace zenkit {
 			}
 
 			[[nodiscard]] size_t tell() const noexcept override {
-				return static_cast<size_t>(_m_stream->tellg());
+				return _m_stream->tellg();
 			}
 
 			[[nodiscard]] bool eof() const noexcept override {
@@ -263,7 +263,7 @@ namespace zenkit {
 
 			size_t read(void* buf, size_t len) noexcept override {
 				len = _m_position + len > _m_length ? _m_length - _m_position : len;
-				::memcpy(buf, _m_bytes + _m_position, len);
+				memcpy(buf, _m_bytes + _m_position, len);
 				_m_position += len;
 				return len;
 			}
@@ -273,7 +273,7 @@ namespace zenkit {
 
 				if (new_position > _m_length) return;
 
-				_m_position = static_cast<size_t>(new_position);
+				_m_position = new_position;
 			}
 
 			[[nodiscard]] size_t tell() const noexcept override {
@@ -289,7 +289,7 @@ namespace zenkit {
 			size_t _m_length, _m_position {0};
 		};
 
-		class ZKREM("Deprecated") ReadBuffer ZKINT : public Read {
+		class ZKREM("Deprecated") ReadBuffer final ZKINT : public Read {
 		public:
 			explicit ReadBuffer(phoenix::buffer* buf) : _m_buffer(buf) {}
 
@@ -330,7 +330,7 @@ namespace zenkit {
 			phoenix::buffer* _m_buffer;
 		};
 
-		class ReadVector ZKINT : public ReadMemory {
+		class ReadVector final ZKINT : public ReadMemory {
 		public:
 			explicit ReadVector(std::vector<std::byte> vec)
 			    : ReadMemory(vec.data(), vec.size()), _m_vector(std::move(vec)) {}
@@ -340,7 +340,7 @@ namespace zenkit {
 		};
 
 #ifdef _ZK_WITH_MMAP
-		class ReadMmap ZKINT : public ReadMemory {
+		class ReadMmap final ZKINT : public ReadMemory {
 		public:
 			explicit ReadMmap(std::filesystem::path const& path) : ReadMmap(Mmap {path}) {}
 
@@ -351,27 +351,27 @@ namespace zenkit {
 		};
 #endif
 
-		class WriteFile ZKINT : public Write {
+		class WriteFile final ZKINT : public Write {
 		public:
-			explicit WriteFile(::FILE* stream) : _m_stream(stream) {}
+			explicit WriteFile(FILE* stream) : _m_stream(stream) {}
 
 			size_t write(void const* buf, size_t len) noexcept override {
-				return ::fwrite(buf, 1, len, _m_stream);
+				return fwrite(buf, 1, len, _m_stream);
 			}
 
 			void seek(ssize_t off, Whence whence) noexcept override {
-				::fseek(_m_stream, off, INTO_C_WHENCE[static_cast<int>(whence)]);
+				fseek(_m_stream, off, INTO_C_WHENCE[static_cast<int>(whence)]);
 			}
 
 			[[nodiscard]] size_t tell() const noexcept override {
-				return static_cast<size_t>(::ftell(_m_stream));
+				return static_cast<size_t>(ftell(_m_stream));
 			}
 
 		private:
-			::FILE* _m_stream;
+			FILE* _m_stream;
 		};
 
-		class WriteStream ZKINT : public Write {
+		class WriteStream final ZKINT : public Write {
 		public:
 			explicit WriteStream(std::ostream* stream) : _m_stream(stream), _m_own(false) {}
 			explicit WriteStream(std::filesystem::path const& path)
@@ -396,7 +396,7 @@ namespace zenkit {
 			}
 
 			[[nodiscard]] size_t tell() const noexcept override {
-				return static_cast<size_t>(_m_stream->tellp());
+				return _m_stream->tellp();
 			}
 
 		private:
@@ -404,13 +404,13 @@ namespace zenkit {
 			bool _m_own;
 		};
 
-		class WriteStatic ZKINT : public Write {
+		class WriteStatic final ZKINT : public Write {
 		public:
 			explicit WriteStatic(std::byte* buf, size_t len) : _m_bytes(buf), _m_length(len) {}
 
 			size_t write(void const* buf, size_t len) noexcept override {
 				len = _m_position + len > _m_length ? _m_length - _m_position : len;
-				::memcpy(_m_bytes + _m_position, buf, len);
+				memcpy(_m_bytes + _m_position, buf, len);
 				_m_position += len;
 				return len;
 			}
@@ -419,7 +419,7 @@ namespace zenkit {
 				auto new_position = seek_internal(_m_position, _m_length, off, whence);
 
 				if (new_position > _m_length) return;
-				_m_position = static_cast<size_t>(new_position);
+				_m_position = new_position;
 			}
 
 			[[nodiscard]] size_t tell() const noexcept override {
@@ -431,7 +431,7 @@ namespace zenkit {
 			size_t _m_length, _m_position {0};
 		};
 
-		class WriteDynamic ZKINT : public Write {
+		class WriteDynamic final ZKINT : public Write {
 		public:
 			explicit WriteDynamic(std::vector<std::byte>* vec) : _m_vector(vec) {}
 
@@ -466,7 +466,7 @@ namespace zenkit {
 		};
 	} // namespace detail
 
-	std::unique_ptr<Read> Read::from(::FILE* stream) {
+	std::unique_ptr<Read> Read::from(FILE* stream) {
 		return std::make_unique<detail::ReadFile>(stream);
 	}
 
@@ -508,7 +508,7 @@ namespace zenkit {
 		return std::make_unique<detail::WriteStream>(path);
 	}
 
-	std::unique_ptr<Write> Write::to(::FILE* stream) {
+	std::unique_ptr<Write> Write::to(FILE* stream) {
 		return std::make_unique<detail::WriteFile>(stream);
 	}
 

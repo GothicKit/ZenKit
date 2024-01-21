@@ -128,7 +128,6 @@ namespace zenkit {
 	class Material : public Object {
 		ZK_OBJECT(ObjectType::zCMaterial);
 
-	public:
 		/// \brief Parses a material from the given *ZenGin* archive.
 		///
 		/// <p>This implementation is heavily based on the implementation found in

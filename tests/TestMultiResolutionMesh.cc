@@ -8,7 +8,7 @@ static bool compare_triangle(zenkit::MeshTriangle a, zenkit::MeshTriangle b) {
 	return a.wedges[0] == b.wedges[0] && a.wedges[1] == b.wedges[1] && a.wedges[2] == b.wedges[2];
 }
 
-static bool compare_wedge(zenkit::MeshWedge a, zenkit::MeshWedge b) {
+static bool compare_wedge(zenkit::MeshWedge const& a, zenkit::MeshWedge const& b) {
 	return a.normal == b.normal && a.texture == b.texture && a.index == b.index;
 }
 

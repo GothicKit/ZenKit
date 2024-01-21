@@ -8,7 +8,7 @@
 #include <vector>
 
 namespace zenkit {
-	static constexpr std::uint8_t const type_sizes[] = {
+	static constexpr std::uint8_t type_sizes[] = {
 	    0,                        // ?            = 0x00
 	    0,                        // bs_string    = 0x01,
 	    sizeof(std::int32_t),     // bs_int       = 0x02,
@@ -37,10 +37,10 @@ namespace zenkit {
 
 	class ReadArchiveBinsafe final : public ReadArchive {
 	public:
-		inline ReadArchiveBinsafe(ArchiveHeader&& parent_header, Read* r, std::unique_ptr<Read> owned)
+		ReadArchiveBinsafe(ArchiveHeader&& parent_header, Read* r, std::unique_ptr<Read> owned)
 		    : ReadArchive(std::forward<ArchiveHeader>(parent_header), r, std::move(owned)) {}
 
-		inline ReadArchiveBinsafe(ArchiveHeader&& parent_header, Read* r)
+		ReadArchiveBinsafe(ArchiveHeader&& parent_header, Read* r)
 		    : ReadArchive(std::forward<ArchiveHeader>(parent_header), r) {}
 
 		bool read_object_begin(ArchiveObject& obj) override;
@@ -88,7 +88,7 @@ namespace zenkit {
 		}
 	};
 
-	class WriteArchiveBinsafe : public WriteArchive {
+	class WriteArchiveBinsafe final : public WriteArchive {
 	public:
 		explicit WriteArchiveBinsafe(Write* w);
 
@@ -112,7 +112,7 @@ namespace zenkit {
 		void write_raw(std::string_view name, std::vector<std::byte> const& v) override;
 		void write_raw(std::string_view name, std::byte const* v, std::uint16_t length) override;
 		void write_raw_float(std::string_view name, float const* v, std::uint16_t length) override;
-		void write_header() final;
+		void write_header() override;
 
 		[[nodiscard]] Write* get_stream() const noexcept override {
 			return _m_write;
@@ -121,7 +121,6 @@ namespace zenkit {
 	private:
 		void write_entry(std::string_view name, ArchiveEntryType type);
 
-	private:
 		Write* _m_write;
 		std::uint32_t _m_index {0};
 		std::map<std::string, std::uint16_t, std::less<>> _m_hash_keys;

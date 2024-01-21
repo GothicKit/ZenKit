@@ -22,7 +22,7 @@ namespace zenkit {
 	}
 
 	MorphMesh MorphMesh::parse(phoenix::buffer&& buf) {
-		return MorphMesh::parse(buf);
+		return parse(buf);
 	}
 
 	void MorphMesh::load(Read* r) {
@@ -49,8 +49,8 @@ namespace zenkit {
 				break;
 			}
 			case MorphMeshChunkType::MORPH:
-				for (std::uint32_t i = 0; i < this->morph_positions.size(); ++i) {
-					this->morph_positions[i] = c->read_vec3();
+				for (auto& morph_position : this->morph_positions) {
+					morph_position = c->read_vec3();
 				}
 				break;
 			case MorphMeshChunkType::ANIMATIONS: {

@@ -6,8 +6,6 @@
 
 #include "phoenix/buffer.hh"
 
-#include "Internal.hh"
-
 #include <algorithm>
 #include <chrono>
 #include <cstring>
@@ -19,7 +17,7 @@ namespace zenkit {
 	static constexpr std::string_view VFS_DISK_SIGNATURE_G1 = "PSVDSC_V2.00\r\n\r\n";
 	static constexpr std::string_view VFS_DISK_SIGNATURE_G2 = "PSVDSC_V2.00\n\r\n\r";
 
-	class ZKINT RawBufferBacking : public phoenix::buffer_backing {
+	class ZKINT RawBufferBacking final : public phoenix::buffer_backing {
 	public:
 		RawBufferBacking(std::byte const* bytes, uint64_t length) : _m_buffer(bytes), _m_size(length) {}
 
@@ -88,7 +86,7 @@ namespace zenkit {
 	}
 
 	std::string_view trim_trailing_whitespace(std::string_view s) {
-		while (s.length() > 0 && std::isspace(s.back())) {
+		while (!s.empty() && std::isspace(s.back())) {
 			s = s.substr(0, s.size() - 1);
 		}
 
@@ -115,7 +113,7 @@ namespace zenkit {
 
 	VfsNode* VfsNode::create(VfsNode node) {
 		auto& children = std::get<ChildContainer>(_m_data);
-		auto it = children.insert(node);
+		auto it = children.insert(std::move(node));
 		return const_cast<VfsNode*>(&*it.first);
 	}
 
@@ -217,8 +215,7 @@ namespace zenkit {
 			auto* node = tree.top();
 			tree.pop();
 
-			auto* child = node->child(name);
-			if (child != nullptr) return child;
+			if (auto* child = node->child(name); child != nullptr) return child;
 
 			auto& children = node->children();
 			for (auto const& x : children) {
@@ -290,7 +287,7 @@ namespace zenkit {
 			}
 
 			for (auto [off, dir] : dirs) {
-				auto here = write_catalog->tell();
+				auto here = static_cast<ssize_t>(write_catalog->tell());
 				write_catalog->seek(off, Whence::BEG);
 				write_catalog->write_uint(index);
 				write_catalog->seek(here, Whence::BEG);
@@ -315,7 +312,7 @@ namespace zenkit {
 		w->write_uint(off + catalog.size());
 		w->write_uint(off);
 		w->write_uint(80);
-		w->seek(off, Whence::BEG);
+		w->seek(static_cast<ssize_t>(off), Whence::BEG);
 		w->write(catalog.data(), catalog.size());
 	}
 
@@ -335,21 +332,21 @@ namespace zenkit {
 	}
 
 	static std::time_t vfs_dos_to_unix_time(std::uint32_t dos) noexcept {
-		struct tm t {};
+		tm t {};
 
-		t.tm_year = ((int32_t) ((dos >> 25) & 0x7F)) + 80;
-		t.tm_mon = ((int32_t) ((dos >> 21) & 0xF)) - 1;
-		t.tm_mday = (int32_t) ((dos >> 16) & 0x1F);
-		t.tm_hour = (int32_t) ((dos >> 11) & 0x1F);
-		t.tm_min = (int32_t) ((dos >> 5) & 0x3F);
-		t.tm_sec = ((int32_t) ((dos >> 0) & 0x1F)) * 2;
+		t.tm_year = static_cast<int32_t>((dos >> 25) & 0x7F) + 80;
+		t.tm_mon = static_cast<int32_t>((dos >> 21) & 0xF) - 1;
+		t.tm_mday = static_cast<int32_t>((dos >> 16) & 0x1F);
+		t.tm_hour = static_cast<int32_t>((dos >> 11) & 0x1F);
+		t.tm_min = static_cast<int32_t>((dos >> 5) & 0x3F);
+		t.tm_sec = static_cast<int32_t>((dos >> 0) & 0x1F) * 2;
 
 		return mktime(&t);
 	}
 
 	void Vfs::mount_disk(phoenix::buffer buf, VfsOverwriteBehavior overwrite) {
 		auto mem = std::make_unique<std::byte[]>(buf.limit());
-		::memcpy(mem.get(), buf.array(), buf.limit());
+		memcpy(mem.get(), buf.array(), buf.limit());
 		this->mount_disk(mem.get(), buf.limit(), overwrite);
 		_m_data.push_back(std::move(mem));
 	}
@@ -433,9 +430,8 @@ namespace zenkit {
 			}
 
 			auto name = path.substr(0, next);
-			auto it = context->child(name);
 
-			if (it == nullptr) {
+			if (auto it = context->child(name); it == nullptr) {
 				auto now = std::chrono::system_clock::now();
 				context = context->create(VfsNode::directory(name, std::chrono::system_clock::to_time_t(now)));
 			} else if (it->type() == VfsNodeType::FILE) {
@@ -515,10 +511,9 @@ namespace zenkit {
 		auto timestamp = vfs_dos_to_unix_time(r->read_uint());
 		[[maybe_unused]] auto _size = r->read_uint();
 		auto catalog_offset = r->read_uint();
-		auto version = r->read_uint();
 
 		// Check that we're not loading a compressed Union disk.
-		if (version != 80) {
+		if (r->read_uint() != 80) {
 			throw VfsBrokenDiskError {"Detected unsupported Union disk"};
 		}
 

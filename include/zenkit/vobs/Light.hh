@@ -163,7 +163,6 @@ namespace zenkit {
 	struct VLight : VirtualObject, LightPreset {
 		ZK_OBJECT(ObjectType::zCVobLight);
 
-	public:
 		ZKREM("use ::load()") ZKAPI static void parse(VLight& obj, ReadArchive& ctx, GameVersion version);
 
 		/// \brief Load this object from the given archive.

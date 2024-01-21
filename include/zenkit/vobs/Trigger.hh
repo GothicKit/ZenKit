@@ -95,7 +95,6 @@ namespace zenkit {
 	struct VTrigger : VirtualObject {
 		ZK_OBJECT(ObjectType::zCTrigger);
 
-	public:
 		/// \brief The name of VObject to send `OnTrigger` and `OnUntrigger` events to after processing.
 		/// \see https://zk.gothickit.dev/engine/objects/zCTrigger/#triggerTarget
 		std::string target;
@@ -231,7 +230,6 @@ namespace zenkit {
 	struct VMover : VTrigger {
 		ZK_OBJECT(ObjectType::zCMover);
 
-	public:
 		/// \brief Controls how the mover behaves in response to events ("activation")
 		/// \see https://zk.gothickit.dev/engine/objects/zCMover/#moverBehavior
 		MoverBehavior behavior {MoverBehavior::TOGGLE};
@@ -342,7 +340,6 @@ namespace zenkit {
 	struct VTriggerList : VTrigger {
 		ZK_OBJECT(ObjectType::zCTriggerList);
 
-	public:
 		struct Target {
 			/// \brief The name of the VObject to send events to. Behaves like VTrigger#target`.
 			/// \see https://zk.gothickit.dev/engine/objects/zCTriggerList/#triggerTarget
@@ -390,7 +387,6 @@ namespace zenkit {
 	struct VTriggerScript : VTrigger {
 		ZK_OBJECT(ObjectType::oCTriggerScript);
 
-	public:
 		/// \brief The name script function to call when the trigger successfully processes a message.
 		/// \see https://zk.gothickit.dev/engine/objects/oCTriggerScript/#scriptFunc
 		std::string function {};
@@ -416,7 +412,6 @@ namespace zenkit {
 	struct VTriggerChangeLevel : VTrigger {
 		ZK_OBJECT(ObjectType::oCTriggerChangeLevel);
 
-	public:
 		/// \brief The name of the level to load including the file extension.
 		/// \see https://zk.gothickit.dev/engine/objects/oCTriggerChangeLevel/#levelName
 		std::string level_name {};
@@ -446,7 +441,6 @@ namespace zenkit {
 	struct VTriggerWorldStart : VirtualObject {
 		ZK_OBJECT(ObjectType::zCTriggerWorldStart);
 
-	public:
 		/// \brief The name of VObject to send an `OnTrigger` event to when the world is loaded and started.
 		/// \see https://zk.gothickit.dev/engine/objects/zCTriggerChangeLevel/#triggerTarget
 		std::string target;
@@ -479,7 +473,6 @@ namespace zenkit {
 	struct VTriggerUntouch : VirtualObject {
 		ZK_OBJECT(ObjectType::zCTriggerUntouch);
 
-	public:
 		/// \brief The name of VObject to send the `OnTrigger` events to.
 		/// \see https://zk.gothickit.dev/engine/objects/zCTriggerUntouch/#triggerTarget
 		std::string target;

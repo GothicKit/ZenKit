@@ -45,7 +45,6 @@ namespace zenkit {
 	struct VSound : VirtualObject {
 		ZK_OBJECT(ObjectType::zCVobSound);
 
-	public:
 		/// \brief The volume of the sound effect in percent (0-100).
 		/// \see https://zk.gothickit.dev/engine/objects/zCVobSound/#sndVolume
 		float volume {0};
@@ -127,7 +126,6 @@ namespace zenkit {
 	struct VSoundDaytime : VSound {
 		ZK_OBJECT(ObjectType::zCVobSoundDaytime);
 
-	public:
 		/// \brief The time of day after which the sound can be heard (`13.5` corresponds to `13:30`).
 		///
 		/// Must be less than #start_time.

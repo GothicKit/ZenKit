@@ -47,7 +47,7 @@ namespace zenkit {
 		///       using buffer::duplicate.
 		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelHierarchy parse(phoenix::buffer& in);
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelHierarchy parse(phoenix::buffer& buf);
 
 		/// \brief Parses a model hierarchy from the data in the given buffer.
 		///
@@ -58,12 +58,11 @@ namespace zenkit {
 		/// \return The parsed model hierarchy object.
 		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelHierarchy parse(phoenix::buffer&& in);
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelHierarchy parse(phoenix::buffer&& buf);
 
 		ZKAPI void load(Read* r);
 		ZKAPI void save(Write* w) const;
 
-	public:
 		/// \brief The list of nodes this hierarchy consists of.
 		std::vector<ModelHierarchyNode> nodes {};
 

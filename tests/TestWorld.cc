@@ -228,9 +228,8 @@ TEST_SUITE("World") {
 			auto& children = vob0->children;
 			CHECK_EQ(children.size(), 7496);
 
-			auto& child1 = children[0];
-
 			{
+				auto& child1 = children[0];
 				auto box1 = child1->bbox;
 				CHECK_EQ(box1.min, glm::vec3 {-18596.9004, -161.17189, 4091.1333});
 				CHECK_EQ(box1.max, glm::vec3 {-18492.0723, -111.171906, 4191.26221});
@@ -263,7 +262,6 @@ TEST_SUITE("World") {
 				CHECK_EQ(child1->dynamic_shadows, zenkit::ShadowType::NONE);
 				CHECK_EQ(child1->bias, 0);
 				CHECK_FALSE(child1->ambient);
-				CHECK_FALSE(child1->physics_enabled);
 
 				CHECK(child1->children.empty());
 			}

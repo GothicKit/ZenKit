@@ -61,14 +61,14 @@ namespace zenkit {
 		///       using buffer::duplicate.
 		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static CutsceneLibrary parse(phoenix::buffer& path);
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static CutsceneLibrary parse(phoenix::buffer& buf);
 
 		/// \brief Parses a message database from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed message database object.
 		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static CutsceneLibrary parse(phoenix::buffer&& path);
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static CutsceneLibrary parse(phoenix::buffer&& buf);
 
 		/// \brief Retrieves a message block by it's name.
 		/// \param name The name of the block to get
@@ -78,7 +78,6 @@ namespace zenkit {
 		ZKAPI void load(Read* r);
 		ZKAPI void save(Write* r, ArchiveFormat fmt) const;
 
-	public:
 		/// \brief A list of all message blocks in the database.
 		std::vector<CutsceneBlock> blocks {};
 	};

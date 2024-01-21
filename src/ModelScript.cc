@@ -81,8 +81,7 @@ namespace zenkit {
 			MdsEventTag evt {};
 			evt.frame = frame;
 
-			auto tp = event_types.find(type);
-			if (tp == event_types.end()) {
+			if (auto tp = event_types.find(type); tp == event_types.end()) {
 				evt.type = MdsEventType::UNKNOWN;
 				ZKLOGW("ModelScript", "Unexpected value for MdsEventType: \"%s\"", type.c_str());
 			} else {
@@ -100,9 +99,7 @@ namespace zenkit {
 				evt.slot = a.value_or("");
 				break;
 			case MdsEventType::SET_FIGHT_MODE: {
-				auto mode = a.value_or("");
-
-				if (mode == "FIST") {
+				if (auto mode = a.value_or(""); mode == "FIST") {
 					evt.fight_mode = MdsFightMode::FIST;
 				} else if (mode == "1H" || mode == "1h") {
 					evt.fight_mode = MdsFightMode::SINGLE_HANDED;
@@ -150,7 +147,7 @@ namespace zenkit {
 		}
 
 		AnimationFlags animation_flags_from_string(std::string_view str) {
-			AnimationFlags flags = AnimationFlags::NONE;
+			auto flags = AnimationFlags::NONE;
 
 			for (char c : str) {
 				switch (c) {
@@ -303,8 +300,7 @@ namespace zenkit {
 				    event.frame = c->read_int();
 
 				    auto event_type = c->read_line(false);
-				    auto tp = event_types.find(event_type);
-				    if (tp == event_types.end()) {
+				    if (auto tp = event_types.find(event_type); tp == event_types.end()) {
 					    event.type = MdsEventType::UNKNOWN;
 					    ZKLOGW("ModelScript", "Unexpected value for MdsEventType: \"%s\"", event_type.c_str());
 				    } else {
@@ -322,9 +318,7 @@ namespace zenkit {
 					    event.slot = c->read_line(true);
 					    break;
 				    case MdsEventType::SET_FIGHT_MODE: {
-					    auto mode = c->read_line(true);
-
-					    if (mode == "FIST") {
+					    if (auto mode = c->read_line(true); mode == "FIST") {
 						    event.fight_mode = MdsFightMode::FIST;
 					    } else if (mode == "1H" || mode == "1h") {
 						    event.fight_mode = MdsFightMode::SINGLE_HANDED;
@@ -448,7 +442,7 @@ namespace zenkit {
 	}
 
 	ModelScript ModelScript::parse(phoenix::buffer&& buf) {
-		return ModelScript::parse(buf);
+		return parse(buf);
 	}
 
 	void ModelScript::load(Read* r) {

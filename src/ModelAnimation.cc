@@ -9,13 +9,13 @@
 
 namespace zenkit {
 	/// \brief The highest number representable by a single rotation component.
-	static float const SAMPLE_ROTATION_RANGE = float(1 << 16) - 1.0f;
+	constexpr float SAMPLE_ROTATION_RANGE = static_cast<float>(1 << 16) - 1.0f;
 
 	/// \brief The scaling factor applied to each rotation component.
-	static float const SAMPLE_ROTATION_SCALE = (1.0f / SAMPLE_ROTATION_RANGE) * 2.1f;
+	constexpr float SAMPLE_ROTATION_SCALE = (1.0f / SAMPLE_ROTATION_RANGE) * 2.1f;
 
 	/// \brief The number half way to `SAMPLE_ROTATION_RANGE`.
-	static std::uint16_t const SAMPLE_ROTATION_MID = (1 << 15) - 1;
+	constexpr std::uint16_t SAMPLE_ROTATION_MID = (1 << 15) - 1;
 
 	enum class AnimationChunkType : std::uint16_t {
 		MARKER = 0xa000u,
@@ -33,9 +33,9 @@ namespace zenkit {
 	/// \see http://phoenix.gothickit.dev/engine/formats/animation/#sample-positions
 	static glm::vec3 read_sample_position(Read* r, float scale, float minimum) {
 		glm::vec3 v {};
-		v.x = (float) r->read_ushort() * scale + minimum;
-		v.y = (float) r->read_ushort() * scale + minimum;
-		v.z = (float) r->read_ushort() * scale + minimum;
+		v.x = static_cast<float>(r->read_ushort()) * scale + minimum;
+		v.y = static_cast<float>(r->read_ushort()) * scale + minimum;
+		v.z = static_cast<float>(r->read_ushort()) * scale + minimum;
 		return v;
 	}
 
@@ -45,21 +45,21 @@ namespace zenkit {
 	/// \see http://phoenix.gothickit.dev/engine/formats/animation/#sample-rotations
 	static glm::quat read_sample_quaternion(Read* r) {
 		glm::quat v {};
-		v.x = ((float) r->read_ushort() - SAMPLE_ROTATION_MID) * SAMPLE_ROTATION_SCALE;
-		v.y = ((float) r->read_ushort() - SAMPLE_ROTATION_MID) * SAMPLE_ROTATION_SCALE;
-		v.z = ((float) r->read_ushort() - SAMPLE_ROTATION_MID) * SAMPLE_ROTATION_SCALE;
+		v.x = (static_cast<float>(r->read_ushort()) - SAMPLE_ROTATION_MID) * SAMPLE_ROTATION_SCALE;
+		v.y = (static_cast<float>(r->read_ushort()) - SAMPLE_ROTATION_MID) * SAMPLE_ROTATION_SCALE;
+		v.z = (static_cast<float>(r->read_ushort()) - SAMPLE_ROTATION_MID) * SAMPLE_ROTATION_SCALE;
 
 		float len_q = v.x * v.x + v.y * v.y + v.z * v.z;
 
 		if (len_q > 1.0f) {
-			float l = 1.0f / ::sqrtf(len_q);
+			float l = 1.0f / sqrtf(len_q);
 			v.x *= l;
 			v.y *= l;
 			v.z *= l;
 			v.w = 0;
 		} else {
 			// We know the quaternion has to be a unit quaternion, so we can calculate the missing value.
-			v.w = ::sqrtf(1.0f - len_q);
+			v.w = sqrtf(1.0f - len_q);
 		}
 
 		return v;
@@ -79,7 +79,7 @@ namespace zenkit {
 	}
 
 	ModelAnimation ModelAnimation::parse(phoenix::buffer&& in) {
-		return ModelAnimation::parse(in);
+		return parse(in);
 	}
 
 	void ModelAnimation::load(Read* r) {

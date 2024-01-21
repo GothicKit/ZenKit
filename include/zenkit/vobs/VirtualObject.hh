@@ -130,7 +130,6 @@ namespace zenkit {
 	struct VisualDecal final : Visual {
 		ZK_OBJECT(ObjectType::zCDecal);
 
-	public:
 		/// \brief The size of the decal texture as a 2-dimensional vector.
 		///
 		/// The `x`-coordinate is the width, and the `y`-coordinate is the height.
@@ -201,7 +200,6 @@ namespace zenkit {
 	struct EventManager final : Object {
 		ZK_OBJECT(ObjectType::zCEventManager);
 
-	public:
 		bool cleared = false;
 		bool active = false;
 
@@ -216,7 +214,6 @@ namespace zenkit {
 	struct AiHuman final : Ai {
 		ZK_OBJECT(ObjectType::oCAIHuman);
 
-	public:
 		int water_level;
 		float floor_y;
 		float water_y;
@@ -240,7 +237,6 @@ namespace zenkit {
 	struct AiMove final : Ai {
 		ZK_OBJECT(ObjectType::oCAIVobMove);
 
-	public:
 		std::weak_ptr<VirtualObject> vob;
 		std::weak_ptr<VNpc> owner;
 
@@ -314,13 +310,12 @@ namespace zenkit {
 	struct VirtualObject : Object {
 		ZK_OBJECT(ObjectType::zCVob);
 
-	public:
 		VirtualObject() = default;
 
-		/// \brief Implicit copy-constructor. Disabled for performance reasons.
-		explicit VirtualObject(VirtualObject const&) = default;
+		/// \brief Implicit copy-constructor.
+		VirtualObject(VirtualObject const&) = default;
 
-		/// \brief Move-constructor. Disabled for memory safety with shared references.
+		/// \brief Move-constructor.
 		VirtualObject(VirtualObject&&) = default;
 
 		/// \brief Default virtual destructor.

@@ -47,7 +47,6 @@ namespace zenkit {
 		ZKAPI void load(Read* r);
 		ZKAPI void save(Write* w, GameVersion version) const;
 
-	public:
 		/// \brief A list of soft-skin meshes associated with this model mesh.
 		std::vector<SoftSkinMesh> meshes {};
 

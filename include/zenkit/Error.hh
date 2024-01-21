@@ -17,7 +17,6 @@ namespace zenkit {
 			return message.c_str();
 		}
 
-	public:
 		std::string const message;
 	};
 
@@ -29,7 +28,6 @@ namespace zenkit {
 		ZKINT explicit ParserError(std::string&& resource_type, std::exception const& cause);
 		ZKINT explicit ParserError(std::string&& resource_type, std::exception const& cause, std::string&& context);
 
-	public:
 		std::string const resource_type;
 		std::optional<std::string> const context {std::nullopt};
 		std::optional<std::exception> const cause {std::nullopt};

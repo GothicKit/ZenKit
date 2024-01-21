@@ -21,8 +21,8 @@ namespace zenkit {
 		return hierarchy;
 	}
 
-	zenkit::ModelHierarchy zenkit::ModelHierarchy::parse(phoenix::buffer&& in) {
-		return ModelHierarchy::parse(in);
+	ModelHierarchy ModelHierarchy::parse(phoenix::buffer&& in) {
+		return parse(in);
 	}
 
 	void ModelHierarchy::load(Read* r) {
@@ -32,8 +32,7 @@ namespace zenkit {
 		    [this](Read* c, ModelHierarchyChunkType type) {
 			    switch (type) {
 			    case ModelHierarchyChunkType::HIERARCHY: {
-				    auto version = c->read_uint();
-				    if (version != 0x03) {
+				    if (auto version = c->read_uint(); version != 0x03) {
 					    ZKLOGW("ModelHierarchy", "Trying to parse ModelHierarchy with unsupported version %d", version);
 				    }
 

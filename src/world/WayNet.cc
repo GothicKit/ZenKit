@@ -3,8 +3,6 @@
 #include "zenkit/world/WayNet.hh"
 #include "zenkit/Archive.hh"
 
-#include "../Internal.hh"
-
 namespace zenkit {
 #ifndef ZK_FUTURE
 	static void read_waypoint_data(WayPoint& wp, ReadArchive& in) {
@@ -148,7 +146,7 @@ namespace zenkit {
 		}
 
 		w.write_int("numWays", this->edges.size());
-		for (auto i = 0u; i < this->edges.size(); ++i) {
+		for (i = 0u; i < this->edges.size(); ++i) {
 			auto& [wayl, wayr] = this->edges[i];
 			w.write_object("wayl" + std::to_string(i), wayl, version);
 			w.write_object("wayr" + std::to_string(i), wayr, version);

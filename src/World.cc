@@ -23,7 +23,7 @@ namespace zenkit {
 		auto archive = ReadArchive::from(buf);
 
 		if (archive->is_save_game()) {
-			throw zenkit::ParserError {"World", "cannot automatically detect world version for save-games!s"};
+			throw ParserError {"World", "cannot automatically detect world version for save-games!s"};
 		}
 
 		ArchiveObject chnk {};
@@ -54,7 +54,7 @@ namespace zenkit {
 	}
 
 	World World::parse(phoenix::buffer&& buf, GameVersion version) {
-		return World::parse(buf, version);
+		return parse(buf, version);
 	}
 
 	World World::parse(phoenix::buffer& buf) {
@@ -67,7 +67,7 @@ namespace zenkit {
 	}
 
 	World World::parse(phoenix::buffer&& buf) {
-		return World::parse(buf);
+		return parse(buf);
 	}
 
 	void World::load(Read* r) {
@@ -116,7 +116,7 @@ namespace zenkit {
 				auto bsp_version = raw->read_uint();
 				(void) /* size = */ raw->read_uint();
 
-				std::uint16_t chunk_type = 0;
+				std::uint16_t chunk_type;
 				auto mesh_offset = raw->tell();
 
 				do {

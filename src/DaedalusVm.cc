@@ -24,7 +24,6 @@ namespace zenkit {
 	/// guard.inhibit();
 	/// \endcode
 	struct StackGuard {
-	public:
 		/// \brief Creates a new stack guard.
 		/// \param machine The VM this instance is guarding.
 		/// \param type The type of value to push if the guard is triggered.
@@ -38,8 +37,6 @@ namespace zenkit {
 			if (_m_inhibited) return;
 
 			switch (_m_type) {
-			case DaedalusDataType::VOID:
-				break;
 			case DaedalusDataType::FLOAT:
 				_m_machine->push_float(0);
 				break;
@@ -53,8 +50,8 @@ namespace zenkit {
 			case DaedalusDataType::INSTANCE:
 				_m_machine->push_instance(nullptr);
 				break;
+			case DaedalusDataType::VOID:
 			case DaedalusDataType::CLASS:
-				break;
 			case DaedalusDataType::PROTOTYPE:
 				break;
 			}
@@ -120,16 +117,16 @@ namespace zenkit {
 	}
 
 	void DaedalusVm::unsafe_set_gi(std::shared_ptr<DaedalusInstance> i) {
-		_m_instance = i;
+		_m_instance = std::move(i);
 	}
 
 	bool DaedalusVm::exec() {
 		auto instr = instruction_at(_m_pc);
 
-		std::int32_t a {}, b {};
-		DaedalusSymbol* sym {};
-
 		try {
+			std::int32_t a, b;
+			DaedalusSymbol* sym;
+
 			switch (instr.op) {
 			case DaedalusOpcode::ADD:
 				push_int(pop_int() + pop_int());
@@ -230,8 +227,7 @@ namespace zenkit {
 			case DaedalusOpcode::BL: {
 				// Check if the function is overridden and if it is, call the resulting external.
 				sym = find_symbol_by_address(instr.address);
-				auto cb = _m_function_overrides.find(instr.address);
-				if (cb != _m_function_overrides.end()) {
+				if (auto cb = _m_function_overrides.find(instr.address); cb != _m_function_overrides.end()) {
 					// Guard against exceptions during external invocation.
 					StackGuard guard {this, sym->rtype()};
 					// Call maybe naked.
@@ -263,9 +259,9 @@ namespace zenkit {
 						(*_m_default_external)(*this, *sym);
 						guard.inhibit();
 						break;
-					} else {
-						throw DaedalusVmException {"be: no external registered for " + sym->name()};
 					}
+
+					throw DaedalusVmException {"be: no external registered for " + sym->name()};
 				}
 
 				push_call(sym);
@@ -423,7 +419,7 @@ namespace zenkit {
 			}
 
 			_m_pc += instr.size;
-		} catch (zenkit::DaedalusScriptError& err) {
+		} catch (DaedalusScriptError& err) {
 			uint32_t prev_pc = _m_pc;
 
 			if (_m_exception_handler) {
@@ -432,14 +428,16 @@ namespace zenkit {
 				if (strategy == DaedalusVmExceptionStrategy::FAIL) {
 					ZKLOGE("DaedalusVm", "+++ Error while executing script: %s +++", err.what());
 					print_stack_trace();
-					throw err;
-				} else if (strategy == DaedalusVmExceptionStrategy::RETURN) {
+					throw;
+				}
+
+				if (strategy == DaedalusVmExceptionStrategy::RETURN) {
 					return false;
 				}
 			} else {
 				ZKLOGE("DaedalusVm", "+++ Error while executing script: %s +++", err.what());
 				print_stack_trace();
-				throw err;
+				throw;
 			}
 
 			if (_m_pc == prev_pc) {
@@ -462,7 +460,7 @@ namespace zenkit {
 	}
 
 	void DaedalusVm::push_int(std::int32_t value) {
-		if (_m_stack_ptr == DaedalusVm::stack_size) {
+		if (_m_stack_ptr == stack_size) {
 			throw DaedalusVmException {"stack overflow"};
 		}
 
@@ -470,7 +468,7 @@ namespace zenkit {
 	}
 
 	void DaedalusVm::push_reference(DaedalusSymbol* value, std::uint8_t index) {
-		if (_m_stack_ptr == DaedalusVm::stack_size) {
+		if (_m_stack_ptr == stack_size) {
 			throw DaedalusVmException {"stack overflow"};
 		}
 
@@ -483,7 +481,7 @@ namespace zenkit {
 	}
 
 	void DaedalusVm::push_float(float value) {
-		if (_m_stack_ptr == DaedalusVm::stack_size) {
+		if (_m_stack_ptr == stack_size) {
 			throw DaedalusVmException {"stack overflow"};
 		}
 
@@ -491,7 +489,7 @@ namespace zenkit {
 	}
 
 	void DaedalusVm::push_instance(std::shared_ptr<DaedalusInstance> value) {
-		if (_m_stack_ptr == DaedalusVm::stack_size) {
+		if (_m_stack_ptr == stack_size) {
 			throw DaedalusVmException {"stack overflow"};
 		}
 
@@ -507,11 +505,13 @@ namespace zenkit {
 
 		if (v.reference) {
 			return this->get_int(v.context, v.value, v.index);
-		} else if (std::holds_alternative<int32_t>(v.value)) {
-			return std::get<int32_t>(v.value);
-		} else {
-			throw DaedalusVmException {"tried to pop_int but frame does not contain a int."};
 		}
+
+		if (std::holds_alternative<int32_t>(v.value)) {
+			return std::get<int32_t>(v.value);
+		}
+
+		throw DaedalusVmException {"tried to pop_int but frame does not contain a int."};
 	}
 
 	float DaedalusVm::pop_float() {
@@ -523,18 +523,22 @@ namespace zenkit {
 
 		if (v.reference) {
 			return this->get_float(v.context, v.value, v.index);
-		} else if (std::holds_alternative<float>(v.value)) {
+		}
+
+		if (std::holds_alternative<float>(v.value)) {
 			return std::get<float>(v.value);
-		} else if (std::holds_alternative<std::int32_t>(v.value)) {
+		}
+
+		if (std::holds_alternative<std::int32_t>(v.value)) {
 			auto k = std::get<std::int32_t>(v.value);
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
-			return *(float*) &k;
+			return *reinterpret_cast<float*>(&k);
 #pragma GCC diagnostic pop
-		} else {
-			throw DaedalusVmException {"tried to pop_float but frame does not contain a float."};
 		}
+
+		throw DaedalusVmException {"tried to pop_float but frame does not contain a float."};
 	}
 
 	std::tuple<DaedalusSymbol*, std::uint8_t, std::shared_ptr<DaedalusInstance>> DaedalusVm::pop_reference() {
@@ -560,11 +564,13 @@ namespace zenkit {
 
 		if (v.reference) {
 			return std::get<DaedalusSymbol*>(v.value)->get_instance();
-		} else if (std::holds_alternative<std::shared_ptr<DaedalusInstance>>(v.value)) {
-			return std::get<std::shared_ptr<DaedalusInstance>>(v.value);
-		} else {
-			throw DaedalusVmException {"tried to pop_instance but frame does not contain am instance."};
 		}
+
+		if (std::holds_alternative<std::shared_ptr<DaedalusInstance>>(v.value)) {
+			return std::get<std::shared_ptr<DaedalusInstance>>(v.value);
+		}
+
+		throw DaedalusVmException {"tried to pop_instance but frame does not contain am instance."};
 	}
 
 	std::string const& DaedalusVm::pop_string() {
@@ -594,12 +600,11 @@ namespace zenkit {
 	}
 
 	void DaedalusVm::register_default_external(std::function<void(std::string_view)> const& callback) {
-		_m_default_external = [this, callback](DaedalusVm& v, DaedalusSymbol& sym) {
+		_m_default_external = [this, callback](DaedalusVm& v, DaedalusSymbol const& sym) {
 			// pop all parameters from the stack
 			auto params = find_parameters_for_function(&sym);
 			for (int i = static_cast<int>(params.size()) - 1; i >= 0; --i) {
 				auto par = params[static_cast<unsigned>(i)];
-
 				if (par->type() == DaedalusDataType::INT)
 					(void) v.pop_int();
 				else if (par->type() == DaedalusDataType::FLOAT)
@@ -643,7 +648,7 @@ namespace zenkit {
 		auto last_pc = _m_pc;
 		auto tmp_stack_ptr = _m_stack_ptr;
 
-		std::stack<DaedalusCallStackFrame> callstack {_m_call_stack};
+		std::stack callstack {_m_call_stack};
 
 		ZKLOGE("DaedalusVm", "------- CALL STACK (MOST RECENT CALL FIRST) -------");
 
@@ -681,8 +686,7 @@ namespace zenkit {
 					break;
 				}
 				case DaedalusDataType::INSTANCE: {
-					auto& inst = ref->get_instance();
-					if (inst != nullptr) {
+					if (auto& inst = ref->get_instance(); inst != nullptr) {
 						value = "<instance of '" + std::string(inst->_m_type->name()) + "'>";
 					} else {
 						value = "NULL";
@@ -705,8 +709,7 @@ namespace zenkit {
 				} else if (std::holds_alternative<int32_t>(v.value)) {
 					ZKLOGE("DaedalusVm", "%d: [IMMEDIATE INT] = %d", tmp_stack_ptr, std::get<int32_t>(v.value));
 				} else if (std::holds_alternative<std::shared_ptr<DaedalusInstance>>(v.value)) {
-					auto& inst = std::get<std::shared_ptr<DaedalusInstance>>(v.value);
-					if (inst == nullptr) {
+					if (auto& inst = std::get<std::shared_ptr<DaedalusInstance>>(v.value); inst == nullptr) {
 						ZKLOGE("DaedalusVm", "%d: [IMMEDIATE INSTANCE] = NULL", tmp_stack_ptr);
 					} else {
 						ZKLOGE("DaedalusVm",
@@ -731,8 +734,7 @@ namespace zenkit {
 		for (auto* sym : symbols) {
 			if (sym == nullptr) continue;
 
-			auto instance = sym->get_instance();
-			if (instance != nullptr) {
+			if (auto instance = sym->get_instance(); instance != nullptr) {
 				DaedalusSymbol const* instance_symbol = find_symbol_by_instance(instance);
 				ZKLOGE("DaedalusVm",
 				       "%s = %s (%u)",
@@ -757,10 +759,10 @@ namespace zenkit {
 
 	DaedalusIllegalExternalReturnType::DaedalusIllegalExternalReturnType(DaedalusSymbol const* s,
 	                                                                     std::string&& provided)
-	    : DaedalusIllegalExternalDefinition(s,
-	                                        "external " + s->name() + " has illegal return type '" + provided +
-	                                            "', expected '" + DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) s->rtype()] +
-	                                            "'") {}
+	    : DaedalusIllegalExternalDefinition(
+	          s,
+	          "external " + s->name() + " has illegal return type '" + provided + "', expected '" +
+	              DAEDALUS_DATA_TYPE_NAMES[static_cast<std::uint32_t>(s->rtype())] + "'") {}
 
 	DaedalusIllegalExternalParameter::DaedalusIllegalExternalParameter(DaedalusSymbol const* s,
 	                                                                   std::string&& provided,
@@ -768,7 +770,8 @@ namespace zenkit {
 	    : DaedalusIllegalExternalDefinition(s,
 	                                        "external " + s->name() + " has illegal parameter type '" + provided +
 	                                            "' (no. " + std::to_string(i) + "), expected '" +
-	                                            DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) s->type()] + "'") {}
+	                                            DAEDALUS_DATA_TYPE_NAMES[static_cast<std::uint32_t>(s->type())] + "'") {
+	}
 
 	DaedalusVmExceptionStrategy
 	lenient_vm_exception_handler(DaedalusVm& v, DaedalusScriptError const& exc, DaedalusInstruction const& instr) {
@@ -843,9 +846,9 @@ namespace zenkit {
 	}
 
 	std::int32_t
-	DaedalusVm::get_int(std::shared_ptr<DaedalusInstance>& context,
-	                    std::variant<int32_t, float, DaedalusSymbol*, std::shared_ptr<DaedalusInstance>>& value,
-	                    uint16_t index) {
+	DaedalusVm::get_int(std::shared_ptr<DaedalusInstance> const& context,
+	                    std::variant<int32_t, float, DaedalusSymbol*, std::shared_ptr<DaedalusInstance>> const& value,
+	                    uint16_t index) const {
 		auto* sym = std::get<DaedalusSymbol*>(value);
 
 		// compatibility: sometimes the context might be zero, but we can't fail so when
@@ -862,9 +865,10 @@ namespace zenkit {
 		return sym->get_int(index, context.get());
 	}
 
-	float DaedalusVm::get_float(std::shared_ptr<DaedalusInstance>& context,
-	                            std::variant<int32_t, float, DaedalusSymbol*, std::shared_ptr<DaedalusInstance>>& value,
-	                            uint16_t index) {
+	float
+	DaedalusVm::get_float(std::shared_ptr<DaedalusInstance> const& context,
+	                      std::variant<int32_t, float, DaedalusSymbol*, std::shared_ptr<DaedalusInstance>> const& value,
+	                      uint16_t index) const {
 		auto* sym = std::get<DaedalusSymbol*>(value);
 
 		// compatibility: sometimes the context might be zero, but we can't fail so when
@@ -881,7 +885,7 @@ namespace zenkit {
 		return sym->get_float(index, context.get());
 	}
 
-	void DaedalusVm::set_int(std::shared_ptr<DaedalusInstance>& context,
+	void DaedalusVm::set_int(std::shared_ptr<DaedalusInstance> const& context,
 	                         DaedalusSymbol* ref,
 	                         uint16_t index,
 	                         std::int32_t value) {
@@ -897,7 +901,7 @@ namespace zenkit {
 		}
 	}
 
-	void DaedalusVm::set_float(std::shared_ptr<DaedalusInstance>& context,
+	void DaedalusVm::set_float(std::shared_ptr<DaedalusInstance> const& context,
 	                           DaedalusSymbol* ref,
 	                           uint16_t index,
 	                           float value) {
@@ -913,7 +917,7 @@ namespace zenkit {
 		}
 	}
 
-	void DaedalusVm::set_string(std::shared_ptr<DaedalusInstance>& context,
+	void DaedalusVm::set_string(std::shared_ptr<DaedalusInstance> const& context,
 	                            DaedalusSymbol* ref,
 	                            uint16_t index,
 	                            std::string_view value) {

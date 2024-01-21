@@ -4,7 +4,8 @@
 #include <zenkit/DaedalusScript.hh>
 #include <zenkit/Stream.hh>
 
-[[maybe_unused]] static bool compare_instruction(zenkit::DaedalusInstruction a, zenkit::DaedalusInstruction b) {
+[[maybe_unused]] static bool compare_instruction(zenkit::DaedalusInstruction const& a,
+                                                 zenkit::DaedalusInstruction const& b) {
 	return a.op == b.op && a.index == b.index && a.immediate == b.immediate && a.address == b.address &&
 	    a.symbol == b.symbol;
 }

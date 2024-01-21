@@ -18,8 +18,8 @@ namespace zenkit {
 		return msgs;
 	}
 
-	CutsceneLibrary CutsceneLibrary::parse(phoenix::buffer&& path) {
-		return CutsceneLibrary::parse(path);
+	CutsceneLibrary CutsceneLibrary::parse(phoenix::buffer&& buf) {
+		return parse(buf);
 	}
 
 	CutsceneBlock const* CutsceneLibrary::block_by_name(std::string_view name) const {
@@ -39,11 +39,11 @@ namespace zenkit {
 
 		ArchiveObject obj;
 		if (!archive->read_object_begin(obj)) {
-			throw zenkit::ParserError {"CutsceneLibrary", "root object missing"};
+			throw ParserError {"CutsceneLibrary", "root object missing"};
 		}
 
 		if (obj.class_name != "zCCSLib") {
-			throw zenkit::ParserError {"CutsceneLibrary", "root object is not 'zCCSLib'"};
+			throw ParserError {"CutsceneLibrary", "root object is not 'zCCSLib'"};
 		}
 
 		auto item_count = archive->read_int(); // NumOfItems
@@ -51,7 +51,7 @@ namespace zenkit {
 
 		for (auto& itm : this->blocks) {
 			if (!archive->read_object_begin(obj) || obj.class_name != "zCCSBlock") {
-				throw zenkit::ParserError {"CutsceneLibrary", "expected 'zCCSBlock' but didn't find it"};
+				throw ParserError {"CutsceneLibrary", "expected 'zCCSBlock' but didn't find it"};
 			}
 
 			itm.name = archive->read_string();      // blockName
@@ -59,17 +59,17 @@ namespace zenkit {
 			(void) archive->read_float();           // subBlock0
 
 			if (block_count != 1) {
-				throw zenkit::ParserError {"CutsceneLibrary",
-				                           "expected only one block but got " + std::to_string(block_count) + " for " +
-				                               itm.name};
+				throw ParserError {"CutsceneLibrary",
+				                   "expected only one block but got " + std::to_string(block_count) + " for " +
+				                       itm.name};
 			}
 
 			if (!archive->read_object_begin(obj) || obj.class_name != "zCCSAtomicBlock") {
-				throw zenkit::ParserError {"CutsceneLibrary", "Expected atomic block not found for " + itm.name};
+				throw ParserError {"CutsceneLibrary", "Expected atomic block not found for " + itm.name};
 			}
 
 			if (!archive->read_object_begin(obj) || obj.class_name != "oCMsgConversation:oCNpcMessage:zCEventMessage") {
-				throw zenkit::ParserError {"CutsceneLibrary", "Expected oCMsgConversation not found for " + itm.name};
+				throw ParserError {"CutsceneLibrary", "Expected oCMsgConversation not found for " + itm.name};
 			}
 
 			itm.message.type = archive->read_enum();   // subType

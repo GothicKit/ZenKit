@@ -14,11 +14,11 @@ namespace zenkit {
 
 		~Mmap() noexcept;
 
-		[[nodiscard]] inline std::byte const* data() const noexcept {
+		[[nodiscard]] std::byte const* data() const noexcept {
 			return _m_data;
 		}
 
-		[[nodiscard]] inline std::size_t size() const noexcept {
+		[[nodiscard]] std::size_t size() const noexcept {
 			return _m_size;
 		}
 

@@ -90,14 +90,14 @@ namespace zenkit {
 
 		// read positions
 		this->positions.resize(vertices_size);
-		r->seek((ssize_t) vertices_offset, Whence::BEG);
+		r->seek(static_cast<ssize_t>(vertices_offset), Whence::BEG);
 		for (auto& pos : this->positions) {
 			pos = r->read_vec3();
 		}
 
 		// read normals
 		this->normals.resize(normals_size);
-		r->seek((ssize_t) normals_offset, Whence::BEG);
+		r->seek(static_cast<ssize_t>(normals_offset), Whence::BEG);
 		for (auto& normal : this->normals) {
 			normal = r->read_vec3();
 		}
@@ -120,7 +120,7 @@ namespace zenkit {
 	void MultiResolutionMesh::save_to_section(Write* w, GameVersion version) const {
 		w->write_ushort(version == GameVersion::GOTHIC_1 ? VERSION_G1 : VERSION_G2);
 
-		auto off_size = w->tell();
+		auto off_size = static_cast<ssize_t>(w->tell());
 		w->write_uint(0);
 
 		auto off_content = w->tell();
@@ -139,7 +139,7 @@ namespace zenkit {
 			sections.push_back(mesh.save(w));
 		}
 
-		auto off_end = w->tell();
+		auto off_end = static_cast<ssize_t>(w->tell());
 		w->seek(off_size, Whence::BEG);
 		w->write_uint(off_end - off_size);
 		w->seek(off_end, Whence::BEG);
@@ -202,17 +202,17 @@ namespace zenkit {
 
 	void SubMesh::load(Read* r, SubMeshSection const& map) {
 		// triangles
-		r->seek((ssize_t) map.triangles.offset, Whence::BEG);
+		r->seek(static_cast<ssize_t>(map.triangles.offset), Whence::BEG);
 		this->triangles.resize(map.triangles.size);
-		for (std::uint32_t i = 0; i < map.triangles.size; ++i) {
+		for (auto i = 0u; i < map.triangles.size; ++i) {
 			this->triangles[i] = {{r->read_ushort(), r->read_ushort(), r->read_ushort()}};
 		}
 
 		// wedges
-		r->seek((ssize_t) map.wedges.offset, Whence::BEG);
+		r->seek(static_cast<ssize_t>(map.wedges.offset), Whence::BEG);
 		this->wedges.resize(map.wedges.size);
 
-		for (std::uint32_t i = 0; i < map.wedges.size; ++i) {
+		for (auto i = 0u; i < map.wedges.size; ++i) {
 			this->wedges[i] = {r->read_vec3(), r->read_vec2(), r->read_ushort()};
 
 			// and this is why you don't just dump raw binary data
@@ -220,58 +220,58 @@ namespace zenkit {
 		}
 
 		// colors
-		r->seek((ssize_t) map.colors.offset, Whence::BEG);
+		r->seek(static_cast<ssize_t>(map.colors.offset), Whence::BEG);
 		this->colors.resize(map.colors.size);
 
-		for (std::uint32_t i = 0; i < map.colors.size; ++i) {
+		for (auto i = 0u; i < map.colors.size; ++i) {
 			this->colors[i] = r->read_float();
 		}
 
 		// triangle_plane_indices
-		r->seek((ssize_t) map.triangle_plane_indices.offset, Whence::BEG);
+		r->seek(static_cast<ssize_t>(map.triangle_plane_indices.offset), Whence::BEG);
 		this->triangle_plane_indices.resize(map.triangle_plane_indices.size);
 
-		for (std::uint32_t i = 0; i < map.triangle_plane_indices.size; ++i) {
+		for (auto i = 0u; i < map.triangle_plane_indices.size; ++i) {
 			this->triangle_plane_indices[i] = r->read_ushort();
 		}
 
 		// triangle_planes
-		r->seek((ssize_t) map.triangle_planes.offset, Whence::BEG);
+		r->seek(static_cast<ssize_t>(map.triangle_planes.offset), Whence::BEG);
 		this->triangle_planes.resize(map.triangle_planes.size);
 
-		for (std::uint32_t i = 0; i < map.triangle_planes.size; ++i) {
+		for (auto i = 0u; i < map.triangle_planes.size; ++i) {
 			this->triangle_planes[i] = {r->read_float(), r->read_vec3()};
 		}
 
 		// triangle_edges
-		r->seek((ssize_t) map.triangle_edges.offset, Whence::BEG);
+		r->seek(static_cast<ssize_t>(map.triangle_edges.offset), Whence::BEG);
 		this->triangle_edges.resize(map.triangle_edges.size);
 
-		for (std::uint32_t i = 0; i < map.triangle_edges.size; ++i) {
+		for (auto i = 0u; i < map.triangle_edges.size; ++i) {
 			this->triangle_edges[i] = {{r->read_ushort(), r->read_ushort(), r->read_ushort()}};
 		}
 
 		// edges
-		r->seek((ssize_t) map.edges.offset, Whence::BEG);
+		r->seek(static_cast<ssize_t>(map.edges.offset), Whence::BEG);
 		this->edges.resize(map.edges.size);
 
-		for (std::uint32_t i = 0; i < map.edges.size; ++i) {
+		for (auto i = 0u; i < map.edges.size; ++i) {
 			this->edges[i] = {{r->read_ushort(), r->read_ushort()}};
 		}
 
 		// edge_scores
-		r->seek((ssize_t) map.edge_scores.offset, Whence::BEG);
+		r->seek(static_cast<ssize_t>(map.edge_scores.offset), Whence::BEG);
 		this->edge_scores.resize(map.edge_scores.size);
 
-		for (std::uint32_t i = 0; i < map.edge_scores.size; ++i) {
+		for (auto i = 0u; i < map.edge_scores.size; ++i) {
 			this->edge_scores[i] = r->read_float();
 		}
 
 		// wedge_map
-		r->seek((ssize_t) map.wedge_map.offset, Whence::BEG);
+		r->seek(static_cast<ssize_t>(map.wedge_map.offset), Whence::BEG);
 		this->wedge_map.resize(map.wedge_map.size);
 
-		for (std::uint32_t i = 0; i < map.wedge_map.size; ++i) {
+		for (auto i = 0u; i < map.wedge_map.size; ++i) {
 			this->wedge_map[i] = r->read_ushort();
 		}
 	}

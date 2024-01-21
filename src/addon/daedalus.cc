@@ -41,7 +41,7 @@ namespace zenkit {
 
 #define ZKLOG_CLASS(a, b) ZKLOGD("Daedalus", "Registering script class \"%s\" as zenkit::%s", a, b)
 
-void zenkit::IGuildValues::register_(zenkit::DaedalusScript& s) {
+void zenkit::IGuildValues::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("C_GILVALUES", "IGuildValues");
 	s.register_member("C_GILVALUES.WATER_DEPTH_KNEE", &IGuildValues::water_depth_knee);
 	s.register_member("C_GILVALUES.WATER_DEPTH_CHEST", &IGuildValues::water_depth_chest);
@@ -80,12 +80,12 @@ void zenkit::IGuildValues::register_(zenkit::DaedalusScript& s) {
 	}
 }
 
-void zenkit::IFightAi::register_(zenkit::DaedalusScript& s) {
+void zenkit::IFightAi::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("C_FIGHTAI", "IFightAi");
 	s.register_member("C_FIGHTAI.MOVE", &IFightAi::move);
 }
 
-void zenkit::ISoundEffect::register_(zenkit::DaedalusScript& s) {
+void zenkit::ISoundEffect::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("C_SFX", "ISoundEffect");
 	s.register_member("C_SFX.FILE", &ISoundEffect::file);
 	s.register_member("C_SFX.PITCHOFF", &ISoundEffect::pitch_off);
@@ -98,7 +98,7 @@ void zenkit::ISoundEffect::register_(zenkit::DaedalusScript& s) {
 	s.register_member("C_SFX.PFXNAME", &ISoundEffect::pfx_name);
 }
 
-void zenkit::ISoundSystem::register_(zenkit::DaedalusScript& s) {
+void zenkit::ISoundSystem::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("C_SNDSYS_CFG", "ISoundSystem");
 	s.register_member("C_SNDSYS_CFG.VOLUME", &ISoundSystem::volume);
 	s.register_member("C_SNDSYS_CFG.BITRESOLUTION", &ISoundSystem::bit_resolution);
@@ -108,7 +108,7 @@ void zenkit::ISoundSystem::register_(zenkit::DaedalusScript& s) {
 	s.register_member("C_SNDSYS_CFG.USED3DPROVIDERNAME", &ISoundSystem::used_3d_provider_name);
 }
 
-void zenkit::IParticleEffectEmitKey::register_(zenkit::DaedalusScript& s) {
+void zenkit::IParticleEffectEmitKey::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("C_PARTICLEFXEMITKEY", "IParticleEffectEmitKey");
 	s.register_member("C_PARTICLEFXEMITKEY.VISNAME_S", &IParticleEffectEmitKey::vis_name_s);
 	s.register_member("C_PARTICLEFXEMITKEY.VISSIZESCALE", &IParticleEffectEmitKey::vis_size_scale);
@@ -145,7 +145,7 @@ void zenkit::IParticleEffectEmitKey::register_(zenkit::DaedalusScript& s) {
 	s.register_member("C_PARTICLEFXEMITKEY.EMFXLIFESPAN", &IParticleEffectEmitKey::em_fx_lifespan);
 }
 
-void zenkit::INpc::register_(zenkit::DaedalusScript& s) {
+void zenkit::INpc::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("C_NPC", "INpc");
 	s.register_member("C_NPC.ID", &INpc::id);
 	s.register_member("C_NPC.NAME", &INpc::name);
@@ -185,7 +185,7 @@ void zenkit::INpc::register_(zenkit::DaedalusScript& s) {
 	}
 }
 
-void zenkit::IMission::register_(zenkit::DaedalusScript& s) {
+void zenkit::IMission::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("C_MISSION", "IMission");
 	s.register_member("C_MISSION.NAME", &IMission::name);
 	s.register_member("C_MISSION.DESCRIPTION", &IMission::description);
@@ -202,7 +202,7 @@ void zenkit::IMission::register_(zenkit::DaedalusScript& s) {
 	s.register_member("C_MISSION.RUNNING", &IMission::running);
 }
 
-void zenkit::IItem::register_(zenkit::DaedalusScript& s) {
+void zenkit::IItem::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("C_ITEM", "IItem");
 	s.register_member("C_ITEM.ID", &IItem::id);
 	s.register_member("C_ITEM.NAME", &IItem::name);
@@ -254,7 +254,7 @@ void zenkit::IItem::register_(zenkit::DaedalusScript& s) {
 	}
 }
 
-void zenkit::IFocus::register_(zenkit::DaedalusScript& s) {
+void zenkit::IFocus::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("C_FOCUS", "IFocus");
 	s.register_member("C_FOCUS.NPC_LONGRANGE", &IFocus::npc_longrange);
 	s.register_member("C_FOCUS.NPC_RANGE1", &IFocus::npc_range1);
@@ -277,7 +277,7 @@ void zenkit::IFocus::register_(zenkit::DaedalusScript& s) {
 	s.register_member("C_FOCUS.MOB_PRIO", &IFocus::mob_prio);
 }
 
-void zenkit::IInfo::register_(zenkit::DaedalusScript& s) {
+void zenkit::IInfo::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("C_INFO", "IInfo");
 	s.register_member("C_INFO.NPC", &IInfo::npc);
 	s.register_member("C_INFO.NR", &IInfo::nr);
@@ -289,7 +289,7 @@ void zenkit::IInfo::register_(zenkit::DaedalusScript& s) {
 	s.register_member("C_INFO.PERMANENT", &IInfo::permanent);
 }
 
-void zenkit::IInfo::add_choice(zenkit::IInfoChoice const& ch) {
+void zenkit::IInfo::add_choice(IInfoChoice const& ch) {
 	choices.insert(choices.begin(), ch);
 }
 
@@ -297,7 +297,7 @@ void zenkit::IInfo::remove_choice(std::size_t index) {
 	choices.erase(choices.begin() + static_cast<decltype(choices)::difference_type>(index));
 }
 
-void zenkit::IItemReact::register_(zenkit::DaedalusScript& s) {
+void zenkit::IItemReact::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("C_ITEMREACT", "IItemReact");
 	s.register_member("C_ITEMREACT.NPC", &IItemReact::npc);
 	s.register_member("C_ITEMREACT.TRADE_ITEM", &IItemReact::trade_item);
@@ -308,7 +308,7 @@ void zenkit::IItemReact::register_(zenkit::DaedalusScript& s) {
 	s.register_member("C_ITEMREACT.REACTION", &IItemReact::reaction);
 }
 
-void zenkit::ISpell::register_(zenkit::DaedalusScript& s) {
+void zenkit::ISpell::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("C_SPELL", "ISpell");
 	s.register_member("C_SPELL.TIME_PER_MANA", &ISpell::time_per_mana);
 	s.register_member("C_SPELL.DAMAGE_PER_LEVEL", &ISpell::damage_per_level);
@@ -331,7 +331,7 @@ void zenkit::ISpell::register_(zenkit::DaedalusScript& s) {
 		}                                                                                                              \
 	} while (false)
 
-void zenkit::ISvm::register_(zenkit::DaedalusScript& s) {
+void zenkit::ISvm::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("C_SVM", "ISvm");
 	REG_IF_SYM_EXIST("C_SVM.MILGREETINGS", &ISvm::MILGREETINGS);
 	REG_IF_SYM_EXIST("C_SVM.PALGREETINGS", &ISvm::PALGREETINGS);
@@ -650,7 +650,7 @@ void zenkit::ISvm::register_(zenkit::DaedalusScript& s) {
 
 #undef REG_IF_SYM_EXIST
 
-void zenkit::IMenu::register_(zenkit::DaedalusScript& s) {
+void zenkit::IMenu::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("C_MENU", "IMenu");
 	s.register_member("C_MENU.BACKPIC", &IMenu::back_pic);
 	s.register_member("C_MENU.BACKWORLD", &IMenu::back_world);
@@ -667,7 +667,7 @@ void zenkit::IMenu::register_(zenkit::DaedalusScript& s) {
 	s.register_member("C_MENU.DEFAULTINGAME", &IMenu::default_ingame);
 }
 
-void zenkit::IMenuItem::register_(zenkit::DaedalusScript& s) {
+void zenkit::IMenuItem::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("C_MENU_ITEM", "IMenuItem");
 	s.register_member("C_MENU_ITEM.FONTNAME", &IMenuItem::fontname);
 	s.register_member("C_MENU_ITEM.TEXT", &IMenuItem::text);
@@ -707,7 +707,7 @@ void zenkit::IMenuItem::register_(zenkit::DaedalusScript& s) {
 	}
 }
 
-void zenkit::ICamera::register_(zenkit::DaedalusScript& s) {
+void zenkit::ICamera::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("CCAMSYS", "ICamera");
 	s.register_member("CCAMSYS.BESTRANGE", &ICamera::best_range);
 	s.register_member("CCAMSYS.MINRANGE", &ICamera::min_range);
@@ -734,7 +734,7 @@ void zenkit::ICamera::register_(zenkit::DaedalusScript& s) {
 	s.register_member("CCAMSYS.COLLISION", &ICamera::collision);
 }
 
-void zenkit::IMusicSystem::register_(zenkit::DaedalusScript& s) {
+void zenkit::IMusicSystem::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("C_MUSICSYS_CFG", "IMusicSystem");
 	s.register_member("C_MUSICSYS_CFG.VOLUME", &IMusicSystem::volume);
 	s.register_member("C_MUSICSYS_CFG.BITRESOLUTION", &IMusicSystem::bit_resolution);
@@ -744,7 +744,7 @@ void zenkit::IMusicSystem::register_(zenkit::DaedalusScript& s) {
 	s.register_member("C_MUSICSYS_CFG.REVERBBUFFERSIZE", &IMusicSystem::reverb_buffer_size);
 }
 
-void zenkit::IMusicTheme::register_(zenkit::DaedalusScript& s) {
+void zenkit::IMusicTheme::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("C_MUSICTHEME", "IMusicTheme");
 	s.register_member("C_MUSICTHEME.FILE", &IMusicTheme::file);
 	s.register_member("C_MUSICTHEME.VOL", &IMusicTheme::vol);
@@ -755,7 +755,7 @@ void zenkit::IMusicTheme::register_(zenkit::DaedalusScript& s) {
 	s.register_member("C_MUSICTHEME.TRANSSUBTYPE", &IMusicTheme::transsubtype);
 }
 
-void zenkit::IMusicJingle::register_(zenkit::DaedalusScript& s) {
+void zenkit::IMusicJingle::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("C_MUSICJINGLE", "IMusicJingle");
 	s.register_member("C_MUSICJINGLE.NAME", &IMusicJingle::name);
 	s.register_member("C_MUSICJINGLE.LOOP", &IMusicJingle::loop);
@@ -763,7 +763,7 @@ void zenkit::IMusicJingle::register_(zenkit::DaedalusScript& s) {
 	s.register_member("C_MUSICJINGLE.TRANSSUBTYPE", &IMusicJingle::transsubtype);
 }
 
-void zenkit::IParticleEffect::register_(zenkit::DaedalusScript& s) {
+void zenkit::IParticleEffect::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("C_PARTICLEFX", "IParticleEffect");
 	s.register_member("C_PARTICLEFX.PPSVALUE", &IParticleEffect::pps_value);
 	s.register_member("C_PARTICLEFX.PPSSCALEKEYS_S", &IParticleEffect::pps_scale_keys_s);
@@ -828,7 +828,7 @@ void zenkit::IParticleEffect::register_(zenkit::DaedalusScript& s) {
 	}
 }
 
-void zenkit::IEffectBase::register_(zenkit::DaedalusScript& s) {
+void zenkit::IEffectBase::register_(DaedalusScript& s) {
 	ZKLOG_CLASS("CFX_BASE", "IEffectBase");
 	s.register_member("CFX_BASE.VISNAME_S", &IEffectBase::vis_name_s);
 	s.register_member("CFX_BASE.VISSIZE_S", &IEffectBase::vis_size_s);

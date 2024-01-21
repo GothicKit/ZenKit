@@ -12,9 +12,7 @@
 #include <cstddef>
 #include <filesystem>
 #include <functional>
-#include <istream>
 #include <memory>
-#include <ostream>
 #include <vector>
 
 namespace phoenix {
@@ -110,7 +108,7 @@ namespace zenkit {
 		[[nodiscard]] virtual size_t tell() const noexcept = 0;
 		[[nodiscard]] virtual bool eof() const noexcept = 0;
 
-		[[nodiscard]] static std::unique_ptr<Read> from(::FILE* stream);
+		[[nodiscard]] static std::unique_ptr<Read> from(FILE* stream);
 		[[nodiscard]] static std::unique_ptr<Read> from(std::istream* stream);
 		[[nodiscard]] static std::unique_ptr<Read> from(std::byte const* bytes, size_t len);
 		[[nodiscard]] static std::unique_ptr<Read> from(std::vector<std::byte> const* vector);
@@ -144,7 +142,7 @@ namespace zenkit {
 		[[nodiscard]] virtual size_t tell() const noexcept = 0;
 
 		[[nodiscard]] static std::unique_ptr<Write> to(std::filesystem::path const& path);
-		[[nodiscard]] static std::unique_ptr<Write> to(::FILE* stream);
+		[[nodiscard]] static std::unique_ptr<Write> to(FILE* stream);
 		[[nodiscard]] static std::unique_ptr<Write> to(std::ostream* stream);
 		[[nodiscard]] static std::unique_ptr<Write> to(std::byte* bytes, size_t len);
 		[[nodiscard]] static std::unique_ptr<Write> to(std::vector<std::byte>* vector);
@@ -152,7 +150,7 @@ namespace zenkit {
 
 	namespace proto {
 		template <typename T>
-		inline std::enable_if_t<std::is_enum_v<T>, void>
+		std::enable_if_t<std::is_enum_v<T>, void>
 		read_chunked(Read* r, char const* name, std::function<bool(Read*, T)> const& cb) {
 			do {
 				auto type = static_cast<T>(r->read_ushort());
@@ -186,7 +184,7 @@ namespace zenkit {
 		}
 
 		template <typename T>
-		inline std::enable_if_t<std::is_enum_v<T>, void>
+		std::enable_if_t<std::is_enum_v<T>, void>
 		read_chunked(Read* r, char const* name, std::function<bool(Read*, T, size_t&)> const& cb) {
 			do {
 				auto type = static_cast<T>(r->read_ushort());
@@ -220,8 +218,7 @@ namespace zenkit {
 		}
 
 		template <typename T>
-		inline std::enable_if_t<std::is_enum_v<T>, void>
-		write_chunk(Write* w, T v, std::function<void(Write*)> const& cb) {
+		std::enable_if_t<std::is_enum_v<T>, void> write_chunk(Write* w, T v, std::function<void(Write*)> const& cb) {
 			w->write_ushort(static_cast<uint16_t>(v));
 
 			auto size_off = static_cast<ssize_t>(w->tell());

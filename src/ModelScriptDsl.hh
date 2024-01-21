@@ -7,7 +7,6 @@
 
 #include <iterator>
 #include <optional>
-#include <stdexcept>
 #include <string>
 #include <string_view>
 
@@ -95,7 +94,6 @@ namespace zenkit {
 		[[nodiscard]] bool maybe_keyword(std::string_view value);
 		[[nodiscard]] std::optional<float> maybe_named(std::string_view name);
 
-	private:
 		MdsTokenizer _m_stream;
 	};
 } // namespace zenkit

@@ -22,7 +22,6 @@ namespace zenkit {
 	struct VZoneMusic : VirtualObject {
 		ZK_OBJECT(ObjectType::oCZoneMusic);
 
-	public:
 		/// \brief Whether the music zone is enabled when loading the level.
 		/// \see https://zk.gothickit.dev/engine/objects/oCZoneMusic/#enabled
 		bool enabled {false};
@@ -81,7 +80,6 @@ namespace zenkit {
 	struct VZoneFarPlane : VirtualObject {
 		ZK_OBJECT(ObjectType::zCZoneVobFarPlane);
 
-	public:
 		float vob_far_plane_z;
 		float inner_range_percentage;
 
@@ -104,7 +102,6 @@ namespace zenkit {
 	struct VZoneFog : VirtualObject {
 		ZK_OBJECT(ObjectType::zCZoneZFog);
 
-	public:
 		float range_center {0};
 		float inner_range_percentage {0};
 		glm::u8vec4 color {};

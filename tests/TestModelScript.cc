@@ -57,7 +57,7 @@ TEST_SUITE("ModelScript") {
 		CHECK_EQ(script.animations[1].events[0].attached, true);
 		CHECK_EQ(script.animations[1].events[1].frame, 1);
 		CHECK_EQ(script.animations[1].events[1].type, zenkit::MdsEventType::COMBO_WINDOW);
-		CHECK_EQ(script.animations[1].events[1].frames, std::vector<int32_t> {1, 2, 3, 4, 5});
+		CHECK_EQ(script.animations[1].events[1].frames, std::vector {1, 2, 3, 4, 5});
 		CHECK_EQ(script.animations[1].events[1].attached, false);
 		CHECK_EQ(script.animations[1].events[2].frame, 0); // Defaulted
 		CHECK_EQ(script.animations[1].events[2].type, zenkit::MdsEventType::ITEM_CREATE);

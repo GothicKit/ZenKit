@@ -79,8 +79,8 @@ namespace zenkit {
 	}
 
 	void ModelMesh::save(Write* w, GameVersion version) const {
-		proto::write_chunk(w, ModelMeshChunkType::HEADER, [version](Write* w) {
-			w->write_uint(version == GameVersion::GOTHIC_1 ? VERSION_G1 : VERSION_G2);
+		proto::write_chunk(w, ModelMeshChunkType::HEADER, [version](Write* wr) {
+			wr->write_uint(version == GameVersion::GOTHIC_1 ? VERSION_G1 : VERSION_G2);
 		});
 
 		/* TODO: Source Chunk
@@ -117,6 +117,6 @@ namespace zenkit {
 	}
 
 	ModelMesh ModelMesh::parse(phoenix::buffer&& buf) {
-		return ModelMesh::parse(buf);
+		return parse(buf);
 	}
 } // namespace zenkit

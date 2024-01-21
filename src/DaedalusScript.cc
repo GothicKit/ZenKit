@@ -18,7 +18,7 @@ namespace zenkit {
 	                                                                         std::string&& provided)
 	    : DaedalusMemberRegistrationError(s,
 	                                      "wrong datatype: provided '" + provided + "' expected " +
-	                                          DAEDALUS_DATA_TYPE_NAMES[(std::uint32_t) s->type()]) {}
+	                                          DAEDALUS_DATA_TYPE_NAMES[static_cast<std::uint32_t>(s->type())]) {}
 
 	DaedalusIllegalTypeAccess::DaedalusIllegalTypeAccess(DaedalusSymbol const* s, DaedalusDataType expected_dt)
 	    : DaedalusIllegalAccess("illegal access of type " + std::to_string(static_cast<int32_t>(expected_dt)) +
@@ -130,7 +130,7 @@ namespace zenkit {
 		}
 
 		std::uint32_t text_size = r->read_uint();
-		std::vector<std::byte> code(text_size, std::byte {});
+		std::vector code(text_size, std::byte {});
 		r->read(code.data(), text_size);
 
 		this->_m_text = Read::from(std::move(code));
@@ -150,7 +150,7 @@ namespace zenkit {
 
 	DaedalusSymbol const* DaedalusScript::find_symbol_by_name(std::string_view name) const {
 		std::string up {name};
-		std::transform(up.begin(), up.end(), up.begin(), ::toupper);
+		std::transform(up.begin(), up.end(), up.begin(), toupper);
 
 		if (auto it = _m_symbols_by_name.find(up); it != _m_symbols_by_name.end()) {
 			return find_symbol_by_index(it->second);
@@ -176,7 +176,7 @@ namespace zenkit {
 
 	DaedalusSymbol* DaedalusScript::find_symbol_by_name(std::string_view name) {
 		std::string up {name};
-		std::transform(up.begin(), up.end(), up.begin(), ::toupper);
+		std::transform(up.begin(), up.end(), up.begin(), toupper);
 
 		if (auto it = _m_symbols_by_name.find(up); it != _m_symbols_by_name.end()) {
 			return find_symbol_by_index(it->second);
@@ -323,6 +323,8 @@ namespace zenkit {
 					s[i] = '\t';
 					s.erase(i + 1, 1);
 					break;
+				default:
+					break;
 				}
 			}
 		}
@@ -344,7 +346,7 @@ namespace zenkit {
 
 		this->_m_count = (properties >> 0U) & 0xFFFU;                              // 12 bits
 		this->_m_type = static_cast<DaedalusDataType>((properties >> 12U) & 0xFU); // 4 bits
-		this->_m_flags = static_cast<std::uint32_t>((properties >> 16U) & 0x3FU);  // 6 bits
+		this->_m_flags = properties >> 16U & 0x3FU;                                // 6 bits
 
 		if (this->is_member()) {
 			this->_m_member_offset = vary;
@@ -364,13 +366,13 @@ namespace zenkit {
 			switch (this->_m_type) {
 			case DaedalusDataType::FLOAT: {
 				std::unique_ptr<float[]> value {new float[this->_m_count]};
-				r->read((std::uint8_t*) value.get(), this->_m_count * sizeof(float));
+				r->read(value.get(), this->_m_count * sizeof(float));
 				this->_m_value = std::move(value);
 				break;
 			}
 			case DaedalusDataType::INT: {
 				std::unique_ptr<std::int32_t[]> value {new std::int32_t[this->_m_count]};
-				r->read((std::uint8_t*) value.get(), this->_m_count * sizeof(std::uint32_t));
+				r->read(value.get(), this->_m_count * sizeof(std::uint32_t));
 				this->_m_value = std::move(value);
 				break;
 			}
@@ -415,9 +417,8 @@ namespace zenkit {
 			unsigned byte = 4;
 			for (; byte > 0; --byte) {
 				r->seek(-3, Whence::CUR);
-				auto parent_index = r->read_int();
 
-				if (parent_index == -1) {
+				if (auto parent_index = r->read_int(); parent_index == -1) {
 					// This parent index is valid.
 					this->_m_parent = parent_index;
 					break;
@@ -452,9 +453,9 @@ namespace zenkit {
 			}
 
 			return *get_member_ptr<std::string>(index, context);
-		} else {
-			return std::get<std::unique_ptr<std::string[]>>(_m_value)[index];
 		}
+
+		return std::get<std::unique_ptr<std::string[]>>(_m_value)[index];
 	}
 
 	float DaedalusSymbol::get_float(std::uint16_t index, DaedalusInstance const* context) const {
@@ -476,9 +477,9 @@ namespace zenkit {
 			}
 
 			return *get_member_ptr<float>(static_cast<uint8_t>(index), context);
-		} else {
-			return std::get<std::unique_ptr<float[]>>(_m_value)[index];
 		}
+
+		return std::get<std::unique_ptr<float[]>>(_m_value)[index];
 	}
 
 	std::int32_t DaedalusSymbol::get_int(std::uint16_t index, DaedalusInstance const* context) const {
@@ -500,9 +501,9 @@ namespace zenkit {
 			}
 
 			return *get_member_ptr<std::int32_t>(index, context);
-		} else {
-			return std::get<std::unique_ptr<std::int32_t[]>>(_m_value)[index];
 		}
+
+		return std::get<std::unique_ptr<std::int32_t[]>>(_m_value)[index];
 	}
 
 	void DaedalusSymbol::set_string(std::string_view value, std::uint16_t index, DaedalusInstance* context) {
@@ -611,7 +612,7 @@ namespace zenkit {
 			str_count += member->count();
 		}
 
-		_m_storage.reset(new uint8_t[sym.class_size()]());
+		_m_storage.reset(new uint8_t[sym.class_size()]);
 		_m_strings.resize(str_count, nullptr);
 
 		str_count = 0;
@@ -665,6 +666,4 @@ namespace zenkit {
 	DaedalusTransientInstance::DaedalusTransientInstance() {
 		_m_type = &typeid(DaedalusTransientInstance);
 	}
-
-	DaedalusTransientInstance::~DaedalusTransientInstance() {}
 } // namespace zenkit

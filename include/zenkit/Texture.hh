@@ -3,9 +3,8 @@
 #pragma once
 #include "zenkit/Library.hh"
 
+#include <array>
 #include <cstdint>
-#include <string>
-#include <string_view>
 #include <vector>
 
 namespace phoenix {
@@ -16,7 +15,7 @@ namespace zenkit {
 	class Read;
 	class Write;
 
-	constexpr std::uint16_t const ZTEX_PALETTE_ENTRIES = 0x100;
+	constexpr std::uint16_t ZTEX_PALETTE_ENTRIES = 0x100;
 
 	/// \brief Texture formats used by the ZenGin.
 	enum class TextureFormat {
@@ -53,86 +52,67 @@ namespace zenkit {
 		Texture& operator=(Texture&&) = default;
 		Texture& operator=(Texture const&) = default;
 
-		/// \brief Parses a texture from the data in the given buffer.
-		///
-		/// <p>This implementation is heavily based on the implementation found in
-		/// [ZenLib](https://github.com/Try/ZenLib).
-		///
-		/// \param[in,out] buf The buffer to read from.
-		/// \return The parsed texture.
-		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
-		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
-		///       using buffer::duplicate.
-		/// \throws zenkit::ParserError if parsing fails.
-		/// \see #parse(buffer&&)
 		[[nodiscard]] ZKREM("use ::load") ZKAPI static Texture parse(phoenix::buffer& in);
-
-		/// \brief Parses a texture from the data in the given buffer.
-		/// \param[in,out] buf The buffer to read from (by rvalue-reference).
-		/// \return The parsed texture.
-		/// \throws zenkit::ParserError if parsing fails.
-		/// \see #parse(buffer&)
 		[[nodiscard]] ZKREM("use ::load") ZKAPI static Texture parse(phoenix::buffer&& in);
 
 		ZKAPI void load(Read* r);
 		ZKAPI void save(Write* r) const;
 
 		/// \return The format of the texture.
-		[[nodiscard]] ZKAPI inline TextureFormat format() const noexcept {
+		[[nodiscard]] ZKAPI TextureFormat format() const noexcept {
 			return _m_format;
 		}
 
 		/// \return The width in pixels of the first mipmap level.
-		[[nodiscard]] ZKAPI inline std::uint32_t width() const noexcept {
+		[[nodiscard]] ZKAPI std::uint32_t width() const noexcept {
 			return _m_width;
 		}
 
 		/// \return The height in pixels of the first mipmap level.
-		[[nodiscard]] ZKAPI inline std::uint32_t height() const noexcept {
+		[[nodiscard]] ZKAPI std::uint32_t height() const noexcept {
 			return _m_height;
 		}
 
 		/// \param level The mipmap level to use (beginning from 0).
 		/// \return The width in pixels of the given mipmap level.
-		[[nodiscard]] ZKAPI inline std::uint32_t mipmap_width(std::uint32_t level) const noexcept {
+		[[nodiscard]] ZKAPI std::uint32_t mipmap_width(std::uint32_t level) const noexcept {
 			return _m_width >> level;
 		}
 
 		/// \param level The mipmap level to use (beginning from 0).
 		/// \return The height in pixels of the given mipmap level.
-		[[nodiscard]] ZKAPI inline std::uint32_t mipmap_height(std::uint32_t level) const noexcept {
+		[[nodiscard]] ZKAPI std::uint32_t mipmap_height(std::uint32_t level) const noexcept {
 			return _m_height >> level;
 		}
 
 		/// \return The width of the texture in-engine.
-		[[nodiscard]] ZKAPI inline std::uint32_t ref_width() const noexcept {
+		[[nodiscard]] ZKAPI std::uint32_t ref_width() const noexcept {
 			return _m_reference_width;
 		}
 
 		/// \return The height of the texture in-engine.
-		[[nodiscard]] ZKAPI inline std::uint32_t ref_height() const noexcept {
+		[[nodiscard]] ZKAPI std::uint32_t ref_height() const noexcept {
 			return _m_reference_height;
 		}
 
 		/// \return The number of mipmaps of the texture.
-		[[nodiscard]] ZKAPI inline std::uint32_t mipmaps() const noexcept {
+		[[nodiscard]] ZKAPI std::uint32_t mipmaps() const noexcept {
 			return _m_mipmap_count;
 		}
 
 		/// \return The average color of the texture.
-		[[nodiscard]] ZKAPI inline std::uint32_t average_color() const noexcept {
+		[[nodiscard]] ZKAPI std::uint32_t average_color() const noexcept {
 			return _m_average_color;
 		}
 
 		/// \return The palette of the texture.
-		[[nodiscard]] ZKAPI inline ColorARGB* palette() const noexcept {
-			return (ColorARGB*) _m_palette;
+		[[nodiscard]] ZKAPI ColorARGB const* palette() const noexcept {
+			return _m_palette.data();
 		}
 
 		/// \param mipmap_level The mipmap level to get.
 		/// \return The texture data at the given mipmap level.
-		[[nodiscard]] ZKAPI inline std::vector<std::uint8_t> const&
-		data(std::uint32_t mipmap_level = 0) const noexcept {
+		[[nodiscard]] ZKAPI std::vector<std::uint8_t> const& data(std::uint32_t mipmap_level = 0) const noexcept {
 			return _m_textures.at(_m_mipmap_count - 1 - mipmap_level);
 		}
 
@@ -144,7 +124,7 @@ namespace zenkit {
 
 	private:
 		TextureFormat _m_format {};
-		ColorARGB _m_palette[ZTEX_PALETTE_ENTRIES] {};
+		std::array<ColorARGB, ZTEX_PALETTE_ENTRIES> _m_palette {};
 		std::uint32_t _m_width {};
 		std::uint32_t _m_height {};
 		std::uint32_t _m_reference_width {};

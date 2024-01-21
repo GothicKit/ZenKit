@@ -77,7 +77,6 @@ namespace zenkit {
 
 		ZKAPI void load(Read* r);
 
-	public:
 		/// \brief The name of the mesh.
 		std::string name {};
 

@@ -4,8 +4,6 @@
 #include "zenkit/Archive.hh"
 #include "zenkit/Stream.hh"
 
-#include "Internal.hh"
-
 namespace zenkit {
 	[[maybe_unused]] static constexpr auto MESH_VERSION_G1 = 9;
 	static constexpr auto MESH_VERSION_G2 = 265;
@@ -39,7 +37,7 @@ namespace zenkit {
 	}
 
 	Mesh Mesh::parse(phoenix::buffer&& buf, std::vector<std::uint32_t> const& include_polygons) {
-		return Mesh::parse(buf, include_polygons);
+		return parse(buf, include_polygons);
 	}
 
 	void Mesh::load(Read* r, std::vector<std::uint32_t> const& leaf_polygons, bool force_wide_indices) {
@@ -210,11 +208,11 @@ namespace zenkit {
 				continue;
 			}
 
-			auto root = 0u;
 			auto a = 1u;
 
 			// NOTE(lmichaelis): This unpacks triangle fans
 			for (auto b = 2u; b < polygon.vertices.size(); ++b) {
+				auto root = 0u;
 				this->polygons.vertex_indices.push_back(polygon.vertices[root]);
 				this->polygons.vertex_indices.push_back(polygon.vertices[a]);
 				this->polygons.vertex_indices.push_back(polygon.vertices[b]);

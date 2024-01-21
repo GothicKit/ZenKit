@@ -19,7 +19,7 @@
 // clang-format on
 
 namespace zenkit {
-	struct IGuildValues : public DaedalusInstance {
+	struct IGuildValues : DaedalusInstance {
 		static constexpr std::uint32_t count = 66;
 
 		var int32_t water_depth_knee[count];
@@ -175,7 +175,7 @@ namespace zenkit {
 	};
 	FLAG(NpcFlag)
 
-	struct INpc : public DaedalusInstance {
+	struct INpc : DaedalusInstance {
 		static constexpr std::uint32_t hitchance_count =
 		    5; // -> TODO: one of "unknown", "one-handed", "two-handed", "bow", "crossbow"
 		static constexpr std::uint32_t name_count = 5;
@@ -218,7 +218,7 @@ namespace zenkit {
 		ZKAPI static void register_(DaedalusScript& s);
 	};
 
-	struct IMission : public DaedalusInstance {
+	struct IMission : DaedalusInstance {
 		var string name;
 		var string description;
 		var int32_t duration;
@@ -263,7 +263,7 @@ namespace zenkit {
 	};
 	FLAG(ItemFlag)
 
-	struct IItem : public DaedalusInstance {
+	struct IItem : DaedalusInstance {
 		static constexpr std::uint32_t condition_count = 3;
 		static constexpr std::uint32_t state_count = 4;
 		static constexpr std::uint32_t text_count = 6;
@@ -316,7 +316,7 @@ namespace zenkit {
 		ZKAPI static void register_(DaedalusScript& s);
 	};
 
-	struct IFocus : public DaedalusInstance {
+	struct IFocus : DaedalusInstance {
 		var float npc_longrange;
 		var float npc_range1;
 		var float npc_range2;
@@ -345,7 +345,7 @@ namespace zenkit {
 		var int32_t function = 0;
 	};
 
-	struct IInfo : public DaedalusInstance {
+	struct IInfo : DaedalusInstance {
 		var int32_t npc;
 		var int32_t nr;
 		var int32_t important;
@@ -363,7 +363,7 @@ namespace zenkit {
 		ZKAPI static void register_(DaedalusScript& s);
 	};
 
-	struct IItemReact : public DaedalusInstance {
+	struct IItemReact : DaedalusInstance {
 		var int32_t npc;
 		var int32_t trade_item;
 		var int32_t trade_amount;
@@ -375,7 +375,7 @@ namespace zenkit {
 		ZKAPI static void register_(DaedalusScript& s);
 	};
 
-	struct ISpell : public DaedalusInstance {
+	struct ISpell : DaedalusInstance {
 		var float time_per_mana;
 		var int32_t damage_per_level;
 		var int32_t damage_type;
@@ -729,7 +729,7 @@ namespace zenkit {
 	};
 	FLAG(MenuFlag)
 
-	struct IMenu : public DaedalusInstance {
+	struct IMenu : DaedalusInstance {
 		static constexpr std::uint8_t item_count = 150;
 
 		var string back_pic;
@@ -846,7 +846,7 @@ namespace zenkit {
 		execute_commands ZKREM("renamed to MenuItemSelectAction::EXECUTE_COMMANDS") = EXECUTE_COMMANDS,
 	};
 
-	struct IMenuItem : public DaedalusInstance {
+	struct IMenuItem : DaedalusInstance {
 		static constexpr std::uint32_t text_count = 10;
 		static constexpr std::uint32_t select_action_count = 5;
 		static constexpr std::uint32_t event_action_count = 10;
@@ -884,7 +884,7 @@ namespace zenkit {
 		ZKAPI static void register_(DaedalusScript& s);
 	};
 
-	struct ICamera : public DaedalusInstance {
+	struct ICamera : DaedalusInstance {
 		var float best_range;
 		var float min_range;
 		var float max_range;
@@ -944,7 +944,7 @@ namespace zenkit {
 		measure ZKREM("renamed to MusicTransitionType::MEASURE") = MEASURE,
 	};
 
-	struct IMusicSystem : public DaedalusInstance {
+	struct IMusicSystem : DaedalusInstance {
 		var float volume;
 		var int32_t bit_resolution;
 		var int32_t global_reverb_enabled;
@@ -955,7 +955,7 @@ namespace zenkit {
 		ZKAPI static void register_(DaedalusScript& s);
 	};
 
-	struct IMusicTheme : public DaedalusInstance {
+	struct IMusicTheme : DaedalusInstance {
 		var string file;
 		var float vol;
 		var int32_t loop;
@@ -967,7 +967,7 @@ namespace zenkit {
 		ZKAPI static void register_(DaedalusScript& s);
 	};
 
-	struct IMusicJingle : public DaedalusInstance {
+	struct IMusicJingle : DaedalusInstance {
 		var string name;
 		var int32_t loop;
 		var float vol;
@@ -976,7 +976,7 @@ namespace zenkit {
 		ZKAPI static void register_(DaedalusScript& s);
 	};
 
-	struct IParticleEffect : public DaedalusInstance {
+	struct IParticleEffect : DaedalusInstance {
 		var float pps_value;
 		var string pps_scale_keys_s;
 		var int32_t pps_is_looping;
@@ -1038,7 +1038,7 @@ namespace zenkit {
 		ZKAPI static void register_(DaedalusScript& s);
 	};
 
-	struct IEffectBase : public DaedalusInstance {
+	struct IEffectBase : DaedalusInstance {
 		static constexpr std::uint8_t user_string_count = 5;
 
 		var string vis_name_s;
@@ -1091,7 +1091,7 @@ namespace zenkit {
 		ZKAPI static void register_(DaedalusScript& s);
 	};
 
-	struct IParticleEffectEmitKey : public DaedalusInstance {
+	struct IParticleEffectEmitKey : DaedalusInstance {
 		var string vis_name_s;
 		var float vis_size_scale;
 		var float scale_duration;
@@ -1168,7 +1168,7 @@ namespace zenkit {
 		wait_ext ZKREM("renamed to zenkit::WAIT_EXT") = WAIT_EXT,
 	};
 
-	struct IFightAi : public DaedalusInstance {
+	struct IFightAi : DaedalusInstance {
 		static constexpr std::uint32_t move_count = 6;
 
 		var FightAiMove move[move_count];
@@ -1176,7 +1176,7 @@ namespace zenkit {
 		ZKAPI static void register_(DaedalusScript& s);
 	};
 
-	struct ISoundEffect : public DaedalusInstance {
+	struct ISoundEffect : DaedalusInstance {
 		var string file;
 		var int32_t pitch_off;
 		var int32_t pitch_var;
@@ -1190,7 +1190,7 @@ namespace zenkit {
 		ZKAPI static void register_(DaedalusScript& s);
 	};
 
-	struct ISoundSystem : public DaedalusInstance {
+	struct ISoundSystem : DaedalusInstance {
 		var float volume;
 		var int32_t bit_resolution;
 		var int32_t sample_rate;

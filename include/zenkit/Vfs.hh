@@ -16,17 +16,17 @@
 #include <vector>
 
 namespace zenkit {
-	class VfsBrokenDiskError : public Error {
+	class VfsBrokenDiskError final : public Error {
 	public:
 		ZKINT explicit VfsBrokenDiskError(std::string const& signature);
 	};
 
-	class VfsFileExistsError : public Error {
+	class VfsFileExistsError final : public Error {
 	public:
 		ZKINT explicit VfsFileExistsError(std::string const& name);
 	};
 
-	class VfsNotFoundError : public Error {
+	class VfsNotFoundError final : public Error {
 	public:
 		ZKINT explicit VfsNotFoundError(std::string const& name);
 	};
@@ -191,7 +191,6 @@ namespace zenkit {
 	private:
 		ZKINT void mount_disk(std::byte const* buf, std::size_t size, VfsOverwriteBehavior overwrite);
 
-	private:
 		VfsNode _m_root;
 		std::vector<std::unique_ptr<std::byte[]>> _m_data;
 

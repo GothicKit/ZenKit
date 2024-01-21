@@ -273,7 +273,6 @@ namespace zenkit {
 		/// \brief Skips the next entry in the reader.
 		virtual void skip_entry() = 0;
 
-	protected:
 		ArchiveHeader header;
 		Read* read;
 
@@ -289,8 +288,8 @@ namespace zenkit {
 		static std::unique_ptr<WriteArchive> to(Write* w, ArchiveFormat format);
 		static std::unique_ptr<WriteArchive> to_save(Write* w, ArchiveFormat format);
 
-		void write_object(std::shared_ptr<Object> obj, GameVersion version);
-		void write_object(std::string_view name, std::shared_ptr<Object> obj, GameVersion version);
+		void write_object(std::shared_ptr<Object> const& obj, GameVersion version);
+		void write_object(std::string_view name, std::shared_ptr<Object> const& obj, GameVersion version);
 		void write_object(std::string_view name, Object const* obj, GameVersion version);
 		virtual std::uint32_t
 		write_object_begin(std::string_view object_name, std::string_view class_name, std::uint16_t version) = 0;

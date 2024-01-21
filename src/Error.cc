@@ -3,7 +3,7 @@
 #include "zenkit/Error.hh"
 
 namespace zenkit {
-	Error::Error(std::string&& msg) : std::exception(), message(std::move(msg)) {}
+	Error::Error(std::string&& msg) : message(std::move(msg)) {}
 
 	ParserError::ParserError(std::string&& type)
 	    : Error("failed parsing resource of type " + type), resource_type(type) {}

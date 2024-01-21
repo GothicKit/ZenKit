@@ -92,7 +92,7 @@ namespace zenkit {
 
 	/// \brief Represents an animation event.
 	struct AnimationEvent {
-		static constexpr auto const VMAX = 4;
+		static constexpr auto VMAX = 4;
 
 		AnimationEventType type;
 
@@ -122,18 +122,17 @@ namespace zenkit {
 		///       using buffer::duplicate.
 		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelAnimation parse(phoenix::buffer& in);
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelAnimation parse(phoenix::buffer& buf);
 
 		/// \brief Parses an animation from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed animation.
 		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelAnimation parse(phoenix::buffer&& in);
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelAnimation parse(phoenix::buffer&& buf);
 
 		ZKAPI void load(Read* r);
 
-	public:
 		/// \brief The name of the animation
 		std::string name {};
 

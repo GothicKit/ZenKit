@@ -89,7 +89,6 @@ namespace zenkit {
 	struct VCameraTrajectoryFrame : VirtualObject {
 		ZK_OBJECT(ObjectType::zCCamTrj_KeyFrame);
 
-	public:
 		float time;
 		float roll_angle;
 		float fov_scale;
@@ -105,7 +104,7 @@ namespace zenkit {
 		glm::mat4 original_pose;
 
 		ZKREM("use ::load()")
-		ZKAPI static std::unique_ptr<VCameraTrajectoryFrame> parse(ReadArchive& ctx, GameVersion version);
+		ZKAPI static std::unique_ptr<VCameraTrajectoryFrame> parse(ReadArchive& r, GameVersion version);
 
 		/// \brief Load this object from the given archive.
 		/// \param r The archive to read from;
@@ -122,7 +121,6 @@ namespace zenkit {
 	struct VCutsceneCamera : VirtualObject {
 		ZK_OBJECT(ObjectType::zCCSCamera);
 
-	public:
 		/// \brief The reference coordinate system of camera trajectory keyframes.
 		/// \note FOR stands for "frame of reference".
 		CameraCoordinateReference trajectory_for;
@@ -156,7 +154,7 @@ namespace zenkit {
 		bool goto_time_mode {false};
 		float cs_time {0};
 
-		ZKREM("use ::load()") ZKAPI static void parse(VCutsceneCamera& obj, ReadArchive& ctx, GameVersion version);
+		ZKREM("use ::load()") ZKAPI static void parse(VCutsceneCamera& obj, ReadArchive& r, GameVersion version);
 
 		/// \brief Load this object from the given archive.
 		/// \param r The archive to read from;

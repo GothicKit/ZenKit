@@ -14,18 +14,17 @@ namespace zenkit {
 		AnimationFlags animation_flags_from_string(std::string_view str);
 	} // namespace mds
 
-	struct ScriptSyntaxError : public zenkit::ParserError {
-	public:
+	struct ScriptSyntaxError : ParserError {
 		ScriptSyntaxError(std::string&& location, std::string&& msg);
 	};
 
 	ScriptSyntaxError::ScriptSyntaxError(std::string&& location, std::string&& msg)
-	    : zenkit::ParserError("ModelScript (source)", "MDS syntax error at " + location + ": " + msg) {}
+	    : ParserError("ModelScript (source)", "MDS syntax error at " + location + ": " + msg) {}
 
 	constexpr std::string_view token_names[] =
 	    {"KEYWORD", "integer", "float", "string", "rparen", "lparen", "rbrace", "lbrace", "colon", "eof", "null"};
 
-	MdsTokenizer::MdsTokenizer(Read* buf) : _m_buffer(buf) {}
+	MdsTokenizer::MdsTokenizer(Read* buf) : _m_buffer(buf), _m_mark(0) {}
 
 	MdsToken MdsTokenizer::next() {
 		_m_value.clear();
@@ -163,7 +162,8 @@ namespace zenkit {
 	template <MdsToken kind>
 	void MdsParser::expect() {
 		if (!this->maybe<kind>()) {
-			throw ScriptSyntaxError {_m_stream.format_location(), "expected " + std::string {token_names[int(kind)]}};
+			throw ScriptSyntaxError {_m_stream.format_location(),
+			                         "expected " + std::string {token_names[static_cast<int>(kind)]}};
 		}
 	}
 

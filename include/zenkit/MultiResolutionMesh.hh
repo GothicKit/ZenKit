@@ -94,21 +94,20 @@ namespace zenkit {
 		///       using buffer::duplicate.
 		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&&)
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static MultiResolutionMesh parse(phoenix::buffer& in);
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static MultiResolutionMesh parse(phoenix::buffer& buf);
 
 		/// \brief Parses a proto mesh from the data in the given buffer.
 		/// \param[in] buf The buffer to read from (by rvalue-reference).
 		/// \return The parsed proto mesh.
 		/// \throws zenkit::ParserError if parsing fails.
 		/// \see #parse(buffer&)
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static MultiResolutionMesh parse(phoenix::buffer&& in);
+		[[nodiscard]] ZKREM("use ::load()") ZKAPI static MultiResolutionMesh parse(phoenix::buffer&& buf);
 
 		ZKAPI void load(Read* r);
 		ZKINT void load_from_section(Read* r);
 		ZKAPI void save(Write* w, GameVersion version) const;
 		ZKINT void save_to_section(Write* w, GameVersion version) const;
 
-	public:
 		/// \brief The vertex positions associated with the mesh.
 		std::vector<glm::vec3> positions;
 

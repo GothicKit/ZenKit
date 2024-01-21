@@ -131,18 +131,17 @@ namespace zenkit {
 
 	class SaveGame {
 	public:
-		explicit SaveGame(GameVersion version);
+		ZKAPI explicit SaveGame(GameVersion version);
 
-		void load(std::filesystem::path const& path);
-		void save(std::filesystem::path const& path, World& world, std::string world_name);
+		ZKAPI void load(std::filesystem::path const& path);
+		ZKAPI void save(std::filesystem::path const& path, World& world, std::string const& world_name);
 
-		std::shared_ptr<World> load_world() const;
-		std::shared_ptr<World> load_world(std::string name) const;
+		[[nodiscard]] ZKAPI std::shared_ptr<World> load_world() const;
+		[[nodiscard]] ZKAPI std::shared_ptr<World> load_world(std::string_view name) const;
 
-	public:
-		SaveMetadata metadata;
-		SaveState state;
-		std::optional<Texture> thumbnail;
+		SaveMetadata metadata {};
+		SaveState state {};
+		std::optional<Texture> thumbnail {};
 
 	private:
 		GameVersion _m_version;

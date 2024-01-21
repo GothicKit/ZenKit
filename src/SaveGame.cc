@@ -262,7 +262,7 @@ namespace zenkit {
 		return *result;
 	}
 
-	std::shared_ptr<World> SaveGame::load_world(std::string world_name) const {
+	std::shared_ptr<World> SaveGame::load_world(std::string_view world_name) const {
 		auto path = _m_path / world_name;
 		path.replace_extension("SAV");
 
@@ -302,8 +302,7 @@ namespace zenkit {
 		// Load THUMB.SAV
 		{
 			ZKLOGI("SaveGame", "Loading THUMB.SAV");
-			auto file_thumb = find_file_matching(entries, "THUMB.SAV");
-			if (file_thumb) {
+			if (auto file_thumb = find_file_matching(entries, "THUMB.SAV")) {
 				auto r = Read::from(*file_thumb);
 
 				this->thumbnail.emplace();
@@ -326,7 +325,7 @@ namespace zenkit {
 		}
 	}
 
-	void SaveGame::save(std::filesystem::path const& path, World& world, std::string world_name) {
+	void SaveGame::save(std::filesystem::path const& path, World& world, std::string const& world_name) {
 		// Copy over the current save if necessary.
 		if (_m_path != path) {
 			if (std::filesystem::exists(path)) {

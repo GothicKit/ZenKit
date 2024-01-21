@@ -270,7 +270,7 @@ TEST_SUITE("vobs") {
 	}
 
 	static std::vector<float> const G1_LIGHT_RANGE_ANIMATION_SCALE {};
-	static std::vector<glm::u8vec4> const G1_LIGHT_COLOR_ANIMATION_LIST {
+	static std::vector const G1_LIGHT_COLOR_ANIMATION_LIST {
 	    glm::u8vec4 {211, 147, 107, 255}, glm::u8vec4 {223, 173, 117, 255}, glm::u8vec4 {211, 147, 107, 255},
 	    glm::u8vec4 {223, 173, 117, 255}, glm::u8vec4 {225, 197, 100, 255}, glm::u8vec4 {223, 173, 117, 255},
 	    glm::u8vec4 {227, 209, 106, 255}, glm::u8vec4 {223, 173, 117, 255}, glm::u8vec4 {211, 147, 107, 255},

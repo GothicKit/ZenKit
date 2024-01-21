@@ -38,7 +38,6 @@ namespace zenkit {
 		ZKAPI void load(Read* r);
 		ZKAPI void save(Write* w, GameVersion version) const;
 
-	public:
 		/// \brief The zenkit::ModelHierarchy associated with this model.
 		ModelHierarchy hierarchy {};
 

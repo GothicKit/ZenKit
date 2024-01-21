@@ -108,13 +108,13 @@ namespace zenkit {
 	}
 
 	phoenix::buffer ReadArchiveBinary::read_raw_bytes(uint32_t size) {
-		std::vector<std::byte> bytes(size, std::byte {});
+		std::vector bytes(size, std::byte {});
 		read->read(bytes.data(), bytes.size());
 		return phoenix::buffer::of(std::move(bytes));
 	}
 
 	std::unique_ptr<Read> ReadArchiveBinary::read_raw(std::size_t size) {
-		std::vector<std::byte> bytes(size, std::byte {});
+		std::vector bytes(size, std::byte {});
 		read->read(bytes.data(), bytes.size());
 		return Read::from(std::move(bytes));
 	}

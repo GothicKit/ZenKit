@@ -89,8 +89,8 @@ namespace zenkit {
 	}
 
 	void SoftSkinMesh::save(Write* w, GameVersion version) const {
-		proto::write_chunk(w, SoftSkinMeshChunkType::HEADER, [version](Write* w) {
-			w->write_uint(version == GameVersion::GOTHIC_1 ? VERSION_G1 : VERSION_G2);
+		proto::write_chunk(w, SoftSkinMeshChunkType::HEADER, [version](Write* wr) {
+			wr->write_uint(version == GameVersion::GOTHIC_1 ? VERSION_G1 : VERSION_G2);
 		});
 
 		proto::write_chunk(w, SoftSkinMeshChunkType::PROTO, [&, version](Write* wr) {
@@ -98,20 +98,20 @@ namespace zenkit {
 		});
 
 		proto::write_chunk(w, SoftSkinMeshChunkType::HEADER, [&](Write* wr) {
-			auto off_size = wr->tell();
+			auto off_size = static_cast<ssize_t>(wr->tell());
 			wr->write_uint(0);
 
-			for (auto& w : this->weights) {
-				wr->write_uint(w.size());
+			for (auto& we : this->weights) {
+				wr->write_uint(we.size());
 
-				for (auto& i : w) {
+				for (auto& i : we) {
 					wr->write_float(i.weight);
 					wr->write_vec3(i.position);
 					wr->write_ubyte(i.node_index);
 				}
 			}
 
-			auto off_end = wr->tell();
+			auto off_end = static_cast<ssize_t>(wr->tell());
 			wr->seek(off_size, Whence::BEG);
 			wr->write_uint(off_end - off_size);
 			wr->seek(off_end, Whence::BEG);
@@ -136,6 +136,6 @@ namespace zenkit {
 	}
 
 	SoftSkinMesh SoftSkinMesh::parse(phoenix::buffer&& in) {
-		return SoftSkinMesh::parse(in);
+		return parse(in);
 	}
 } // namespace zenkit
