@@ -1,7 +1,7 @@
 site_name: 'ZenKit'
 site_url: 'https://zk.gothickit.dev'
 copyright: 'Copyright © 2022-2023 GothicKit Contributors.'
-repo_url: 'https://github.com/GothicKit/phoenix'
+repo_url: 'https://github.com/GothicKit/ZenKit'
 edit_uri: 'edit/main/docs/'
 nav:
   - 'Library Reference':
