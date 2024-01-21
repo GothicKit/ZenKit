@@ -393,7 +393,13 @@ namespace zenkit {
 		std::array<char, 2> buf {};
 		for (auto i = 0u; i < length; ++i) {
 			std::to_chars(buf.data(), buf.data() + buf.size(), static_cast<unsigned char>(v[i]), 16);
-			this->_m_write->write_string({buf.data(), 2});
+
+			if (buf[1] == '\0') {
+				this->_m_write->write_char('0');
+				this->_m_write->write_char(buf[0]);
+			} else {
+				this->_m_write->write_string(buf.data());
+			}
 		}
 
 		this->_m_write->write_char('\n');
