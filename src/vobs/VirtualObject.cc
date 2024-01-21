@@ -99,11 +99,7 @@ namespace zenkit {
 			// present but this is only relevant in save-games.
 			has_event_manager_object = static_cast<bool>((bit1 & 0b000000000100000u) >> 5u) && r.is_save_game();
 
-			if (version == GameVersion::GOTHIC_1) {
-				this->physics_enabled = static_cast<bool>((bit1 & 0b000000010000000u) >> 7u);
-			} else {
-				this->physics_enabled = static_cast<bool>((bit1 & 0b000000001000000u) >> 6u);
-			}
+			this->physics_enabled = static_cast<bool>((bit1 & 0b000000001000000u) >> 6u);
 
 			if (version == GameVersion::GOTHIC_2) {
 				this->anim_mode = static_cast<AnimationType>(bit1 & 0b000000110000000u >> 7u);
@@ -190,7 +186,7 @@ namespace zenkit {
 			this->sleep_mode = r.read_byte();     // sleepMode
 			this->next_on_timer = r.read_float(); // nextOnTimer
 
-			if (this->physics_enabled && version == GameVersion::GOTHIC_2) {
+			if (this->physics_enabled) {
 				this->rigid_body.emplace().load(r, version);
 			}
 		}
@@ -277,7 +273,7 @@ namespace zenkit {
 			w.write_float("nextOnTimer", this->next_on_timer);
 
 			// Gothic 1 does not store rigid-body information.
-			if (this->physics_enabled && this->rigid_body && version == GameVersion::GOTHIC_2) {
+			if (this->physics_enabled && this->rigid_body) {
 				this->rigid_body->save(w, version);
 			}
 		}
