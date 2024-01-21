@@ -476,6 +476,36 @@ namespace zenkit {
 
 		using slot ZKREM("renamed to Slot") = Slot;
 
+		enum class NewsId {
+			MURDER = 200,
+			ATTACK = 195,
+			THEFT = 190,
+			DEFEAT = 185,
+			NERVE = 180,
+			INTERFERE = 175,
+			HAS_DEFEATED = 170,
+		};
+
+		enum class NewsSpread {
+			DONT_SPREAD = 0,
+			FRIENDLY_TOWARDS_VICTIM = 1,
+			FRIENDLY_TOWARDS_WITNESS = 2,
+			FRIENDLY_TOWARDS_OFFENDER = 3,
+			SAME_GUILD_VICTIM = 4,
+		};
+
+		struct News {
+			bool told;
+			float spread_time;
+			NewsSpread spread_type;
+			NewsId news_id;
+			bool gossip;
+			bool guild_victim;
+			std::string witness_name;
+			std::string offender_name;
+			std::string victim_name;
+		};
+
 		std::string npc_instance;
 		glm::vec3 model_scale;
 		float model_fatness;
@@ -512,6 +542,7 @@ namespace zenkit {
 		bool move_lock;
 
 		std::string packed[packed_count];
+		std::vector<std::unique_ptr<News>> news;
 		std::vector<std::shared_ptr<VItem>> items;
 		std::vector<std::unique_ptr<Slot>> slots;
 

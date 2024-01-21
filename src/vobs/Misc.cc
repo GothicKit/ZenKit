@@ -332,13 +332,19 @@ namespace zenkit {
 		// unknown.
 		[[maybe_unused]] auto spells = r.read_raw(4); // spells
 
-		// TODO: News (I don't have a sample.).
 		auto news_count = r.read_int(); // NumOfEntries
-		if (news_count != 0) {
-			ZKLOGE("VOb.Npc",
-			       "!!! IMPORTANT !!! This save-game contains news entries and cannot be loaded currently. Please "
-			       "open an issue at https://github.com/GothicKit/ZenKit providing your save-game as a ZIP file.");
-			throw ParserError {"VNpc"};
+		for (auto i = 0; i < news_count; ++i) {
+			auto n = std::make_unique<News>();
+			n->told = r.read_bool();                                // told
+			n->spread_time = r.read_float();                        // spread_time
+			n->spread_type = static_cast<NewsSpread>(r.read_int()); // spreadType
+			n->news_id = static_cast<NewsId>(r.read_int());         // news_id
+			n->gossip = r.read_bool();                              // gossip
+			n->guild_victim = r.read_bool();                        // guildvictim
+			n->witness_name = r.read_string();                      // witnessName
+			n->offender_name = r.read_string();                     // offenderName
+			n->victim_name = r.read_string();                       // victimName
+			news.push_back(std::move(n));
 		}
 
 		carry_vob = std::dynamic_pointer_cast<VirtualObject>(r.read_object(version)); // [carryVob % 0 0]
@@ -492,8 +498,18 @@ namespace zenkit {
 		spells.push_back({});
 		w.write_raw("spells", spells);
 
-		// TODO: News (I don't have a sample.).
-		w.write_int("NumOfEntries", 0);
+		w.write_int("NumOfEntries", this->news.size());
+		for (auto& n : this->news) {
+			w.write_bool("told", n->told);
+			w.write_float("spread_time", n->spread_time);
+			w.write_int("spreadType", static_cast<std::int32_t>(n->spread_type));
+			w.write_int("news_id", static_cast<std::int32_t>(n->news_id));
+			w.write_bool("gossip", n->gossip);
+			w.write_bool("guildvictim", n->guild_victim);
+			w.write_string("witnessName", n->witness_name);
+			w.write_string("offenderName", n->offender_name);
+			w.write_string("victimName", n->victim_name);
+		}
 
 		w.write_object("carryVob", this->carry_vob, version);
 		w.write_object("enemy", this->enemy, version);
