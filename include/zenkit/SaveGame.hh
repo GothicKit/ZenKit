@@ -47,15 +47,16 @@ namespace zenkit {
 
 	/// \brief The section log entries are in.
 	enum class SaveTopicSection : std::uint32_t {
-		QUESTS = 0x00,
-		INFOS = 0x01,
+		MISSIONS = 0x00,
+		NOTES = 0x01,
 	};
 
 	/// \brief The status of a single log entry.
 	enum class SaveTopicStatus : std::uint32_t {
-		ACTIVE = 0x01,
-		COMPLETED = 0x02,
-		FAILED = 0x03,
+		FREE = 0x00,
+		RUNNING = 0x01,
+		SUCCESS = 0x02,
+		FAILURE = 0x03,
 		OBSOLETE = 0x04,
 	};
 
@@ -79,7 +80,7 @@ namespace zenkit {
 	struct Mission {
 		std::string name;
 		int id;
-		bool av;
+		bool available;
 		int status_index;
 	};
 

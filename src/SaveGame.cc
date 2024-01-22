@@ -99,9 +99,9 @@ namespace zenkit {
 		for (auto i = 0; i < mission_count; ++i) {
 			// oCMission {
 			auto& mission = this->missions.emplace_back();
-			mission.name = r.read_string(); // name
-			mission.id = r.read_int();      // ID
-			mission.av = r.read_bool();     // Av
+			mission.name = r.read_string();    // name
+			mission.id = r.read_int();         // ID
+			mission.available = r.read_bool(); // Av
 
 			auto unknown_count = r.read_int(); // NumInList
 			for (auto j = 0; j < unknown_count; ++j) {
@@ -189,7 +189,7 @@ namespace zenkit {
 			// oCMission {
 			w.write_string("name", mission.name);
 			w.write_int("ID", mission.id);
-			w.write_bool("Av", mission.av);
+			w.write_bool("Av", mission.available);
 			w.write_int("NumInList", 0); // TODO: Unknown!
 			w.write_int("StatusIndex", mission.status_index);
 			// }
