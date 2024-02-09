@@ -136,3 +136,4 @@ markdown_extensions:
   - 'md_in_html'
   - 'pymdownx.details'
   - 'def_list'
+  - 'attr_list'
