@@ -8,28 +8,51 @@
     **Version Identifiers:**<br />
     — Gothic I: `52224`<br/>
     — Gothic II: `52224`<br/>
-    **ZenKit Class:** `VTriggerUntouch`
+    **ZenKit Class:** `VTriggerUntouch`<br/>
+    **Sources:**<br/>
+    — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)
 
 A trigger which fires an `OnTrigger` event to its [`triggerTarget`](#triggerTarget) if any `OnUntouch` event is emitted
 from an inanimate object within the object's bounding box.
 
-<ul class="sp-list">
-    <li class="sp-type"><a href="../zCVob/">zCVob</a></li>
-    <li class="sp-type">
-        <span>zCTriggerUntouch</span>
-        <ul class="sp-list">
-            <li class="sp-string"><a href="#triggerTarget">triggerTarget</a> = ""</li>
-        </ul>
-    </li>
-</ul>
+=== "Gothic 1"
+
+    - [zCVob](zCVob.md)
+      {: .sp-type}
+    - zCTriggerUntouch
+      {: .sp-type}
+        - [triggerTarget](#triggertarget) = ""
+          {: .sp-string}
+
+=== "Gothic 2"
+
+    - [zCVob](zCVob.md)
+      {: .sp-type}
+    - zCTriggerUntouch
+      {: .sp-type}
+        - [triggerTarget](#triggertarget) = ""
+          {: .sp-string}
+
+=== "Gothic 1 (Save)"
+
+    - [zCVob](zCVob.md)
+      {: .sp-type}
+    - zCTriggerUntouch
+      {: .sp-type}
+        - [triggerTarget](#triggertarget) = ""
+          {: .sp-string}
+
+=== "Gothic 2 (Save)"
+
+    - [zCVob](zCVob.md)
+      {: .sp-type}
+    - zCTriggerUntouch
+      {: .sp-type}
+        - [triggerTarget](#triggertarget) = ""
+          {: .sp-string}
 
 ## Properties
 
-<a name="triggerTarget" class="t-str"></a> `triggerTarget`
+#### `triggerTarget` {: .t-str}
 
 :   The name of VObject to send the `OnTrigger` events to.
-
-
-## Sources
-
-The help file for the Spacer, found [here](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei).

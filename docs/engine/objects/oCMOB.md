@@ -8,64 +8,166 @@
     **Version Identifiers:**<br />
     — Gothic I: `47105`<br/>
     — Gothic II: `47105`<br/>
-    **ZenKit Class:** `VMovableObject`
+    **ZenKit Class:** `VMovableObject`<br/>
+    **Sources:**<br/>
+    — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)<br/>
+    — [gothic-library.ru](http://www.gothic-library.ru/publ/ocmob_class/1-1-0-503)
 
 A VObject which can optionally be moved and/or carried.
 
-<ul class="sp-list">
-    <li class="sp-type"><a href="../zCVob/">zCVob</a></li>
-    <li class="sp-type">
-        <span>oCMOB</span>
-        <ul class="sp-list">
-            <li class="sp-folder">
-                <span>MOB</span>
-                <ul class="sp-list">
-                    <li class="sp-string"><a href="#focusName">focusName</a> = ""</li>
-                    <li class="sp-int"><a href="#hitpoints">hitpoints</a> = 0</li>
-                    <li class="sp-int"><a href="#damage">damage</a> = 0</li>
-                    <li class="sp-bool"><a href="#moveable">moveable</a> = FALSE</li>
-                    <li class="sp-bool"><a href="#takeable">takeable</a> = FALSE</li>
-                    <li class="sp-bool"><a href="#focusOverride">focusOverride</a> = FALSE</li>
-                    <li class="sp-enum"><a href="#soundMaterial">soundMaterial</a> = WOOD</li>
-                    <li class="sp-string"><a href="#visualDestroyed">visualDestroyed</a> = ""</li>
-                    <li class="sp-string"><a href="#owner">owner</a> = ""</li>
-                    <li class="sp-string"><a href="#ownerGuild">ownerGuild</a> = ""</li>
-                </ul>
-            </li>
-            <li class="sp-bool"><a href="#isDestroyed">isDestroyed</a> = ""</li>
-        </ul>
-    </li>
-</ul>
+=== "Gothic 1"
+    
+    - [oCVob](oCVob.md)
+      {: .sp-type}
+    - oCMOB
+      {: .sp-type}
+        - MOB
+          {: .sp-folder}
+            - [focusName](#focusName) = ""
+              {: .sp-string}
+            - [hitpoints](#hitpoints) = 0
+              {: .sp-int}
+            - [damage](#damage) = 0
+              {: .sp-int}
+            - [moveable](#moveable) = FALSE
+              {: .sp-bool}
+            - [takeable](#takeable) = FALSE
+              {: .sp-bool}
+            - [focusOverride](#focusOverride) = FALSE
+              {: .sp-bool}
+            - [soundMaterial](#soundMaterial) = WOOD
+              {: .sp-enum}
+            - [visualDestroyed](#visualDestroyed) = ""
+              {: .sp-string}
+            - [owner](#owner) = ""
+              {: .sp-string}
+            - [ownerGuild](#ownerGuild) = ""
+              {: .sp-string}
+        - [isDestroyed](#isDestroyed) = ""
+          {: .sp-bool}
+
+=== "Gothic 2"
+
+    - [oCVob](oCVob.md)
+      {: .sp-type}
+    - oCMOB
+      {: .sp-type}
+        - MOB
+          {: .sp-folder}
+            - [focusName](#focusName) = ""
+              {: .sp-string}
+            - [hitpoints](#hitpoints) = 0
+              {: .sp-int}
+            - [damage](#damage) = 0
+              {: .sp-int}
+            - [moveable](#moveable) = FALSE
+              {: .sp-bool}
+            - [takeable](#takeable) = FALSE
+              {: .sp-bool}
+            - [focusOverride](#focusOverride) = FALSE
+              {: .sp-bool}
+            - [soundMaterial](#soundMaterial) = WOOD
+              {: .sp-enum}
+            - [visualDestroyed](#visualDestroyed) = ""
+              {: .sp-string}
+            - [owner](#owner) = ""
+              {: .sp-string}
+            - [ownerGuild](#ownerGuild) = ""
+              {: .sp-string}
+        - [isDestroyed](#isDestroyed) = ""
+          {: .sp-bool}
+
+=== "Gothic 1 (Save)"
+
+    - [oCVob](oCVob.md)
+      {: .sp-type}
+    - oCMOB
+      {: .sp-type}
+        - MOB
+          {: .sp-folder}
+            - [focusName](#focusName) = ""
+              {: .sp-string}
+            - [hitpoints](#hitpoints) = 0
+              {: .sp-int}
+            - [damage](#damage) = 0
+              {: .sp-int}
+            - [moveable](#moveable) = FALSE
+              {: .sp-bool}
+            - [takeable](#takeable) = FALSE
+              {: .sp-bool}
+            - [focusOverride](#focusOverride) = FALSE
+              {: .sp-bool}
+            - [soundMaterial](#soundMaterial) = WOOD
+              {: .sp-enum}
+            - [visualDestroyed](#visualDestroyed) = ""
+              {: .sp-string}
+            - [owner](#owner) = ""
+              {: .sp-string}
+            - [ownerGuild](#ownerGuild) = ""
+              {: .sp-string}
+        - [isDestroyed](#isDestroyed) = ""
+          {: .sp-bool}
+
+=== "Gothic 2 (Save)"
+
+    - [oCVob](oCVob.md)
+      {: .sp-type}
+    - oCMOB
+      {: .sp-type}
+        - MOB
+          {: .sp-folder}
+            - [focusName](#focusName) = ""
+              {: .sp-string}
+            - [hitpoints](#hitpoints) = 0
+              {: .sp-int}
+            - [damage](#damage) = 0
+              {: .sp-int}
+            - [moveable](#moveable) = FALSE
+              {: .sp-bool}
+            - [takeable](#takeable) = FALSE
+              {: .sp-bool}
+            - [focusOverride](#focusOverride) = FALSE
+              {: .sp-bool}
+            - [soundMaterial](#soundMaterial) = WOOD
+              {: .sp-enum}
+            - [visualDestroyed](#visualDestroyed) = ""
+              {: .sp-string}
+            - [owner](#owner) = ""
+              {: .sp-string}
+            - [ownerGuild](#ownerGuild) = ""
+              {: .sp-string}
+        - [isDestroyed](#isDestroyed) = ""
+          {: .sp-bool}
 
 ## Properties
 
-<a name="focusName" class="t-str"></a> `focusName`
+#### `focusName` {: .t-str}
 
 :   The name of the object as seen in-game when focusing it.
 
-<a name="hitpoints" class="t-int"></a> `hitpoints`
+#### `hitpoints` {: .t-int}
 
 :   The number of hitpoints of the object.
 
-<a name="damage" class="t-int"></a> `damage`
+#### `damage` {: .t-int}
 
 :   The damage dealt by the object when being used.
 
-<a name="moveable" class="t-bool"></a> `moveable`
+#### `moveable` {: .t-bool}
 
 :   Whether the object can be moved by the player.
     <br />`TRUE` — The object can be moved. `FALSE` — The object can not be moved.
 
-<a name="takeable" class="t-bool"></a> `takeable`
+#### `takeable` {: .t-bool}
 
 :   Whether the object can be carried by the player.
     <br />`TRUE` — The object can be carried. `FALSE` — The object can not be carried.
 
-<a name="focusOverride" class="t-bool"></a> `focusOverride`
+#### `focusOverride` {: .t-bool}
 
 :   Unknown.
 
-<a name="soundMaterial" class="t-enum"></a> `soundMaterial`
+#### `soundMaterial` {: .t-enum}
 
 :   The sound to play when the object is hit.
 
@@ -76,24 +178,19 @@ A VObject which can optionally be moved and/or carried.
     * `CLAY` — Clay.
     * `GLAS` — Glass.
 
-<a name="visualDestroyed" class="t-str"></a> `visualDestroyed`
+#### `visualDestroyed` {: .t-str}
 
 :   The name of the visual to use when the object is destroyed. Behaves like [zCVob.visual](zCVob.md#visual).
 
-<a name="owner" class="t-str"></a> `owner`
+#### `owner` {: .t-str}
 
 :   The name of the script instance of the NPC who is the owner of this object.
 
-<a name="ownerGuild" class="t-str"></a> `ownerGuild`
+#### `ownerGuild` {: .t-str}
 
 :   The name of the guild this object belongs to. This name corresponds to the script constant for
     each guild (i.e. `GIL_BAU`), found in `Constants.d`.
 
-<a name="isDestroyed" class="t-bool"></a> `isDestroyed`
+#### `isDestroyed` {: .t-bool}
 
 :   Unknown.
-
-## Sources
-
-The help file for the Spacer, found [here](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei) and the
-Russian-language knowledge accumulator [gothic-library.ru](http://www.gothic-library.ru/publ/ocmob_class/1-1-0-503).

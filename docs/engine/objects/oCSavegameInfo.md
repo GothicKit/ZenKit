@@ -10,78 +10,176 @@
     — Gothic II: `0`<br/>
     **ZenKit Class:** `SaveMetadata`
 
-<ul class="sp-list">
-    <li class="sp-type">
-        <span>oCSavegameInfo</span>
-        <ul class="sp-list">
-            <li class="sp-string"><a href="#Title">Title</a> = ""</li>
-            <li class="sp-string"><a href="#WorldName">WorldName</a> = ""</li>
-            <li class="sp-int"><a href="#TimeDay">TimeDay</a> = 0</li>
-            <li class="sp-int"><a href="#TimeHour">TimeHour</a> = 0</li>
-            <li class="sp-int"><a href="#TimeMinute">TimeMinute</a> = 0</li>
-            <li class="sp-string"><a href="#SaveDate">SaveDate</a> = "01.01.0001 - 00:00"</li>
-            <li class="sp-int"><a href="#VersionMajor">VersionMajor</a> = 0</li>
-            <li class="sp-int"><a href="#VersionMinor">VersionMinor</a> = 0</li>
-            <li class="sp-int"><a href="#PlayTimeSeconds">PlayTimeSeconds</a> = 0</li>
-            <li class="sp-int"><a href="#VersionPoint">VersionPoint</a> = 0</li>
-            <li class="sp-int"><a href="#VersionInt">VersionInt</a> = 0</li>
-            <li class="sp-string"><a href="#VersionAppName">VersionAppName</a> = ""</li>
-        </ul>
-    </li>
-</ul>
+=== "Gothic 1"
 
-<a name="Title" class="t-str"></a> `Title`
+    - oCSavegameInfo
+      {: .sp-type}
+        - [Title](#Title) = ""
+          {: .sp-string}
+        - [WorldName](#WorldName) = ""
+          {: .sp-string}
+        - [TimeDay](#TimeDay) = 0
+          {: .sp-int}
+        - [TimeHour](#TimeHour) = 0
+          {: .sp-int}
+        - [TimeMinute](#TimeMinute) = 0
+          {: .sp-int}
+        - [SaveDate](#SaveDate) = "01.01.0001 - 00:00"
+          {: .sp-string}
+        - [VersionMajor](#VersionMajor) = 0
+          {: .sp-int}
+        - [VersionMinor](#VersionMinor) = 0
+          {: .sp-int}
+        - [PlayTimeSeconds](#PlayTimeSeconds) = 0
+          {: .sp-int}
+        - [VersionPoint](#VersionPoint) = 0
+          {: .sp-int}
+        - [VersionInt](#VersionInt) = 0
+          {: .sp-int}
+        - [VersionAppName](#VersionAppName) = ""
+          {: .sp-string}
 
-: The name of the save-game as provided by the player.
+=== "Gothic 2"
 
-<a name="WorldName" class="t-str"></a> `WorldName`
+    - oCSavegameInfo
+      {: .sp-type}
+        - [Title](#Title) = ""
+          {: .sp-string}
+        - [WorldName](#WorldName) = ""
+          {: .sp-string}
+        - [TimeDay](#TimeDay) = 0
+          {: .sp-int}
+        - [TimeHour](#TimeHour) = 0
+          {: .sp-int}
+        - [TimeMinute](#TimeMinute) = 0
+          {: .sp-int}
+        - [SaveDate](#SaveDate) = "01.01.0001 - 00:00"
+          {: .sp-string}
+        - [VersionMajor](#VersionMajor) = 0
+          {: .sp-int}
+        - [VersionMinor](#VersionMinor) = 0
+          {: .sp-int}
+        - [PlayTimeSeconds](#PlayTimeSeconds) = 0
+          {: .sp-int}
+        - [VersionPoint](#VersionPoint) = 0
+          {: .sp-int}
+        - [VersionInt](#VersionInt) = 0
+          {: .sp-int}
+        - [VersionAppName](#VersionAppName) = ""
+          {: .sp-string}
 
-: The name of the world the hero was in when creating the save. For example: `"WORLD"` or `"NEWORLD"`.
+=== "Gothic 1 (Save)"
 
-<a name="TimeDay" class="t-int"></a> `TimeDay`
+    - oCSavegameInfo
+      {: .sp-type}
+        - [Title](#Title) = ""
+          {: .sp-string}
+        - [WorldName](#WorldName) = ""
+          {: .sp-string}
+        - [TimeDay](#TimeDay) = 0
+          {: .sp-int}
+        - [TimeHour](#TimeHour) = 0
+          {: .sp-int}
+        - [TimeMinute](#TimeMinute) = 0
+          {: .sp-int}
+        - [SaveDate](#SaveDate) = "01.01.0001 - 00:00"
+          {: .sp-string}
+        - [VersionMajor](#VersionMajor) = 0
+          {: .sp-int}
+        - [VersionMinor](#VersionMinor) = 0
+          {: .sp-int}
+        - [PlayTimeSeconds](#PlayTimeSeconds) = 0
+          {: .sp-int}
+        - [VersionPoint](#VersionPoint) = 0
+          {: .sp-int}
+        - [VersionInt](#VersionInt) = 0
+          {: .sp-int}
+        - [VersionAppName](#VersionAppName) = ""
+          {: .sp-string}
 
-: The number of in-game days played in the save-game.
+=== "Gothic 2 (Save)"
 
-<a name="TimeHour" class="t-int"></a> `TimeHour`
+    - oCSavegameInfo
+      {: .sp-type}
+        - [Title](#Title) = ""
+          {: .sp-string}
+        - [WorldName](#WorldName) = ""
+          {: .sp-string}
+        - [TimeDay](#TimeDay) = 0
+          {: .sp-int}
+        - [TimeHour](#TimeHour) = 0
+          {: .sp-int}
+        - [TimeMinute](#TimeMinute) = 0
+          {: .sp-int}
+        - [SaveDate](#SaveDate) = "01.01.0001 - 00:00"
+          {: .sp-string}
+        - [VersionMajor](#VersionMajor) = 0
+          {: .sp-int}
+        - [VersionMinor](#VersionMinor) = 0
+          {: .sp-int}
+        - [PlayTimeSeconds](#PlayTimeSeconds) = 0
+          {: .sp-int}
+        - [VersionPoint](#VersionPoint) = 0
+          {: .sp-int}
+        - [VersionInt](#VersionInt) = 0
+          {: .sp-int}
+        - [VersionAppName](#VersionAppName) = ""
+          {: .sp-string}
 
-: The hour of the in-game [day](#TimeDay) when the save-game was created (values from `0` to `24`).
+## Properties
 
-<a name="TimeMinute" class="t-int"></a> `TimeMinute`
+#### `Title` {: .t-str}
 
-: The minute of the in-game [hour](#TimeHour) when the save-game was created (values from `0` to `59`).
+:   The name of the save-game as provided by the player.
 
-<a name="SaveDate" class="t-str"></a> `SaveDate`
+#### `WorldName` {: .t-str}
 
-: The real-world date at which the save-game was created in a human-readable format. Its value conforms to this
-`strftime` format string: `%d.%m.%Y - %H:%M`
+:   The name of the world the hero was in when creating the save. For example: `"WORLD"` or `"NEWORLD"`.
 
-<a name="VersionMajor" class="t-int"></a> `VersionMajor`
+#### `TimeDay` {: .t-int}
+
+:   The number of in-game days played in the save-game.
+
+#### `TimeHour` {: .t-int}
+
+:   The hour of the in-game [day](#TimeDay) when the save-game was created (values from `0` to `24`).
+
+#### `TimeMinute` {: .t-int}
+
+:   The minute of the in-game [hour](#TimeHour) when the save-game was created (values from `0` to `59`).
+
+#### `SaveDate` {: .t-str}
+
+:   The real-world date at which the save-game was created in a human-readable format. Its value conforms to this
+    `strftime` format string: `%d.%m.%Y - %H:%M`
+
+#### `VersionMajor` {: .t-int}
 
 :   The major version of the save-game format. Known values for *Gothic I*: \[`1`\], known values for *Gothic II*: \[`2`\]
 
-<a name="VersionMinor" class="t-int"></a> `VersionMinor`
+#### `VersionMinor` {: .t-int}
 
 :   The minor version of the save-game format. Known values for *Gothic I*: \[`87`\], known values for *Gothic II*: \[`6`\]
 
-<a name="PlayTimeSeconds" class="t-int"></a> `PlayTimeSeconds`
+#### `PlayTimeSeconds` {: .t-int}
 
 :   The total number of real-time seconds played in this save-game.
 
-<a name="VersionPoint" class="t-int"></a> `VersionPoint`
+#### `VersionPoint` {: .t-int}
 
 :   Unknown. Known values: \[`0`\]
 
     !!! warning
         This property is only available in Gothic II.
 
-<a name="VersionInt" class="t-int"></a> `VersionInt`
+#### `VersionInt` {: .t-int}
 
 :   Unknown. Known values: \[`0`\]
 
     !!! warning
         This property is only available in Gothic II.
 
-<a name="VersionAppName" class="t-str"></a> `VersionAppName`
+#### `VersionAppName` {: .t-str}
 
 :   The name and version number of the version of Gothic used to create the save-game.
 

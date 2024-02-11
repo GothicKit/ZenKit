@@ -10,19 +10,46 @@
     — Gothic II: `0`<br/>
     **ZenKit Class:** *—*
 
-<ul class="sp-list">
-    <li class="sp-type">
-        <span>oCSavegameInfo</span>
-        <ul class="sp-list">
-            <li class="sp-int"><a href="#NumOfEntries">NumOfEntries</a> = 0</li>
-            <li class="sp-type"><a href="../oCInfo/">(inline) [oCInfo]</a><sup>1</sup></li>
-        </ul>
-    </li>
-</ul>
+=== "Gothic 1"
 
-<a name="NumOfEntries" class="t-int"></a> `NumOfEntries`
+    - oCInfoManager
+      {: .sp-type}
+        - &lt;empty&gt;
+          {: .sp-none}
 
-: The number of saved [`oCInfo`](oCInfo.md) objects.
+=== "Gothic 2"
+
+    - oCInfoManager
+      {: .sp-type}
+        - &lt;empty&gt;
+          {: .sp-none}
+
+=== "Gothic 1 (Save)"
+
+    - oCInfoManager
+      {: .sp-type}
+        - [NumOfEntries](#numofentries) = 0
+          {: .sp-int}
+        - (inline)[^1] [oCInfo](oCInfo.md) ...
+          {: .sp-type}
+
+=== "Gothic 2 (Save)"
+
+    - oCInfoManager
+      {: .sp-type}
+        - [NumOfEntries](#numofentries) = 0
+          {: .sp-int}
+        - (inline)[^1] [oCInfo](oCInfo.md) ...
+          {: .sp-type}
+
+## Properties
+
+#### `NumOfEntries` {: .t-int}
+
+:   The number of saved [`oCInfo`](oCInfo.md) objects.
+
+    !!! warning
+        This property is only available in saved games.
 
 [^1]: "Inline" means, that these objects are not wrapped in an archive object. Rather, their contents are simply
       all written to the parent object directly without encapsulation.

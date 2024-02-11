@@ -73,6 +73,10 @@
     content: url("/assets/icons/spacer-misc.png");
 }
 
+.t-type::before {
+    content: url("/assets/icons/spacer-class.png");
+}
+
 .sp-folder {
     margin-top: 0 !important;
     margin-bottom: 0 !important;

@@ -10,33 +10,89 @@
     — Gothic II: `0`<br/>
     **ZenKit Class:** *—*
 
-<ul class="sp-list">
-    <li class="sp-type">
-        <span>oCLogTopic</span>
-        <ul class="sp-list">
-            <li class="sp-string"><a href="#TOPICDESCRIPTION">TOPICDESCRIPTION</a> = ""</li>
-            <li class="sp-enum"><a href="#TOPICSECTION">TOPICSECTION</a> = zELogSection_Missions</li>
-            <li class="sp-enum"><a href="#TOPICSTATUS">TOPICSTATUS</a> = zELogTopicStatus_Free</li>
-            <li class="sp-int"><a href="#LOGTOPICENTRYCOUNT">LOGTOPICENTRYCOUNT</a> = 0</li>
-            <li class="sp-int"><a href="#LOGMANAGERENTRYCOUNT">LOGMANAGERENTRYCOUNT</a> = 0</li>
-            <li class="sp-string"><a href="#ENTRYDESCRIPTION">[ENTRYDESCRIPTION]</a> = ""</li>
-        </ul>
-    </li>
-</ul>
+=== "Gothic 1"
 
-<a name="TOPICDESCRIPTION" class="t-str"></a> `TOPICDESCRIPTION`
+    - oCLogTopic
+      {: .sp-type}
+        - [TOPICDESCRIPTION](#topicdescription) = ""
+          {: .sp-string}
+        - [TOPICSECTION](#topicsection) = zELogSection_Missions
+          {: .sp-enum}
+        - [TOPICSTATUS](#topicstatus) = zELogTopicStatus_Free
+          {: .sp-enum}
+        - [LOGTOPICENTRYCOUNT](#logtopicentrycount) = 0
+          {: .sp-int}
+        - [LOGMANAGERENTRYCOUNT](#logmanagerentrycount) = 0
+          {: .sp-int}
+        - [ENTRYDESCRIPTION](#entrydescription) ... = ""
+          {: .sp-string}
+
+=== "Gothic 2"
+
+    - oCLogTopic
+      {: .sp-type}
+        - [TOPICDESCRIPTION](#topicdescription) = ""
+          {: .sp-string}
+        - [TOPICSECTION](#topicsection) = zELogSection_Missions
+          {: .sp-enum}
+        - [TOPICSTATUS](#topicstatus) = zELogTopicStatus_Free
+          {: .sp-enum}
+        - [LOGTOPICENTRYCOUNT](#logtopicentrycount) = 0
+          {: .sp-int}
+        - [LOGMANAGERENTRYCOUNT](#logmanagerentrycount) = 0
+          {: .sp-int}
+        - [ENTRYDESCRIPTION](#entrydescription) ... = ""
+          {: .sp-string}
+
+=== "Gothic 1 (Save)"
+
+    - oCLogTopic
+      {: .sp-type}
+        - [TOPICDESCRIPTION](#topicdescription) = ""
+          {: .sp-string}
+        - [TOPICSECTION](#topicsection) = zELogSection_Missions
+          {: .sp-enum}
+        - [TOPICSTATUS](#topicstatus) = zELogTopicStatus_Free
+          {: .sp-enum}
+        - [LOGTOPICENTRYCOUNT](#logtopicentrycount) = 0
+          {: .sp-int}
+        - [LOGMANAGERENTRYCOUNT](#logmanagerentrycount) = 0
+          {: .sp-int}
+        - [ENTRYDESCRIPTION](#entrydescription) ... = ""
+          {: .sp-string}
+
+=== "Gothic 2 (Save)"
+
+    - oCLogTopic
+      {: .sp-type}
+        - [TOPICDESCRIPTION](#topicdescription) = ""
+          {: .sp-string}
+        - [TOPICSECTION](#topicsection) = zELogSection_Missions
+          {: .sp-enum}
+        - [TOPICSTATUS](#topicstatus) = zELogTopicStatus_Free
+          {: .sp-enum}
+        - [LOGTOPICENTRYCOUNT](#logtopicentrycount) = 0
+          {: .sp-int}
+        - [LOGMANAGERENTRYCOUNT](#logmanagerentrycount) = 0
+          {: .sp-int}
+        - [ENTRYDESCRIPTION](#entrydescription) ... = ""
+          {: .sp-string}
+
+## Properties
+
+#### `TOPICDESCRIPTION` {: .t-str}
 
 :   The name of the quest log entry.
 
 
-<a name="TOPICSECTION" class="t-enum"></a> `TOPICSECTION`
+#### `TOPICSECTION` {: .t-enum}
 
 :   The quest log section the entry is in.
 
     * `zELogSection_Missions` — The entry is in one of the mission sections of the quest log.
     * `zELogSection_Notes` — The entry is in the general notes section of the quest log
 
-<a name="TOPICSTATUS" class="t-enum"></a> `TOPICSTATUS`
+#### `TOPICSTATUS` {: .t-enum}
 
 :   The status the quest log entry.
     
@@ -49,15 +105,15 @@
     !!! warning
         This field is ignored unless [`TOPICSECTION`](#TOPICSECTION) is set to `zELogSection_Missions`.
 
-<a name="LOGTOPICENTRYCOUNT" class="t-int"></a> `LOGTOPICENTRYCOUNT`
+#### `LOGTOPICENTRYCOUNT` {: .t-int}
 
 :   The number of entries of this log topic.
 
-<a name="LOGMANAGERENTRYCOUNT" class="t-int"></a> `LOGMANAGERENTRYCOUNT`
+#### `LOGMANAGERENTRYCOUNT` {: .t-int}
 
 :   The same as [`LOGTOPICENTRYCOUNT`](#LOGTOPICENTRYCOUNT).
 
-<a name="ENTRYDESCRIPTION" class="t-int"></a> `ENTRYDESCRIPTION`
+#### `ENTRYDESCRIPTION` {: .t-int}
 
 :   A single entry in the log topic. Log entries are shown in chronological order on the detailed view of the
     log topic, separated by three dashes.

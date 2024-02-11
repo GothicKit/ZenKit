@@ -8,7 +8,11 @@
     **Version Identifiers:**<br />
     — Gothic I: *Unused*<br/>
     — Gothic II: `52224`<br/>
-    **ZenKit Class:** `VEarthquake`
+    **ZenKit Class:** `VEarthquake`<br/>
+    **Sources:**<br/>
+    — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)<br/>
+    — [gothic-library.ru](http://www.gothic-library.ru/publ/zcearthquake/1-1-0-516)
+
 
 A VObject used to create an earthquake effect when it receives an `OnTrigger` event. An earthquake is represented
 by a shaking camera.
@@ -16,38 +20,54 @@ by a shaking camera.
 !!! warning
     This VObject is only available in Gothic II.
 
-<ul class="sp-list">
-    <li class="sp-type"><a href="../zCVob/">zCVob</a></li>
-    <li class="sp-type">
-        <span>zCEarthquake</span>
-        <ul class="sp-list">
-            <li class="sp-folder">
-                <span>Earthquake</span>
-                <ul class="sp-list">
-                    <li class="sp-float"><a href="#radius">radius</a> = 200</li>
-                    <li class="sp-float"><a href="#timeSec">timeSec</a> = 5</li>
-                    <li class="sp-vec"><a href="#amplitudeCM">amplitudeCM</a> = 0 0 0</li>
-                </ul>
-            </li>
-        </ul>
-    </li>
-</ul>
+=== "Gothic 1"
+
+    *Unavailable*
+
+=== "Gothic 2"
+
+    - [zCVob](zCVob.md)
+      {: .sp-type}
+    - zCEarthquake
+      {: .sp-type}
+        - Earthquake
+          {: .sp-folder}
+            - [radius](#radius) = 200
+              {: .sp-float}
+            - [timeSec](#timeSec) = 5
+              {: .sp-float}
+            - [amplitudeCM](#amplitudeCM) = 0
+              {: .sp-vec}
+
+=== "Gothic 1 (Save)"
+
+    *Unavailable*
+
+=== "Gothic 2 (Save)"
+
+    - [zCVob](zCVob.md)
+      {: .sp-type}
+    - zCEarthquake
+      {: .sp-type}
+        - Earthquake
+          {: .sp-folder}
+            - [radius](#radius) = 200
+              {: .sp-float}
+            - [timeSec](#timeSec) = 5
+              {: .sp-float}
+            - [amplitudeCM](#amplitudeCM) = 0
+              {: .sp-vec}
 
 ## Properties
 
-<a name="radius" class="t-float"></a> `radius`
+#### `radius` {: .t-float}
 
 :   The radius of the earthquake effect
 
-<a name="timeSec" class="t-float"></a> `timeSec`
+#### `timeSec` {: .t-float}
 
 :   The duration of the earthquake effect in seconds.
 
-<a name="amplitudeCM" class="t-float"></a> `amplitudeCM`
+#### `amplitudeCM` {: .t-float}
 
 :   The amplitude of the earthquake effect.
-
-## Sources
-
-The help file for the Spacer, found [here](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei) and the
-Russian-language knowledge accumulator [gothic-library.ru](http://www.gothic-library.ru/publ/zcearthquake/1-1-0-516).

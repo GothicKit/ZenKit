@@ -10,21 +10,51 @@
     — Gothic II: `0`<br/>
     **ZenKit Class:** *—*
 
-<ul class="sp-list">
-    <li class="sp-type">
-        <span>oCInfo</span>
-        <ul class="sp-list">
-            <li class="sp-bool"><a href="#Told">Told</a> = FALSE</li>
-            <li class="sp-string"><a href="#InstName">InstName</a> = ""</li>
-        </ul>
-    </li>
-</ul>
+=== "Gothic 1"
 
-<a name="Told" class="t-bool"></a> `Told`
+    - oCInfo
+      {: .sp-type}
+        - &lt;empty&gt;
+          {: .sp-none}
+
+=== "Gothic 2"
+
+    - oCInfo
+      {: .sp-type}
+        - &lt;empty&gt;
+          {: .sp-none}
+
+=== "Gothic 1 (Save)"
+
+    - oCInfo
+      {: .sp-type}
+        - [Told](#told) = FALSE
+          {: .sp-bool}
+        - [InstName](#instname) = ""
+          {: .sp-string}
+
+=== "Gothic 2 (Save)"
+
+    - oCInfo
+      {: .sp-type}
+        - [Told](#told) = FALSE
+          {: .sp-bool}
+        - [InstName](#instname) = ""
+          {: .sp-string}
+
+## Properties
+
+#### `Told` {: .t-bool}
 
 :   Whether the hero  has already been told this info.
 
+    !!! warning
+        This property is only available in saved games.
 
-<a name="InstName" class="t-bool"></a> `InstName`
+
+#### `InstName` {: .t-bool}
 
 :   The name of the script instance representing this info.
+
+    !!! warning
+        This property is only available in saved games.

@@ -10,56 +10,121 @@
     — Gothic II: `0`<br/>
     **ZenKit Class:** *—*
 
-<ul class="sp-list">
-    <li class="sp-type">
-        <span>oCMission</span>
-        <ul class="sp-list">
-            <li class="sp-string"><a href="#name">name</a> = ""</li>
-            <li class="sp-int"><a href="#ID">ID</a> = 0</li>
-            <li class="sp-bool"><a href="#Av">Av</a> = FALSE</li>
-            <li class="sp-int"><a href="#NumInList">NumInList</a> = 0</li>
-            <li class="sp-folder">
-                <span>[Status]</span>
-                <ul class="sp-list">
-                    <li class="sp-int"><a href="#VobIDL">VobIDL</a> = 0</li>
-                    <li class="sp-int"><a href="#StatusL">StatusL</a> = 0</li>
-                    <li class="sp-float"><a href="#startTimeL">startTimeL</a> = 0.0</li>
-                </ul>
-            </li>
-            <li class="sp-int"><a href="#StatusIndex">StatusIndex</a> = 0</li>
-        </ul>
-    </li>
-</ul>
+=== "Gothic 1"
 
-<a name="name" class="t-str"></a> `name`
+    - oCMission
+      {: .sp-type}
+        - &lt;empty&gt;
+          {: .sp-none}
+
+=== "Gothic 2"
+
+    - oCMission
+      {: .sp-type}
+        - &lt;empty&gt;
+          {: .sp-none}
+
+=== "Gothic 1 (Save)"
+
+    - oCMission
+      {: .sp-type}
+        - [name](#name) = ""
+          {: .sp-string}
+        - [ID](#id) = 0
+          {: .sp-int}
+        - [Av](#av) = FALSE
+          {: .sp-bool}
+        - [NumInList](#numinlist) = 0
+          {: .sp-int}
+        - Status ...
+          {: .sp-folder}
+            - [VobIDL](#vobidl) = 0
+              {: .sp-int}
+            - [StatusL](#statusl) = 0
+              {: .sp-int}
+            - [startTimeL](#starttimel) = 0.0
+              {: .sp-float}
+        - [StatusIndex](#statusindex) = 0
+          {: .sp-int}
+
+=== "Gothic 2 (Save)"
+
+    - oCMission
+      {: .sp-type}
+        - [name](#name) = ""
+          {: .sp-string}
+        - [ID](#id) = 0
+          {: .sp-int}
+        - [Av](#av) = FALSE
+          {: .sp-bool}
+        - [NumInList](#numinlist) = 0
+          {: .sp-int}
+        - Status ...
+          {: .sp-folder}
+            - [VobIDL](#vobidl) = 0
+              {: .sp-int}
+            - [StatusL](#statusl) = 0
+              {: .sp-int}
+            - [startTimeL](#starttimel) = 0.0
+              {: .sp-float}
+        - [StatusIndex](#statusindex) = 0
+          {: .sp-int}
+
+## Properties
+
+#### `name` {: .t-str}
 
 :   Unknown.
 
-<a name="ID" class="t-int"></a> `ID`
+    !!! warning
+        This property is only available in saved games.
+
+#### `ID` {: .t-int}
 
 :   Unknown.
 
+    !!! warning
+        This property is only available in saved games.
 
-<a name="Av" class="t-bool"></a> `Av`
+
+#### `Av` {: .t-bool}
 
 :   Unknown.
 
-<a name="NumInList" class="t-int"></a> `NumInList`
+    !!! warning
+        This property is only available in saved games.
+
+#### `NumInList` {: .t-int}
 
 :   The number of statuses stored for the mission.
 
-<a name="VobIDL" class="t-int"></a> `VobIDL`
+    !!! warning
+        This property is only available in saved games.
+
+#### `VobIDL` {: .t-int}
 
 :   Unknown.
 
-<a name="StatusL" class="t-int"></a> `StatusL`
+    !!! warning
+        This property is only available in saved games.
+
+#### `StatusL` {: .t-int}
 
 :   Unknown.
 
-<a name="startTimeL" class="t-float"></a> `startTimeL`
+    !!! warning
+        This property is only available in saved games.
+
+#### `startTimeL` {: .t-float}
 
 :   Unknown.
 
-<a name="StatusIndex" class="t-int"></a> `StatusIndex`
+    !!! warning
+        This property is only available in saved games.
+
+#### `StatusIndex` {: .t-int}
 
 :   Unknown.
+
+    !!! warning
+        This property is only available in saved games.

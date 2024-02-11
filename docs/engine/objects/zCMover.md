@@ -8,7 +8,11 @@
     **Version Identifiers:**<br />
     — Gothic I: `39936`<br/>
     — Gothic II: `39936`<br/>
-    **ZenKit Class:** `VMover`
+    **ZenKit Class:** `VMover`<br/>
+    **Sources:**<br/>
+    — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)<br/>
+    — [gothic-library.ru](http://www.gothic-library.ru/publ/class_zcmover/1-1-0-533)
+
 
 A VObject which can move along a pre-determined path in response to an event. Movers can be controlled through a set of
 keyframes or the animation of their visuals. If the visual has an attached animation to be used as the mover's animation,
@@ -23,58 +27,251 @@ their [`moverBehavior`](#moverBehavior) set to `NSTATE_SINGLE_KEYS` are an excep
 individually be addressed as a state.
 
 Movers are specialized triggers. Before beginning their animation, movers first filter the incoming events as per the
-[`zCTrigger`](zCTrigger.md)'s rules and only start the animation if the event passes through the filters. When the
-the mover reaches the "open" state after being activated, it emits an `OnTrigger` event according to the fire behavior
-set for the [`zCTrigger`](zCTrigger.md). Similarly, when it reaches the "closed" state it emits an `OnUntrigger` event.
+[`zCTrigger`](zCTrigger.md)'s rules and only start the animation if the event passes through the filters. When the mover reaches
+the "open" state after being activated, it emits an `OnTrigger` event according to the fire behavior set for the
+[`zCTrigger`](zCTrigger.md). Similarly, when it reaches the "closed" state it emits an `OnUntrigger` event.
 
 Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnToggleDisabled` events.
 
-<ul class="sp-list">
-    <li class="sp-type"><a href="../zCVob/">zCVob</a></li>
-    <li class="sp-type"><a href="../zCTrigger/">zCTrigger</a></li>
-    <li class="sp-type">
-        <span>zCMover</span>
-        <ul class="sp-list">
-            <li class="sp-folder">
-                <span>Mover</span>
-                <ul class="sp-list">
-                    <li class="sp-enum"><a href="#moverBehavior">moverBehavior</a> = 2STATE_TOGGLE</li>
-                    <li class="sp-float"><a href="#touchBlockerDamage">touchBlockerDamage</a> = 0.0</li>
-                    <li class="sp-float"><a href="#stayOpenTimeSec">stayOpenTimeSec</a> = 0.0</li>
-                    <li class="sp-bool"><a href="#moverLocked">moverLocked</a> = FALSE</li>
-                    <li class="sp-bool"><a href="#autoLinkEnabled">autoLinkEnabled</a> = FALSE</li>
-                    <li class="sp-bool"><a href="#autoRotate">autoRotate</a> = FALSE</li>
-                    <li class="sp-folder">
-                        <span>Keyframe</span>
-                        <ul class="sp-list">
-                            <li class="sp-int"><a href="#numKeyframes">numKeyframes</a> = 0</li>
-                            <li class="sp-float"><a href="#moveSpeed">moveSpeed</a> = 0.0</li>
-                            <li class="sp-enum"><a href="#posLerpType">posLerpType</a> = CURVE</li>
-                            <li class="sp-enum"><a href="#speedType">speedType</a> = CONST</li>
-                        </ul>
-                    </li>
-                    <li class="sp-folder">
-                        <span>Sound</span>
-                        <ul class="sp-list">
-                            <li class="sp-string"><a href="#sfxOpenStart">sfxOpenStart</a> = ""</li>
-                            <li class="sp-string"><a href="#sfxOpenEnd">sfxOpenEnd</a> = ""</li>
-                            <li class="sp-string"><a href="#sfxMoving">sfxMoving</a> = ""</li>
-                            <li class="sp-string"><a href="#sfxCloseStart">sfxCloseStart</a> = ""</li>
-                            <li class="sp-string"><a href="#sfxCloseEnd">sfxCloseEnd</a> = ""</li>
-                            <li class="sp-string"><a href="#sfxLock">sfxLock</a> = ""</li>
-                            <li class="sp-string"><a href="#sfxUnlock">sfxUnlock</a> = ""</li>
-                            <li class="sp-string"><a href="#sfxUseLocked">sfxUseLocked</a> = ""</li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-    </li>
-</ul>
+=== "Gothic 1"
+
+    - [zCVob](zCVob.md)
+      {: .sp-type}
+    - [zCTrigger](zCTrigger.md)
+      {: .sp-type}
+    - zCMover
+      {: .sp-type}
+        - Mover
+          {: .sp-folder}
+            - [moverBehavior](#moverbehavior) = 2STATE_TOGGLE
+              {: .sp-enum}
+            - [touchBlockerDamage](#touchblockerdamage) = 0.0
+              {: .sp-float}
+            - [stayOpenTimeSec](#stayopentimesec) = 0.0
+              {: .sp-float}
+            - [moverLocked](#moverlocked) = FALSE
+              {: .sp-bool}
+            - [autoLinkEnabled](#autolinkenabled) = FALSE
+              {: .sp-bool}
+            - Keyframe
+              {: .sp-folder}
+                - [numKeyframes](#numkeyframes) = 0
+                  {: .sp-int}
+                - [moveSpeed](#movespeed) = 0.0
+                  {: .sp-float}
+                - [posLerpType](#poslerptype) = CURVE
+                  {: .sp-enum}
+                - [speedType](#speedtype) = CONST
+                  {: .sp-enum}
+            - Sound
+              {: .sp-folder}
+                - [sfxOpenStart](#sfxopenstart) = ""
+                  {: .sp-string}
+                - [sfxOpenEnd](#sfxopenend) = ""
+                  {: .sp-string}
+                - [sfxMoving](#sfxmoving) = ""
+                  {: .sp-string}
+                - [sfxCloseStart](#sfxclosestart) = ""
+                  {: .sp-string}
+                - [sfxCloseEnd](#sfxcloseend) = ""
+                  {: .sp-string}
+                - [sfxLock](#sfxlock) = ""
+                  {: .sp-string}
+                - [sfxUnlock](#sfxunlock) = ""
+                  {: .sp-string}
+                - [sfxUseLocked](#sfxuselocked) = ""
+                  {: .sp-string}
+
+=== "Gothic 2"
+
+    - [zCVob](zCVob.md)
+      {: .sp-type}
+    - [zCTrigger](zCTrigger.md)
+      {: .sp-type}
+    - zCMover
+      {: .sp-type}
+        - Mover
+          {: .sp-folder}
+            - [moverBehavior](#moverbehavior) = 2STATE_TOGGLE
+              {: .sp-enum}
+            - [touchBlockerDamage](#touchblockerdamage) = 0.0
+              {: .sp-float}
+            - [stayOpenTimeSec](#stayopentimesec) = 0.0
+              {: .sp-float}
+            - [moverLocked](#moverlocked) = FALSE
+              {: .sp-bool}
+            - [autoLinkEnabled](#autolinkenabled) = FALSE
+              {: .sp-bool}
+            - [autoRotate](#autorotate) = FALSE
+              {: .sp-bool}
+            - Keyframe
+              {: .sp-folder}
+                - [numKeyframes](#numkeyframes) = 0
+                  {: .sp-int}
+                - [moveSpeed](#movespeed) = 0.0
+                  {: .sp-float}
+                - [posLerpType](#poslerptype) = CURVE
+                  {: .sp-enum}
+                - [speedType](#speedtype) = CONST
+                  {: .sp-enum}
+            - Sound
+              {: .sp-folder}
+                - [sfxOpenStart](#sfxopenstart) = ""
+                  {: .sp-string}
+                - [sfxOpenEnd](#sfxopenend) = ""
+                  {: .sp-string}
+                - [sfxMoving](#sfxmoving) = ""
+                  {: .sp-string}
+                - [sfxCloseStart](#sfxclosestart) = ""
+                  {: .sp-string}
+                - [sfxCloseEnd](#sfxcloseend) = ""
+                  {: .sp-string}
+                - [sfxLock](#sfxlock) = ""
+                  {: .sp-string}
+                - [sfxUnlock](#sfxunlock) = ""
+                  {: .sp-string}
+                - [sfxUseLocked](#sfxuselocked) = ""
+                  {: .sp-string}
+
+=== "Gothic 1 (Save)"
+
+    - [zCVob](zCVob.md)
+      {: .sp-type}
+    - [zCTrigger](zCTrigger.md)
+      {: .sp-type}
+    - zCMover
+      {: .sp-type}
+        - Mover
+          {: .sp-folder}
+            - [moverBehavior](#moverbehavior) = 2STATE_TOGGLE
+              {: .sp-enum}
+            - [touchBlockerDamage](#touchblockerdamage) = 0.0
+              {: .sp-float}
+            - [stayOpenTimeSec](#stayopentimesec) = 0.0
+              {: .sp-float}
+            - [moverLocked](#moverlocked) = FALSE
+              {: .sp-bool}
+            - [autoLinkEnabled](#autolinkenabled) = FALSE
+              {: .sp-bool}
+            - Keyframe
+              {: .sp-folder}
+                - [numKeyframes](#numkeyframes) = 0
+                  {: .sp-int}
+                - [moveSpeed](#movespeed) = 0.0
+                  {: .sp-float}
+                - [posLerpType](#poslerptype) = CURVE
+                  {: .sp-enum}
+                - [speedType](#speedtype) = CONST
+                  {: .sp-enum}
+			- [actKeyPosDelta](#actkeyposdelta) = 0 0 0
+              {: .sp-vec}
+			- [actKeyframeF](#actkeyframef) = 0.0
+              {: .sp-float}
+			- [actKeyframe](#actkeyframe) = 0
+              {: .sp-int}
+			- [nextKeyframe](#nextkeyframe) = 0
+              {: .sp-int}
+			- [moveSpeedUnit](#movespeedunit) = 0.0 
+              {: .sp-float}
+			- [advanceDir](#advancedir) = 0.0
+              {: .sp-float}
+			- [moverState](#moverstate) = ?
+              {: .sp-enum}
+			- [numTriggerEvents](#numtriggerevents) = 0
+              {: .sp-int}
+			- [stayOpenTimeDest](#stayopentimedest) = 0.0
+              {: .sp-float}
+            - Sound
+              {: .sp-folder}
+                - [sfxOpenStart](#sfxopenstart) = ""
+                  {: .sp-string}
+                - [sfxOpenEnd](#sfxopenend) = ""
+                  {: .sp-string}
+                - [sfxMoving](#sfxmoving) = ""
+                  {: .sp-string}
+                - [sfxCloseStart](#sfxclosestart) = ""
+                  {: .sp-string}
+                - [sfxCloseEnd](#sfxcloseend) = ""
+                  {: .sp-string}
+                - [sfxLock](#sfxlock) = ""
+                  {: .sp-string}
+                - [sfxUnlock](#sfxunlock) = ""
+                  {: .sp-string}
+                - [sfxUseLocked](#sfxuselocked) = ""
+                  {: .sp-string}
+
+=== "Gothic 2 (Save)"
+
+    - [zCVob](zCVob.md)
+      {: .sp-type}
+    - [zCTrigger](zCTrigger.md)
+      {: .sp-type}
+    - zCMover
+      {: .sp-type}
+        - Mover
+          {: .sp-folder}
+            - [moverBehavior](#moverbehavior) = 2STATE_TOGGLE
+              {: .sp-enum}
+            - [touchBlockerDamage](#touchblockerdamage) = 0.0
+              {: .sp-float}
+            - [stayOpenTimeSec](#stayopentimesec) = 0.0
+              {: .sp-float}
+            - [moverLocked](#moverlocked) = FALSE
+              {: .sp-bool}
+            - [autoLinkEnabled](#autolinkenabled) = FALSE
+              {: .sp-bool}
+            - [autoRotate](#autorotate) = FALSE
+              {: .sp-bool}
+            - Keyframe
+              {: .sp-folder}
+                - [numKeyframes](#numkeyframes) = 0
+                  {: .sp-int}
+                - [moveSpeed](#movespeed) = 0.0
+                  {: .sp-float}
+                - [posLerpType](#poslerptype) = CURVE
+                  {: .sp-enum}
+                - [speedType](#speedtype) = CONST
+                  {: .sp-enum}
+			- [actKeyPosDelta](#actkeyposdelta) = 0 0 0
+              {: .sp-vec}
+			- [actKeyframeF](#actkeyframef) = 0.0
+              {: .sp-float}
+			- [actKeyframe](#actkeyframe) = 0
+              {: .sp-int}
+			- [nextKeyframe](#nextkeyframe) = 0
+              {: .sp-int}
+			- [moveSpeedUnit](#movespeedunit) = 0.0 
+              {: .sp-float}
+			- [advanceDir](#advancedir) = 0.0
+              {: .sp-float}
+			- [moverState](#moverstate) = ?
+              {: .sp-enum}
+			- [numTriggerEvents](#numtriggerevents) = 0
+              {: .sp-int}
+			- [stayOpenTimeDest](#stayopentimedest) = 0.0
+              {: .sp-float}
+            - Sound
+              {: .sp-folder}
+                - [sfxOpenStart](#sfxopenstart) = ""
+                  {: .sp-string}
+                - [sfxOpenEnd](#sfxopenend) = ""
+                  {: .sp-string}
+                - [sfxMoving](#sfxmoving) = ""
+                  {: .sp-string}
+                - [sfxCloseStart](#sfxclosestart) = ""
+                  {: .sp-string}
+                - [sfxCloseEnd](#sfxcloseend) = ""
+                  {: .sp-string}
+                - [sfxLock](#sfxlock) = ""
+                  {: .sp-string}
+                - [sfxUnlock](#sfxunlock) = ""
+                  {: .sp-string}
+                - [sfxUseLocked](#sfxuselocked) = ""
+                  {: .sp-string}
 
 ## Properties
 
-<a name="moverBehavior" class="t-enum"></a> `moverBehavior`
+#### `moverBehavior` {: .t-enum}
 
 :   Controls how the mover behaves in response to events ("activation").
 
@@ -88,11 +285,11 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
     * `NSTATE_SINGLE_KEYS` — The mover can transition to each keyframe separately. Often used in conjunction
       with a [`zCMoverController`](zCMoverController.md).
 
-<a name="touchBlockerDamage" class="t-float"></a> `touchBlockerDamage`
+#### `touchBlockerDamage` {: .t-float}
 
 :   The amount of damage to deal to objects in the way of the mover.
 
-<a name="stayOpenTimeSec" class="t-float"></a> `stayOpenTimeSec`
+#### `stayOpenTimeSec` {: .t-float}
 
 :   The number of seconds a mover with the `2STATE_OPEN_TIMED` [behavior](#moverBehavior) stays in the "open"
     state until transitioning to the "closed" state again.
@@ -100,18 +297,18 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
     !!! warning
         Only relevant if [`moverBehavior`](#moverBehavior) is `2STATE_OPEN_TIMED`.
 
-<a name="moverLocked" class="t-bool"></a> `moverLocked`
+#### `moverLocked` {: .t-bool}
 
 :   Unclear.
 
-<a name="autoLinkEnabled" class="t-bool"></a> `autoLinkEnabled`
+#### `autoLinkEnabled` {: .t-bool}
 
 :   Determines whether the position of the object triggering the mover should be tied to the mover's position.
     
     * `TRUE` — When the mover transitions, the position of the triggering object follows the position of the mover.
     * `FALSE` — The triggering object's position is uncoupled from the position of the mover.
 
-<a name="autoRotate" class="t-bool"></a> `autoRotate`
+#### `autoRotate` {: .t-bool}
 
 :   Whether to automatically rotate the mover along its movement trajectory. For example, this is used for making fish
     always face in the direction they're moving.
@@ -122,18 +319,18 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
     !!! warning
         Only available in Gothic II.
 
-<a name="numKeyframes" class="t-int"></a> `numKeyframes`
+#### `numKeyframes` {: .t-int}
 
 :   Unclear.
 
-<a name="moveSpeed" class="t-float"></a> `moveSpeed`
+#### `moveSpeed` {: .t-float}
 
 :   The movement speed for transitioning between keyframes in units per millisecond.
     
     !!! warning
         Only relevant if manually specified keyframes are used. Ignored when using the visual for the animation.
 
-<a name="posLerpType" class="t-enum"></a> `posLerpType`
+#### `posLerpType` {: .t-enum}
 
 :   Defines how the mover should interpolate between the keyframe positions. Only affects the mover's position,
     never its rotation.
@@ -144,7 +341,7 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
     !!! warning
         Only relevant if manually specified keyframes are used. Ignored when using the visual for the animation.
 
-<a name="speedType" class="t-enum"></a> `speedType`
+#### `speedType` {: .t-enum}
 
 :   Controls the acceleration and deceleration behavior of the mover.
 
@@ -159,39 +356,97 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
     !!! warning
         Only relevant if manually specified keyframes are used. Ignored when using the visual for the animation.
 
-<a name="sfxOpenStart" class="t-str"></a> `sfxOpenStart`
+#### `sfxOpenStart` {: .t-str}
 
 :   The name of the sound to play at the beginning of the opening sequence.
 
-<a name="sfxOpenEnd" class="t-str"></a> `sfxOpenEnd`
+#### `sfxOpenEnd` {: .t-str}
 
 :   The name of the sound to play at the end of the opening sequence.
 
-<a name="sfxMoving" class="t-str"></a> `sfxMoving`
+#### `sfxMoving` {: .t-str}
 
 :   The name of the sound to play in a loop while the mover is transitioning between keyframes.
 
-<a name="sfxCloseStart" class="t-str"></a> `sfxCloseStart`
+#### `sfxCloseStart` {: .t-str}
 
 :   The name of the sound to play at the beginning of the closing sequence.
 
-<a name="sfxCloseEnd" class="t-str"></a> `sfxCloseEnd`
+#### `sfxCloseEnd` {: .t-str}
 
 :   The name of the sound to play at the end of the closing sequence.
 
-<a name="sfxLock" class="t-str"></a> `sfxLock`
+#### `sfxLock` {: .t-str}
 
 :   The name of the sound to play when locking a mover.
 
-<a name="sfxUnlock" class="t-str"></a> `sfxUnlock`
+#### `sfxUnlock` {: .t-str}
 
 :   The name of the sound to play when unlocking a mover.
 
-<a name="sfxUseLocked" class="t-str"></a> `sfxUseLocked`
+#### `sfxUseLocked` {: .t-str}
 
 :   The name of the sound to play when using a locked mover.
 
-## Sources
+#### `actKeyPosDelta` {: .t-vec}
 
-The help file for the Spacer, found [here](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei) and the
-Russian-language knowledge accumulator [gothic-library.ru](http://www.gothic-library.ru/publ/class_zcmover/1-1-0-533).
+:   Unknown.
+
+    !!! warning
+        This property is only available in saved games.
+
+#### `actKeyframeF` {: .t-float}
+
+:   Unknown.
+
+    !!! warning
+        This property is only available in saved games.
+
+#### `actKeyframe` {: .t-int}
+
+:   Unknown.
+
+    !!! warning
+        This property is only available in saved games.
+
+#### `nextKeyframe` {: .t-int}
+
+:   Unknown.
+
+    !!! warning
+        This property is only available in saved games.
+
+#### `moveSpeedUnit` {: .t-float}
+
+:   Unknown.
+
+    !!! warning
+        This property is only available in saved games.
+
+#### `advanceDir` {: .t-float}
+
+:   Unknown.
+
+    !!! warning
+        This property is only available in saved games.
+
+#### `moverState` {: .t-enum}
+
+:   Unknown.
+
+    !!! warning
+        This property is only available in saved games.
+
+#### `numTriggerEvents` {: .t-int}
+
+:   Unknown.
+
+    !!! warning
+        This property is only available in saved games.
+
+#### `stayOpenTimeDest` {: .t-float}
+
+:   Unknown.
+
+    !!! warning
+        This property is only available in saved games.

@@ -10,19 +10,47 @@
     — Gothic II: `0`<br/>
     **ZenKit Class:** *—*
 
-<ul class="sp-list">
-    <li class="sp-type">
-        <span>oCMissionManager</span>
-        <ul class="sp-list">
-            <li class="sp-int"><a href="#NumOfEntries">NumOfEntries</a> = 0</li>
-            <li class="sp-type"><a href="../oCMission/">(inline) [oCMission]</a><sup>1</sup></li>
-        </ul>
-    </li>
-</ul>
+=== "Gothic 1"
 
-<a name="NumOfEntries" class="t-int"></a> `NumOfEntries`
+    - oCMissionManager
+      {: .sp-type}
+        - [NumOfEntries](#numofentries) = 0
+          {: .sp-int}
+        - (inline)[^1] [oCMission](oCMission.md) ...
+          {: .sp-type}
 
-: The number of saved [`oCMission`](oCMission.md) objects.
+=== "Gothic 2"
+
+    - oCMissionManager
+      {: .sp-type}
+        - [NumOfEntries](#numofentries) = 0
+          {: .sp-int}
+        - (inline)[^1] [oCMission](oCMission.md) ...
+          {: .sp-type}
+
+=== "Gothic 1 (Save)"
+
+    - oCMissionManager
+      {: .sp-type}
+        - [NumOfEntries](#numofentries) = 0
+          {: .sp-int}
+        - (inline)[^1] [oCMission](oCMission.md) ...
+          {: .sp-type}
+
+=== "Gothic 2 (Save)"
+
+    - oCMissionManager
+      {: .sp-type}
+        - [NumOfEntries](#numofentries) = 0
+          {: .sp-int}
+        - (inline)[^1] [oCMission](oCMission.md) ...
+          {: .sp-type}
+
+## Properties
+
+#### `NumOfEntries` {: .t-int}
+
+:   The number of saved [`oCMission`](oCMission.md) objects.
 
 [^1]: "Inline" means, that these objects are not wrapped in an archive object. Rather, their contents are simply
       all written to the parent object directly without encapsulation.

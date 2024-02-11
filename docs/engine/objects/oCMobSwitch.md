@@ -8,22 +8,60 @@
     **Version Identifiers:**<br />
     — Gothic I: `35585`<br/>
     — Gothic II: `35585`<br/>
-    **ZenKit Class:** `VSwitch`
+    **ZenKit Class:** `VSwitch`<br/>
+    **Sources:**<br/>
+    — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)<br/>
 
 A VObject representing a switch with two states.
 
-<ul class="sp-list">
-    <li class="sp-type"><a href="../zCVob/">zCVob</a></li>
-    <li class="sp-type"><a href="../oCMOB/">oCMOB</a></li>
-    <li class="sp-type"><a href="../oCMOBInter/">oCMOBInter</a></li>
-    <li class="sp-type">
-        <span>oCMobSwitch</span>
-        <ul class="sp-list">
-            <li class="sp-none">&lt;empty&gt;</li>
-        </ul>
-    </li>
-</ul>
+=== "Gothic 1"
 
-## Sources
+    - [oCVob](oCVob.md)
+      {: .sp-type}
+    - [oCMOB](oCMOB.md)
+      {: .sp-type}
+    - [oCMobInter](oCMobInter.md)
+      {: .sp-type}
+    - oCMobSwitch
+      {: .sp-type}
+        - &lt;empty&gt;
+          {: .sp-none}
 
-The help file for the Spacer, found [here](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei).
+=== "Gothic 2"
+
+    - [oCVob](oCVob.md)
+      {: .sp-type}
+    - [oCMOB](oCMOB.md)
+      {: .sp-type}
+    - [oCMobInter](oCMobInter.md)
+      {: .sp-type}
+    - oCMobSwitch
+      {: .sp-type}
+        - &lt;empty&gt;
+          {: .sp-none}
+
+=== "Gothic 1 (Save)"
+
+    - [oCVob](oCVob.md)
+      {: .sp-type}
+    - [oCMOB](oCMOB.md)
+      {: .sp-type}
+    - [oCMobInter](oCMobInter.md)
+      {: .sp-type}
+    - oCMobSwitch
+      {: .sp-type}
+        - &lt;empty&gt;
+          {: .sp-none}
+
+=== "Gothic 2 (Save)"
+
+    - [oCVob](oCVob.md)
+      {: .sp-type}
+    - [oCMOB](oCMOB.md)
+      {: .sp-type}
+    - [oCMobInter](oCMobInter.md)
+      {: .sp-type}
+    - oCMobSwitch
+      {: .sp-type}
+        - &lt;empty&gt;
+          {: .sp-none}

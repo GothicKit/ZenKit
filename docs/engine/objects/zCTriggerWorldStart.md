@@ -8,34 +8,65 @@
     **Version Identifiers:**<br />
     — Gothic I: `52224`<br/>
     — Gothic II: `52224`<br/>
-    **ZenKit Class:** `VTriggerWorldStart`
+    **ZenKit Class:** `VTriggerWorldStart`<br/>
+    **Sources:**<br/>
+    — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)
 
 A special trigger which fires an `OnTrigger` event to its [target](#triggerTarget) when the world is loaded and started.
 
-<ul class="sp-list">
-    <li class="sp-type"><a href="../zCVob/">zCVob</a></li>
-    <li class="sp-type">
-        <span>oCTriggerChangeLevel</span>
-        <ul class="sp-list">
-            <li class="sp-string"><a href="#triggerTarget">triggerTarget</a> = ""</li>
-            <li class="sp-bool"><a href="#fireOnlyFirstTime">fireOnlyFirstTime</a> = FALSE</li>
-        </ul>
-    </li>
-</ul>
+=== "Gothic 1"
+
+    - [zCVob](zCVob.md)
+      {: .sp-type}
+    - zCTriggerWorldStart
+      {: .sp-type}
+        - [triggerTarget](#triggertarget) = ""
+          {: .sp-string}
+        - [fireOnlyFirstTime](#fireonlyfirsttime) = FALSE
+          {: .sp-bool}
+
+=== "Gothic 2"
+
+    - [zCVob](zCVob.md)
+      {: .sp-type}
+    - zCTriggerWorldStart
+      {: .sp-type}
+        - [triggerTarget](#triggertarget) = ""
+          {: .sp-string}
+        - [fireOnlyFirstTime](#fireonlyfirsttime) = FALSE
+          {: .sp-bool}
+
+=== "Gothic 1 (Save)"
+
+    - [zCVob](zCVob.md)
+      {: .sp-type}
+    - zCTriggerWorldStart
+      {: .sp-type}
+        - [triggerTarget](#triggertarget) = ""
+          {: .sp-string}
+        - [fireOnlyFirstTime](#fireonlyfirsttime) = FALSE
+          {: .sp-bool}
+
+=== "Gothic 2 (Save)"
+
+    - [zCVob](zCVob.md)
+      {: .sp-type}
+    - zCTriggerWorldStart
+      {: .sp-type}
+        - [triggerTarget](#triggertarget) = ""
+          {: .sp-string}
+        - [fireOnlyFirstTime](#fireonlyfirsttime) = FALSE
+          {: .sp-bool}
 
 ## Properties
 
-<a name="triggerTarget" class="t-str"></a> `triggerTarget`
+#### `triggerTarget` {: .t-str}
 
 :   The name of VObject to send an `OnTrigger` event to when the world is loaded and started.
 
-<a name="fireOnlyFirstTime" class="t-bool"></a> `fireOnlyFirstTime`
+#### `fireOnlyFirstTime` {: .t-bool}
 
 :   Determines whether to fire the `OnTrigger` event only the first time the world is loaded.
     
     * `TRUE` — Only fire the event if this is the first time the world is loaded.
     * `FALSE` — Fire the event every time the world is loaded.
-
-## Sources
-
-The help file for the Spacer, found [here](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei).

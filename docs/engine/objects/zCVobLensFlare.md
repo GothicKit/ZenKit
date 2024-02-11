@@ -8,27 +8,51 @@
     **Version Identifiers:**<br />
     — Gothic I: `64704`<br/>
     — Gothic II: `193`<br/>
-    **ZenKit Class:** `VLensFlare`
+    **ZenKit Class:** `VLensFlare`<br/>
+    **Sources:**<br/>
+    — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)<br/>
+    — [gothic-library.ru](http://www.gothic-library.ru/publ/class_zcvoblensflare/1-1-0-524)
 
 Represents a lens flare effect. Behaves exactly like the base [`zCVob`](zCVob.md) but has a lens flare effect.
 
-<ul class="sp-list">
-    <li class="sp-type"><a href="../zCVob/">zCVob</a></li>
-    <li class="sp-type">
-        <span>zCVobLight</span>
-        <ul class="sp-list">
-            <li class="sp-string"><a href="#lensflareFX">lensflareFX</a> = ""</li>
-        </ul>
-    </li>
-</ul>
+=== "Gothic 1"
+
+    - [zCVob](zCVob.md)
+      {: .sp-type}
+    - zCVobLensFlare
+      {: .sp-type}
+        - [lensflareFX](#lensflarefx) = ""
+          {: .sp-string}
+
+=== "Gothic 2"
+
+    - [zCVob](zCVob.md)
+      {: .sp-type}
+    - zCVobLensFlare
+      {: .sp-type}
+        - [lensflareFX](#lensflarefx) = ""
+          {: .sp-string}
+
+=== "Gothic 1 (Save)"
+
+    - [zCVob](zCVob.md)
+      {: .sp-type}
+    - zCVobLensFlare
+      {: .sp-type}
+        - [lensflareFX](#lensflarefx) = ""
+          {: .sp-string}
+
+=== "Gothic 2 (Save)"
+
+    - [zCVob](zCVob.md)
+      {: .sp-type}
+    - zCVobLensFlare
+      {: .sp-type}
+        - [lensflareFX](#lensflarefx) = ""
+          {: .sp-string}
 
 ## Properties
 
-<a name="lensflareFX" class="t-str"></a> `lensflareFX`
+#### `lensflareFX` {: .t-str}
 
 :   The name of the lens flare effect. Must be one of the effects listed in `/_work/data/Presets/Lensflare.zen`.
-
-## Sources
-
-The help file for the Spacer, found [here](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei) and the
-Russian-language knowledge accumulator [gothic-library.ru](http://www.gothic-library.ru/publ/class_zcvoblensflare/1-1-0-524).

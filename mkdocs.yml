@@ -125,6 +125,9 @@ markdown_extensions:
   - pymdownx.emoji
   - pymdownx.tabbed:
       alternate_style: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
   - pymdownx.arithmatex:
       generic: true
   - 'abbr'

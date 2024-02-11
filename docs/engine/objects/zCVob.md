@@ -8,7 +8,10 @@
     **Version Identifiers:**<br />
     — Gothic I: `12289`<br/>
     — Gothic II: `52224`<br/>
-    **ZenKit Class:** `VirtualObject`
+    **ZenKit Class:** `VirtualObject`<br/>
+    **Sources:**<br/>
+    — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)<br/>
+    — [gothic-library.ru](http://www.gothic-library.ru/publ/class_zcvob/1-1-0-467)
 
 Represents so-called virtual objects which appear in the game world. `zCVob` is the base class for all virtual
 objects which include everything from static models like boxes to interactive elements like doors and chests and
@@ -402,8 +405,3 @@ The following list shows the virtual object class hierarchy. Click on any of the
         * [zCZoneVobFarPlaneDefault](zCZoneVobFarPlaneDefault.md)
     * [zCZoneZFog](zCZoneZFog.md)
         * [zCZoneZFogDefault](zCZoneZFogDefault.md)
-
-## Sources
-
-The help file for the Spacer, found [here](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei) and the
-Russian-language knowledge accumulator [gothic-library.ru](http://www.gothic-library.ru/publ/class_zcvob/1-1-0-467).

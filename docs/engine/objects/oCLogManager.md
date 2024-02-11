@@ -10,17 +10,45 @@
     — Gothic II: `0`<br/>
     **ZenKit Class:** *—*
 
-<ul class="sp-list">
-    <li class="sp-type">
-        <span>oCLogManager</span>
-        <ul class="sp-list">
-            <li class="sp-int"><a href="#LOGMANAGERTOPICCOUNT">LOGMANAGERTOPICCOUNT</a> = 0</li>
-            <li class="sp-type"><a href="../oCLogTopic/">(inline) [oCLogTopic]</a><sup>1</sup></li>
-        </ul>
-    </li>
-</ul>
+=== "Gothic 1"
 
-<a name="NumOfEntries" class="t-int"></a> `NumOfEntries`
+    - oCLogManager
+      {: .sp-type}
+        - [LOGMANAGERTOPICCOUNT](#logmanagertopiccount) = 0
+          {: .sp-int}
+        - (inline)[^1] [oCLogTopic](oCLogTopic.md) ...
+          {: .sp-type}
+
+=== "Gothic 2"
+
+    - oCLogManager
+      {: .sp-type}
+        - [LOGMANAGERTOPICCOUNT](#logmanagertopiccount) = 0
+          {: .sp-int}
+        - (inline)[^1] [oCLogTopic](oCLogTopic.md) ...
+          {: .sp-type}
+
+=== "Gothic 1 (Save)"
+
+    - oCLogManager
+      {: .sp-type}
+        - [LOGMANAGERTOPICCOUNT](#logmanagertopiccount) = 0
+          {: .sp-int}
+        - (inline)[^1] [oCLogTopic](oCLogTopic.md) ...
+          {: .sp-type}
+
+=== "Gothic 2 (Save)"
+
+    - oCLogManager
+      {: .sp-type}
+        - [LOGMANAGERTOPICCOUNT](#logmanagertopiccount) = 0
+          {: .sp-int}
+        - (inline)[^1] [oCLogTopic](oCLogTopic.md) ...
+          {: .sp-type}
+
+## Properties
+
+#### `LOGMANAGERTOPICCOUNT` {: .t-int}
 
 : The number of saved [`oCLogTopic`](oCLogTopic.md) objects.
 
