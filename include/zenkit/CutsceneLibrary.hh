@@ -33,9 +33,9 @@ namespace zenkit {
 		std::string name;
 
 		/// \brief The content of the message.
-		/// \details It seems like it was possible to specify multiple atomic_message object for each message_block.
-		///          This seems to have been abandoned, however, so this implementation only supports one atomic_message
-		///          per message block.
+		/// \details It seems like it was at one point possible to specify multiple CutsceneMessage objects for each
+		///          CutsceneBlock. This seems to have been abandoned, however, so this implementation only supports
+		///          one CutsceneMessage per message block.
 		CutsceneMessage message;
 	};
 
@@ -49,25 +49,7 @@ namespace zenkit {
 	/// text files</p>
 	class CutsceneLibrary {
 	public:
-		/// \brief Parses a message database from the data in the given buffer.
-		///
-		/// <p>This implementation is heavily based on the implementation found in
-		/// [ZenLib](https://github.com/Try/ZenLib).</p>
-		///
-		/// \param[in,out] buf The buffer to read from.
-		/// \return The parsed message database object.
-		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
-		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
-		///       using buffer::duplicate.
-		/// \throws zenkit::ParserError if parsing fails.
-		/// \see #parse(buffer&&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static CutsceneLibrary parse(phoenix::buffer& buf);
-
-		/// \brief Parses a message database from the data in the given buffer.
-		/// \param[in] buf The buffer to read from (by rvalue-reference).
-		/// \return The parsed message database object.
-		/// \throws zenkit::ParserError if parsing fails.
-		/// \see #parse(buffer&)
 		[[nodiscard]] ZKREM("use ::load()") ZKAPI static CutsceneLibrary parse(phoenix::buffer&& buf);
 
 		/// \brief Retrieves a message block by it's name.

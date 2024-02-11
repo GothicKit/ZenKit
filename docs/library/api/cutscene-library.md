@@ -5,29 +5,26 @@ audio recording. These files are used in conjunction with [scripts](daedalus-scr
 conversations in-game. *Cutscene libraries* are found within the `_work/data/scripts/content/cutscene/` directory
 of Gothic and Gothic II installations. 
 
-# Loading Cutscene Libraries
-
 === "C"
 
     ```c title="Example"
-    #include <phoenix/cffi/Cutscene.h>
-    #include <phoenix/cffi/Buffer.h>
+    #include <zenkit-capi/CutsceneLibrary.h>
+    #include <zenkit-capi/Vfs.h>
 
     int main(int, const char** argv) {
-        PxBuffer* buf = pxBufferMmap("OU.csl");
-        PxCutsceneLib* csl = pxCslLoad(buf);
-        pxBufferDestroy(csl);
-        
-        // ...
+        // Load from a file on disk:
+        ZkCutsceneLibrary* csl = ZkCutsceneLibrary_loadPath("OU.csl");
+        ZkCutsceneLibrary_del(csl);
 
-        pxCslDestroy(man);
+        // ... or from a VFS:
+        ZkVfs* vfs = ZkVfs_new();
+        ZkVfs_mountHost(vfs, "_work/", "/", ZkVfsOverwriteBehavior_OLDER);
+        csl = ZkCutsceneLibrary_loadVfs(vfs, "OU.csl");
+        ZkCutsceneLibrary_del(csl);
+
         return 0;
     }
     ```
-
-    !!! info
-        As with all resources, cutscene libraries can also be loaded from a [virtual file system](virtual-file-system.md)
-        by passing a `PxVfs` and the file name to `pxCslLoadFromVfs`.
 
 === "C++"
 
@@ -38,23 +35,34 @@ of Gothic and Gothic II installations.
     int main(int, char const** argv) {
         zenkit::CutsceneLibrary csl {};
         
+        // Load from a file on disk:
         auto r = zenkit::Read::from("OU.csl");
         csl.load(r.get());
 
-        // ...
+        // ... or from a VFS
+        zenkit::Vfs vfs;
+        vfs.mount_host("_work/", "/", zenkit::VfsOverwriteBehavior::OLDER)
+
+        r = vfs->find("OU.csl")->open_read();
+        font.load(r.get());
 
         return 0;
     }
     ```
 
-    !!! info
-        As with all resources, cutscene libraries can also be loaded from a [virtual file system](virtual-file-system.md)
-        by passing the input obtained from `zenkit::VfsNode::open_read` into `zenkit::CutsceneLibrary::load`.
-
 === "C#"
     
-    !!! note
-        No documentation available.
+    ```c# title="Example"
+    using ZenKit;
+
+    // Load from a file on disk:
+    var csl = new CutsceneLibrary("OU.csl");
+
+    // ... or from a VFS:
+    var vfs = new Vfs();
+    vfs.Mount("_work/", "/", VfsOverwriteBehavior.Older);
+    csl = new CutsceneLibrary(vfs, "OU.csl");
+    ```
 
 === "Java"
 
