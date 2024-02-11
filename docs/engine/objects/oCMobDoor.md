@@ -16,6 +16,8 @@ A VObject representing a door. This is also used for NPCs navigating the waynet.
 
 === "Gothic 1"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)
@@ -35,6 +37,8 @@ A VObject representing a door. This is also used for NPCs navigating the waynet.
 
 === "Gothic 2"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)
@@ -54,6 +58,8 @@ A VObject representing a door. This is also used for NPCs navigating the waynet.
 
 === "Gothic 1 (Save)"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)
@@ -73,6 +79,8 @@ A VObject representing a door. This is also used for NPCs navigating the waynet.
 
 === "Gothic 2 (Save)"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)

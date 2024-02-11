@@ -19,6 +19,8 @@ Interactive objects can be interacted with by NPCs and the player. Every time th
 
 === "Gothic 1"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)
@@ -40,6 +42,8 @@ Interactive objects can be interacted with by NPCs and the player. Every time th
 
 === "Gothic 2"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)
@@ -61,6 +65,8 @@ Interactive objects can be interacted with by NPCs and the player. Every time th
 
 === "Gothic 1 (Save)"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)
@@ -82,6 +88,8 @@ Interactive objects can be interacted with by NPCs and the player. Every time th
 
 === "Gothic 2 (Save)"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)

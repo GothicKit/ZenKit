@@ -23,7 +23,7 @@ the game to put the player at its location and in its orientation when the world
     - zCVobStartpoint
       {: .sp-type}
         - &lt;empty&gt;
-          {: .sp-string}
+          {: .sp-none}
 
 === "Gothic 2"
 
@@ -32,7 +32,7 @@ the game to put the player at its location and in its orientation when the world
     - zCVobStartpoint
       {: .sp-type}
         - &lt;empty&gt;
-          {: .sp-string}
+          {: .sp-none}
 
 === "Gothic 1 (Save)"
 
@@ -41,7 +41,7 @@ the game to put the player at its location and in its orientation when the world
     - zCVobStartpoint
       {: .sp-type}
         - &lt;empty&gt;
-          {: .sp-string}
+          {: .sp-none}
 
 === "Gothic 2 (Save)"
 
@@ -50,4 +50,4 @@ the game to put the player at its location and in its orientation when the world
     - zCVobStartpoint
       {: .sp-type}
         - &lt;empty&gt;
-          {: .sp-string}
+          {: .sp-none}

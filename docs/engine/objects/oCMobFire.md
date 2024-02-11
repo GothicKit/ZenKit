@@ -16,6 +16,8 @@ An object with an integrated fire effect. Only supports rigged models as visuals
 
 === "Gothic 1"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)
@@ -31,6 +33,8 @@ An object with an integrated fire effect. Only supports rigged models as visuals
 
 === "Gothic 2"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)
@@ -46,6 +50,8 @@ An object with an integrated fire effect. Only supports rigged models as visuals
 
 === "Gothic 1 (Save)"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)
@@ -61,6 +67,8 @@ An object with an integrated fire effect. Only supports rigged models as visuals
 
 === "Gothic 2 (Save)"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)

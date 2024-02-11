@@ -23,7 +23,7 @@ free points and can be used in scripts to spawn other objects at their location.
     - zCVobSpot
       {: .sp-type}
         - &lt;empty&gt;
-          {: .sp-string}
+          {: .sp-none}
 
 === "Gothic 2"
 
@@ -32,7 +32,7 @@ free points and can be used in scripts to spawn other objects at their location.
     - zCVobSpot
       {: .sp-type}
         - &lt;empty&gt;
-          {: .sp-string}
+          {: .sp-none}
 
 === "Gothic 1 (Save)"
 
@@ -41,7 +41,7 @@ free points and can be used in scripts to spawn other objects at their location.
     - zCVobSpot
       {: .sp-type}
         - &lt;empty&gt;
-          {: .sp-string}
+          {: .sp-none}
 
 === "Gothic 2 (Save)"
 
@@ -50,4 +50,4 @@ free points and can be used in scripts to spawn other objects at their location.
     - zCVobSpot
       {: .sp-type}
         - &lt;empty&gt;
-          {: .sp-string}
+          {: .sp-none}

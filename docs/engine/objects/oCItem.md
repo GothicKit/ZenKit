@@ -19,6 +19,8 @@ their attributes. They have physics enabled and can be targeted and picked up by
 
     - [zCVob](zCVob.md)
       {: .sp-type}
+    - [oCVob](oCVob.md)
+      {: .sp-type}
     - oCItem
       {: .sp-type}
         - [itemInstance](#iteminstance) = ""
@@ -28,6 +30,8 @@ their attributes. They have physics enabled and can be targeted and picked up by
 
     - [zCVob](zCVob.md)
       {: .sp-type}
+    - [oCVob](oCVob.md)
+      {: .sp-type}
     - oCItem
       {: .sp-type}
         - [itemInstance](#iteminstance) = ""
@@ -36,6 +40,8 @@ their attributes. They have physics enabled and can be targeted and picked up by
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
+      {: .sp-type}
+    - [oCVob](oCVob.md)
       {: .sp-type}
     - oCItem
       {: .sp-type}
@@ -49,6 +55,8 @@ their attributes. They have physics enabled and can be targeted and picked up by
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
+      {: .sp-type}
+    - [oCVob](oCVob.md)
       {: .sp-type}
     - oCItem
       {: .sp-type}

@@ -16,6 +16,8 @@ A wheel with four different states. For example, this is used for the gates of t
 
 === "Gothic 1"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)
@@ -29,6 +31,8 @@ A wheel with four different states. For example, this is used for the gates of t
 
 === "Gothic 2"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)
@@ -42,6 +46,8 @@ A wheel with four different states. For example, this is used for the gates of t
 
 === "Gothic 1 (Save)"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)
@@ -55,6 +61,8 @@ A wheel with four different states. For example, this is used for the gates of t
 
 === "Gothic 2 (Save)"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)

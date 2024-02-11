@@ -24,7 +24,7 @@ has no relevance to other VObjects in the hierarchy.
     - zCVobLevelCompo
       {: .sp-type}
         - &lt;empty&gt;
-          {: .sp-string}
+          {: .sp-none}
 
 === "Gothic 2"
 
@@ -33,7 +33,7 @@ has no relevance to other VObjects in the hierarchy.
     - zCVobLevelCompo
       {: .sp-type}
         - &lt;empty&gt;
-          {: .sp-string}
+          {: .sp-none}
 
 === "Gothic 1 (Save)"
 
@@ -42,7 +42,7 @@ has no relevance to other VObjects in the hierarchy.
     - zCVobLevelCompo
       {: .sp-type}
         - &lt;empty&gt;
-          {: .sp-string}
+          {: .sp-none}
 
 === "Gothic 2 (Save)"
 
@@ -51,4 +51,4 @@ has no relevance to other VObjects in the hierarchy.
     - zCVobLevelCompo
       {: .sp-type}
         - &lt;empty&gt;
-          {: .sp-string}
+          {: .sp-none}

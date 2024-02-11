@@ -40,6 +40,7 @@ nav:
           - 'ZenGin Save Game': 'engine/formats/savegame.md'
       - 'Objects':
           - 'zCVob': 'engine/objects/zCVob.md'
+          - 'oCVob': 'engine/objects/oCVob.md'
           - 'zCVobAnimate': 'engine/objects/zCVobAnimate.md'
           - 'zCVobLensFlare': 'engine/objects/zCVobLensFlare.md'
           - 'zCVobLevelCompo': 'engine/objects/zCVobLevelCompo.md'

@@ -26,7 +26,7 @@ routines to properly ascend and descend staircases.
     - zCVobStair
       {: .sp-type}
         - &lt;empty&gt;
-          {: .sp-string}
+          {: .sp-none}
 
 === "Gothic 2"
 
@@ -39,7 +39,7 @@ routines to properly ascend and descend staircases.
     - zCVobStair
       {: .sp-type}
         - &lt;empty&gt;
-          {: .sp-string}
+          {: .sp-none}
 
 === "Gothic 2 (Save)"
 

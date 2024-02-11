@@ -17,6 +17,8 @@ A VObject representing a ladder. NPCs can interact with ladders by climbing.
 
 === "Gothic 1"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)
@@ -30,6 +32,8 @@ A VObject representing a ladder. NPCs can interact with ladders by climbing.
 
 === "Gothic 2"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)
@@ -43,6 +47,8 @@ A VObject representing a ladder. NPCs can interact with ladders by climbing.
 
 === "Gothic 1 (Save)"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)
@@ -56,6 +62,8 @@ A VObject representing a ladder. NPCs can interact with ladders by climbing.
 
 === "Gothic 2 (Save)"
 
+    - [zCVob](zCVob.md)
+      {: .sp-type}
     - [oCVob](oCVob.md)
       {: .sp-type}
     - [oCMOB](oCMOB.md)
