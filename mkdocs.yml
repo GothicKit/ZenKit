@@ -17,7 +17,6 @@ theme:
     - 'navigation.instant'
     - 'navigation.tabs'
     - 'navigation.sections'
-    - 'navigation.expand'
     - 'search.suggest'
     - 'search.highlight'
     - 'content.tabs.link'
