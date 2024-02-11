@@ -84,10 +84,10 @@ An object with an integrated fire effect. Only supports rigged models as visuals
 
 ## Properties
 
-#### `fireSlot` {: .t-str}
+#### `fireSlot` {: .sp-string}
 
 :   The bone of the rigged model to place the fire effect at.
 
-#### `fireVobtreeName` {: .t-str}
+#### `fireVobtreeName` {: .sp-string}
 
 :   The name of the template file which contains the configuration of the fire effect. For example: `FIRETREE_MEDIUM.ZEN`.

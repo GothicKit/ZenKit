@@ -149,33 +149,33 @@ A VObject which can optionally be moved and/or carried.
 
 ## Properties
 
-#### `focusName` {: .t-str}
+#### `focusName` {: .sp-string}
 
 :   The name of the object as seen in-game when focusing it.
 
-#### `hitpoints` {: .t-int}
+#### `hitpoints` {: .sp-int}
 
 :   The number of hitpoints of the object.
 
-#### `damage` {: .t-int}
+#### `damage` {: .sp-int}
 
 :   The damage dealt by the object when being used.
 
-#### `moveable` {: .t-bool}
+#### `moveable` {: .sp-bool}
 
 :   Whether the object can be moved by the player.
     <br />`TRUE` — The object can be moved. `FALSE` — The object can not be moved.
 
-#### `takeable` {: .t-bool}
+#### `takeable` {: .sp-bool}
 
 :   Whether the object can be carried by the player.
     <br />`TRUE` — The object can be carried. `FALSE` — The object can not be carried.
 
-#### `focusOverride` {: .t-bool}
+#### `focusOverride` {: .sp-bool}
 
 :   Unknown.
 
-#### `soundMaterial` {: .t-enum}
+#### `soundMaterial` {: .sp-enum}
 
 :   The sound to play when the object is hit.
 
@@ -186,19 +186,19 @@ A VObject which can optionally be moved and/or carried.
     * `CLAY` — Clay.
     * `GLAS` — Glass.
 
-#### `visualDestroyed` {: .t-str}
+#### `visualDestroyed` {: .sp-string}
 
 :   The name of the visual to use when the object is destroyed. Behaves like [zCVob.visual](zCVob.md#visual).
 
-#### `owner` {: .t-str}
+#### `owner` {: .sp-string}
 
 :   The name of the script instance of the NPC who is the owner of this object.
 
-#### `ownerGuild` {: .t-str}
+#### `ownerGuild` {: .sp-string}
 
 :   The name of the guild this object belongs to. This name corresponds to the script constant for
     each guild (i.e. `GIL_BAU`), found in `Constants.d`.
 
-#### `isDestroyed` {: .t-bool}
+#### `isDestroyed` {: .sp-bool}
 
 :   Unknown.

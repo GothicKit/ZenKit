@@ -60,14 +60,14 @@ and stopped using `OnTrigger` and `OnUntrigger` events.
 
 ## Properties
 
-#### `startOn` {: .t-bool}
+#### `startOn` {: .sp-bool}
 
 :   Whether to start this animation when loading the level.
     
     * `TRUE` — Immediately start the animation when the level is loaded.
     * `FALSE` — Don't automatically start the animation.
 
-#### `isRunning` {: .t-bool}
+#### `isRunning` {: .sp-bool}
 
 :   Unknown.
 

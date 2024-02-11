@@ -69,10 +69,10 @@ to load another level when activated.
 
 ## Properties
 
-#### `levelName` {: .t-str}
+#### `levelName` {: .sp-string}
 
 :   The name of the level to load including the file extension.
 
-#### `startVobName` {: .t-str}
+#### `startVobName` {: .sp-string}
 
 :   The name of the VObject in the new level to place the player at.

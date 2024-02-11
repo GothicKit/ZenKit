@@ -86,17 +86,17 @@ sound can be defined which is played outside the defined time range (example: bi
 
 ## Properties
 
-#### `sndStartTime` {: .t-float}
+#### `sndStartTime` {: .sp-float}
 
 :   The time of day after which the sound can be heard (`13.5` corresponds to `13:30`). Must be less
     than [`sndEndTime`](#sndEndTime).
 
-#### `sndEndTime` {: .t-float}
+#### `sndEndTime` {: .sp-float}
 
 :   The time of day after which the sound can no longer be heard (`13.5` corresponds to `13:30`). Must be greater than
     [`sndStartTime`](#sndStartTime).
 
-#### `sndName2` {: .t-str}
+#### `sndName2` {: .sp-string}
 
 :   The name of the script instance describing the sound to play outside the hours defined by
     [`sndStartTime`](#sndStartTime) and [`sndEndTime`](#sndEndTime). May be empty.

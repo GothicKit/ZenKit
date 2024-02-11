@@ -60,14 +60,14 @@ by a shaking camera.
 
 ## Properties
 
-#### `radius` {: .t-float}
+#### `radius` {: .sp-float}
 
 :   The radius of the earthquake effect
 
-#### `timeSec` {: .t-float}
+#### `timeSec` {: .sp-float}
 
 :   The duration of the earthquake effect in seconds.
 
-#### `amplitudeCM` {: .t-float}
+#### `amplitudeCM` {: .sp-float}
 
 :   The amplitude of the earthquake effect.

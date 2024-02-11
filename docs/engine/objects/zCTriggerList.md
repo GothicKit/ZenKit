@@ -130,7 +130,7 @@ How the events are sent can be configured through [`listProcess`](#listProcess).
 
 ## Properties
 
-#### `listProcess` {: .t-enum}
+#### `listProcess` {: .sp-enum}
 
 :   Controls how events are sent to the targets.
     
@@ -139,23 +139,23 @@ How the events are sent can be configured through [`listProcess`](#listProcess).
     * `LP_NEXT_ONE` — The event is sent to the next target in the list.
     * `LP_RAND_ONE` — The event is sent to a random target in the list.
 
-#### `triggerTarget` {: .t-string}
+#### `triggerTarget` {: .sp-string}
 
 :   The name of the VObject to send events to. Behaves like [`zCTrigger.triggerTarget`](zCTrigger.md#triggerTarget).
 
-#### `fireDelay` {: .t-float}
+#### `fireDelay` {: .sp-float}
 
 :   The delay after which to fire the event to the target. Behaves like [`zCTrigger.fireDelaySec`](zCTrigger.md#fireDelaySec).
 
 
-#### `actTarget` {: .t-int}
+#### `actTarget` {: .sp-int}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `sendOnTrigger` {: .t-bool}
+#### `sendOnTrigger` {: .sp-bool}
 
 :   Unknown.
 

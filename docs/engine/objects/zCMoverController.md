@@ -73,11 +73,11 @@ just step one keyframe back and forth at a time.
 
 ## Properties
 
-#### `triggerTarget` {: .t-str}
+#### `triggerTarget` {: .sp-string}
 
 :   The name of the [`zCMover`](zCMover.md) VOject that is controlled by this `zCMoverControler`.
 
-#### `moverMessage` {: .t-enum}
+#### `moverMessage` {: .sp-enum}
 
 :   The type of event to emit to the [`triggerTarget`](#triggerTarget) when this controller receives an `OnTrigger` event.
 
@@ -88,7 +88,7 @@ just step one keyframe back and forth at a time.
     * `GOTO_KEY_NEXT` — Make the target mover go to the next keyframe in sequence. Wraps around to the first keyframe.
     * `GOTO_KEY_PREV` — Make the target mover go to the previous keyframe in sequence. Wraps around to the last keyframe.
 
-#### `gotoFixedKey` {: .t-int}
+#### `gotoFixedKey` {: .sp-int}
 
 :   The keyframe of the mover referred to by [`triggerTarget`](#triggerTarget) to move to.
 

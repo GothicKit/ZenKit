@@ -205,11 +205,11 @@ and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at t
 
 ## Properties
 
-#### `triggerTarget` {: .t-str}
+#### `triggerTarget` {: .sp-string}
 
 :   The name of VObject to send `OnTrigger` and `OnUntrigger` events to after processing.
 
-#### `reactToOnTrigger` {: .t-bool}
+#### `reactToOnTrigger` {: .sp-bool}
 
 :   Whether this trigger should react to `OnTrigger` events.
     
@@ -218,7 +218,7 @@ and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at t
       if the trigger receives an `OnUntrigger` event.
     * `FALSE` — Ignore `OnTrigger` events.
 
-#### `reactToOnTouch` {: .t-bool}
+#### `reactToOnTouch` {: .sp-bool}
 
 :   Whether this trigger should react to `OnTouch` events.
 
@@ -227,35 +227,35 @@ and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at t
       if the trigger receives an `OnUntouch` event.
     * `FALSE` — Ignore `OnTouch` events.
 
-#### `reactToOnDamage` {: .t-bool}
+#### `reactToOnDamage` {: .sp-bool}
 
 :   Whether this trigger should react to `OnDamage` events.
 
     * `TRUE` — Do react to `OnDamage` events by sending an `OnTrigger` message to the [`triggerTarget`](#triggerTarget)
     * `FALSE` — Ignore `OnDamage` events.
 
-#### `respondToObject` {: .t-bool}
+#### `respondToObject` {: .sp-bool}
 
 :   Whether this trigger should process events coming from inanimate objects.
 
     * `TRUE` — Do process events from inanimate objects.
     * `FALSE` — Ignore events from inanimate objects.
 
-#### `respondToPC` {: .t-bool}
+#### `respondToPC` {: .sp-bool}
 
 :   Whether this trigger should process events coming from the player.
 
     * `TRUE` — Do process events from the player.
     * `FALSE` — Ignore events from the player.
 
-#### `respondToNPC` {: .t-bool}
+#### `respondToNPC` {: .sp-bool}
 
 :   Whether this trigger should process events coming from NPCs.
 
     * `TRUE` — Do process events from NPCs.
     * `FALSE` — Ignore events from NPCs.
 
-#### `startEnabled` {: .t-bool}
+#### `startEnabled` {: .sp-bool}
 
 :   Determines whether the trigger is initially enabled. Enabled triggers will process incoming events and send
     outgoing events while disabled triggers do not. Triggers can be activated and deactivated at runtime by sending
@@ -264,57 +264,57 @@ and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at t
     * `TRUE` — Enable the trigger when the world is loaded.
     * `FALSE` — Do not enable the trigger when the world is loaded.
 
-#### `respondToVobName` {: .t-str}
+#### `respondToVobName` {: .sp-string}
 
 :   Whether this trigger should process events coming from VObjects with this name. If empty, match no VObject
     name directly.
 
-#### `numCanBeActivated` {: .t-int}
+#### `numCanBeActivated` {: .sp-int}
 
 :   The number of times the trigger will process incoming events. If set to `-1` the trigger will process
     an infinite number of events. 
 
-#### `retriggerWaitSec` {: .t-float}
+#### `retriggerWaitSec` {: .sp-float}
 
 :   The number of seconds that have to elapse after processing an event before the trigger will process additional events.
     All events received by the trigger during that time are ignored.
 
-#### `damageThreshold` {: .t-float}
+#### `damageThreshold` {: .sp-float}
 
 :   The amount of damage which must be dealt for the trigger to react to an `OnDamage` event.
 
-#### `fireDelaySec` {: .t-float}
+#### `fireDelaySec` {: .sp-float}
 
 :   The number of seconds to wait before emitting the `OnTrigger` event after processing.
 
-#### `sendUntrigger` {: .t-bool}
+#### `sendUntrigger` {: .sp-bool}
 
 :   Whether to send and `OnUntrigger` event to the [`triggerTarget`](#triggerTarget) after the trigger receives an
     `OnUntrigger` or `OnUntouch` event. Only fires the `OnUntrigger` event if [`reactToOnTrigger`](#reactToOnTrigger)
     and [`reactToOnTouch`](#reactToOnTouch) are set to `TRUE` respectively.
 
-#### `nextTimeTriggerable` {: .t-float}
+#### `nextTimeTriggerable` {: .sp-float}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `savedOtherVob` {: .t-type}
+#### `savedOtherVob` {: .sp-type}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `countCanBeActivated` {: .t-int}
+#### `countCanBeActivated` {: .sp-int}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `isEnabled` {: .t-bool}
+#### `isEnabled` {: .sp-bool}
 
 :   Unknown.
 

@@ -128,58 +128,58 @@
 
 ## Properties
 
-#### `Title` {: .t-str}
+#### `Title` {: .sp-string}
 
 :   The name of the save-game as provided by the player.
 
-#### `WorldName` {: .t-str}
+#### `WorldName` {: .sp-string}
 
 :   The name of the world the hero was in when creating the save. For example: `"WORLD"` or `"NEWORLD"`.
 
-#### `TimeDay` {: .t-int}
+#### `TimeDay` {: .sp-int}
 
 :   The number of in-game days played in the save-game.
 
-#### `TimeHour` {: .t-int}
+#### `TimeHour` {: .sp-int}
 
 :   The hour of the in-game [day](#TimeDay) when the save-game was created (values from `0` to `24`).
 
-#### `TimeMinute` {: .t-int}
+#### `TimeMinute` {: .sp-int}
 
 :   The minute of the in-game [hour](#TimeHour) when the save-game was created (values from `0` to `59`).
 
-#### `SaveDate` {: .t-str}
+#### `SaveDate` {: .sp-string}
 
 :   The real-world date at which the save-game was created in a human-readable format. Its value conforms to this
     `strftime` format string: `%d.%m.%Y - %H:%M`
 
-#### `VersionMajor` {: .t-int}
+#### `VersionMajor` {: .sp-int}
 
 :   The major version of the save-game format. Known values for *Gothic I*: \[`1`\], known values for *Gothic II*: \[`2`\]
 
-#### `VersionMinor` {: .t-int}
+#### `VersionMinor` {: .sp-int}
 
 :   The minor version of the save-game format. Known values for *Gothic I*: \[`87`\], known values for *Gothic II*: \[`6`\]
 
-#### `PlayTimeSeconds` {: .t-int}
+#### `PlayTimeSeconds` {: .sp-int}
 
 :   The total number of real-time seconds played in this save-game.
 
-#### `VersionPoint` {: .t-int}
+#### `VersionPoint` {: .sp-int}
 
 :   Unknown. Known values: \[`0`\]
 
     !!! warning
         This property is only available in Gothic II.
 
-#### `VersionInt` {: .t-int}
+#### `VersionInt` {: .sp-int}
 
 :   Unknown. Known values: \[`0`\]
 
     !!! warning
         This property is only available in Gothic II.
 
-#### `VersionAppName` {: .t-str}
+#### `VersionAppName` {: .sp-string}
 
 :   The name and version number of the version of Gothic used to create the save-game.
 

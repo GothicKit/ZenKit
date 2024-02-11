@@ -86,7 +86,7 @@ format and structured as follows:
 - [guildTable](#guildtable) = 0 ...
   {: .sp-misc}
 
-#### `day` {: .t-int}
+#### `day` {: .sp-int}
 
 :   The number of in-game days played in the save-game.
 
@@ -94,7 +94,7 @@ format and structured as follows:
         This value is the true time to be set when loading the save. The value stored in [`SAVEINFO.SAV`](saveinfosav)
         is discarded and only used in the save-game preview.
 
-#### `hour` {: .t-int}
+#### `hour` {: .sp-int}
 
 :   The hour of the in-game [day](#day) when the save-game was created (values from `0` to `24`).
 
@@ -102,7 +102,7 @@ format and structured as follows:
         This value is the true time to be set when loading the save. The value stored in [`SAVEINFO.SAV`](saveinfosav)
         is discarded and only used in the save-game preview.
 
-#### `min` {: .t-int}
+#### `min` {: .sp-int}
 
 :   The minute of the in-game [hour](#hour) when the save-game was created (values from `0` to `59`).
 
@@ -110,37 +110,37 @@ format and structured as follows:
         This value is the true time to be set when loading the save. The value stored in [`SAVEINFO.SAV`](saveinfosav)
         is discarded and only used in the save-game preview.
 
-#### `numSymbols` {: .t-int}
+#### `numSymbols` {: .sp-int}
 
 :   The number of script symbol values that are stored in the archive.
 
-#### `symName0` {: .t-string}
+#### `symName0` {: .sp-string}
 
 :   The name of the symbol the next value is stored for. Appears for every stored symbol value and is suffixed with the
     index in the saved symbol list.
 
-#### `symValue0` {: .t-int}
+#### `symValue0` {: .sp-int}
 
 :   The single value saved for the symbol.
     
     !!! warning
         Only available in *Gothic I*-saves. *Gothic II* allows for storing multiple values per symbol; see [symName0cnt](#symNameCnt).
 
-#### `symName0cnt` {: .t-int}
+#### `symName0cnt` {: .sp-int}
 
 :   The number of values stored for the symbol. Appears for every stored symbol value.
 
     !!! warning
         Only available in *Gothic II*-saves.
 
-#### `symValue0_0` {: .t-int}
+#### `symValue0_0` {: .sp-int}
 
 :   The value of the symbol at the index given by the suffix. Stored sequentially.
 
     !!! warning
         Only available in *Gothic II*-saves.
 
-#### `guildTable` {: .t-misc}
+#### `guildTable` {: .sp-misc}
 
 :   The attitude values for each in-game guild towards each other. Stored as a 42x42 matrix in the `raw` format.
 

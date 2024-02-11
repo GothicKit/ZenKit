@@ -48,7 +48,7 @@
 
 ## Properties
 
-#### `LOGMANAGERTOPICCOUNT` {: .t-int}
+#### `LOGMANAGERTOPICCOUNT` {: .sp-int}
 
 : The number of saved [`oCLogTopic`](oCLogTopic.md) objects.
 

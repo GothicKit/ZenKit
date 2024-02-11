@@ -53,6 +53,6 @@ from an inanimate object within the object's bounding box.
 
 ## Properties
 
-#### `triggerTarget` {: .t-str}
+#### `triggerTarget` {: .sp-string}
 
 :   The name of VObject to send the `OnTrigger` events to.

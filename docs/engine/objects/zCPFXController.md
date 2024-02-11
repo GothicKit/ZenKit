@@ -70,15 +70,15 @@ events.
 
 ## Properties
 
-#### `pfxName` {: .t-str}
+#### `pfxName` {: .sp-string}
 
 :   The name of the particle effect. Corresponds to a `.ZEN` file containing the particle system definition.
 
-#### `killVobWhenDone` {: .t-bool}
+#### `killVobWhenDone` {: .sp-bool}
 
 :   Disable the particle effect after it runs once.
 
-#### `pfxStartOn` {: .t-bool}
+#### `pfxStartOn` {: .sp-bool}
 
 :   Whether to start the particle effect when the level is loaded.
     

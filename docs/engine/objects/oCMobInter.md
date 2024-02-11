@@ -111,30 +111,30 @@ Interactive objects can be interacted with by NPCs and the player. Every time th
 
 ## Properties
 
-#### `stateNum` {: .t-int}
+#### `stateNum` {: .sp-int}
 
 :   Unknown.
 
-#### `triggerTarget` {: .t-str}
+#### `triggerTarget` {: .sp-string}
 
 :   The name of the VObject(s) to send an `OnTrigger` event to when this object is interacted with. Controlled by
     the [`rewind`](#rewind) property.
 
-#### `useWithItem` {: .t-str}
+#### `useWithItem` {: .sp-string}
 
 :   The name of the item which the player or NPC must have in their inventory in order to interact with the object.
     Corresponds to the name of the item instance in the scripts.
 
-#### `conditionFunc` {: .t-str}
+#### `conditionFunc` {: .sp-string}
 
 :   The name of a script function which, when called, determines whether the object can be interacted with. The script
     function returns an int which is either `0`, if the object should be disabled and `1` if it should be enabled.
 
-#### `onStateFunc` {: .t-str}
+#### `onStateFunc` {: .sp-string}
 
 :   The name of a script function to be called when the object is being used.
 
-#### `rewind` {: .t-bool}
+#### `rewind` {: .sp-bool}
 
 :   Determines whether an `OnTrigger` event should be sent every time the object is interacted with or only the first time.
     <br />`TRUE` — Send `OnTrigger` events multiple times. `FALSE` — Only send the event once.

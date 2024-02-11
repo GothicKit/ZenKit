@@ -48,7 +48,7 @@
 
 ## Properties
 
-#### `NumOfEntries` {: .t-int}
+#### `NumOfEntries` {: .sp-int}
 
 :   The number of saved [`oCMission`](oCMission.md) objects.
 

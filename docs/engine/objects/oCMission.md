@@ -72,14 +72,14 @@
 
 ## Properties
 
-#### `name` {: .t-str}
+#### `name` {: .sp-string}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `ID` {: .t-int}
+#### `ID` {: .sp-int}
 
 :   Unknown.
 
@@ -87,42 +87,42 @@
         This property is only available in saved games.
 
 
-#### `Av` {: .t-bool}
+#### `Av` {: .sp-bool}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `NumInList` {: .t-int}
+#### `NumInList` {: .sp-int}
 
 :   The number of statuses stored for the mission.
 
     !!! warning
         This property is only available in saved games.
 
-#### `VobIDL` {: .t-int}
+#### `VobIDL` {: .sp-int}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `StatusL` {: .t-int}
+#### `StatusL` {: .sp-int}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `startTimeL` {: .t-float}
+#### `startTimeL` {: .sp-float}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `StatusIndex` {: .t-int}
+#### `StatusIndex` {: .sp-int}
 
 :   Unknown.
 

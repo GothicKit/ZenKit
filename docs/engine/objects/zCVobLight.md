@@ -186,41 +186,40 @@ may be animated with different colors and ranges.
 
 ## Properties
 
-#### `lightPresetInUse` {: .t-str}
+#### `lightPresetInUse` {: .sp-string}
 
 :   The name of the selected light template. Templates can be found in `_work/data/Presets/LightPresets.zen`. This
     property is irrelevant for most use-cases.
 
 
-#### `lightType` {: .t-enum}
+#### `lightType` {: .sp-enum}
 
 :   The type of the light source. One of:
     
     * `POINT` — A point light source.
     * `SPOT` — A spot light source.
 
-
-#### `range` {: .t-float}
+#### `range` {: .sp-float}
 
 :   The range in which this light source illuminates objects.
 
-#### `color` {: .t-color}
+#### `color` {: .sp-color}
 
 :   The color of this light source in RGBA form.
 
-#### `spotConeAngle` {: .t-float}
+#### `spotConeAngle` {: .sp-float}
 
 :   The angle of the beam cone for spotlights. Only relevant if [`lightType`](#lightType) is `SPOT`, ignored otherwise.
 
 
-#### `lightStatic` {: .t-bool}
+#### `lightStatic` {: .sp-bool}
 
 :   Determines whether this is a static light or not. Static lights are baked into the world when its lighting is
     compiled. This makes static lights faster at runtime, but it also means, that they cannot change in any way after
     the world is compiled.
     <br />`TRUE` — This light is a static light. `FALSE` — This light is a dynamic light.
 
-#### `lightQuality` {: .t-enum}
+#### `lightQuality` {: .sp-enum}
 
 :   Determines the quality of the light source. What exactly changes with these values is unknown.
 
@@ -228,11 +227,11 @@ may be animated with different colors and ranges.
     * `MEDIUM` — Medium quality.
     * `LOW_FASTEST` — Low quality (used for almost all lights).
 
-#### `lensflareFX` {: .t-str}
+#### `lensflareFX` {: .sp-string}
 
 :   The name of the lensflare effect associated with this light. Empty if there is no associated lensflare effect.
 
-#### `turnedOn` {: .t-bool}
+#### `turnedOn` {: .sp-bool}
 
 :   Whether this dynamic light is turned on.
     <br />`TRUE` — The light is turned on. `FALSE` — The light is turned off.
@@ -240,7 +239,7 @@ may be animated with different colors and ranges.
     !!! warning
         This value is only valid for dynamic lights. Check [`lightStatic`](#lightStatic) before use.
 
-#### `rangeAniScale` {: .t-str}
+#### `rangeAniScale` {: .sp-string}
 
 :   Frames for the light's range animation. Its value is a space-separated list of floats where each float is one key
     frame of the animation. A value of `1.0` corresponds to the initial [`range`](#range) of the light source, a value
@@ -251,14 +250,14 @@ may be animated with different colors and ranges.
     !!! warning
         This value is only valid for dynamic lights. Check [`lightStatic`](#lightStatic) before use.
 
-#### `rangeAniFPS` {: .t-float}
+#### `rangeAniFPS` {: .sp-float}
 
 :   The speed of the range animation in frames per second. The animation frames are defined in [`rangeAniScale`](#rangeAniScale)
 
     !!! warning
         This value is only valid for dynamic lights. Check [`lightStatic`](#lightStatic) before use.
 
-#### `rangeAniSmooth` {: .t-bool}
+#### `rangeAniSmooth` {: .sp-bool}
 
 :   Whether the range animation should smoothly interpolate between keyframes.
     <br />`TRUE` — Turn on interpolation. `FALSE` — Turn off interpolation
@@ -266,7 +265,7 @@ may be animated with different colors and ranges.
     !!! warning
         This value is only valid for dynamic lights. Check [`lightStatic`](#lightStatic) before use.
 
-#### `colorAniList` {: .t-str}
+#### `colorAniList` {: .sp-string}
 
 :   Frames for the light's color animation. Its value is a space-separated list of colors where each element can either
     be an RGB color consisting of three integers enclosed by parentheses or a greyscale color consisting of a single
@@ -277,14 +276,14 @@ may be animated with different colors and ranges.
     !!! warning
         This value is only valid for dynamic lights. Check [`lightStatic`](#lightStatic) before use.
 
-#### `colorAniFPS` {: .t-float}
+#### `colorAniFPS` {: .sp-float}
 
 :   The speed of the color animation in frames per second. The animation frames are defined in [`colorAniList`](#colorAniList)
 
     !!! warning
         This value is only valid for dynamic lights. Check [`lightStatic`](#lightStatic) before use.
 
-#### `colorAniSmooth` {: .t-bool}
+#### `colorAniSmooth` {: .sp-bool}
 
 :   Whether the color animation should smoothly interpolate between keyframes.
     <br />`TRUE` — Turn on interpolation. `FALSE` — Turn off interpolation
@@ -292,7 +291,7 @@ may be animated with different colors and ranges.
     !!! warning
         This value is only valid for dynamic lights. Check [`lightStatic`](#lightStatic) before use.
 
-#### `canMove` {: .t-bool}
+#### `canMove` {: .sp-bool}
 
 :   Unknown.
 

@@ -114,12 +114,12 @@ The name of the music theme to be played is defined by the [`vobName`](zCVob.md#
 
 ## Properties
 
-#### `enabled` {: .t-bool}
+#### `enabled` {: .sp-bool}
 
 :   Whether the music zone is enabled when loading the level. When disabled, no music will be played in the zone.
     <br/>`TRUE` — Enable the music zone when loading the level. `FALSE` — The not enable the zone.
 
-#### `priority` {: .t-int}
+#### `priority` {: .sp-int}
 
 :   The priority of the music zone if two zones overlap. A higher number means a higher priority. `0` is the lowest
     possible priority.
@@ -127,40 +127,40 @@ The name of the music theme to be played is defined by the [`vobName`](zCVob.md#
     !!! warning
         Only relevant if two `zCZoneMusic` zones overlap.
 
-#### `ellipsoid` {: .t-bool}
+#### `ellipsoid` {: .sp-bool}
 
 :   Determines the shape of the zone.
     
     * `TRUE` — The zone forms an ellipsoid within the bounding box.
     * `FALSE` — The zone exactly mirrors the bounding box.
 
-#### `reverbLevel` {: .t-float}
+#### `reverbLevel` {: .sp-float}
 
 :   Unclear.
 
-#### `volumeLevel` {: .t-float}
+#### `volumeLevel` {: .sp-float}
 
 :   Unclear.
 
-#### `loop` {: .t-bool}
+#### `loop` {: .sp-bool}
 
 :   Unclear.
 
-#### `local_enabled` {: .t-bool}
+#### `local_enabled` {: .sp-bool}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `dayEntranceDone` {: .t-bool}
+#### `dayEntranceDone` {: .sp-bool}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `nightEntranceDone` {: .t-bool}
+#### `nightEntranceDone` {: .sp-bool}
 
 :   Unknown.
 

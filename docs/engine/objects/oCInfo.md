@@ -44,7 +44,7 @@
 
 ## Properties
 
-#### `Told` {: .t-bool}
+#### `Told` {: .sp-bool}
 
 :   Whether the hero  has already been told this info.
 
@@ -52,7 +52,7 @@
         This property is only available in saved games.
 
 
-#### `InstName` {: .t-bool}
+#### `InstName` {: .sp-bool}
 
 :   The name of the script instance representing this info.
 

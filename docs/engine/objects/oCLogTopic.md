@@ -80,19 +80,19 @@
 
 ## Properties
 
-#### `TOPICDESCRIPTION` {: .t-str}
+#### `TOPICDESCRIPTION` {: .sp-string}
 
 :   The name of the quest log entry.
 
 
-#### `TOPICSECTION` {: .t-enum}
+#### `TOPICSECTION` {: .sp-enum}
 
 :   The quest log section the entry is in.
 
     * `zELogSection_Missions` — The entry is in one of the mission sections of the quest log.
     * `zELogSection_Notes` — The entry is in the general notes section of the quest log
 
-#### `TOPICSTATUS` {: .t-enum}
+#### `TOPICSTATUS` {: .sp-enum}
 
 :   The status the quest log entry.
     
@@ -105,15 +105,15 @@
     !!! warning
         This field is ignored unless [`TOPICSECTION`](#TOPICSECTION) is set to `zELogSection_Missions`.
 
-#### `LOGTOPICENTRYCOUNT` {: .t-int}
+#### `LOGTOPICENTRYCOUNT` {: .sp-int}
 
 :   The number of entries of this log topic.
 
-#### `LOGMANAGERENTRYCOUNT` {: .t-int}
+#### `LOGMANAGERENTRYCOUNT` {: .sp-int}
 
 :   The same as [`LOGTOPICENTRYCOUNT`](#LOGTOPICENTRYCOUNT).
 
-#### `ENTRYDESCRIPTION` {: .t-int}
+#### `ENTRYDESCRIPTION` {: .sp-int}
 
 :   A single entry in the log topic. Log entries are shown in chronological order on the detailed view of the
     log topic, separated by three dashes.

@@ -60,11 +60,11 @@ A special trigger which fires an `OnTrigger` event to its [target](#triggerTarge
 
 ## Properties
 
-#### `triggerTarget` {: .t-str}
+#### `triggerTarget` {: .sp-string}
 
 :   The name of VObject to send an `OnTrigger` event to when the world is loaded and started.
 
-#### `fireOnlyFirstTime` {: .t-bool}
+#### `fireOnlyFirstTime` {: .sp-bool}
 
 :   Determines whether to fire the `OnTrigger` event only the first time the world is loaded.
     

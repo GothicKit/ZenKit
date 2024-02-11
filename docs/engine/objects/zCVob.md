@@ -204,17 +204,17 @@ invisible trigger objects. They are also referred to as VObjects in this documen
 
 ## Properties
 
-#### `pack` {: .t-int}
+#### `pack` {: .sp-int}
 
 :   Internal property which indicates how the data associated with this VObject is stored. Can not be changed in the
     Spacer and is inaccessible in *ZenKit*.
 
-#### `presetName` {: .t-str}
+#### `presetName` {: .sp-string}
 
 :   The name of the template used to create this VObject in the Spacer. Exposed as a normal field by *ZenKit*.
 
 
-#### `bbox3DWS` {: .t-raw}
+#### `bbox3DWS` {: .sp-misc}
 
 :   The 3-dimensional bounding box of this VObject to be used for collision detection. This is used in conjunction with
     [`cdStatic`](#cdstatic) and [`cdDyn`](#cddyn) to detect whether two VObject are colliding. Depending on the kind of
@@ -222,20 +222,20 @@ invisible trigger objects. They are also referred to as VObjects in this documen
 
     The bounding box is described by two opposite diagonal points in 3D world space coordinates.
 
-#### `trafoOSToWSRot` {: .t-raw}
+#### `trafoOSToWSRot` {: .sp-misc}
 
 :   The rotation of this VObject in world space, represented by a 3x3 rotation matrix.
 
-#### `trafoOSToWSPos` {: .t-vec}
+#### `trafoOSToWSPos` {: .sp-vec}
 
 :   The coordinates of this VObject in world space.
 
-#### `vobName` {: .t-str}
+#### `vobName` {: .sp-string}
 
 :   The name of this VObject. VObject names are not necessarily unique but are sometimes helpful for identifying them.
     For some VObjects, like [zCVobSpot](zCVobSpot.md) or [zCTrigger](zCTrigger.md) setting the `vobName` is required
 
-#### `visual` {: .t-str}
+#### `visual` {: .sp-string}
 
 :   The name of the visual component associated with this VObject. This is usually the name of a file containing the
     data for a visual object. The following file formats are supported:
@@ -246,12 +246,12 @@ invisible trigger objects. They are also referred to as VObjects in this documen
     * `*.MDS`, `.ASC` — Interactive or rigged models
     * `*.MMS` — Morph-mesh animated models
 
-#### `showVisual` {: .t-bool}
+#### `showVisual` {: .sp-bool}
 
 :   Indicates whether this VObject should display its associated visual.
     <br /> `TRUE` — Display the visual. `FALSE` — Hide the visual.
 
-#### `visualCamAlign` {: .t-enum}
+#### `visualCamAlign` {: .sp-enum}
 
 :   Indicates how this VObject should be aligned in relation to the camera. This may be used with grass or flowers
     which only consist of a 2-dimensional sprite to have it always face the camera, for example. Possible value are
@@ -260,7 +260,7 @@ invisible trigger objects. They are also referred to as VObjects in this documen
     * `YAW` — The sprite rotates with the camera's yaw axis.
     * `FULL` — The sprite rotates alonside the camera.
 
-#### `visualAniMode` {: .t-enum}
+#### `visualAniMode` {: .sp-enum}
 
 :   The type of wind animation to apply to the VObject. One of
     
@@ -272,7 +272,7 @@ invisible trigger objects. They are also referred to as VObjects in this documen
     !!! warning
         This property is only available in Gothic II.
 
-#### `visualAniModeStrength` {: .t-float}
+#### `visualAniModeStrength` {: .sp-float}
 
 :   Indicates the strength of the animation set through [`visualAniMode`](#visualanimode). This value is ignored if
     [`visualAniMode`](#visualanimode) is set to `NONE`.
@@ -280,7 +280,7 @@ invisible trigger objects. They are also referred to as VObjects in this documen
     !!! warning
         This property is only available in Gothic II.
 
-#### `vobFarClipZScale` {: .t-float}
+#### `vobFarClipZScale` {: .sp-float}
 
 :   Indicates the draw distance of this VObject. Its value should be between 0 and 2. 0 Means, that this object is
     never drawn on screen but collisions are still calculated. A value of 2 means, that the draw distance of this
@@ -289,7 +289,7 @@ invisible trigger objects. They are also referred to as VObjects in this documen
     !!! warning
         This property is only available in Gothic II.
 
-#### `cdStatic` {: .t-bool}
+#### `cdStatic` {: .sp-bool}
 
 :   Indicates whether this VObject should collide with other VObjects. This is used for placing the object in the
     ZenGin map editor, the *Spacer*, where it will prevent the VObject being placed wither other VObjects. This setting
@@ -299,7 +299,7 @@ invisible trigger objects. They are also referred to as VObjects in this documen
     * `FALSE` — Don't collide with other static VObjects.
     
 
-#### `cdDyn` {: .t-bool}
+#### `cdDyn` {: .sp-bool}
 
 :   Indicates whether this VObject should collide with dynamic objects. For this purpose, dynamic objects are the
     player, NPCs and items. If this flag is set, implementations should apply collision detection to this VObject.
@@ -307,7 +307,7 @@ invisible trigger objects. They are also referred to as VObjects in this documen
     * `TRUE` — Collide with dynamic VObjects.
     * `FALSE` — Don't collide with dynamic VObjects.
 
-#### `staticVob` {: .t-bool}
+#### `staticVob` {: .sp-bool}
 
 :   Indicates whether this VObject should be included during static lighting calculations. These lighting calculations
     are done at compile-time and will bake VObjects with this flag into the light-maps available from the world mesh.
@@ -315,14 +315,14 @@ invisible trigger objects. They are also referred to as VObjects in this documen
     * `TRUE` — Exclude this VObject from dynamic lighting calculations.
     * `FALSE` — Include this VObject in dynamic lighting calculations.
 
-#### `dynShadow` {: .t-enum}
+#### `dynShadow` {: .sp-enum}
 
 :   The type of dynamic shadow to be used for this VObject.
     
     * `DS_NONE` — The VObject does not cast any shadow.
     * `DS_BLOB` — The VObject casts a dark circle at its base.
 
-#### `zbias` {: .t-int}
+#### `zbias` {: .sp-int}
 
 :   The depth-bias for this VObject. This value is passed directly to Direct3D when rendering the associated visual of
     this VObject. Sadly, because documentation is not available for the very old Direct3D version used by the ZenGin,
@@ -331,7 +331,7 @@ invisible trigger objects. They are also referred to as VObjects in this documen
     !!! warning
         This property is only available in Gothic II.
 
-#### `isAmbient` {: .t-bool}
+#### `isAmbient` {: .sp-bool}
 
 :   Indicates that this VObject is *ambient*. It looks like this VObject setting was a system used during development
     when access to the game's source code was available. Basically, the global variable `zCWorld::s_bAmbientVobsEnabled`
@@ -342,14 +342,14 @@ invisible trigger objects. They are also referred to as VObjects in this documen
     !!! warning
         This property is only available in Gothic II.
 
-#### `sleepMode` {: .t-int}
+#### `sleepMode` {: .sp-int}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `nextOnTimer` {: .t-float}
+#### `nextOnTimer` {: .sp-float}
 
 :   Unknown.
 

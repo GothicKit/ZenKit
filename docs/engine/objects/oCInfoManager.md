@@ -44,7 +44,7 @@
 
 ## Properties
 
-#### `NumOfEntries` {: .t-int}
+#### `NumOfEntries` {: .sp-int}
 
 :   The number of saved [`oCInfo`](oCInfo.md) objects.
 

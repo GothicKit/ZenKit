@@ -68,13 +68,13 @@ Transforms any incoming `OnTrigger` and `OnUntrigger` events before passing them
 
 ## Properties
 
-#### `triggerTarget` {: .t-str}
+#### `triggerTarget` {: .sp-string}
 
 :   The name of the target VObject. All `OnTrigger` and `OnUntrigger` messages received by this `zCMessageFilter`
     VObject are transformed according to [`onTrigger`](#onTrigger) and [`onUntrigger`](#onUntrigger) and then
     passed on to the VObject with the name specified in this field.
 
-#### `onTrigger` {: .t-enum}
+#### `onTrigger` {: .sp-enum}
 
 :   The type of event to emit to the [`triggerTarget`](#triggerTarget) if this VObject receives an `OnTrigger` message.
     
@@ -85,7 +85,7 @@ Transforms any incoming `OnTrigger` and `OnUntrigger` events before passing them
     * `MT_DISABLE` — Emit a `Disable` event.
     * `MT_TOGGLE_ENABLED` — Emit a `ToggleEnabled` event.
 
-#### `onUntrigger` {: .t-enum}
+#### `onUntrigger` {: .sp-enum}
 
 :   The type of event to emit to the [`triggerTarget`](#triggerTarget) if this VObject receives an `OnUntrigger` message.
 

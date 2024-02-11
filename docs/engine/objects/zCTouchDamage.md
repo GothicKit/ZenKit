@@ -157,56 +157,56 @@ A VObject which damages other VObjects colliding with it.
 
 ## Properties
 
-#### `damage` {: .t-float}
+#### `damage` {: .sp-float}
 
 :   The amount of damage being dealt.
 
-#### `Barrier` {: .t-bool}
+#### `Barrier` {: .sp-bool}
 
 :   `TRUE` — Deal barrier damage. `FALSE` — Do not deal barrier damage.
 
-#### `Blunt` {: .t-bool}
+#### `Blunt` {: .sp-bool}
 
 :   `TRUE` — Deal blunt damage (blunt weapons). `FALSE` — Do not deal blunt damage.
 
-#### `Edge` {: .t-bool}
+#### `Edge` {: .sp-bool}
 
 :   `TRUE` — Deal edge damage (sharp weapons). `FALSE` — Do not deal edge damage.
 
-#### `Fire` {: .t-bool}
+#### `Fire` {: .sp-bool}
 
 :   `TRUE` — Deal fire damage. `FALSE` — Do not deal fire damage.
 
-#### `Fly` {: .t-bool}
+#### `Fly` {: .sp-bool}
 
 :   `TRUE` — Deal knockout damage. `FALSE` — Do not deal knockout damage.
 
-#### `Magic` {: .t-bool}
+#### `Magic` {: .sp-bool}
 
 :   `TRUE` — Deal magic damage. `FALSE` — Do not deal magic damage.
 
-#### `Point` {: .t-bool}
+#### `Point` {: .sp-bool}
 
 :   `TRUE` — Deal point damage (bows and crossbows). `FALSE` — Do not deal point damage.
 
-#### `Fall` {: .t-bool}
+#### `Fall` {: .sp-bool}
 
 :   `TRUE` — Deal fall damage. `FALSE` — Do not deal fall damage.
 
 
-#### `damageRepeatDelaySec` {: .t-float}
+#### `damageRepeatDelaySec` {: .sp-float}
 
 :   The delay between damage ticks when applying continuous damage. If set to `0`, only deals the damage once per
     collision. If set to a value greater than `0`, deals damage every `damageRepeatDelaySec` seconds.
 
 
-#### `damageVolDownScale` {: .t-float}
+#### `damageVolDownScale` {: .sp-float}
 
 :   A scale value used in conjunction with [`damageCollType`](#damageCollType). Its function depends on the type of
     collision detection used.
 
 
-#### `damageCollType` {: .t-enum}
+#### `damageCollType` {: .sp-enum}
 
 :   The type of collision detection to use for damage calculations.
 

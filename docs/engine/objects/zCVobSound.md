@@ -150,11 +150,11 @@ Emits a sound defined by a script instance in a given radius. The sound playback
 
 ## Properties
 
-#### `sndVolume` {: .t-float}
+#### `sndVolume` {: .sp-float}
 
 :   The volume of the sound effect in percent (0-100).
 
-#### `sndMode` {: .t-enum}
+#### `sndMode` {: .sp-enum}
 
 :   Determines how the sound effect is played.
 
@@ -162,7 +162,7 @@ Emits a sound defined by a script instance in a given radius. The sound playback
     * `ONCE` — The sound plays once
     * `RANDOM` — The sound effect is repeated endlessly with a random delay between repetitions
 
-#### `sndRandDelay` {: .t-float}
+#### `sndRandDelay` {: .sp-float}
 
 :   The average delay between repetitions in seconds if [`sndMode`](#sndMode) is `RANDOM`.
     
@@ -170,7 +170,7 @@ Emits a sound defined by a script instance in a given radius. The sound playback
         Only relevant if [`sndMode`](#sndMode) is `RANDOM`.
 
 
-#### `sndRandDelayVar` {: .t-float}
+#### `sndRandDelayVar` {: .sp-float}
 
 :   The maximum deviation of the random delay between repetitions if [`sndMode`](#sndMode) is `RANDOM`. The resulting
     delay will be a value between [`sndRandDelay`](#sndRandDelay) ± [`sndRandDelayVar`](#sndRandDelayVar).
@@ -178,55 +178,55 @@ Emits a sound defined by a script instance in a given radius. The sound playback
     !!! warning
         Only relevant if [`sndMode`](#sndMode) is `RANDOM`.
 
-#### `sndStartOn` {: .t-bool}
+#### `sndStartOn` {: .sp-bool}
 
 :   Whether to start the sound when loading the world.
     
     * `TRUE` — Start the sound when the world is loaded
     * `FALSE` — Only start the sound in response to an `OnTrigger` event
 
-#### `sndAmbient3D` {: .t-bool}
+#### `sndAmbient3D` {: .sp-bool}
 
 :   Determines whether the sound is an omnidirectional ambient sound. It will change volume depending on the distance
     to this VObject, but it won't sound as if this VObject is emitting the effect.
     <br/>`TRUE` — Emit an ambient sound effect. `FALSE` — Emit a directional sound effect.
 
 
-#### `sndObstruction` {: .t-bool}
+#### `sndObstruction` {: .sp-bool}
 
 :   Whether to dampen the sound when there is no direct path from the VObject to the listener.
     <br/>`TRUE` — The sound is dampened by obstructions. `FALSE` — The sound is not dampened.
 
 
-#### `sndConeAngle` {: .t-float}
+#### `sndConeAngle` {: .sp-float}
 
 :   When set to a value other than `0`, determines a cone in front of the VObject in which the sound can be heard.
     To listeners outside of that cone, the sound is not heard. Only values between `0` and `360` are valid.
 
 
-#### `sndVolType` {: .t-enum}
+#### `sndVolType` {: .sp-enum}
 
 :   Determines the type of volume used to check whether the sound can be heard.
 
     * `SV_SPHERE` — The sound the be heard in a sphere around this VObject.
     * `SV_ELLIPSOID` — The sound can be heard within an ellipsoid defined by the VObject's bounding box.
 
-#### `sndRadius` {: .t-float}
+#### `sndRadius` {: .sp-float}
 
 :   The radius in which the sound can be heard.
 
-#### `sndName` {: .t-str}
+#### `sndName` {: .sp-string}
 
 :   The name of the script instance describing the sound.
 
-#### `soundIsRunning` {: .t-bool}
+#### `soundIsRunning` {: .sp-bool}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `soundAllowedToRun` {: .t-bool}
+#### `soundAllowedToRun` {: .sp-bool}
 
 :   Unknown.
 

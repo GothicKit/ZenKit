@@ -85,20 +85,20 @@ A VObject which causes fog to appear within its bounding box.
 
 ## Properties
 
-#### `fogRangeCenter` {: .t-float}
+#### `fogRangeCenter` {: .sp-float}
 
 :  The maximum distance of visibility if the player is in the center of the fog object.
     
 
-#### `innerRangePerc` {: .t-float}
+#### `innerRangePerc` {: .sp-float}
 
 :   Unknown.
 
-#### `fogColor` {: .t-float}
+#### `fogColor` {: .sp-float}
 
 :   The color of the fog.
 
-#### `fadeOutSky` {: .t-color}
+#### `fadeOutSky` {: .sp-color}
 
 :   Whether to hide the sky when the player is inside the fog.
 
@@ -108,7 +108,7 @@ A VObject which causes fog to appear within its bounding box.
     !!! warning
         This property is only available in Gothic II.
 
-#### `overrideColor` {: .t-color}
+#### `overrideColor` {: .sp-color}
 
 :   Unclear.
 

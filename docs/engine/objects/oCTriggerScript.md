@@ -61,6 +61,6 @@ function when the trigger is activated. `OnUntrigger` events do not result in th
 
 ## Properties
 
-#### `scriptFunc` {: .t-str}
+#### `scriptFunc` {: .sp-string}
 
 :   The name script function to call when the trigger successfully processes a message.

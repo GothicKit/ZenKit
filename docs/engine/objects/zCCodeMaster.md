@@ -49,11 +49,11 @@ from all slaves, it emits an `OnTrigger` event to the [`triggerTarget`](#trigger
 
 ## Properties
 
-### `triggerTarget` {: .t-str}
+### `triggerTarget` {: .sp-string}
 
 :   The name of the VObject to send an `OnTrigger` event to after all slaves have fired in the correct order.
 
-### `orderRelevant` {: .t-bool}
+### `orderRelevant` {: .sp-bool}
 
 :   Controls whether the master should keep track of the order it receives messages from its slaves.
     
@@ -62,7 +62,7 @@ from all slaves, it emits an `OnTrigger` event to the [`triggerTarget`](#trigger
     * `FALSE` — Send an `OnTrigger` event to the [`triggerTarget`](#triggerTarget) after all slaves have fired at least
       once, regardless of order.
 
-### `firstFalseIsFailure` {: .t-bool}
+### `firstFalseIsFailure` {: .sp-bool}
 
 :   Controls when the slave activation sequence is considered to be incorrect. After the sequence is marked as
     incorrect an `OnTrigger` event is sent to [`triggerTargetFailure`](#triggerTargetFailure).
@@ -74,7 +74,7 @@ from all slaves, it emits an `OnTrigger` event to the [`triggerTarget`](#trigger
     !!! warning
         Only relevant if [`orderRelevant`](#orderRelevant) is set to `TRUE`.
 
-### `triggerTargetFailure` {: .t-str}
+### `triggerTargetFailure` {: .sp-string}
 
 :   The name of the VObject to emit an `OnTrigger` event to if the activation sequence fails. This is controlled by
     [`firstFalseIsFailure`](#firstFalseIsFailure).
@@ -82,7 +82,7 @@ from all slaves, it emits an `OnTrigger` event to the [`triggerTarget`](#trigger
     !!! warning
         Only relevant if [`orderRelevant`](#orderRelevant) is set to `TRUE`.
 
-### `untriggerCancels` {: .t-bool}
+### `untriggerCancels` {: .sp-bool}
 
 :   Controls whether slaves can emit `OnUntrigger` events to the master VObject to mark themselves as deactivated.
 
@@ -93,7 +93,7 @@ from all slaves, it emits an `OnTrigger` event to the [`triggerTarget`](#trigger
         Only relevant if [`orderRelevant`](#orderRelevant) is set to `FALSE`.
 
 
-### `slaveVobName` {: .t-str}
+### `slaveVobName` {: .sp-string}
 
 :   The name of a slave VObject.
 

@@ -125,19 +125,19 @@ An object which contains items.
 
 ## Properties
 
-#### `locked` {: .t-bool}
+#### `locked` {: .sp-bool}
 
 :   Determines whether the container is locked.
     <br/>`TRUE` — The container is locked. `FALSE` — The container is not locked.
 
-#### `keyInstance` {: .t-str}
+#### `keyInstance` {: .sp-string}
 
 :   The name of the item script instance which unlocks the container.
 
     !!! tip
         Only relevant if the container is locked.
 
-#### `pickLockStr` {: .t-str}
+#### `pickLockStr` {: .sp-string}
 
 :   The combination which unlocks this container when picking the lock. Each character of the string is either `R` or
     `L` where `R` stands for "Right" and `L` stands for "Left". If empty, the lock can not be picked.
@@ -146,14 +146,14 @@ An object which contains items.
     !!! tip
         Only relevant if the container is locked.
 
-#### `contains` {: .t-str}
+#### `contains` {: .sp-string}
 
 :   The items found inside the container as a comma-separated list. Each element of the list starts with the name of the
     item script instance and is optionally followed by a colon and a number, indicating the number of that item to be
     found inside.
     <br />Example: `ItMi_Gold:75, ItFo_Fish:2, ItMi_Quartz`.
 
-#### `NumOfEntries` {: .t-int}
+#### `NumOfEntries` {: .sp-int}
 
 :   The number of items in the container.
 

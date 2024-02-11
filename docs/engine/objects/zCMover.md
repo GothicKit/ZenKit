@@ -271,7 +271,7 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
 
 ## Properties
 
-#### `moverBehavior` {: .t-enum}
+#### `moverBehavior` {: .sp-enum}
 
 :   Controls how the mover behaves in response to events ("activation").
 
@@ -285,11 +285,11 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
     * `NSTATE_SINGLE_KEYS` — The mover can transition to each keyframe separately. Often used in conjunction
       with a [`zCMoverController`](zCMoverController.md).
 
-#### `touchBlockerDamage` {: .t-float}
+#### `touchBlockerDamage` {: .sp-float}
 
 :   The amount of damage to deal to objects in the way of the mover.
 
-#### `stayOpenTimeSec` {: .t-float}
+#### `stayOpenTimeSec` {: .sp-float}
 
 :   The number of seconds a mover with the `2STATE_OPEN_TIMED` [behavior](#moverBehavior) stays in the "open"
     state until transitioning to the "closed" state again.
@@ -297,18 +297,18 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
     !!! warning
         Only relevant if [`moverBehavior`](#moverBehavior) is `2STATE_OPEN_TIMED`.
 
-#### `moverLocked` {: .t-bool}
+#### `moverLocked` {: .sp-bool}
 
 :   Unclear.
 
-#### `autoLinkEnabled` {: .t-bool}
+#### `autoLinkEnabled` {: .sp-bool}
 
 :   Determines whether the position of the object triggering the mover should be tied to the mover's position.
     
     * `TRUE` — When the mover transitions, the position of the triggering object follows the position of the mover.
     * `FALSE` — The triggering object's position is uncoupled from the position of the mover.
 
-#### `autoRotate` {: .t-bool}
+#### `autoRotate` {: .sp-bool}
 
 :   Whether to automatically rotate the mover along its movement trajectory. For example, this is used for making fish
     always face in the direction they're moving.
@@ -319,18 +319,18 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
     !!! warning
         Only available in Gothic II.
 
-#### `numKeyframes` {: .t-int}
+#### `numKeyframes` {: .sp-int}
 
 :   Unclear.
 
-#### `moveSpeed` {: .t-float}
+#### `moveSpeed` {: .sp-float}
 
 :   The movement speed for transitioning between keyframes in units per millisecond.
     
     !!! warning
         Only relevant if manually specified keyframes are used. Ignored when using the visual for the animation.
 
-#### `posLerpType` {: .t-enum}
+#### `posLerpType` {: .sp-enum}
 
 :   Defines how the mover should interpolate between the keyframe positions. Only affects the mover's position,
     never its rotation.
@@ -341,7 +341,7 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
     !!! warning
         Only relevant if manually specified keyframes are used. Ignored when using the visual for the animation.
 
-#### `speedType` {: .t-enum}
+#### `speedType` {: .sp-enum}
 
 :   Controls the acceleration and deceleration behavior of the mover.
 
@@ -356,95 +356,95 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
     !!! warning
         Only relevant if manually specified keyframes are used. Ignored when using the visual for the animation.
 
-#### `sfxOpenStart` {: .t-str}
+#### `sfxOpenStart` {: .sp-string}
 
 :   The name of the sound to play at the beginning of the opening sequence.
 
-#### `sfxOpenEnd` {: .t-str}
+#### `sfxOpenEnd` {: .sp-string}
 
 :   The name of the sound to play at the end of the opening sequence.
 
-#### `sfxMoving` {: .t-str}
+#### `sfxMoving` {: .sp-string}
 
 :   The name of the sound to play in a loop while the mover is transitioning between keyframes.
 
-#### `sfxCloseStart` {: .t-str}
+#### `sfxCloseStart` {: .sp-string}
 
 :   The name of the sound to play at the beginning of the closing sequence.
 
-#### `sfxCloseEnd` {: .t-str}
+#### `sfxCloseEnd` {: .sp-string}
 
 :   The name of the sound to play at the end of the closing sequence.
 
-#### `sfxLock` {: .t-str}
+#### `sfxLock` {: .sp-string}
 
 :   The name of the sound to play when locking a mover.
 
-#### `sfxUnlock` {: .t-str}
+#### `sfxUnlock` {: .sp-string}
 
 :   The name of the sound to play when unlocking a mover.
 
-#### `sfxUseLocked` {: .t-str}
+#### `sfxUseLocked` {: .sp-string}
 
 :   The name of the sound to play when using a locked mover.
 
-#### `actKeyPosDelta` {: .t-vec}
+#### `actKeyPosDelta` {: .sp-vec}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `actKeyframeF` {: .t-float}
+#### `actKeyframeF` {: .sp-float}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `actKeyframe` {: .t-int}
+#### `actKeyframe` {: .sp-int}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `nextKeyframe` {: .t-int}
+#### `nextKeyframe` {: .sp-int}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `moveSpeedUnit` {: .t-float}
+#### `moveSpeedUnit` {: .sp-float}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `advanceDir` {: .t-float}
+#### `advanceDir` {: .sp-float}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `moverState` {: .t-enum}
+#### `moverState` {: .sp-enum}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `numTriggerEvents` {: .t-int}
+#### `numTriggerEvents` {: .sp-int}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `stayOpenTimeDest` {: .t-float}
+#### `stayOpenTimeDest` {: .sp-float}
 
 :   Unknown.
 

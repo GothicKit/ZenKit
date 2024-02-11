@@ -102,24 +102,24 @@ waterfall splash effects which don't need to be 3-dimensional objects.
 
 ## Properties
 
-#### `name` {: .t-str}
+#### `name` {: .sp-string}
 
 :   The name of the decal texture. If the decal is part of a VObject, this field is the same as [zCVob.visual](zCVob.md#visual).
 
-#### `decalDim` {: .t-raw}
+#### `decalDim` {: .sp-misc}
 
 :   The size of the decal texture as a 2-dimensional vector. The first element is the width, and the second is the height.
 
-#### `decalOffset` {: .t-raw}
+#### `decalOffset` {: .sp-misc}
 
 :   The offset of the decal texture relative to the parent VObject's position as a 2-dimensional vector.
 
-#### `decal2Sided` {: .t-bool}
+#### `decal2Sided` {: .sp-bool}
 
 :   Enables or disables backface culling for the texture.
     <br />`TRUE` — Show the texture on both sides. `FALSE` — Show the texture on the front side only.
 
-#### `decalAlphaFunc` {: .t-enum}
+#### `decalAlphaFunc` {: .sp-enum}
 
 :   The function to use for calculating the texture's alpha channel.
     
@@ -131,11 +131,11 @@ waterfall splash effects which don't need to be 3-dimensional objects.
     * `MUL` — Multiplication.
     * `MUL2` — Multiplication.
 
-#### `decalTexAniFPS` {: .t-float}
+#### `decalTexAniFPS` {: .sp-float}
 
 :   Determines the number of frames per **minute** to use for animated textures.
 
-#### `decalAlphaWeight` {: .t-int}
+#### `decalAlphaWeight` {: .sp-int}
 
 :   Determines the transparency of the texture between `0` and `255`. Only relevant if
     [`decalAlphaFunc`](#decalAlphaFunc) is set to a value other than `NONE`. A value of `255`
@@ -145,7 +145,7 @@ waterfall splash effects which don't need to be 3-dimensional objects.
     !!! warning
         This property is only available in Gothic II.
 
-#### `ignoreDayLight` {: .t-bool}
+#### `ignoreDayLight` {: .sp-bool}
 
 :   Determines whether to take the day lighting into account when calculation the brightness of this decal.
     <br />`TRUE` — To take into account daylight. `FALSE` — Do not take into account daylight.

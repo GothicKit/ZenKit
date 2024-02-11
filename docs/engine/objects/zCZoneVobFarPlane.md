@@ -61,11 +61,11 @@ A VObject which defines the loading range of VObjects within its bounding box.
 
 ## Properties
 
-#### `vobFarPlaneZ` {: .t-float}
+#### `vobFarPlaneZ` {: .sp-float}
 
 :   The loading range of VObject within.
     
 
-#### `innerRangePerc` {: .t-float}
+#### `innerRangePerc` {: .sp-float}
 
 :   Unknown.

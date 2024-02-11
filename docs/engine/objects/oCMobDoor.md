@@ -100,19 +100,19 @@ A VObject representing a door. This is also used for NPCs navigating the waynet.
 
 ## Properties
 
-#### `locked` {: .t-bool}
+#### `locked` {: .sp-bool}
 
 :   Determines whether the container is locked.
     <br/>`TRUE` — The container is locked. `FALSE` — The container is not locked.
 
-#### `keyInstance` {: .t-str}
+#### `keyInstance` {: .sp-string}
 
 :   The name of the item script instance which unlocks the container.
 
     !!! tip
         Only relevant if the container is locked.
 
-#### `pickLockStr` {: .t-str}
+#### `pickLockStr` {: .sp-string}
 
 :   The combination which unlocks this container when picking the lock. Each character of the string is either `R` or
     `L` where `R` stands for "Right" and `L` stands for "Left". If empty, the lock can not be picked.

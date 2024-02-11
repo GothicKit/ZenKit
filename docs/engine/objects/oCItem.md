@@ -69,18 +69,18 @@ their attributes. They have physics enabled and can be targeted and picked up by
 
 ## Properties
 
-#### `itemInstance` {: .t-str}
+#### `itemInstance` {: .sp-string}
 
 :   The name of the script instance representing the item.
 
-#### `amount` {: .t-int}
+#### `amount` {: .sp-int}
 
 :   Unknown.
 
     !!! warning
         This property is only available in saved games.
 
-#### `flags` {: .t-int}
+#### `flags` {: .sp-int}
 
 :   Unknown.
 

@@ -53,6 +53,6 @@ Represents a lens flare effect. Behaves exactly like the base [`zCVob`](zCVob.md
 
 ## Properties
 
-#### `lensflareFX` {: .t-str}
+#### `lensflareFX` {: .sp-string}
 
 :   The name of the lens flare effect. Must be one of the effects listed in `/_work/data/Presets/Lensflare.zen`.
