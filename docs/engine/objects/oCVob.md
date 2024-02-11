@@ -14,35 +14,35 @@
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCVob
-      {: .sp-type}
+      {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}
 
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCVob
-      {: .sp-type}
+      {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}
 
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCVob
-      {: .sp-type}
+      {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}
 
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCVob
-      {: .sp-type}
+      {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}

@@ -18,9 +18,9 @@ A VObject which defines the loading range of VObjects within its bounding box.
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCZoneVobFarPlane
-      {: .sp-type}
+      {: .sp-class}
         - [vobFarPlaneZ](#vobfarplanez) = 12000.0
           {: .sp-float}
         - [innerRangePerc](#innerrangeperc) = 0.0
@@ -29,9 +29,9 @@ A VObject which defines the loading range of VObjects within its bounding box.
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCZoneVobFarPlane
-      {: .sp-type}
+      {: .sp-class}
         - [vobFarPlaneZ](#vobfarplanez) = 12000.0
           {: .sp-float}
         - [innerRangePerc](#innerrangeperc) = 0.0
@@ -40,9 +40,9 @@ A VObject which defines the loading range of VObjects within its bounding box.
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCZoneVobFarPlane
-      {: .sp-type}
+      {: .sp-class}
         - [vobFarPlaneZ](#vobfarplanez) = 12000.0
           {: .sp-float}
         - [innerRangePerc](#innerrangeperc) = 0.0
@@ -51,9 +51,9 @@ A VObject which defines the loading range of VObjects within its bounding box.
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCZoneVobFarPlane
-      {: .sp-type}
+      {: .sp-class}
         - [vobFarPlaneZ](#vobfarplanez) = 12000.0
           {: .sp-float}
         - [innerRangePerc](#innerrangeperc) = 0.0

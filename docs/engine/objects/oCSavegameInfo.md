@@ -13,7 +13,7 @@
 === "Gothic 1"
 
     - oCSavegameInfo
-      {: .sp-type}
+      {: .sp-class}
         - [Title](#Title) = ""
           {: .sp-string}
         - [WorldName](#WorldName) = ""
@@ -42,7 +42,7 @@
 === "Gothic 2"
 
     - oCSavegameInfo
-      {: .sp-type}
+      {: .sp-class}
         - [Title](#Title) = ""
           {: .sp-string}
         - [WorldName](#WorldName) = ""
@@ -71,7 +71,7 @@
 === "Gothic 1 (Save)"
 
     - oCSavegameInfo
-      {: .sp-type}
+      {: .sp-class}
         - [Title](#Title) = ""
           {: .sp-string}
         - [WorldName](#WorldName) = ""
@@ -100,7 +100,7 @@
 === "Gothic 2 (Save)"
 
     - oCSavegameInfo
-      {: .sp-type}
+      {: .sp-class}
         - [Title](#Title) = ""
           {: .sp-string}
         - [WorldName](#WorldName) = ""

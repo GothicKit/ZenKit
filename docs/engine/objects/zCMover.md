@@ -36,11 +36,11 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [zCTrigger](zCTrigger.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCMover
-      {: .sp-type}
+      {: .sp-class}
         - Mover
           {: .sp-folder}
             - [moverBehavior](#moverbehavior) = 2STATE_TOGGLE
@@ -85,11 +85,11 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [zCTrigger](zCTrigger.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCMover
-      {: .sp-type}
+      {: .sp-class}
         - Mover
           {: .sp-folder}
             - [moverBehavior](#moverbehavior) = 2STATE_TOGGLE
@@ -136,11 +136,11 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [zCTrigger](zCTrigger.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCMover
-      {: .sp-type}
+      {: .sp-class}
         - Mover
           {: .sp-folder}
             - [moverBehavior](#moverbehavior) = 2STATE_TOGGLE
@@ -203,11 +203,11 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [zCTrigger](zCTrigger.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCMover
-      {: .sp-type}
+      {: .sp-class}
         - Mover
           {: .sp-folder}
             - [moverBehavior](#moverbehavior) = 2STATE_TOGGLE

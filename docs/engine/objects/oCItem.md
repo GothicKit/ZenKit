@@ -18,33 +18,33 @@ their attributes. They have physics enabled and can be targeted and picked up by
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCItem
-      {: .sp-type}
+      {: .sp-class}
         - [itemInstance](#iteminstance) = ""
           {: .sp-string}
 
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCItem
-      {: .sp-type}
+      {: .sp-class}
         - [itemInstance](#iteminstance) = ""
           {: .sp-string}
 
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCItem
-      {: .sp-type}
+      {: .sp-class}
         - [itemInstance](#iteminstance) = ""
           {: .sp-string}
         - [amount](#amount) = 0
@@ -55,11 +55,11 @@ their attributes. They have physics enabled and can be targeted and picked up by
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCItem
-      {: .sp-type}
+      {: .sp-class}
         - [itemInstance](#iteminstance) = ""
           {: .sp-string}
         - [amount](#amount) = 0

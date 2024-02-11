@@ -18,11 +18,11 @@ A VObject which can optionally be moved and/or carried.
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCMOB
-      {: .sp-type}
+      {: .sp-class}
         - MOB
           {: .sp-folder}
             - [focusName](#focusName) = ""
@@ -51,11 +51,11 @@ A VObject which can optionally be moved and/or carried.
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCMOB
-      {: .sp-type}
+      {: .sp-class}
         - MOB
           {: .sp-folder}
             - [focusName](#focusName) = ""
@@ -84,11 +84,11 @@ A VObject which can optionally be moved and/or carried.
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCMOB
-      {: .sp-type}
+      {: .sp-class}
         - MOB
           {: .sp-folder}
             - [focusName](#focusName) = ""
@@ -117,11 +117,11 @@ A VObject which can optionally be moved and/or carried.
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCMOB
-      {: .sp-type}
+      {: .sp-class}
         - MOB
           {: .sp-folder}
             - [focusName](#focusName) = ""

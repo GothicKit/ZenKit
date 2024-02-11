@@ -19,7 +19,7 @@
 }
 
 ul .sp-folder,
-ul .sp-type,
+ul .sp-class,
 ul .sp-int,
 ul .sp-string,
 ul .sp-misc,
@@ -74,7 +74,7 @@ ul .sp-color {
     padding-right: 0.5em;
 }
 
-.sp-type::before {
+.sp-class::before {
     content: url("/assets/icons/spacer-class.png");
     padding-right: 0.5em;
 }

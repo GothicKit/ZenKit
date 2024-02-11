@@ -17,9 +17,9 @@ Transforms any incoming `OnTrigger` and `OnUntrigger` events before passing them
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCMessageFilter
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
         - [onTrigger](#ontrigger) = MT_TRIGGER
@@ -30,9 +30,9 @@ Transforms any incoming `OnTrigger` and `OnUntrigger` events before passing them
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCMessageFilter
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
         - [onTrigger](#ontrigger) = MT_TRIGGER
@@ -43,9 +43,9 @@ Transforms any incoming `OnTrigger` and `OnUntrigger` events before passing them
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCMessageFilter
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
         - [onTrigger](#ontrigger) = MT_TRIGGER
@@ -56,9 +56,9 @@ Transforms any incoming `OnTrigger` and `OnUntrigger` events before passing them
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCMessageFilter
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
         - [onTrigger](#ontrigger) = MT_TRIGGER

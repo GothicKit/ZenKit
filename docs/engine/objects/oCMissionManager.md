@@ -13,38 +13,38 @@
 === "Gothic 1"
 
     - oCMissionManager
-      {: .sp-type}
+      {: .sp-class}
         - [NumOfEntries](#numofentries) = 0
           {: .sp-int}
         - (inline)[^1] [oCMission](oCMission.md) ...
-          {: .sp-type}
+          {: .sp-class}
 
 === "Gothic 2"
 
     - oCMissionManager
-      {: .sp-type}
+      {: .sp-class}
         - [NumOfEntries](#numofentries) = 0
           {: .sp-int}
         - (inline)[^1] [oCMission](oCMission.md) ...
-          {: .sp-type}
+          {: .sp-class}
 
 === "Gothic 1 (Save)"
 
     - oCMissionManager
-      {: .sp-type}
+      {: .sp-class}
         - [NumOfEntries](#numofentries) = 0
           {: .sp-int}
         - (inline)[^1] [oCMission](oCMission.md) ...
-          {: .sp-type}
+          {: .sp-class}
 
 === "Gothic 2 (Save)"
 
     - oCMissionManager
-      {: .sp-type}
+      {: .sp-class}
         - [NumOfEntries](#numofentries) = 0
           {: .sp-int}
         - (inline)[^1] [oCMission](oCMission.md) ...
-          {: .sp-type}
+          {: .sp-class}
 
 ## Properties
 

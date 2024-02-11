@@ -18,36 +18,36 @@ from an inanimate object within the object's bounding box.
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCTriggerUntouch
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
 
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCTriggerUntouch
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
 
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCTriggerUntouch
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
 
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCTriggerUntouch
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
 

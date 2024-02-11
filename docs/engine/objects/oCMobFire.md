@@ -17,15 +17,15 @@ An object with an integrated fire effect. Only supports rigged models as visuals
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMOB](oCMOB.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMobInter](oCMobInter.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCMobFire
-      {: .sp-type}
+      {: .sp-class}
         - [fireSlot](#fireslot) = ""
           {: .sp-string}
         - [fireVobtreeName](#firevobtreename) = ""
@@ -34,15 +34,15 @@ An object with an integrated fire effect. Only supports rigged models as visuals
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMOB](oCMOB.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMobInter](oCMobInter.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCMobFire
-      {: .sp-type}
+      {: .sp-class}
         - [fireSlot](#fireslot) = ""
           {: .sp-string}
         - [fireVobtreeName](#firevobtreename) = ""
@@ -51,15 +51,15 @@ An object with an integrated fire effect. Only supports rigged models as visuals
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMOB](oCMOB.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMobInter](oCMobInter.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCMobFire
-      {: .sp-type}
+      {: .sp-class}
         - [fireSlot](#fireslot) = ""
           {: .sp-string}
         - [fireVobtreeName](#firevobtreename) = ""
@@ -68,15 +68,15 @@ An object with an integrated fire effect. Only supports rigged models as visuals
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMOB](oCMOB.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMobInter](oCMobInter.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCMobFire
-      {: .sp-type}
+      {: .sp-class}
         - [fireSlot](#fireslot) = ""
           {: .sp-string}
         - [fireVobtreeName](#firevobtreename) = ""

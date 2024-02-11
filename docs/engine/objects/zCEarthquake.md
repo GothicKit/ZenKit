@@ -27,9 +27,9 @@ by a shaking camera.
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCEarthquake
-      {: .sp-type}
+      {: .sp-class}
         - Earthquake
           {: .sp-folder}
             - [radius](#radius) = 200
@@ -46,9 +46,9 @@ by a shaking camera.
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCEarthquake
-      {: .sp-type}
+      {: .sp-class}
         - Earthquake
           {: .sp-folder}
             - [radius](#radius) = 200

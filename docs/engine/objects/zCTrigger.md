@@ -28,9 +28,9 @@ and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at t
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCTrigger
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggerTarget) = ""
           {: .sp-string}
         - Trigger
@@ -69,9 +69,9 @@ and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at t
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCTrigger
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggerTarget) = ""
           {: .sp-string}
         - Trigger
@@ -110,9 +110,9 @@ and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at t
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCTrigger
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggerTarget) = ""
           {: .sp-string}
         - Trigger
@@ -150,16 +150,16 @@ and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at t
             - [nextTimeTriggerable](#nexttimetriggerable) = 0.0
               {: .sp-float}
             - [savedOtherVob](#savedothervob) = NULL
-              {: .sp-type}
+              {: .sp-class}
             - [countCanBeActivated](#countcanbeactivated)
               {: .sp-int}
 
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCTrigger
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggerTarget) = ""
           {: .sp-string}
         - Trigger
@@ -197,7 +197,7 @@ and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at t
             - [nextTimeTriggerable](#nexttimetriggerable) = 0.0
               {: .sp-float}
             - [savedOtherVob](#savedothervob) = NULL
-              {: .sp-type}
+              {: .sp-class}
             - [countCanBeActivated](#countcanbeactivated) = 0
               {: .sp-int}
             - [isEnabled](#isenabled) = TRUE
@@ -300,7 +300,7 @@ and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at t
     !!! warning
         This property is only available in saved games.
 
-#### `savedOtherVob` {: .sp-type}
+#### `savedOtherVob` {: .sp-class}
 
 :   Unknown.
 

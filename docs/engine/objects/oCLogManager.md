@@ -13,38 +13,38 @@
 === "Gothic 1"
 
     - oCLogManager
-      {: .sp-type}
+      {: .sp-class}
         - [LOGMANAGERTOPICCOUNT](#logmanagertopiccount) = 0
           {: .sp-int}
         - (inline)[^1] [oCLogTopic](oCLogTopic.md) ...
-          {: .sp-type}
+          {: .sp-class}
 
 === "Gothic 2"
 
     - oCLogManager
-      {: .sp-type}
+      {: .sp-class}
         - [LOGMANAGERTOPICCOUNT](#logmanagertopiccount) = 0
           {: .sp-int}
         - (inline)[^1] [oCLogTopic](oCLogTopic.md) ...
-          {: .sp-type}
+          {: .sp-class}
 
 === "Gothic 1 (Save)"
 
     - oCLogManager
-      {: .sp-type}
+      {: .sp-class}
         - [LOGMANAGERTOPICCOUNT](#logmanagertopiccount) = 0
           {: .sp-int}
         - (inline)[^1] [oCLogTopic](oCLogTopic.md) ...
-          {: .sp-type}
+          {: .sp-class}
 
 === "Gothic 2 (Save)"
 
     - oCLogManager
-      {: .sp-type}
+      {: .sp-class}
         - [LOGMANAGERTOPICCOUNT](#logmanagertopiccount) = 0
           {: .sp-int}
         - (inline)[^1] [oCLogTopic](oCLogTopic.md) ...
-          {: .sp-type}
+          {: .sp-class}
 
 ## Properties
 

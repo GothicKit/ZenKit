@@ -4,16 +4,16 @@ The base class for visual objects in the game world. It itself does not have any
 visuals exist but also don't have any properties associated with them:
 
 - zCMesh
-  {: .sp-type}
+  {: .sp-class}
 - zCProgMeshProto
-  {: .sp-type}
+  {: .sp-class}
 - zCParticleFX
-  {: .sp-type}
+  {: .sp-class}
 - zCAICamera
-  {: .sp-type}
+  {: .sp-class}
 - zCModel
-  {: .sp-type}
+  {: .sp-class}
 - zCMorphMesh
-  {: .sp-type}
+  {: .sp-class}
 
 The only visual which has additional data associated with it is [zCDecal](zCDecal.md).

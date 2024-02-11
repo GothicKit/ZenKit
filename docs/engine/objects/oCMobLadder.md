@@ -18,60 +18,60 @@ A VObject representing a ladder. NPCs can interact with ladders by climbing.
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMOB](oCMOB.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMobInter](oCMobInter.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCMobLadder
-      {: .sp-type}
+      {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}
 
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMOB](oCMOB.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMobInter](oCMobInter.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCMobLadder
-      {: .sp-type}
+      {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}
 
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMOB](oCMOB.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMobInter](oCMobInter.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCMobLadder
-      {: .sp-type}
+      {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}
 
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMOB](oCMOB.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMobInter](oCMobInter.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCMobLadder
-      {: .sp-type}
+      {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}
 

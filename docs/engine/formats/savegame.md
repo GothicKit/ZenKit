@@ -64,13 +64,13 @@ format and structured as follows:
 - [min](#min) = 0
   {: .sp-int}
 - (inline)[^1] [oCInfoManager](../objects/oCInfoManager.md)
-  {: .sp-type}
+  {: .sp-class}
 - (inline)[^1] [oCMissionManager](../objects/oCMissionManager.md)
-  {: .sp-type}
+  {: .sp-class}
 - (inline)[^1] [oCLogManager](../objects/oCLogManager.md)
-  {: .sp-type}
+  {: .sp-class}
 - (inline)[^1] [oCCSManager](../objects/oCCSManager.md)
-  {: .sp-type}
+  {: .sp-class}
 - [numSymbols](#numsymbols) = 0
   {: .sp-int}
 - (Symbol) ...

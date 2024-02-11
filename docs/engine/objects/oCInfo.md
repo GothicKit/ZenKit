@@ -13,21 +13,21 @@
 === "Gothic 1"
 
     - oCInfo
-      {: .sp-type}
+      {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}
 
 === "Gothic 2"
 
     - oCInfo
-      {: .sp-type}
+      {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}
 
 === "Gothic 1 (Save)"
 
     - oCInfo
-      {: .sp-type}
+      {: .sp-class}
         - [Told](#told) = FALSE
           {: .sp-bool}
         - [InstName](#instname) = ""
@@ -36,7 +36,7 @@
 === "Gothic 2 (Save)"
 
     - oCInfo
-      {: .sp-type}
+      {: .sp-class}
         - [Told](#told) = FALSE
           {: .sp-bool}
         - [InstName](#instname) = ""

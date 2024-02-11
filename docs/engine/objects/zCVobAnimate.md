@@ -21,27 +21,27 @@ and stopped using `OnTrigger` and `OnUntrigger` events.
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobAnimate
-      {: .sp-type}
+      {: .sp-class}
         - [startOn](#starton) = ""
           {: .sp-bool}
 
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobAnimate
-      {: .sp-type}
+      {: .sp-class}
         - [startOn](#starton) = ""
           {: .sp-bool}
 
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobAnimate
-      {: .sp-type}
+      {: .sp-class}
         - [startOn](#starton) = ""
           {: .sp-bool}
         - [isRunning](#isrunning) = FALSE
@@ -50,9 +50,9 @@ and stopped using `OnTrigger` and `OnUntrigger` events.
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobAnimate
-      {: .sp-type}
+      {: .sp-class}
         - [startOn](#starton) = ""
           {: .sp-bool}
         - [isRunning](#isrunning) = FALSE

@@ -20,13 +20,13 @@ Interactive objects can be interacted with by NPCs and the player. Every time th
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMOB](oCMOB.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMobInter](oCMobInter.md)
-      {: .sp-type}
+      {: .sp-class}
         - [stateNum](#statenum) = 0
           {: .sp-int}
         - [triggerTarget](#triggerTarget) = ""
@@ -43,13 +43,13 @@ Interactive objects can be interacted with by NPCs and the player. Every time th
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMOB](oCMOB.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMobInter](oCMobInter.md)
-      {: .sp-type}
+      {: .sp-class}
         - [stateNum](#statenum) = 0
           {: .sp-int}
         - [triggerTarget](#triggerTarget) = ""
@@ -66,13 +66,13 @@ Interactive objects can be interacted with by NPCs and the player. Every time th
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMOB](oCMOB.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMobInter](oCMobInter.md)
-      {: .sp-type}
+      {: .sp-class}
         - [stateNum](#statenum) = 0
           {: .sp-int}
         - [triggerTarget](#triggerTarget) = ""
@@ -89,13 +89,13 @@ Interactive objects can be interacted with by NPCs and the player. Every time th
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMOB](oCMOB.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMobInter](oCMobInter.md)
-      {: .sp-type}
+      {: .sp-class}
         - [stateNum](#statenum) = 0
           {: .sp-int}
         - [triggerTarget](#triggerTarget) = ""

@@ -20,35 +20,35 @@ has no relevance to other VObjects in the hierarchy.
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobLevelCompo
-      {: .sp-type}
+      {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}
 
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobLevelCompo
-      {: .sp-type}
+      {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}
 
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobLevelCompo
-      {: .sp-type}
+      {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}
 
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobLevelCompo
-      {: .sp-type}
+      {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}

@@ -13,7 +13,7 @@
 === "Gothic 1"
 
     - oCLogTopic
-      {: .sp-type}
+      {: .sp-class}
         - [TOPICDESCRIPTION](#topicdescription) = ""
           {: .sp-string}
         - [TOPICSECTION](#topicsection) = zELogSection_Missions
@@ -30,7 +30,7 @@
 === "Gothic 2"
 
     - oCLogTopic
-      {: .sp-type}
+      {: .sp-class}
         - [TOPICDESCRIPTION](#topicdescription) = ""
           {: .sp-string}
         - [TOPICSECTION](#topicsection) = zELogSection_Missions
@@ -47,7 +47,7 @@
 === "Gothic 1 (Save)"
 
     - oCLogTopic
-      {: .sp-type}
+      {: .sp-class}
         - [TOPICDESCRIPTION](#topicdescription) = ""
           {: .sp-string}
         - [TOPICSECTION](#topicsection) = zELogSection_Missions
@@ -64,7 +64,7 @@
 === "Gothic 2 (Save)"
 
     - oCLogTopic
-      {: .sp-type}
+      {: .sp-class}
         - [TOPICDESCRIPTION](#topicdescription) = ""
           {: .sp-string}
         - [TOPICSECTION](#topicsection) = zELogSection_Missions

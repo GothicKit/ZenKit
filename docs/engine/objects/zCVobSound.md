@@ -19,9 +19,9 @@ Emits a sound defined by a script instance in a given radius. The sound playback
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobSound
-      {: .sp-type}
+      {: .sp-class}
         - Sound
           {: .sp-folder}
             - [sndVolume](#sndvolume) = 100
@@ -50,9 +50,9 @@ Emits a sound defined by a script instance in a given radius. The sound playback
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobSound
-      {: .sp-type}
+      {: .sp-class}
         - Sound
           {: .sp-folder}
             - [sndVolume](#sndvolume) = 100
@@ -81,9 +81,9 @@ Emits a sound defined by a script instance in a given radius. The sound playback
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobSound
-      {: .sp-type}
+      {: .sp-class}
         - Sound
           {: .sp-folder}
             - [sndVolume](#sndvolume) = 100
@@ -116,9 +116,9 @@ Emits a sound defined by a script instance in a given radius. The sound playback
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobSound
-      {: .sp-type}
+      {: .sp-class}
         - Sound
           {: .sp-folder}
             - [sndVolume](#sndvolume) = 100

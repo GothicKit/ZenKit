@@ -13,34 +13,34 @@
 === "Gothic 1"
 
     - oCInfoManager
-      {: .sp-type}
+      {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}
 
 === "Gothic 2"
 
     - oCInfoManager
-      {: .sp-type}
+      {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}
 
 === "Gothic 1 (Save)"
 
     - oCInfoManager
-      {: .sp-type}
+      {: .sp-class}
         - [NumOfEntries](#numofentries) = 0
           {: .sp-int}
         - (inline)[^1] [oCInfo](oCInfo.md) ...
-          {: .sp-type}
+          {: .sp-class}
 
 === "Gothic 2 (Save)"
 
     - oCInfoManager
-      {: .sp-type}
+      {: .sp-class}
         - [NumOfEntries](#numofentries) = 0
           {: .sp-int}
         - (inline)[^1] [oCInfo](oCInfo.md) ...
-          {: .sp-type}
+          {: .sp-class}
 
 ## Properties
 

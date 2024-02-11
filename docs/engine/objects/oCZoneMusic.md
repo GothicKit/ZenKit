@@ -27,9 +27,9 @@ The name of the music theme to be played is defined by the [`vobName`](zCVob.md#
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCZoneMusic
-      {: .sp-type}
+      {: .sp-class}
         - [enabled](#enabled) = TRUE
           {: .sp-bool}
         - [priority](#priority) = 0
@@ -46,9 +46,9 @@ The name of the music theme to be played is defined by the [`vobName`](zCVob.md#
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCZoneMusic
-      {: .sp-type}
+      {: .sp-class}
         - [enabled](#enabled) = TRUE
           {: .sp-bool}
         - [priority](#priority) = 0
@@ -65,9 +65,9 @@ The name of the music theme to be played is defined by the [`vobName`](zCVob.md#
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCZoneMusic
-      {: .sp-type}
+      {: .sp-class}
         - [enabled](#enabled) = TRUE
           {: .sp-bool}
         - [priority](#priority) = 0
@@ -90,9 +90,9 @@ The name of the music theme to be played is defined by the [`vobName`](zCVob.md#
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCZoneMusic
-      {: .sp-type}
+      {: .sp-class}
         - [enabled](#enabled) = TRUE
           {: .sp-bool}
         - [priority](#priority) = 0

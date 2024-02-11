@@ -13,21 +13,21 @@
 === "Gothic 1"
 
     - oCMission
-      {: .sp-type}
+      {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}
 
 === "Gothic 2"
 
     - oCMission
-      {: .sp-type}
+      {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}
 
 === "Gothic 1 (Save)"
 
     - oCMission
-      {: .sp-type}
+      {: .sp-class}
         - [name](#name) = ""
           {: .sp-string}
         - [ID](#id) = 0
@@ -50,7 +50,7 @@
 === "Gothic 2 (Save)"
 
     - oCMission
-      {: .sp-type}
+      {: .sp-class}
         - [name](#name) = ""
           {: .sp-string}
         - [ID](#id) = 0

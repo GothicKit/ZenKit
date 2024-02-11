@@ -21,9 +21,9 @@ just step one keyframe back and forth at a time.
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCMoverControler
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
         - [moverMessage](#movermessage) = GOTO_KEY_FIXED_DIRECTLY
@@ -34,9 +34,9 @@ just step one keyframe back and forth at a time.
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCMoverControler
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
         - [moverMessage](#movermessage) = GOTO_KEY_FIXED_DIRECTLY
@@ -47,9 +47,9 @@ just step one keyframe back and forth at a time.
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCMoverControler
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
         - [moverMessage](#movermessage) = GOTO_KEY_FIXED_DIRECTLY
@@ -60,9 +60,9 @@ just step one keyframe back and forth at a time.
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCMoverControler
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
         - [moverMessage](#movermessage) = GOTO_KEY_FIXED_DIRECTLY

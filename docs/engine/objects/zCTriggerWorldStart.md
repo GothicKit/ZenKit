@@ -17,9 +17,9 @@ A special trigger which fires an `OnTrigger` event to its [target](#triggerTarge
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCTriggerWorldStart
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
         - [fireOnlyFirstTime](#fireonlyfirsttime) = FALSE
@@ -28,9 +28,9 @@ A special trigger which fires an `OnTrigger` event to its [target](#triggerTarge
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCTriggerWorldStart
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
         - [fireOnlyFirstTime](#fireonlyfirsttime) = FALSE
@@ -39,9 +39,9 @@ A special trigger which fires an `OnTrigger` event to its [target](#triggerTarge
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCTriggerWorldStart
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
         - [fireOnlyFirstTime](#fireonlyfirsttime) = FALSE
@@ -50,9 +50,9 @@ A special trigger which fires an `OnTrigger` event to its [target](#triggerTarge
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCTriggerWorldStart
-      {: .sp-type}
+      {: .sp-class}
         - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
         - [fireOnlyFirstTime](#fireonlyfirsttime) = FALSE

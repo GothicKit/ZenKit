@@ -19,9 +19,9 @@ waterfall splash effects which don't need to be 3-dimensional objects.
 === "Gothic 1"
 
     - [zCVisual](zCVisual.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCDecal
-      {: .sp-type}
+      {: .sp-class}
         - [name](#name) = ""
           {: .sp-string}
         - [decalDim](#decaldim) = 25 25
@@ -38,9 +38,9 @@ waterfall splash effects which don't need to be 3-dimensional objects.
 === "Gothic 2"
 
     - [zCVisual](zCVisual.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCDecal
-      {: .sp-type}
+      {: .sp-class}
         - [name](#name) = ""
           {: .sp-string}
         - [decalDim](#decaldim) = 25 25
@@ -61,9 +61,9 @@ waterfall splash effects which don't need to be 3-dimensional objects.
 === "Gothic 1 (Save)"
 
     - [zCVisual](zCVisual.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCDecal
-      {: .sp-type}
+      {: .sp-class}
         - [name](#name) = ""
           {: .sp-string}
         - [decalDim](#decaldim) = 25 25
@@ -80,9 +80,9 @@ waterfall splash effects which don't need to be 3-dimensional objects.
 === "Gothic 2 (Save)"
 
     - [zCVisual](zCVisual.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCDecal
-      {: .sp-type}
+      {: .sp-class}
         - [name](#name) = ""
           {: .sp-string}
         - [decalDim](#decaldim) = 25 25

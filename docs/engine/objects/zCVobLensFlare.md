@@ -18,36 +18,36 @@ Represents a lens flare effect. Behaves exactly like the base [`zCVob`](zCVob.md
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobLensFlare
-      {: .sp-type}
+      {: .sp-class}
         - [lensflareFX](#lensflarefx) = ""
           {: .sp-string}
 
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobLensFlare
-      {: .sp-type}
+      {: .sp-class}
         - [lensflareFX](#lensflarefx) = ""
           {: .sp-string}
 
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobLensFlare
-      {: .sp-type}
+      {: .sp-class}
         - [lensflareFX](#lensflarefx) = ""
           {: .sp-string}
 
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobLensFlare
-      {: .sp-type}
+      {: .sp-class}
         - [lensflareFX](#lensflarefx) = ""
           {: .sp-string}
 

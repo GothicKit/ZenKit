@@ -18,44 +18,44 @@ function when the trigger is activated. `OnUntrigger` events do not result in th
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [zCTrigger](zCTrigger.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCTriggerScript
-      {: .sp-type}
+      {: .sp-class}
         - [scriptFunc](#scriptfunc) = ""
           {: .sp-string}
 
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [zCTrigger](zCTrigger.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCTriggerScript
-      {: .sp-type}
+      {: .sp-class}
         - [scriptFunc](#scriptfunc) = ""
           {: .sp-string}
 
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [zCTrigger](zCTrigger.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCTriggerScript
-      {: .sp-type}
+      {: .sp-class}
         - [scriptFunc](#scriptfunc) = ""
           {: .sp-string}
 
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [zCTrigger](zCTrigger.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCTriggerScript
-      {: .sp-type}
+      {: .sp-class}
         - [scriptFunc](#scriptfunc) = ""
           {: .sp-string}
 

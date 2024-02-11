@@ -18,9 +18,9 @@ A VObject which causes fog to appear within its bounding box.
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCZoneZFog
-      {: .sp-type}
+      {: .sp-class}
         - ZoneZFog
           {: .sp-folder}
             - [fogRangeCenter](#fograngecenter) = 0.0
@@ -33,9 +33,9 @@ A VObject which causes fog to appear within its bounding box.
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCZoneZFog
-      {: .sp-type}
+      {: .sp-class}
         - ZoneZFog
           {: .sp-folder}
             - [fogRangeCenter](#fograngecenter) = 0.0
@@ -52,9 +52,9 @@ A VObject which causes fog to appear within its bounding box.
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCZoneZFog
-      {: .sp-type}
+      {: .sp-class}
         - ZoneZFog
           {: .sp-folder}
             - [fogRangeCenter](#fograngecenter) = 0.0
@@ -67,9 +67,9 @@ A VObject which causes fog to appear within its bounding box.
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCZoneZFog
-      {: .sp-type}
+      {: .sp-class}
         - ZoneZFog
           {: .sp-folder}
             - [fogRangeCenter](#fograngecenter) = 0.0

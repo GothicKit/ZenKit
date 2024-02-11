@@ -20,7 +20,7 @@ invisible trigger objects. They are also referred to as VObjects in this documen
 === "Gothic 1"
     
     - zCVob
-    {: .sp-type}
+    {: .sp-class}
         - Internals
         {: .sp-folder}
             - [pack](#pack) = 0
@@ -52,14 +52,14 @@ invisible trigger objects. They are also referred to as VObjects in this documen
             - [dynShadow](#dynshadow) = DS_NONE
             {: .sp-enum}
         - visual = NULL
-        {: .sp-type}
+        {: .sp-class}
         - ai = NULL
-        {: .sp-type}
+        {: .sp-class}
 
 === "Gothic 2"
 
     - zCVob
-    {: .sp-type}
+    {: .sp-class}
         - Internals
         {: .sp-folder}
             - [pack](#pack) = 0
@@ -101,15 +101,15 @@ invisible trigger objects. They are also referred to as VObjects in this documen
             - [isAmbient](#isambient) = FALSE
             {: .sp-bool}
         - visual = NULL
-        {: .sp-type}
+        {: .sp-class}
         - ai = NULL
-        {: .sp-type}
+        {: .sp-class}
 
 
 === "Gothic 1 (Save)"
 
     - zCVob
-    {: .sp-type}
+    {: .sp-class}
         - Internals
         {: .sp-folder}
             - [pack](#pack) = 0
@@ -141,9 +141,9 @@ invisible trigger objects. They are also referred to as VObjects in this documen
             - [dynShadow](#dynshadow) = DS_NONE
             {: .sp-enum}
         - visual = NULL
-        {: .sp-type}
+        {: .sp-class}
         - ai = NULL
-        {: .sp-type}
+        {: .sp-class}
         - [sleepMode](#sleepmode) = 0
         {: .sp-int}
         - [nextOnTimer](#nextontimer) = 0.0
@@ -152,7 +152,7 @@ invisible trigger objects. They are also referred to as VObjects in this documen
 === "Gothic 2 (Save)"
 
     - zCVob
-    {: .sp-type}
+    {: .sp-class}
         - Internals
         {: .sp-folder}
             - [pack](#pack) = 0
@@ -194,9 +194,9 @@ invisible trigger objects. They are also referred to as VObjects in this documen
             - [isAmbient](#isambient) = FALSE
             {: .sp-bool}
         - visual = NULL
-        {: .sp-type}
+        {: .sp-class}
         - ai = NULL
-        {: .sp-type}
+        {: .sp-class}
         - [sleepMode](#sleepmode) = 0
         {: .sp-int}
         - [nextOnTimer](#nextontimer) = 0.0

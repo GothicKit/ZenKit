@@ -19,11 +19,11 @@ sound can be defined which is played outside the defined time range (example: bi
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [zCVobSound](zCVobSound.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobSoundDaytime
-      {: .sp-type}
+      {: .sp-class}
         - SoundDaytime
           {: .sp-folder}
             - [sndStartTime](#sndstarttime) = 0
@@ -36,11 +36,11 @@ sound can be defined which is played outside the defined time range (example: bi
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [zCVobSound](zCVobSound.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobSoundDaytime
-      {: .sp-type}
+      {: .sp-class}
         - SoundDaytime
           {: .sp-folder}
             - [sndStartTime](#sndstarttime) = 0
@@ -53,11 +53,11 @@ sound can be defined which is played outside the defined time range (example: bi
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [zCVobSound](zCVobSound.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobSoundDaytime
-      {: .sp-type}
+      {: .sp-class}
         - SoundDaytime
           {: .sp-folder}
             - [sndStartTime](#sndstarttime) = 0
@@ -70,11 +70,11 @@ sound can be defined which is played outside the defined time range (example: bi
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [zCVobSound](zCVobSound.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCVobSoundDaytime
-      {: .sp-type}
+      {: .sp-class}
         - SoundDaytime
           {: .sp-folder}
             - [sndStartTime](#sndstarttime) = 0

@@ -19,9 +19,9 @@ events.
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCPFXController
-      {: .sp-type}
+      {: .sp-class}
         - [pfxName](#pfxname) = ""
           {: .sp-string}
         - [killVobWhenDone](#killvobwhendone) = TRUE
@@ -32,9 +32,9 @@ events.
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCPFXController
-      {: .sp-type}
+      {: .sp-class}
         - [pfxName](#pfxname) = ""
           {: .sp-string}
         - [killVobWhenDone](#killvobwhendone) = TRUE
@@ -45,9 +45,9 @@ events.
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCPFXController
-      {: .sp-type}
+      {: .sp-class}
         - [pfxName](#pfxname) = ""
           {: .sp-string}
         - [killVobWhenDone](#killvobwhendone) = TRUE
@@ -58,9 +58,9 @@ events.
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - zCPFXController
-      {: .sp-type}
+      {: .sp-class}
         - [pfxName](#pfxname) = ""
           {: .sp-string}
         - [killVobWhenDone](#killvobwhendone) = TRUE

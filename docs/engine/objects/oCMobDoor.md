@@ -17,15 +17,15 @@ A VObject representing a door. This is also used for NPCs navigating the waynet.
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMOB](oCMOB.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMobInter](oCMobInter.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCMobContainer
-      {: .sp-type}
+      {: .sp-class}
         - Lockable
           {: .sp-folder}
             - [locked](#locked) = FALSE
@@ -38,15 +38,15 @@ A VObject representing a door. This is also used for NPCs navigating the waynet.
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMOB](oCMOB.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMobInter](oCMobInter.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCMobContainer
-      {: .sp-type}
+      {: .sp-class}
         - Lockable
           {: .sp-folder}
             - [locked](#locked) = FALSE
@@ -59,15 +59,15 @@ A VObject representing a door. This is also used for NPCs navigating the waynet.
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMOB](oCMOB.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMobInter](oCMobInter.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCMobContainer
-      {: .sp-type}
+      {: .sp-class}
         - Lockable
           {: .sp-folder}
             - [locked](#locked) = FALSE
@@ -80,15 +80,15 @@ A VObject representing a door. This is also used for NPCs navigating the waynet.
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCVob](oCVob.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMOB](oCMOB.md)
-      {: .sp-type}
+      {: .sp-class}
     - [oCMobInter](oCMobInter.md)
-      {: .sp-type}
+      {: .sp-class}
     - oCMobContainer
-      {: .sp-type}
+      {: .sp-class}
         - Lockable
           {: .sp-folder}
             - [locked](#locked) = FALSE

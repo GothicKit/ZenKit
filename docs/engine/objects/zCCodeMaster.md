@@ -16,8 +16,8 @@ from all slaves, it emits an `OnTrigger` event to the [`triggerTarget`](#trigger
 `OnTrigger` event is also referred to as an 'activation' for this purpose.
 
 <ul class="sp-list">
-    <li class="sp-type"><a href="../zCVob/">zCVob</a></li>
-    <li class="sp-type">
+    <li class="sp-class"><a href="../zCVob/">zCVob</a></li>
+    <li class="sp-class">
         <span>zCCodeMaster</span>
         <ul class="sp-list">
             <li class="sp-string"><a href="#triggerTarget">triggerTarget</a> = ""</li>
