@@ -94,11 +94,11 @@ A VObject which causes fog to appear within its bounding box.
 
 :   Unknown.
 
-#### `fogColor` {: .sp-float}
+#### `fogColor` {: .sp-color}
 
 :   The color of the fog.
 
-#### `fadeOutSky` {: .sp-color}
+#### `fadeOutSky` {: .sp-bool}
 
 :   Whether to hide the sky when the player is inside the fog.
 
@@ -108,7 +108,7 @@ A VObject which causes fog to appear within its bounding box.
     !!! warning
         This property is only available in Gothic II.
 
-#### `overrideColor` {: .sp-color}
+#### `overrideColor` {: .sp-bool}
 
 :   Unclear.
 
