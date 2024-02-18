@@ -44,6 +44,13 @@ list(APPEND _ZK_SOURCES
         src/Archive.cc
         src/Boxes.cc
         src/CutsceneLibrary.cc
+        src/daedalus/Compiler.cc
+        src/daedalus/Module.cc
+        src/daedalus/SyntaxTree.cc
+        src/daedalus/Tokenizer.cc
+        src/daedalus/Type.cc
+        src/daedalus/TypeCheck.cc
+        src/daedalus/TypeStore.cc
         src/DaedalusScript.cc
         src/Date.cc
         src/DaedalusVm.cc
@@ -74,6 +81,7 @@ list(APPEND _ZK_TESTS
         tests/TestArchive.cc
         tests/TestCutsceneLibrary.cc
         tests/TestDaedalusScript.cc
+        tests/TestDaedalusCompiler.cc
         tests/TestFont.cc
         tests/TestMaterial.cc
         tests/TestModel.cc

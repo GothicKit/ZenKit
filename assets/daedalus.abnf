@@ -1,0 +1,50 @@
+ident = (ALPHA / "_") *(ALPHA / DIGIT / "_")
+ident-qual = ident ["." ident]
+
+literal-string = DQUOTE *(ALPHA / DIGIT / WSP / "!" / %x23-7E) DQUOTE
+literal-int = 1*DIGIT
+literal-float = 1*DIGIT ["." *DIGIT]
+literal-array = "{" expr *("," expr) [","] "}"
+
+expr-call-args = [expr *("," expr)]
+expr-call = ident "(" expr-call-args ")"
+
+expr-ref = ident-qual [ "[" expr "]" ]
+expr-group = "(" expr ")"
+
+expr-primary = literal-string / literal-int / literal-float / literal-array / expr-ref / expr-call / expr-group
+expr-unary = (("!" / "+" / "-" / "~") expr-unary) / expr-primary
+expr-factor = expr-unary [("*" / "/" / "%") expr]
+expr-term = expr-factor [("+" / "-") expr]
+expr-shift = expr-term [("<<" / ">>") expr]
+expr-rel = expr-shift [("<" / "<=" / ">=" / ">") expr]
+expr-equal = expr-rel [("==" / "!=") expr]
+expr-bit = expr-equal [("&" / "|") expr]
+expr-logic = expr-bit [("&&" / "||") expr]
+expr-assign = expr-logic [( "=" / "+=" / "-=" / "*=" / "/=" ) expr]
+expr = expr-assign
+
+stmt-cond = "if" expr stmt-block *("else" "if" expr stmt-block) ["else" stmt-block]
+stmt-return = "return" [expr]
+stmt-decl = var-decl
+stmt-expr = expr
+stmt = stmt-cond / stmt-return / stmt-decl / stmt-expr
+
+stmt-block = "{" *( stmt [";"] ) "}"
+
+var-decl-single = "var" ident ident [ "[" expr "]" ]
+var-decl-multi = "var" ident ident 1*("," ident)
+var-decl = var-decl-single / var-decl-multi
+
+const-decl = "const" ident ident [ "[" expr "]" ] "=" expr
+class-decl = "class" ident "{" *(var-decl ";") "}"
+inst-decl = "instance" ident *("," ident) "(" ident ")" [stmt-block]
+proto-decl = "prototype" ident "(" ident ")" stmt-block
+
+func-decl-args = "(" [ var-decl-single *("," var-decl-single) [","] ] ")"
+func-decl = "func" ident ident func-decl-args stmt-block
+
+extern-decl = "extern" "func" ident ident func-decl-args
+
+script-decl-node = const-decl / var-decl / class-decl / proto-decl / inst-decl / func-decl / extern-decl
+script-decl = *(script-decl-node ";")
