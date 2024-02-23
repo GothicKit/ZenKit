@@ -10,7 +10,7 @@
     — Gothic II: `52224`<br/>
     **ZenKit Class:** `VZoneFarPlaneDefault`<br/>
     **Sources:**<br/>
-    — [gothic-library.ru](http://www.gothic-library.ru/publ/class_zczonevobfarplane/1-1-0-706)
+    — [gothic-library.ru](http://www.gothic-library.ru/publ/class_zczonevobfarplanedefault/1-1-0-707)
 
 
 A VObject which defines the default loading range of VObjects in the entire world. There may only be one of these
