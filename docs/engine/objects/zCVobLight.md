@@ -209,7 +209,7 @@ may be animated with different colors and ranges.
 
 #### `spotConeAngle` {: .sp-float}
 
-:   The angle of the beam cone for spotlights. Only relevant if [`lightType`](#lightType) is `SPOT`, ignored otherwise.
+:   The angle of the beam cone for spotlights. Only relevant if [`lightType`](#lighttype) is `SPOT`, ignored otherwise.
 
 
 #### `lightStatic` {: .sp-bool}
@@ -217,7 +217,9 @@ may be animated with different colors and ranges.
 :   Determines whether this is a static light or not. Static lights are baked into the world when its lighting is
     compiled. This makes static lights faster at runtime, but it also means, that they cannot change in any way after
     the world is compiled.
-    <br />`TRUE` — This light is a static light. `FALSE` — This light is a dynamic light.
+
+    * `TRUE` — This light is a static light.
+    * `FALSE` — This light is a dynamic light.
 
 #### `lightQuality` {: .sp-enum}
 
@@ -234,36 +236,40 @@ may be animated with different colors and ranges.
 #### `turnedOn` {: .sp-bool}
 
 :   Whether this dynamic light is turned on.
-    <br />`TRUE` — The light is turned on. `FALSE` — The light is turned off.
+
+    * `TRUE` — The light is turned on.
+    * `FALSE` — The light is turned off.
 
     !!! warning
-        This value is only valid for dynamic lights. Check [`lightStatic`](#lightStatic) before use.
+        This value is only valid for dynamic lights. Check [`lightStatic`](#lightstatic) before use.
 
 #### `rangeAniScale` {: .sp-string}
 
 :   Frames for the light's range animation. Its value is a space-separated list of floats where each float is one key
     frame of the animation. A value of `1.0` corresponds to the initial [`range`](#range) of the light source, a value
     of `2.0` corresponds to double the initial [`range`](#range) and a value of `0.5` means half the initial
-    [`range`](#range). The range animation is further controlled by [`rangeAniFPS`](#rangeAniFps) and
-    [`rangeAniSmooth`](#rangeAniSmooth).
+    [`range`](#range). The range animation is further controlled by [`rangeAniFPS`](#rangeanifps) and
+    [`rangeAniSmooth`](#rangeanismooth).
 
     !!! warning
-        This value is only valid for dynamic lights. Check [`lightStatic`](#lightStatic) before use.
+        This value is only valid for dynamic lights. Check [`lightStatic`](#lightstatic) before use.
 
 #### `rangeAniFPS` {: .sp-float}
 
-:   The speed of the range animation in frames per second. The animation frames are defined in [`rangeAniScale`](#rangeAniScale)
+:   The speed of the range animation in frames per second. The animation frames are defined in [`rangeAniScale`](#rangeaniscale)
 
     !!! warning
-        This value is only valid for dynamic lights. Check [`lightStatic`](#lightStatic) before use.
+        This value is only valid for dynamic lights. Check [`lightStatic`](#lightstatic) before use.
 
 #### `rangeAniSmooth` {: .sp-bool}
 
 :   Whether the range animation should smoothly interpolate between keyframes.
-    <br />`TRUE` — Turn on interpolation. `FALSE` — Turn off interpolation
+
+    * `TRUE` — Turn on interpolation.
+    * `FALSE` — Turn off interpolation.
 
     !!! warning
-        This value is only valid for dynamic lights. Check [`lightStatic`](#lightStatic) before use.
+        This value is only valid for dynamic lights. Check [`lightStatic`](#lightstatic) before use.
 
 #### `colorAniList` {: .sp-string}
 
@@ -271,29 +277,31 @@ may be animated with different colors and ranges.
     be an RGB color consisting of three integers enclosed by parentheses or a greyscale color consisting of a single
     integer. For example: `(255 0 0) 100 (255 50 180)` would result in <span style="color: #ff0000">#ff0000</span>
     <span style="color: #646464">#646464</span>, <span style="color: #ff32b4">#ff32b4</span>. The color animation is
-    further controlled by [`colorAniFPS`](#colorAniFPS) and [`colorAniSmooth`](#colorAniSmooth).
+    further controlled by [`colorAniFPS`](#coloranifps) and [`colorAniSmooth`](#coloranismooth).
 
     !!! warning
-        This value is only valid for dynamic lights. Check [`lightStatic`](#lightStatic) before use.
+        This value is only valid for dynamic lights. Check [`lightStatic`](#lightstatic) before use.
 
 #### `colorAniFPS` {: .sp-float}
 
-:   The speed of the color animation in frames per second. The animation frames are defined in [`colorAniList`](#colorAniList)
+:   The speed of the color animation in frames per second. The animation frames are defined in [`colorAniList`](#coloranilist)
 
     !!! warning
-        This value is only valid for dynamic lights. Check [`lightStatic`](#lightStatic) before use.
+        This value is only valid for dynamic lights. Check [`lightStatic`](#lightstatic) before use.
 
 #### `colorAniSmooth` {: .sp-bool}
 
 :   Whether the color animation should smoothly interpolate between keyframes.
-    <br />`TRUE` — Turn on interpolation. `FALSE` — Turn off interpolation
+
+    * `TRUE` — Turn on interpolation.
+    * `FALSE` — Turn off interpolation.
 
     !!! warning
-        This value is only valid for dynamic lights. Check [`lightStatic`](#lightStatic) before use.
+        This value is only valid for dynamic lights. Check [`lightStatic`](#lightstatic) before use.
 
 #### `canMove` {: .sp-bool}
 
 :   Unknown.
 
     !!! warning
-        This value is only valid for dynamic lights in **Gothic II**. Check [`lightStatic`](#lightStatic) before use.
+        This value is only valid for dynamic lights in **Gothic II**. Check [`lightStatic`](#lightstatic) before use.

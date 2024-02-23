@@ -16,7 +16,7 @@
 
 A VObject which defines the music to be played within its bounding box. Music zones may overlap; if they do, their
 [`priority`](#priority) property determines which music zone should be used. The camera object is used to test which
-music zone applies. If no music zone applies the music defined in the optional [`zCZoneMusicDefault`](#zCZoneMusicDefault)
+music zone applies. If no music zone applies the music defined in the optional [`oCZoneMusicDefault`](oCZoneMusicDefault.md)
 is used.
 
 The name of the music theme to be played is defined by the [`vobName`](zCVob.md#vobname).

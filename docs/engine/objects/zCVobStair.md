@@ -8,7 +8,7 @@
     **Version Identifiers:**<br />
     — Gothic I: `12289`<br/>
     — Gothic II: *Unused*<br/>
-    **ZenKit Class:** `VStair`<br/>
+    **Sources:**<br/>
     — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)<br/>
     — [gothic-library.ru](http://www.gothic-library.ru/publ/class_zcvobstair/1-1-0-499)
 

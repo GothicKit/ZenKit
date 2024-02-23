@@ -9,6 +9,7 @@
     — Gothic I: `24577`<br/>
     — Gothic II: `24577`<br/>
     **ZenKit Class:** `VCutsceneTrigger`<br/>
+    **Sources:**<br/>
     — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)<br/>
     — [gothic-library.ru](http://www.gothic-library.ru/publ/class_occstrigger/1-1-0-530)
 

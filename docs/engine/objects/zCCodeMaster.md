@@ -9,80 +9,173 @@
     — Gothic I: `0`<br/>
     — Gothic II: `0`<br/>
     **ZenKit Class:** `zCCodeMaster`
+    **Source:**<br/>
+    — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)<br/>
+    — [gothic-library.ru](http://www.gothic-library.ru/publ/zccodemaster/1-1-0-526)
 
 `zCCodeMaster` VObjects keep a list of 'slave' VObjects and keep track of events received by them. If the master
 receives an `OnTrigger` event from a slave, it remembers that it did. After it has receives an `OnTrigger` message
-from all slaves, it emits an `OnTrigger` event to the [`triggerTarget`](#triggerTarget). Receiving or sending an
+from all slaves, it emits an `OnTrigger` event to the [`triggerTarget`](#triggertarget). Receiving or sending an
 `OnTrigger` event is also referred to as an 'activation' for this purpose.
 
-<ul class="sp-list">
-    <li class="sp-class"><a href="../zCVob/">zCVob</a></li>
-    <li class="sp-class">
-        <span>zCCodeMaster</span>
-        <ul class="sp-list">
-            <li class="sp-string"><a href="#triggerTarget">triggerTarget</a> = ""</li>
-            <li class="sp-folder">
-                <span>CodeMaster</span>
-                <ul class="sp-list">
-                    <li class="sp-bool"><a href="#orderRelevant">orderRelevant</a> = TRUE</li>
-                    <li class="sp-folder">
-                        <span>OrderRelevant</span>
-                        <ul class="sp-list">
-                            <li class="sp-bool"><a href="#firstFalseIsFailure">firstFalseIsFailure</a> = TRUE</li>
-                            <li class="sp-string"><a href="#triggerTargetFailure">triggerTargetFailure</a> = ""</li>
-                        </ul>
-                    </li>
-                    <li class="sp-folder">
-                        <span>OrderNotRelevant</span>
-                        <ul class="sp-list">
-                            <li class="sp-bool"><a href="#untriggerCancels">untriggerCancels</a> = FALSE</li>
-                        </ul>
-                    </li>
-                    <li class="sp-string"><a href="#slaveVobName">slaveVobName0</a> = ""</li>
-                    <li class="sp-string"><a href="#slaveVobName">slaveVobName1</a> = ""</li>
-                    <li class="sp-string"><a href="#slaveVobName">slaveVobName2</a> = ""</li>
-                </ul>
-            </li>
-        </ul>
-    </li>
-</ul>
+=== "Gothic 1"
+
+    - [zCVob](zCVob.md)
+      {: .sp-class}
+    - zCCodeMaster
+      {: .sp-class}
+        - [triggerTarget](#triggertarget) = ""
+          {: .sp-string}
+        - CodeMaster
+          {: .sp-folder}
+            - [orderRelevant](#orderrelevant) = FALSE
+              {: .sp-bool}
+            - OrderRelevant
+              {: .sp-folder}
+                - [firstFalseIsFailure](#firstfalseisfailure) = TRUE
+                  {: .sp-bool}
+                - [triggerTargetFailure](#triggertargetfailure) = ""
+                  {: .sp-string}
+            - OrderNotRelevant
+              {: .sp-folder}
+                - [untriggerCancels](#untriggercancels) = FALSE
+                  {: .sp-bool}
+            - [slaveVobName0](#slavevobname) = ""
+              {: .sp-string}
+            - [slaveVobName1](#slavevobname) = ""
+              {: .sp-string}
+            - [slaveVobName2](#slavevobname) = ""
+              {: .sp-string}
+
+=== "Gothic 2"
+
+    - [zCVob](zCVob.md)
+      {: .sp-class}
+    - zCCodeMaster
+      {: .sp-class}
+        - [triggerTarget](#triggertarget) = ""
+          {: .sp-string}
+        - CodeMaster
+          {: .sp-folder}
+            - [orderRelevant](#orderrelevant) = FALSE
+              {: .sp-bool}
+            - OrderRelevant
+              {: .sp-folder}
+                - [firstFalseIsFailure](#firstfalseisfailure) = TRUE
+                  {: .sp-bool}
+                - [triggerTargetFailure](#triggertargetfailure) = ""
+                  {: .sp-string}
+            - OrderNotRelevant
+              {: .sp-folder}
+                - [untriggerCancels](#untriggercancels) = FALSE
+                  {: .sp-bool}
+            - [slaveVobName0](#slavevobname) = ""
+              {: .sp-string}
+            - [slaveVobName1](#slavevobname) = ""
+              {: .sp-string}
+            - [slaveVobName2](#slavevobname) = ""
+              {: .sp-string}
+
+=== "Gothic 1 (Save)"
+
+    - [zCVob](zCVob.md)
+      {: .sp-class}
+    - zCCodeMaster
+      {: .sp-class}
+        - [triggerTarget](#triggertarget) = ""
+          {: .sp-string}
+        - CodeMaster
+          {: .sp-folder}
+            - [orderRelevant](#orderrelevant) = FALSE
+              {: .sp-bool}
+            - OrderRelevant
+              {: .sp-folder}
+                - [firstFalseIsFailure](#firstfalseisfailure) = TRUE
+                  {: .sp-bool}
+                - [triggerTargetFailure](#triggertargetfailure) = ""
+                  {: .sp-string}
+            - OrderNotRelevant
+              {: .sp-folder}
+                - [untriggerCancels](#untriggercancels) = FALSE
+                  {: .sp-bool}
+            - [slaveVobName0](#slavevobname) = ""
+              {: .sp-string}
+            - [slaveVobName1](#slavevobname) = ""
+              {: .sp-string}
+            - [slaveVobName2](#slavevobname) = ""
+              {: .sp-string}
+
+=== "Gothic 2 (Save)"
+
+    - [zCVob](zCVob.md)
+      {: .sp-class}
+    - zCCodeMaster
+      {: .sp-class}
+        - [triggerTarget](#triggertarget) = ""
+          {: .sp-string}
+        - CodeMaster
+          {: .sp-folder}
+            - [orderRelevant](#orderrelevant) = FALSE
+              {: .sp-bool}
+            - OrderRelevant
+              {: .sp-folder}
+                - [firstFalseIsFailure](#firstfalseisfailure) = TRUE
+                  {: .sp-bool}
+                - [triggerTargetFailure](#triggertargetfailure) = ""
+                  {: .sp-string}
+            - OrderNotRelevant
+              {: .sp-folder}
+                - [untriggerCancels](#untriggercancels) = FALSE
+                  {: .sp-bool}
+            - [slaveVobName0](#slavevobname) = ""
+              {: .sp-string}
+            - [slaveVobName1](#slavevobname) = ""
+              {: .sp-string}
+            - [slaveVobName2](#slavevobname) = ""
+              {: .sp-string}
+            - [numSlavesTriggered](#numslavestriggered)
+              {: .sp-int}
+            - slaveTriggered0
+              {: .sp-type}
+            - slaveTriggered1
+              {: .sp-type}
 
 ## Properties
 
-### `triggerTarget` {: .sp-string}
+#### `triggerTarget` {: .sp-string}
 
 :   The name of the VObject to send an `OnTrigger` event to after all slaves have fired in the correct order.
 
-### `orderRelevant` {: .sp-bool}
+#### `orderRelevant` {: .sp-bool}
 
 :   Controls whether the master should keep track of the order it receives messages from its slaves.
     
-    * `TRUE` — Only send an `OnTrigger` event to the [`triggerTarget`](#triggerTarget) if the slaves have fired in
+    * `TRUE` — Only send an `OnTrigger` event to the [`triggerTarget`](#triggertarget) if the slaves have fired in
       the exact order they are configured here. Also counts multiple activations.
-    * `FALSE` — Send an `OnTrigger` event to the [`triggerTarget`](#triggerTarget) after all slaves have fired at least
+    * `FALSE` — Send an `OnTrigger` event to the [`triggerTarget`](#triggertarget) after all slaves have fired at least
       once, regardless of order.
 
-### `firstFalseIsFailure` {: .sp-bool}
+#### `firstFalseIsFailure` {: .sp-bool}
 
 :   Controls when the slave activation sequence is considered to be incorrect. After the sequence is marked as
-    incorrect an `OnTrigger` event is sent to [`triggerTargetFailure`](#triggerTargetFailure).
+    incorrect an `OnTrigger` event is sent to [`triggerTargetFailure`](#triggertargetfailure).
     
     * `TRUE` — The sequence is considered to be incorrect as soon as one slave is activated out-of-order.
     * `FALSE` — The sequence is considered to be incorrect only after all slaves have been activated at least once and
       they were activated out-of-order.
 
     !!! warning
-        Only relevant if [`orderRelevant`](#orderRelevant) is set to `TRUE`.
+        Only relevant if [`orderRelevant`](#orderrelevant) is set to `TRUE`.
 
-### `triggerTargetFailure` {: .sp-string}
+#### `triggerTargetFailure` {: .sp-string}
 
 :   The name of the VObject to emit an `OnTrigger` event to if the activation sequence fails. This is controlled by
-    [`firstFalseIsFailure`](#firstFalseIsFailure).
+    [`firstFalseIsFailure`](#firstfalseisfailure).
 
     !!! warning
-        Only relevant if [`orderRelevant`](#orderRelevant) is set to `TRUE`.
+        Only relevant if [`orderRelevant`](#orderrelevant) is set to `TRUE`.
 
-### `untriggerCancels` {: .sp-bool}
+#### `untriggerCancels` {: .sp-bool}
 
 :   Controls whether slaves can emit `OnUntrigger` events to the master VObject to mark themselves as deactivated.
 
@@ -90,14 +183,13 @@ from all slaves, it emits an `OnTrigger` event to the [`triggerTarget`](#trigger
     * `FALSE` — The master ignore `OnUntrigger` events from its slaves.
     
     !!! warning
-        Only relevant if [`orderRelevant`](#orderRelevant) is set to `FALSE`.
+        Only relevant if [`orderRelevant`](#orderrelevant) is set to `FALSE`.
 
 
-### `slaveVobName` {: .sp-string}
+#### `slaveVobName` {: .sp-string}
 
 :   The name of a slave VObject.
 
-## Sources
+### `numSlavesTriggered` {: .sp-int}
 
-The help file for the Spacer, found [here](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei) and the
-Russian-language knowledge accumulator [gothic-library.ru](http://www.gothic-library.ru/publ/zccodemaster/1-1-0-526).
+:   Unknown.

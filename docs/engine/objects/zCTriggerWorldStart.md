@@ -12,7 +12,7 @@
     **Sources:**<br/>
     — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)
 
-A special trigger which fires an `OnTrigger` event to its [target](#triggerTarget) when the world is loaded and started.
+A special trigger which fires an `OnTrigger` event to its [target](#triggertarget) when the world is loaded and started.
 
 === "Gothic 1"
 

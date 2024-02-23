@@ -164,19 +164,19 @@ Emits a sound defined by a script instance in a given radius. The sound playback
 
 #### `sndRandDelay` {: .sp-float}
 
-:   The average delay between repetitions in seconds if [`sndMode`](#sndMode) is `RANDOM`.
+:   The average delay between repetitions in seconds if [`sndMode`](#sndmode) is `RANDOM`.
     
     !!! warning
-        Only relevant if [`sndMode`](#sndMode) is `RANDOM`.
+        Only relevant if [`sndMode`](#sndmode) is `RANDOM`.
 
 
 #### `sndRandDelayVar` {: .sp-float}
 
-:   The maximum deviation of the random delay between repetitions if [`sndMode`](#sndMode) is `RANDOM`. The resulting
-    delay will be a value between [`sndRandDelay`](#sndRandDelay) ± [`sndRandDelayVar`](#sndRandDelayVar).
+:   The maximum deviation of the random delay between repetitions if [`sndMode`](#sndmode) is `RANDOM`. The resulting
+    delay will be a value between [`sndRandDelay`](#sndranddelay) ± [`sndRandDelayVar`](#sndranddelayvar).
 
     !!! warning
-        Only relevant if [`sndMode`](#sndMode) is `RANDOM`.
+        Only relevant if [`sndMode`](#sndmode) is `RANDOM`.
 
 #### `sndStartOn` {: .sp-bool}
 

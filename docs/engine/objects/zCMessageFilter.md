@@ -71,12 +71,12 @@ Transforms any incoming `OnTrigger` and `OnUntrigger` events before passing them
 #### `triggerTarget` {: .sp-string}
 
 :   The name of the target VObject. All `OnTrigger` and `OnUntrigger` messages received by this `zCMessageFilter`
-    VObject are transformed according to [`onTrigger`](#onTrigger) and [`onUntrigger`](#onUntrigger) and then
+    VObject are transformed according to [`onTrigger`](#ontrigger) and [`onUntrigger`](#onuntrigger) and then
     passed on to the VObject with the name specified in this field.
 
 #### `onTrigger` {: .sp-enum}
 
-:   The type of event to emit to the [`triggerTarget`](#triggerTarget) if this VObject receives an `OnTrigger` message.
+:   The type of event to emit to the [`triggerTarget`](#triggertarget) if this VObject receives an `OnTrigger` message.
     
     * `MT_NONE` — Don't emit another event.
     * `MT_TRIGGER` — Emit an `OnTrigger` event.
@@ -87,7 +87,7 @@ Transforms any incoming `OnTrigger` and `OnUntrigger` events before passing them
 
 #### `onUntrigger` {: .sp-enum}
 
-:   The type of event to emit to the [`triggerTarget`](#triggerTarget) if this VObject receives an `OnUntrigger` message.
+:   The type of event to emit to the [`triggerTarget`](#triggertarget) if this VObject receives an `OnUntrigger` message.
 
     * `MT_NONE` — Don't emit another event.
     * `MT_TRIGGER` — Emit an `OnTrigger` event.

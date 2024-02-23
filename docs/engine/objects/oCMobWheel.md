@@ -10,7 +10,7 @@
     — Gothic II: `35585`<br/>
     **ZenKit Class:** `VWheel`<br/>
     **Sources:**<br/>
-    — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)<br/>
+    — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)
 
 A wheel with four different states. For example, this is used for the gates of the old camp in Gothic I.
 

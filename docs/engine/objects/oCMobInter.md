@@ -29,13 +29,13 @@ Interactive objects can be interacted with by NPCs and the player. Every time th
       {: .sp-class}
         - [stateNum](#statenum) = 0
           {: .sp-int}
-        - [triggerTarget](#triggerTarget) = ""
+        - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
-        - [useWithItem](#useWithItem) = ""
+        - [useWithItem](#usewithitem) = ""
           {: .sp-string}
-        - [conditionFunc](#conditionFunc) = ""
+        - [conditionFunc](#conditionfunc) = ""
           {: .sp-string}
-        - [onStateFunc](#onStateFunc) = ""
+        - [onStateFunc](#onstatefunc) = ""
           {: .sp-string}
         - [rewind](#rewind) = FALSE
           {: .sp-bool}
@@ -52,13 +52,13 @@ Interactive objects can be interacted with by NPCs and the player. Every time th
       {: .sp-class}
         - [stateNum](#statenum) = 0
           {: .sp-int}
-        - [triggerTarget](#triggerTarget) = ""
+        - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
-        - [useWithItem](#useWithItem) = ""
+        - [useWithItem](#usewithitem) = ""
           {: .sp-string}
-        - [conditionFunc](#conditionFunc) = ""
+        - [conditionFunc](#conditionfunc) = ""
           {: .sp-string}
-        - [onStateFunc](#onStateFunc) = ""
+        - [onStateFunc](#onstatefunc) = ""
           {: .sp-string}
         - [rewind](#rewind) = FALSE
           {: .sp-bool}
@@ -75,13 +75,13 @@ Interactive objects can be interacted with by NPCs and the player. Every time th
       {: .sp-class}
         - [stateNum](#statenum) = 0
           {: .sp-int}
-        - [triggerTarget](#triggerTarget) = ""
+        - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
-        - [useWithItem](#useWithItem) = ""
+        - [useWithItem](#usewithitem) = ""
           {: .sp-string}
-        - [conditionFunc](#conditionFunc) = ""
+        - [conditionFunc](#conditionfunc) = ""
           {: .sp-string}
-        - [onStateFunc](#onStateFunc) = ""
+        - [onStateFunc](#onstatefunc) = ""
           {: .sp-string}
         - [rewind](#rewind) = FALSE
           {: .sp-bool}
@@ -98,13 +98,13 @@ Interactive objects can be interacted with by NPCs and the player. Every time th
       {: .sp-class}
         - [stateNum](#statenum) = 0
           {: .sp-int}
-        - [triggerTarget](#triggerTarget) = ""
+        - [triggerTarget](#triggertarget) = ""
           {: .sp-string}
-        - [useWithItem](#useWithItem) = ""
+        - [useWithItem](#usewithitem) = ""
           {: .sp-string}
-        - [conditionFunc](#conditionFunc) = ""
+        - [conditionFunc](#conditionfunc) = ""
           {: .sp-string}
-        - [onStateFunc](#onStateFunc) = ""
+        - [onStateFunc](#onstatefunc) = ""
           {: .sp-string}
         - [rewind](#rewind) = FALSE
           {: .sp-bool}

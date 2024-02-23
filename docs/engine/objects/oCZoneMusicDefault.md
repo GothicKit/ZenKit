@@ -12,7 +12,7 @@
     **Sources:**<br/>
     — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)
 
-Determines the default music to be played when the camera is outside any [`oCZoneMusic`](#oCZoneMusic) zones. The
+Determines the default music to be played when the camera is outside any [`oCZoneMusic`](oCZoneMusic.md) zones. The
 volume-related options of the zone are ignored. There may only be one `oCZoneMusicDefault` object in a world.
 
 === "Gothic 1"

@@ -10,7 +10,7 @@
     — Gothic II: `35585`<br/>
     **ZenKit Class:** `VBed`<br/>
     **Sources:**<br/>
-    — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)<br/>
+    — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)
 
 VObject marking beds for NPCs and the player to sleep on. In the original Gothic I, there is a bug which prevents
 `oCMobBed`s from working correctly, so it is recommended to instead use [`oCMobDoor`](oCMobDoor.md) and attach the

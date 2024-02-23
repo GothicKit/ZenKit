@@ -15,11 +15,11 @@
 
 VObject to process and relay specific filtered events. When a `zCTrigger` receives an `OnTrigger`, `OnDamage`, or 
 `OnTouch` event it checks whether the event source (an [`oCNpc`](oCNpc.md), the player or another VObject) should
-be acknowledged (see [`respondToNPC`](#respondToNPC), [`respondToPC`](#respondToPC) and
-[`respondToObject`](#respondToObject) respectively). It then verifies if it should react to the specific event by
-checking the [`reactToOnTrigger`](#reactToOnTrigger), [`reactToOnDamage`](#reactToOnDamage) and
-[`reactToOnTouch`](#reactToOnTouch) properties. If both checks succeed, an `OnTrigger` event is sent to the
-[`triggerTarget`](#triggerTarget) and the trigger is considered to be *activated*. `zCTrigger` objects can be enabled
+be acknowledged (see [`respondToNPC`](#respondtonpc), [`respondToPC`](#respondtopc) and
+[`respondToObject`](#respondtoobject) respectively). It then verifies if it should react to the specific event by
+checking the [`reactToOnTrigger`](#reacttoontrigger), [`reactToOnDamage`](#reacttoondamage) and
+[`reactToOnTouch`](#reacttoontouch) properties. If both checks succeed, an `OnTrigger` event is sent to the
+[`triggerTarget`](#triggertarget) and the trigger is considered to be *activated*. `zCTrigger` objects can be enabled
 and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at them.
 
 !!! tip
@@ -213,8 +213,8 @@ and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at t
 
 :   Whether this trigger should react to `OnTrigger` events.
     
-    * `TRUE` — Do react to `OnTrigger` events by sending an `OnTrigger` message to the [`triggerTarget`](#triggerTarget)
-      If [`sendUntrigger`](#sendUntrigger) is set to `TRUE`, also sends an `OnUntrigger` event to the [`triggerTarget`](#triggerTarget)
+    * `TRUE` — Do react to `OnTrigger` events by sending an `OnTrigger` message to the [`triggerTarget`](#triggertarget)
+      If [`sendUntrigger`](#senduntrigger) is set to `TRUE`, also sends an `OnUntrigger` event to the [`triggerTarget`](#triggertarget)
       if the trigger receives an `OnUntrigger` event.
     * `FALSE` — Ignore `OnTrigger` events.
 
@@ -222,8 +222,8 @@ and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at t
 
 :   Whether this trigger should react to `OnTouch` events.
 
-    * `TRUE` — Do react to `OnTouch` events by sending an `OnTrigger` message to the [`triggerTarget`](#triggerTarget)
-      If [`sendUntrigger`](#sendUntrigger) is set to `TRUE`, also sends an `OnUntrigger` event to the [`triggerTarget`](#triggerTarget)
+    * `TRUE` — Do react to `OnTouch` events by sending an `OnTrigger` message to the [`triggerTarget`](#triggertarget)
+      If [`sendUntrigger`](#senduntrigger) is set to `TRUE`, also sends an `OnUntrigger` event to the [`triggerTarget`](#triggertarget)
       if the trigger receives an `OnUntouch` event.
     * `FALSE` — Ignore `OnTouch` events.
 
@@ -231,7 +231,7 @@ and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at t
 
 :   Whether this trigger should react to `OnDamage` events.
 
-    * `TRUE` — Do react to `OnDamage` events by sending an `OnTrigger` message to the [`triggerTarget`](#triggerTarget)
+    * `TRUE` — Do react to `OnDamage` events by sending an `OnTrigger` message to the [`triggerTarget`](#triggertarget)
     * `FALSE` — Ignore `OnDamage` events.
 
 #### `respondToObject` {: .sp-bool}
@@ -289,9 +289,9 @@ and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at t
 
 #### `sendUntrigger` {: .sp-bool}
 
-:   Whether to send and `OnUntrigger` event to the [`triggerTarget`](#triggerTarget) after the trigger receives an
-    `OnUntrigger` or `OnUntouch` event. Only fires the `OnUntrigger` event if [`reactToOnTrigger`](#reactToOnTrigger)
-    and [`reactToOnTouch`](#reactToOnTouch) are set to `TRUE` respectively.
+:   Whether to send and `OnUntrigger` event to the [`triggerTarget`](#triggertarget) after the trigger receives an
+    `OnUntrigger` or `OnUntouch` event. Only fires the `OnUntrigger` event if [`reactToOnTrigger`](#reacttoontrigger)
+    and [`reactToOnTouch`](#reacttoontouch) are set to `TRUE` respectively.
 
 #### `nextTimeTriggerable` {: .sp-float}
 

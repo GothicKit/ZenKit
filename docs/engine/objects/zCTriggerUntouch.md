@@ -12,7 +12,7 @@
     **Sources:**<br/>
     — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)
 
-A trigger which fires an `OnTrigger` event to its [`triggerTarget`](#triggerTarget) if any `OnUntouch` event is emitted
+A trigger which fires an `OnTrigger` event to its [`triggerTarget`](#triggertarget) if any `OnUntouch` event is emitted
 from an inanimate object within the object's bounding box.
 
 === "Gothic 1"

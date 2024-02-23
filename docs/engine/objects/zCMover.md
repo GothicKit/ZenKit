@@ -23,7 +23,7 @@ Each mover is in one of three states, "open", "closed" or "moving". Keyframe `0`
 animation) corresponds to the "open" state while the last keyframe (or `S_CLOSED`) corresponds to the "closed" state.
 When transitioning between the "open" and "closed" states, the mover is in the "moving" state during which it
 sequentially moves between its keyframes (or runs the `T_CLOSED_2_OPEN` or `T_OPEN_TO_CLOSED` animations). Movers with
-their [`moverBehavior`](#moverBehavior) set to `NSTATE_SINGLE_KEYS` are an exception to this rule: each keyframe can
+their [`moverBehavior`](#moverbehavior) set to `NSTATE_SINGLE_KEYS` are an exception to this rule: each keyframe can
 individually be addressed as a state.
 
 Movers are specialized triggers. Before beginning their animation, movers first filter the incoming events as per the
@@ -280,7 +280,7 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
     * `2STATE_TRIGGER_CTRL` — An `OnTrigger` causes the mover to transition to the "open" state while an `OnUntrigger`
       event causes the mover to transition to the "closed" state.
     * `2STATE_OPEN_TIMED` — An `OnTrigger` event causes the mover to transition to the "open" state. It than transitions
-      to the "closed" state after a fixed amount of time specified by [`stayOpenTimeSec`](#stayOpenTimeSec).
+      to the "closed" state after a fixed amount of time specified by [`stayOpenTimeSec`](#stayopentimesec).
     * `NSTATE_LOOP` —  The mover opens and closes in a loop indefinitely.
     * `NSTATE_SINGLE_KEYS` — The mover can transition to each keyframe separately. Often used in conjunction
       with a [`zCMoverController`](zCMoverController.md).
@@ -291,11 +291,11 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
 
 #### `stayOpenTimeSec` {: .sp-float}
 
-:   The number of seconds a mover with the `2STATE_OPEN_TIMED` [behavior](#moverBehavior) stays in the "open"
+:   The number of seconds a mover with the `2STATE_OPEN_TIMED` [behavior](#moverbehavior) stays in the "open"
     state until transitioning to the "closed" state again.
 
     !!! warning
-        Only relevant if [`moverBehavior`](#moverBehavior) is `2STATE_OPEN_TIMED`.
+        Only relevant if [`moverBehavior`](#moverbehavior) is `2STATE_OPEN_TIMED`.
 
 #### `moverLocked` {: .sp-bool}
 

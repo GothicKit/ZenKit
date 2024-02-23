@@ -147,7 +147,7 @@ A VObject which damages other VObjects colliding with it.
                 - [Point](#point) = FALSE
                   {: .sp-bool}
                 - [Fall](#fall) = FALSE
-                  {: .sp-bool}
+                  {: .sp-bool}[zCCodeMaster.md](zCCodeMaster.md)
             - [damageRepeatDelaySec](#damagerepeatdelaysec) = 0
               {: .sp-float}
             - [damageVolDownScale](#damagevoldownscale) = 0

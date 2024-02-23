@@ -10,7 +10,7 @@
     — Gothic II: `35585`<br/>
     **ZenKit Class:** `VSwitch`<br/>
     **Sources:**<br/>
-    — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)<br/>
+    — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)
 
 A VObject representing a switch with two states.
 
