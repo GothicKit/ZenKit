@@ -50,6 +50,8 @@
             * [zCPFXControler](engine/objects/zCPFXController.md)
             * [zCTriggerWorldStart](engine/objects/zCTriggerWorldStart.md)
             * [zCTriggerUntouch](engine/objects/zCTriggerUntouch.md)
+            * [zCCSCamera](engine/objects/zCCSCamera.md)
+            * [zCCamTrj_KeyFrame](engine/objects/zCCamTrj_KeyFrame.md)
             * [oCVob](engine/objects/oCVob.md)
                 * [oCMOB](engine/objects/oCMOB.md)
                     * [oCMobInter](engine/objects/oCMobInter.md)
