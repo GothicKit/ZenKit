@@ -20,6 +20,8 @@ events.
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [zCEffect](zCEffect.md)
+      {: .sp-class}
     - zCPFXController
       {: .sp-class}
         - [pfxName](#pfxname) = ""
@@ -32,6 +34,8 @@ events.
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [zCEffect](zCEffect.md)
       {: .sp-class}
     - zCPFXController
       {: .sp-class}
@@ -46,6 +50,8 @@ events.
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [zCEffect](zCEffect.md)
+      {: .sp-class}
     - zCPFXController
       {: .sp-class}
         - [pfxName](#pfxname) = ""
@@ -58,6 +64,8 @@ events.
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [zCEffect](zCEffect.md)
       {: .sp-class}
     - zCPFXController
       {: .sp-class}

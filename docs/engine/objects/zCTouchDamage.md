@@ -19,6 +19,8 @@ A VObject which damages other VObjects colliding with it.
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [zCEffect](zCEffect.md)
+      {: .sp-class}
     - zCTouchDamage
       {: .sp-class}
         - TouchDamage
@@ -53,6 +55,8 @@ A VObject which damages other VObjects colliding with it.
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [zCEffect](zCEffect.md)
       {: .sp-class}
     - zCTouchDamage
       {: .sp-class}
@@ -89,6 +93,8 @@ A VObject which damages other VObjects colliding with it.
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [zCEffect](zCEffect.md)
+      {: .sp-class}
     - zCTouchDamage
       {: .sp-class}
         - TouchDamage
@@ -123,6 +129,8 @@ A VObject which damages other VObjects colliding with it.
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [zCEffect](zCEffect.md)
       {: .sp-class}
     - zCTouchDamage
       {: .sp-class}
