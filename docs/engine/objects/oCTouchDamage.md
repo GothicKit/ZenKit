@@ -14,6 +14,8 @@
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [zCEffect](zCEffect.md)
+      {: .sp-class}
     - [zCTouchDamage](zCTouchDamage.md)
       {: .sp-class}
     - oCTouchDamage
