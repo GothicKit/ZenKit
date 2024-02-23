@@ -31,6 +31,7 @@ of Gothic and Gothic II installations.
     ```cpp title="Example"
     #include <zenkit/CutsceneLibrary.hh>
     #include <zenkit/Stream.hh>
+    #include <zenkit/Vfs.hh>
 
     int main(int, char const** argv) {
         zenkit::CutsceneLibrary csl {};
@@ -41,7 +42,7 @@ of Gothic and Gothic II installations.
 
         // ... or from a VFS
         zenkit::Vfs vfs;
-        vfs.mount_host("_work/", "/", zenkit::VfsOverwriteBehavior::OLDER)
+        vfs.mount_host("_work/", "/", zenkit::VfsOverwriteBehavior::OLDER);
 
         r = vfs->find("OU.csl")->open_read();
         font.load(r.get());
@@ -65,6 +66,17 @@ of Gothic and Gothic II installations.
     ```
 
 === "Java"
+    
+    ```java
+    import dev.gothickit.zenkit.csl.CutsceneLibrary;
+    import dev.gothickit.zenkit.vfs.Vfs;
+    import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
 
-    !!! note
-        No documentation available.
+    // Load from a file on disk:
+    var csl = new CutsceneLibrary("OU.csl");
+
+    // ... or from a VFS:
+    var vfs = new Vfs();
+    vfs.mount("_work/", "/", VfsOverwriteBehavior.Older);
+    csl = new CutsceneLibrary(vfs, "OU.csl");
+    ```
