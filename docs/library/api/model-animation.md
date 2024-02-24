@@ -17,56 +17,80 @@ which should be loaded before animations. The `ModelAnimation::events` field wil
 === "C"
 
     ```c title="Example"
-    #include <phoenix/cffi/Animation.h>
-    #include <phoenix/cffi/Buffer.h>
+    #include <zenkit-capi/ModelAnimation.h>
+    #include <zenkit-capi/Vfs.h>
 
     int main(int, const char** argv) {
-        PxBuffer* buf = pxBufferMmap("MyAnimation.MAN");
-        PxAnimation* model = pxAniLoad(buf);
-        pxBufferDestroy(buf);
-        
-        // ...
+        // Load from a file on disk:
+        ZkModelAnimation* man = ZkModelAnimation_loadPath("MyAnimation.MAN");
+        ZkModelAnimation_del(man);
 
-        pxAniDestroy(model);
+        // ... or from a VFS:
+        ZkVfs* vfs = ZkVfs_new();
+        ZkVfs_mountDiskHost(vfs, "Anims.vdf", ZkVfsOverwriteBehavior_OLDER);
+        man = ZkModelAnimation_loadVfs(vfs, "MyAnimation.MAN");
+        ZkModelAnimation_del(man);
+        ZkVfs_del(vfs);
+
         return 0;
     }
     ```
-
-    !!! info
-        As with all resources, animations can also be loaded from a [virtual file system](virtual-file-system.md) by
-        passing a `PxVfs` and the file name to `pxAniLoadFromVfs`.
 
 === "C++"
 
     ```cpp title="Example"
     #include <zenkit/ModelAnimation.hh>
     #include <zenkit/Stream.hh>
+    #include <zenkit/Vfs.hh>
 
     int main(int, char const** argv) {
-        zenkit::ModelAnimation ani {};
+        zenkit::ModelAnimation man {};
         
+        // Load from a file on disk:
         auto r = zenkit::Read::from("MyAnimation.MAN");
-        ani.load(r.get());
+        man.load(r.get());
 
-        // ...
+        // ... or from a VFS
+        zenkit::Vfs vfs;
+        vfs.mount_disk("Anims.vdf", zenkit::VfsOverwriteBehavior::OLDER)
+
+        r = vfs->find("MyAnimation.MAN")->open_read();
+        man.load(r.get());
 
         return 0;
     }
     ```
 
-    !!! info
-        As with all resources, animations can also be loaded from a [virtual file system](virtual-file-system.md)
-        by passing the input obtained from `zenkit::VfsNode::open_read` into `zenkit::ModelAnimation::load`.
-
 === "C#"
 
-    !!! note
-        No documentation available.
+    ```c# title="Example"
+    using ZenKit;
+
+    // Load from a file on disk:
+    var man = new ModelAnimation("MyAnimation.MAN");
+
+    // ... or from a VFS:
+    var vfs = new Vfs();
+    vfs.MountDisk("Anims.vdf", VfsOverwriteBehavior.Older);
+    man = new ModelAnimation(vfs, "MyAnimation.MAN");
+    ```
 
 === "Java"
 
-    !!! note
-        No documentation available.
+    ```java title="Example"
+    import dev.gothickit.zenkit.ani.ModelAnimation;
+    import dev.gothickit.zenkit.vfs.Vfs;
+    import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
+
+    // Load from a file on disk:
+    var man = new ModelAnimation("MyAnimation.MAN");
+
+    // ... or from a VFS:
+    var vfs = new Vfs();
+    vfs.mountDisk("Anims.vdf", VfsOverwriteBehavior.OLDER)
+    man = new ModelAnimation(vfs, "MyAnimation.MAN");
+    ```
+
 
 [^1]: This assertion is made after examining many animations from both *Gothic* and *Gothic II*
       and finding no events being stored.

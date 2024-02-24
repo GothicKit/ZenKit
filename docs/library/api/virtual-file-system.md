@@ -89,8 +89,27 @@ by a now defunct company called [TRIACOM Software][].
 
 === "Java"
 
-    !!! note
-        No documentation available.
+    ```java title="Example"
+    import dev.gothickit.zenkit.vfs.Vfs;
+    import dev.gothickit.zenkit.vfs.VfsNode;
+    import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
+    import dev.gothickit.zenkit.Read;
+
+    var vfs = new Vfs();
+    vfs.mountDisk("Worlds.vdf", VfsOverwriteBehavior.OLDER);
+
+    VfsNode node = vfs.find("OLDWORLD.ZEN");
+
+    if (node == null)
+    {
+        System.err.println("Error: OLDWORLD.ZEN not found!");
+        return;
+    }
+
+    Read rd = node.open();
+
+    // ...
+    ```
 
 [ZIP]: https://en.wikipedia.org/wiki/ZIP_(file_format)
 [TAR]: https://en.wikipedia.org/wiki/Tar_(computing)

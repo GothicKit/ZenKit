@@ -26,6 +26,7 @@ glyph contains two coordinates which together form a rectangle around the glyph 
         ZkVfs_mountDiskHost(vfs, "Textures.vdf", ZkVfsOverwriteBehavior_OLDER);
         font = ZkFont_loadVfs(vfs, "FONT_OLD_20.FNT");
         ZkFont_del(font);
+        ZkVfs_del(vfs);
 
         return 0;
     }
@@ -46,8 +47,8 @@ glyph contains two coordinates which together form a rectangle around the glyph 
         font.load(r.get());
 
         // ... or from a VFS
-        Vfs vfs;
-        vfs.mount_disk("Textures.vdf", VfsOverwriteBehavior::OLDER)
+        zenkit::Vfs vfs;
+        vfs.mount_disk("Textures.vdf", zenkit::VfsOverwriteBehavior::OLDER)
 
         r = vfs->find("FONT_OLD_20.FNT")->open_read();
         font.load(r.get());
@@ -72,8 +73,19 @@ glyph contains two coordinates which together form a rectangle around the glyph 
 
 === "Java"
 
-    !!! note
-        No documentation available.
+    ```java title="Example"
+    import dev.gothickit.zenkit.fnt.Font;
+    import dev.gothickit.zenkit.vfs.Vfs;
+    import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
+
+    // Load from a file on disk:
+    var fnt = new Font("FONT_OLD_20.FNT");
+
+    // ... or from a VFS:
+    var vfs = new Vfs();
+    vfs.mountDisk("Textures.vdf", VfsOverwriteBehavior.OLDER)
+    fnt = new Font(vfs, "FONT_OLD_20.FNT");
+    ```
 
 ### Dealing with glyphs
 
@@ -193,9 +205,40 @@ follows  *Windows-1252* encoding.
     // ...
     ```
 
+    1. See [Textures](texture.md) for information about loading texture files.
+
 === "Java"
 
-    !!! note
-        No documentation available.
+    ```java title="Example"
+    import dev.gothickit.zenkit.fnt.Font;
+    import dev.gothickit.zenkit.fnt.FontGlyph;
+    import dev.gothickit.zenkit.tex.Texture;
+    import dev.gothickit.zenkit.vfs.Vfs;
+    import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
+
+    var font = new Font("FONT_OLD_20.FNT");
+
+    // The texture (1) must be loaded from some other location,
+    // most likely the `Textures.vdf` disk.
+    var tex = new Texture(font.getName());
+
+    // The second parameter denotes the index of the glyph to get. There
+    // are usually 256 glyphs in every font but the number of glyphs can
+    // also be retrieved using `Font.GlyphCount`. You can also access all
+    // glyphs at once through `Font.Glyphs`.
+    FontGlyph glyph = font.getGlyph(0);
+
+    // Each UV coordinate contains a value from 0 to 1 which is
+    // mapped to the actual with and height of the image
+    float actualTopX = glyph.topLeft.x * tex.getWidth();
+    float actualTopY = glyph.topLeft.y * tex.getHeight();
+
+    float actualBottomX = glyph.bottomRight.x * tex.getWidth();
+    float actualBottomY = glyph.bottomRight.y * tex.getHeight();
+
+    // ...
+    ```
+
+    1. See [Textures](texture.md) for information about loading texture files.
 
 [Windows-1252]: https://en.wikipedia.org/wiki/Windows-1252

@@ -5,53 +5,76 @@
 === "C"
 
     ```c title="Example"
-    #include <phoenix/cffi/World.h>
-    #include <phoenix/cffi/Buffer.h>
+    #include <zenkit-capi/World.h>
+    #include <zenkit-capi/Vfs.h>
 
     int main(int, const char** argv) {
-        PxBuffer* buf = pxBufferMmap("OLDWORLD.ZEN");
-        PxWorld* world = pxWorldLoad(buf);
-        pxBufferDestroy(buf);
-        
-        // ...
+        // Load from a file on disk:
+        ZkWorld* world = ZkWorld_loadPath("OLDWORLD.ZEN");
+        ZkWorld_del(world);
 
-        pxWorldDestroy(world);
+        // ... or from a VFS:
+        ZkVfs* vfs = ZkVfs_new();
+        ZkVfs_mountDiskHost(vfs, "Worlds.vdf", ZkVfsOverwriteBehavior_OLDER);
+        world = ZkWorld_loadVfs(vfs, "OLDWORLD.ZEN");
+        ZkWorld_del(world);
+        ZkVfs_del(vfs);
+
         return 0;
     }
     ```
-
-    !!! info
-        As with all resources, worlds can also be loaded from a [virtual file system](virtual-file-system.md)
-        by passing a `PxVfs` and the file name to `pxWorldLoadFromVfs`.
 
 === "C++"
 
     ```cpp title="Example"
     #include <zenkit/World.hh>
     #include <zenkit/Stream.hh>
+    #include <zenkit/Vfs.hh>
 
     int main(int, char const** argv) {
         zenkit::World world {};
         
+        // Load from a file on disk:
         auto r = zenkit::Read::from("OLDWORLD.ZEN");
         world.load(r.get());
 
-        // ...
+        // ... or from a VFS
+        zenkit::Vfs vfs;
+        vfs.mount_disk("Worlds.vdf", zenkit::VfsOverwriteBehavior::OLDER)
+
+        r = vfs->find("OLDWORLD.ZEN")->open_read();
+        world.load(r.get());
 
         return 0;
     }
     ```
 
-    !!! info
-        As with all resources, texture can also be loaded from a [virtual file system](virtual-file-system.md)
-        by passing the input obtained from `zenkit::VfsNode::open_read` into `zenkit::Texture::load`.
-
 === "C#"
 
-    !!! note
-        No documentation available.
+    ```c# title="Example"
+    using ZenKit;
+
+    // Load from a file on disk:
+    var world = new World("OLDWORLD.ZEN");
+
+    // ... or from a VFS:
+    var vfs = new Vfs();
+    vfs.MountDisk("Worlds.vdf", VfsOverwriteBehavior.Older);
+    world = new World(vfs, "OLDWORLD.ZEN");
+    ```
 
 === "Java"
 
-    !!! note
-        No documentation available.
+    ```java title="Example"
+    import dev.gothickit.zenkit.world.World;
+    import dev.gothickit.zenkit.vfs.Vfs;
+    import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
+
+    // Load from a file on disk:
+    var world = new World("OLDWORLD.ZEN");
+
+    // ... or from a VFS:
+    var vfs = new Vfs();
+    vfs.mountDisk("Worlds.vdf", VfsOverwriteBehavior.OLDER)
+    world = new World(vfs, "OLDWORLD.ZEN");
+    ```

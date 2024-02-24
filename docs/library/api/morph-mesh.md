@@ -5,53 +5,76 @@
 === "C"
 
     ```c title="Example"
-    #include <phoenix/cffi/MorphMesh.h>
-    #include <phoenix/cffi/Buffer.h>
+    #include <zenkit-capi/MorphMesh.h>
+    #include <zenkit-capi/Vfs.h>
 
     int main(int, const char** argv) {
-        PxBuffer* buf = pxBufferMmap("MyMesh.MMB");
-        PxMorphMesh* mmb = pxMmbLoad(buf);
-        pxBufferDestroy(buf);
-        
-        // ...
+        // Load from a file on disk:
+        ZkMorphMesh* mmb = ZkMorphMesh_loadPath("MyMesh.MMB");
+        ZkMorphMesh_del(mmb);
 
-        pxMmbDestroy(mmb);
+        // ... or from a VFS:
+        ZkVfs* vfs = ZkVfs_new();
+        ZkVfs_mountDiskHost(vfs, "Anims.vdf", ZkVfsOverwriteBehavior_OLDER);
+        mmb = ZkMorphMesh_loadVfs(vfs, "MyMesh.MMB");
+        ZkMorphMesh_del(mmb);
+        ZkVfs_del(vfs);
+
         return 0;
     }
     ```
-
-    !!! info
-        As with all resources, morph meshes can also be loaded from a [virtual file system](virtual-file-system.md)
-        by passing a `PxVfs` and the file name to `pxMmbLoadFromVfs`.
 
 === "C++"
 
     ```cpp title="Example"
     #include <zenkit/MorphMesh.hh>
     #include <zenkit/Stream.hh>
+    #include <zenkit/Vfs.hh>
 
     int main(int, char const** argv) {
         zenkit::MorphMesh mmb {};
         
+        // Load from a file on disk:
         auto r = zenkit::Read::from("MyMesh.MMB");
         mmb.load(r.get());
 
-        // ...
+        // ... or from a VFS
+        zenkit::Vfs vfs;
+        vfs.mount_disk("Anims.vdf", zenkit::VfsOverwriteBehavior::OLDER)
+
+        r = vfs->find("MyMesh.MMB")->open_read();
+        mmb.load(r.get());
 
         return 0;
     }
     ```
 
-    !!! info
-        As with all resources, morph meshes can also be loaded from a [virtual file system](virtual-file-system.md)
-        by passing the input obtained from `zenkit::VfsNode::open_read` into `zenkit::MorphMesh::load`.
-
 === "C#"
 
-    !!! note
-        No documentation available.
+    ```c# title="Example"
+    using ZenKit;
+
+    // Load from a file on disk:
+    var mmb = new MorphMesh("MyMesh.MMB");
+
+    // ... or from a VFS:
+    var vfs = new Vfs();
+    vfs.MountDisk("Anims.vdf", VfsOverwriteBehavior.Older);
+    mmb = new MorphMesh(vfs, "MyMesh.MMB");
+    ```
 
 === "Java"
 
-    !!! note
-        No documentation available.
+    ```java title="Example"
+    import dev.gothickit.zenkit.mmb.MorphMesh;
+    import dev.gothickit.zenkit.vfs.Vfs;
+    import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
+
+    // Load from a file on disk:
+    var mmb = new MorphMesh("MyMesh.MMB");
+
+    // ... or from a VFS:
+    var vfs = new Vfs();
+    vfs.mountDisk("Anims.vdf", VfsOverwriteBehavior.OLDER)
+    mmb = new MorphMesh(vfs, "MyMesh.MMB");
+    ```

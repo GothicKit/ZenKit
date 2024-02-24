@@ -67,7 +67,7 @@ of Gothic and Gothic II installations.
 
 === "Java"
     
-    ```java
+    ```java title="Example"
     import dev.gothickit.zenkit.csl.CutsceneLibrary;
     import dev.gothickit.zenkit.vfs.Vfs;
     import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
@@ -77,6 +77,6 @@ of Gothic and Gothic II installations.
 
     // ... or from a VFS:
     var vfs = new Vfs();
-    vfs.mount("_work/", "/", VfsOverwriteBehavior.Older);
+    vfs.mount("_work/", "/", VfsOverwriteBehavior.OLDER);
     csl = new CutsceneLibrary(vfs, "OU.csl");
     ```

@@ -4,8 +4,22 @@
 
 === "C"
 
-    !!! warning
-        Archives are currently not supported with the C API.
+    ```c title="Example"
+    #include <zenkit-capi/SaveGame.h>
+    #include <zenkit-capi/Vfs.h>
+
+    int main(int, const char** argv) {
+        // Load from a file on disk:
+        ZkSaveGame* sav = ZkSaveGame_new(ZkGameVersion_GOTHIC1);
+        ZkSaveGame_load(sav, "Gothic/Saves/savegame0/");
+
+        // ...
+
+        ZkSaveGame_del(sav);
+
+        return 0;
+    }
+    ```
 
 === "C++"
 
@@ -14,8 +28,8 @@
     #include <zenkit/Stream.hh>
 
     int main(int, char const** argv) {
-        zenkit::SaveGame sav {};
-        sav.load("/path/to/save/game/");
+        zenkit::SaveGame sav {zenkit::GameVersion::GOTHIC1};
+        sav.load("Gothic/Saves/savegame0/");
         
         // ...
 
@@ -25,10 +39,17 @@
 
 === "C#"
 
-    !!! warning
-        Archives are currently not supported with the C# API since it depends on the C wrapper.
+    ```c# title="Example"
+    using ZenKit;
+
+    var sav = new SaveGame(GameVersion.Gothic1);
+    sav.Load("Gothic/Saves/savegame0/");
+
+    // ...
+
+    ```
 
 === "Java"
 
     !!! warning
-        Archives are currently not supported with the Java API since it depends on the C wrapper.
+        Not yet available.

@@ -5,53 +5,76 @@
 === "C"
 
     ```c title="Example"
-    #include <phoenix/cffi/MultiResolutionMesh.h>
-    #include <phoenix/cffi/Buffer.h>
+    #include <zenkit-capi/MultiResolutionMesh.h>
+    #include <zenkit-capi/Vfs.h>
 
     int main(int, const char** argv) {
-        PxBuffer* buf = pxBufferMmap("MyMesh.MRM");
-        PxMultiResolutionMesh* mrm = pxMrmLoad(buf);
-        pxBufferDestroy(buf);
-        
-        // ...
+        // Load from a file on disk:
+        ZkMultiResolutionMesh* mrm = ZkMultiResolutionMesh_loadPath("MyMesh.MRM");
+        ZkMultiResolutionMesh_del(mrm);
 
-        pxMrmDestroy(mrm);
+        // ... or from a VFS:
+        ZkVfs* vfs = ZkVfs_new();
+        ZkVfs_mountDiskHost(vfs, "Meshes.vdf", ZkVfsOverwriteBehavior_OLDER);
+        mrm = ZkMultiResolutionMesh_loadVfs(vfs, "MyMesh.MRM");
+        ZkMultiResolutionMesh_del(mrm);
+        ZkVfs_del(vfs);
+
         return 0;
     }
     ```
-
-    !!! info
-        As with all resources, multi resolution meshes can also be loaded from a [virtual file system](virtual-file-system.md)
-        by passing a `PxVfs` and the file name to `pxMrmLoadFromVfs`.
 
 === "C++"
 
     ```cpp title="Example"
     #include <zenkit/MultiResolutionMesh.hh>
     #include <zenkit/Stream.hh>
+    #include <zenkit/Vfs.hh>
 
     int main(int, char const** argv) {
         zenkit::MultiResolutionMesh mrm {};
         
+        // Load from a file on disk:
         auto r = zenkit::Read::from("MyMesh.MRM");
         mrm.load(r.get());
 
-        // ...
+        // ... or from a VFS
+        zenkit::Vfs vfs;
+        vfs.mount_disk("Meshes.vdf", zenkit::VfsOverwriteBehavior::OLDER)
+
+        r = vfs->find("MyMesh.MRM")->open_read();
+        mrm.load(r.get());
 
         return 0;
     }
     ```
 
-    !!! info
-        As with all resources, multi resolution meshes can also be loaded from a [virtual file system](virtual-file-system.md)
-        by passing the input obtained from `zenkit::VfsNode::open_read` into `zenkit::MultiResolutionMesh::load`.
-
 === "C#"
 
-    !!! note
-        No documentation available.
+    ```c# title="Example"
+    using ZenKit;
+
+    // Load from a file on disk:
+    var mrm = new MultiResolutionMesh("MyMesh.MRM");
+
+    // ... or from a VFS:
+    var vfs = new Vfs();
+    vfs.MountDisk("Meshes.vdf", VfsOverwriteBehavior.Older);
+    mrm = new MultiResolutionMesh(vfs, "MyMesh.MRM");
+    ```
 
 === "Java"
 
-    !!! note
-        No documentation available.
+    ```java title="Example"
+    import dev.gothickit.zenkit.mrm.MultiResolutionMesh;
+    import dev.gothickit.zenkit.vfs.Vfs;
+    import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
+
+    // Load from a file on disk:
+    var mrm = new MultiResolutionMesh("MyMesh.MRM");
+
+    // ... or from a VFS:
+    var vfs = new Vfs();
+    vfs.mountDisk("Meshes.vdf", VfsOverwriteBehavior.OLDER)
+    mrm = new MultiResolutionMesh(vfs, "MyMesh.MRM");
+    ```

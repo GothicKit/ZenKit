@@ -5,53 +5,76 @@
 === "C"
 
     ```c title="Example"
-    #include <phoenix/cffi/ModelHierarchy.h>
-    #include <phoenix/cffi/Buffer.h>
+    #include <zenkit-capi/ModelHierarchy.h>
+    #include <zenkit-capi/Vfs.h>
 
     int main(int, const char** argv) {
-        PxBuffer* buf = pxBufferMmap("MySkeleton.MDH");
-        PxModelHierarchy* mdh = pxMdhLoad(buf);
-        pxBufferDestroy(buf);
-        
-        // ...
+        // Load from a file on disk:
+        ZkModelHierarchy* mdh = ZkModelHierarchy_loadPath("MySkeleton.MDH");
+        ZkModelHierarchy_del(mdh);
 
-        pxMdhDestroy(mdh);
+        // ... or from a VFS:
+        ZkVfs* vfs = ZkVfs_new();
+        ZkVfs_mountDiskHost(vfs, "Anims.vdf", ZkVfsOverwriteBehavior_OLDER);
+        mdh = ZkModelHierarchy_loadVfs(vfs, "MySkeleton.MDH");
+        ZkModelHierarchy_del(mdh);
+        ZkVfs_del(vfs);
+
         return 0;
     }
     ```
-
-    !!! info
-        As with all resources, model hierarchies can also be loaded from a [virtual file system](virtual-file-system.md)
-        by passing a `PxVfs` and the file name to `pxMdhLoadFromVfs`.
 
 === "C++"
 
     ```cpp title="Example"
     #include <zenkit/ModelHierarchy.hh>
     #include <zenkit/Stream.hh>
+    #include <zenkit/Vfs.hh>
 
     int main(int, char const** argv) {
         zenkit::ModelHierarchy mdh {};
         
+        // Load from a file on disk:
         auto r = zenkit::Read::from("MySkeleton.MDH");
         mdh.load(r.get());
 
-        // ...
+        // ... or from a VFS
+        zenkit::Vfs vfs;
+        vfs.mount_disk("Anims.vdf", zenkit::VfsOverwriteBehavior::OLDER)
+
+        r = vfs->find("MySkeleton.MDH")->open_read();
+        mdh.load(r.get());
 
         return 0;
     }
     ```
 
-    !!! info
-        As with all resources, model hierarchies can also be loaded from a [virtual file system](virtual-file-system.md)
-        by passing the input obtained from `zenkit::VfsNode::open_read` into `zenkit::ModelHierarchy::load`.
-
 === "C#"
 
-    !!! note
-        No documentation available.
+    ```c# title="Example"
+    using ZenKit;
+
+    // Load from a file on disk:
+    var mdh = new ModelHierarchy("MySkeleton.MDH");
+
+    // ... or from a VFS:
+    var vfs = new Vfs();
+    vfs.MountDisk("Anims.vdf", VfsOverwriteBehavior.Older);
+    mdh = new ModelHierarchy(vfs, "MySkeleton.MDH");
+    ```
 
 === "Java"
 
-    !!! note
-        No documentation available.
+    ```java title="Example"
+    import dev.gothickit.zenkit.mdh.ModelHierarchy;
+    import dev.gothickit.zenkit.vfs.Vfs;
+    import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
+
+    // Load from a file on disk:
+    var mdh = new ModelHierarchy("MySkeleton.MDH");
+
+    // ... or from a VFS:
+    var vfs = new Vfs();
+    vfs.mountDisk("Anims.vdf", VfsOverwriteBehavior.OLDER)
+    mdh = new ModelHierarchy(vfs, "MySkeleton.MDH");
+    ```

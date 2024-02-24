@@ -8,30 +8,31 @@ loading and executing compiled scripts using the `zenkit::DaedalusScript` API.
 === "C"
 
     ```c title="Example"
-    #include <phoenix/cffi/DaedalusScript.h>
-    #include <phoenix/cffi/Buffer.h>
+    #include <zenkit-capi/DaedalusScript.h>
+    #include <zenkit-capi/Vfs.h>
 
     int main(int, const char** argv) {
-        PxBuffer* buf = pxBufferMmap("MENU.DAT");
-        PxDaedalusScript* script = pxScriptLoad(buf);
-        pxBufferDestroy(buf);
-        
-        // ...
+        // Load from a file on disk:
+        ZkDaedalusScript* script = ZkDaedalusScript_loadPath("MENU.DAT");
+        ZkDaedalusScript_del(script);
 
-        pxScriptDestroy(script);
+        // ... or from a VFS:
+        ZkVfs* vfs = ZkVfs_new();
+        ZkVfs_mountHost(vfs, "_work/", "/", ZkVfsOverwriteBehavior_OLDER);
+        script = ZkDaedalusScript_loadVfs(vfs, "MENU.DAT");
+        ZkDaedalusScript_del(csl);
+        ZkVfs_del(vfs);
+
         return 0;
     }
     ```
-
-    !!! info
-        As with all resources, scripts can also be loaded from a [virtual file system](virtual-file-system.md) by
-        passing a `PxVfs` and the file name to `pxScriptLoadFromVfs`.
 
 === "C++"
 
     ```cpp title="Example"
     #include <zenkit/DaedalusScript.hh>
     #include <zenkit/Stream.hh>
+    #include <zenkit/Vfs.hh>
 
     int main(int, char const** argv) {
         zenkit::DaedalusScript script {};
@@ -39,22 +40,43 @@ loading and executing compiled scripts using the `zenkit::DaedalusScript` API.
         auto r = zenkit::Read::from("MENU.DAT");
         script.load(r.get());
 
-        // ...
+        // ... or from a VFS
+        zenkit::Vfs vfs;
+        vfs.mount_host("_work/", "/", zenkit::VfsOverwriteBehavior::OLDER);
+
+        r = vfs->find("MENU.DAT")->open_read();
+        script.load(r.get());
 
         return 0;
     }
     ```
 
-    !!! info
-        As with all resources, scripts can also be loaded from a [virtual file system](virtual-file-system.md)
-        by passing the input obtained from `zenkit::VfsNode::open_read` into `zenkit::DaedalusScript::load`.
-
 === "C#"
+    
+    ```c# title="Example"
+    using ZenKit;
 
-    !!! note
-        No documentation available.
+    // Load from a file on disk:
+    var script = new DaedalusScript("MENU.DAT");
+
+    // ... or from a VFS:
+    var vfs = new Vfs();
+    vfs.Mount("_work/", "/", VfsOverwriteBehavior.Older);
+    script = new DaedalusScript(vfs, "MENU.DAT");
+    ```
 
 === "Java"
+    
+    ```java
+    import dev.gothickit.zenkit.daedalus.DaedalusScript;
+    import dev.gothickit.zenkit.vfs.Vfs;
+    import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
 
-    !!! note
-        No documentation available.
+    // Load from a file on disk:
+    var script = new DaedalusScript("MENU.DAT");
+
+    // ... or from a VFS:
+    var vfs = new Vfs();
+    vfs.mount("_work/", "/", VfsOverwriteBehavior.Older);
+    script = new DaedalusScript(vfs, "MENU.DAT");
+    ```
