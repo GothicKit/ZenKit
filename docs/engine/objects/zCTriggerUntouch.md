@@ -12,47 +12,49 @@
     **Sources:**<br/>
     — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)
 
-A trigger which fires an `OnTrigger` event to its [`triggerTarget`](#triggertarget) if any `OnUntouch` event is emitted
-from an inanimate object within the object's bounding box.
+A trigger which fires an `OnTrigger` event to its [`triggerTarget`](zCTriggerBase.md#triggertarget) if any `OnUntouch` 
+event is emitted from an inanimate object within the object's bounding box.
 
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - zCTriggerUntouch
       {: .sp-class}
-        - [triggerTarget](#triggertarget) = ""
-          {: .sp-string}
+        - &lt;empty&gt;
+          {: .sp-none}
 
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - zCTriggerUntouch
       {: .sp-class}
-        - [triggerTarget](#triggertarget) = ""
-          {: .sp-string}
+        - &lt;empty&gt;
+          {: .sp-none}
 
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - zCTriggerUntouch
       {: .sp-class}
-        - [triggerTarget](#triggertarget) = ""
-          {: .sp-string}
+        - &lt;empty&gt;
+          {: .sp-none}
 
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - zCTriggerUntouch
       {: .sp-class}
-        - [triggerTarget](#triggertarget) = ""
-          {: .sp-string}
-
-## Properties
-
-#### `triggerTarget` {: .sp-string}
-
-:   The name of VObject to send the `OnTrigger` events to.
+        - &lt;empty&gt;
+          {: .sp-none}

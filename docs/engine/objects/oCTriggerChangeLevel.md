@@ -19,6 +19,8 @@ to load another level when activated.
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - [zCTrigger](zCTrigger.md)
       {: .sp-class}
     - oCTriggerChangeLevel
@@ -31,6 +33,8 @@ to load another level when activated.
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
       {: .sp-class}
     - [zCTrigger](zCTrigger.md)
       {: .sp-class}
@@ -45,6 +49,8 @@ to load another level when activated.
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - [zCTrigger](zCTrigger.md)
       {: .sp-class}
     - oCTriggerChangeLevel
@@ -57,6 +63,8 @@ to load another level when activated.
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
       {: .sp-class}
     - [zCTrigger](zCTrigger.md)
       {: .sp-class}

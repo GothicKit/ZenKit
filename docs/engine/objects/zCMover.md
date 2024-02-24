@@ -37,6 +37,8 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - [zCTrigger](zCTrigger.md)
       {: .sp-class}
     - zCMover
@@ -85,6 +87,8 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
       {: .sp-class}
     - [zCTrigger](zCTrigger.md)
       {: .sp-class}
@@ -136,6 +140,8 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
       {: .sp-class}
     - [zCTrigger](zCTrigger.md)
       {: .sp-class}
@@ -203,6 +209,8 @@ Movers can be enabled and disabled using the `OnEnable`, `OnDisable` and `OnTogg
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
       {: .sp-class}
     - [zCTrigger](zCTrigger.md)
       {: .sp-class}

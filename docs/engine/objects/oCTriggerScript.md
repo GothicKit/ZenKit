@@ -19,6 +19,8 @@ function when the trigger is activated. `OnUntrigger` events do not result in th
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - [zCTrigger](zCTrigger.md)
       {: .sp-class}
     - oCTriggerScript
@@ -29,6 +31,8 @@ function when the trigger is activated. `OnUntrigger` events do not result in th
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
       {: .sp-class}
     - [zCTrigger](zCTrigger.md)
       {: .sp-class}
@@ -41,6 +45,8 @@ function when the trigger is activated. `OnUntrigger` events do not result in th
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - [zCTrigger](zCTrigger.md)
       {: .sp-class}
     - oCTriggerScript
@@ -51,6 +57,8 @@ function when the trigger is activated. `OnUntrigger` events do not result in th
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
       {: .sp-class}
     - [zCTrigger](zCTrigger.md)
       {: .sp-class}

@@ -12,16 +12,19 @@
     **Sources:**<br/>
     — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)
 
-Transforms any incoming `OnTrigger` and `OnUntrigger` events before passing them on to the trigger target.
+Transforms any incoming `OnTrigger` and `OnUntrigger` events before passing them on to the trigger target. All 
+`OnTrigger` and `OnUntrigger` messages received by this `zCMessageFilter` VObject are transformed according to 
+[`onTrigger`](#ontrigger) and [`onUntrigger`](#onuntrigger) and then passed on to the VObject with the name specified 
+in the [`triggerTarget`](zCTriggerBase.md#triggertarget).
 
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - zCMessageFilter
       {: .sp-class}
-        - [triggerTarget](#triggertarget) = ""
-          {: .sp-string}
         - [onTrigger](#ontrigger) = MT_TRIGGER
           {: .sp-enum}
         - [onUntrigger](#onuntrigger) = MT_UNTRIGGER
@@ -31,10 +34,10 @@ Transforms any incoming `OnTrigger` and `OnUntrigger` events before passing them
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - zCMessageFilter
       {: .sp-class}
-        - [triggerTarget](#triggertarget) = ""
-          {: .sp-string}
         - [onTrigger](#ontrigger) = MT_TRIGGER
           {: .sp-enum}
         - [onUntrigger](#onuntrigger) = MT_UNTRIGGER
@@ -44,10 +47,10 @@ Transforms any incoming `OnTrigger` and `OnUntrigger` events before passing them
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - zCMessageFilter
       {: .sp-class}
-        - [triggerTarget](#triggertarget) = ""
-          {: .sp-string}
         - [onTrigger](#ontrigger) = MT_TRIGGER
           {: .sp-enum}
         - [onUntrigger](#onuntrigger) = MT_UNTRIGGER
@@ -57,22 +60,16 @@ Transforms any incoming `OnTrigger` and `OnUntrigger` events before passing them
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - zCMessageFilter
       {: .sp-class}
-        - [triggerTarget](#triggertarget) = ""
-          {: .sp-string}
         - [onTrigger](#ontrigger) = MT_TRIGGER
           {: .sp-enum}
         - [onUntrigger](#onuntrigger) = MT_UNTRIGGER
           {: .sp-enum}
 
 ## Properties
-
-#### `triggerTarget` {: .sp-string}
-
-:   The name of the target VObject. All `OnTrigger` and `OnUntrigger` messages received by this `zCMessageFilter`
-    VObject are transformed according to [`onTrigger`](#ontrigger) and [`onUntrigger`](#onuntrigger) and then
-    passed on to the VObject with the name specified in this field.
 
 #### `onTrigger` {: .sp-enum}
 

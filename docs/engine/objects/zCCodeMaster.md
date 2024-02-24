@@ -15,17 +15,17 @@
 
 `zCCodeMaster` VObjects keep a list of 'slave' VObjects and keep track of events received by them. If the master
 receives an `OnTrigger` event from a slave, it remembers that it did. After it has receives an `OnTrigger` message
-from all slaves, it emits an `OnTrigger` event to the [`triggerTarget`](#triggertarget). Receiving or sending an
+from all slaves, it emits an `OnTrigger` event to the [`triggerTarget`](zCTriggerBase.md#triggertarget). Receiving or sending an
 `OnTrigger` event is also referred to as an 'activation' for this purpose.
 
 === "Gothic 1"
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - zCCodeMaster
       {: .sp-class}
-        - [triggerTarget](#triggertarget) = ""
-          {: .sp-string}
         - CodeMaster
           {: .sp-folder}
             - [orderRelevant](#orderrelevant) = FALSE
@@ -47,10 +47,10 @@ from all slaves, it emits an `OnTrigger` event to the [`triggerTarget`](#trigger
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - zCCodeMaster
       {: .sp-class}
-        - [triggerTarget](#triggertarget) = ""
-          {: .sp-string}
         - CodeMaster
           {: .sp-folder}
             - [orderRelevant](#orderrelevant) = FALSE
@@ -72,10 +72,10 @@ from all slaves, it emits an `OnTrigger` event to the [`triggerTarget`](#trigger
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - zCCodeMaster
       {: .sp-class}
-        - [triggerTarget](#triggertarget) = ""
-          {: .sp-string}
         - CodeMaster
           {: .sp-folder}
             - [orderRelevant](#orderrelevant) = FALSE
@@ -97,10 +97,10 @@ from all slaves, it emits an `OnTrigger` event to the [`triggerTarget`](#trigger
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - zCCodeMaster
       {: .sp-class}
-        - [triggerTarget](#triggertarget) = ""
-          {: .sp-string}
         - CodeMaster
           {: .sp-folder}
             - [orderRelevant](#orderrelevant) = FALSE
@@ -124,17 +124,13 @@ from all slaves, it emits an `OnTrigger` event to the [`triggerTarget`](#trigger
 
 ## Properties
 
-#### `triggerTarget` {: .sp-string}
-
-:   The name of the VObject to send an `OnTrigger` event to after all slaves have fired in the correct order.
-
 #### `orderRelevant` {: .sp-bool}
 
 :   Controls whether the master should keep track of the order it receives messages from its slaves.
     
-    * `TRUE` — Only send an `OnTrigger` event to the [`triggerTarget`](#triggertarget) if the slaves have fired in
+    * `TRUE` — Only send an `OnTrigger` event to the [`triggerTarget`](zCTriggerBase.md#triggertarget) if the slaves have fired in
       the exact order they are configured here. Also counts multiple activations.
-    * `FALSE` — Send an `OnTrigger` event to the [`triggerTarget`](#triggertarget) after all slaves have fired at least
+    * `FALSE` — Send an `OnTrigger` event to the [`triggerTarget`](zCTriggerBase.md#triggertarget) after all slaves have fired at least
       once, regardless of order.
 
 #### `firstFalseIsFailure` {: .sp-bool}

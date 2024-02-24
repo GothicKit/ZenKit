@@ -29,10 +29,10 @@ and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at t
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - zCTrigger
       {: .sp-class}
-        - [triggerTarget](#triggerTarget) = ""
-          {: .sp-string}
         - Trigger
           {: .sp-folder}
             - ActivationFilter
@@ -70,10 +70,10 @@ and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at t
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - zCTrigger
       {: .sp-class}
-        - [triggerTarget](#triggerTarget) = ""
-          {: .sp-string}
         - Trigger
           {: .sp-folder}
             - ActivationFilter
@@ -111,10 +111,10 @@ and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at t
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - zCTrigger
       {: .sp-class}
-        - [triggerTarget](#triggerTarget) = ""
-          {: .sp-string}
         - Trigger
           {: .sp-folder}
             - ActivationFilter
@@ -158,10 +158,10 @@ and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at t
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - zCTrigger
       {: .sp-class}
-        - [triggerTarget](#triggerTarget) = ""
-          {: .sp-string}
         - Trigger
           {: .sp-folder}
             - ActivationFilter
@@ -204,10 +204,6 @@ and disabled by firing `OnEnable`, `OnDisable` and `OnToggleEnabled` events at t
               {: .sp-bool}
 
 ## Properties
-
-#### `triggerTarget` {: .sp-string}
-
-:   The name of VObject to send `OnTrigger` and `OnUntrigger` events to after processing.
 
 #### `reactToOnTrigger` {: .sp-bool}
 

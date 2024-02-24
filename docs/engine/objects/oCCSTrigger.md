@@ -21,6 +21,8 @@ name of the cutscene (without the extension) to be started. For this to work, th
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - [zCTrigger](zCTrigger.md)
       {: .sp-class}
     - oCCSTrigger
@@ -31,6 +33,8 @@ name of the cutscene (without the extension) to be started. For this to work, th
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
       {: .sp-class}
     - [zCTrigger](zCTrigger.md)
       {: .sp-class}
@@ -43,6 +47,8 @@ name of the cutscene (without the extension) to be started. For this to work, th
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
+      {: .sp-class}
     - [zCTrigger](zCTrigger.md)
       {: .sp-class}
     - oCCSTrigger
@@ -53,6 +59,8 @@ name of the cutscene (without the extension) to be started. For this to work, th
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [*zCTriggerBase*](zCTriggerBase.md)
       {: .sp-class}
     - [zCTrigger](zCTrigger.md)
       {: .sp-class}
