@@ -91,7 +91,7 @@ format and structured as follows:
 :   The number of in-game days played in the save-game.
 
     !!! info
-        This value is the true time to be set when loading the save. The value stored in [`SAVEINFO.SAV`](saveinfosav)
+        This value is the true time to be set when loading the save. The value stored in [`SAVEINFO.SAV`](#saveinfosav)
         is discarded and only used in the save-game preview.
 
 #### `hour` {: .sp-int}
@@ -99,7 +99,7 @@ format and structured as follows:
 :   The hour of the in-game [day](#day) when the save-game was created (values from `0` to `24`).
 
     !!! info
-        This value is the true time to be set when loading the save. The value stored in [`SAVEINFO.SAV`](saveinfosav)
+        This value is the true time to be set when loading the save. The value stored in [`SAVEINFO.SAV`](#saveinfosav)
         is discarded and only used in the save-game preview.
 
 #### `min` {: .sp-int}
@@ -107,7 +107,7 @@ format and structured as follows:
 :   The minute of the in-game [hour](#hour) when the save-game was created (values from `0` to `59`).
 
     !!! info
-        This value is the true time to be set when loading the save. The value stored in [`SAVEINFO.SAV`](saveinfosav)
+        This value is the true time to be set when loading the save. The value stored in [`SAVEINFO.SAV`](#saveinfosav)
         is discarded and only used in the save-game preview.
 
 #### `numSymbols` {: .sp-int}
