@@ -1,6 +1,7 @@
 // Copyright © 2021-2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "zenkit/Error.hh"
 #include "zenkit/Library.hh"
 
 #include <array>
@@ -35,6 +36,18 @@ namespace zenkit {
 		DXT3 = 0xC,   ///< \brief DXT3 compression texture format
 		DXT4 = 0xD,   ///< \brief DXT4 compression texture format
 		DXT5 = 0xE,   ///< \brief DXT5 compression texture format
+	};
+
+	class InvalidMipmapSize final : public Error {
+	public:
+		explicit InvalidMipmapSize(uint32_t expect, size_t got)
+		    : Error("Invalid texture mipmap size. Expected " + std::to_string(expect) + ", got " +
+		            std::to_string(got)) {}
+	};
+
+	class UnsupportedFormatError final : public Error {
+	public:
+		explicit UnsupportedFormatError(std::string msg) : Error("Format not supported: " + msg) {}
 	};
 
 	/// \brief Simple ARGB quad.
@@ -134,5 +147,21 @@ namespace zenkit {
 
 		// Quirk: largest mipmap (level 0) stored at the end of the vector
 		std::vector<std::vector<std::uint8_t>> _m_textures;
+
+		friend class TextureBuilder;
+	};
+
+	class TextureBuilder {
+	public:
+		TextureBuilder(uint32_t width, uint32_t height);
+
+		TextureBuilder& add_mipmap(std::vector<uint8_t> bytes, TextureFormat format);
+
+		Texture build(TextureFormat format);
+
+	private:
+		std::uint32_t _m_width;
+		std::uint32_t _m_height;
+		std::vector<std::pair<std::vector<uint8_t>, TextureFormat>> _m_mipmaps;
 	};
 } // namespace zenkit

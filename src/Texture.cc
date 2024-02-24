@@ -352,4 +352,38 @@ namespace zenkit {
 			w->write(m.data(), m.size());
 		}
 	}
+
+	TextureBuilder::TextureBuilder(uint32_t width, uint32_t height) : _m_width(width), _m_height(height) {}
+
+	TextureBuilder& TextureBuilder::add_mipmap(std::vector<uint8_t> bytes, TextureFormat format) {
+		auto expected_size = _ztex_mipmap_size(format, _m_width, _m_height, _m_mipmaps.size());
+		if (bytes.size() != expected_size) {
+			throw InvalidMipmapSize {expected_size, bytes.size()};
+		}
+
+		_m_mipmaps.emplace_back(std::move(bytes), format);
+		return *this;
+	}
+
+	Texture TextureBuilder::build(TextureFormat format) {
+		if (format == TextureFormat::P8) {
+			throw UnsupportedFormatError {"P8"};
+		}
+
+		Texture tex;
+		tex._m_format = format;
+		tex._m_width = _m_width;
+		tex._m_height = _m_height;
+		tex._m_reference_width = _m_width;
+		tex._m_reference_height = _m_height;
+		tex._m_mipmap_count = _m_mipmaps.size();
+		tex._m_average_color = {}; // FIXME(lmichaelis): Calculate the average color
+
+		for (auto i = 0u; i < _m_mipmaps.size(); ++i) {
+			auto& [data, fmt] = _m_mipmaps[i];
+			tex._m_textures.push_back(_ztex_convert_format(data.data(), _m_width >> i, _m_height >> i, fmt, format));
+		}
+
+		return tex;
+	}
 } // namespace zenkit
