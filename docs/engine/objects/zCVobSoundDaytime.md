@@ -20,6 +20,8 @@ sound can be defined which is played outside the defined time range (example: bi
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCZone*](zCZone.md)
+      {: .sp-class}
     - [zCVobSound](zCVobSound.md)
       {: .sp-class}
     - zCVobSoundDaytime
@@ -36,6 +38,8 @@ sound can be defined which is played outside the defined time range (example: bi
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [*zCZone*](zCZone.md)
       {: .sp-class}
     - [zCVobSound](zCVobSound.md)
       {: .sp-class}
@@ -54,6 +58,8 @@ sound can be defined which is played outside the defined time range (example: bi
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCZone*](zCZone.md)
+      {: .sp-class}
     - [zCVobSound](zCVobSound.md)
       {: .sp-class}
     - zCVobSoundDaytime
@@ -70,6 +76,8 @@ sound can be defined which is played outside the defined time range (example: bi
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [*zCZone*](zCZone.md)
       {: .sp-class}
     - [zCVobSound](zCVobSound.md)
       {: .sp-class}

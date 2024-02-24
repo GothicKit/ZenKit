@@ -20,6 +20,8 @@ Its effect can be overridden using [zCZoneZFog](zCZoneZFog.md) objects.
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCZone*](zCZone.md)
+      {: .sp-class}
     - [zCZoneZFog](zCZoneZFog.md)
       {: .sp-class}
     - zCZoneZFogDefault
@@ -30,6 +32,8 @@ Its effect can be overridden using [zCZoneZFog](zCZoneZFog.md) objects.
 === "Gothic 2"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [*zCZone*](zCZone.md)
       {: .sp-class}
     - [zCZoneZFog](zCZoneZFog.md)
       {: .sp-class}
@@ -42,6 +46,8 @@ Its effect can be overridden using [zCZoneZFog](zCZoneZFog.md) objects.
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCZone*](zCZone.md)
+      {: .sp-class}
     - [zCZoneZFog](zCZoneZFog.md)
       {: .sp-class}
     - zCZoneZFogDefault
@@ -52,6 +58,8 @@ Its effect can be overridden using [zCZoneZFog](zCZoneZFog.md) objects.
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [*zCZone*](zCZone.md)
       {: .sp-class}
     - [zCZoneZFog](zCZoneZFog.md)
       {: .sp-class}

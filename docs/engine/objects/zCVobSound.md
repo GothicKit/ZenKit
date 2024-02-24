@@ -20,6 +20,8 @@ Emits a sound defined by a script instance in a given radius. The sound playback
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCZone*](zCZone.md)
+      {: .sp-class}
     - zCVobSound
       {: .sp-class}
         - Sound
@@ -51,6 +53,8 @@ Emits a sound defined by a script instance in a given radius. The sound playback
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCZone*](zCZone.md)
+      {: .sp-class}
     - zCVobSound
       {: .sp-class}
         - Sound
@@ -81,6 +85,8 @@ Emits a sound defined by a script instance in a given radius. The sound playback
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [*zCZone*](zCZone.md)
       {: .sp-class}
     - zCVobSound
       {: .sp-class}
@@ -116,6 +122,8 @@ Emits a sound defined by a script instance in a given radius. The sound playback
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [*zCZone*](zCZone.md)
       {: .sp-class}
     - zCVobSound
       {: .sp-class}

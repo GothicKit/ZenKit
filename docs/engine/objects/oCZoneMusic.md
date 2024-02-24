@@ -28,6 +28,8 @@ The name of the music theme to be played is defined by the [`vobName`](zCVob.md#
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCZone*](zCZone.md)
+      {: .sp-class}
     - oCZoneMusic
       {: .sp-class}
         - [enabled](#enabled) = TRUE
@@ -47,6 +49,8 @@ The name of the music theme to be played is defined by the [`vobName`](zCVob.md#
 
     - [zCVob](zCVob.md)
       {: .sp-class}
+    - [*zCZone*](zCZone.md)
+      {: .sp-class}
     - oCZoneMusic
       {: .sp-class}
         - [enabled](#enabled) = TRUE
@@ -65,6 +69,8 @@ The name of the music theme to be played is defined by the [`vobName`](zCVob.md#
 === "Gothic 1 (Save)"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [*zCZone*](zCZone.md)
       {: .sp-class}
     - oCZoneMusic
       {: .sp-class}
@@ -90,6 +96,8 @@ The name of the music theme to be played is defined by the [`vobName`](zCVob.md#
 === "Gothic 2 (Save)"
 
     - [zCVob](zCVob.md)
+      {: .sp-class}
+    - [*zCZone*](zCZone.md)
       {: .sp-class}
     - oCZoneMusic
       {: .sp-class}
