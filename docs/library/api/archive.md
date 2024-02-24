@@ -184,19 +184,19 @@ demonstration can be found in the example below.
 
     **Supported data types:**
 
-    | Type Name  | Read Function                                                      | Description                                                                    |
-    |------------|--------------------------------------------------------------------|--------------------------------------------------------------------------------|
-    | `string`   | `read_string`                                                      | A [Windows-1252][] encoded `std::string`                                       |
-    | `int`      | `read_int`                                                         | A 32-bit signed integer                                                        |
-    | `float`    | `read_float`                                                       | An [IEEE 754][] floating point number                                          |
-    | `byte`     | `read_byte`                                                        | An 8-bit unsigned integer                                                      |
-    | `word`     | `read_word`                                                        | A 16-bit unsigned integer                                                      |
-    | `enum`     | `read_enum`                                                        | A 32-bit unsigned integer                                                      |
-    | `bool`     | `read_bool`                                                        | A boolean value                                                                |
-    | `color`    | `read_color`                                                       | An `RGBA` color quad                                                           |
-    | `vec3`     | `read_vec3`                                                        | A 3-dimensional vector with floating point values                              |
-    | `rawFloat` | `read_bbox`, `read_mat3x3`, `read_vec2`                            | A mathematical structure consisting of multiple floating point values          |
-    | `raw`      | `read_raw`                                                         | A set of raw bytes, returned as a `zenkit::Read*`                              |
+    | Type Name  | Read Function                           | Description                                                           |
+    |------------|-----------------------------------------|-----------------------------------------------------------------------|
+    | `string`   | `read_string`                           | A [Windows-1252][] encoded `std::string`                              |
+    | `int`      | `read_int`                              | A 32-bit signed integer                                               |
+    | `float`    | `read_float`                            | An [IEEE 754][] floating point number                                 |
+    | `byte`     | `read_byte`                             | An 8-bit unsigned integer                                             |
+    | `word`     | `read_word`                             | A 16-bit unsigned integer                                             |
+    | `enum`     | `read_enum`                             | A 32-bit unsigned integer                                             |
+    | `bool`     | `read_bool`                             | A boolean value                                                       |
+    | `color`    | `read_color`                            | An `RGBA` color quad                                                  |
+    | `vec3`     | `read_vec3`                             | A 3-dimensional vector with floating point values                     |
+    | `rawFloat` | `read_bbox`, `read_mat3x3`, `read_vec2` | A mathematical structure consisting of multiple floating point values |
+    | `raw`      | `read_raw`                              | A set of raw bytes, returned as a `zenkit::Read*`                     |
 
 === "C#"
 
