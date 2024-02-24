@@ -12,6 +12,9 @@
 
 The base class for many visual and sound effects.
 
+!!! warning
+    This object is an abstract base class and cannot be instantiated by itself.
+
 === "Gothic 1"
 
     - [zCVob](zCVob.md)

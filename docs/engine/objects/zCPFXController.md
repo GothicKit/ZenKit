@@ -20,7 +20,7 @@ events.
 
     - [zCVob](zCVob.md)
       {: .sp-class}
-    - [zCEffect](zCEffect.md)
+    - [*zCEffect*](zCEffect.md)
       {: .sp-class}
     - zCPFXController
       {: .sp-class}
@@ -35,7 +35,7 @@ events.
 
     - [zCVob](zCVob.md)
       {: .sp-class}
-    - [zCEffect](zCEffect.md)
+    - [*zCEffect*](zCEffect.md)
       {: .sp-class}
     - zCPFXController
       {: .sp-class}
@@ -50,7 +50,7 @@ events.
 
     - [zCVob](zCVob.md)
       {: .sp-class}
-    - [zCEffect](zCEffect.md)
+    - [*zCEffect*](zCEffect.md)
       {: .sp-class}
     - zCPFXController
       {: .sp-class}
@@ -65,7 +65,7 @@ events.
 
     - [zCVob](zCVob.md)
       {: .sp-class}
-    - [zCEffect](zCEffect.md)
+    - [*zCEffect*](zCEffect.md)
       {: .sp-class}
     - zCPFXController
       {: .sp-class}

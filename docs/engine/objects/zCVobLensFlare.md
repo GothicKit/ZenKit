@@ -19,7 +19,7 @@ Represents a lens flare effect. Behaves exactly like the base [`zCVob`](zCVob.md
 
     - [zCVob](zCVob.md)
       {: .sp-class}
-    - [zCEffect](zCEffect.md)
+    - [*zCEffect*](zCEffect.md)
       {: .sp-class}
     - zCVobLensFlare
       {: .sp-class}
@@ -30,7 +30,7 @@ Represents a lens flare effect. Behaves exactly like the base [`zCVob`](zCVob.md
 
     - [zCVob](zCVob.md)
       {: .sp-class}
-    - [zCEffect](zCEffect.md)
+    - [*zCEffect*](zCEffect.md)
       {: .sp-class}
     - zCVobLensFlare
       {: .sp-class}
@@ -41,7 +41,7 @@ Represents a lens flare effect. Behaves exactly like the base [`zCVob`](zCVob.md
 
     - [zCVob](zCVob.md)
       {: .sp-class}
-    - [zCEffect](zCEffect.md)
+    - [*zCEffect*](zCEffect.md)
       {: .sp-class}
     - zCVobLensFlare
       {: .sp-class}
@@ -52,7 +52,7 @@ Represents a lens flare effect. Behaves exactly like the base [`zCVob`](zCVob.md
 
     - [zCVob](zCVob.md)
       {: .sp-class}
-    - [zCEffect](zCEffect.md)
+    - [*zCEffect*](zCEffect.md)
       {: .sp-class}
     - zCVobLensFlare
       {: .sp-class}
