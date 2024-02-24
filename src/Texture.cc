@@ -7,8 +7,18 @@
 
 #include "squish.h"
 
+#include <cstring>
+
 namespace zenkit {
 	constexpr std::string_view ZTEX_SIGNATURE = "ZTEX";
+
+#pragma pack(push, 1)
+	struct r5g6b5 {
+		std::uint16_t r : 5;
+		std::uint16_t g : 6;
+		std::uint16_t b : 5;
+	};
+#pragma pack(pop)
 
 	/// \brief Calculates the size in bytes of a texture at the given mipmap level.
 	/// \return The size in bytes of a texture at the given mipmap level.
@@ -46,6 +56,203 @@ namespace zenkit {
 		default:
 			return 0;
 		}
+	}
+
+	std::vector<std::uint8_t> _ztex_to_rgba(uint8_t const* bytes, uint32_t width, uint32_t height, TextureFormat src) {
+		std::vector<std::uint8_t> conv;
+		conv.resize(width * height * 4);
+
+		switch (src) {
+		case TextureFormat::DXT1:
+			squish::DecompressImage( //
+			    conv.data(),
+			    static_cast<int>(width),
+			    static_cast<int>(height),
+			    bytes,
+			    squish::kDxt1);
+			break;
+		case TextureFormat::DXT3:
+			squish::DecompressImage( //
+			    conv.data(),
+			    static_cast<int>(width),
+			    static_cast<int>(height),
+			    bytes,
+			    squish::kDxt3);
+			break;
+		case TextureFormat::DXT5: {
+			squish::DecompressImage( //
+			    conv.data(),
+			    static_cast<int>(width),
+			    static_cast<int>(height),
+			    bytes,
+			    squish::kDxt5);
+			break;
+		}
+		case TextureFormat::B8G8R8A8:
+			for (auto i = 0; i < width * height; ++i) {
+				conv[i * 4 + 0] = bytes[i * 4 + 2];
+				conv[i * 4 + 1] = bytes[i * 4 + 1];
+				conv[i * 4 + 2] = bytes[i * 4 + 0];
+				conv[i * 4 + 3] = bytes[i * 4 + 3];
+			}
+			break;
+		case TextureFormat::R8G8B8A8:
+			conv.assign(bytes, bytes + width * height * 4);
+			break;
+		case TextureFormat::A8B8G8R8:
+			for (auto i = 0u; i < width * height; ++i) {
+				conv[i * 4 + 0] = bytes[i * 4 + 3];
+				conv[i * 4 + 1] = bytes[i * 4 + 2];
+				conv[i * 4 + 2] = bytes[i * 4 + 1];
+				conv[i * 4 + 3] = bytes[i * 4 + 0];
+			}
+
+			break;
+		case TextureFormat::A8R8G8B8: {
+			for (auto i = 0u; i < width * height; ++i) {
+				conv[i * 4 + 0] = bytes[i * 4 + 1];
+				conv[i * 4 + 1] = bytes[i * 4 + 2];
+				conv[i * 4 + 2] = bytes[i * 4 + 3];
+				conv[i * 4 + 3] = bytes[i * 4 + 0];
+			}
+
+			break;
+		}
+		case TextureFormat::B8G8R8: {
+			for (std::uint32_t i = 0; i < width * height; ++i) {
+				conv[i * 4 + 0] = bytes[i * 3 + 2];
+				conv[i * 4 + 1] = bytes[i * 3 + 1];
+				conv[i * 4 + 2] = bytes[i * 3 + 0];
+				conv[i * 4 + 3] = 0;
+			}
+
+			break;
+		}
+		case TextureFormat::R8G8B8: {
+			for (std::uint32_t i = 0; i < width * height; ++i) {
+				conv[i * 4 + 0] = bytes[i * 3 + 0];
+				conv[i * 4 + 1] = bytes[i * 3 + 1];
+				conv[i * 4 + 2] = bytes[i * 3 + 2];
+				conv[i * 4 + 3] = 0;
+			}
+
+			break;
+		}
+		case TextureFormat::R5G6B5: {
+			for (auto i = 0u; i < width * height; ++i) {
+				auto* rgb = reinterpret_cast<r5g6b5 const*>(&bytes[i]);
+				conv[i * 4 + 0] = static_cast<uint8_t>(static_cast<float>(rgb->r) * 8.225806452f);
+				conv[i * 4 + 1] = static_cast<uint8_t>(static_cast<float>(rgb->g) * 4.047619048f);
+				conv[i * 4 + 2] = static_cast<uint8_t>(static_cast<float>(rgb->b) * 8.225806452f);
+				conv[i * 4 + 3] = 0xff;
+			}
+
+			break;
+		}
+		default:
+			throw ParserError {"texture",
+			                   "cannot convert format to rgba: " + std::to_string(static_cast<int32_t>(src))};
+		}
+
+		return conv;
+	}
+
+	std::vector<std::uint8_t>
+	_ztex_from_rgba(uint8_t const* bytes, uint32_t width, uint32_t height, TextureFormat dest) {
+		std::vector<std::uint8_t> conv;
+
+		switch (dest) {
+		case TextureFormat::B8G8R8A8:
+			conv.resize(width * height * 4);
+			for (auto i = 0u; i < width * height; ++i) {
+				conv[i + 0] = bytes[i + 2];
+				conv[i + 1] = bytes[i + 1];
+				conv[i + 2] = bytes[i + 0];
+				conv[i + 3] = bytes[i + 3];
+			}
+
+			break;
+		case TextureFormat::R8G8B8A8:
+			conv.assign(bytes, bytes + width * height * 4);
+			break;
+		case TextureFormat::A8B8G8R8:
+			conv.resize(width * height * 4);
+			for (auto i = 0u; i < width * height; ++i) {
+				conv[i * 4 + 0] = bytes[i * 4 + 3];
+				conv[i * 4 + 1] = bytes[i * 4 + 2];
+				conv[i * 4 + 2] = bytes[i * 4 + 1];
+				conv[i * 4 + 3] = bytes[i * 4 + 0];
+			}
+			break;
+		case TextureFormat::A8R8G8B8:
+			conv.resize(width * height * 4);
+			for (auto i = 0u; i < width * height; ++i) {
+				conv[i * 4 + 0] = bytes[i * 4 + 1];
+				conv[i * 4 + 1] = bytes[i * 4 + 2];
+				conv[i * 4 + 2] = bytes[i * 4 + 3];
+				conv[i * 4 + 3] = bytes[i * 4 + 0];
+			}
+			break;
+		case TextureFormat::B8G8R8:
+			conv.resize(width * height * 3);
+			for (std::uint32_t i = 0; i < width * height; ++i) {
+				conv[i * 3 + 0] = bytes[i * 4 + 2];
+				conv[i * 3 + 1] = bytes[i * 4 + 1];
+				conv[i * 3 + 2] = bytes[i * 4 + 0];
+			}
+			break;
+		case TextureFormat::R8G8B8:
+			conv.resize(width * height * 3);
+			for (std::uint32_t i = 0; i < width * height; ++i) {
+				conv[i * 3 + 0] = bytes[i * 4 + 0];
+				conv[i * 3 + 1] = bytes[i * 4 + 1];
+				conv[i * 3 + 2] = bytes[i * 4 + 2];
+			}
+			break;
+		case TextureFormat::R5G6B5:
+			conv.resize(width * height * 2);
+
+			for (std::uint32_t i = 0; i < width * height; ++i) {
+				r5g6b5 rgb {
+				    static_cast<uint8_t>(static_cast<double>(bytes[i * 4 + 0]) / (5. / 8.)),
+				    static_cast<uint8_t>(static_cast<double>(bytes[i * 4 + 1]) / (6. / 8.)),
+				    static_cast<uint8_t>(static_cast<double>(bytes[i * 4 + 2]) / (5. / 8.)),
+				};
+
+				memcpy(conv.data() + i * 2, &rgb, sizeof(rgb));
+			}
+
+			break;
+		case TextureFormat::DXT1:
+			squish::CompressImage(bytes, static_cast<int>(width), static_cast<int>(height), conv.data(), squish::kDxt1);
+			break;
+		case TextureFormat::DXT3:
+			squish::CompressImage(bytes, static_cast<int>(width), static_cast<int>(height), conv.data(), squish::kDxt3);
+			break;
+		case TextureFormat::DXT5:
+			squish::CompressImage(bytes, static_cast<int>(width), static_cast<int>(height), conv.data(), squish::kDxt5);
+			break;
+		default:
+			throw ParserError {"texture",
+			                   "cannot convert format from rgba: " + std::to_string(static_cast<int32_t>(dest))};
+		}
+
+		return conv;
+	}
+
+	std::vector<std::uint8_t> _ztex_convert_format(uint8_t const* bytes,
+	                                               uint32_t width,
+	                                               uint32_t height,
+	                                               TextureFormat from,
+	                                               TextureFormat into) {
+		if (from == into) {
+			std::vector<std::uint8_t> conv;
+			conv.assign(bytes, bytes + _ztex_mipmap_size(from, width, height, 0));
+			return conv;
+		}
+
+		auto rgba = _ztex_to_rgba(bytes, width, height, from);
+		return _ztex_from_rgba(rgba.data(), width, height, into);
 	}
 
 	Texture Texture::parse(phoenix::buffer& in) {
@@ -100,141 +307,25 @@ namespace zenkit {
 		}
 	}
 
-#pragma pack(push, 1)
-	struct r5g5b5 {
-		std::uint16_t r : 5;
-		std::uint16_t g : 5;
-		std::uint16_t b : 5;
-	};
-
-	struct r5g6b5 {
-		std::uint16_t r : 5;
-		std::uint16_t g : 6;
-		std::uint16_t b : 5;
-	};
-#pragma pack(pop)
-
-	static_assert(sizeof(r5g5b5) == 2);
-
 	std::vector<std::uint8_t> Texture::as_rgba8(std::uint32_t mipmap_level) const {
-		std::vector<std::uint8_t> conv;
 
-		switch (_m_format) {
-		case TextureFormat::DXT1:
-		case TextureFormat::DXT3:
-		case TextureFormat::DXT5: {
-			auto const& map = data(mipmap_level);
-			auto w = mipmap_width(mipmap_level);
-			auto h = mipmap_height(mipmap_level);
-			conv.resize(w * h * 4);
+		auto const& map = data(mipmap_level);
+		auto width = mipmap_width(mipmap_level);
+		auto height = mipmap_height(mipmap_level);
 
-			auto flag = _m_format == TextureFormat::DXT1
-			    ? squish::kDxt1
-			    : (_m_format == TextureFormat::DXT3 ? squish::kDxt3 : squish::kDxt5);
-
-			squish::DecompressImage(conv.data(), static_cast<int>(w), static_cast<int>(h), map.data(), flag);
-			return conv;
-		}
-		case TextureFormat::B8G8R8A8: {
-			auto const& map = data(mipmap_level);
-			conv.resize(map.size());
-
-			for (std::uint32_t i = 0; i < map.size(); i += 4) {
-				conv[i + 0] = map[i + 2];
-				conv[i + 1] = map[i + 1];
-				conv[i + 2] = map[i + 0];
-				conv[i + 3] = map[i + 3];
-			}
-
-			return conv;
-		}
-		case TextureFormat::R8G8B8A8:
-			return data(mipmap_level);
-		case TextureFormat::A8B8G8R8: {
-			auto const& map = data(mipmap_level);
-			conv.resize(map.size());
-
-			for (std::uint32_t i = 0; i < map.size(); i += 4) {
-				conv[i + 0] = map[i + 3];
-				conv[i + 1] = map[i + 2];
-				conv[i + 2] = map[i + 1];
-				conv[i + 3] = map[i + 0];
-			}
-
-			return conv;
-		}
-		case TextureFormat::A8R8G8B8: {
-			auto const& map = data(mipmap_level);
-			conv.resize(map.size());
-
-			for (std::uint32_t i = 0; i < map.size(); i += 4) {
-				conv[i + 0] = map[i + 1];
-				conv[i + 1] = map[i + 2];
-				conv[i + 2] = map[i + 3];
-				conv[i + 3] = map[i + 0];
-			}
-
-			return conv;
-		}
-		case TextureFormat::B8G8R8: {
-			auto const& map = data(mipmap_level);
-			conv.resize(map.size());
-
-			for (std::uint32_t i = 0; i < map.size(); i += 3) {
-				conv[i + 0] = map[i + 2];
-				conv[i + 1] = map[i + 1];
-				conv[i + 2] = map[i + 0];
-				conv[i + 3] = 0;
-			}
-
-			return conv;
-		}
-		case TextureFormat::R8G8B8: {
-			auto const& map = data(mipmap_level);
-			conv.resize(map.size());
-
-			for (std::uint32_t i = 0; i < map.size(); i += 3) {
-				conv[i + 0] = map[i + 0];
-				conv[i + 1] = map[i + 1];
-				conv[i + 2] = map[i + 2];
-				conv[i + 3] = 0;
-			}
-
-			return conv;
-		}
-		case TextureFormat::R5G6B5: {
-			auto const& map = data(mipmap_level);
-			conv.resize(map.size() * 2);
-
-			std::uint32_t idx = 0;
-			for (std::uint32_t i = 0; i < map.size(); i += 2) {
-				auto* rgb = reinterpret_cast<r5g6b5 const*>(&map[i]);
-				conv[idx++] = static_cast<uint8_t>(static_cast<float>(rgb->b) * 8.225806452f);
-				conv[idx++] = static_cast<uint8_t>(static_cast<float>(rgb->g) * 4.047619048f);
-				conv[idx++] = static_cast<uint8_t>(static_cast<float>(rgb->r) * 8.225806452f);
-				conv[idx++] = 0xff;
-			}
-
-			return conv;
-		}
-		case TextureFormat::P8: {
-			auto const& map = data(mipmap_level);
-			conv.resize(map.size() * sizeof(std::uint8_t) * 4);
-
-			for (std::uint32_t i = 0; i < map.size(); ++i) {
+		if (_m_format == TextureFormat::P8) {
+			std::vector<std::uint8_t> conv;
+			for (auto i = 0; i < width * height; ++i) {
 				auto palentry = _m_palette[map[i]];
-				conv[i + 0] = palentry.r;
-				conv[i + 1] = palentry.g;
-				conv[i + 2] = palentry.b;
-				conv[i + 3] = palentry.a;
+				conv[i * 4 + 0] = palentry.r;
+				conv[i * 4 + 1] = palentry.g;
+				conv[i * 4 + 2] = palentry.b;
+				conv[i * 4 + 3] = palentry.a;
 			}
-
 			return conv;
 		}
-		default:
-			throw ParserError {"texture",
-			                   "cannot convert format to rgba: " + std::to_string(static_cast<int32_t>(_m_format))};
-		}
+
+		return _ztex_to_rgba(map.data(), width, height, _m_format);
 	}
 
 	void Texture::save(Write* w) const {
