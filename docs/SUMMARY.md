@@ -2,7 +2,6 @@
     * [Overview](library/overview.md)
     * [Getting Started](library/quickstart.md)
     * [File Type Reference](library/reference.md)
-    * [File Type Reference](library/reference.md)
     * Miscellaneous
         * [Migration Guide (v1.2 ➞ v1.3)](library/misc/v1.2-to-v1.3.md)
     * ZenKit Concepts
