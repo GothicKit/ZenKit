@@ -89,7 +89,7 @@ namespace zenkit {
 			break;
 		}
 		case TextureFormat::B8G8R8A8:
-			for (auto i = 0; i < width * height; ++i) {
+			for (auto i = 0u; i < width * height; ++i) {
 				conv[i * 4 + 0] = bytes[i * 4 + 2];
 				conv[i * 4 + 1] = bytes[i * 4 + 1];
 				conv[i * 4 + 2] = bytes[i * 4 + 0];
@@ -315,7 +315,7 @@ namespace zenkit {
 
 		if (_m_format == TextureFormat::P8) {
 			std::vector<std::uint8_t> conv;
-			for (auto i = 0; i < width * height; ++i) {
+			for (auto i = 0u; i < width * height; ++i) {
 				auto palentry = _m_palette[map[i]];
 				conv[i * 4 + 0] = palentry.r;
 				conv[i * 4 + 1] = palentry.g;
