@@ -130,7 +130,8 @@ namespace zenkit {
 		/// \see https://zk.gothickit.dev/engine/objects/zCCamTrj_KeyFrame/#anglerolldeg
 		float roll_angle;
 
-		/// \brief Focal zoom of the camera's field of view (FOV) of the frame. Use reasonable values to avoid dizzying effects.
+		/// \brief Focal zoom of the camera's field of view (FOV) of the frame. Use reasonable values to avoid dizzying
+		///        effects.
 		/// \see https://zk.gothickit.dev/engine/objects/zCCamTrj_KeyFrame/#camfovscale
 		float fov_scale;
 
@@ -150,11 +151,13 @@ namespace zenkit {
 		/// \see https://zk.gothickit.dev/engine/objects/zCCamTrj_KeyFrame/#motiontypetimescale
 		CameraMotion motion_type_time_scale;
 
-		/// \brief Defines the bend of the camera motion curve at the specified key. Larger values result in a sharper bend.
+		/// \brief Defines the bend of the camera motion curve at the specified key. Larger values result in a sharper
+		///       bend.
 		/// \see https://zk.gothickit.dev/engine/objects/zCCamTrj_KeyFrame/#tension
 		float tension;
 
-		/// \brief Determines the slope of a line in one direction. The direction of the slope is determined by the sign, and the steepness by the value.
+		/// \brief Determines the slope of a line in one direction. The direction of the slope is determined by the
+		///       sign, and the steepness by the value.
 		/// \see https://zk.gothickit.dev/engine/objects/zCCamTrj_KeyFrame/#bias
 		float cam_bias;
 
@@ -216,7 +219,8 @@ namespace zenkit {
 		/// \see https://zk.gothickit.dev/engine/objects/zCCSCamera/#ignoreforvobrotcam
 		bool ignore_for_vob_rotation;
 
-		/// \brief Determines the need to take into account the orientation of target key frames to reference VOB objects.
+		/// \brief Determines the need to take into account the orientation of target key frames to reference VOB
+		///       objects.
 		/// \see https://zk.gothickit.dev/engine/objects/zCCSCamera/#ignoreforvobrottarget
 		bool ignore_for_vob_rotation_target;
 
