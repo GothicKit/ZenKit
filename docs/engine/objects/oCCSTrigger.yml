@@ -1,0 +1,19 @@
+class:
+  name: "oCCSTrigger"
+  bases: [
+      "zCVob",
+      "zCTriggerBase",
+      "zCTrigger",
+  ]
+  description: |
+    A special trigger VObject which can start a cutscene. The [zCTriggerBase:triggerTarget] must be the name
+    of the cutscene (without the extension) to be started. For this to work, the cutscene must already be loaded.
+    `OnUntrigger` events are ignored by `oCCSTrigger`s.
+  zenkit: "VCutsceneTrigger"
+version:
+  gothic1: 24577
+  gothic2: 24577
+sources:
+  spacerhilfedatei.sph: "https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei"
+  gothic-library.ru: "http://www.gothic-library.ru/publ/class_occstrigger/1-1-0-530"
+

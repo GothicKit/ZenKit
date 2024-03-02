@@ -1,4 +1,4 @@
-# oCMission
+# `oCMission`
 
 !!! abstract inline end "Quick Infos"
     **Type:** Object<br/>
@@ -8,31 +8,28 @@
     **Version Identifiers:**<br />
     — Gothic I: `0`<br/>
     — Gothic II: `0`<br/>
-    **ZenKit Class:** *—*
+    **ZenKit Class:** `—` 
 
 === "Gothic 1"
-
     - oCMission
       {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}
 
 === "Gothic 2"
-
     - oCMission
       {: .sp-class}
         - &lt;empty&gt;
           {: .sp-none}
 
 === "Gothic 1 (Save)"
-
     - oCMission
       {: .sp-class}
-        - [name](#name) = ""
+        - [name](#name) = 
           {: .sp-string}
         - [ID](#id) = 0
           {: .sp-int}
-        - [Av](#av) = FALSE
+        - [AV](#av) = FALSE
           {: .sp-bool}
         - [NumInList](#numinlist) = 0
           {: .sp-int}
@@ -48,14 +45,13 @@
           {: .sp-int}
 
 === "Gothic 2 (Save)"
-
     - oCMission
       {: .sp-class}
-        - [name](#name) = ""
+        - [name](#name) = 
           {: .sp-string}
         - [ID](#id) = 0
           {: .sp-int}
-        - [Av](#av) = FALSE
+        - [AV](#av) = FALSE
           {: .sp-bool}
         - [NumInList](#numinlist) = 0
           {: .sp-int}
@@ -86,8 +82,7 @@
     !!! warning
         This property is only available in saved games.
 
-
-#### `Av` {: .sp-bool}
+#### `AV` {: .sp-bool}
 
 :   Unknown.
 
@@ -128,3 +123,4 @@
 
     !!! warning
         This property is only available in saved games.
+

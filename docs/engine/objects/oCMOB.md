@@ -1,22 +1,21 @@
-# oCMOB
+# `oCMOB`
 
 !!! abstract inline end "Quick Infos"
-    **Type:** Virtual Object<br/>
+    **Type:** Object<br/>
     **Format Name:** ZenGin Archive<br/>
     **File Extension:** `.ZEN`<br/>
     **Class Name:** `oCMOB`<br/>
     **Version Identifiers:**<br />
     — Gothic I: `47105`<br/>
     — Gothic II: `47105`<br/>
-    **ZenKit Class:** `VMovableObject`<br/>
+    **ZenKit Class:** `VMovableObject` <br/>
     **Sources:**<br/>
-    — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)<br/>
+    — [spacerhilfedatei.sph](https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei)<br />
     — [gothic-library.ru](http://www.gothic-library.ru/publ/ocmob_class/1-1-0-503)
 
 A VObject which can optionally be moved and/or carried.
 
 === "Gothic 1"
-
     - [zCVob](zCVob.md)
       {: .sp-class}
     - [oCVob](oCVob.md)
@@ -25,7 +24,7 @@ A VObject which can optionally be moved and/or carried.
       {: .sp-class}
         - MOB
           {: .sp-folder}
-            - [focusName](#focusName) = ""
+            - [focusName](#focusname) = 
               {: .sp-string}
             - [hitpoints](#hitpoints) = 0
               {: .sp-int}
@@ -35,21 +34,20 @@ A VObject which can optionally be moved and/or carried.
               {: .sp-bool}
             - [takeable](#takeable) = FALSE
               {: .sp-bool}
-            - [focusOverride](#focusOverride) = FALSE
+            - [focusOverride](#focusoverride) = FALSE
               {: .sp-bool}
-            - [soundMaterial](#soundMaterial) = WOOD
+            - [soundMaterial](#soundmaterial) = WOOD
               {: .sp-enum}
-            - [visualDestroyed](#visualDestroyed) = ""
+            - [visualDestroyed](#visualdestroyed) = 
               {: .sp-string}
-            - [owner](#owner) = ""
+            - [owner](#owner) = 
               {: .sp-string}
-            - [ownerGuild](#ownerGuild) = ""
+            - [ownerGuild](#ownerguild) = 
               {: .sp-string}
-        - [isDestroyed](#isDestroyed) = ""
+        - [isDestroyed](#isdestroyed) = FALSE
           {: .sp-bool}
 
 === "Gothic 2"
-
     - [zCVob](zCVob.md)
       {: .sp-class}
     - [oCVob](oCVob.md)
@@ -58,7 +56,7 @@ A VObject which can optionally be moved and/or carried.
       {: .sp-class}
         - MOB
           {: .sp-folder}
-            - [focusName](#focusName) = ""
+            - [focusName](#focusname) = 
               {: .sp-string}
             - [hitpoints](#hitpoints) = 0
               {: .sp-int}
@@ -68,21 +66,20 @@ A VObject which can optionally be moved and/or carried.
               {: .sp-bool}
             - [takeable](#takeable) = FALSE
               {: .sp-bool}
-            - [focusOverride](#focusOverride) = FALSE
+            - [focusOverride](#focusoverride) = FALSE
               {: .sp-bool}
-            - [soundMaterial](#soundMaterial) = WOOD
+            - [soundMaterial](#soundmaterial) = WOOD
               {: .sp-enum}
-            - [visualDestroyed](#visualDestroyed) = ""
+            - [visualDestroyed](#visualdestroyed) = 
               {: .sp-string}
-            - [owner](#owner) = ""
+            - [owner](#owner) = 
               {: .sp-string}
-            - [ownerGuild](#ownerGuild) = ""
+            - [ownerGuild](#ownerguild) = 
               {: .sp-string}
-        - [isDestroyed](#isDestroyed) = ""
+        - [isDestroyed](#isdestroyed) = FALSE
           {: .sp-bool}
 
 === "Gothic 1 (Save)"
-
     - [zCVob](zCVob.md)
       {: .sp-class}
     - [oCVob](oCVob.md)
@@ -91,7 +88,7 @@ A VObject which can optionally be moved and/or carried.
       {: .sp-class}
         - MOB
           {: .sp-folder}
-            - [focusName](#focusName) = ""
+            - [focusName](#focusname) = 
               {: .sp-string}
             - [hitpoints](#hitpoints) = 0
               {: .sp-int}
@@ -101,21 +98,20 @@ A VObject which can optionally be moved and/or carried.
               {: .sp-bool}
             - [takeable](#takeable) = FALSE
               {: .sp-bool}
-            - [focusOverride](#focusOverride) = FALSE
+            - [focusOverride](#focusoverride) = FALSE
               {: .sp-bool}
-            - [soundMaterial](#soundMaterial) = WOOD
+            - [soundMaterial](#soundmaterial) = WOOD
               {: .sp-enum}
-            - [visualDestroyed](#visualDestroyed) = ""
+            - [visualDestroyed](#visualdestroyed) = 
               {: .sp-string}
-            - [owner](#owner) = ""
+            - [owner](#owner) = 
               {: .sp-string}
-            - [ownerGuild](#ownerGuild) = ""
+            - [ownerGuild](#ownerguild) = 
               {: .sp-string}
-        - [isDestroyed](#isDestroyed) = ""
+        - [isDestroyed](#isdestroyed) = FALSE
           {: .sp-bool}
 
 === "Gothic 2 (Save)"
-
     - [zCVob](zCVob.md)
       {: .sp-class}
     - [oCVob](oCVob.md)
@@ -124,7 +120,7 @@ A VObject which can optionally be moved and/or carried.
       {: .sp-class}
         - MOB
           {: .sp-folder}
-            - [focusName](#focusName) = ""
+            - [focusName](#focusname) = 
               {: .sp-string}
             - [hitpoints](#hitpoints) = 0
               {: .sp-int}
@@ -134,17 +130,17 @@ A VObject which can optionally be moved and/or carried.
               {: .sp-bool}
             - [takeable](#takeable) = FALSE
               {: .sp-bool}
-            - [focusOverride](#focusOverride) = FALSE
+            - [focusOverride](#focusoverride) = FALSE
               {: .sp-bool}
-            - [soundMaterial](#soundMaterial) = WOOD
+            - [soundMaterial](#soundmaterial) = WOOD
               {: .sp-enum}
-            - [visualDestroyed](#visualDestroyed) = ""
+            - [visualDestroyed](#visualdestroyed) = 
               {: .sp-string}
-            - [owner](#owner) = ""
+            - [owner](#owner) = 
               {: .sp-string}
-            - [ownerGuild](#ownerGuild) = ""
+            - [ownerGuild](#ownerguild) = 
               {: .sp-string}
-        - [isDestroyed](#isDestroyed) = ""
+        - [isDestroyed](#isdestroyed) = FALSE
           {: .sp-bool}
 
 ## Properties
@@ -164,12 +160,16 @@ A VObject which can optionally be moved and/or carried.
 #### `moveable` {: .sp-bool}
 
 :   Whether the object can be moved by the player.
-    <br />`TRUE` — The object can be moved. `FALSE` — The object can not be moved.
+
+    * `False` — The object can not be moved.
+    * `True` — The object can be moved.
 
 #### `takeable` {: .sp-bool}
 
 :   Whether the object can be carried by the player.
-    <br />`TRUE` — The object can be carried. `FALSE` — The object can not be carried.
+
+    * `False` — The object can not be carried.
+    * `True` — The object can be carried.
 
 #### `focusOverride` {: .sp-bool}
 
@@ -188,7 +188,7 @@ A VObject which can optionally be moved and/or carried.
 
 #### `visualDestroyed` {: .sp-string}
 
-:   The name of the visual to use when the object is destroyed. Behaves like [zCVob.visual](zCVob.md#visual).
+:   The name of the visual to use when the object is destroyed. Behaves like [`zCVob:visual`](zCVob.md#visual).
 
 #### `owner` {: .sp-string}
 
@@ -196,9 +196,9 @@ A VObject which can optionally be moved and/or carried.
 
 #### `ownerGuild` {: .sp-string}
 
-:   The name of the guild this object belongs to. This name corresponds to the script constant for
-    each guild (i.e. `GIL_BAU`), found in `Constants.d`.
+:   The name of the guild this object belongs to. This name corresponds to the script constant for each guild (i.e. `GIL_BAU`), found in `Constants.d`.
 
 #### `isDestroyed` {: .sp-bool}
 
 :   Unknown.
+
