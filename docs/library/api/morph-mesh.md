@@ -78,3 +78,16 @@
     vfs.mountDisk("Anims.vdf", VfsOverwriteBehavior.OLDER)
     mmb = new MorphMesh(vfs, "MyMesh.MMB");
     ```
+
+=== "Python"
+
+    ```python title="Example"
+    from zenkit import Vfs, VfsOverwriteBehavior, MorphMesh
+
+    # Load from a file on disk:
+    mmb = MorphMesh.load("MyMesh.MMB")
+
+    # ... or from a VFS:
+    vfs = Vfs()
+    vfs.mount_disk("Anims.vdf", clobber=VfsOverwriteBehavior.OLDER)
+    mmb = MorphMesh.load(vfs.find("MyMesh.MMB"))

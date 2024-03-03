@@ -78,3 +78,17 @@
     vfs.mountDisk("Meshes.vdf", VfsOverwriteBehavior.OLDER)
     mesh = new Mesh(vfs, "MyMesh.MSH");
     ```
+
+=== "Python"
+
+    ```python title="Example"
+    from zenkit import Vfs, VfsOverwriteBehavior, Mesh
+
+    # Load from a file on disk:
+    mesh = Mesh.load("MyMesh.MSH")
+
+    # ... or from a VFS:
+    vfs = Vfs()
+    vfs.mount_disk("Meshes.vdf", clobber=VfsOverwriteBehavior.OLDER)
+    mesh = Mesh.load(vfs.find("MyMesh.MSH"))
+    ```

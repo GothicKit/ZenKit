@@ -80,3 +80,17 @@ loading and executing compiled scripts using the `zenkit::DaedalusScript` API.
     vfs.mount("_work/", "/", VfsOverwriteBehavior.Older);
     script = new DaedalusScript(vfs, "MENU.DAT");
     ```
+
+=== "Python"
+
+    ```python title="Example"
+    from zenkit import Vfs, VfsOverwriteBehavior, DaedalusScript
+
+    # Load from a file on disk:
+    script = DaedalusScript.load("MENU.DAT")
+
+    # ... or from a VFS:
+    vfs = Vfs()
+    vfs.mount_path("_work/", "/", clobber=VfsOverwriteBehavior.OLDER)
+    script = DaedalusScript.load(vfs.find("MENU.DAT"))
+    ```

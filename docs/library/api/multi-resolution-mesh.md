@@ -78,3 +78,16 @@
     vfs.mountDisk("Meshes.vdf", VfsOverwriteBehavior.OLDER)
     mrm = new MultiResolutionMesh(vfs, "MyMesh.MRM");
     ```
+
+=== "Python"
+
+    ```python title="Example"
+    from zenkit import Vfs, VfsOverwriteBehavior, MultiResolutionMesh
+
+    # Load from a file on disk:
+    mrm = MultiResolutionMesh.load("MyMesh.MRM")
+
+    # ... or from a VFS:
+    vfs = Vfs()
+    vfs.mount_disk("Meshes.vdf", clobber=VfsOverwriteBehavior.OLDER)
+    mrm = MultiResolutionMesh.load(vfs.find("MyMesh.MRM"))

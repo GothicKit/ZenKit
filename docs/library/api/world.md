@@ -78,3 +78,16 @@
     vfs.mountDisk("Worlds.vdf", VfsOverwriteBehavior.OLDER)
     world = new World(vfs, "OLDWORLD.ZEN");
     ```
+
+=== "Python"
+
+    ```python title="Example"
+    from zenkit import Vfs, VfsOverwriteBehavior, World
+
+    # Load from a file on disk:
+    world = World.load("OLDWORLD.ZEN")
+
+    # ... or from a VFS:
+    vfs = Vfs()
+    vfs.mount_disk("Worlds.vdf", clobber=VfsOverwriteBehavior.OLDER)
+    world = World.load(vfs.find("OLDWORLD.ZEN"))

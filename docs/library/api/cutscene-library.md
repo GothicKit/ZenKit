@@ -80,3 +80,17 @@ of Gothic and Gothic II installations.
     vfs.mount("_work/", "/", VfsOverwriteBehavior.OLDER);
     csl = new CutsceneLibrary(vfs, "OU.csl");
     ```
+
+=== "Python"
+
+    ```python title="Example"
+    from zenkit import Vfs, VfsOverwriteBehavior, CutsceneLibrary
+
+    # Load from a file on disk:
+    csl = CutsceneLibrary.load("OU.CSL")
+
+    # ... or from a VFS:
+    vfs = Vfs()
+    vfs.mount_path("_work", "/", clobber=VfsOverwriteBehavior.OLDER)
+    csl = CutsceneLibrary.load(vfs.find("OU.bin"))
+    ```

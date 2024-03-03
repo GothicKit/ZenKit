@@ -81,3 +81,16 @@
     mesh = new Model(vfs, "MyMesh.MDL");
     ```
 
+=== "Python"
+
+    ```python title="Example"
+    from zenkit import Vfs, VfsOverwriteBehavior, Model
+
+    # Load from a file on disk:
+    mesh = Model.load("MyMesh.MDL")
+
+    # ... or from a VFS:
+    vfs = Vfs()
+    vfs.mount_disk("Anims.vdf", clobber=VfsOverwriteBehavior.OLDER)
+    mesh = Model.load(vfs.find("MyMesh.MDL"))
+    ```

@@ -78,3 +78,16 @@
     vfs.mountDisk("Textures.vdf", VfsOverwriteBehavior.OLDER)
     tex = new Texture(vfs, "MyTexture.TEX");
     ```
+
+=== "Python"
+
+    ```python title="Example"
+    from zenkit import Vfs, VfsOverwriteBehavior, Texture
+
+    # Load from a file on disk:
+    tex = Texture.load("MyTexture.TEX")
+
+    # ... or from a VFS:
+    vfs = Vfs()
+    vfs.mount_disk("Textures.vdf", clobber=VfsOverwriteBehavior.OLDER)
+    tex = Texture.load(vfs.find("MyTexture.TEX"))

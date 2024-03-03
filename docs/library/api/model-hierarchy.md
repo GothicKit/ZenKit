@@ -78,3 +78,16 @@
     vfs.mountDisk("Anims.vdf", VfsOverwriteBehavior.OLDER)
     mdh = new ModelHierarchy(vfs, "MySkeleton.MDH");
     ```
+
+=== "Python"
+
+    ```python title="Example"
+    from zenkit import Vfs, VfsOverwriteBehavior, ModelHierarchy
+
+    # Load from a file on disk:
+    mdh = ModelHierarchy.load("MySkeleton.MDH")
+
+    # ... or from a VFS:
+    vfs = Vfs()
+    vfs.mount_disk("Anims.vdf", clobber=VfsOverwriteBehavior.OLDER)
+    mdh = ModelHierarchy.load(vfs.find("MySkeleton.MDH"))

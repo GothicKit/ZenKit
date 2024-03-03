@@ -78,3 +78,8 @@
     vfs.mountDisk("Anims.vdf", VfsOverwriteBehavior.OLDER)
     mds = new ModelScript(vfs, "MyScript.MDS");
     ```
+
+=== "Python"
+
+    !!! warning
+        Not yet available.

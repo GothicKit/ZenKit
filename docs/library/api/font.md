@@ -87,6 +87,20 @@ glyph contains two coordinates which together form a rectangle around the glyph 
     fnt = new Font(vfs, "FONT_OLD_20.FNT");
     ```
 
+=== "Python"
+
+    ```python title="Example"
+    from zenkit import Vfs, VfsOverwriteBehavior, Font
+
+    # Load from a file on disk:
+    fnt = Font.load("FONT_OLD_20.FNT")
+
+    # ... or from a VFS:
+    vfs = Vfs()
+    vfs.mount_disk("Textures.vdf", clobber=VfsOverwriteBehavior.OLDER)
+    fnt = Font.load(vfs.find("FONT_OLD_20.FNT"))
+    ```
+
 ### Dealing with glyphs
 
 To render a font, first the font [texture](texture.md) must be loaded. Its name is stored in the `Font::name` field.

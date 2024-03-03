@@ -78,3 +78,16 @@
     vfs.mountDisk("Anims.vdf", VfsOverwriteBehavior.OLDER)
     mesh = new ModelMesh(vfs, "MyMesh.MDM");
     ```
+
+=== "Python"
+
+    ```python title="Example"
+    from zenkit import Vfs, VfsOverwriteBehavior, ModelMesh
+
+    # Load from a file on disk:
+    mesh = ModelMesh.load("MyMesh.MDM")
+
+    # ... or from a VFS:
+    vfs = Vfs()
+    vfs.mount_disk("Anims.vdf", clobber=VfsOverwriteBehavior.OLDER)
+    mesh = ModelMesh.load(vfs.find("MyMesh.MDM"))

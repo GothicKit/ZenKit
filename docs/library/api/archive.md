@@ -57,6 +57,11 @@ call `zenkit::ReadArchive::from` (which is analogous to `zenkit::Read::from`) an
     !!! warning
         Archives are currently not supported with the Java API since it depends on the C wrapper.
 
+=== "Python"
+
+    !!! warning
+        Archives are currently not supported with the Python API since it depends on the C wrapper.
+
 
 ### Reading from an archive
 
@@ -208,6 +213,10 @@ demonstration can be found in the example below.
     !!! warning
         Archives are currently not supported with the Java API since it depends on the C wrapper.
 
+=== "Python"
+
+    !!! warning
+        Archives are currently not supported with the Python API since it depends on the C wrapper.
 
 [JSON]: https://en.wikipedia.org/wiki/JSON
 [XML]: https://en.wikipedia.org/wiki/XML

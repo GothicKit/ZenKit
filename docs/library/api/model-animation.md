@@ -91,6 +91,20 @@ which should be loaded before animations. The `ModelAnimation::events` field wil
     man = new ModelAnimation(vfs, "MyAnimation.MAN");
     ```
 
+=== "Python"
+
+    ```python title="Example"
+    from zenkit import Vfs, VfsOverwriteBehavior, ModelAnimation
+
+    # Load from a file on disk:
+    man = ModelAnimation.load("MyAnimation.MAN")
+
+    # ... or from a VFS:
+    vfs = Vfs()
+    vfs.mount_disk("Anims.vdf", clobber=VfsOverwriteBehavior.OLDER)
+    man = ModelAnimation.load(vfs.find("MyAnimation.MAN"))
+    ```
+
 
 [^1]: This assertion is made after examining many animations from both *Gothic* and *Gothic II*
       and finding no events being stored.

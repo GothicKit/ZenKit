@@ -128,6 +128,11 @@ VOb-tree of the base world.
     !!! warning
         Not yet available.
 
+=== "Python"
+
+    !!! warning
+        Not yet available.
+
 ### Creating or modifying save games
 
 You can easily create a new save-game or modify an exising one using the save game APIs. To do so you need to have
@@ -232,6 +237,11 @@ access to a [world](world.md) from somewhere (could also be another save game).
     ```
 
 === "Java"
+
+    !!! warning
+        Not yet available.
+
+=== "Python"
 
     !!! warning
         Not yet available.

@@ -111,6 +111,26 @@ by a now defunct company called [TRIACOM Software][].
     // ...
     ```
 
+
+=== "Python"
+
+    ```python title="Example"
+    from sys import stderr
+    from zenkit import Vfs, VfsOverwriteBehavior
+
+    vfs = Vfs()
+    vfs.mount_disk("Worlds.vdf", clobber=VfsOverwriteBehavior.OLDER)
+    
+    node = vfs.find("OLDWORLD.ZEN")
+    if node is None:
+        print("Error: OLDWORLD.ZEN not found!", file=stderr)
+        exit(-1)
+    
+    rd = node.open()
+
+    # ...
+
+
 [ZIP]: https://en.wikipedia.org/wiki/ZIP_(file_format)
 [TAR]: https://en.wikipedia.org/wiki/Tar_(computing)
 [PhysicsFS]: https://icculus.org/physfs/
