@@ -30,6 +30,52 @@ continue.
     After doing this, you'll need to link against `zenkit` using the `#!cmake target_link_libraries(your-target PRIVATE zenkit)`
     directive. With that, everything should be set up correctly for you to use *ZenKit* in your application.
 
+=== "C#"
+    
+    You can install `ZenKitCS` from the [NuGet Package Gallery](https://www.nuget.org/packages/ZenKit). Simply add the
+    following snippet to your `.csproj` file, replacing the version with the approprite version identifier from NuGet.
+
+    ```
+    <ItemGroup>
+      <PackageReference Include="ZenKit" Version="x.x.x" />
+    </ItemGroup>
+    ```
+
+    To build your project then, you will need to add a `RuntimeIdentifiers` property to your `.csproj`. You can simply
+    use this once and copy it the topmost `<PropertyGroup>` in your `.csproj` like this:
+
+    ```xml
+    <PropertyGroup>
+        <!-- ... -->
+        
+        <RuntimeIdentifiers>linux-x64;win-x64;osx-x64;android-arm64</RuntimeIdentifiers>
+
+        <!-- ... -->
+    </PropertyGroup>
+    ```
+
+    You can now also build your project for those runtimes by supplying the runtime identifier in `dotnet build` using the
+    `-r` parameter. This is how you would build your project for Android:
+
+    ```
+    dotnet build -r android-arm64 -c Release --self-contained
+    ```
+
+=== "Java"
+
+    You can integrate `ZenKit4J` into your Java project from [Maven Central](https://mvnrepository.com/artifact/dev.gothickit/zenkit).
+    Refer to its documentation about how to set it up with your package manager. No additional configuration is required.
+
+=== "Python"
+
+    You can add `ZenKit4Py` to you Python project through Pip via [PyPI](https://pypi.org/project/zenkit/):
+
+    ```
+    pip install zenkit
+    ```
+
+    No further action is required.
+
 !!! info "Getting Help"
     **Feel free to ask any questions you might have over in the [:material-github:/discussions][1] section of the
     GitHub repository!**
