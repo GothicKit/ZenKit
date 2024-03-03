@@ -136,6 +136,32 @@ The general mode of operation here is applicable to most assets that can be load
 
     More examples can be found in the [:material-github:/examples/][2] directory of the project.
 
+=== "Python"
+
+    ```py
+    import sys
+    from zenkit import Vfs, Font
+
+    def main() -> int:
+        if len(sys.argv) < 2:
+            print("please provide a textures.vdf file to read from", file=sys.stderr)
+            return -1
+        
+        vfs = Vfs()
+        vfs.mount_disk(sys.argv[1])
+
+        font_file = vfs.find("font_default.fnt")
+        if font_file is None:
+            print("FONT_DEFAULT.FNT was not found in the VFS", file=sys.stderr)
+            return -2
+        
+        font = Font.load(font_file)
+        print("The associated texture for FONT_DEFAULT.FNT is \"" + font.name + "\"")
+        return 0
+
+    if __name__ == "__main__":
+        exit(main())
+    ```
 
 [CMake]: https://cmake.org/
 [FetchContent]: https://cmake.org/cmake/help/latest/module/FetchContent.html
