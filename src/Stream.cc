@@ -375,7 +375,7 @@ namespace zenkit {
 		public:
 			explicit WriteStream(std::ostream* stream) : _m_stream(stream), _m_own(false) {}
 			explicit WriteStream(std::filesystem::path const& path)
-			    : _m_stream(new std::ofstream(path)), _m_own(true) {}
+			    : _m_stream(new std::ofstream(path, std::ios::binary)), _m_own(true) {}
 
 			~WriteStream() noexcept override {
 				if (_m_own) {
@@ -491,7 +491,7 @@ namespace zenkit {
 		return std::make_unique<detail::ReadMmap>(path);
 #else
 		std::vector<std::byte> data {};
-		std::ifstream stream {path, std::ios::ate};
+		std::ifstream stream {path, std::ios::ate | std::ios::binar};
 		data.resize(static_cast<size_t>(stream.tellg()));
 		stream.seekg(0);
 		stream.read(reinterpret_cast<char*>(data.data()), static_cast<std::streamsize>(data.size()));
