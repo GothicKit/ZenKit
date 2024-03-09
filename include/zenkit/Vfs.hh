@@ -39,6 +39,13 @@ namespace zenkit {
 	struct VfsFileDescriptor {
 		std::byte const* memory;
 		std::size_t size;
+
+		VfsFileDescriptor(std::byte const* mem, size_t len, bool del);
+		VfsFileDescriptor(VfsFileDescriptor const& cpy);
+		~VfsFileDescriptor() noexcept;
+
+	private:
+		size_t* refcnt;
 	};
 
 	class VfsNode;

@@ -61,6 +61,25 @@ namespace zenkit {
 
 	VfsNotFoundError::VfsNotFoundError(std::string const& name) : Error("not found: \"" + name + "\"") {}
 
+	VfsFileDescriptor::VfsFileDescriptor(std::byte const* mem, size_t len, bool del)
+	    : memory(mem), size(len), refcnt(del ? new size_t(1) : nullptr) {}
+
+	VfsFileDescriptor::VfsFileDescriptor(VfsFileDescriptor const& cpy)
+	    : memory(cpy.memory), size(cpy.size), refcnt(cpy.refcnt) {
+		if (this->refcnt == nullptr) return;
+		*this->refcnt += 1;
+	}
+
+	VfsFileDescriptor::~VfsFileDescriptor() noexcept {
+		if (this->refcnt == nullptr) return;
+		*this->refcnt -= 1;
+
+		if (*this->refcnt == 0) {
+			delete[] memory;
+			delete this->refcnt;
+		}
+	}
+
 	bool VfsNodeComparator::operator()(VfsNode const& a, VfsNode const& b) const noexcept {
 		return phoenix::icompare(a.name(), b.name());
 	}
@@ -476,7 +495,7 @@ namespace zenkit {
 #ifdef _ZK_WITH_MMAP
 					    auto& mem = this->_m_data_mapped.emplace_back(path);
 					    parent->create(VfsNode::file(path.filename().string(),
-					                                 VfsFileDescriptor {mem.data(), mem.size()},
+					                                 VfsFileDescriptor {mem.data(), mem.size(), false},
 					                                 time.count()));
 #else
 					    std::ifstream stream {host, std::ios::ate};
@@ -603,7 +622,8 @@ namespace zenkit {
 					    parent->remove(e_name);
 				    }
 
-				    (void) parent->create(VfsNode::file(e_name, VfsFileDescriptor {buf + e_offset, e_size}, timestamp));
+				    (void) parent->create(
+				        VfsNode::file(e_name, VfsFileDescriptor {buf + e_offset, e_size, false}, timestamp));
 			    }
 
 			    return last;
