@@ -1,9 +1,9 @@
-// Copyright © 2022-2023 GothicKit Contributors.
+// Copyright © 2022-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
-#include <phoenix/ext/daedalus_classes.hh>
-#include <phoenix/script.hh>
-#include <phoenix/vm.hh>
+#include <zenkit/DaedalusScript.hh>
+#include <zenkit/DaedalusVm.hh>
 #include <zenkit/Logger.hh>
+#include <zenkit/addon/daedalus.hh>
 
 #include <iostream>
 
@@ -15,77 +15,82 @@ int main(int argc, char** argv) {
 
 	zenkit::Logger::set_default(zenkit::LogLevel::DEBUG);
 
-	phoenix::vm vm {phoenix::script::parse(argv[1])};
-	phoenix::register_all_script_classes(vm); // needed for Gothic scripts
+	// Load the script file
+	zenkit::DaedalusScript script;
+	auto rd = zenkit::Read::from(argv[1]);
+	script.load(rd.get());
 
-	vm.register_default_external([](std::string_view name) { std::cout << "VM: No external for " << name << "\n"; });
+	// Create a VM from the script
+	zenkit::DaedalusVm vm {std::move(script)};
+
+	// Register default script classes. Their implementation can be found in `zenkit/addon/daedalus.hh`. You are able
+	// to define your own classes through DaedalusScript::register_member if your use-case requires it.
+	// Generally, registering class definitions is required for scripts to work correctly.
+	zenkit::register_all_script_classes(vm);
+
+	// Register a catch-all callback for all calls to un-registered external functions. ZenKit will handle all required
+	// internal VM state as required so as to not corrupt the stack.
+	//
+	// If you need to restore custom VM state when external calls fail (such as setting a global variable or returning
+	// a custom value), you can use the unmanaged `DaedalusVm::register_default_external_custom` which leaves VM state
+	// fixing up to you. This not not recommended, however, and you should only use it when its absolutely required.
+	// Prefer actually implementing externals to messing with internal VM state.
+	vm.register_default_external([](zenkit::DaedalusSymbol const& sym) { //
+		std::cout << "VM: No external for " << sym.name() << "\n";
+	});
+
+	// Register implementations for external functions. Parameters and return values are checked to match their
+	// definitions in the script at runtime and any mismatches between definition and implementation will cause runtime
+	// exceptions to be thrown.
 	vm.register_external("INTTOSTRING", [](int i) { return std::to_string(i); });
-	vm.register_external("CONCATSTRINGS",
-	                     [](std::string_view a, std::string_view b) { return std::string {a} + std::string {b}; });
+	vm.register_external("CONCATSTRINGS", [](std::string_view a, std::string_view b) { //
+		return std::string {a} + std::string {b};
+	});
 
 	vm.register_external("AI_PRINTSCREEN", [](std::string_view msg, int, int, std::string_view font, int) {
 		std::cout << "AI: print \"" << msg << "\" with font \"" << font << "\"\n";
 		return true;
 	});
 
+	// Initialize some instances. Essentially, each Daedalus instance needs to be initialized in C++ which causes the
+	// Daedalus code defining that instance to be executed. This needs to be done for every Daedalus instance BEFORE
+	// it can be used in a script. The fields of the Daedalus instances are synced, so any change in C++ will be
+	// reflected in Daedalus and vice-versa.
 	auto xardas = vm.init_instance<zenkit::INpc>("NONE_100_XARDAS");
 	auto hero = vm.init_instance<zenkit::INpc>("PC_HERO");
-	auto gold = vm.init_instance<zenkit::IItem>("ITMI_GOLD");
 
-	vm.register_external("NPC_ISPLAYER", [&hero](std::shared_ptr<phoenix::c_npc> npc) { return npc->id == hero->id; });
+	// You can also move the actual instance initialization call to a later point. This might be useful when you need
+	// you want to manually initialize the instance in C++. To do it, first allocate an instance, then initialize it,
+	// when needed, like this:
+	auto gold = vm.allocate_instance<zenkit::IItem>("ITMI_GOLD");
+	vm.init_instance(gold, "ITMI_GOLD");
 
-	std::cout << "\nNONE_100_XARDAS = C_NPC(\n"
-	          << "    id=" << xardas->id << ",\n"
-	          << "    name=" << xardas->name[0] << ",\n"
-	          << "    slot=" << xardas->slot << ",\n"
-	          << "    effect=" << xardas->effect << ",\n"
-	          << "    npc_type=" << (int) xardas->type << ",\n"
-	          << "    flags=" << (int) xardas->flags << ",\n"
-	          << "    attribute=[" << xardas->attribute[0] << ", " << xardas->attribute[1] << ", "
-	          << xardas->attribute[2] << ", " << xardas->attribute[3] << ", " << xardas->attribute[5] << ", "
-	          << xardas->attribute[5] << ", " << xardas->attribute[6] << ", " << xardas->attribute[7] << "],\n"
-	          << "    hitchance=[" << xardas->hitchance[0] << ", " << xardas->hitchance[1] << ", "
-	          << xardas->hitchance[2] << ", " << xardas->hitchance[3] << ", " << xardas->hitchance[4] << ", "
-	          << "],\n"
-	          << "    protection=[" << xardas->protection[0] << ", " << xardas->protection[1] << ", "
-	          << xardas->protection[2] << ", " << xardas->protection[3] << ", " << xardas->protection[4] << ", "
-	          << xardas->protection[5] << ", " << xardas->protection[6] << ", " << xardas->protection[7] << ", "
-	          << "],\n"
-	          << "    damage=[" << xardas->damage[0] << ", " << xardas->damage[1] << ", " << xardas->damage[2] << ", "
-	          << xardas->damage[3] << ", " << xardas->damage[4] << ", " << xardas->damage[5] << ", "
-	          << xardas->damage[6] << ", " << xardas->damage[7] << ", "
-	          << "],\n"
-	          << "    damage_type=" << xardas->damage_type << ",\n"
-	          << "    guild=" << xardas->guild << ",\n"
-	          << "    level=" << xardas->level << ",\n"
-	          << "    mission=[" << xardas->mission[0] << ", " << xardas->mission[1] << ", " << xardas->mission[2]
-	          << ", " << xardas->mission[3] << ", " << xardas->mission[4] << ", "
-	          << "],\n"
-	          << "    fight_tactic=" << xardas->fight_tactic << ",\n"
-	          << "    weapon=" << xardas->weapon << ",\n"
-	          << "    voice=" << xardas->voice << ",\n"
-	          << "    voice_pitch=" << xardas->voice_pitch << ",\n"
-	          << "    body_mass=" << xardas->body_mass << ",\n"
-	          << "    daily_routine=" << xardas->daily_routine << ",\n"
-	          << "    start_aistate=" << xardas->start_aistate << ",\n"
-	          << "    spawnpoint=" << xardas->spawnpoint << ",\n"
-	          << "    spawn_delay=" << xardas->spawn_delay << ",\n"
-	          << "    senses=" << xardas->senses << ",\n"
-	          << "    senses_range=" << xardas->senses_range << ",\n"
-	          << "    wp=" << xardas->wp << ",\n"
-	          << "    exp=" << xardas->exp << ",\n"
-	          << "    exp_next=" << xardas->exp_next << ",\n"
-	          << "    lp=" << xardas->lp << ",\n"
-	          << "    bodystate_interruptable_override=" << xardas->bodystate_interruptable_override << ",\n"
-	          << "    no_focus=" << xardas->no_focus << "\n)\n\n";
+	// External callbacks may also capture any local state, if needed.
+	vm.register_external("NPC_ISPLAYER", [&hero](std::shared_ptr<zenkit::INpc> npc) { //
+		return npc->id == hero->id;
+	});
 
+	// Some calls to VM function require a certain global context variable to be set. This applies mainly to NPC
+	// routine functions, state update functions (like item equip callbacks) and mission state query functions. The
+	// available global context variables are:
+	//
+	//  * `global_self` -> var C_NPC self
+	//  * `global_other` -> var C_NPC other
+	//  * `global_victim` -> var C_NPC victim
+	//  * `global_hero` -> var C_NPC hero
+	//  * `global_item` -> var C_ITEM item
 	vm.global_item()->set_instance(gold);
 
-	// A return type is provided in the template parameter (<int>). If it is left empty, the return value is ignored.
+	// Call a function defined the script. The first parameter can either be the function's name or the DaedalusSymbol
+	// for the function. The following parameters are passed to the Daedalus function as arguments. If set, the explicit
+	// template parameter indicates the return value. If it is not set, the return value (if any) is ignored.
+	//
+	// In this case, the Daedalus function definition is:
+	//
+	//     func int B_GIVEINVITEMS(var C_NPC giver, var C_NPC taker, var int itemInstance, var int amount)
 	auto ret = vm.call_function<int>("B_GIVEINVITEMS", xardas, hero, static_cast<int>(gold->symbol_index()), 2);
 
 	std::cout << "\nCalling B_GIVEINVITEMS(NONE_100_XARDAS, PC_HERO, " << gold->symbol_index()
 	          << ", 1) resulted in return of " << ret << "\n";
-
 	return 0;
 }
