@@ -605,8 +605,19 @@ namespace zenkit {
 		/// underflows.
 		///
 		/// \param callback The function to call. The one parameter of the function is the name of the unresolved
-		/// external.
+		///                 external.
 		ZKAPI void register_default_external(std::function<void(std::string_view)> const& callback);
+
+		/// \brief Registers a function to be called when the script tries to call an external which has not been
+		///        registered.
+		///
+		/// Before the callback is invoked, the VM makes sure that all parameters for the external are popped off
+		/// the stack and a default return value (if needed) is pushed onto the stack. This prevents stack
+		/// underflows.
+		///
+		/// \param callback The function to call. The one parameter of the function is the symbol of the unresolved
+		///                 external.
+		ZKAPI void register_default_external(std::function<void(DaedalusSymbol const&)> const& callback);
 
 		ZKAPI void register_default_external_custom(std::function<void(DaedalusVm&, DaedalusSymbol&)> const& callback);
 
