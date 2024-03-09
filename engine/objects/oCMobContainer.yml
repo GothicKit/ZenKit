@@ -1,0 +1,44 @@
+class:
+  name: "oCMobContainer"
+  bases:
+    - zCVob
+    - oCVob
+    - oCMOB
+    - oCMOBInter
+    - oCMOBLockable
+  description: "An object which contains items."
+  zenkit: "VContainer"
+version:
+  gothic1: 64513
+  gothic2: 64513
+sources:
+  spacerhilfedatei.sph: https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei
+  gothic-library.ru: http://www.gothic-library.ru/publ/ocmobcontainer/1-1-0-509
+properties:
+  Container:
+    type: "group"
+    version: [ 1, 2 ]
+    save: false
+    properties:
+      contains:
+        type: "string"
+        description: |
+          The items found inside the container as a comma-separated list. Each element of the list starts with the name of the
+          item script instance and is optionally followed by a colon and a number, indicating the number of that item to be found
+          inside.
+        default: ""
+        version: [ 1, 2 ]
+        save: false
+        example: "ItMi_Gold:75, ItFo_Fish:2, ItMi_Quartz"
+  NumOfEntries:
+    type: "int"
+    description: "The number of items in the container."
+    default: "0"
+    version: [ 1, 2 ]
+    save: true
+  oCItem:
+    type: "class"
+    default: "NULL"
+    version: [ 1, 2 ]
+    save: true
+    multi: true

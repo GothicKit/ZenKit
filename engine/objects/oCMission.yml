@@ -1,0 +1,62 @@
+class:
+  name: "oCMission"
+  bases: []
+  description: ""
+  zenkit: "—"
+version:
+  gothic1: 0
+  gothic2: 0
+properties:
+  name:
+    type: "string"
+    description: "Unknown."
+    default: ""
+    version: [1, 2]
+    save: true
+  ID:
+    type: "int"
+    description: "Unknown."
+    default: "0"
+    version: [1, 2]
+    save: true
+  AV:
+    type: "bool"
+    description: "Unknown."
+    default: "FALSE"
+    version: [1, 2]
+    save: true
+  NumInList:
+    type: "int"
+    description: "The number of statuses stored for the mission."
+    default: "0"
+    version: [1, 2]
+    save: true
+  "Status ...":
+    type: "group"
+    version: [ 1, 2 ]
+    save: true
+    properties:
+      VobIDL:
+        type: "int"
+        description: "Unknown."
+        default: "0"
+        version: [ 1, 2 ]
+        save: true
+      StatusL:
+        type: "int"
+        description: "Unknown."
+        default: "0"
+        version: [ 1, 2 ]
+        save: true
+      startTimeL:
+        type: "float"
+        description: "Unknown."
+        default: "0.0"
+        version: [ 1, 2 ]
+        save: true
+  StatusIndex:
+    type: "int"
+    description: "Unknown."
+    default: "0"
+    version: [1, 2]
+    save: true

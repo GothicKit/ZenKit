@@ -1,0 +1,100 @@
+{% macro _field(name, cfg) -%}
+{%- if cfg.type == "group" %}
+- {{name}}
+  {: .sp-folder}
+    {%- for f, itm in cfg.properties|items %}
+
+    {{ _field(f, itm)|indent(4) }}
+    {%- endfor %}
+{%- elif cfg.type == "class" %}
+- [{{name}}]({{name}}.md){{ " ..." if cfg.multi}} = {{cfg.default}}
+  {: .sp-class}
+{%- else %}
+- [{{name}}](#{{name|lower}}){{ " ..." if cfg.multi}} = {{cfg.default}}
+  {: .sp-{{cfg.type}}}
+{%- endif %}
+{%- endmacro %}
+ 
+{% macro _structure(version, save) -%}
+    === "Gothic {{version}}{{ " (Save)" if save }}"
+    {% for base in class.bases %}
+    - [{{base}}]({{base}}.md)
+      {: .sp-class}
+    {% endfor %}
+    - {{class.name}}
+      {: .sp-class}
+    {% set ns = namespace(count=0, groups=[]) %}
+    {% for f, cfg in properties|items %}
+        {% if version in cfg.version and (not cfg.save or save) %}
+            {% set ns.count = ns.count + 1 %}
+        {{ _field(f, cfg)|indent(8) }}
+        {% endif %}
+    {% endfor %}
+    {% if ns.count == 0 %}
+        - &lt;empty&gt;
+          {: .sp-none}
+    {% endif %}
+{%- endmacro %}
+
+# `{{class.name}}`
+
+!!! abstract inline end "Quick Infos"
+    **Type:** Object<br/>
+    **Format Name:** ZenGin Archive<br/>
+    **File Extension:** `.ZEN`<br/>
+    **Class Name:** `{{class.name}}`<br/>
+    **Version Identifiers:**<br />
+    — Gothic I: `{{version.gothic1}}`<br/>
+    — Gothic II: `{{version.gothic2}}`<br/>
+    **ZenKit Class:** `{{class.zenkit}}` {{ "<br/>" if sources else "" }}
+    {% if sources %}
+    **Sources:**<br/>
+        {% for source,link in sources|items %}
+    — [{{source}}]({{link}}){{ "" if loop.last else "<br />" }}
+        {% endfor %}
+    {% endif %}
+
+{{ class.description|replace("\n", " ") }}
+
+{{ _structure(1, False) }}
+{{ _structure(2, False) }}
+{{ _structure(1, True) }}
+{{ _structure(2, True) }}
+
+{% if properties %}
+## Properties
+
+{% for name, value in properties|items recursive %}
+    {% if value.type == "group" %}
+{{ loop(value.properties|items) }}
+    {%- elif value.description %}
+#### `{{name}}` {: .sp-{{value.type}}}
+
+:   {{value.description|replace("\n", "")}}
+    {%- if value.example %}<br />Example: `{{value.example}}`{% endif %}
+
+
+    {% for optname, optdesc in value.options|items %}
+    * `{{ optname }}` — {{ optdesc|replace("\n", " ") }}
+    {% endfor %}
+    {% if value.extra %}
+    !!! {{ value.extra.type }}
+        {{ value.extra.text }}
+    {% endif %}
+    {% if value.save %}
+        {% if value.version|length == 1 %}
+    !!! warning
+        This property is only available in saved games made using Gothic {{ value.version[0] }}.
+        {% else %}
+    !!! warning
+        This property is only available in saved games.
+        {% endif %}
+    {% elif value.version|length == 1 %}
+
+    !!! warning
+        This property is only available in Gothic {{ value.version[0] }}.
+    {% endif %}
+{%- endif %}
+
+{% endfor %}
+{% endif %}

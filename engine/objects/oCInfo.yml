@@ -1,0 +1,24 @@
+class:
+  name: "oCInfo"
+  bases: []
+  description: ""
+  zenkit: "—"
+version:
+  gothic1: 0
+  gothic2: 0
+properties:
+  Told:
+    type: "bool"
+    description: "Whether the hero has already been told this info."
+    default: "FALSE"
+    version: [1, 2]
+    save: true
+    options:
+      FALSE: "The info has not yet been told."
+      TRUE: "The info has already been told."
+  InstName:
+    type: "string"
+    description: "The name of the script instance representing this info."
+    default: ""
+    version: [1, 2]
+    save: true

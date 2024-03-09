@@ -1,0 +1,33 @@
+class:
+  name: "oCItem"
+  bases:
+    - "zCVob"
+    - "oCVob"
+  description: |
+    Represents an item in the game world. Items are special VObjects which are tied to a script instance which defines
+    their attributes. They have physics enabled and can be targeted and picked up by the player.
+  zenkit: "—"
+version:
+  gothic1: 0
+  gothic2: 0
+sources:
+  gothic-library.ru: http://www.gothic-library.ru/publ/class_occstrigger/1-1-0-530
+properties:
+  itemInstance:
+    type: "string"
+    description: "The name of the script instance representing the item."
+    default: ""
+    version: [1, 2]
+    save: false
+  amount:
+    type: "int"
+    description: "Unknown."
+    default: ""
+    version: [1, 2]
+    save: true
+  flags:
+    type: "int"
+    description: "Unknown."
+    default: ""
+    version: [1, 2]
+    save: true
