@@ -131,6 +131,8 @@ namespace zenkit {
 	}
 
 	VfsNode* VfsNode::create(VfsNode node) {
+		this->remove(node.name());
+
 		auto& children = std::get<ChildContainer>(_m_data);
 		auto it = children.insert(std::move(node));
 		return const_cast<VfsNode*>(&*it.first);
