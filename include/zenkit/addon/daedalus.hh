@@ -67,7 +67,7 @@ namespace zenkit {
 		static constexpr std::uint32_t POINT = 6U;
 		static constexpr std::uint32_t FALL = 7U;
 
-		static constexpr std::uint32_t _NUM = 8U;
+		static constexpr std::uint32_t NUM = 8U;
 
 		static constexpr std::uint32_t barrier ZKREM("renamed to DamageType::BARRIER") = BARRIER;
 		static constexpr std::uint32_t blunt ZKREM("renamed to DamageType::BLUNT") = BLUNT;
@@ -77,7 +77,7 @@ namespace zenkit {
 		static constexpr std::uint32_t magic ZKREM("renamed to DamageType::MAGIC") = MAGIC;
 		static constexpr std::uint32_t point ZKREM("renamed to DamageType::POINT") = POINT;
 		static constexpr std::uint32_t fall ZKREM("renamed to DamageType::FALL") = FALL;
-		static constexpr std::uint32_t count ZKREM("renamed to DamageType::_NUM") = _NUM;
+		static constexpr std::uint32_t count ZKREM("renamed to DamageType::NUM") = NUM;
 	} // namespace DamageType
 
 	namespace NpcAttribute {
@@ -90,7 +90,7 @@ namespace zenkit {
 		static constexpr std::uint32_t REGENERATE_HP = 6U;
 		static constexpr std::uint32_t REGENERATE_MANA = 7U;
 
-		static constexpr std::uint32_t _NUM = 8U;
+		static constexpr std::uint32_t NUM = 8U;
 
 		static constexpr std::uint32_t hitpoints ZKREM("renamed to NpcAttribute::HITPOINTS") = HITPOINTS;
 		static constexpr std::uint32_t hitpoints_max ZKREM("renamed to NpcAttribute::HITPOINTS_MAX") = HITPOINTS_MAX;
@@ -101,7 +101,7 @@ namespace zenkit {
 		static constexpr std::uint32_t regenerate_hp ZKREM("renamed to NpcAttribute::REGENERATE_HP") = REGENERATE_HP;
 		static constexpr std::uint32_t
 		    regenerate_mana ZKREM("renamed to NpcAttribute::REGENERATE_MANA") = REGENERATE_MANA;
-		static constexpr std::uint32_t count ZKREM("renamed to NpcAttribute::_NUM") = _NUM;
+		static constexpr std::uint32_t count ZKREM("renamed to NpcAttribute::NUM") = NUM;
 	} // namespace NpcAttribute
 
 	enum class NpcType : std::uint32_t {
@@ -188,10 +188,10 @@ namespace zenkit {
 		var string effect;
 		var NpcType type;
 		var NpcFlag flags;
-		var int32_t attribute[NpcAttribute::_NUM];
+		var int32_t attribute[NpcAttribute::NUM];
 		var int32_t hitchance[hitchance_count];
-		var int32_t protection[DamageType::_NUM];
-		var int32_t damage[DamageType::_NUM];
+		var int32_t protection[DamageType::NUM];
+		var int32_t damage[DamageType::NUM];
 		var int32_t damage_type;
 		var int32_t guild;
 		var int32_t level;
@@ -279,9 +279,9 @@ namespace zenkit {
 		var int32_t value;
 		var int32_t damage_type;
 		var int32_t damage_total;
-		var int32_t damage[DamageType::_NUM];
+		var int32_t damage[DamageType::NUM];
 		var int32_t wear;
-		var int32_t protection[DamageType::_NUM];
+		var int32_t protection[DamageType::NUM];
 		var int32_t nutrition;
 		var int32_t cond_atr[condition_count];
 		var int32_t cond_value[condition_count];
