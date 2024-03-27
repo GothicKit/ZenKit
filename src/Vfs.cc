@@ -1,6 +1,8 @@
 // Copyright © 2023 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/Vfs.hh"
+
+#include "Internal.hh"
 #include "zenkit/Error.hh"
 #include "zenkit/Stream.hh"
 
@@ -16,6 +18,7 @@
 namespace zenkit {
 	static constexpr std::string_view VFS_DISK_SIGNATURE_G1 = "PSVDSC_V2.00\r\n\r\n";
 	static constexpr std::string_view VFS_DISK_SIGNATURE_G2 = "PSVDSC_V2.00\n\r\n\r";
+	static constexpr std::string_view VFS_DISK_SIGNATURE_VDFSTOOL = "PSVDSC_V2.00\x1A\x1A\x1A\x1A";
 
 	class ZKINT RawBufferBacking final : public phoenix::buffer_backing {
 	public:
@@ -538,12 +541,22 @@ namespace zenkit {
 			throw VfsBrokenDiskError {"Detected unsupported Union disk"};
 		}
 
-		if (signature != VFS_DISK_SIGNATURE_G1 && signature != VFS_DISK_SIGNATURE_G2) {
+		if (signature == VFS_DISK_SIGNATURE_VDFSTOOL) {
+			ZKLOGI("Vfs", "VDFS tool disk detected");
+		} else if (signature == VFS_DISK_SIGNATURE_G1) {
+			ZKLOGD("Vfs", "Gothic 1 disk detected");
+		} else if (signature == VFS_DISK_SIGNATURE_G2) {
+			ZKLOGD("Vfs", "Gothic 2 disk detected");
+		} else {
 			throw VfsBrokenDiskError {signature};
 		}
 
 		if (auto it = comment.find('\x1A'); it != std::string::npos) {
 			comment.resize(it);
+		}
+
+		if (catalog_offset == 0) {
+			catalog_offset = r->tell();
 		}
 
 		std::function<bool(VfsNode*)> load_entry =
