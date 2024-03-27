@@ -180,10 +180,7 @@ namespace phoenix {
 
 		/// \brief Gets the current position of this buffer.
 		/// \return The current position of this buffer.
-		[[nodiscard]] ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI inline std::uint64_t
-		    position() const noexcept {
-			return _m_position;
-		}
+		[[nodiscard]] ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI std::uint64_t position() const noexcept;
 
 		/// \brief Sets this buffer's position.
 		/// \param pos The new position value.
@@ -192,9 +189,7 @@ namespace phoenix {
 
 		/// \brief Returns the number of bytes available in this buffer.
 		/// \return The limit of this buffer.
-		[[nodiscard]] ZKAPI inline std::uint64_t limit() const noexcept {
-			return _m_backing_end - _m_backing_begin;
-		}
+		[[nodiscard]] ZKAPI std::uint64_t limit() const noexcept;
 
 		/// \brief Sets this buffer's limit.
 		///
@@ -207,28 +202,20 @@ namespace phoenix {
 		/// \brief Rewinds this buffer by setting the position to 0.
 		///
 		/// This operation discards the #mark if it is set.
-		ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI inline void rewind() {
-			_m_position = 0;
-			_m_mark.reset();
-		}
+		ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI void rewind();
 
 		/// \brief Skips \p count bytes in this buffer.
 		/// \param count The number of bytes to skip.
 		/// \throws buffer_underflow if #position + \p count > #limit
 		/// \see #position
-		ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI inline void skip(std::uint64_t count) {
-			return this->position(this->position() + count);
-		}
+		ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI void skip(std::uint64_t count);
 
 		/// \brief Returns the number of bytes remaining in this buffer.
 		///
 		/// The number of remaining bytes is equal to #limit - #position.
 		///
 		/// \return The number of bytes remaining in this buffer.
-		[[nodiscard]] ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI inline std::uint64_t
-		    remaining() const noexcept {
-			return this->limit() - this->position();
-		}
+		[[nodiscard]] ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI std::uint64_t remaining() const noexcept;
 
 		/// \brief Returns the capacity of this buffer.
 		///
@@ -236,24 +223,17 @@ namespace phoenix {
 		/// the total number of bytes available in the backing.
 		///
 		/// \return The capacity of this buffer.
-		[[nodiscard]] ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI inline std::uint64_t
-		    capacity() const noexcept {
-			return _m_capacity;
-		}
+		[[nodiscard]] ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI std::uint64_t capacity() const noexcept;
 
 		/// \brief Returns whether this buffer is considered to be direct or not.
 		/// \return `true` if the backing of this buffer is considered to be direct.
 		/// \see buffer_backing::direct
-		[[nodiscard]] ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI inline bool direct() const noexcept {
-			return _m_backing->direct();
-		}
+		[[nodiscard]] ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI bool direct() const noexcept;
 
 		/// \brief Returns whether this buffer is read-only or not.
 		/// \return `true` if this buffer is read-only.
 		/// \see buffer_backing::readonly
-		[[nodiscard]] ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI inline bool readonly() const noexcept {
-			return _m_backing->readonly();
-		}
+		[[nodiscard]] ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI bool readonly() const noexcept;
 
 		/// \brief Clears this buffer by resetting #position and #limit.
 		///
@@ -268,17 +248,11 @@ namespace phoenix {
 
 		/// \brief Sets this buffer's mark at its position.
 		/// \return This buffer.
-		ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI inline void mark() noexcept {
-			_m_mark = position();
-		}
+		ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI void mark() noexcept;
 
 		/// \brief Resets this buffer's position to the previously-marked position.
 		/// \return This buffer.
-		ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI inline void reset() {
-			if (_m_mark) {
-				position(*_m_mark);
-			}
-		}
+		ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI void reset();
 
 		/// \brief Creates a new buffer which shares its content with this buffer.
 		///
@@ -314,16 +288,10 @@ namespace phoenix {
 		/// \param size The number of bytes to extract.
 		/// \return The newly created buffer.
 		/// \throws buffer_underflow if #position + \p size > #limit.
-		[[nodiscard]] ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI buffer extract(std::uint64_t size) {
-			auto sl = this->slice(position(), size);
-			_m_position += size;
-			return sl;
-		}
+		[[nodiscard]] ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI buffer extract(std::uint64_t size);
 
 		/// \return A read-only view into the raw contents of this buffer.
-		[[nodiscard]] ZKAPI inline std::byte const* array() const noexcept {
-			return _m_backing->array() + _m_backing_begin;
-		}
+		[[nodiscard]] ZKAPI std::byte const* array() const noexcept;
 
 		/// \brief Get bytes from the buffer, put them into buf and advance the position accordingly.
 		/// \param buf The buffer to write into.
@@ -335,9 +303,7 @@ namespace phoenix {
 		/// \param buf The buffer to write into.
 		/// \param size The number of bytes to get.
 		/// \throws buffer_underflow if the size of \p buf > #remaining.
-		ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI inline void get(std::uint8_t* buf, std::uint64_t size) {
-			return this->get((std::byte*) buf, size);
-		}
+		ZKREM("Deprecated. Use zenkit::Read instead.") ZKAPI void get(std::uint8_t* buf, std::uint64_t size);
 
 		/// \brief Get a value of type std::uint8_t from the buffer and advance the position accordingly.
 		/// \return The value just read.

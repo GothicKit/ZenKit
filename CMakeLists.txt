@@ -129,7 +129,7 @@ endif ()
 
 target_sources(zenkit PRIVATE ${_ZK_SOURCES} ${_ZK_HEADERS})
 target_include_directories(zenkit PUBLIC include)
-target_compile_definitions(zenkit PRIVATE _ZKEXPORT=1)
+target_compile_definitions(zenkit PRIVATE _ZKEXPORT=1 ZKNO_REM=1)
 target_compile_options(zenkit PRIVATE ${_ZK_COMPILE_FLAGS})
 target_link_options(zenkit PUBLIC ${_ZK_LINK_FLAGS})
 target_link_libraries(zenkit PUBLIC glm::glm_static squish)

@@ -500,6 +500,63 @@ namespace phoenix {
 		_put_t(value);
 	}
 
+	void buffer::skip(std::uint64_t count) {
+		return this->position(this->position() + count);
+	}
+
+	void buffer::rewind() {
+		_m_position = 0;
+		_m_mark.reset();
+	}
+
+	std::uint64_t buffer::remaining() const noexcept {
+		return this->limit() - this->position();
+	}
+
+	std::uint64_t buffer::capacity() const noexcept {
+		return _m_capacity;
+	}
+
+	bool buffer::direct() const noexcept {
+		return _m_backing->direct();
+	}
+
+	bool buffer::readonly() const noexcept {
+		return _m_backing->readonly();
+	}
+
+	void buffer::reset() {
+		if (_m_mark) {
+			position(*_m_mark);
+		}
+	}
+
+	void buffer::mark() noexcept {
+		_m_mark = position();
+	}
+
+	buffer buffer::extract(std::uint64_t size) {
+		auto sl = this->slice(position(), size);
+		_m_position += size;
+		return sl;
+	}
+
+	std::byte const* buffer::array() const noexcept {
+		return _m_backing->array() + _m_backing_begin;
+	}
+
+	void buffer::get(std::uint8_t* buf, std::uint64_t size) {
+		return this->get((std::byte*) buf, size);
+	}
+
+	std::uint64_t buffer::position() const noexcept {
+		return _m_position;
+	}
+
+	std::uint64_t buffer::limit() const noexcept {
+		return _m_backing_end - _m_backing_begin;
+	}
+
 	template <typename T, typename>
 	void buffer::_put_t(T value) {
 		if (this->remaining() < sizeof(T)) {
