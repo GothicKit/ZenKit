@@ -106,12 +106,15 @@ struct SymbolCodeSpan {
     uint reserved: 13;
     uint lineCount: 19;
     uint reserved: 13;
-    uint columnStart: 24;
+    uint charStart: 24; // (1)
     uint reserved: 8;
-    uint columnCount: 24;
+    uint charCount: 24; // (2)
     uint reserved: 8;
 };
 ```
+
+1. Points to a byte of a source code file at which the span starts
+2. Determines how many bytes does the span starting at `charStart` has
 
 #### Symbol Data
 
