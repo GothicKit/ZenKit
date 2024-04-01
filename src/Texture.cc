@@ -140,7 +140,7 @@ namespace zenkit {
 		}
 		case TextureFormat::R5G6B5: {
 			for (auto i = 0u; i < width * height; ++i) {
-				auto* rgb = reinterpret_cast<r5g6b5 const*>(&bytes[i]);
+				auto* rgb = reinterpret_cast<r5g6b5 const*>(&bytes[i * 2]);
 				conv[i * 4 + 0] = static_cast<uint8_t>(static_cast<float>(rgb->r) * 8.225806452f);
 				conv[i * 4 + 1] = static_cast<uint8_t>(static_cast<float>(rgb->g) * 4.047619048f);
 				conv[i * 4 + 2] = static_cast<uint8_t>(static_cast<float>(rgb->b) * 8.225806452f);
