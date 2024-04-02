@@ -14,9 +14,9 @@ namespace zenkit {
 
 #pragma pack(push, 1)
 	struct r5g6b5 {
-		std::uint16_t r : 5;
-		std::uint16_t g : 6;
 		std::uint16_t b : 5;
+		std::uint16_t g : 6;
+		std::uint16_t r : 5;
 	};
 #pragma pack(pop)
 
@@ -123,7 +123,7 @@ namespace zenkit {
 				conv[i * 4 + 0] = bytes[i * 3 + 2];
 				conv[i * 4 + 1] = bytes[i * 3 + 1];
 				conv[i * 4 + 2] = bytes[i * 3 + 0];
-				conv[i * 4 + 3] = 0;
+				conv[i * 4 + 3] = 0xff;
 			}
 
 			break;
@@ -133,7 +133,7 @@ namespace zenkit {
 				conv[i * 4 + 0] = bytes[i * 3 + 0];
 				conv[i * 4 + 1] = bytes[i * 3 + 1];
 				conv[i * 4 + 2] = bytes[i * 3 + 2];
-				conv[i * 4 + 3] = 0;
+				conv[i * 4 + 3] = 0xff;
 			}
 
 			break;
