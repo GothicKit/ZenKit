@@ -139,7 +139,7 @@ This depends on `params.flags`, if `CLASSVAR` flag is set this data will always 
 
     !!! warning
         Some mods don't terminate those strings correctly, look at this [code](https://github.com/GothicKit/ZenKit/commit/0e7e507de92e8da4ec28513e6be56e4043329990)
-        and the issue related to it.
+        and the [issue related to it](https://github.com/Try/OpenGothic/issues/483).
     ```c title="For CLASS"
     struct SymbolData {
         int classOffset;
