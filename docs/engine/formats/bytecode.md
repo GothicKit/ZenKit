@@ -19,13 +19,9 @@ struct Instruction {
 
 ### Opcode
 
-<details>
-    <summary>
-    ```c title=""
-    enum Opcode: uint { ... }
-    ```
-    </summary>
+??? "enum Opcode: uint { ... }"
 
+    Unused variants are commented out
     ```c title=""
     enum Opcode: uint {
         zPAR_OP_PLUS         = 0,
@@ -50,31 +46,31 @@ struct Instruction {
         zPAR_OP_ISMINUS      = 20,
         zPAR_OP_ISMUL        = 21,
         zPAR_OP_ISDIV        = 22,
-        zPAR_OP_UNARY        = 30,
+        // zPAR_OP_UNARY        = 30,
         zPAR_OP_UN_PLUS      = 30,
         zPAR_OP_UN_MINUS     = 31,
         zPAR_OP_UN_NOT       = 32,
         zPAR_OP_UN_NEG       = 33,
-        zPAR_OP_MAX          = 33,
-        zPAR_TOK_BRACKETON   = 40,
-        zPAR_TOK_BRACKETOFF  = 41,
-        zPAR_TOK_SEMIKOLON   = 42,
-        zPAR_TOK_KOMMA       = 43,
-        zPAR_TOK_SCHWEIF     = 44,
+        // zPAR_OP_MAX          = 33,
+        // zPAR_TOK_BRACKETON   = 40,
+        // zPAR_TOK_BRACKETOFF  = 41,
+        // zPAR_TOK_SEMIKOLON   = 42,
+        // zPAR_TOK_KOMMA       = 43,
+        // zPAR_TOK_SCHWEIF     = 44,
         zPAR_TOK_NONE        = 45,
-        zPAR_TOK_FLOAT       = 51,
-        zPAR_TOK_VAR         = 52,
-        zPAR_TOK_OPERATOR    = 53,
+        // zPAR_TOK_FLOAT       = 51,
+        // zPAR_TOK_VAR         = 52,
+        // zPAR_TOK_OPERATOR    = 53,
         zPAR_TOK_RET         = 60,
         zPAR_TOK_CALL        = 61,
         zPAR_TOK_CALLEXTERN  = 62,
-        zPAR_TOK_POPINT      = 63,
+        // zPAR_TOK_POPINT      = 63,
         zPAR_TOK_PUSHINT     = 64,
         zPAR_TOK_PUSHVAR     = 65,
-        zPAR_TOK_PUSHSTR     = 66,
+        // zPAR_TOK_PUSHSTR     = 66,
         zPAR_TOK_PUSHINST    = 67,
-        zPAR_TOK_PUSHINDEX   = 68,
-        zPAR_TOK_POPVAR      = 69,
+        // zPAR_TOK_PUSHINDEX   = 68,
+        // zPAR_TOK_POPVAR      = 69,
         zPAR_TOK_ASSIGNSTR   = 70,
         zPAR_TOK_ASSIGNSTRP  = 71,
         zPAR_TOK_ASSIGNFUNC  = 72,
@@ -83,19 +79,18 @@ struct Instruction {
         zPAR_TOK_JUMP        = 75,
         zPAR_TOK_JUMPF       = 76,
         zPAR_TOK_SETINSTANCE = 80,
-        zPAR_TOK_SKIP        = 90,
-        zPAR_TOK_LABEL       = 91,
-        zPAR_TOK_FUNC        = 92,
-        zPAR_TOK_FUNCEND     = 93,
-        zPAR_TOK_CLASS       = 94,
-        zPAR_TOK_CLASSEND    = 95,
-        zPAR_TOK_INSTANCE    = 96,
-        zPAR_TOK_INSTANCEEND = 97,
-        zPAR_TOK_NEWSTRING   = 98,
+        // zPAR_TOK_SKIP        = 90,
+        // zPAR_TOK_LABEL       = 91,
+        // zPAR_TOK_FUNC        = 92,
+        // zPAR_TOK_FUNCEND     = 93,
+        // zPAR_TOK_CLASS       = 94,
+        // zPAR_TOK_CLASSEND    = 95,
+        // zPAR_TOK_INSTANCE    = 96,
+        // zPAR_TOK_INSTANCEEND = 97,
+        // zPAR_TOK_NEWSTRING   = 98,
         zPAR_TOK_FLAGARRAY   = zPAR_TOK_VAR + 128
     };
     ```
-</details>
 
 ### Instruction Data
 
