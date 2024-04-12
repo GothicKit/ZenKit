@@ -121,38 +121,45 @@ struct SymbolCodeSpan {
 This depends on `params.flags`, if `CLASSVAR` flag is set this data will always be 0 sized.
 === "If `CLASSVAR` flag is not set"
     It also depends on `params.type` of the symbol.
-    ```c title="For FLOAT"
-    struct SymbolData {
-        float value[/* params.count */];
-    };
-    ```
-    ```c title="For INT"
-    struct SymbolData {
-        int value[/* params.count */];
-    };
-    ```
-    ```c title="For STRING"
-    struct SymbolData {
-        string value[/* params.count */];
-    };
-    ```
 
-    !!! warning
-        Some mods don't terminate those strings correctly, look at this [code](https://github.com/GothicKit/ZenKit/commit/0e7e507de92e8da4ec28513e6be56e4043329990)
-        and the [issue related to it](https://github.com/Try/OpenGothic/issues/483).
-    ```c title="For CLASS"
-    struct SymbolData {
-        int classOffset;
-    };
-    ```
-    ```c title="For INSTANCE, FUNCTION, PROTOTYPE"
-    struct SymbolData {
-        int address;
-    };
-    ```
-    ```c title="For VOID"
-    struct SymbolData {}
-    ```
+    === "FLOAT"
+        ```c title=""
+        struct SymbolData {
+            float value[/* params.count */];
+        };
+        ```
+    === "INT"
+        ```c title=""
+        struct SymbolData {
+            int value[/* params.count */];
+        };
+        ```
+    === "STRING"
+        ```c title=""
+        struct SymbolData {
+            string value[/* params.count */];
+        };
+        ```
+
+        !!! warning
+            Some mods don't terminate those strings correctly, look at this [code](https://github.com/GothicKit/ZenKit/commit/0e7e507de92e8da4ec28513e6be56e4043329990)
+            and the [issue related to it](https://github.com/Try/OpenGothic/issues/483).
+    === "CLASS"
+        ```c title=""
+        struct SymbolData {
+            int classOffset;
+        };
+        ```
+    === "INSTANCE, FUNCTION, PROTOTYPE"
+        ```c title=""
+        struct SymbolData {
+            int address;
+        };
+        ```
+    === "VOID"
+        ```c title=""
+        struct SymbolData {}
+        ```
 
 === "If `CLASSVAR` flag is set"
     ```c title=""
