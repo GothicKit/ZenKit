@@ -27,7 +27,8 @@
     * [Datatypes](engine/datatypes.md)
     * Formats
         * [ZenGin Animations](engine/formats/animation.md)
-        * [ZenGin DAT](engine/formats/dat.md)
+        * ZenGin Scripts
+            * [Script Binaries](engine/formats/script_binaries.md)
             * [Daedalus Bytecode](engine/formats/bytecode.md)
         * [ZenGin Font](engine/formats/font.md)
         * [ZenGin Texture](engine/formats/texture.md)

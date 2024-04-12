@@ -1,4 +1,4 @@
-# ZenGin DAT
+# ZenGin Script Binaries
 
 !!! abstract inline end "Quick Infos"
     **Type:** Script Format<br/>

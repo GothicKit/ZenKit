@@ -1,6 +1,6 @@
 # ZenGin Bytecode
 
-Bytecode is read from [`DatFile.bytecode`](./dat.md#format-description) field
+Bytecode is read from [`DatFile.bytecode`](./script_binaries.md#format-description) field
 
 ```c title="Bytecode Buffer"
 struct Bytecode {
