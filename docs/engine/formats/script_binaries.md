@@ -50,14 +50,16 @@ struct zCPar_Symbol {
 
 #### Symbol Name
 
-```c title="If isNamed == 1"
-struct SymbolName {
-    string name;
-};
-```
-```c title="If isNamed == 0"
-struct SymbolName {};
-```
+=== "If isNamed == 1"
+    ```c title=""
+    struct SymbolName {
+        string name;
+    };
+    ```
+=== "If isNamed == 0"
+    ```c title=""
+    struct SymbolName {};
+    ```
 
 #### Symbol Parameters
 
