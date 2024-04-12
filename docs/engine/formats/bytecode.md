@@ -96,32 +96,42 @@ struct Instruction {
 
 Depending on `opcode` the data may be different or in most cases 0 sized.
 
-```c title="For CALL, JUMPF, JUMP"
-struct InstructionData {
-    uint address;
-};
-```
+=== "CALL, JUMPF, JUMP"
 
-```c title="For PUSHINT"
-struct InstructionData {
-    int immediate;
-};
-```
+    ```c title=""
+    struct InstructionData {
+        uint address;
+    };
+    ```
 
-```c title="For CALLEXTERN, PUSHVAR, PUSHINST, SETINSTANCE"
-struct InstructionData {
-    uint symbol;
-};
-```
+=== "PUSHINT"
 
-```c title="For PUSHVAR + FLAGARRAY"
-struct InstructionData {
-    uint symbol;
-    byte index;
-};
-```
+    ```c title=""
+    struct InstructionData {
+        int immediate;
+    };
+    ```
 
-```c title="For any other Opcode"
-struct InstructionData {};
-```
+=== "CALLEXTERN, PUSHVAR, PUSHINST, SETINSTANCE"
+
+    ```c title=""
+    struct InstructionData {
+        uint symbol;
+    };
+    ```
+
+=== "PUSHVAR + FLAGARRAY"
+
+    ```c title=""
+    struct InstructionData {
+        uint symbol;
+        byte index;
+    };
+    ```
+
+=== "any other"
+
+    ```c title=""
+    struct InstructionData {};
+    ```
 
