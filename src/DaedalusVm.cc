@@ -592,7 +592,7 @@ namespace zenkit {
 	}
 
 	void DaedalusVm::jump(std::uint32_t address) {
-		if (address > size()) {
+		if (address >= size()) {
 			throw DaedalusVmException {"Cannot jump to " + std::to_string(address) + ": illegal address"};
 		}
 
