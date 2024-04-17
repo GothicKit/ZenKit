@@ -142,7 +142,7 @@ namespace zenkit {
 	}
 
 	DaedalusSymbol const* DaedalusScript::find_symbol_by_index(std::uint32_t index) const {
-		if (index > _m_symbols.size()) {
+		if (index >= _m_symbols.size()) {
 			return nullptr;
 		}
 		return &_m_symbols[index];
@@ -168,7 +168,7 @@ namespace zenkit {
 	}
 
 	DaedalusSymbol* DaedalusScript::find_symbol_by_index(std::uint32_t index) {
-		if (index > _m_symbols.size()) {
+		if (index >= _m_symbols.size()) {
 			return nullptr;
 		}
 		return &_m_symbols[index];
