@@ -600,7 +600,7 @@ namespace zenkit {
 	}
 
 	void DaedalusVm::register_default_external(std::function<void(std::string_view)> const& callback) {
-		this->register_default_external([&callback](DaedalusSymbol const& sym) { callback(sym.name()); });
+		this->register_default_external([callback](DaedalusSymbol const& sym) { callback(sym.name()); });
 	}
 
 	void DaedalusVm::register_default_external(std::function<void(DaedalusSymbol const&)> const& callback) {
