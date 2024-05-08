@@ -5,6 +5,7 @@
 
 #include "Internal.hh"
 
+#include <algorithm>
 #include <cstddef>
 #include <fstream>
 

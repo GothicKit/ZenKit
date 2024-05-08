@@ -5,6 +5,8 @@
 
 #include "../Internal.hh"
 
+#include <algorithm>
+
 namespace zenkit {
 	static constexpr auto version_g1 = 0x2090000;
 	[[maybe_unused]] static constexpr auto version_g2 = 0x4090000;

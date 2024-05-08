@@ -7,6 +7,8 @@
 
 #include "phoenix/buffer.hh"
 
+#include <algorithm>
+
 namespace zenkit {
 	DaedalusSymbolNotFound::DaedalusSymbolNotFound(std::string&& sym_name)
 	    : DaedalusScriptError("symbol not found: " + sym_name), name(sym_name) {}

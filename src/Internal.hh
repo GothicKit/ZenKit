@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Logger.hh"
+#include <cstdint>
 
 #ifndef _MSC_VER
 	#define ZKLOGT(...) zenkit::Logger::log(zenkit::LogLevel::TRACE, __VA_ARGS__)

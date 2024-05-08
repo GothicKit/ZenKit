@@ -8,6 +8,8 @@
 
 #include "phoenix/buffer.hh"
 
+#include <algorithm>
+
 namespace zenkit {
 	CutsceneLibrary CutsceneLibrary::parse(phoenix::buffer& buf) {
 		CutsceneLibrary msgs {};

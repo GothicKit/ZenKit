@@ -7,6 +7,7 @@
 
 #include "Internal.hh"
 
+#include <algorithm>
 #include <set>
 
 namespace zenkit {

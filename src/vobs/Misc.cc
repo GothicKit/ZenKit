@@ -5,6 +5,8 @@
 
 #include "../Internal.hh"
 
+#include <algorithm>
+
 namespace zenkit {
 	void VAnimate::parse(VAnimate& obj, ReadArchive& r, GameVersion version) {
 		obj.load(r, version);

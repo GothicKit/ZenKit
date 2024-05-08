@@ -4,6 +4,8 @@
 #include "zenkit/Archive.hh"
 #include "zenkit/Stream.hh"
 
+#include <algorithm>
+
 namespace zenkit {
 	[[maybe_unused]] static constexpr auto MESH_VERSION_G1 = 9;
 	static constexpr auto MESH_VERSION_G2 = 265;
