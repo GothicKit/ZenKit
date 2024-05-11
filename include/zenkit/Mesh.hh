@@ -81,8 +81,8 @@ namespace zenkit {
 		int32_t lightmap;
 		PolygonFlagSet flags;
 
-		std::vector<uint32_t> vertices;
-		std::vector<uint32_t> features;
+		size_t index_count;
+		size_t index_offset;
 	};
 
 	/// \brief Represents a *ZenGin* basic mesh.
@@ -161,6 +161,8 @@ namespace zenkit {
 		std::vector<LightMap> lightmaps {};
 
 		std::vector<Polygon> geometry {};
+		std::vector<uint32_t> polygon_vertex_indices;
+		std::vector<uint32_t> polygon_feature_indices;
 
 		/// \brief A list of polygons of this mesh.
 		PolygonList polygons {};

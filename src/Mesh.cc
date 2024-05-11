@@ -96,6 +96,11 @@ namespace zenkit {
 				    auto poly_count = c->read_uint();
 				    this->geometry.resize(poly_count);
 
+				    // At least 3 indices per polygon (triangulated).
+				    this->polygon_vertex_indices.reserve(poly_count * 3);
+				    this->polygon_feature_indices.reserve(poly_count * 3);
+				    uint32_t index_offset = 0;
+
 				    for (std::uint32_t i = 0; i < poly_count; ++i) {
 					    this->geometry[i].material = c->read_ushort();
 					    this->geometry[i].lightmap = c->read_short();
@@ -133,9 +138,14 @@ namespace zenkit {
 					    auto has_wide_indices = (version == MESH_VERSION_G2) || force_wide_indices;
 
 					    for (int32_t j = 0; j < vertex_count; ++j) {
-						    this->geometry[i].vertices.push_back(has_wide_indices ? c->read_uint() : c->read_ushort());
-						    this->geometry[i].features.push_back(c->read_uint());
+						    this->polygon_vertex_indices.push_back(has_wide_indices ? c->read_uint()
+						                                                            : c->read_ushort());
+						    this->polygon_feature_indices.push_back(c->read_uint());
 					    }
+
+					    this->geometry[i].index_count = vertex_count;
+					    this->geometry[i].index_offset = index_offset;
+					    index_offset += vertex_count;
 				    }
 
 				    break;
@@ -205,7 +215,7 @@ namespace zenkit {
 			}
 
 			auto& polygon = this->geometry[i];
-			if (polygon.vertices.size() < 3 || polygon.flags.is_portal || polygon.flags.is_ghost_occluder ||
+			if (polygon.index_count < 3 || polygon.flags.is_portal || polygon.flags.is_ghost_occluder ||
 			    polygon.flags.is_outdoor) {
 				continue;
 			}
@@ -213,14 +223,14 @@ namespace zenkit {
 			auto a = 1u;
 
 			// NOTE(lmichaelis): This unpacks triangle fans
-			for (auto b = 2u; b < polygon.vertices.size(); ++b) {
-				auto root = 0u;
-				this->polygons.vertex_indices.push_back(polygon.vertices[root]);
-				this->polygons.vertex_indices.push_back(polygon.vertices[a]);
-				this->polygons.vertex_indices.push_back(polygon.vertices[b]);
-				this->polygons.feature_indices.push_back(polygon.features[root]);
-				this->polygons.feature_indices.push_back(polygon.features[a]);
-				this->polygons.feature_indices.push_back(polygon.features[b]);
+			for (auto b = 2u; b < polygon.index_count; ++b) {
+				auto root = polygon.index_offset;
+				this->polygons.vertex_indices.push_back(polygon_vertex_indices[root]);
+				this->polygons.vertex_indices.push_back(polygon_vertex_indices[root + a]);
+				this->polygons.vertex_indices.push_back(polygon_vertex_indices[root + b]);
+				this->polygons.feature_indices.push_back(polygon_feature_indices[root]);
+				this->polygons.feature_indices.push_back(polygon_feature_indices[root + a]);
+				this->polygons.feature_indices.push_back(polygon_feature_indices[root + b]);
 				this->polygons.material_indices.push_back(polygon.material);
 				this->polygons.lightmap_indices.push_back(polygon.lightmap);
 				this->polygons.flags.push_back(polygon.flags);
@@ -297,8 +307,8 @@ namespace zenkit {
 					c->write_short(flags.sector_index);
 				}
 
-				c->write_ubyte(poly.vertices.size());
-				for (auto i = 0u; i < poly.vertices.size(); ++i) {
+				c->write_ubyte(poly.index_count);
+				for (auto i = 0u; i < poly.index_count; ++i) {
 					if (version == GameVersion::GOTHIC_1) {
 						c->write_ushort(this->polygons.vertex_indices[i]);
 						c->write_uint(this->polygons.feature_indices[i]);
