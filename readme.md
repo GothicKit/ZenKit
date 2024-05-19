@@ -2,11 +2,11 @@
 
 # The _ZenKit_ Project
 
-[![Build](https://img.shields.io/github/actions/workflow/status/GothicKit/phoenix/build.yml?label=Build&branch=main)](https://github.com/GothicKit/phoenix/actions/workflows/build.yml)
-[![License](https://img.shields.io/github/license/GothicKit/phoenix?label=License&color=important)](https://github.com/GothicKit/phoenix/blob/main/license.md)
+[![Build](https://img.shields.io/github/actions/workflow/status/GothicKit/ZenKit/build.yml?label=Build&branch=main)](https://github.com/GothicKit/ZenKit/actions/workflows/build.yml)
+[![License](https://img.shields.io/github/license/GothicKit/ZenKit?label=License&color=important)](https://github.com/GothicKit/ZenKit/blob/main/license.md)
 [![C++](https://img.shields.io/static/v1?label=C%2B%2B&message=17&color=informational)]()
 [![Platforms](https://img.shields.io/static/v1?label=Supports&message=GCC%20|%20Clang%20|%20MSVC%20|%20Apple%20Clang&color=blueviolet)]()
-[![Version](https://img.shields.io/github/v/tag/GothicKit/phoenix?label=Version&sort=semver)](https://github.com/GothicKit/phoenix/releases/latest)
+[![Version](https://img.shields.io/github/v/tag/GothicKit/ZenKit?label=Version&sort=semver)](https://github.com/GothicKit/ZenKit/releases/latest)
 
 **_ZenKit_ has recently been updated to version 1.3! For information about how to migrate your projects, see the
 [documentation](https://zk.gothickit.dev/library/misc/v1.2-to-v1.3/).**
@@ -64,8 +64,8 @@ feel free to create an issue or open a merge request. You will need
 To build _ZenKit_ from scratch, just open a terminal in a directory of your choice and run
 
 ```bash
-git clone --recursive https://github.com/GothicKit/phoenix
-cd phoenix
+git clone --recursive https://github.com/GothicKit/ZenKit
+cd ZenKit
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ```
@@ -187,7 +187,7 @@ int main(int, char**) {
     // You could also have differing member and/or class names:
     //   vm.register_member("SomeOtherClass.fancyness", &MyScriptClass::anEnum);
     
-    // phoenix supports registering external script functions to a C++ function. The function signature is
+    // ZenKit supports registering external script functions to a C++ function. The function signature is
     // validated at runtime to match the definition of the function in the script file.
     vm.register_external("MyExternalFunction", &MyExternalFunction);
     
@@ -196,7 +196,7 @@ int main(int, char**) {
         std::cout << "External " << name << " not registered\n";
     });
     
-    // phoenix allows you to override internal script functions as well. The signature of the function
+    // ZenKit allows you to override internal script functions as well. The signature of the function
     // is also validated at runtime.
     vm.override_function("MyInternalFunction", &MyInternalFunction);
     
@@ -252,25 +252,25 @@ While the source code of _ZenKit_ is licensed under the [MIT license](license.md
 [Gothic II]: https://en.wikipedia.org/wiki/Gothic_II
 [ZenLib]: https://github.com/ataulien/ZenLib
 [phoenix studio]: https://github.com/GothicKit/phoenix-studio
-[examples]: https://github.com/lmichaelis/phoenix/tree/main/examples
+[examples]: https://github.com/GothicKit/ZenKit/tree/main/examples
 
 [TAR]: https://en.wikipedia.org/wiki/Tar_(computing)
 [LOD]: https://en.wikipedia.org/wiki/Level_of_detail_(computer_graphics)
 
-[Reference Documentation]: https://phoenix.gothickit.dev/library/overview
-[Discussions]: https://github.com/GothicKit/phoenix/discussions
+[Reference Documentation]: https://zk.gothickit.dev/library/overview
+[Discussions]: https://github.com/GothicKit/ZenKit/discussions
 
-[Model Animation]: https://phoenix.gothickit.dev/library/api/model-animation/
-[Model Hierarchy]: https://phoenix.gothickit.dev/library/api/model-hierarchy/
-[Model Mesh]: https://phoenix.gothickit.dev/library/api/model-mesh/
-[Model]: https://phoenix.gothickit.dev/library/api/model/
-[Morph Mesh]: https://phoenix.gothickit.dev/library/api/morph-mesh/
-[Multi Resolution Mesh]: https://phoenix.gothickit.dev/library/api/multi-resolution-mesh/
-[Mesh]: https://phoenix.gothickit.dev/library/api/mesh/
-[Daedalus Script]: https://phoenix.gothickit.dev/library/api/daedalus-script/
-[Texture]: https://phoenix.gothickit.dev/library/api/texture/
-[Font]: https://phoenix.gothickit.dev/library/api/font/
-[ZenGin Archive]: https://phoenix.gothickit.dev/library/api/archive/
-[Text/Cutscenes]: https://phoenix.gothickit.dev/library/api/cutscene-library/
-[Model Script]: https://phoenix.gothickit.dev/library/api/model-script/
-[Virtual File System]: https://phoenix.gothickit.dev/library/api/virtual-file-system/
+[Model Animation]: https://zk.gothickit.dev/library/api/model-animation/
+[Model Hierarchy]: https://zk.gothickit.dev/library/api/model-hierarchy/
+[Model Mesh]: https://zk.gothickit.dev/library/api/model-mesh/
+[Model]: https://zk.gothickit.dev/library/api/model/
+[Morph Mesh]: https://zk.gothickit.dev/library/api/morph-mesh/
+[Multi Resolution Mesh]: https://zk.gothickit.dev/library/api/multi-resolution-mesh/
+[Mesh]: https://zk.gothickit.dev/library/api/mesh/
+[Daedalus Script]: https://zk.gothickit.dev/library/api/daedalus-script/
+[Texture]: https://zk.gothickit.dev/library/api/texture/
+[Font]: https://zk.gothickit.dev/library/api/font/
+[ZenGin Archive]: https://zk.gothickit.dev/library/api/archive/
+[Text/Cutscenes]: https://zk.gothickit.dev/library/api/cutscene-library/
+[Model Script]: https://zk.gothickit.dev/library/api/model-script/
+[Virtual File System]: https://zk.gothickit.dev/library/api/virtual-file-system/
