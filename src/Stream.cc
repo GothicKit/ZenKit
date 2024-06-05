@@ -376,7 +376,8 @@ namespace zenkit {
 		public:
 			explicit WriteStream(std::ostream* stream) : _m_stream(stream), _m_own(false) {}
 			explicit WriteStream(std::filesystem::path const& path)
-			    : _m_stream(new std::ofstream(path, std::ios::binary)), _m_own(true) {}
+			    : _m_stream(new std::ofstream(path, std::ios::binary | std::ios::out | std::ios::trunc)), _m_own(true) {
+			}
 
 			~WriteStream() noexcept override {
 				if (_m_own) {
