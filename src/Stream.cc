@@ -493,7 +493,7 @@ namespace zenkit {
 		return std::make_unique<detail::ReadMmap>(path);
 #else
 		std::vector<std::byte> data {};
-		std::ifstream stream {path, std::ios::ate | std::ios::binar};
+		std::ifstream stream {path, std::ios::ate | std::ios::binary | std::ios::in};
 		data.resize(static_cast<size_t>(stream.tellg()));
 		stream.seekg(0);
 		stream.read(reinterpret_cast<char*>(data.data()), static_cast<std::streamsize>(data.size()));
