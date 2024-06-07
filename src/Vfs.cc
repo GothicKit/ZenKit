@@ -581,6 +581,15 @@ namespace zenkit {
 			    bool dir = (e_type & 0x80000000) != 0;
 			    bool last = (e_type & 0x40000000) != 0;
 
+			    ZKLOGT("Vfs",
+			           "Parsing node name='%s' offset=%x size=%x dir=%d last=%d existing='%s'",
+			           e_name.c_str(),
+			           e_offset,
+			           e_size,
+			           dir,
+			           last,
+			           existing == nullptr ? "(NIL)" : existing->name().c_str());
+
 			    if (dir) {
 				    if (existing == nullptr) {
 					    existing = parent->create(VfsNode::directory(e_name, timestamp));
