@@ -511,7 +511,7 @@ namespace zenkit {
 					    stream.read((char*) data.get(), size);
 
 					    parent->create(VfsNode::file(path.filename().string(),
-					                                 VfsFileDescriptor {data.get(), static_cast<size_t>(size)},
+					                                 VfsFileDescriptor {data.get(), static_cast<size_t>(size), false},
 					                                 time.count()));
 #endif
 				    }
