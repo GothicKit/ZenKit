@@ -16,7 +16,10 @@ updating to the new version. A migration guide is available at https://zk.gothic
 Here are the changes not related to the renamed API.
 
 ### Breaking Changes
-* The `phoenix` CMake target has been renamed to `zenkit`
+
+The `phoenix` CMake target has been renamed to `zenkit` and the following changes have been made in relation to that
+change:
+
 * The following CMake variables have been renamed:
   * `PHOENIX_BUILD_EXAMPLES` to `ZK_BUILD_EXAMPLES`
   * `PHOENIX_BUILD_TESTS` to `ZK_BUILD_TESTS`
@@ -32,15 +35,45 @@ Here are the changes not related to the renamed API.
 * `phoenix::symbol::{get,set}_{string,int,float}` now take a raw pointer as context.
 * `phoenix::cs_camera::frames` has been split into `trajectory_frames` and `target_frames`
 
+Other breaking changes:
+* [59d79309] The value setters in `DaedalusSymbol` now take regular pointers for the context (instead of `shared_ptr`)
+* [cd8092c6] `DaedalusScript::enumerate_instances_by_name` now only enumerates `const` instances
+
 ### Features
 * [cfec0051] XZEN-encoded worlds are now supported. Thanks, @ThielHater!
 * [13dbb6a7] The member array lengths of `vobs::npc` now have names thanks to a patch by @JucanAndreiDaniel
 * [bbf0505f,ad4a3540] @Try added support for the Nintendo Switch port of Gothic 1 by adding `c_menu_item_frame::frame_pos{x,y}` and `c_menu_item_flags::hor_selectable` in the Daedalus support library
 * There are two new interfaces for interacting with data which replace `phoenix::buffer`: `zenkit::Read` and `zenkit::Write`
 * [535ef541] The `phoenix::mesh` now comes with a new API for retrieving raw, un-triangulated polygons from the mesh data
+* [9caff1b3] Added a getter for `DaedalusInstance` bound types
+* [2122d852,7e8b4800,fed97b02,fd58eef2] Added spec-compliant _ZenGin Archive_ parser. This new implementation properly handles
+  object references and is capable of parsing objects automatically using the new `ReadArchive::read_object` API.
+* [34b26bc2] Added a new `WriteArchive` API for creating _ZenGin Archives_ using **ZenKit**
+* [c3dbd5e5...46e9ea43,6aa96dbc,aba71724,cd2e3d7f,60d49f14,05cbd047,9b694f06] Implement `save` for various object types, including the VOb-tree. These objects can now be
+  loaded, modified and then saved again using ZenKit only. The objects are: `VirtualObject` and its descendants,
+  `CutsceneLibrary`, `Font`, `Mesh`, `ModelHierarchy`, `Texture`, `Vfs`, `MultiResolutionMesh`, `ModelMesh`, `Model`, `World`
+* [fc75d4b5] Added `Write` implemented to write to a given file system path
+* [338cce71] Added getters and setters for the global `DaedalusVm` instance
+* [369ea8bc] `DaedalusVm::print_stack_trace` now reports global state information as well
+* [f7230659,253e29b6] Improved `SaveGame` support drastically. Save games can now be fully parsed and also created using `ZenKit` alone.
+* [202e9b8b] Added a `TextureBuilder` for creating new textures from scratch
+* [a3a408f9] Deadalus external functions can now also take a `DaedalusSymbol&` as a parameter (instead of just a name)
+* [d0b8dcf7] Add support for loading uncompressed VdfsTool VDFs
+
+### Bugfixes
+* [a5cdce4c] Fixed possible `nullptr`-dereference in `Vfs::mount_disk`
+* [9d7c3f74] Fixed an integer underflow in `register_default_external`
+* [42efd418] Fixed loading of rigid-body information from save-games.
+* [5eb44c88,2b5aa9e8] Fixed some issues with memory leakage in the `Vfs`
+* [713480bf] Fixed a dangeling reference issue in `DaedalusVm::register_default_external`
+* [c9acf8e9,3d67ed5a] Fixed some broken bounds checks in `DaedalusVm` and `DaedalusScript`
 
 ### Misc
+* Added documentation for all known VObs and their fields. This new documentation can be viewed at
+  [zk.gothickit.dev](https://zk.gothickit.dev/engine/objects/zCVob/), and it has been mirrored to the
+  [Gothic Modding Community (GMC)](https://auronen.cokoliv.eu/gmc/zengin/worlds/Classes/zCVob/)'s page.
 * [6e71a70c] `mio` has been dropped and replaced by a custom, simpler memory mapping implementation (`zenkit::Mmap`)
+* [1f887325] Sped up `Mesh` parsing for some Windows systems by up to 15x
 
 ### Deprecations
 * All APIs in the `phoenix` namespace. Migrate to their analogs in the `zenkit` namespace instead! Also see [the migration guide](https://zk.gothickit.dev/library/misc/v1.2-to-v1.3/.)
