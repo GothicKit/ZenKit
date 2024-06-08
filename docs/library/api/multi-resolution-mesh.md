@@ -71,12 +71,12 @@
     import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
 
     // Load from a file on disk:
-    var mrm = new MultiResolutionMesh("MyMesh.MRM");
+    var mrm = MultiResolutionMesh.load("MyMesh.MRM");
 
     // ... or from a VFS:
     var vfs = new Vfs();
     vfs.mountDisk("Meshes.vdf", VfsOverwriteBehavior.OLDER)
-    mrm = new MultiResolutionMesh(vfs, "MyMesh.MRM");
+    mrm = MultiResolutionMesh.load(vfs, "MyMesh.MRM");
     ```
 
 === "Python"

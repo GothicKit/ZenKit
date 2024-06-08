@@ -71,12 +71,12 @@
     import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
 
     // Load from a file on disk:
-    var world = new World("OLDWORLD.ZEN");
+    var world = World.load("OLDWORLD.ZEN");
 
     // ... or from a VFS:
     var vfs = new Vfs();
     vfs.mountDisk("Worlds.vdf", VfsOverwriteBehavior.OLDER)
-    world = new World(vfs, "OLDWORLD.ZEN");
+    world = World.load(vfs, "OLDWORLD.ZEN");
     ```
 
 === "Python"

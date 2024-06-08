@@ -73,12 +73,12 @@
     import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
 
     // Load from a file on disk:
-    var mesh = new Model("MyMesh.MDL");
+    var mesh = Model.load("MyMesh.MDL");
 
     // ... or from a VFS:
     var vfs = new Vfs();
     vfs.mountDisk("Anims.vdf", VfsOverwriteBehavior.OLDER)
-    mesh = new Model(vfs, "MyMesh.MDL");
+    mesh = Model.load(vfs, "MyMesh.MDL");
     ```
 
 === "Python"

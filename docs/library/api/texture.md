@@ -71,12 +71,12 @@
     import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
 
     // Load from a file on disk:
-    var tex = new Texture("MyTexture.TEX");
+    var tex = Texture.load("MyTexture.TEX");
 
     // ... or from a VFS:
     var vfs = new Vfs();
     vfs.mountDisk("Textures.vdf", VfsOverwriteBehavior.OLDER)
-    tex = new Texture(vfs, "MyTexture.TEX");
+    tex = Texture.load(vfs, "MyTexture.TEX");
     ```
 
 === "Python"

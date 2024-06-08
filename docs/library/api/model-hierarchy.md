@@ -71,12 +71,12 @@
     import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
 
     // Load from a file on disk:
-    var mdh = new ModelHierarchy("MySkeleton.MDH");
+    var mdh = ModelHierarchy.load("MySkeleton.MDH");
 
     // ... or from a VFS:
     var vfs = new Vfs();
     vfs.mountDisk("Anims.vdf", VfsOverwriteBehavior.OLDER)
-    mdh = new ModelHierarchy(vfs, "MySkeleton.MDH");
+    mdh = ModelHierarchy.load(vfs, "MySkeleton.MDH");
     ```
 
 === "Python"

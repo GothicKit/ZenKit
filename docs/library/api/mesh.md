@@ -71,12 +71,12 @@
     import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
 
     // Load from a file on disk:
-    var mesh = new Mesh("MyMesh.MSH");
+    var mesh = Mesh.load("MyMesh.MSH");
 
     // ... or from a VFS:
     var vfs = new Vfs();
     vfs.mountDisk("Meshes.vdf", VfsOverwriteBehavior.OLDER)
-    mesh = new Mesh(vfs, "MyMesh.MSH");
+    mesh = Mesh.load(vfs, "MyMesh.MSH");
     ```
 
 === "Python"

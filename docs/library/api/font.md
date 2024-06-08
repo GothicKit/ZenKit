@@ -79,12 +79,12 @@ glyph contains two coordinates which together form a rectangle around the glyph 
     import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
 
     // Load from a file on disk:
-    var fnt = new Font("FONT_OLD_20.FNT");
+    var fnt = Font.load("FONT_OLD_20.FNT");
 
     // ... or from a VFS:
     var vfs = new Vfs();
     vfs.mountDisk("Textures.vdf", VfsOverwriteBehavior.OLDER)
-    fnt = new Font(vfs, "FONT_OLD_20.FNT");
+    fnt = Font.load(vfs, "FONT_OLD_20.FNT");
     ```
 
 === "Python"

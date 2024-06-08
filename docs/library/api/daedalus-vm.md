@@ -71,12 +71,12 @@
     import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
 
     // Load from a file on disk:
-    var script = new DaedalusScript("MENU.DAT");
+    var script = DaedalusScript.load("MENU.DAT");
 
     // ... or from a VFS:
     var vfs = new Vfs();
     vfs.mount("_work/", "/", VfsOverwriteBehavior.Older);
-    script = new DaedalusScript(vfs, "MENU.DAT");
+    script = DaedalusScript.load(vfs, "MENU.DAT");
     ```
 
 === "Python"

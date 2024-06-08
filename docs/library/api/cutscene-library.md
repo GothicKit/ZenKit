@@ -73,12 +73,12 @@ of Gothic and Gothic II installations.
     import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
 
     // Load from a file on disk:
-    var csl = new CutsceneLibrary("OU.csl");
+    var csl = CutsceneLibrary.load("OU.csl");
 
     // ... or from a VFS:
     var vfs = new Vfs();
     vfs.mount("_work/", "/", VfsOverwriteBehavior.OLDER);
-    csl = new CutsceneLibrary(vfs, "OU.csl");
+    csl = CutsceneLibrary.load(vfs, "OU.csl");
     ```
 
 === "Python"

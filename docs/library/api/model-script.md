@@ -71,12 +71,12 @@
     import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
 
     // Load from a file on disk:
-    var mds = new ModelScript("MyScript.MDS");
+    var mds = ModelScript.load("MyScript.MDS");
 
     // ... or from a VFS:
     var vfs = new Vfs();
     vfs.mountDisk("Anims.vdf", VfsOverwriteBehavior.OLDER)
-    mds = new ModelScript(vfs, "MyScript.MDS");
+    mds = ModelScript.load(vfs, "MyScript.MDS");
     ```
 
 === "Python"

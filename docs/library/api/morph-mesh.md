@@ -71,12 +71,12 @@
     import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
 
     // Load from a file on disk:
-    var mmb = new MorphMesh("MyMesh.MMB");
+    var mmb = MorphMesh.load("MyMesh.MMB");
 
     // ... or from a VFS:
     var vfs = new Vfs();
     vfs.mountDisk("Anims.vdf", VfsOverwriteBehavior.OLDER)
-    mmb = new MorphMesh(vfs, "MyMesh.MMB");
+    mmb = MorphMesh.load(vfs, "MyMesh.MMB");
     ```
 
 === "Python"

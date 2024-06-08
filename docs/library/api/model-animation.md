@@ -83,12 +83,12 @@ which should be loaded before animations. The `ModelAnimation::events` field wil
     import dev.gothickit.zenkit.vfs.VfsOverwriteBehavior;
 
     // Load from a file on disk:
-    var man = new ModelAnimation("MyAnimation.MAN");
+    var man = ModelAnimation.load("MyAnimation.MAN");
 
     // ... or from a VFS:
     var vfs = new Vfs();
     vfs.mountDisk("Anims.vdf", VfsOverwriteBehavior.OLDER)
-    man = new ModelAnimation(vfs, "MyAnimation.MAN");
+    man = ModelAnimation.load(vfs, "MyAnimation.MAN");
     ```
 
 === "Python"
