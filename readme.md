@@ -103,7 +103,7 @@ int main(int, char**) {
 	//   auto buf = zenkit::Read::from(std::move(data));
 	
 	// Parse the model
-	zeknit::Model mdl {};
+	zenkit::Model mdl {};
 	mdl.load(buf.get());
 	
 	// Do something with mdl ...
