@@ -272,6 +272,20 @@ namespace zenkit {
 		return count;
 	}
 
+	static std::uint32_t vfs_unix_to_dos_time(std::time_t unix_) noexcept {
+		tm t = *gmtime(&unix_);
+
+		uint32_t dos = 0;
+		dos |= (t.tm_year - 80) << 25;
+		dos |= (t.tm_mon + 1) << 21;
+		dos |= (t.tm_mday) << 16;
+		dos |= (t.tm_hour) << 11;
+		dos |= (t.tm_min) << 5;
+		dos |= (t.tm_sec / 2);
+
+		return dos;
+	}
+
 	void Vfs::save(Write* w, GameVersion version) const {
 		std::vector<std::byte> catalog;
 		auto write_catalog = Write::to(&catalog);
@@ -346,7 +360,7 @@ namespace zenkit {
 		w->write_string(version == GameVersion::GOTHIC_1 ? VFS_DISK_SIGNATURE_G1 : VFS_DISK_SIGNATURE_G2);
 		w->write_uint(files);
 		w->write_uint(index);
-		w->write_uint(0);
+		w->write_uint(vfs_unix_to_dos_time(time(nullptr)));
 		w->write_uint(off + catalog.size());
 		w->write_uint(header_size);
 		w->write_uint(80);
