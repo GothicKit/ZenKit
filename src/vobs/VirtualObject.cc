@@ -7,6 +7,8 @@
 #include <unordered_map>
 
 namespace zenkit {
+	static std::shared_ptr<Visual> const DEFAULT_VISUAL = std::make_shared<Visual>();
+
 	/// \brief A mapping of archive class names to visual_type values.
 	static std::unordered_map<ObjectType, VisualType> visual_type_map = {
 	    {ObjectType::zCDecal, VisualType::DECAL},
@@ -167,6 +169,8 @@ namespace zenkit {
 				if (this->visual->type == VisualType::DECAL) {
 					this->visual_decal.emplace(*reinterpret_cast<VisualDecal*>(this->visual.get()));
 				}
+			} else {
+				this->visual = DEFAULT_VISUAL;
 			}
 		}
 
