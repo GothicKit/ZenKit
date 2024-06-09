@@ -53,6 +53,7 @@ struct zFILE_VDFS_Header {
    [below](#dos-date-format).
 4. The full size of the file in bytes.
 5. An offset from the beginning of the file in bytes at which the first entry of the [catalog](#catalog) is located.
+   Because of a likely bug in the original `vdfs32g.dll` shipped with the game, this value must always be `296`.
 6. The version of the VDF format being used. This is always `0x50` in reality.
 
 ### Catalog
