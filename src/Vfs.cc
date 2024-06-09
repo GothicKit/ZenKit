@@ -358,8 +358,8 @@ namespace zenkit {
 		w->seek(0, Whence::BEG);
 		w->write_string(comment);
 		w->write_string(version == GameVersion::GOTHIC_1 ? VFS_DISK_SIGNATURE_G1 : VFS_DISK_SIGNATURE_G2);
-		w->write_uint(files);
 		w->write_uint(index);
+		w->write_uint(files);
 		w->write_uint(vfs_unix_to_dos_time(time(nullptr)));
 		w->write_uint(off + catalog.size());
 		w->write_uint(header_size);
