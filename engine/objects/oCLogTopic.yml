@@ -1,0 +1,58 @@
+class:
+  name: "oCLogTopic"
+  bases: []
+  description: ""
+  zenkit: "—"
+version:
+  gothic1: 0
+  gothic2: 0
+properties:
+  TOPICDESCRIPTION:
+    type: "string"
+    description: "The name of the quest log entry."
+    default: "0"
+    version: [1, 2]
+    save: false
+  TOPICSECTION:
+    type: "enum"
+    description: "The quest log section the entry is in."
+    default: "zELogSection_Missions"
+    version: [1, 2]
+    save: false
+    options:
+      zELogSection_Missions: The entry is in one of the mission sections of the quest log.
+      zELogSection_Notes: The entry is in the general notes section of the quest log.
+  TOPICSTATUS:
+    type: "enum"
+    description: "The status the quest log entry."
+    default: "zELogTopicStatus_Free"
+    version: [1, 2]
+    save: false
+    options:
+      zELogTopicStatus_Free: Unknown, makes the entry disappear from the quest log.
+      zELogTopicStatus_Running: The entry is in the 'running quests' section of the quest log.
+      zELogTopicStatus_Success: The entry is in the 'succeeded quests' section of the quest log.
+      zELogTopicStatus_Failure: The entry is in the 'failed quests' section of the quest log.
+      zELogTopicStatus_Obsolete: The entry is in the 'obsolete quests' section of the quest log.
+    extra:
+      type: "warning"
+      text: "This field is ignored unless [`TOPICSECTION`](#topicsection) is set to `zELogSection_Missions`."
+  LOGTOPICENTRYCOUNT:
+    type: "int"
+    description: "The number of entries of this log topic."
+    default: "0"
+    version: [1, 2]
+    save: false
+  LOGMANAGERENTRYCOUNT:
+    type: "int"
+    description: "The same as [`LOGTOPICENTRYCOUNT`](#logtopicentrycount)."
+    default: "0"
+    version: [ 1, 2 ]
+    save: false
+  ENTRYDESCRIPTION:
+    type: "string"
+    description: "A single entry in the log topic. Log entries are shown in chronological order on the detailed view of the log topic, separated by three dashes."
+    default: ""
+    version: [ 1, 2 ]
+    save: false
+    multi: true

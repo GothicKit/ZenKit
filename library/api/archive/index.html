@@ -1,0 +1,3605 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://zk.gothickit.dev/library/api/archive/">
+      
+      
+        <link rel="prev" href="../../misc/v1.2-to-v1.3/">
+      
+      
+        <link rel="next" href="../cutscene-library/">
+      
+      
+      <link rel="icon" href="../../../assets/logo-square.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.18">
+    
+    
+      
+        <title>Archive - ZenKit</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.66ac8b77.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="red" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#zengin-archives" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="ZenKit" class="md-header__button md-logo" aria-label="ZenKit" data-md-component="logo">
+      
+  <img src="../../../assets/logo-square.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ZenKit
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Archive
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/GothicKit/ZenKit" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="../../overview/" class="md-tabs__link">
+        
+  
+    
+  
+  Library Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../engine/overview/" class="md-tabs__link">
+        
+  
+    
+  
+  ZenGin Reference
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="ZenKit" class="md-nav__button md-logo" aria-label="ZenKit" data-md-component="logo">
+      
+  <img src="../../../assets/logo-square.png" alt="logo">
+
+    </a>
+    ZenKit
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/GothicKit/ZenKit" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../overview/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Library Reference
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_1" id="__nav_1_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            Library Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting Started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    File Type Reference
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_4" id="__nav_1_4_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Miscellaneous
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_4">
+            <span class="md-nav__icon md-icon"></span>
+            Miscellaneous
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../misc/v1.2-to-v1.3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migration Guide (v1.2 ➞ v1.3)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1_5" id="__nav_1_5_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    ZenKit Concepts
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1_5">
+            <span class="md-nav__icon md-icon"></span>
+            ZenKit Concepts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Archive
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Archive
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#loading-an-archive" class="md-nav__link">
+    <span class="md-ellipsis">
+      Loading an archive
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reading-from-an-archive" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reading from an archive
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cutscene-library/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cutscene Library
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../daedalus-script/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Daedalus Script
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../daedalus-vm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Daedalus VM
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../font/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Font
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mesh/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Mesh
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Model
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-animation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Model Animation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-hierarchy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Model Hierarchy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-mesh/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Model Mesh
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-script/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Model Script
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../morph-mesh/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Morph Mesh
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../multi-resolution-mesh/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Multi-Resolution Mesh
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../save-game/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Save Game
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../texture/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Texture
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../virtual-file-system/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Virtual File System
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../world/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    World
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../engine/overview/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    ZenGin Reference
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            ZenGin Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/datatypes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Datatypes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Formats
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Formats
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/formats/animation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZenGin Animations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_2" id="__nav_2_3_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    ZenGin Scripts
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            ZenGin Scripts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/formats/script_binaries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Script Binaries
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/formats/bytecode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Daedalus Bytecode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/formats/font/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZenGin Font
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/formats/texture/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZenGin Texture
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/formats/vdf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZenGin Virtual File System
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/formats/archive/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZenGin Archive
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/formats/savegame/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZenGin Save Game
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Objects
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            Objects
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_1" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../engine/objects/zCVob/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    zCVob
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4_1" id="__nav_2_4_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            zCVob
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCVobLevelCompo/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCVobLevelCompo
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCVobLight/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCVobLight
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCVobSpot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCVobSpot
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCVobStair/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCVobStair
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCVobStartpoint/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCVobStartpoint
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCCSCamera/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCCSCamera
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCCamTrj_KeyFrame/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCCamTrj_KeyFrame
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_1_8" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../engine/objects/zCEffect/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    zCEffect
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4_1_8" id="__nav_2_4_1_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_2_4_1_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_1_8">
+            <span class="md-nav__icon md-icon"></span>
+            zCEffect
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCVobAnimate/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCVobAnimate
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCVobLensFlare/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCVobLensFlare
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCVobScreenFX/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCVobScreenFX
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCPFXController/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCPFXControler
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCEarthquake/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCEarthquake
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_1_8_6" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../engine/objects/zCTouchDamage/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    zCTouchDamage
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4_1_8_6" id="__nav_2_4_1_8_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_2_4_1_8_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_1_8_6">
+            <span class="md-nav__icon md-icon"></span>
+            zCTouchDamage
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCTouchDamage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCTouchDamage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_1_9" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../engine/objects/oCVob/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    oCVob
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4_1_9" id="__nav_2_4_1_9_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_2_4_1_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_1_9">
+            <span class="md-nav__icon md-icon"></span>
+            oCVob
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_1_9_1" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../engine/objects/oCMOB/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    oCMOB
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4_1_9_1" id="__nav_2_4_1_9_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_2_4_1_9_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_1_9_1">
+            <span class="md-nav__icon md-icon"></span>
+            oCMOB
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_1_9_1_1" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../engine/objects/oCMobInter/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    oCMobInter
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4_1_9_1_1" id="__nav_2_4_1_9_1_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="6" aria-labelledby="__nav_2_4_1_9_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_1_9_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            oCMobInter
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCMobBed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCMobBed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCMobFire/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCMobFire
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCMobLadder/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCMobLadder
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCMobSwitch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCMobSwitch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCMobWheel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCMobWheel
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_1_9_1_1_6" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../engine/objects/oCMobLockable/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    oCMobLockable
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4_1_9_1_1_6" id="__nav_2_4_1_9_1_1_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="7" aria-labelledby="__nav_2_4_1_9_1_1_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_1_9_1_1_6">
+            <span class="md-nav__icon md-icon"></span>
+            oCMobLockable
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCMobContainer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCMobContainer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCMobDoor/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCMobDoor
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCItem/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCItem
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_1_10" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../engine/objects/zCTriggerBase/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    zCTriggerBase
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4_1_10" id="__nav_2_4_1_10_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_2_4_1_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_1_10">
+            <span class="md-nav__icon md-icon"></span>
+            zCTriggerBase
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCCodeMaster/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCCodeMaster
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCMessageFilter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCMessageFilter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCMoverController/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCMoverControler
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCTriggerUntouch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCTriggerUntouch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCTriggerWorldStart/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCTriggerWorldStart
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_1_10_6" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../engine/objects/zCTrigger/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    zCTrigger
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4_1_10_6" id="__nav_2_4_1_10_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_2_4_1_10_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_1_10_6">
+            <span class="md-nav__icon md-icon"></span>
+            zCTrigger
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCTriggerList/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCTriggerList
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCTriggerScript/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCTriggerScript
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCTriggerChangeLevel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCTriggerChangeLevel
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCCSTrigger/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCCSTrigger
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCMover/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCMover
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_1_11" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../engine/objects/zCZone/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    zCZone
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4_1_11" id="__nav_2_4_1_11_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_2_4_1_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_1_11">
+            <span class="md-nav__icon md-icon"></span>
+            zCZone
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_1_11_1" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../engine/objects/oCZoneMusic/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    oCZoneMusic
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4_1_11_1" id="__nav_2_4_1_11_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_2_4_1_11_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_1_11_1">
+            <span class="md-nav__icon md-icon"></span>
+            oCZoneMusic
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCZoneMusicDefault/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCZoneMusicDefault
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_1_11_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../engine/objects/zCZoneVobFarPlane/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    zCZoneVobFarPlane
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4_1_11_2" id="__nav_2_4_1_11_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_2_4_1_11_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_1_11_2">
+            <span class="md-nav__icon md-icon"></span>
+            zCZoneVobFarPlane
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCZoneVobFarPlaneDefault/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCZoneVobFarPlaneDefault
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_1_11_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../engine/objects/zCZoneZFog/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    zCZoneZFog
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4_1_11_3" id="__nav_2_4_1_11_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_2_4_1_11_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_1_11_3">
+            <span class="md-nav__icon md-icon"></span>
+            zCZoneZFog
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCZoneZFogDefault/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCZoneZFogDefault
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_1_11_4" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../engine/objects/zCVobSound/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    zCVobSound
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4_1_11_4" id="__nav_2_4_1_11_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_2_4_1_11_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_1_11_4">
+            <span class="md-nav__icon md-icon"></span>
+            zCVobSound
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCVobSoundDaytime/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCVobSoundDaytime
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../engine/objects/zCVisual/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    zCVisual
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4_2" id="__nav_2_4_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            zCVisual
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/zCDecal/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    zCDecal
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCSavegameInfo/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCSavegameInfo
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCInfo/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCInfo
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCInfoManager/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCInfoManager
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCLogManager/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCLogManager
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCLogTopic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCLogTopic
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCMission/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCMission
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/objects/oCMissionManager/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oCMissionManager
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Encodings
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            Encodings
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/encodings/binary/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Binary
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../engine/encodings/binary-chunked/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Binary, Chunked
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#loading-an-archive" class="md-nav__link">
+    <span class="md-ellipsis">
+      Loading an archive
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reading-from-an-archive" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reading from an archive
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="zengin-archives">ZenGin Archives<a class="headerlink" href="#zengin-archives" title="Permanent link">&para;</a></h1>
+<p>The <em>ZenGin Archive</em> format is similar in concept to <a href="https://en.wikipedia.org/wiki/JSON">JSON</a> or <a href="https://en.wikipedia.org/wiki/XML">XML</a> in that it is used to serialize nested data
+into a file which can be read later. There are three different kinds of archives called <code>ASCII</code>, <code>BINARY</code> and <code>BIN_SAFE</code>
+but the way these work exactly does not matter when using <em>ZenKit</em>.</p>
+<p>For detailed documentation on the inner workings of archives, see
+the <a href="../../../engine/formats/archive/">ZenGin Reference</a>.</p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>Like JSON, archives store values using a key-value structure where every key-value pair belongs to an object. Objects
+can also be nested. Unlike JSON, archives do not have first-class support for arrays, instead choosing a special type
+and encoding scheme. The class which is responsible for loading <em>ZenGin Archives</em> is called <code>zenkit::ReadArchive</code>.</p>
+<h3 id="loading-an-archive">Loading an archive<a class="headerlink" href="#loading-an-archive" title="Permanent link">&para;</a></h3>
+<p>Since archives are an intermediate format, they are not loaded into memory. Rather, <code>zenkit::ReadArchive</code> functions as
+a high-level reader-like interface with which data can be read from the archive in a stream. To create one, simply
+call <code>zenkit::ReadArchive::from</code> (which is analogous to <code>zenkit::Read::from</code>) and start reading from it:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:5"><input checked="checked" id="c" name="__tabbed_1" type="radio" /><input id="c_1" name="__tabbed_1" type="radio" /><input id="c_2" name="__tabbed_1" type="radio" /><input id="java" name="__tabbed_1" type="radio" /><input id="python" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="c">C</label><label for="c_1">C++</label><label for="c_2">C#</label><label for="java">Java</label><label for="python">Python</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Archives are currently not supported with the C API.</p>
+</div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><span class="filename">Example</span><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;zenkit/Archive.hh&gt;</span><span class="c1">  // for `ReadArchive`</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;zenkit/Stream.hh&gt;</span><span class="c1">  // for `Read`</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">**</span><span class="w"> </span><span class="n">argv</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zenkit</span><span class="o">::</span><span class="n">Read</span><span class="o">::</span><span class="n">from</span><span class="p">(</span><span class="s">&quot;A.ZEN&quot;</span><span class="p">);</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">ar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zenkit</span><span class="o">::</span><span class="n">ReadArchive</span><span class="o">::</span><span class="n">from</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">get</span><span class="p">());</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="c1">// ...</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">}</span>
+</code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>As with all resources, archives can also be loaded from a <a href="../virtual-file-system/">virtual file system</a>, passing the
+input obtained from <code>zenkit::VfsNode::open_read</code> into <code>zenkit::ReadArchive::from</code>.</p>
+<p><strong>It must be noted in this case, however, that the unique pointer returned by <code>VfsNode::open_read</code> must be saved
+for the lifetime of <code>ar</code> since it is the data source for all read operations on it.</strong></p>
+</div>
+</div>
+<div class="tabbed-block">
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Archives are currently not supported with the C# API since it depends on the C wrapper.</p>
+</div>
+</div>
+<div class="tabbed-block">
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Archives are currently not supported with the Java API since it depends on the C wrapper.</p>
+</div>
+</div>
+<div class="tabbed-block">
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Archives are currently not supported with the Python API since it depends on the C wrapper.</p>
+</div>
+</div>
+</div>
+</div>
+<h3 id="reading-from-an-archive">Reading from an archive<a class="headerlink" href="#reading-from-an-archive" title="Permanent link">&para;</a></h3>
+<p><em>ZenKit</em>'s implementation of <em>ZenGin Archives</em> is very bare-bones and does not provide a very rich interface. <em>ZenKit</em>
+will automatically determine the kind of archive but that's about it. Reading more data from it requires knowing the
+format you will be reading beforehand, no buffering or preloading of data is done. A more detailed explanation and
+demonstration can be found in the example below.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:5"><input checked="checked" id="c_3" name="__tabbed_2" type="radio" /><input id="c_4" name="__tabbed_2" type="radio" /><input id="c_5" name="__tabbed_2" type="radio" /><input id="java_1" name="__tabbed_2" type="radio" /><input id="python_1" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="c_3">C</label><label for="c_4">C++</label><label for="c_5">C#</label><label for="java_1">Java</label><label for="python_1">Python</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Archives are currently not supported with the C API.</p>
+</div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><span class="filename">Example</span><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;zenkit/Archive.hh&gt;</span><span class="c1">  // for `ReadArchive`</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;zenkit/Stream.hh&gt;</span><span class="c1">  // for `Read`</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">**</span><span class="w"> </span><span class="n">argv</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="c1">// First, open the archive</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">buf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zenkit</span><span class="o">::</span><span class="n">Read</span><span class="o">::</span><span class="n">from</span><span class="p">(</span><span class="s">&quot;WORLD.ZEN&quot;</span><span class="p">);</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">zen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zenkit</span><span class="o">::</span><span class="n">ReadArchive</span><span class="o">::</span><span class="n">from</span><span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">get</span><span class="p">());</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="c1">// Second, read the definition of the root object.</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="c1">//   Every archive has one object at its root which can be used to</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="c1">//   identify what kind of data it is storing.</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">    </span><span class="n">zenkit</span><span class="o">::</span><span class="n">ArchiveObject</span><span class="w"> </span><span class="n">object</span><span class="w"> </span><span class="p">{};</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">zen</span><span class="o">-&gt;</span><span class="n">read_object_begin</span><span class="p">(</span><span class="n">object</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">        </span><span class="c1">// If no object begins at the current position `read_object_begin`</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">        </span><span class="c1">// will return `false`.</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;The root object was not found.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>
+<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="w">    </span><span class="c1">// Here, for example, we&#39;re checking whether the root object is a</span>
+<a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="w">    </span><span class="c1">// serialized game world.</span>
+<a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">object</span><span class="p">.</span><span class="n">class_name</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;oCWorld:zCWorld&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a><span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;This archive does not contain a serialized game world.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a>
+<a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a><span class="w">    </span><span class="c1">// From now on, we need to know the format worlds come in. It is not documented here</span>
+<a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a><span class="w">    </span><span class="c1">// but if necessary, the format of most objects can be found in ZenKit&#39;s source code.</span>
+<a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a><span class="w">    </span><span class="c1">//</span>
+<a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a><span class="w">    </span><span class="c1">// In this case, we know that worlds contain three sub-objects, one describing the</span>
+<a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a><span class="w">    </span><span class="c1">// world mesh, one containing the way-net and one containing all dynamic objects in</span>
+<a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a><span class="w">    </span><span class="c1">// the world.</span>
+<a id="__codelineno-1-36" name="__codelineno-1-36" href="#__codelineno-1-36"></a>
+<a id="__codelineno-1-37" name="__codelineno-1-37" href="#__codelineno-1-37"></a><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">zen</span><span class="o">-&gt;</span><span class="n">read_object_end</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-38" name="__codelineno-1-38" href="#__codelineno-1-38"></a><span class="w">        </span><span class="c1">// `read_object_end` is used to read the end of an object. If it returns `false`,</span>
+<a id="__codelineno-1-39" name="__codelineno-1-39" href="#__codelineno-1-39"></a><span class="w">        </span><span class="c1">// no object ends at the current position. It is required to `read_object_end`</span>
+<a id="__codelineno-1-40" name="__codelineno-1-40" href="#__codelineno-1-40"></a><span class="w">        </span><span class="c1">// after reading all entries in that object.</span>
+<a id="__codelineno-1-41" name="__codelineno-1-41" href="#__codelineno-1-41"></a>
+<a id="__codelineno-1-42" name="__codelineno-1-42" href="#__codelineno-1-42"></a><span class="w">        </span><span class="n">zen</span><span class="o">-&gt;</span><span class="n">read_object_begin</span><span class="p">(</span><span class="n">object</span><span class="p">);</span>
+<a id="__codelineno-1-43" name="__codelineno-1-43" href="#__codelineno-1-43"></a>
+<a id="__codelineno-1-44" name="__codelineno-1-44" href="#__codelineno-1-44"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">object</span><span class="p">.</span><span class="n">object_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;VobTree&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-45" name="__codelineno-1-45" href="#__codelineno-1-45"></a><span class="w">            </span><span class="c1">// Here, we&#39;re only interested in finding the sub-object containing the dynamic</span>
+<a id="__codelineno-1-46" name="__codelineno-1-46" href="#__codelineno-1-46"></a><span class="w">            </span><span class="c1">// objects placed into the world.</span>
+<a id="__codelineno-1-47" name="__codelineno-1-47" href="#__codelineno-1-47"></a>
+<a id="__codelineno-1-48" name="__codelineno-1-48" href="#__codelineno-1-48"></a><span class="w">            </span><span class="c1">// The VOb tree consists of more nested objects, each followed by an integer</span>
+<a id="__codelineno-1-49" name="__codelineno-1-49" href="#__codelineno-1-49"></a><span class="w">            </span><span class="c1">// denoting the number entries following it which should be considered children</span>
+<a id="__codelineno-1-50" name="__codelineno-1-50" href="#__codelineno-1-50"></a><span class="w">            </span><span class="c1">// of the VOb. The first integer denotes the number of root objects in the tree.</span>
+<a id="__codelineno-1-51" name="__codelineno-1-51" href="#__codelineno-1-51"></a>
+<a id="__codelineno-1-52" name="__codelineno-1-52" href="#__codelineno-1-52"></a><span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">root_vobs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zen</span><span class="o">-&gt;</span><span class="n">read_int</span><span class="p">();</span>
+<a id="__codelineno-1-53" name="__codelineno-1-53" href="#__codelineno-1-53"></a>
+<a id="__codelineno-1-54" name="__codelineno-1-54" href="#__codelineno-1-54"></a><span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">zen</span><span class="o">-&gt;</span><span class="n">read_object_end</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-55" name="__codelineno-1-55" href="#__codelineno-1-55"></a><span class="w">                </span><span class="n">zen</span><span class="o">-&gt;</span><span class="n">read_object_begin</span><span class="p">(</span><span class="n">object</span><span class="p">);</span>
+<a id="__codelineno-1-56" name="__codelineno-1-56" href="#__codelineno-1-56"></a>
+<a id="__codelineno-1-57" name="__codelineno-1-57" href="#__codelineno-1-57"></a><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">object</span><span class="p">.</span><span class="n">class_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;zCVob&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-58" name="__codelineno-1-58" href="#__codelineno-1-58"></a><span class="w">                    </span><span class="c1">// There is a whole system to the class names in the VOb tree but here,</span>
+<a id="__codelineno-1-59" name="__codelineno-1-59" href="#__codelineno-1-59"></a><span class="w">                    </span><span class="c1">// to give an example, we&#39;re just interested in the basic `zCVob`. Also</span>
+<a id="__codelineno-1-60" name="__codelineno-1-60" href="#__codelineno-1-60"></a><span class="w">                    </span><span class="c1">// there is a lot more data saved in the `zCVob` object but I will omit</span>
+<a id="__codelineno-1-61" name="__codelineno-1-61" href="#__codelineno-1-61"></a><span class="w">                    </span><span class="c1">// most of it for brevity sake.</span>
+<a id="__codelineno-1-62" name="__codelineno-1-62" href="#__codelineno-1-62"></a><span class="w">                    </span><span class="c1">//</span>
+<a id="__codelineno-1-63" name="__codelineno-1-63" href="#__codelineno-1-63"></a><span class="w">                    </span><span class="c1">// So here&#39;s some of the types supported by archives read from one:</span>
+<a id="__codelineno-1-64" name="__codelineno-1-64" href="#__codelineno-1-64"></a>
+<a id="__codelineno-1-65" name="__codelineno-1-65" href="#__codelineno-1-65"></a><span class="w">                    </span><span class="k">auto</span><span class="w"> </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zen</span><span class="o">-&gt;</span><span class="n">read_int</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<a id="__codelineno-1-66" name="__codelineno-1-66" href="#__codelineno-1-66"></a><span class="w">                    </span><span class="k">auto</span><span class="w"> </span><span class="n">preset_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zen</span><span class="o">-&gt;</span><span class="n">read_string</span><span class="p">();</span>
+<a id="__codelineno-1-67" name="__codelineno-1-67" href="#__codelineno-1-67"></a><span class="w">                    </span><span class="k">auto</span><span class="w"> </span><span class="n">bbox</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zen</span><span class="o">-&gt;</span><span class="n">read_bbox</span><span class="p">();</span>
+<a id="__codelineno-1-68" name="__codelineno-1-68" href="#__codelineno-1-68"></a><span class="w">                    </span><span class="k">auto</span><span class="w"> </span><span class="n">rotation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zen</span><span class="o">-&gt;</span><span class="n">read_mat3x3</span><span class="p">();</span>
+<a id="__codelineno-1-69" name="__codelineno-1-69" href="#__codelineno-1-69"></a><span class="w">                    </span><span class="k">auto</span><span class="w"> </span><span class="n">position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zen</span><span class="o">-&gt;</span><span class="n">read_vec3</span><span class="p">();</span>
+<a id="__codelineno-1-70" name="__codelineno-1-70" href="#__codelineno-1-70"></a>
+<a id="__codelineno-1-71" name="__codelineno-1-71" href="#__codelineno-1-71"></a><span class="w">                    </span><span class="k">auto</span><span class="w"> </span><span class="n">vob_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zen</span><span class="o">-&gt;</span><span class="n">read_string</span><span class="p">();</span>
+<a id="__codelineno-1-72" name="__codelineno-1-72" href="#__codelineno-1-72"></a><span class="w">                    </span><span class="k">auto</span><span class="w"> </span><span class="n">visual_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zen</span><span class="o">-&gt;</span><span class="n">read_string</span><span class="p">();</span>
+<a id="__codelineno-1-73" name="__codelineno-1-73" href="#__codelineno-1-73"></a><span class="w">                    </span><span class="k">auto</span><span class="w"> </span><span class="n">show_visual</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zen</span><span class="o">-&gt;</span><span class="n">read_bool</span><span class="p">();</span>
+<a id="__codelineno-1-74" name="__codelineno-1-74" href="#__codelineno-1-74"></a><span class="w">                    </span><span class="k">auto</span><span class="w"> </span><span class="n">camera_alignment</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zen</span><span class="o">-&gt;</span><span class="n">read_enum</span><span class="p">();</span>
+<a id="__codelineno-1-75" name="__codelineno-1-75" href="#__codelineno-1-75"></a>
+<a id="__codelineno-1-76" name="__codelineno-1-76" href="#__codelineno-1-76"></a><span class="w">                   </span><span class="c1">// As you can see, all fields must be read in order and with the correct type.</span>
+<a id="__codelineno-1-77" name="__codelineno-1-77" href="#__codelineno-1-77"></a><span class="w">                   </span><span class="c1">// If the archive contains a field of type `int` but you try to `read_string()`,</span>
+<a id="__codelineno-1-78" name="__codelineno-1-78" href="#__codelineno-1-78"></a><span class="w">                   </span><span class="c1">// ZenKit will throw an exception (as documented in the docstrings).</span>
+<a id="__codelineno-1-79" name="__codelineno-1-79" href="#__codelineno-1-79"></a><span class="w">                   </span><span class="c1">//</span>
+<a id="__codelineno-1-80" name="__codelineno-1-80" href="#__codelineno-1-80"></a><span class="w">                   </span><span class="c1">// For the full list of supported types, see the table below this example.</span>
+<a id="__codelineno-1-81" name="__codelineno-1-81" href="#__codelineno-1-81"></a><span class="w">                </span><span class="p">}</span>
+<a id="__codelineno-1-82" name="__codelineno-1-82" href="#__codelineno-1-82"></a>
+<a id="__codelineno-1-83" name="__codelineno-1-83" href="#__codelineno-1-83"></a><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">zen</span><span class="o">-&gt;</span><span class="n">read_object_end</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-84" name="__codelineno-1-84" href="#__codelineno-1-84"></a><span class="w">                     </span><span class="c1">// (see below for an explanation)</span>
+<a id="__codelineno-1-85" name="__codelineno-1-85" href="#__codelineno-1-85"></a><span class="w">                     </span><span class="n">zen</span><span class="o">-&gt;</span><span class="n">skip_object</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+<a id="__codelineno-1-86" name="__codelineno-1-86" href="#__codelineno-1-86"></a><span class="w">                </span><span class="p">}</span>
+<a id="__codelineno-1-87" name="__codelineno-1-87" href="#__codelineno-1-87"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-1-88" name="__codelineno-1-88" href="#__codelineno-1-88"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-1-89" name="__codelineno-1-89" href="#__codelineno-1-89"></a>
+<a id="__codelineno-1-90" name="__codelineno-1-90" href="#__codelineno-1-90"></a><span class="w">        </span><span class="c1">// Now, we read the end of the current object.</span>
+<a id="__codelineno-1-91" name="__codelineno-1-91" href="#__codelineno-1-91"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">zen</span><span class="o">-&gt;</span><span class="n">read_object_end</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-92" name="__codelineno-1-92" href="#__codelineno-1-92"></a><span class="w">            </span><span class="c1">// But since this small example cannot parse the `WayNet` and `MeshAndBsp`</span>
+<a id="__codelineno-1-93" name="__codelineno-1-93" href="#__codelineno-1-93"></a><span class="w">            </span><span class="c1">// objects of the world, we need to still make sure that the parser is in</span>
+<a id="__codelineno-1-94" name="__codelineno-1-94" href="#__codelineno-1-94"></a><span class="w">            </span><span class="c1">// a sane state. `skip_object` can be used to fully ignore the next object</span>
+<a id="__codelineno-1-95" name="__codelineno-1-95" href="#__codelineno-1-95"></a><span class="w">            </span><span class="c1">// in the archive or, if passed `true`, the object the parser is currently in.</span>
+<a id="__codelineno-1-96" name="__codelineno-1-96" href="#__codelineno-1-96"></a><span class="w">            </span><span class="c1">//</span>
+<a id="__codelineno-1-97" name="__codelineno-1-97" href="#__codelineno-1-97"></a><span class="w">            </span><span class="c1">// We pass `true` here, since we&#39;ve already `read_object_begin` so the</span>
+<a id="__codelineno-1-98" name="__codelineno-1-98" href="#__codelineno-1-98"></a><span class="w">            </span><span class="c1">// parser is now considered to be in the object we want to skip. Here, skipping</span>
+<a id="__codelineno-1-99" name="__codelineno-1-99" href="#__codelineno-1-99"></a><span class="w">            </span><span class="c1">// the current object also has another great bonus: if, for some reason, one</span>
+<a id="__codelineno-1-100" name="__codelineno-1-100" href="#__codelineno-1-100"></a><span class="w">            </span><span class="c1">// of the objects was not fully parsed, the remaining entries will be skipped</span>
+<a id="__codelineno-1-101" name="__codelineno-1-101" href="#__codelineno-1-101"></a><span class="w">            </span><span class="c1">// so the parser is in a good state for the next iteration of the loop.</span>
+<a id="__codelineno-1-102" name="__codelineno-1-102" href="#__codelineno-1-102"></a><span class="w">            </span><span class="n">zen</span><span class="o">-&gt;</span><span class="n">skip_object</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+<a id="__codelineno-1-103" name="__codelineno-1-103" href="#__codelineno-1-103"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-1-104" name="__codelineno-1-104" href="#__codelineno-1-104"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-1-105" name="__codelineno-1-105" href="#__codelineno-1-105"></a>
+<a id="__codelineno-1-106" name="__codelineno-1-106" href="#__codelineno-1-106"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<a id="__codelineno-1-107" name="__codelineno-1-107" href="#__codelineno-1-107"></a><span class="p">}</span>
+</code></pre></div>
+<p><strong>Supported data types:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type Name</th>
+<th>Read Function</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>string</code></td>
+<td><code>read_string</code></td>
+<td>A <a href="https://en.wikipedia.org/wiki/Windows-1252">Windows-1252</a> encoded <code>std::string</code></td>
+</tr>
+<tr>
+<td><code>int</code></td>
+<td><code>read_int</code></td>
+<td>A 32-bit signed integer</td>
+</tr>
+<tr>
+<td><code>float</code></td>
+<td><code>read_float</code></td>
+<td>An <a href="https://en.wikipedia.org/wiki/IEEE_754">IEEE 754</a> floating point number</td>
+</tr>
+<tr>
+<td><code>byte</code></td>
+<td><code>read_byte</code></td>
+<td>An 8-bit unsigned integer</td>
+</tr>
+<tr>
+<td><code>word</code></td>
+<td><code>read_word</code></td>
+<td>A 16-bit unsigned integer</td>
+</tr>
+<tr>
+<td><code>enum</code></td>
+<td><code>read_enum</code></td>
+<td>A 32-bit unsigned integer</td>
+</tr>
+<tr>
+<td><code>bool</code></td>
+<td><code>read_bool</code></td>
+<td>A boolean value</td>
+</tr>
+<tr>
+<td><code>color</code></td>
+<td><code>read_color</code></td>
+<td>An <code>RGBA</code> color quad</td>
+</tr>
+<tr>
+<td><code>vec3</code></td>
+<td><code>read_vec3</code></td>
+<td>A 3-dimensional vector with floating point values</td>
+</tr>
+<tr>
+<td><code>rawFloat</code></td>
+<td><code>read_bbox</code>, <code>read_mat3x3</code>, <code>read_vec2</code></td>
+<td>A mathematical structure consisting of multiple floating point values</td>
+</tr>
+<tr>
+<td><code>raw</code></td>
+<td><code>read_raw</code></td>
+<td>A set of raw bytes, returned as a <code>zenkit::Read*</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tabbed-block">
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Archives are currently not supported with the C# API since it depends on the C wrapper.</p>
+</div>
+</div>
+<div class="tabbed-block">
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Archives are currently not supported with the Java API since it depends on the C wrapper.</p>
+</div>
+</div>
+<div class="tabbed-block">
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Archives are currently not supported with the Python API since it depends on the C wrapper.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright © 2022-2023 GothicKit Contributors.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.tabs", "navigation.sections", "search.suggest", "search.highlight", "content.tabs.link", "content.code.copy", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.3220b9d7.min.js"></script>
+      
+        <script src="../../../assets/javascript/extra.js"></script>
+      
+        <script src="../../../assets/javascript/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

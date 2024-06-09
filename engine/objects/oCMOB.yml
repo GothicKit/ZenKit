@@ -1,0 +1,98 @@
+class:
+  name: "oCMOB"
+  bases:
+    - "zCVob"
+    - "oCVob"
+  description: "A VObject which can optionally be moved and/or carried."
+  zenkit: "VMovableObject"
+version:
+  gothic1: 47105
+  gothic2: 47105
+sources:
+  spacerhilfedatei.sph: "https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei"
+  gothic-library.ru: "http://www.gothic-library.ru/publ/ocmob_class/1-1-0-503"
+properties:
+  MOB:
+    type: "group"
+    version: [1, 2]
+    save: false
+    properties:
+      focusName:
+        type: "string"
+        default: ""
+        description: "The name of the object as seen in-game when focusing it."
+        version: [ 1, 2 ]
+        save: false
+      hitpoints:
+        type: "int"
+        default: "0"
+        description: "The number of hitpoints of the object."
+        version: [ 1, 2 ]
+        save: false
+      damage:
+        type: "int"
+        default: "0"
+        description: "The damage dealt by the object when being used."
+        version: [ 1, 2 ]
+        save: false
+      moveable:
+        type: "bool"
+        default: "FALSE"
+        description: "Whether the object can be moved by the player."
+        version: [ 1, 2 ]
+        save: false
+        options:
+          FALSE: "The object can not be moved."
+          TRUE: "The object can be moved."
+      takeable:
+        type: "bool"
+        default: "FALSE"
+        description: "Whether the object can be carried by the player."
+        version: [ 1, 2 ]
+        save: false
+        options:
+          FALSE: "The object can not be carried."
+          TRUE: "The object can be carried."
+      focusOverride:
+        type: "bool"
+        default: "FALSE"
+        description: "Unknown."
+        version: [ 1, 2 ]
+        save: false
+      soundMaterial:
+        type: "enum"
+        default: "WOOD"
+        description: "The sound to play when the object is hit."
+        version: [ 1, 2 ]
+        save: false
+        options:
+          WOOD: "Wood."
+          STONE: "Stone."
+          METAL: "Metal."
+          LEATHER: "Leather."
+          CLAY: "Clay."
+          GLAS: "Glass."
+      visualDestroyed:
+        type: "string"
+        default: ""
+        description: "The name of the visual to use when the object is destroyed. Behaves like [zCVob:visual]."
+        version: [ 1, 2 ]
+        save: false
+      owner:
+        type: "string"
+        default: ""
+        description: "The name of the script instance of the NPC who is the owner of this object."
+        version: [ 1, 2 ]
+        save: false
+      ownerGuild:
+        type: "string"
+        default: ""
+        description: "The name of the guild this object belongs to. This name corresponds to the script constant for each guild (i.e. `GIL_BAU`), found in `Constants.d`."
+        version: [ 1, 2 ]
+        save: false
+  isDestroyed:
+    type: "bool"
+    default: "FALSE"
+    description: "Unknown."
+    version: [ 1, 2 ]
+    save: false
