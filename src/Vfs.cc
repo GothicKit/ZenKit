@@ -558,8 +558,8 @@ namespace zenkit {
 
 		auto comment = r->read_string(256);
 		auto signature = r->read_string(16);
-		[[maybe_unused]] auto file_count = r->read_uint();
 		[[maybe_unused]] auto entry_count = r->read_uint();
+		[[maybe_unused]] auto file_count = r->read_uint();
 		auto timestamp = vfs_dos_to_unix_time(r->read_uint());
 		[[maybe_unused]] auto _size = r->read_uint();
 		auto catalog_offset = r->read_uint();

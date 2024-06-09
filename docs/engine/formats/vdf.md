@@ -36,8 +36,8 @@ a C struct like this.
 struct zFILE_VDFS_Header {
     char comment[256]; // (1)
     char signature[16]; // (2)
-    uint numFiles;
     uint numEntries;
+    uint numFiles;
     uint timestamp; // (3)
     uint size; // (4)
     uint catalogOffset; // (5)
