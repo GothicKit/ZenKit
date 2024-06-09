@@ -260,12 +260,26 @@ namespace zenkit {
 		return const_cast<VfsNode*>(const_cast<Vfs const*>(this)->find(name));
 	}
 
+	static uint32_t count_nodes(VfsNode const* node) {
+		uint32_t count = 1; /* self */
+
+		if (node->type() == VfsNodeType::DIRECTORY) {
+			for (auto& child : node->children()) {
+				count += count_nodes(&child);
+			}
+		}
+
+		return count;
+	}
+
 	void Vfs::save(Write* w, GameVersion version) const {
 		std::vector<std::byte> catalog;
 		auto write_catalog = Write::to(&catalog);
 
 		// Skip the header, we'll write it at the end.
-		w->seek(256 + 16 + 6 * 4, Whence::BEG);
+		unsigned header_size = 256 + 16 + 6 * 4;
+		unsigned catalog_size = (count_nodes(&_m_root) - 1) * (64 + 4 * 4); // -1 because the root node is not counted
+		w->seek(header_size + catalog_size, Whence::BEG);
 
 		std::vector<std::byte> cache;
 		std::string name;
@@ -334,9 +348,9 @@ namespace zenkit {
 		w->write_uint(index);
 		w->write_uint(0);
 		w->write_uint(off + catalog.size());
-		w->write_uint(off);
+		w->write_uint(header_size);
 		w->write_uint(80);
-		w->seek(static_cast<ssize_t>(off), Whence::BEG);
+		w->seek(static_cast<ssize_t>(header_size), Whence::BEG);
 		w->write(catalog.data(), catalog.size());
 	}
 
