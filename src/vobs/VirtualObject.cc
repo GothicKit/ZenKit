@@ -172,6 +172,8 @@ namespace zenkit {
 			} else {
 				this->visual = DEFAULT_VISUAL;
 			}
+		} else {
+			this->visual = DEFAULT_VISUAL;
 		}
 
 		if (has_ai_object) {
