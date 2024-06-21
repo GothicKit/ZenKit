@@ -155,13 +155,13 @@ namespace zenkit {
 		float fps_source {};
 
 		union {
-			ZKREM("renamed to Animation::sample_position_min") float sample_position_range_min {};
-			float sample_position_min;
+			ZKREM("renamed to Animation::sample_position_min") float sample_position_range_min;
+			float sample_position_min {};
 		};
 
 		union {
-			ZKREM("renamed to Animation::sample_position_scale") float sample_position_scalar {};
-			float sample_position_scale;
+			ZKREM("renamed to Animation::sample_position_scale") float sample_position_scalar;
+			float sample_position_scale {};
 		};
 
 		/// \brief The bounding box of the animation.
