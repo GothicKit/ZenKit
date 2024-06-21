@@ -334,7 +334,7 @@ namespace zenkit {
 		///             be used since it is not a real unique identifier of any single object and references internal
 		///             parser state. If you need to check, if two VObjects are equal, you should do a simple pointer
 		///             compare on the shared pointer it's wrapped in.
-		uint32_t id ZKREM("scheduled for removal; refer to documentation") = 0;
+		uint32_t id = 0;
 
 		/// \brief The bounding box of this VObject.
 		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#bbox3dws
