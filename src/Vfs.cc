@@ -531,7 +531,7 @@ namespace zenkit {
 					                                 VfsFileDescriptor {mem.data(), mem.size(), false},
 					                                 time.count()));
 #else
-					    std::ifstream stream {host, std::ios::in | std::ios::ate | std::ios::binary};
+					    std::ifstream stream {path, std::ios::in | std::ios::ate | std::ios::binary};
 					    auto size = stream.tellg();
 					    stream.seekg(0);
 
