@@ -173,7 +173,7 @@ namespace phoenix {
 			return buffer {std::make_shared<detail::mmap_backing>(path)};
 #else
 			std::vector<std::byte> data {};
-			std::ifstream stream {path, std::ios::ate};
+			std::ifstream stream {path, std::ios::in | std::ios::ate | std::ios::binary};
 			data.resize(static_cast<size_t>(stream.tellg()));
 			stream.seekg(0);
 			stream.read(reinterpret_cast<char*>(data.data()), static_cast<std::streamsize>(data.size()));
@@ -186,7 +186,7 @@ namespace phoenix {
 	}
 
 	buffer buffer::read(std::filesystem::path const& path, bool readonly) {
-		std::ifstream in {path, std::ios::binary | std::ios::ate};
+		std::ifstream in {path, std::ios::binary | std::ios::ate | std::ios::in};
 		std::vector<std::byte> data {static_cast<size_t>(in.tellg())};
 
 		in.seekg(0);
