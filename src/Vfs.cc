@@ -373,7 +373,7 @@ namespace zenkit {
 		auto& mem = _m_data_mapped.emplace_back(host);
 		this->mount_disk(mem.data(), mem.size(), overwrite);
 #else
-		std::ifstream stream {host, std::ios::ate};
+		std::ifstream stream {host, std::ios::in | std::ios::ate | std::ios::bin};
 		auto size = stream.tellg();
 		stream.seekg(0);
 
