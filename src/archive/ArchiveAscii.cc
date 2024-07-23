@@ -71,12 +71,18 @@ namespace zenkit {
 		auto line = read->read_line(true);
 
 		// Compatibility fix for binary data in ASCII archives.
-		// TODO: Optimize using `find_if`!
-		while (std::isspace(static_cast<unsigned char>(line[0]))) {
-			line = line.substr(1);
+		std::string_view view = line;
+		size_t spaces_count = 0;
+		for (; spaces_count < view.size()
+			   && std::isspace(static_cast<unsigned char>(view[spaces_count]));
+			 ++spaces_count)
+			;
+
+		if (spaces_count > 0) {
+			view.remove_prefix(spaces_count);
 		}
 
-		if (line != "[]") {
+		if (view != "[]") {
 			read->seek(static_cast<ssize_t>(mark), Whence::BEG);
 			return false;
 		}
