@@ -73,9 +73,8 @@ namespace zenkit {
 		// Compatibility fix for binary data in ASCII archives.
 		std::string_view view = line;
 		size_t spaces_count = 0;
-		for (; spaces_count < view.size()
-			   && std::isspace(static_cast<unsigned char>(view[spaces_count]));
-			 ++spaces_count)
+		for (; spaces_count < view.size() && std::isspace(static_cast<unsigned char>(view[spaces_count]));
+		     ++spaces_count)
 			;
 
 		if (spaces_count > 0) {
