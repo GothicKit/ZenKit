@@ -82,6 +82,7 @@ namespace zenkit {
 	struct DaedalusCallStackFrame {
 		DaedalusSymbol const* function;
 		std::uint32_t program_counter;
+		std::uint32_t stack_ptr;
 		std::shared_ptr<DaedalusInstance> context;
 	};
 
@@ -153,20 +154,14 @@ namespace zenkit {
 			unsafe_call(sym);
 
 			if constexpr (std::is_same_v<R, IgnoreReturnValue>) {
-				// clear the stack
-				_m_stack_ptr = 0;
+				if (sym->has_return()) {
+					// Make sure to still pop the return value off of the stack.
+					_m_stack_ptr--;
+				}
 
 				return {};
 			} else if constexpr (!std::is_same_v<R, void>) {
-				auto ret = pop_call_return_value<R>();
-
-				// clear the stack
-				_m_stack_ptr = 0;
-
-				return ret;
-			} else {
-				// clear the stack
-				_m_stack_ptr = 0;
+				return pop_call_return_value<R>();
 			}
 		}
 
