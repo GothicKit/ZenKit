@@ -120,6 +120,10 @@ namespace zenkit {
 		_m_instance = std::move(i);
 	}
 
+	void DaedalusVm::unsafe_clear_stack() {
+		_m_stack_ptr = 0;
+	}
+
 	bool DaedalusVm::exec() {
 		auto instr = instruction_at(_m_pc);
 

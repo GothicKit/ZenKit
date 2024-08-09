@@ -153,20 +153,15 @@ namespace zenkit {
 			unsafe_call(sym);
 
 			if constexpr (std::is_same_v<R, IgnoreReturnValue>) {
-				// clear the stack
-				_m_stack_ptr = 0;
-
+				this->unsafe_clear_stack();
 				return {};
 			} else if constexpr (!std::is_same_v<R, void>) {
 				auto ret = pop_call_return_value<R>();
 
-				// clear the stack
-				_m_stack_ptr = 0;
-
+				this->unsafe_clear_stack();
 				return ret;
 			} else {
-				// clear the stack
-				_m_stack_ptr = 0;
+				this->unsafe_clear_stack();
 			}
 		}
 
@@ -647,6 +642,7 @@ namespace zenkit {
 		ZKAPI void unsafe_jump(uint32_t address);
 		ZKAPI std::shared_ptr<DaedalusInstance> unsafe_get_gi();
 		ZKAPI void unsafe_set_gi(std::shared_ptr<DaedalusInstance> i);
+		ZKAPI void unsafe_clear_stack();
 
 		/// \return the symbol referring to the global <tt>var C_NPC self</tt>.
 		[[nodiscard]] ZKAPI DaedalusSymbol* global_self() {
