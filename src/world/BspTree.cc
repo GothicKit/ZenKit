@@ -95,7 +95,7 @@ namespace zenkit {
 				this->nodes.reserve(node_count);
 				this->leaf_node_indices.reserve(leaf_count);
 
-				_parse_bsp_nodes(c, this->nodes, this->leaf_node_indices, version, -1);
+				_parse_bsp_nodes(c, this->nodes, this->leaf_node_indices, version, -1, node_count == 1);
 
 				for (auto idx : this->leaf_node_indices) {
 					auto& node = this->nodes[idx];
