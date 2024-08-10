@@ -82,6 +82,7 @@ namespace zenkit {
 	struct DaedalusCallStackFrame {
 		DaedalusSymbol const* function;
 		std::uint32_t program_counter;
+		std::uint32_t stack_ptr;
 		std::shared_ptr<DaedalusInstance> context;
 	};
 

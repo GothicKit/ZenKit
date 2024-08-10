@@ -36,25 +36,7 @@ namespace zenkit {
 		~StackGuard() {
 			if (_m_inhibited) return;
 
-			switch (_m_type) {
-			case DaedalusDataType::FLOAT:
-				_m_machine->push_float(0);
-				break;
-			case DaedalusDataType::INT:
-			case DaedalusDataType::FUNCTION:
-				_m_machine->push_int(0);
-				break;
-			case DaedalusDataType::STRING:
-				_m_machine->push_string("");
-				break;
-			case DaedalusDataType::INSTANCE:
-				_m_machine->push_instance(nullptr);
-				break;
-			case DaedalusDataType::VOID:
-			case DaedalusDataType::CLASS:
-			case DaedalusDataType::PROTOTYPE:
-				break;
-			}
+			StackGuard::fix(_m_machine, _m_type);
 		}
 
 		/// \brief Inhibits this guard.
@@ -63,6 +45,28 @@ namespace zenkit {
 		/// value onto the stack.
 		void inhibit() {
 			_m_inhibited = true;
+		}
+
+		static void fix(DaedalusVm* vm, DaedalusDataType type) {
+			switch (type) {
+			case DaedalusDataType::FLOAT:
+				vm->push_float(0);
+				break;
+			case DaedalusDataType::INT:
+			case DaedalusDataType::FUNCTION:
+				vm->push_int(0);
+				break;
+			case DaedalusDataType::STRING:
+				vm->push_string("");
+				break;
+			case DaedalusDataType::INSTANCE:
+				vm->push_instance(nullptr);
+				break;
+			case DaedalusDataType::VOID:
+			case DaedalusDataType::CLASS:
+			case DaedalusDataType::PROTOTYPE:
+				break;
+			}
 		}
 
 	private:
@@ -453,11 +457,39 @@ namespace zenkit {
 	}
 
 	void DaedalusVm::push_call(DaedalusSymbol const* sym) {
-		_m_call_stack.push({sym, _m_pc, _m_instance});
+		auto var_count = this->find_parameters_for_function(sym).size();
+		_m_call_stack.push({sym, _m_pc, _m_stack_ptr - static_cast<uint32_t>(var_count), _m_instance});
 	}
 
 	void DaedalusVm::pop_call() {
 		auto const& call = _m_call_stack.top();
+
+		// First, try to fix up the stack.
+		if (!call.function->has_return()) {
+			// No special logic needed, there are supposed to be no more stack frames for
+			// this function, so just reset the stack for the caller.
+			_m_stack_ptr = call.stack_ptr;
+		} else {
+			auto remaining_locals = _m_stack_ptr - call.stack_ptr;
+			if (remaining_locals == 0) {
+				// The function is supposed to have a return value, but it does not seem to have one.
+				// To fix this, we just insert a default value (either 0, "" or NULL).
+				StackGuard::fix(this, call.function->rtype());
+			} else if (remaining_locals > 1) {
+				// Now we have too many items left on the stack. Remove all of them, except the topmost one,
+				// since that one is supposed to be the return value of the function.
+				DaedalusStackFrame frame = _m_stack[--_m_stack_ptr];
+				_m_stack_ptr = call.stack_ptr;
+				_m_stack[_m_stack_ptr++] = std::move(frame);
+			}
+			// else {
+			//     We have exactly one value to be returned (as indicated by the symbol's return type).
+			//     That means, that the compiler did not mess up the stack management, so we can just
+			//     return that value.
+			// }
+		}
+
+		// Second, reset PC and context, then remove the call stack frame
 		_m_pc = call.program_counter;
 		_m_instance = call.context;
 		_m_call_stack.pop();
