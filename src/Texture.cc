@@ -18,6 +18,20 @@ namespace zenkit {
 		std::uint16_t g : 6;
 		std::uint16_t r : 5;
 	};
+
+	struct a4r4g4b4 {
+		std::uint16_t b : 4;
+		std::uint16_t g : 4;
+		std::uint16_t r : 4;
+		std::uint16_t a : 4;
+	};
+
+	struct a1r5g5b5 {
+		std::uint16_t b : 5;
+		std::uint16_t g : 5;
+		std::uint16_t r : 5;
+		std::uint16_t a : 1;
+	};
 #pragma pack(pop)
 
 	/// \brief Calculates the size in bytes of a texture at the given mipmap level.
@@ -145,6 +159,16 @@ namespace zenkit {
 				conv[i * 4 + 1] = static_cast<uint8_t>(static_cast<float>(rgb->g) * 4.047619048f);
 				conv[i * 4 + 2] = static_cast<uint8_t>(static_cast<float>(rgb->b) * 8.225806452f);
 				conv[i * 4 + 3] = 0xff;
+			}
+
+			break;
+		}
+		case TextureFormat::A4R4G4B4: {
+			for (auto i = 0u; i < width * height; ++i) {
+				conv[i * 4 + 2] = ((bytes[i * 2 + 0] >> 0) & 0x0F) * 17;
+				conv[i * 4 + 1] = ((bytes[i * 2 + 0] >> 4) & 0x0F) * 17;
+				conv[i * 4 + 0] = ((bytes[i * 2 + 1] >> 0) & 0x0F) * 17;
+				conv[i * 4 + 3] = ((bytes[i * 2 + 1] >> 4) & 0x0F) * 17;
 			}
 
 			break;
