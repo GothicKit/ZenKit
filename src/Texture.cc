@@ -165,22 +165,10 @@ namespace zenkit {
 		}
 		case TextureFormat::A4R4G4B4: {
 			for (auto i = 0u; i < width * height; ++i) {
-				auto* argb = reinterpret_cast<a4r4g4b4 const*>(&bytes[i * 2]);
-				conv[i * 4 + 0] = argb->r * 17;
-				conv[i * 4 + 1] = argb->g * 17;
-				conv[i * 4 + 2] = argb->b * 17;
-				conv[i * 4 + 3] = argb->a * 17;
-			}
-
-			break;
-		}
-		case TextureFormat::A1R5G5B5: {
-			for (auto i = 0u; i < width * height; ++i) {
-				auto* argb = reinterpret_cast<a1r5g5b5 const*>(&bytes[i * 2]);
-				conv[i * 4 + 0] = static_cast<uint8_t>(static_cast<float>(argb->r) * 8.225806452f);
-				conv[i * 4 + 1] = static_cast<uint8_t>(static_cast<float>(argb->g) * 8.225806452f);
-				conv[i * 4 + 2] = static_cast<uint8_t>(static_cast<float>(argb->b) * 8.225806452f);
-				conv[i * 4 + 3] = argb->a * 255;
+				conv[i * 4 + 2] = ((bytes[i * 2 + 0] >> 0) & 0x0F) * 17;
+				conv[i * 4 + 1] = ((bytes[i * 2 + 0] >> 4) & 0x0F) * 17;
+				conv[i * 4 + 0] = ((bytes[i * 2 + 1] >> 0) & 0x0F) * 17;
+				conv[i * 4 + 3] = ((bytes[i * 2 + 1] >> 4) & 0x0F) * 17;
 			}
 
 			break;
