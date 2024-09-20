@@ -91,3 +91,4 @@
     vfs = Vfs()
     vfs.mount_disk("Textures.vdf", clobber=VfsOverwriteBehavior.OLDER)
     tex = Texture.load(vfs.find("MyTexture.TEX"))
+    ```

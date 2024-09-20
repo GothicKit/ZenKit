@@ -91,3 +91,4 @@
     vfs = Vfs()
     vfs.mount_disk("Meshes.vdf", clobber=VfsOverwriteBehavior.OLDER)
     mrm = MultiResolutionMesh.load(vfs.find("MyMesh.MRM"))
+    ```

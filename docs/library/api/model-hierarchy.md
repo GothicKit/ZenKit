@@ -91,3 +91,4 @@
     vfs = Vfs()
     vfs.mount_disk("Anims.vdf", clobber=VfsOverwriteBehavior.OLDER)
     mdh = ModelHierarchy.load(vfs.find("MySkeleton.MDH"))
+    ```

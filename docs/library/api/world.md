@@ -91,3 +91,4 @@
     vfs = Vfs()
     vfs.mount_disk("Worlds.vdf", clobber=VfsOverwriteBehavior.OLDER)
     world = World.load(vfs.find("OLDWORLD.ZEN"))
+    ```

@@ -129,6 +129,7 @@ by a now defunct company called [TRIACOM Software][].
     rd = node.open()
 
     # ...
+    ```
 
 
 [ZIP]: https://en.wikipedia.org/wiki/ZIP_(file_format)
