@@ -59,6 +59,7 @@ Other breaking changes:
 * [202e9b8b] Added a `TextureBuilder` for creating new textures from scratch
 * [a3a408f9] Deadalus external functions can now also take a `DaedalusSymbol&` as a parameter (instead of just a name)
 * [d0b8dcf7] Add support for loading uncompressed VdfsTool VDFs
+* [037db917] Added supported for the ARGB4 texture format
 
 ### Bugfixes
 * [a5cdce4c] Fixed possible `nullptr`-dereference in `Vfs::mount_disk`
@@ -67,6 +68,10 @@ Other breaking changes:
 * [5eb44c88,2b5aa9e8] Fixed some issues with memory leakage in the `Vfs`
 * [713480bf] Fixed a dangeling reference issue in `DaedalusVm::register_default_external`
 * [c9acf8e9,3d67ed5a] Fixed some broken bounds checks in `DaedalusVm` and `DaedalusScript`
+* [748962d6] Fixed an issue where exported VDF files could not be read in by some tools because the journal was at the incorrect location
+* [51540d8d] Fixed an issue where the file and directory count was written out-of-order in the VDF export
+* [616182ac,7dc594e3,36c2e909,f942cf20] Fixed a set of issues preventing files from being read correctly on Windows when MMAP support was disabled.
+* [f6ded81a] Fixed a segfault which could happen when reading in a world with an empty BSP-tree.
 
 ### Misc
 * Added documentation for all known VObs and their fields. This new documentation can be viewed at
@@ -74,6 +79,8 @@ Other breaking changes:
   [Gothic Modding Community (GMC)](https://auronen.cokoliv.eu/gmc/zengin/worlds/Classes/zCVob/)'s page.
 * [6e71a70c] `mio` has been dropped and replaced by a custom, simpler memory mapping implementation (`zenkit::Mmap`)
 * [1f887325] Sped up `Mesh` parsing for some Windows systems by up to 15x
+* [5e60a3a6] The VDF export now always outputs the current date as the file's timestamp
+* [f53a9551] The Daedalus VM's stack is now managed correctly when functions exit with unconsumed data on the stack. 
 
 ### Deprecations
 * All APIs in the `phoenix` namespace. Migrate to their analogs in the `zenkit` namespace instead! Also see [the migration guide](https://zk.gothickit.dev/library/misc/v1.2-to-v1.3/.)
