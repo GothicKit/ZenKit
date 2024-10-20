@@ -225,7 +225,7 @@ namespace zenkit {
 		bit1 |= !preset_name.empty() << 0u;
 		bit1 |= !vob_name.empty() << 1u;
 		bit1 |= (this->visual && !this->visual->name.empty()) << 2u;
-		bit1 |= (!!this->visual) << 3u;
+		bit1 |= (!!this->visual && this->visual->type != VisualType::UNKNOWN) << 3u;
 		bit1 |= (!!this->ai) << 4u;
 		bit1 |= (!!this->event_manager) << 5u;
 
@@ -262,7 +262,7 @@ namespace zenkit {
 			w.write_string("visual", this->visual->name);
 		}
 
-		if (this->visual) {
+		if (this->visual && this->visual->type != VisualType::UNKNOWN) {
 			w.write_object("visual", this->visual, version);
 		}
 
