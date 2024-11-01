@@ -46,6 +46,18 @@ namespace zenkit {
 		w.write_object(this->message, version);
 	}
 
+	std::shared_ptr<ConversationMessageEvent> CutsceneBlock::get_message() const {
+		auto const* cur = this;
+		while (std::holds_alternative<std::shared_ptr<CutsceneBlock>>(cur->block)) {
+			cur = std::get<std::shared_ptr<CutsceneBlock>>(cur->block).get();
+			if (cur == nullptr) {
+				return nullptr;
+			}
+		}
+
+		return std::get<std::shared_ptr<CutsceneAtomicBlock>>(cur->block)->message;
+	}
+
 	void CutsceneBlock::load(ReadArchive& r, GameVersion version) {
 		this->name = r.read_string(); // blockName
 

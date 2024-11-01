@@ -19,17 +19,20 @@ static void verify_g1(zenkit::CutsceneLibrary const& msgs) {
 	CHECK_NE(msg200, nullptr);
 	CHECK_EQ(msg_none, nullptr);
 
-	CHECK_EQ(msg20->atomic->message->type, 0);
-	CHECK_EQ(msg20->atomic->message->text, "Du redest nicht viel, was?");
-	CHECK_EQ(msg20->atomic->message->name, "DIA_ARTO_PERM_15_00.WAV");
+	auto message = msg20->get_message();
+	CHECK_EQ(message->type, 0);
+	CHECK_EQ(message->text, "Du redest nicht viel, was?");
+	CHECK_EQ(message->name, "DIA_ARTO_PERM_15_00.WAV");
 
-	CHECK_EQ(msg100->atomic->message->type, 0);
-	CHECK_EQ(msg100->atomic->message->text, "Ich kann dich auf viele Arten entlohnen.");
-	CHECK_EQ(msg100->atomic->message->name, "DIA_BAALKAGAN_WASDRIN_13_01.WAV");
+	message = msg100->get_message();
+	CHECK_EQ(message->type, 0);
+	CHECK_EQ(message->text, "Ich kann dich auf viele Arten entlohnen.");
+	CHECK_EQ(message->name, "DIA_BAALKAGAN_WASDRIN_13_01.WAV");
 
-	CHECK_EQ(msg200->atomic->message->type, 0);
-	CHECK_EQ(msg200->atomic->message->text, "Stimmt genau.");
-	CHECK_EQ(msg200->atomic->message->name, "DIA_BAALTARAN_INTOCASTLE_EXACTLY_15_00.WAV");
+	message = msg200->get_message();
+	CHECK_EQ(message->type, 0);
+	CHECK_EQ(message->text, "Stimmt genau.");
+	CHECK_EQ(message->name, "DIA_BAALTARAN_INTOCASTLE_EXACTLY_15_00.WAV");
 }
 
 TEST_SUITE("CutsceneLibrary") {
