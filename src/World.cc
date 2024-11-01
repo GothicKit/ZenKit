@@ -6,6 +6,7 @@
 #include "zenkit/vobs/Misc.hh"
 
 #include "Internal.hh"
+#include "zenkit/CutsceneLibrary.hh"
 
 namespace zenkit {
 	[[maybe_unused]] static constexpr uint32_t BSP_VERSION_G1 = 0x2090000;
@@ -273,16 +274,24 @@ namespace zenkit {
 		return 64513;
 	}
 
-	void CutscenePlayer::load(ReadArchive& r, GameVersion) {
+	void CutscenePlayer::load(ReadArchive& r, GameVersion version) {
 		this->last_process_day = r.read_int();  // lastProcessDay
 		this->last_process_hour = r.read_int(); // lastProcessHour
-		this->play_list_count = r.read_int();   // playListCount
+
+		auto play_list_count = r.read_int(); // playListCount
+		for (auto i = 0; i < play_list_count; ++i) {
+			playlists.push_back(r.read_object<CutsceneContext>(version));
+		}
 	}
 
-	void CutscenePlayer::save(WriteArchive& w, GameVersion) const {
+	void CutscenePlayer::save(WriteArchive& w, GameVersion version) const {
 		w.write_int("lastProcessDay", this->last_process_day);
 		w.write_int("lastProcessHour", this->last_process_hour);
-		w.write_int("playListCount", this->play_list_count);
+		w.write_int("playListCount", this->playlists.size());
+
+		for (auto i = 0; i < this->playlists.size(); ++i) {
+			w.write_object("playContext" + std::to_string(i), this->playlists[i].lock(), version);
+		}
 	}
 
 	void SkyController::load(ReadArchive& r, GameVersion version) {

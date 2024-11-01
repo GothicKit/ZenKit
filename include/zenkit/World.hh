@@ -18,13 +18,14 @@ namespace phoenix {
 
 namespace zenkit {
 	struct VNpc;
+	struct CutsceneContext;
 
 	struct CutscenePlayer : Object {
 		static constexpr ObjectType TYPE = ObjectType::oCCSPlayer;
 
 		int32_t last_process_day;
 		int32_t last_process_hour;
-		int32_t play_list_count;
+		std::vector<std::weak_ptr<CutsceneContext>> playlists;
 
 		[[nodiscard]] ObjectType get_object_type() const override {
 			return TYPE;
