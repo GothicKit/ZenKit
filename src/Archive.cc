@@ -94,10 +94,11 @@ namespace zenkit {
 	    {"zCCSPoolItem", ObjectType::zCCSPoolItem},
 	    {"zCCSBlock", ObjectType::zCCSBlock},
 	    {"zCCutscene:zCCSBlock", ObjectType::zCCutscene},
-	    {"zCCutsceneContext:zCCutscene:zCCSBlock", ObjectType::zCCutsceneContext},
+	    {"zCCSCutsceneContext:zCCutscene:zCCSBlock", ObjectType::zCCSCutsceneContext},
 	    {"oCMsgConversation:oCNpcMessage:zCEventMessage", ObjectType::oCMsgConversation},
 	    {"zCCSAtomicBlock", ObjectType::zCCSAtomicBlock},
 	    {"zCCSLib", ObjectType::zCCSLib},
+		{"zCCSProps", ObjectType::zCCSProps},
 	};
 
 	static std::unordered_map<ObjectType, std::string> const CLASS_NAMES = {
@@ -167,10 +168,11 @@ namespace zenkit {
 	    {ObjectType::zCCSPoolItem, "zCCSPoolItem"},
 	    {ObjectType::zCCSBlock, "zCCSBlock"},
 	    {ObjectType::zCCutscene, "zCCutscene:zCCSBlock"},
-	    {ObjectType::zCCutsceneContext, "zCCutsceneContext:zCCutscene:zCCSBlock"},
+	    {ObjectType::zCCSCutsceneContext, "zCCSCutsceneContext:zCCutscene:zCCSBlock"},
 	    {ObjectType::oCMsgConversation, "oCMsgConversation:oCNpcMessage:zCEventMessage"},
 	    {ObjectType::zCCSAtomicBlock, "zCCSAtomicBlock"},
 	    {ObjectType::zCCSLib, "zCCSLib"},
+		{ObjectType::zCCSProps, "zCCSProps"},
 	};
 
 	ReadArchive::ReadArchive(ArchiveHeader head, Read* read) : header(std::move(head)), read(read) {}
@@ -499,7 +501,7 @@ namespace zenkit {
 		case ObjectType::zCCutscene:
 			syn = std::make_shared<Cutscene>();
 			break;
-		case ObjectType::zCCutsceneContext:
+		case ObjectType::zCCSCutsceneContext:
 			syn = std::make_shared<CutsceneContext>();
 			break;
 		case ObjectType::zCCSBlock:
@@ -513,6 +515,9 @@ namespace zenkit {
 			break;
 		case ObjectType::oCMsgConversation:
 			syn = std::make_shared<ConversationMessageEvent>();
+			break;
+		case ObjectType::zCCSProps:
+			syn = std::make_shared<CutsceneProps>();
 			break;
 #ifdef ZK_FUTURE
 		case ObjectType::zCWayNet:

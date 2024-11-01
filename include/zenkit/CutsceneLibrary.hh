@@ -13,6 +13,8 @@ namespace phoenix {
 }
 
 namespace zenkit {
+	struct VNpc;
+
 	class Read;
 	class Write;
 
@@ -27,6 +29,10 @@ namespace zenkit {
 
 		/// \brief The name of the WAV file containing the message's audio.
 		std::string name;
+
+		bool high_priority = false;
+		bool used = false;
+		bool deleted = false;
 
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
@@ -53,7 +59,7 @@ namespace zenkit {
 		/// \details It seems like it was at one point possible to specify multiple CutsceneMessage objects for each
 		///          CutsceneBlock. This seems to have been abandoned, however, so this implementation only supports
 		///          one CutsceneMessage per message block.
-		std::shared_ptr<CutsceneAtomicBlock> atomic;
+		std::variant<std::shared_ptr<CutsceneAtomicBlock>, std::shared_ptr<CutsceneBlock>> block;
 
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
@@ -83,19 +89,48 @@ namespace zenkit {
 		std::vector<std::shared_ptr<CutsceneBlock>> blocks {};
 	};
 
-	class Cutscene : public CutsceneBlock {
-		ZK_OBJECT(ObjectType::zCCutscene);
+	struct CutsceneProps final : Object {
+		ZK_OBJECT(ObjectType::zCCSProps);
 
-	public:
-		ZKAPI void load(Read* r);
-		ZKAPI void save(Write* r, ArchiveFormat fmt) const;
+		std::string name;
+		bool global;
+		bool loop;
+		bool has_to_be_triggered;
+		float distance;
+		float range;
+		int locked_block_count;
+		uint32_t run_behaviour;
+		int run_behaviour_value;
+		std::string stage_name;
+		std::string script_function_on_stop;
+
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 	};
 
-	class CutsceneContext final : public Cutscene {
-		ZK_OBJECT(ObjectType::zCCutsceneContext);
+	struct Cutscene : CutsceneBlock {
+		ZK_OBJECT(ObjectType::zCCutscene);
 
-	public:
-		ZKAPI void load(Read* r);
-		ZKAPI void save(Write* r, ArchiveFormat fmt) const;
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+	};
+
+	struct CutsceneContext final : Cutscene {
+		ZK_OBJECT(ObjectType::zCCSCutsceneContext);
+
+		std::shared_ptr<CutsceneProps> props;
+		int role_count;
+		int role_vob_count;
+		std::weak_ptr<VNpc> npc;
+		std::weak_ptr<VNpc> main_role;
+		bool is_cutscene;
+		int reference;
+		int actual_block;
+		std::shared_ptr<Object> alt_stage;
+		std::shared_ptr<Object> stage;
+		bool was_triggered;
+
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 	};
 } // namespace zenkit

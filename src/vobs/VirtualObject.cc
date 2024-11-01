@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 #include "zenkit/vobs/VirtualObject.hh"
 #include "zenkit/Archive.hh"
+#include "zenkit/CutsceneLibrary.hh"
 #include "zenkit/vobs/Misc.hh"
 
 #include <unordered_map>
@@ -305,14 +306,12 @@ namespace zenkit {
 		w.write_vec3("slideDir", this->slide_direction);
 	}
 
-	void EventManager::load(ReadArchive& r, GameVersion) {
+	void EventManager::load(ReadArchive& r, GameVersion version) {
 		this->cleared = r.read_bool();
 		this->active = r.read_bool();
 
 		/* TODO: emCutscene = */
-		ArchiveObject o;
-		r.read_object_begin(o);
-		r.read_object_end();
+		r.read_object<CutsceneContext>(version);
 	}
 
 	void EventManager::save(WriteArchive& w, GameVersion) const {

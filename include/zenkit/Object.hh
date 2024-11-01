@@ -79,10 +79,11 @@ namespace zenkit {
 		zCCSPoolItem,
 		zCCSBlock,
 		zCCutscene,
-		zCCutsceneContext,
+		zCCSCutsceneContext,
 		oCMsgConversation,
 		zCCSAtomicBlock,
 		zCCSLib,
+		zCCSProps,
 	};
 
 	constexpr bool is_vobject(ObjectType type) {
