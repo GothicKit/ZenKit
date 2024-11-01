@@ -17,7 +17,9 @@ namespace zenkit {
 	class Write;
 
 	/// \brief A single cutscene message.
-	struct CutsceneMessage {
+	struct ConversationMessageEvent final : Object {
+		ZK_OBJECT(ObjectType::oCMsgConversation);
+
 		uint32_t type = 0;
 
 		/// \brief The text associated with the message.
@@ -25,10 +27,25 @@ namespace zenkit {
 
 		/// \brief The name of the WAV file containing the message's audio.
 		std::string name;
+
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
+	};
+
+	struct CutsceneAtomicBlock final : Object {
+		ZK_OBJECT(ObjectType::zCCSAtomicBlock);
+
+		std::shared_ptr<ConversationMessageEvent> message;
+		bool synchronized = false;
+
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 	};
 
 	/// \brief A block containing a cutscene message and a unique name.
-	struct CutsceneBlock {
+	struct CutsceneBlock : Object {
+		ZK_OBJECT(ObjectType::zCCSBlock);
+
 		/// \brief The unique name of the message.
 		std::string name;
 
@@ -36,7 +53,10 @@ namespace zenkit {
 		/// \details It seems like it was at one point possible to specify multiple CutsceneMessage objects for each
 		///          CutsceneBlock. This seems to have been abandoned, however, so this implementation only supports
 		///          one CutsceneMessage per message block.
-		CutsceneMessage message;
+		std::shared_ptr<CutsceneAtomicBlock> atomic;
+
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 	};
 
 	/// \brief Represents a cutscene library.
@@ -47,20 +67,35 @@ namespace zenkit {
 	/// of Gothic and Gothic II installations. Cutscene libraries are *ZenGin* archives in either binary or ASCII
 	/// format. They have either the `.DAT` or `.BIN` extension for binary files or the `.CSL` or `.LSC` extension for
 	/// text files</p>
-	class CutsceneLibrary {
-	public:
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static CutsceneLibrary parse(phoenix::buffer& buf);
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static CutsceneLibrary parse(phoenix::buffer&& buf);
+	class CutsceneLibrary final : public Object {
+		ZK_OBJECT(ObjectType::zCCSLib);
 
+	public:
 		/// \brief Retrieves a message block by it's name.
 		/// \param name The name of the block to get
 		/// \return A pointer to the block or `nullptr` if the block was not found.
-		[[nodiscard]] ZKAPI CutsceneBlock const* block_by_name(std::string_view name) const;
+		[[nodiscard]] ZKAPI std::shared_ptr<CutsceneBlock> block_by_name(std::string_view name) const;
 
-		ZKAPI void load(Read* r);
-		ZKAPI void save(Write* r, ArchiveFormat fmt) const;
+		ZKAPI void load(ReadArchive& r, GameVersion version) override;
+		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 
 		/// \brief A list of all message blocks in the database.
-		std::vector<CutsceneBlock> blocks {};
+		std::vector<std::shared_ptr<CutsceneBlock>> blocks {};
+	};
+
+	class Cutscene : public CutsceneBlock {
+		ZK_OBJECT(ObjectType::zCCutscene);
+
+	public:
+		ZKAPI void load(Read* r);
+		ZKAPI void save(Write* r, ArchiveFormat fmt) const;
+	};
+
+	class CutsceneContext final : public Cutscene {
+		ZK_OBJECT(ObjectType::zCCutsceneContext);
+
+	public:
+		ZKAPI void load(Read* r);
+		ZKAPI void save(Write* r, ArchiveFormat fmt) const;
 	};
 } // namespace zenkit

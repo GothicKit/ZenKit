@@ -77,6 +77,12 @@ namespace zenkit {
 		oCSavegameInfo,
 		oCCSManager,
 		zCCSPoolItem,
+		zCCSBlock,
+		zCCutscene,
+		zCCutsceneContext,
+		oCMsgConversation,
+		zCCSAtomicBlock,
+		zCCSLib,
 	};
 
 	constexpr bool is_vobject(ObjectType type) {

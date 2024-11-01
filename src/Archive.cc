@@ -20,6 +20,7 @@
 #include "archive/ArchiveBinsafe.hh"
 
 #include "phoenix/buffer.hh"
+#include "zenkit/CutsceneLibrary.hh"
 #include "zenkit/SaveGame.hh"
 #include "zenkit/World.hh"
 
@@ -91,6 +92,12 @@ namespace zenkit {
 	    {"oCSavegameInfo", ObjectType::oCSavegameInfo},
 	    {"oCCSManager:zCCSManager", ObjectType::oCCSManager},
 	    {"zCCSPoolItem", ObjectType::zCCSPoolItem},
+	    {"zCCSBlock", ObjectType::zCCSBlock},
+	    {"zCCutscene:zCCSBlock", ObjectType::zCCutscene},
+	    {"zCCutsceneContext:zCCutscene:zCCSBlock", ObjectType::zCCutsceneContext},
+	    {"oCMsgConversation:oCNpcMessage:zCEventMessage", ObjectType::oCMsgConversation},
+	    {"zCCSAtomicBlock", ObjectType::zCCSAtomicBlock},
+	    {"zCCSLib", ObjectType::zCCSLib},
 	};
 
 	static std::unordered_map<ObjectType, std::string> const CLASS_NAMES = {
@@ -158,6 +165,12 @@ namespace zenkit {
 	    {ObjectType::oCSavegameInfo, "oCSavegameInfo"},
 	    {ObjectType::oCCSManager, "oCCSManager:zCCSManager"},
 	    {ObjectType::zCCSPoolItem, "zCCSPoolItem"},
+	    {ObjectType::zCCSBlock, "zCCSBlock"},
+	    {ObjectType::zCCutscene, "zCCutscene:zCCSBlock"},
+	    {ObjectType::zCCutsceneContext, "zCCutsceneContext:zCCutscene:zCCSBlock"},
+	    {ObjectType::oCMsgConversation, "oCMsgConversation:oCNpcMessage:zCEventMessage"},
+	    {ObjectType::zCCSAtomicBlock, "zCCSAtomicBlock"},
+	    {ObjectType::zCCSLib, "zCCSLib"},
 	};
 
 	ReadArchive::ReadArchive(ArchiveHeader head, Read* read) : header(std::move(head)), read(read) {}
@@ -482,6 +495,24 @@ namespace zenkit {
 			break;
 		case ObjectType::zCCSPoolItem:
 			syn = std::make_shared<CutscenePoolItem>();
+			break;
+		case ObjectType::zCCutscene:
+			syn = std::make_shared<Cutscene>();
+			break;
+		case ObjectType::zCCutsceneContext:
+			syn = std::make_shared<CutsceneContext>();
+			break;
+		case ObjectType::zCCSBlock:
+			syn = std::make_shared<CutsceneBlock>();
+			break;
+		case ObjectType::zCCSAtomicBlock:
+			syn = std::make_shared<CutsceneAtomicBlock>();
+			break;
+		case ObjectType::zCCSLib:
+			syn = std::make_shared<CutsceneLibrary>();
+			break;
+		case ObjectType::oCMsgConversation:
+			syn = std::make_shared<ConversationMessageEvent>();
 			break;
 #ifdef ZK_FUTURE
 		case ObjectType::zCWayNet:
