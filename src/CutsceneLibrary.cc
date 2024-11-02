@@ -12,7 +12,7 @@
 #include <algorithm>
 
 namespace zenkit {
-	void ConversationMessageEvent::load(ReadArchive& r, GameVersion version) {
+	void ConversationMessageEvent::load(ReadArchive& r, GameVersion) {
 		this->type = r.read_enum(); // subType
 
 		if (r.is_save_game()) {
@@ -25,7 +25,7 @@ namespace zenkit {
 		this->name = r.read_string(); // name
 	}
 
-	void ConversationMessageEvent::save(WriteArchive& w, GameVersion version) const {
+	void ConversationMessageEvent::save(WriteArchive& w, GameVersion) const {
 		w.write_enum("subType", this->type);
 
 		if (w.is_save_game()) {
@@ -81,14 +81,14 @@ namespace zenkit {
 			                   "expected only one block but got " + std::to_string(block_count) + " for " + this->name};
 		}
 
-		auto block = r.read_object(version);
-		if (block->get_object_type() == ObjectType::zCCSAtomicBlock) {
-			this->block = std::static_pointer_cast<CutsceneAtomicBlock>(block);
-		} else if (block->get_object_type() == ObjectType::zCCSBlock) {
-			this->block = std::static_pointer_cast<CutsceneBlock>(block);
+		auto blk = r.read_object(version);
+		if (blk->get_object_type() == ObjectType::zCCSAtomicBlock) {
+			this->block = std::static_pointer_cast<CutsceneAtomicBlock>(blk);
+		} else if (blk->get_object_type() == ObjectType::zCCSBlock) {
+			this->block = std::static_pointer_cast<CutsceneBlock>(blk);
 		} else {
 			throw ParserError {"CutsceneLibrary",
-			                   "Unexpected block type: " + std::to_string(static_cast<int>(block->get_object_type())) +
+			                   "Unexpected block type: " + std::to_string(static_cast<int>(blk->get_object_type())) +
 			                       " for " + this->name};
 		}
 	}
@@ -123,7 +123,7 @@ namespace zenkit {
 		this->blocks.reserve(static_cast<std::uint64_t>(item_count));
 
 		for (auto i = 0; i < item_count; ++i) {
-			this->blocks.push_back(r.read_object<CutsceneBlock>(GameVersion::GOTHIC_1));
+			this->blocks.push_back(r.read_object<CutsceneBlock>(version));
 		}
 
 		// Prepare blocks for binary search in block_by_name
@@ -140,7 +140,7 @@ namespace zenkit {
 		}
 	}
 
-	void CutsceneProps::load(ReadArchive& r, GameVersion version) {
+	void CutsceneProps::load(ReadArchive& r, GameVersion) {
 		this->name = r.read_string();                    // name
 		this->global = r.read_bool();                    // globalCutscene
 		this->loop = r.read_bool();                      // csLoop
@@ -154,7 +154,7 @@ namespace zenkit {
 		this->script_function_on_stop = r.read_string(); // scriptFuncOnStop
 	}
 
-	void CutsceneProps::save(WriteArchive& w, GameVersion version) const {
+	void CutsceneProps::save(WriteArchive& w, GameVersion) const {
 		w.write_string("name", this->name);
 		w.write_bool("globalCutscene", this->global);
 		w.write_bool("csLoop", this->loop);
