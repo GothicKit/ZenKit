@@ -41,7 +41,7 @@ namespace zenkit {
 	struct CutsceneAtomicBlock final : Object {
 		ZK_OBJECT(ObjectType::zCCSAtomicBlock);
 
-		std::shared_ptr<ConversationMessageEvent> message;
+		std::shared_ptr<ConversationMessageEvent> message = std::make_shared<ConversationMessageEvent>();
 		bool synchronized = false;
 
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
@@ -59,7 +59,7 @@ namespace zenkit {
 		/// \details It seems like it was at one point possible to specify multiple CutsceneMessage objects for each
 		///          CutsceneBlock. This seems to have been abandoned, however, so this implementation only supports
 		///          one CutsceneMessage per message block.
-		std::variant<std::shared_ptr<CutsceneAtomicBlock>, std::shared_ptr<CutsceneBlock>> block;
+		std::variant<std::shared_ptr<CutsceneAtomicBlock>, std::shared_ptr<CutsceneBlock>> block = std::make_shared<CutsceneAtomicBlock>();
 
 		[[nodiscard]] std::shared_ptr<ConversationMessageEvent> get_message() const;
 		void set_message(std::shared_ptr<ConversationMessageEvent> msg);
@@ -113,6 +113,8 @@ namespace zenkit {
 
 	struct Cutscene : CutsceneBlock {
 		ZK_OBJECT(ObjectType::zCCutscene);
+
+		Cutscene();
 
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;

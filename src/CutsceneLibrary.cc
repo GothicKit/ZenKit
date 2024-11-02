@@ -120,10 +120,10 @@ namespace zenkit {
 
 	void CutsceneLibrary::load(ReadArchive& r, GameVersion version) {
 		auto item_count = r.read_int(); // NumOfItems
-		this->blocks.resize(static_cast<std::uint64_t>(item_count));
+		this->blocks.reserve(static_cast<std::uint64_t>(item_count));
 
 		for (auto i = 0; i < item_count; ++i) {
-			this->blocks[i] = r.read_object<CutsceneBlock>(GameVersion::GOTHIC_1);
+			this->blocks.push_back(r.read_object<CutsceneBlock>(GameVersion::GOTHIC_1));
 		}
 
 		// Prepare blocks for binary search in block_by_name
@@ -166,6 +166,10 @@ namespace zenkit {
 		w.write_int("runBehaviourValue", this->run_behaviour_value);
 		w.write_string("StageName", this->stage_name);
 		w.write_string("scriptFuncOnStop", this->script_function_on_stop);
+	}
+
+	Cutscene::Cutscene() {
+		this->block = std::make_shared<CutsceneBlock>();
 	}
 
 	void Cutscene::load(ReadArchive& r, GameVersion version) {
