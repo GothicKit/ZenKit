@@ -289,7 +289,7 @@ namespace zenkit {
 		w.write_int("lastProcessHour", this->last_process_hour);
 		w.write_int("playListCount", this->playlists.size());
 
-		for (auto i = 0; i < this->playlists.size(); ++i) {
+		for (auto i = 0u; i < this->playlists.size(); ++i) {
 			w.write_object("playContext" + std::to_string(i), this->playlists[i].lock(), version);
 		}
 	}
