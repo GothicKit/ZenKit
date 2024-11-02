@@ -309,17 +309,13 @@ namespace zenkit {
 	void EventManager::load(ReadArchive& r, GameVersion version) {
 		this->cleared = r.read_bool();
 		this->active = r.read_bool();
-
-		/* TODO: emCutscene = */
-		r.read_object<CutsceneContext>(version);
+		this->cutscene = r.read_object<CutsceneContext>(version);
 	}
 
-	void EventManager::save(WriteArchive& w, GameVersion) const {
+	void EventManager::save(WriteArchive& w, GameVersion version) const {
 		w.write_bool("cleared", this->cleared);
 		w.write_bool("active", this->active);
-
-		w.write_object_begin("emCutscene", "%", 0);
-		w.write_object_end();
+		w.write_object("emCutscene", this->cutscene.lock(), version);
 	}
 
 	void AiHuman::load(ReadArchive& r, GameVersion version) {

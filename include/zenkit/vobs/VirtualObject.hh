@@ -19,6 +19,8 @@
 #include <vector>
 
 namespace zenkit {
+	struct CutsceneContext;
+
 	class ReadArchive;
 	struct VNpc;
 
@@ -202,6 +204,7 @@ namespace zenkit {
 
 		bool cleared = false;
 		bool active = false;
+		std::weak_ptr<CutsceneContext> cutscene;
 
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
