@@ -62,6 +62,7 @@ namespace zenkit {
 		std::variant<std::shared_ptr<CutsceneAtomicBlock>, std::shared_ptr<CutsceneBlock>> block;
 
 		[[nodiscard]] std::shared_ptr<ConversationMessageEvent> get_message() const;
+		void set_message(std::shared_ptr<ConversationMessageEvent> msg);
 
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
