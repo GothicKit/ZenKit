@@ -193,7 +193,7 @@ namespace zenkit {
 		/// \return The node with the given name or `nullptr` if no node with the given name was found.
 		[[nodiscard]] ZKAPI VfsNode* find(std::string_view name) noexcept;
 
-		ZKAPI void save(Write* w, GameVersion version) const;
+		ZKAPI void save(Write* w, GameVersion version, time_t unix_t = 0) const;
 
 	private:
 		ZKINT void mount_disk(std::byte const* buf, std::size_t size, VfsOverwriteBehavior overwrite);
