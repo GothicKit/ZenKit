@@ -770,23 +770,28 @@ namespace zenkit {
 		for (auto* sym : symbols) {
 			if (sym == nullptr) continue;
 
-			if (auto instance = sym->get_instance(); instance != nullptr) {
+			auto instance = sym->get_instance();
+			if (instance != nullptr && instance->symbol_index() != static_cast<uint32_t>(-1)) {
 				DaedalusSymbol const* instance_symbol = find_symbol_by_instance(instance);
 				ZKLOGE("DaedalusVm",
 				       "%s = %s (%u)",
 				       sym->name().c_str(),
 				       instance_symbol->name().c_str(),
 				       instance->symbol_index());
-			} else {
+			} else if (instance == nullptr) {
 				ZKLOGE("DaedalusVm", "%s = NULL", sym->name().c_str());
+			} else {
+				ZKLOGE("DaedalusVm", "%s = <TRANSIENT>", sym->name().c_str());
 			}
 		}
 
-		if (_m_instance != nullptr) {
+		if (_m_instance != nullptr && _m_instance->symbol_index() != static_cast<uint32_t>(-1)) {
 			auto instance_symbol = find_symbol_by_instance(_m_instance);
 			ZKLOGE("DaedalusVm", "<__THIS__> = %s (%u)", instance_symbol->name().c_str(), _m_instance->symbol_index());
-		} else {
+		} else if (_m_instance == nullptr) {
 			ZKLOGE("DaedalusVm", "<__THIS__> = NULL");
+		} else {
+			ZKLOGE("DaedalusVm", "<__THIS__> = <TRANSIENT>");
 		}
 	}
 
