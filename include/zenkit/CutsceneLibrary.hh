@@ -59,7 +59,8 @@ namespace zenkit {
 		/// \details It seems like it was at one point possible to specify multiple CutsceneMessage objects for each
 		///          CutsceneBlock. This seems to have been abandoned, however, so this implementation only supports
 		///          one CutsceneMessage per message block.
-		std::variant<std::shared_ptr<CutsceneAtomicBlock>, std::shared_ptr<CutsceneBlock>> block = std::make_shared<CutsceneAtomicBlock>();
+		std::variant<std::shared_ptr<CutsceneAtomicBlock>, std::shared_ptr<CutsceneBlock>> block =
+		    std::make_shared<CutsceneAtomicBlock>();
 
 		[[nodiscard]] std::shared_ptr<ConversationMessageEvent> get_message() const;
 		void set_message(std::shared_ptr<ConversationMessageEvent> msg);

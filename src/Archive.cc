@@ -98,7 +98,7 @@ namespace zenkit {
 	    {"oCMsgConversation:oCNpcMessage:zCEventMessage", ObjectType::oCMsgConversation},
 	    {"zCCSAtomicBlock", ObjectType::zCCSAtomicBlock},
 	    {"zCCSLib", ObjectType::zCCSLib},
-		{"zCCSProps", ObjectType::zCCSProps},
+	    {"zCCSProps", ObjectType::zCCSProps},
 	};
 
 	static std::unordered_map<ObjectType, std::string> const CLASS_NAMES = {
@@ -172,7 +172,7 @@ namespace zenkit {
 	    {ObjectType::oCMsgConversation, "oCMsgConversation:oCNpcMessage:zCEventMessage"},
 	    {ObjectType::zCCSAtomicBlock, "zCCSAtomicBlock"},
 	    {ObjectType::zCCSLib, "zCCSLib"},
-		{ObjectType::zCCSProps, "zCCSProps"},
+	    {ObjectType::zCCSProps, "zCCSProps"},
 	};
 
 	ReadArchive::ReadArchive(ArchiveHeader head, Read* read) : header(std::move(head)), read(read) {}
