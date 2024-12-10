@@ -39,7 +39,7 @@ jobs:
         build_type: [ 'Debug', 'Release' ]
     env:
       ASAN_OPTIONS: 'detect_container_overflow=0'
-    runs-on: 'macos-12'
+    runs-on: 'macos-latest'
     steps:
       - uses: 'actions/checkout@v3'
       - uses: 'maxim-lobanov/setup-xcode@v1'
