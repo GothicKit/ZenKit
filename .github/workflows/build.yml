@@ -46,7 +46,7 @@ jobs:
         with:
           xcode-version: '${{matrix.xcode}}'
       - name: 'Configure'
-        run: 'cmake -B build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DZK_BUILD_EXAMPLES=ON -DZK_BUILD_TESTS=ON'
+        run: 'cmake -B build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DZK_BUILD_EXAMPLES=ON -DZK_BUILD_TESTS=ON -DBUILD_SQUISH_WITH_SSE2=OFF'
       - name: 'Build'
         run: 'cmake --build build'
       - name: 'Test'
