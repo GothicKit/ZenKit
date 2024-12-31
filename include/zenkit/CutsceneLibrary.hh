@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Archive.hh"
@@ -7,10 +7,6 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-
-namespace phoenix {
-	class buffer;
-}
 
 namespace zenkit {
 	struct VNpc;

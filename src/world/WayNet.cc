@@ -1,7 +1,8 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/world/WayNet.hh"
 #include "zenkit/Archive.hh"
+#include "zenkit/Error.hh"
 
 #include "../Internal.hh"
 

@@ -1,11 +1,7 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/ModelAnimation.hh"
 #include "zenkit/Stream.hh"
-
-#include "phoenix/buffer.hh"
-
-#include <cmath>
 
 namespace zenkit {
 	/// \brief The highest number representable by a single rotation component.
@@ -67,19 +63,6 @@ namespace zenkit {
 
 	bool AnimationSample::operator==(AnimationSample const& other) const noexcept {
 		return this->position == other.position && this->rotation == other.rotation;
-	}
-
-	ModelAnimation ModelAnimation::parse(phoenix::buffer& buf) {
-		ModelAnimation anim {};
-
-		auto r = Read::from(&buf);
-		anim.load(r.get());
-
-		return anim;
-	}
-
-	ModelAnimation ModelAnimation::parse(phoenix::buffer&& in) {
-		return parse(in);
 	}
 
 	void ModelAnimation::load(Read* r) {

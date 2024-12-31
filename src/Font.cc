@@ -1,9 +1,8 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/Font.hh"
 #include "zenkit/Stream.hh"
-
-#include "phoenix/phoenix.hh"
+#include "zenkit/Error.hh"
 
 namespace zenkit {
 	bool FontGlyph::operator==(FontGlyph const& g) const noexcept {
@@ -12,19 +11,6 @@ namespace zenkit {
 
 	Font::Font(std::string font_name, std::uint32_t font_height, std::vector<FontGlyph> font_glyphs)
 	    : name(std::move(font_name)), height(font_height), glyphs(std::move(font_glyphs)) {}
-
-	Font Font::parse(phoenix::buffer& in) {
-		Font fnt {};
-
-		auto r = Read::from(&in);
-		fnt.load(r.get());
-
-		return fnt;
-	}
-
-	Font Font::parse(phoenix::buffer&& in) {
-		return parse(in);
-	}
 
 	void Font::load(Read* r) {
 		if (auto version = r->read_line(true); version != "1") {

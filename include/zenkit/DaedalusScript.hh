@@ -1,11 +1,9 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Error.hh"
 #include "zenkit/Library.hh"
 #include "zenkit/Stream.hh"
-
-#include "phoenix/buffer.hh"
 
 #include <cstdint>
 #include <functional>
@@ -15,10 +13,6 @@
 #include <unordered_map>
 #include <variant>
 #include <vector>
-
-namespace phoenix {
-	class buffer;
-}
 
 namespace zenkit {
 	class Read;
@@ -461,10 +455,6 @@ namespace zenkit {
 	public:
 		ZKINT DaedalusSymbol() = default;
 
-		/// \brief Parses a symbol from the given reader.
-		/// \param[in,out] in The reader to read the symbol from.
-		/// \return The symbol parsed.
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static DaedalusSymbol parse(phoenix::buffer& in);
 		ZKAPI void load(Read* in);
 
 		/// \brief Validates that the symbol is a string and retrieves it's value in the given context.
@@ -749,16 +739,6 @@ namespace zenkit {
 		ZKAPI DaedalusScript() = default;
 		ZKAPI DaedalusScript(DaedalusScript const& copy) = delete;
 		ZKAPI DaedalusScript(DaedalusScript&& move) = default;
-
-		/// \brief Parses in a compiled daedalus script.
-		/// \param path The path of the script file.
-		/// \return The script parsed
-		[[nodiscard]] ZKREM("use ::load") ZKAPI static DaedalusScript parse(std::string const& path);
-
-		/// \brief Parses in a compiled daedalus script.
-		/// \param buf A buffer containing the script data.
-		/// \return The script parsed
-		[[nodiscard]] ZKREM("use ::load") ZKAPI static DaedalusScript parse(phoenix::buffer& buf);
 
 		ZKAPI void load(Read* r);
 

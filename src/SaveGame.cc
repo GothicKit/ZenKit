@@ -1,4 +1,4 @@
-// Copyright © 2022-2023 GothicKit Contributors.
+// Copyright © 2022-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/SaveGame.hh"
 #include "zenkit/Archive.hh"
@@ -253,7 +253,7 @@ namespace zenkit {
 	std::optional<std::filesystem::path> find_file_matching(std::set<std::filesystem::path> const& choices,
 	                                                        std::string_view filename) {
 		auto result = std::find_if(choices.begin(), choices.end(), [filename](std::filesystem::path const& path) {
-			return phoenix::iequals(path.filename().string(), filename);
+			return iequals(path.filename().string(), filename);
 		});
 
 		if (result == choices.end()) {

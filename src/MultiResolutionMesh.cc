@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/MultiResolutionMesh.hh"
 #include "zenkit/Archive.hh"
@@ -9,19 +9,6 @@ namespace zenkit {
 	static constexpr auto VERSION_G2 = 0x905;
 
 	enum class MrmChunkType : std::uint16_t { MESH = 0xB100, END = 0xB1FF };
-
-	MultiResolutionMesh MultiResolutionMesh::parse(phoenix::buffer& in) {
-		MultiResolutionMesh msh {};
-
-		auto r = Read::from(&in);
-		msh.load(r.get());
-
-		return msh;
-	}
-
-	MultiResolutionMesh MultiResolutionMesh::parse(phoenix::buffer&& in) {
-		return parse(in);
-	}
 
 	void MultiResolutionMesh::load(Read* r) {
 		proto::read_chunked<MrmChunkType>(r, "MultiResolutionMesh", [this](Read* c, MrmChunkType type) {

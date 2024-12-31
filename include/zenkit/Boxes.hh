@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Library.hh"
@@ -6,10 +6,6 @@
 #include <glm/vec3.hpp>
 
 #include <vector>
-
-namespace phoenix {
-	class buffer;
-}
 
 namespace zenkit {
 	class Read;
@@ -26,11 +22,6 @@ namespace zenkit {
 
 		/// \brief The coordinates of the maximum corner of the bounding box.
 		glm::vec3 max;
-
-		/// \brief Parses a bounding box from the given buffer.
-		/// \param[in,out] in The buffer to parse from.
-		/// \return The bounding box parsed.
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static AxisAlignedBoundingBox parse(phoenix::buffer& in);
 
 		ZKAPI void load(Read* r);
 		ZKAPI void save(Write* w) const;
@@ -55,10 +46,5 @@ namespace zenkit {
 		/// \todo Write a test for this.
 		/// \return An AABB which contains this OBB.
 		[[nodiscard]] ZKAPI AxisAlignedBoundingBox as_bbox() const;
-
-		/// \brief Parses an oriented bounding box from a buffer.
-		/// \param[in,out] in The buffer to parse from.
-		/// \return The parsed bounding box.
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static OrientedBoundingBox parse(phoenix::buffer& in);
 	};
 } // namespace zenkit

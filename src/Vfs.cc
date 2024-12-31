@@ -1,16 +1,14 @@
-// Copyright © 2023 GothicKit Contributors.
+// Copyright © 2023-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/Vfs.hh"
+#include "zenkit/Misc.hh"
 
 #include "Internal.hh"
 #include "zenkit/Error.hh"
 #include "zenkit/Stream.hh"
 
-#include "phoenix/buffer.hh"
-
 #include <algorithm>
 #include <chrono>
-#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <stack>
@@ -19,43 +17,6 @@ namespace zenkit {
 	static constexpr std::string_view VFS_DISK_SIGNATURE_G1 = "PSVDSC_V2.00\r\n\r\n";
 	static constexpr std::string_view VFS_DISK_SIGNATURE_G2 = "PSVDSC_V2.00\n\r\n\r";
 	static constexpr std::string_view VFS_DISK_SIGNATURE_VDFSTOOL = "PSVDSC_V2.00\x1A\x1A\x1A\x1A";
-
-	class ZKINT RawBufferBacking final : public phoenix::buffer_backing {
-	public:
-		RawBufferBacking(std::byte const* bytes, uint64_t length) : _m_buffer(bytes), _m_size(length) {}
-
-		[[nodiscard]] bool direct() const noexcept override {
-			return false;
-		}
-
-		[[nodiscard]] bool readonly() const noexcept override {
-			return false;
-		}
-
-		[[nodiscard]] uint64_t size() const noexcept override {
-			return _m_size;
-		}
-
-		[[nodiscard]] std::byte const* array() const override {
-			return _m_buffer;
-		}
-
-		void read(std::byte* buf, std::uint64_t size, std::uint64_t offset) const override {
-			if (this->readonly()) {
-				throw phoenix::buffer_readonly {};
-			}
-
-			if (offset + size > this->size()) {
-				throw phoenix::buffer_overflow {offset, size, "in backing"};
-			}
-
-			std::copy_n(_m_buffer + static_cast<long>(offset), size, buf);
-		}
-
-	private:
-		std::byte const* _m_buffer;
-		uint64_t _m_size;
-	};
 
 	VfsBrokenDiskError::VfsBrokenDiskError(std::string const& signature)
 	    : Error("VFS disk signature not recognized: \"" + signature + "\"") {}
@@ -84,21 +45,18 @@ namespace zenkit {
 	}
 
 	bool VfsNodeComparator::operator()(VfsNode const& a, VfsNode const& b) const noexcept {
-		return phoenix::icompare(a.name(), b.name());
+		return icompare(a.name(), b.name());
 	}
 
 	bool VfsNodeComparator::operator()(VfsNode const& a, std::string_view b) const noexcept {
-		return phoenix::icompare(a.name(), b);
+		return icompare(a.name(), b);
 	}
 
 	bool VfsNodeComparator::operator()(std::string_view a, VfsNode const& b) const noexcept {
-		return phoenix::icompare(a, b.name());
+		return icompare(a, b.name());
 	}
 
 	VfsNode::VfsNode(std::string_view name, time_t ts) : _m_name(name), _m_time(ts), _m_data(ChildContainer {}) {}
-
-	VfsNode::VfsNode(std::string_view name, phoenix::buffer dev, time_t ts)
-	    : _m_name(name), _m_time(ts), _m_data(std::move(dev)) {}
 
 	VfsNode::VfsNode(std::string_view name, VfsFileDescriptor dev, time_t ts)
 	    : _m_name(name), _m_time(ts), _m_data(dev) {}
@@ -120,7 +78,7 @@ namespace zenkit {
 
 		name = trim_trailing_whitespace(name);
 		auto it = children.find(name);
-		if (it == children.end() || !phoenix::iequals(it->name(), name)) return nullptr;
+		if (it == children.end() || !iequals(it->name(), name)) return nullptr;
 		return &*it;
 	}
 
@@ -129,7 +87,7 @@ namespace zenkit {
 
 		name = trim_trailing_whitespace(name);
 		auto it = children.find(name);
-		if (it == children.end() || !phoenix::iequals(it->name(), name)) return nullptr;
+		if (it == children.end() || !iequals(it->name(), name)) return nullptr;
 		return const_cast<VfsNode*>(&*it);
 	}
 
@@ -146,37 +104,19 @@ namespace zenkit {
 
 		name = trim_trailing_whitespace(name);
 		auto it = children.find(name);
-		if (it == children.end() || !phoenix::iequals(it->name(), name)) return false;
+		if (it == children.end() || !iequals(it->name(), name)) return false;
 
 		children.erase(it);
 		return true;
 	}
 
-	phoenix::buffer VfsNode::open() const {
-		if (std::holds_alternative<phoenix::buffer>(_m_data)) {
-			return std::get<phoenix::buffer>(_m_data).duplicate();
-		}
-
-		auto fd = std::get<VfsFileDescriptor>(_m_data);
-		return phoenix::buffer {std::make_shared<RawBufferBacking>(fd.memory, fd.size)};
-	}
-
 	std::unique_ptr<Read> VfsNode::open_read() const {
-		if (std::holds_alternative<phoenix::buffer>(_m_data)) {
-			auto buf = std::get<phoenix::buffer>(_m_data);
-			return Read::from(buf.array(), buf.limit());
-		}
-
 		auto fd = std::get<VfsFileDescriptor>(_m_data);
 		return Read::from(fd.memory, fd.size);
 	}
 
 	VfsNode VfsNode::directory(std::string_view name) {
 		return directory(name, -1);
-	}
-
-	VfsNode VfsNode::file(std::string_view name, phoenix::buffer dev) {
-		return file(name, std::move(dev), -1);
 	}
 
 	VfsNode VfsNode::file(std::string_view name, VfsFileDescriptor dev) {
@@ -187,18 +127,12 @@ namespace zenkit {
 		return VfsNode(name, ts);
 	}
 
-	VfsNode VfsNode::file(std::string_view name, phoenix::buffer dev, time_t ts) {
-		return VfsNode(name, std::move(dev), ts);
-	}
-
 	VfsNode VfsNode::file(std::string_view name, VfsFileDescriptor dev, std::time_t ts) {
 		return VfsNode(name, dev, ts);
 	}
 
 	VfsNodeType VfsNode::type() const noexcept {
-		return (std::holds_alternative<phoenix::buffer>(_m_data), std::holds_alternative<VfsFileDescriptor>(_m_data))
-		    ? VfsNodeType::FILE
-		    : VfsNodeType::DIRECTORY;
+		return std::holds_alternative<VfsFileDescriptor>(_m_data) ? VfsNodeType::FILE : VfsNodeType::DIRECTORY;
 	}
 
 	std::time_t VfsNode::time() const noexcept {
@@ -394,13 +328,6 @@ namespace zenkit {
 		t.tm_sec = static_cast<int32_t>((dos >> 0) & 0x1F) * 2;
 
 		return mktime(&t);
-	}
-
-	void Vfs::mount_disk(phoenix::buffer buf, VfsOverwriteBehavior overwrite) {
-		auto mem = std::make_unique<std::byte[]>(buf.limit());
-		memcpy(mem.get(), buf.array(), buf.limit());
-		this->mount_disk(mem.get(), buf.limit(), overwrite);
-		_m_data.push_back(std::move(mem));
 	}
 
 	void Vfs::mount_disk(Read* buf, VfsOverwriteBehavior overwrite) {

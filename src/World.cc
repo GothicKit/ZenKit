@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/World.hh"
 #include "zenkit/Archive.hh"
@@ -43,32 +43,6 @@ namespace zenkit {
 
 		ZKLOGE("World", "Failed to determine world version. Assuming Gothic 1.");
 		return GameVersion::GOTHIC_1;
-	}
-
-	World World::parse(phoenix::buffer& buf, GameVersion version) {
-		World wld {};
-
-		auto r = Read::from(&buf);
-		wld.load(r.get(), version);
-
-		return wld;
-	}
-
-	World World::parse(phoenix::buffer&& buf, GameVersion version) {
-		return parse(buf, version);
-	}
-
-	World World::parse(phoenix::buffer& buf) {
-		World wld {};
-
-		auto r = Read::from(&buf);
-		wld.load(r.get());
-
-		return wld;
-	}
-
-	World World::parse(phoenix::buffer&& buf) {
-		return parse(buf);
 	}
 
 	void World::load(Read* r) {

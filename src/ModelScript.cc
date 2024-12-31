@@ -1,4 +1,4 @@
-// Copyright © 2022-2023 GothicKit Contributors.
+// Copyright © 2022-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/ModelScript.hh"
 #include "zenkit/Date.hh"
@@ -8,6 +8,7 @@
 #include "ModelScriptDsl.hh"
 
 #include <unordered_map>
+#include <sstream>
 
 namespace zenkit {
 	enum class ModelScriptBinaryChunkType : uint16_t {
@@ -430,19 +431,6 @@ namespace zenkit {
 			    }
 			    return false;
 		    });
-	}
-
-	ModelScript ModelScript::parse(phoenix::buffer& buf) {
-		ModelScript mds {};
-
-		auto r = Read::from(&buf);
-		mds.load(r.get());
-
-		return mds;
-	}
-
-	ModelScript ModelScript::parse(phoenix::buffer&& buf) {
-		return parse(buf);
 	}
 
 	void ModelScript::load(Read* r) {

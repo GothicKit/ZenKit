@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/ModelMesh.hh"
 #include "zenkit/Date.hh"
@@ -16,15 +16,6 @@ namespace zenkit {
 		END = 0xD040,
 		PROTO = 0xB100,
 	};
-
-	ModelMesh ModelMesh::parse(phoenix::buffer& in) {
-		ModelMesh msh {};
-
-		auto r = Read::from(&in);
-		msh.load(r.get());
-
-		return msh;
-	}
 
 	void ModelMesh::load(Read* r) {
 		std::vector<std::string> attachment_names {};
@@ -114,9 +105,5 @@ namespace zenkit {
 		});
 
 		proto::write_chunk(w, ModelMeshChunkType::END, [](Write*) {});
-	}
-
-	ModelMesh ModelMesh::parse(phoenix::buffer&& buf) {
-		return parse(buf);
 	}
 } // namespace zenkit

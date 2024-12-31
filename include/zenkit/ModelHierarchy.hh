@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Boxes.hh"
@@ -9,10 +9,6 @@
 
 #include <string>
 #include <vector>
-
-namespace phoenix {
-	class buffer;
-}
 
 namespace zenkit {
 	class Read;
@@ -35,31 +31,6 @@ namespace zenkit {
 	/// animals and humans in the game which is commonly referred to as rigging.</p>
 	class ModelHierarchy {
 	public:
-		/// \brief Parses a model hierarchy from the data in the given buffer.
-		///
-		/// <p>This implementation is heavily based on the implementation found in
-		/// [ZenLib](https://github.com/Try/ZenLib).</p>
-		///
-		/// \param[in,out] buf The buffer to read from.
-		/// \return The parsed model hierarchy object.
-		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
-		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
-		///       using buffer::duplicate.
-		/// \throws zenkit::ParserError if parsing fails.
-		/// \see #parse(buffer&&)
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelHierarchy parse(phoenix::buffer& buf);
-
-		/// \brief Parses a model hierarchy from the data in the given buffer.
-		///
-		/// <p>This implementation is heavily based on the implementation found in
-		/// [ZenLib](https://github.com/Try/ZenLib).</p>
-		///
-		/// \param[in] buf The buffer to read from (by rvalue-reference).
-		/// \return The parsed model hierarchy object.
-		/// \throws zenkit::ParserError if parsing fails.
-		/// \see #parse(buffer&)
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelHierarchy parse(phoenix::buffer&& buf);
-
 		ZKAPI void load(Read* r);
 		ZKAPI void save(Write* w) const;
 

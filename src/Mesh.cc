@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/Mesh.hh"
 #include "zenkit/Archive.hh"
@@ -22,24 +22,11 @@ namespace zenkit {
 		END = 0xB060
 	};
 
-	Mesh Mesh::parse(phoenix::buffer& buf, std::vector<std::uint32_t> const& leaf_polygons, bool force_wide_indices) {
-		Mesh msh {};
-
-		auto r = Read::from(&buf);
-		msh.load(r.get(), leaf_polygons, force_wide_indices);
-
-		return msh;
-	}
-
 	bool PolygonFlagSet::operator==(PolygonFlagSet const& b) const {
 		return is_portal == b.is_portal && is_occluder == b.is_occluder && is_sector == b.is_sector &&
 		    should_relight == b.should_relight && is_outdoor == b.is_outdoor &&
 		    is_ghost_occluder == b.is_ghost_occluder && is_dynamically_lit == b.is_dynamically_lit &&
 		    sector_index == b.sector_index && is_lod == b.is_lod && normal_axis == b.normal_axis;
-	}
-
-	Mesh Mesh::parse(phoenix::buffer&& buf, std::vector<std::uint32_t> const& include_polygons) {
-		return parse(buf, include_polygons);
 	}
 
 	void Mesh::load(Read* r, std::vector<std::uint32_t> const& leaf_polygons, bool force_wide_indices) {

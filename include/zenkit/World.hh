@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Library.hh"
@@ -11,10 +11,6 @@
 
 #include <memory>
 #include <vector>
-
-namespace phoenix {
-	class buffer;
-}
 
 namespace zenkit {
 	struct VNpc;
@@ -69,11 +65,6 @@ namespace zenkit {
 	/// \brief Represents a ZenGin world.
 	class World : public Object {
 		ZK_OBJECT(ObjectType::oCWorld);
-
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static World parse(phoenix::buffer& buf, GameVersion version);
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static World parse(phoenix::buffer& buf);
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static World parse(phoenix::buffer&& buf, GameVersion version);
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static World parse(phoenix::buffer&& buf);
 
 		ZKAPI void load(Read* r);
 		ZKAPI void load(Read* r, GameVersion version);

@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/SoftSkinMesh.hh"
 #include "zenkit/Stream.hh"
@@ -15,15 +15,6 @@ namespace zenkit {
 		PROTO = 0xB100,
 		NODES = 0xB1FF,
 	};
-
-	SoftSkinMesh SoftSkinMesh::parse(phoenix::buffer& in) {
-		SoftSkinMesh msh {};
-
-		auto r = Read::from(&in);
-		msh.load(r.get());
-
-		return msh;
-	}
 
 	void SoftSkinMesh::load(Read* r) {
 		proto::read_chunked<SoftSkinMeshChunkType>(r, "SoftSkinMesh", [this](Read* c, SoftSkinMeshChunkType type) {
@@ -133,9 +124,5 @@ namespace zenkit {
 		});
 
 		proto::write_chunk(w, SoftSkinMeshChunkType::END, [](Write*) {});
-	}
-
-	SoftSkinMesh SoftSkinMesh::parse(phoenix::buffer&& in) {
-		return parse(in);
 	}
 } // namespace zenkit

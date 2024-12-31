@@ -1,8 +1,7 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "ArchiveAscii.hh"
-
-#include "phoenix/buffer.hh"
+#include "zenkit/Error.hh"
 
 #include "../Internal.hh"
 
@@ -11,6 +10,7 @@
 #include <array>
 #include <charconv>
 #include <cstring>
+#include <sstream>
 #include <ctime>
 #include <stdexcept>
 #include <utility>
@@ -215,31 +215,6 @@ namespace zenkit {
 		}
 
 		return glm::transpose(v);
-	}
-
-	phoenix::buffer ReadArchiveAscii::read_raw_bytes(uint32_t size) {
-		auto in = read_entry("raw");
-		auto length = in.length() / 2;
-
-		if (length < size) {
-			throw ParserError {"ReadArchive.Ascii", "not enough raw bytes to read!"};
-		}
-
-		if (length > size) {
-			ZKLOGW("ReadArchive.Ascii", "Reading %d bytes although %zu are actually available", size, length);
-		}
-
-		std::vector<std::byte> out {};
-		out.resize(length);
-
-		auto beg_it = in.data();
-
-		for (std::byte& i : out) {
-			std::from_chars(beg_it + 0, beg_it + 2, reinterpret_cast<std::uint8_t&>(i), 16);
-			beg_it += 2;
-		}
-
-		return phoenix::buffer::of(std::move(out));
 	}
 
 	std::unique_ptr<Read> ReadArchiveAscii::read_raw(std::size_t size) {

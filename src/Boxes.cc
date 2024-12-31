@@ -1,22 +1,11 @@
-// Copyright © 2022-2023 GothicKit Contributors.
+// Copyright © 2022-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/Boxes.hh"
 #include "zenkit/Stream.hh"
 
-#include "phoenix/buffer.hh"
-
 #include <limits>
 
 namespace zenkit {
-	AxisAlignedBoundingBox AxisAlignedBoundingBox::parse(phoenix::buffer& in) {
-		AxisAlignedBoundingBox bbox {};
-
-		auto r = Read::from(&in);
-		bbox.load(r.get());
-
-		return bbox;
-	}
-
 	void AxisAlignedBoundingBox::load(Read* r) {
 		this->min = r->read_vec3();
 		this->max = r->read_vec3();
@@ -25,15 +14,6 @@ namespace zenkit {
 	void AxisAlignedBoundingBox::save(Write* w) const {
 		w->write_vec3(this->min);
 		w->write_vec3(this->max);
-	}
-
-	OrientedBoundingBox OrientedBoundingBox::parse(phoenix::buffer& in) {
-		OrientedBoundingBox bbox {};
-
-		auto r = Read::from(&in);
-		bbox.load(r.get());
-
-		return bbox;
 	}
 
 	void OrientedBoundingBox::load(Read* r) {

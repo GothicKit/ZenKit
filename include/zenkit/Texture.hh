@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Error.hh"
@@ -7,10 +7,6 @@
 #include <array>
 #include <cstdint>
 #include <vector>
-
-namespace phoenix {
-	class buffer;
-}
 
 namespace zenkit {
 	class Read;
@@ -64,9 +60,6 @@ namespace zenkit {
 
 		Texture& operator=(Texture&&) = default;
 		Texture& operator=(Texture const&) = default;
-
-		[[nodiscard]] ZKREM("use ::load") ZKAPI static Texture parse(phoenix::buffer& in);
-		[[nodiscard]] ZKREM("use ::load") ZKAPI static Texture parse(phoenix::buffer&& in);
 
 		ZKAPI void load(Read* r);
 		ZKAPI void save(Write* r) const;

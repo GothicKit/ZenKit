@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Boxes.hh"
@@ -10,10 +10,6 @@
 
 #include <string>
 #include <vector>
-
-namespace phoenix {
-	class buffer;
-}
 
 namespace zenkit {
 	class Read;
@@ -110,27 +106,6 @@ namespace zenkit {
 	/// \brief Represents a model animation.
 	class ModelAnimation {
 	public:
-		/// \brief Parses an animation from the data in the given buffer.
-		///
-		/// <p>This implementation is heavily based on the implementation found in
-		/// [ZenLib](https://github.com/Try/ZenLib).
-		///
-		/// \param[in,out] buf The buffer to read from.
-		/// \return The parsed animation.
-		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
-		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
-		///       using buffer::duplicate.
-		/// \throws zenkit::ParserError if parsing fails.
-		/// \see #parse(buffer&&)
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelAnimation parse(phoenix::buffer& buf);
-
-		/// \brief Parses an animation from the data in the given buffer.
-		/// \param[in] buf The buffer to read from (by rvalue-reference).
-		/// \return The parsed animation.
-		/// \throws zenkit::ParserError if parsing fails.
-		/// \see #parse(buffer&)
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static ModelAnimation parse(phoenix::buffer&& buf);
-
 		ZKAPI void load(Read* r);
 
 		/// \brief The name of the animation

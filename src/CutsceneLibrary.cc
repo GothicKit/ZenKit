@@ -1,12 +1,10 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/CutsceneLibrary.hh"
 #include "zenkit/Archive.hh"
 #include "zenkit/Stream.hh"
+#include "zenkit/Error.hh"
 
-#include "Internal.hh"
-
-#include "phoenix/buffer.hh"
 #include "zenkit/vobs/Misc.hh"
 
 #include <algorithm>

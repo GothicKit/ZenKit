@@ -1,11 +1,11 @@
-// Copyright © 2023 GothicKit Contributors.
+// Copyright © 2023-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "Library.hh"
 #include "Mmap.hh"
-
-#include "phoenix/buffer.hh"
-#include "phoenix/phoenix.hh"
+#include "Error.hh"
+#include "Stream.hh"
+#include "Misc.hh"
 
 #include <filesystem>
 #include <memory>
@@ -73,27 +73,22 @@ namespace zenkit {
 		ZKAPI VfsNode* create(VfsNode node);
 		ZKAPI bool remove(std::string_view name);
 
-		[[nodiscard]] ZKREM("use ::open_read()") ZKAPI phoenix::buffer open() const;
 		[[nodiscard]] ZKAPI std::unique_ptr<Read> open_read() const;
 
 		[[nodiscard]] ZKAPI static VfsNode directory(std::string_view name);
-		[[nodiscard]] ZKREM("Deprecated") ZKAPI static VfsNode file(std::string_view name, phoenix::buffer dev);
 		[[nodiscard]] ZKAPI static VfsNode file(std::string_view name, VfsFileDescriptor dev);
 
 		[[nodiscard]] ZKAPI static VfsNode directory(std::string_view name, std::time_t ts);
-		[[nodiscard]] ZKREM("Deprecated") ZKAPI static VfsNode
-		    file(std::string_view name, phoenix::buffer dev, std::time_t ts);
 		[[nodiscard]] ZKAPI static VfsNode file(std::string_view name, VfsFileDescriptor dev, std::time_t ts);
 
 	protected:
 		ZKAPI explicit VfsNode(std::string_view name, std::time_t ts);
-		ZKREM("Deprecated") ZKAPI explicit VfsNode(std::string_view name, phoenix::buffer dev, std::time_t ts);
 		ZKAPI explicit VfsNode(std::string_view name, VfsFileDescriptor dev, std::time_t ts);
 
 	private:
 		std::string _m_name;
 		std::time_t _m_time;
-		std::variant<ChildContainer, VfsFileDescriptor, phoenix::buffer> _m_data;
+		std::variant<ChildContainer, VfsFileDescriptor> _m_data;
 	};
 
 	enum class VfsOverwriteBehavior {
@@ -158,8 +153,6 @@ namespace zenkit {
 		/// \param buf A buffer containing the disk file contents.
 		/// \param overwrite The behavior of the system when conflicting files are found.
 		/// \throws VfsBrokenDiskError if the disk file is corrupted or invalid and thus, can't be loaded.
-		ZKREM("")
-		ZKAPI void mount_disk(phoenix::buffer buf, VfsOverwriteBehavior overwrite = VfsOverwriteBehavior::OLDER);
 		ZKAPI void mount_disk(Read* buf, VfsOverwriteBehavior overwrite = VfsOverwriteBehavior::OLDER);
 
 		/// \brief Mount a file or directory from the host file system into the Vfs.

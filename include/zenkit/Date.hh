@@ -1,13 +1,9 @@
-// Copyright © 2023 GothicKit Contributors.
+// Copyright © 2023-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Library.hh"
 
 #include <cstdint>
-
-namespace phoenix {
-	class buffer;
-}
 
 namespace zenkit {
 	class Read;
@@ -15,8 +11,6 @@ namespace zenkit {
 
 	/// \brief A basic date and time structure used by the *ZenGin*.
 	struct Date {
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Date parse(phoenix::buffer& buf);
-
 		ZKAPI void load(Read* r);
 		ZKAPI void save(Write* w) const;
 

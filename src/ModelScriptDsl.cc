@@ -1,9 +1,11 @@
-// Copyright © 2023 GothicKit Contributors.
+// Copyright © 2023-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "ModelScriptDsl.hh"
 #include "Internal.hh"
 
+#include "zenkit/Error.hh"
 #include "zenkit/Stream.hh"
+#include "zenkit/Misc.hh"
 
 #define WARN_SYNTAX(msg) ZKLOGW("ModelScript", "Syntax error (line %d, column %d): %s", _m_line, _m_column, msg)
 
@@ -184,7 +186,7 @@ namespace zenkit {
 
 	void MdsParser::expect_keyword(std::string_view value) {
 		this->expect<MdsToken::KEYWORD>();
-		if (!phoenix::iequals(_m_stream.token_value(), value)) {
+		if (!iequals(_m_stream.token_value(), value)) {
 			throw ScriptSyntaxError {_m_stream.format_location(),
 			                         "expected the KEYWORD \"" + std::string {value} + "\""};
 		}
@@ -270,7 +272,7 @@ namespace zenkit {
 			return false;
 		}
 
-		if (!phoenix::iequals(this->_m_stream.token_value(), value)) {
+		if (!iequals(this->_m_stream.token_value(), value)) {
 			this->_m_stream.backtrack();
 			return false;
 		}
@@ -283,7 +285,7 @@ namespace zenkit {
 			return std::nullopt;
 		}
 
-		if (!phoenix::iequals(this->_m_stream.token_value(), name)) {
+		if (!iequals(this->_m_stream.token_value(), name)) {
 			this->_m_stream.backtrack();
 			return std::nullopt;
 		}
@@ -306,11 +308,11 @@ namespace zenkit {
 			}
 
 			auto kw = this->expect_keyword();
-			if (phoenix::iequals(kw, "meshAndTree")) {
+			if (iequals(kw, "meshAndTree")) {
 				script.skeleton = this->parse_meshAndTree();
-			} else if (phoenix::iequals(kw, "registerMesh")) {
+			} else if (iequals(kw, "registerMesh")) {
 				script.meshes.push_back(this->parse_registerMesh());
-			} else if (phoenix::iequals(kw, "aniEnum")) {
+			} else if (iequals(kw, "aniEnum")) {
 				this->parse_aniEnum(script);
 			} else {
 				ZKLOGW("ModelScript",
@@ -343,17 +345,17 @@ namespace zenkit {
 			}
 
 			auto kw = this->expect_keyword();
-			if (phoenix::iequals(kw, "ani")) {
+			if (iequals(kw, "ani")) {
 				into.animations.push_back(this->parse_ani());
-			} else if (phoenix::iequals(kw, "aniBlend")) {
+			} else if (iequals(kw, "aniBlend")) {
 				into.blends.push_back(this->parse_aniBlend());
-			} else if (phoenix::iequals(kw, "aniAlias")) {
+			} else if (iequals(kw, "aniAlias")) {
 				into.aliases.push_back(this->parse_aniAlias());
-			} else if (phoenix::iequals(kw, "aniComb")) {
+			} else if (iequals(kw, "aniComb")) {
 				into.combinations.push_back(this->parse_aniComb());
-			} else if (phoenix::iequals(kw, "aniDisable")) {
+			} else if (iequals(kw, "aniDisable")) {
 				into.disabled_animations.push_back(this->parse_aniDisable());
-			} else if (phoenix::iequals(kw, "modelTag")) {
+			} else if (iequals(kw, "modelTag")) {
 				into.model_tags.push_back(this->parse_modelTag());
 			} else {
 				throw ScriptSyntaxError {_m_stream.format_location(), "invalid KEYWORD in \"aniEnum\" block: " + kw};
@@ -368,19 +370,19 @@ namespace zenkit {
 			}
 
 			auto kw = this->expect_keyword();
-			if (phoenix::iequals(kw, "*eventTag")) {
+			if (iequals(kw, "*eventTag")) {
 				ani.events.push_back(this->parse_eventTag());
-			} else if (phoenix::iequals(kw, "*eventSFX")) {
+			} else if (iequals(kw, "*eventSFX")) {
 				ani.sfx.push_back(this->parse_eventSFX());
-			} else if (phoenix::iequals(kw, "*eventSFXGrnd")) {
+			} else if (iequals(kw, "*eventSFXGrnd")) {
 				ani.sfx_ground.push_back(this->parse_eventSFXGrnd());
-			} else if (phoenix::iequals(kw, "*eventPFX")) {
+			} else if (iequals(kw, "*eventPFX")) {
 				ani.pfx.push_back(this->parse_eventPFX());
-			} else if (phoenix::iequals(kw, "*eventPFXStop")) {
+			} else if (iequals(kw, "*eventPFXStop")) {
 				ani.pfx_stop.push_back(this->parse_eventPFXStop());
-			} else if (phoenix::iequals(kw, "*eventMMStartAni")) {
+			} else if (iequals(kw, "*eventMMStartAni")) {
 				ani.morph.push_back(this->parse_eventMMStartAni());
-			} else if (phoenix::iequals(kw, "*eventCamTremor")) {
+			} else if (iequals(kw, "*eventCamTremor")) {
 				ani.tremors.push_back(this->parse_eventCamTremor());
 			} else {
 				throw ScriptSyntaxError {_m_stream.format_location(), "invalid KEYWORD in \"ani\" block: " + kw};
@@ -473,11 +475,11 @@ namespace zenkit {
 		ani.model = this->expect_string();
 
 		auto kw = this->expect_keyword();
-		if (!phoenix::iequals(kw, "F") && !phoenix::iequals(kw, "R")) {
+		if (!iequals(kw, "F") && !iequals(kw, "R")) {
 			throw ScriptSyntaxError {_m_stream.format_location(), R"(expected "F" or "R")"};
 		}
 
-		ani.direction = phoenix::iequals(kw, "R") ? AnimationDirection::BACKWARD : AnimationDirection::FORWARD;
+		ani.direction = iequals(kw, "R") ? AnimationDirection::BACKWARD : AnimationDirection::FORWARD;
 		ani.first_frame = this->expect_int();
 		ani.last_frame = this->expect_int();
 		ani.speed = 0; // TODO
@@ -559,7 +561,7 @@ namespace zenkit {
 		MdsModelTag tag {};
 
 		auto type = this->expect_string();
-		if (!phoenix::iequals(type, "DEF_HIT_LIMB")) {
+		if (!iequals(type, "DEF_HIT_LIMB")) {
 			throw ScriptSyntaxError {_m_stream.format_location(), "expected a \"DEF_HIT_LIMB\""};
 		}
 

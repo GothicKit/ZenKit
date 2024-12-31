@@ -1,11 +1,9 @@
-// Copyright © 2022-2023 GothicKit Contributors.
+// Copyright © 2022-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include "phoenix/buffer.hh"
-#include "phoenix/model_script.hh"
-#include "phoenix/phoenix.hh"
+#include "zenkit/Stream.hh"
+#include "zenkit/ModelScript.hh"
 
-#include <iterator>
 #include <optional>
 #include <string>
 #include <string_view>

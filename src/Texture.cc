@@ -1,9 +1,7 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/Texture.hh"
 #include "zenkit/Stream.hh"
-
-#include "phoenix/phoenix.hh"
 
 #include "squish.h"
 
@@ -277,19 +275,6 @@ namespace zenkit {
 
 		auto rgba = _ztex_to_rgba(bytes, width, height, from);
 		return _ztex_from_rgba(rgba.data(), width, height, into);
-	}
-
-	Texture Texture::parse(phoenix::buffer& in) {
-		Texture tex;
-
-		auto r = Read::from(&in);
-		tex.load(r.get());
-
-		return tex;
-	}
-
-	Texture Texture::parse(phoenix::buffer&& in) {
-		return parse(in);
 	}
 
 	void Texture::load(Read* r) {

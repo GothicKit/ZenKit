@@ -1,8 +1,7 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "ArchiveBinsafe.hh"
-
-#include "phoenix/buffer.hh"
+#include "zenkit/Error.hh"
 
 #include "../Internal.hh"
 
@@ -203,22 +202,6 @@ namespace zenkit {
 		// There might be more bytes in this. We'll ignore them.
 		read->seek(unused, Whence::CUR);
 		return v;
-	}
-
-	phoenix::buffer ReadArchiveBinsafe::read_raw_bytes(uint32_t size) {
-		auto length = ensure_entry_meta<ArchiveEntryType::RAW>();
-
-		if (length < size) {
-			throw ParserError {"ReadArchive.Binsafe", "not enough raw bytes to read!"};
-		}
-
-		if (length > size) {
-			ZKLOGW("ReadArchive.Binsafe", "Reading %d bytes although %d are actually available", size, length);
-		}
-
-		std::vector bytes(length, std::byte {});
-		read->read(bytes.data(), length);
-		return phoenix::buffer::of(std::move(bytes));
 	}
 
 	std::unique_ptr<Read> ReadArchiveBinsafe::read_raw(std::size_t size) {

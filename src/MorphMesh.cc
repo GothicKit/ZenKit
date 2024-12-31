@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/MorphMesh.hh"
 #include "zenkit/Stream.hh"
@@ -11,19 +11,6 @@ namespace zenkit {
 		PROTO = 0xB100,
 		MORPH = 0xB1FF
 	};
-
-	MorphMesh MorphMesh::parse(phoenix::buffer& in) {
-		MorphMesh msh {};
-
-		auto r = Read::from(&in);
-		msh.load(r.get());
-
-		return msh;
-	}
-
-	MorphMesh MorphMesh::parse(phoenix::buffer&& buf) {
-		return parse(buf);
-	}
 
 	void MorphMesh::load(Read* r) {
 		proto::read_chunked<MorphMeshChunkType>(r, "MorphMesh", [this](Read* c, MorphMeshChunkType type) {

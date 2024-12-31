@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/Archive.hh"
 #include "zenkit/Stream.hh"
@@ -19,7 +19,6 @@
 #include "archive/ArchiveBinary.hh"
 #include "archive/ArchiveBinsafe.hh"
 
-#include "phoenix/buffer.hh"
 #include "zenkit/CutsceneLibrary.hh"
 #include "zenkit/SaveGame.hh"
 #include "zenkit/World.hh"
@@ -230,29 +229,6 @@ namespace zenkit {
 		} catch (std::invalid_argument const& e) {
 			throw ParserError {"ReadArchive", e, "reading int"};
 		}
-	}
-
-	std::unique_ptr<ReadArchive> ReadArchive::open(phoenix::buffer& in) {
-		auto read = Read::from(&in);
-
-		ArchiveHeader header {};
-		header.load(read.get());
-
-		std::unique_ptr<ReadArchive> reader;
-		if (header.format == ArchiveFormat::ASCII) {
-			reader = std::make_unique<ReadArchiveAscii>(std::move(header), read.get(), std::move(read));
-		} else if (header.format == ArchiveFormat::BINARY) {
-			reader = std::make_unique<ReadArchiveBinary>(std::move(header), read.get(), std::move(read));
-		} else if (header.format == ArchiveFormat::BINSAFE) {
-			reader = std::make_unique<ReadArchiveBinsafe>(std::move(header), read.get(), std::move(read));
-		} else {
-			throw ParserError {"ReadArchive",
-			                   "format '" + std::to_string(static_cast<uint32_t>(header.format)) +
-			                       "' is not supported"};
-		}
-
-		reader->read_header();
-		return reader;
 	}
 
 	std::unique_ptr<ReadArchive> ReadArchive::from(Read* r) {

@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Boxes.hh"
@@ -13,10 +13,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-
-namespace phoenix {
-	class buffer;
-}
 
 namespace zenkit {
 	class Read;
@@ -91,43 +87,6 @@ namespace zenkit {
 	/// set of polygons and accompanying data describing a static mesh in three dimensions.</p>
 	class Mesh {
 	public:
-		/// \brief Parses a mesh from the data in the given buffer.
-		///
-		/// <p>This implementation is heavily based on the implementation found in
-		/// [ZenLib](https://github.com/Try/ZenLib).</p>
-		///
-		/// \param[in,out] buf The buffer to read from.
-		/// \param include_polygons A list of polygon indices to include in the final mesh. All other polygons are
-		///                         discarded. This is mainly used for world meshes which include level-of-detail
-		///                         polygons.
-		/// \param force_wide_indices Set to true to force 32-bit vertex indices. Useful for parsing world meshes
-		///                           with the XZEN extension (see
-		///                           https://github.com/ThielHater/GRMFixes_Union/blob/master/GRMFixes/XZenFileFormat/Plugin_Source.hpp#L86).
-		/// \return The parsed mesh object.
-		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
-		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
-		///       using buffer::duplicate.
-		/// \throws zenkit::ParserError if parsing fails.
-		/// \see #parse(buffer&&, const std::vector<std::uint32_t>&)
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Mesh parse(phoenix::buffer& buf,
-		                                                            std::vector<uint32_t> const& include_polygons = {},
-		                                                            bool force_wide_indices = false);
-
-		/// \brief Parses a mesh from the data in the given buffer.
-		///
-		/// <p>This implementation is heavily based on the implementation found in
-		/// [ZenLib](https://github.com/Try/ZenLib).</p>
-		///
-		/// \param[in] buf The buffer to read from (by rvalue-reference).
-		/// \param include_polygons A list of polygon indices to include in the final mesh. All other polygons are
-		///                         discarded. This is mainly used for world meshes which include level-of-detail
-		///                         polygons.
-		/// \return The parsed mesh object.
-		/// \throws zenkit::ParserError if parsing fails.
-		/// \see #parse(buffer&, const std::vector<std::uint32_t>&)
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Mesh
-		    parse(phoenix::buffer&& buf, std::vector<std::uint32_t> const& include_polygons = {});
-
 		ZKAPI void load(Read* r, bool force_wide_indices);
 		ZKAPI void load(Read* r, std::vector<std::uint32_t> const& leaf_polygons, bool force_wide_indices);
 		ZKAPI void save(Write* w, GameVersion version) const;

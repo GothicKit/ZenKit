@@ -19,8 +19,6 @@ add_subdirectory(vendor)
 file(GLOB_RECURSE _ZK_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include/**/*.hh")
 
 list(APPEND _ZK_SOURCES
-        src/__legacy_buffer.cc
-
         src/world/BspTree.cc
         src/world/VobTree.cc
         src/world/WayNet.cc

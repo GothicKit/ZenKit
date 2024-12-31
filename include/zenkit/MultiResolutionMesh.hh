@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Boxes.hh"
@@ -9,10 +9,6 @@
 
 #include <cstdint>
 #include <vector>
-
-namespace phoenix {
-	class buffer;
-}
 
 namespace zenkit {
 	class Read;
@@ -86,23 +82,6 @@ namespace zenkit {
 	/// related values.</p>
 	class MultiResolutionMesh {
 	public:
-		/// \brief Parses a proto mesh from the data in the given buffer.
-		/// \param[in,out] buf The buffer to read from.
-		/// \return The parsed proto mesh.
-		/// \note After this function returns the position of \p buf will be at the end of the parsed object.
-		///       If you would like to keep your buffer immutable, consider passing a copy of it to #parse(buffer&&)
-		///       using buffer::duplicate.
-		/// \throws zenkit::ParserError if parsing fails.
-		/// \see #parse(buffer&&)
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static MultiResolutionMesh parse(phoenix::buffer& buf);
-
-		/// \brief Parses a proto mesh from the data in the given buffer.
-		/// \param[in] buf The buffer to read from (by rvalue-reference).
-		/// \return The parsed proto mesh.
-		/// \throws zenkit::ParserError if parsing fails.
-		/// \see #parse(buffer&)
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static MultiResolutionMesh parse(phoenix::buffer&& buf);
-
 		ZKAPI void load(Read* r);
 		ZKINT void load_from_section(Read* r);
 		ZKAPI void save(Write* w, GameVersion version) const;

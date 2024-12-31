@@ -1,11 +1,9 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/DaedalusScript.hh"
 #include "zenkit/Stream.hh"
 
 #include "Internal.hh"
-
-#include "phoenix/buffer.hh"
 
 #include <algorithm>
 
@@ -87,24 +85,6 @@ namespace zenkit {
 		}
 
 		return s;
-	}
-
-	DaedalusScript DaedalusScript::parse(std::string const& file) {
-		DaedalusScript scr {};
-
-		auto r = Read::from(file);
-		scr.load(r.get());
-
-		return scr;
-	}
-
-	DaedalusScript DaedalusScript::parse(phoenix::buffer& in) {
-		DaedalusScript scr {};
-
-		auto r = Read::from(&in);
-		scr.load(r.get());
-
-		return scr;
 	}
 
 	void DaedalusScript::load(Read* r) {
@@ -302,15 +282,6 @@ namespace zenkit {
 		auto size = _m_text->tell();
 		_m_text->seek(static_cast<ssize_t>(off), Whence::BEG);
 		return static_cast<uint32_t>(size);
-	}
-
-	DaedalusSymbol DaedalusSymbol::parse(phoenix::buffer& in) {
-		DaedalusSymbol sym {};
-
-		auto r = Read::from(&in);
-		sym.load(r.get());
-
-		return sym;
 	}
 
 	void zk_internal_escape(std::string& s) {

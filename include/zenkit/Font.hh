@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Library.hh"
@@ -8,10 +8,6 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-
-namespace phoenix {
-	class buffer;
-}
 
 namespace zenkit {
 	class Read;
@@ -52,9 +48,6 @@ namespace zenkit {
 		///          expect 256 glyphs for all fonts. Should you create a font a number of glyphs not equal to 256 and
 		///          try to load it into *ZenGin*, it will fail.
 		ZKAPI Font(std::string name, std::uint32_t height, std::vector<FontGlyph> glyphs);
-
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Font parse(phoenix::buffer& buf);
-		[[nodiscard]] ZKREM("use ::load()") ZKAPI static Font parse(phoenix::buffer&& in);
 
 		ZKAPI void load(Read* r);
 		ZKAPI void save(Write* w) const;

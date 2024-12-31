@@ -1,4 +1,4 @@
-// Copyright © 2023 GothicKit Contributors.
+// Copyright © 2023-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Library.hh"
@@ -14,10 +14,6 @@
 #include <functional>
 #include <memory>
 #include <vector>
-
-namespace phoenix {
-	class buffer;
-}
 
 namespace zenkit {
 
@@ -114,7 +110,6 @@ namespace zenkit {
 		[[nodiscard]] static std::unique_ptr<Read> from(std::vector<std::byte> const* vector);
 		[[nodiscard]] static std::unique_ptr<Read> from(std::vector<std::byte> vector);
 		[[nodiscard]] static std::unique_ptr<Read> from(std::filesystem::path const& path);
-		[[nodiscard]] ZKREM("deprecated") static std::unique_ptr<Read> from(phoenix::buffer* buf);
 	};
 
 	class Write ZKAPI {

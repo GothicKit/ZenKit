@@ -1,9 +1,7 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "ArchiveBinary.hh"
-
-#include "phoenix/buffer.hh"
-#include "phoenix/phoenix.hh"
+#include "zenkit/Error.hh"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -105,12 +103,6 @@ namespace zenkit {
 
 	glm::mat3x3 ReadArchiveBinary::read_mat3x3() {
 		return read->read_mat3();
-	}
-
-	phoenix::buffer ReadArchiveBinary::read_raw_bytes(uint32_t size) {
-		std::vector bytes(size, std::byte {});
-		read->read(bytes.data(), bytes.size());
-		return phoenix::buffer::of(std::move(bytes));
 	}
 
 	std::unique_ptr<Read> ReadArchiveBinary::read_raw(std::size_t size) {

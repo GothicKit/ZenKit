@@ -1,12 +1,11 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Boxes.hh"
 #include "zenkit/Library.hh"
 #include "zenkit/Object.hh"
 #include "zenkit/Stream.hh"
-
-#include "phoenix/buffer.hh"
+#include "zenkit/Error.hh"
 
 #include <glm/mat3x3.hpp>
 #include <glm/vec2.hpp>
@@ -16,10 +15,6 @@
 #include <string>
 #include <unordered_map>
 #include <variant>
-
-namespace phoenix {
-	class buffer;
-}
 
 namespace zenkit {
 	class Read;
@@ -133,13 +128,6 @@ namespace zenkit {
 	public:
 		virtual ~ReadArchive() = default;
 
-		/// \brief Create a new archive reader from the given buffer.
-		/// \param[in] in The buffer to use.
-		/// \return A unique pointer containing an archive reader.
-		/// \throws zenkit::ParserError If the archive's header is invalid.
-		/// \sa ArchiveHeader#load
-		ZKREM("use ::from") static std::unique_ptr<ReadArchive> open(phoenix::buffer& in);
-
 		/// \brief Creates a new archive_reader from the given buffer.
 		/// \param[in] r The buffer to use.
 		/// \return The new archive_reader.
@@ -235,12 +223,6 @@ namespace zenkit {
 		/// \brief Reads a 3-by-3 matrix from the reader.
 		/// \return The matrix.
 		virtual glm::mat3x3 read_mat3x3() = 0;
-
-		/// \brief Reads a raw entry and returns the raw bytes stored within.
-		/// \param size The number of bytes to read (checked at runtime for ASCII and BIN_SAFE archives)
-		/// \return A vector containing the raw bytes of the entry.
-		/// \throws zenkit::ParserError if the value actually present is not raw
-		ZKREM("use ::read_raw()") virtual phoenix::buffer read_raw_bytes(uint32_t size) = 0;
 
 		virtual std::unique_ptr<Read> read_raw(std::size_t size) = 0;
 

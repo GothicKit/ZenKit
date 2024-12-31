@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/ModelHierarchy.hh"
 #include "zenkit/Stream.hh"
@@ -11,19 +11,6 @@ namespace zenkit {
 		SOURCE = 0xD110,
 		END = 0xD120,
 	};
-
-	ModelHierarchy ModelHierarchy::parse(phoenix::buffer& in) {
-		ModelHierarchy hierarchy {};
-
-		auto r = Read::from(&in);
-		hierarchy.load(r.get());
-
-		return hierarchy;
-	}
-
-	ModelHierarchy ModelHierarchy::parse(phoenix::buffer&& in) {
-		return parse(in);
-	}
 
 	void ModelHierarchy::load(Read* r) {
 		proto::read_chunked<ModelHierarchyChunkType>( //

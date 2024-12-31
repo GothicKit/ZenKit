@@ -1,7 +1,6 @@
-// Copyright © 2022-2023 GothicKit Contributors.
+// Copyright © 2022-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/Stream.hh"
-#include "phoenix/buffer.hh"
 #include "zenkit/Mmap.hh"
 
 #include "Internal.hh"
@@ -290,47 +289,6 @@ namespace zenkit {
 			size_t _m_length, _m_position {0};
 		};
 
-		class ZKREM("Deprecated") ReadBuffer final ZKINT : public Read {
-		public:
-			explicit ReadBuffer(phoenix::buffer* buf) : _m_buffer(buf) {}
-
-			size_t read(void* buf, size_t len) noexcept override {
-				try {
-					_m_buffer->get(static_cast<std::byte*>(buf), len);
-					return len;
-				} catch (phoenix::buffer_error const&) {
-					return 0;
-				}
-			}
-
-			void seek(ssize_t off, Whence whence) noexcept override {
-				try {
-					switch (whence) {
-					case Whence::BEG:
-						_m_buffer->position(static_cast<uint64_t>(off));
-						break;
-					case Whence::CUR:
-						_m_buffer->skip(static_cast<uint64_t>(off));
-						break;
-					case Whence::END:
-						_m_buffer->position(_m_buffer->limit() + static_cast<uint64_t>(off));
-						break;
-					}
-				} catch (phoenix::buffer_error const&) {}
-			}
-
-			[[nodiscard]] size_t tell() const noexcept override {
-				return _m_buffer->position();
-			}
-
-			[[nodiscard]] bool eof() const noexcept override {
-				return _m_buffer->position() >= _m_buffer->limit();
-			}
-
-		private:
-			phoenix::buffer* _m_buffer;
-		};
-
 		class ReadVector final ZKINT : public ReadMemory {
 		public:
 			explicit ReadVector(std::vector<std::byte> vec)
@@ -500,10 +458,6 @@ namespace zenkit {
 
 		return Read::from(std::move(data));
 #endif
-	}
-
-	std::unique_ptr<Read> Read::from(phoenix::buffer* buf) {
-		return std::make_unique<detail::ReadBuffer>(buf);
 	}
 
 	std::unique_ptr<Write> Write::to(std::filesystem::path const& path) {
