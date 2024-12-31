@@ -8,8 +8,8 @@
 #include <array>
 #include <charconv>
 #include <cstring>
-#include <sstream>
 #include <ctime>
+#include <sstream>
 #include <stdexcept>
 #include <utility>
 
@@ -158,9 +158,9 @@ namespace zenkit {
 		std::uint16_t r, g, b, a;
 		in >> r >> g >> b >> a;
 		return Color {static_cast<std::uint8_t>(r),
-		                    static_cast<std::uint8_t>(g),
-		                    static_cast<std::uint8_t>(b),
-		                    static_cast<std::uint8_t>(a)};
+		              static_cast<std::uint8_t>(g),
+		              static_cast<std::uint8_t>(b),
+		              static_cast<std::uint8_t>(a)};
 	}
 
 	Vec3 ReadArchiveAscii::read_vec3() {

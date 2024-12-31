@@ -215,11 +215,15 @@ namespace zenkit {
 		}
 
 		[[nodiscard]] constexpr Mat3 transpose() const {
-			return Mat3{
-				columns[0][0], columns[1][0], columns[2][0],
-				columns[0][1], columns[1][1], columns[2][1],
-				columns[0][2], columns[1][2], columns[2][2]
-			};
+			return Mat3 {columns[0][0],
+			             columns[1][0],
+			             columns[2][0],
+			             columns[0][1],
+			             columns[1][1],
+			             columns[2][1],
+			             columns[0][2],
+			             columns[1][2],
+			             columns[2][2]};
 		}
 
 		[[nodiscard]] constexpr float const* pointer() const {
@@ -275,12 +279,22 @@ namespace zenkit {
 		}
 
 		[[nodiscard]] constexpr Mat4 transpose() const {
-			return Mat4 {
-				columns[0][0], columns[1][0], columns[2][0], columns[3][0],
-				columns[0][1], columns[1][1], columns[2][1], columns[3][1],
-				columns[0][2], columns[1][2], columns[2][2], columns[3][2],
-				columns[0][3], columns[1][3], columns[2][3], columns[3][3]
-			};
+			return Mat4 {columns[0][0],
+			             columns[1][0],
+			             columns[2][0],
+			             columns[3][0],
+			             columns[0][1],
+			             columns[1][1],
+			             columns[2][1],
+			             columns[3][1],
+			             columns[0][2],
+			             columns[1][2],
+			             columns[2][2],
+			             columns[3][2],
+			             columns[0][3],
+			             columns[1][3],
+			             columns[2][3],
+			             columns[3][3]};
 		}
 
 		[[nodiscard]] constexpr float const* pointer() const {
@@ -292,7 +306,7 @@ namespace zenkit {
 		}
 
 		constexpr static Mat4 identity() {
-			return Mat4	{1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1};
+			return Mat4 {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
 		}
 	};
 

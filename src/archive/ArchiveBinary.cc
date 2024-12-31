@@ -4,8 +4,8 @@
 #include "zenkit/Error.hh"
 
 #include <charconv>
-#include <stdexcept>
 #include <cstring>
+#include <stdexcept>
 
 namespace zenkit {
 	void ReadArchiveBinary::read_header() {

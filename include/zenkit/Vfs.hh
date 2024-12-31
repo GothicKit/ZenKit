@@ -1,11 +1,11 @@
 // Copyright © 2023-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include "Library.hh"
-#include "Mmap.hh"
 #include "Error.hh"
-#include "Stream.hh"
+#include "Library.hh"
 #include "Misc.hh"
+#include "Mmap.hh"
+#include "Stream.hh"
 
 #include <filesystem>
 #include <memory>

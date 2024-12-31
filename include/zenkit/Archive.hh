@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Boxes.hh"
+#include "zenkit/Error.hh"
 #include "zenkit/Library.hh"
 #include "zenkit/Object.hh"
 #include "zenkit/Stream.hh"
-#include "zenkit/Error.hh"
 
 #include <memory>
 #include <string>
