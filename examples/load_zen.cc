@@ -3,13 +3,13 @@
 #include "zenkit/Vfs.hh"
 #include "zenkit/World.hh"
 
-#include <phoenix/archive.hh>
+#include <zenkit/Archive.hh>
 
 #include <iostream>
 
-void print_entries(std::unique_ptr<phoenix::archive_reader>& reader) {
+void print_entries(std::unique_ptr<zenkit::ReadArchive>& reader) {
 	int level = 0;
-	phoenix::archive_object obj {};
+	zenkit::ArchiveObject obj {};
 
 	do {
 		if (reader->read_object_begin(obj)) {
