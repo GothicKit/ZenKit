@@ -5,8 +5,6 @@
 
 #include "Internal.hh"
 
-#include <glm/gtc/type_ptr.hpp>
-
 #include <algorithm>
 #include <cstring>
 #include <fstream>
@@ -56,28 +54,28 @@ namespace zenkit {
 		return read_any<float>(this);
 	}
 
-	glm::vec2 Read::read_vec2() noexcept {
-		glm::vec2 v {};
-		this->read(glm::value_ptr(v), sizeof(float) * 2);
+	Vec2 Read::read_vec2() noexcept {
+		Vec2 v {};
+		this->read(v.pointer(), sizeof(float) * 2);
 		return v;
 	}
 
-	glm::vec3 Read::read_vec3() noexcept {
-		glm::vec3 v {};
-		this->read(glm::value_ptr(v), sizeof(float) * 3);
+	Vec3 Read::read_vec3() noexcept {
+		Vec3 v {};
+		this->read(v.pointer(), sizeof(float) * 3);
 		return v;
 	}
 
-	glm::mat3 Read::read_mat3() noexcept {
-		glm::mat3 v {};
-		this->read(glm::value_ptr(v), sizeof(float) * 9);
-		return glm::transpose(v);
+	Mat3 Read::read_mat3() noexcept {
+		Mat3 v {};
+		this->read(v.pointer(), sizeof(float) * 9);
+		return v.transpose();
 	}
 
-	glm::mat4 Read::read_mat4() noexcept {
-		glm::mat4 v {};
-		this->read(glm::value_ptr(v), sizeof(float) * 16);
-		return glm::transpose(v);
+	Mat4 Read::read_mat4() noexcept {
+		Mat4 v {};
+		this->read(v.pointer(), sizeof(float) * 16);
+		return v.transpose();
 	}
 
 	std::string Read::read_string(size_t len) noexcept {
@@ -159,22 +157,22 @@ namespace zenkit {
 		this->write_char('\n');
 	}
 
-	void Write::write_vec2(glm::vec2 const& v) noexcept {
-		this->write(glm::value_ptr(v), 2 * sizeof(float));
+	void Write::write_vec2(Vec2 const& v) noexcept {
+		this->write(v.pointer(), 2 * sizeof(float));
 	}
 
-	void Write::write_vec3(glm::vec3 const& v) noexcept {
-		this->write(glm::value_ptr(v), 3 * sizeof(float));
+	void Write::write_vec3(Vec3 const& v) noexcept {
+		this->write(v.pointer(), 3 * sizeof(float));
 	}
 
-	void Write::write_mat3(glm::mat3 const& v) noexcept {
-		auto vT = glm::transpose(v);
-		this->write(glm::value_ptr(vT), 9 * sizeof(float));
+	void Write::write_mat3(Mat3 const& v) noexcept {
+		auto vT = v.transpose();
+		this->write(vT.pointer(), 9 * sizeof(float));
 	}
 
-	void Write::write_mat4(glm::mat4 const& v) noexcept {
-		auto vT = glm::transpose(v);
-		this->write(glm::value_ptr(vT), 16 * sizeof(float));
+	void Write::write_mat4(Mat4 const& v) noexcept {
+		auto vT = v.transpose();
+		this->write(vT.pointer(), 16 * sizeof(float));
 	}
 
 	namespace detail {

@@ -1,10 +1,8 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Library.hh"
 #include "zenkit/Object.hh"
-
-#include <glm/vec3.hpp>
 
 #include <cstdint>
 #include <memory>
@@ -20,8 +18,8 @@ namespace zenkit {
 		std::string name;
 		std::int32_t water_depth;
 		bool under_water;
-		glm::vec3 position;
-		glm::vec3 direction;
+		Vec3 position;
+		Vec3 direction;
 		bool free_point {false};
 	};
 
@@ -59,8 +57,8 @@ namespace zenkit {
 		std::string name;
 		std::int32_t water_depth;
 		bool under_water;
-		glm::vec3 position;
-		glm::vec3 direction;
+		Vec3 position;
+		Vec3 direction;
 		bool free_point {false};
 
 		ZKINT void load(ReadArchive& r, GameVersion version) override;

@@ -5,8 +5,6 @@
 #include "zenkit/Date.hh"
 #include "zenkit/Library.hh"
 
-#include "glm/mat4x4.hpp"
-
 #include <string>
 #include <vector>
 
@@ -22,7 +20,7 @@ namespace zenkit {
 		std::string name;
 
 		/// \brief The position and rotation of this node in its base state.
-		glm::mat4x4 transform;
+		Mat4 transform;
 	};
 
 	/// \brief Represents a *ZenGin* model hierarchy.
@@ -44,7 +42,7 @@ namespace zenkit {
 		AxisAlignedBoundingBox collision_bbox {};
 
 		/// \brief The translation of the root node of this hierarchy.
-		glm::vec3 root_translation {};
+		Vec3 root_translation {};
 
 		/// \brief The checksum of this hierarchy.
 		std::uint32_t checksum;

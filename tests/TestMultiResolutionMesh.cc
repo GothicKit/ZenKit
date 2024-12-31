@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include <doctest/doctest.h>
 #include <zenkit/MultiResolutionMesh.hh>
@@ -24,16 +24,16 @@ TEST_SUITE("MultiResolutionMesh") {
 
 		auto const& positions = mesh.positions;
 		CHECK_EQ(positions.size(), 8);
-		CHECK_EQ(positions[0], glm::vec3 {200, 398.503906, 200});
-		CHECK_EQ(positions[1], glm::vec3 {-200, 398.503906, 200});
-		CHECK_EQ(positions[7], glm::vec3 {-200, 0, -200});
+		CHECK_EQ(positions[0], zenkit::Vec3 {200, 398.503906, 200});
+		CHECK_EQ(positions[1], zenkit::Vec3 {-200, 398.503906, 200});
+		CHECK_EQ(positions[7], zenkit::Vec3 {-200, 0, -200});
 
 		CHECK(mesh.normals.empty());
 		CHECK(mesh.alpha_test);
 
 		auto box0 = mesh.bbox;
-		CHECK_EQ(box0.min, glm::vec3 {-200, 0, -200});
-		CHECK_EQ(box0.max, glm::vec3 {200, 398.503906, 200});
+		CHECK_EQ(box0.min, zenkit::Vec3 {-200, 0, -200});
+		CHECK_EQ(box0.max, zenkit::Vec3 {200, 398.503906, 200});
 
 		auto const& submeshes = mesh.sub_meshes;
 		CHECK_EQ(submeshes.size(), 1);

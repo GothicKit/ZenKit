@@ -7,6 +7,3 @@
 [submodule "vendor/libsquish"]
 	path = vendor/libsquish
 	url = https://github.com/lmichaelis/phoenix-libsquish.git
-[submodule "vendor/glm"]
-	path = vendor/glm
-	url = https://github.com/g-truc/glm.git

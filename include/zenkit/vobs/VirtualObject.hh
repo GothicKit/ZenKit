@@ -1,4 +1,4 @@
-// Copyright © 2022-2023 GothicKit Contributors.
+// Copyright © 2022-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Boxes.hh"
@@ -7,12 +7,7 @@
 #include "zenkit/Misc.hh"
 #include "zenkit/Object.hh"
 
-#include <glm/mat3x3.hpp>
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
-
 #include <cstdint>
-#include <glm/ext/matrix_transform.hpp>
 #include <memory>
 #include <optional>
 #include <string>
@@ -137,11 +132,11 @@ namespace zenkit {
 		/// The `x`-coordinate is the width, and the `y`-coordinate is the height.
 		///
 		/// \see https://zk.gothickit.dev/engine/objects/zCDecal/#decalDim
-		glm::vec2 dimension {};
+		Vec2 dimension {};
 
 		/// \brief The offset of the decal texture relative to the parent VObject's position as a 2-dimensional vector.
 		/// \see https://zk.gothickit.dev/engine/objects/zCDecal/#decalOffset
-		glm::vec2 offset {};
+		Vec2 offset {};
 
 		/// \brief Enables or disables backface culling for the texture.
 		///
@@ -189,11 +184,11 @@ namespace zenkit {
 	};
 
 	struct RigidBody {
-		glm::vec3 vel;
+		Vec3 vel;
 		std::uint8_t mode;
 		bool gravity_enabled;
 		float gravity_scale;
-		glm::vec3 slide_direction;
+		Vec3 slide_direction;
 
 		ZKAPI void load(ReadArchive& r, GameVersion version);
 		ZKAPI void save(WriteArchive& w, GameVersion version) const;
@@ -345,11 +340,11 @@ namespace zenkit {
 
 		/// \brief The position of this VObject in virtual space.
 		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#trafoostowspos
-		glm::vec3 position = glm::vec3 {0};
+		Vec3 position = Vec3 {0};
 
 		/// \brief The rotation of this VObject in virtual space.
 		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#trafoostowsrot
-		glm::mat3x3 rotation = glm::identity<glm::mat3x3>();
+		Mat3 rotation = Mat3::identity();
 
 		/// \brief Indicates whether this VObject should display its associated visual.
 		/// \see https://zk.gothickit.dev/engine/objects/zCVob/#showvisual

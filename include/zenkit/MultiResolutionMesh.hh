@@ -5,8 +5,6 @@
 #include "zenkit/Library.hh"
 #include "zenkit/Material.hh"
 
-#include <glm/vec3.hpp>
-
 #include <cstdint>
 #include <vector>
 
@@ -26,14 +24,14 @@ namespace zenkit {
 	};
 
 	struct MeshWedge {
-		glm::vec3 normal;
-		glm::vec2 texture;
+		Vec3 normal;
+		Vec2 texture;
 		std::uint16_t index;
 	};
 
 	struct MeshPlane {
 		float distance;
-		glm::vec3 normal;
+		Vec3 normal;
 	};
 
 	/// \brief An offset and size tuple for mesh sections.
@@ -88,10 +86,10 @@ namespace zenkit {
 		ZKINT void save_to_section(Write* w, GameVersion version) const;
 
 		/// \brief The vertex positions associated with the mesh.
-		std::vector<glm::vec3> positions;
+		std::vector<Vec3> positions;
 
 		/// \brief The normal vectors of the mesh.
-		std::vector<glm::vec3> normals;
+		std::vector<Vec3> normals;
 
 		/// \brief A list of sub-meshes of the mesh.
 		std::vector<SubMesh> sub_meshes;

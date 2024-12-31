@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/world/BspTree.hh"
 #include "zenkit/Stream.hh"
@@ -105,9 +105,6 @@ namespace zenkit {
 					}
 				}
 				std::sort(this->leaf_polygons.begin(), this->leaf_polygons.end());
-
-				assert(node_count == this->nodes.size());
-				assert(leaf_count == this->leaf_node_indices.size());
 				break;
 			}
 			case BspChunkType::LIGHT: {

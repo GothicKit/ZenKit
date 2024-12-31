@@ -24,11 +24,11 @@ namespace zenkit {
 		std::uint16_t read_word() override;
 		std::uint32_t read_enum() override;
 		bool read_bool() override;
-		glm::u8vec4 read_color() override;
-		glm::vec3 read_vec3() override;
-		glm::vec2 read_vec2() override;
+		Color read_color() override;
+		Vec3 read_vec3() override;
+		Vec2 read_vec2() override;
 		AxisAlignedBoundingBox read_bbox() override;
-		glm::mat3x3 read_mat3x3() override;
+		Mat3 read_mat3x3() override;
 		std::unique_ptr<Read> read_raw(std::size_t size) override;
 
 		void skip_object(bool skip_current) override;
@@ -58,11 +58,11 @@ namespace zenkit {
 		void write_word(std::string_view name, std::uint16_t v) override;
 		void write_enum(std::string_view name, std::uint32_t v) override;
 		void write_bool(std::string_view name, bool v) override;
-		void write_color(std::string_view name, glm::u8vec4 v) override;
-		void write_vec3(std::string_view name, glm::vec3 const& v) override;
-		void write_vec2(std::string_view name, glm::vec2 v) override;
+		void write_color(std::string_view name, Color v) override;
+		void write_vec3(std::string_view name, Vec3 const& v) override;
+		void write_vec2(std::string_view name, Vec2 v) override;
 		void write_bbox(std::string_view name, AxisAlignedBoundingBox const& v) override;
-		void write_mat3x3(std::string_view name, glm::mat3x3 const& v) override;
+		void write_mat3x3(std::string_view name, Mat3 const& v) override;
 		void write_raw(std::string_view name, std::vector<std::byte> const& v) override;
 		void write_raw(std::string_view name, std::byte const* v, std::uint16_t length) override;
 		void write_raw_float(std::string_view name, float const* v, std::uint16_t length) override;

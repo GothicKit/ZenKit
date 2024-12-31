@@ -1,9 +1,7 @@
-// Copyright © 2022-2023 GothicKit Contributors.
+// Copyright © 2022-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/vobs/Camera.hh"
 #include "zenkit/Archive.hh"
-
-#include <glm/gtc/type_ptr.inl>
 
 namespace zenkit {
 	std::unique_ptr<VCameraTrajectoryFrame> VCameraTrajectoryFrame::parse(ReadArchive& r, GameVersion version) {
@@ -46,7 +44,7 @@ namespace zenkit {
 		w.write_float("continuity", this->continuity);
 		w.write_float("timeScale", this->time_scale);
 		w.write_bool("timeIsFixed", this->time_fixed);
-		w.write_raw_float("originalPose", glm::value_ptr(this->original_pose), 4 * 4);
+		w.write_raw_float("originalPose", this->original_pose.pointer(), 4 * 4);
 	}
 
 	void VCutsceneCamera::parse(VCutsceneCamera& obj, ReadArchive& r, GameVersion version) {

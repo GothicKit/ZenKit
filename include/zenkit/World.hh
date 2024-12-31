@@ -58,7 +58,7 @@ namespace zenkit {
 
 	struct SpawnLocation {
 		std::shared_ptr<VNpc> npc;
-		glm::vec3 position;
+		Vec3 position;
 		float timer;
 	};
 

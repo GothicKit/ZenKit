@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Library.hh"
-
-#include <glm/vec2.hpp>
+#include "zenkit/Misc.hh"
 
 #include <cstdint>
 #include <string>
@@ -22,7 +21,7 @@ namespace zenkit {
 		/// \note These values are not stored as absolute pixels but rather in percent of the width and
 		///       height of the image. Thus to calculate the real pixel position of the top left corner,
 		///       one multiplies `uv[0].x` by the width of the font texture and `uv[0].y` by its height.
-		glm::vec2 uv[2];
+		Vec2 uv[2];
 
 		[[nodiscard]] ZKAPI bool operator==(FontGlyph const& g) const noexcept;
 	};

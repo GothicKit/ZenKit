@@ -5,8 +5,6 @@
 #include "zenkit/Library.hh"
 #include "zenkit/MultiResolutionMesh.hh"
 
-#include <glm/vec3.hpp>
-
 #include <cstdint>
 #include <vector>
 
@@ -14,13 +12,13 @@ namespace zenkit {
 	class Read;
 
 	struct SoftSkinWedgeNormal {
-		glm::vec3 normal;
+		Vec3 normal;
 		std::uint32_t index;
 	};
 
 	struct SoftSkinWeightEntry {
 		float weight;
-		glm::vec3 position;
+		Vec3 position;
 		std::uint8_t node_index;
 	};
 

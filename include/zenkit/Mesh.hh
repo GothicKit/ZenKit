@@ -7,9 +7,6 @@
 #include "zenkit/Material.hh"
 #include "zenkit/Texture.hh"
 
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
-
 #include <memory>
 #include <string>
 #include <vector>
@@ -21,20 +18,20 @@ namespace zenkit {
 	/// \brief Represents a light map.
 	struct LightMap {
 		std::shared_ptr<Texture> image;
-		glm::vec3 normals[2];
-		glm::vec3 origin;
+		Vec3 normals[2];
+		Vec3 origin;
 	};
 
 	/// \brief Represents a vertex feature.
 	struct VertexFeature {
 		/// \brief The texture coordinates of the polygon.
-		glm::vec2 texture;
+		Vec2 texture;
 
 		/// \brief A value indicating the light level of the polygon.
 		uint32_t light;
 
 		/// The normal vector of the polygon.
-		glm::vec3 normal;
+		Vec3 normal;
 	};
 
 	/// \brief Flags set for a polygon of a mesh.
@@ -111,7 +108,7 @@ namespace zenkit {
 		std::vector<Material> materials {};
 
 		/// \brief A list of vertices of this mesh.
-		std::vector<glm::vec3> vertices {};
+		std::vector<Vec3> vertices {};
 
 		/// \brief A list of vertex features of this mesh.
 		std::vector<VertexFeature> features {};

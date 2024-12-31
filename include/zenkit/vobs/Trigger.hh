@@ -1,4 +1,4 @@
-// Copyright © 2022-2023 GothicKit Contributors.
+// Copyright © 2022-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Library.hh"
@@ -310,7 +310,7 @@ namespace zenkit {
 		std::string sfx_use_locked {};
 
 		// Save-game only variables
-		glm::vec3 s_act_key_pos_delta;
+		Vec3 s_act_key_pos_delta;
 		float s_act_keyframe_f;
 		int s_act_keyframe;
 		int s_next_keyframe;

@@ -1,4 +1,4 @@
-// Copyright © 2022-2023 GothicKit Contributors.
+// Copyright © 2022-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include <doctest/doctest.h>
 #include <zenkit/Archive.hh>
@@ -25,11 +25,11 @@ TEST_SUITE("vobs") {
 		zenkit::VirtualObject vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
-		CHECK_EQ(vob.bbox.min, glm::vec3 {30897.1035f, 4760.24951f, -14865.5723f});
-		CHECK_EQ(vob.bbox.max, glm::vec3 {30929.8301f, 4836.17529f, -14817.3135f});
-		CHECK_EQ(vob.position, glm::vec3 {30913.4668f, 4798.9751f, -14841.4434f});
+		CHECK_EQ(vob.bbox.min, zenkit::Vec3 {30897.1035f, 4760.24951f, -14865.5723f});
+		CHECK_EQ(vob.bbox.max, zenkit::Vec3 {30929.8301f, 4836.17529f, -14817.3135f});
+		CHECK_EQ(vob.position, zenkit::Vec3 {30913.4668f, 4798.9751f, -14841.4434f});
 		CHECK_EQ(vob.rotation,
-		         glm::mat3x3 {
+		         zenkit::Mat3 {
 		             {0.920505285f, 0, -0.390731275f},
 		             {0, 1, 0},
 		             {0.390731275f, 0, 0.920505285f},
@@ -96,7 +96,7 @@ TEST_SUITE("vobs") {
 		CHECK_EQ(frames[0]->time_scale, 1.0f);
 		CHECK_FALSE(frames[0]->time_fixed);
 		CHECK_EQ(frames[0]->original_pose,
-		         glm::mat4x4 {
+		         zenkit::Mat4 {
 		             {0.202226311f, 3.00647909e-11f, -0.979338825f, 0},
 		             {0.00805913191f, 0.999966145f, 0.00166415179f, 0.0f},
 		             {0.979305685f, -0.00822915602f, 0.202219456f, 0.0f},
@@ -116,7 +116,7 @@ TEST_SUITE("vobs") {
 		CHECK_EQ(frames[1]->time_scale, 1.0f);
 		CHECK_FALSE(frames[1]->time_fixed);
 		CHECK_EQ(frames[1]->original_pose,
-		         glm::mat4x4 {
+		         zenkit::Mat4 {
 		             {1.0f, 0.0f, -0.0f, 0.0f},
 		             {-0.0f, 1.0f, -0.0f, 0.0f},
 		             {0.0f, 0.0f, 1.0f, 0.0f},
@@ -137,7 +137,7 @@ TEST_SUITE("vobs") {
 		CHECK_EQ(target_frames[0]->time_scale, 1.0f);
 		CHECK_FALSE(target_frames[0]->time_fixed);
 		CHECK_EQ(target_frames[0]->original_pose,
-		         glm::mat4x4 {
+		         zenkit::Mat4 {
 		             {1.0f, 0.0f, 0.0f, 0.0f},
 		             {0.0f, 1.0f, 0.0f, 0.0f},
 		             {0.0f, 0.0f, 1.0f, 0.0f},
@@ -190,7 +190,7 @@ TEST_SUITE("vobs") {
 
 		CHECK_EQ(vob.range_center, 16000.0f);
 		CHECK_EQ(vob.inner_range_percentage, 0.699999988f);
-		CHECK_EQ(vob.color, glm::u8vec4 {120, 120, 120, 255});
+		CHECK_EQ(vob.color, zenkit::Color {120, 120, 120, 255});
 		CHECK_FALSE(vob.fade_out_sky);
 		CHECK_FALSE(vob.override_color);
 
@@ -348,7 +348,7 @@ TEST_SUITE("vobs") {
 	}
 
 	static std::vector<float> const G2_LIGHT_RANGE_ANIMATION_SCALE {};
-	static std::vector<glm::u8vec4> const G2_LIGHT_COLOR_ANIMATION_LIST {};
+	static std::vector<zenkit::Color> const G2_LIGHT_COLOR_ANIMATION_LIST {};
 
 	TEST_CASE("zCVobLight(GOTHIC2)") {
 		auto buf = zenkit::Read::from("./samples/G2/VOb/zCVobLight.zen");
@@ -363,7 +363,7 @@ TEST_SUITE("vobs") {
 		CHECK_EQ(vob.preset, "NW_STANDART_FIRE_STATIC");
 		CHECK_EQ(vob.light_type, zenkit::LightType::POINT);
 		CHECK_EQ(vob.range, 400.0f);
-		CHECK_EQ(vob.color, glm::u8vec4 {100, 71, 60, 255});
+		CHECK_EQ(vob.color, zenkit::Color {100, 71, 60, 255});
 		CHECK_EQ(vob.cone_angle, 0.0f);
 		CHECK(vob.is_static);
 		CHECK_EQ(vob.quality, zenkit::LightQuality::LOW);
@@ -522,10 +522,10 @@ TEST_SUITE("vobs") {
 	}
 
 	static std::vector<zenkit::AnimationSample> const G1_MOVER_KEYFRAMES {
-	    {glm::vec3 {29785.9609f, 5140.81982f, -16279.8477f},
-	     glm::quat {0.999809802f, -0.000760567724f, 0.0174517576f, 0.00869333092f}},
-	    {glm::vec3 {29785.9609f, 5720.81982f, -16279.8477f},
-	     glm::quat {0.999809802f, -0.000760567724f, 0.0174517576f, 0.00869333092f}},
+	    {zenkit::Vec3 {29785.9609f, 5140.81982f, -16279.8477f},
+	     zenkit::Quat {0.999809802f, -0.000760567724f, 0.0174517576f, 0.00869333092f}},
+	    {zenkit::Vec3 {29785.9609f, 5720.81982f, -16279.8477f},
+	     zenkit::Quat {0.999809802f, -0.000760567724f, 0.0174517576f, 0.00869333092f}},
 	};
 
 	TEST_CASE("zCMover(GOTHIC2)") {
@@ -619,7 +619,7 @@ TEST_SUITE("vobs") {
 
 		CHECK_EQ(vob.radius, 1000.0f);
 		CHECK_EQ(vob.duration, 5.0f);
-		CHECK_EQ(vob.amplitude, glm::vec3 {2.0f, 10.0f, 2.0f});
+		CHECK_EQ(vob.amplitude, zenkit::Vec3 {2.0f, 10.0f, 2.0f});
 
 		CHECK(ar->read_object_end());
 	}

@@ -1,4 +1,4 @@
-// Copyright © 2022-2023 GothicKit Contributors.
+// Copyright © 2022-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include <doctest/doctest.h>
 #include <zenkit/Archive.hh>
@@ -24,11 +24,11 @@ TEST_SUITE("vobs") {
 		zenkit::VirtualObject vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_1);
 
-		CHECK_EQ(vob.bbox.min, glm::vec3 {-18966.623f, -236.707687f, 4373.23486f});
-		CHECK_EQ(vob.bbox.max, glm::vec3 {-18772.623f, -42.7076874f, 4567.23486f});
-		CHECK_EQ(vob.position, glm::vec3 {-18869.623f, -139.707687f, 4470.23486f});
+		CHECK_EQ(vob.bbox.min, zenkit::Vec3 {-18966.623f, -236.707687f, 4373.23486f});
+		CHECK_EQ(vob.bbox.max, zenkit::Vec3 {-18772.623f, -42.7076874f, 4567.23486f});
+		CHECK_EQ(vob.position, zenkit::Vec3 {-18869.623f, -139.707687f, 4470.23486f});
 		CHECK_EQ(vob.rotation,
-		         glm::mat3x3 {
+		         zenkit::Mat3 {
 		             {1, 0, 0},
 		             {0, 1, 0},
 		             {0, 0, 1},
@@ -97,7 +97,7 @@ TEST_SUITE("vobs") {
 
 		CHECK_EQ(vob.range_center, 8000.0f);
 		CHECK_EQ(vob.inner_range_percentage, 0.850000024f);
-		CHECK_EQ(vob.color, glm::u8vec4 {120, 120, 120, 20});
+		CHECK_EQ(vob.color, zenkit::Color {120, 120, 120, 20});
 		CHECK_FALSE(vob.fade_out_sky);
 		CHECK_FALSE(vob.override_color);
 
@@ -271,17 +271,17 @@ TEST_SUITE("vobs") {
 
 	static std::vector<float> const G1_LIGHT_RANGE_ANIMATION_SCALE {};
 	static std::vector const G1_LIGHT_COLOR_ANIMATION_LIST {
-	    glm::u8vec4 {211, 147, 107, 255}, glm::u8vec4 {223, 173, 117, 255}, glm::u8vec4 {211, 147, 107, 255},
-	    glm::u8vec4 {223, 173, 117, 255}, glm::u8vec4 {225, 197, 100, 255}, glm::u8vec4 {223, 173, 117, 255},
-	    glm::u8vec4 {227, 209, 106, 255}, glm::u8vec4 {223, 173, 117, 255}, glm::u8vec4 {211, 147, 107, 255},
-	    glm::u8vec4 {223, 173, 117, 255}, glm::u8vec4 {225, 197, 100, 255}, glm::u8vec4 {227, 209, 106, 255},
-	    glm::u8vec4 {223, 173, 117, 255}, glm::u8vec4 {211, 147, 107, 255}, glm::u8vec4 {225, 197, 100, 255},
-	    glm::u8vec4 {223, 173, 117, 255}, glm::u8vec4 {225, 197, 100, 255}, glm::u8vec4 {211, 147, 107, 255},
-	    glm::u8vec4 {223, 173, 117, 255}, glm::u8vec4 {227, 209, 106, 255}, glm::u8vec4 {225, 197, 100, 255},
-	    glm::u8vec4 {211, 147, 107, 255}, glm::u8vec4 {225, 197, 100, 255}, glm::u8vec4 {223, 173, 117, 255},
-	    glm::u8vec4 {225, 197, 100, 255}, glm::u8vec4 {227, 209, 106, 255}, glm::u8vec4 {223, 173, 117, 255},
-	    glm::u8vec4 {211, 147, 107, 255}, glm::u8vec4 {223, 173, 117, 255}, glm::u8vec4 {211, 147, 107, 255},
-	    glm::u8vec4 {225, 197, 100, 255}, glm::u8vec4 {227, 209, 106, 255}, glm::u8vec4 {223, 173, 117, 255},
+	    zenkit::Color {211, 147, 107, 255}, zenkit::Color {223, 173, 117, 255}, zenkit::Color {211, 147, 107, 255},
+	    zenkit::Color {223, 173, 117, 255}, zenkit::Color {225, 197, 100, 255}, zenkit::Color {223, 173, 117, 255},
+	    zenkit::Color {227, 209, 106, 255}, zenkit::Color {223, 173, 117, 255}, zenkit::Color {211, 147, 107, 255},
+	    zenkit::Color {223, 173, 117, 255}, zenkit::Color {225, 197, 100, 255}, zenkit::Color {227, 209, 106, 255},
+	    zenkit::Color {223, 173, 117, 255}, zenkit::Color {211, 147, 107, 255}, zenkit::Color {225, 197, 100, 255},
+	    zenkit::Color {223, 173, 117, 255}, zenkit::Color {225, 197, 100, 255}, zenkit::Color {211, 147, 107, 255},
+	    zenkit::Color {223, 173, 117, 255}, zenkit::Color {227, 209, 106, 255}, zenkit::Color {225, 197, 100, 255},
+	    zenkit::Color {211, 147, 107, 255}, zenkit::Color {225, 197, 100, 255}, zenkit::Color {223, 173, 117, 255},
+	    zenkit::Color {225, 197, 100, 255}, zenkit::Color {227, 209, 106, 255}, zenkit::Color {223, 173, 117, 255},
+	    zenkit::Color {211, 147, 107, 255}, zenkit::Color {223, 173, 117, 255}, zenkit::Color {211, 147, 107, 255},
+	    zenkit::Color {225, 197, 100, 255}, zenkit::Color {227, 209, 106, 255}, zenkit::Color {223, 173, 117, 255},
 	};
 
 	TEST_CASE("zCVobLight(GOTHIC1)") {
@@ -297,7 +297,7 @@ TEST_SUITE("vobs") {
 		CHECK_EQ(vob.preset, "");
 		CHECK_EQ(vob.light_type, zenkit::LightType::POINT);
 		CHECK_EQ(vob.range, 2000.0f);
-		CHECK_EQ(vob.color, glm::u8vec4 {223, 173, 117, 255});
+		CHECK_EQ(vob.color, zenkit::Color {223, 173, 117, 255});
 		CHECK_EQ(vob.cone_angle, 0.0f);
 		CHECK_FALSE(vob.is_static);
 		CHECK_EQ(vob.quality, zenkit::LightQuality::LOW);
@@ -417,10 +417,10 @@ TEST_SUITE("vobs") {
 	}
 
 	static std::vector<zenkit::AnimationSample> const G1_MOVER_KEYFRAMES {
-	    {glm::vec3 {-23325.1992f, 3438.91333f, -21834.9473f},
-	     glm::quat {0.105035283f, 0.091305837f, 0.747364759f, 0.649674594f}},
-	    {glm::vec3 {-23325.1543f, 3438.91333f, -21844.3672f},
-	     glm::quat {-0.00970827043f, 0.138834357f, -0.0690778494f, 0.98785609f}},
+	    {zenkit::Vec3 {-23325.1992f, 3438.91333f, -21834.9473f},
+	     zenkit::Quat {0.105035283f, 0.091305837f, 0.747364759f, 0.649674594f}},
+	    {zenkit::Vec3 {-23325.1543f, 3438.91333f, -21844.3672f},
+	     zenkit::Quat {-0.00970827043f, 0.138834357f, -0.0690778494f, 0.98785609f}},
 	};
 
 	TEST_CASE("zCMover(GOTHIC1)") {

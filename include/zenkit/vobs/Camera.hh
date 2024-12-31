@@ -1,11 +1,9 @@
-// Copyright © 2022-2023 GothicKit Contributors.
+// Copyright © 2022-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Library.hh"
 #include "zenkit/Misc.hh"
 #include "zenkit/vobs/VirtualObject.hh"
-
-#include <glm/mat4x4.hpp>
 
 #include <cstdint>
 #include <memory>
@@ -175,7 +173,7 @@ namespace zenkit {
 
 		/// \brief Unknown.
 		/// \see https://zk.gothickit.dev/engine/objects/zCCamTrj_KeyFrame/#originalpose
-		glm::mat4 original_pose;
+		Mat4 original_pose;
 
 		ZKREM("use ::load()")
 		ZKAPI static std::unique_ptr<VCameraTrajectoryFrame> parse(ReadArchive& r, GameVersion version);

@@ -1,11 +1,9 @@
-// Copyright © 2022-2023 GothicKit Contributors.
+// Copyright © 2022-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Library.hh"
 #include "zenkit/Misc.hh"
 #include "zenkit/vobs/VirtualObject.hh"
-
-#include <glm/vec4.hpp>
 
 #include <cstdint>
 #include <string>
@@ -60,7 +58,7 @@ namespace zenkit {
 
 		/// \brief The color of this light source in RGBA form.
 		/// \see https://zk.gothickit.dev/engine/objects/zCVobLight/#color
-		glm::u8vec4 color {};
+		Color color {};
 
 		/// \brief The angle of the beam cone for spotlights.
 		///
@@ -124,7 +122,7 @@ namespace zenkit {
 		///
 		/// \note This value is only valid for dynamic lights. Check #is_static before use.
 		/// \see https://zk.gothickit.dev/engine/objects/zCVobLight/#colorAniList
-		std::vector<glm::u8vec4> color_animation_list {};
+		std::vector<Color> color_animation_list {};
 
 		/// \brief The speed of the color animation in frames per second.
 		/// \note This value is only valid for dynamic lights. Check #is_static before use.

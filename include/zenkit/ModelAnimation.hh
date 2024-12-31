@@ -5,9 +5,6 @@
 #include "zenkit/Date.hh"
 #include "zenkit/Library.hh"
 
-#include <glm/gtc/quaternion.hpp>
-#include <glm/vec3.hpp>
-
 #include <string>
 #include <vector>
 
@@ -22,8 +19,8 @@ namespace zenkit {
 	/// \see zenkit::ModelAnimation
 	/// \see zenkit::ModelHierarchy
 	struct AnimationSample {
-		glm::vec3 position;
-		glm::quat rotation;
+		Vec3 position;
+		Quat rotation;
 
 		[[nodiscard]] ZKAPI bool operator==(AnimationSample const& other) const noexcept;
 	};

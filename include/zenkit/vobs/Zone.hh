@@ -1,11 +1,9 @@
-// Copyright © 2022-2023 GothicKit Contributors.
+// Copyright © 2022-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Library.hh"
 #include "zenkit/Misc.hh"
 #include "zenkit/vobs/VirtualObject.hh"
-
-#include <glm/vec4.hpp>
 
 #include <cstdint>
 
@@ -104,7 +102,7 @@ namespace zenkit {
 
 		float range_center {0};
 		float inner_range_percentage {0};
-		glm::u8vec4 color {};
+		Color color {};
 		bool fade_out_sky {false};
 		bool override_color {false};
 

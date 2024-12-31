@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include <doctest/doctest.h>
 #include <zenkit/ModelMesh.hh>
@@ -34,15 +34,15 @@ TEST_SUITE("ModelMesh") {
 		CHECK_EQ(sk.weights.size(), 115);
 		CHECK_EQ(sk.weights[0].size(), 1);
 		CHECK_EQ(sk.weights[0][0].weight, 1.0f);
-		CHECK_EQ(sk.weights[0][0].position, glm::vec3 {-5.49776077f, 35.086731f, -2.64756012f});
+		CHECK_EQ(sk.weights[0][0].position, zenkit::Vec3 {-5.49776077f, 35.086731f, -2.64756012f});
 		CHECK_EQ(sk.weights[0][0].node_index, 0);
 		CHECK_EQ(sk.weights[62].size(), 1);
 		CHECK_EQ(sk.weights[62][0].weight, 1.0f);
-		CHECK_EQ(sk.weights[62][0].position, glm::vec3 {0.260997772f, 18.0412712f, -23.9048882f});
+		CHECK_EQ(sk.weights[62][0].position, zenkit::Vec3 {0.260997772f, 18.0412712f, -23.9048882f});
 		CHECK_EQ(sk.weights[62][0].node_index, 4);
 		CHECK_EQ(sk.weights[114].size(), 1);
 		CHECK_EQ(sk.weights[114][0].weight, 1.0f);
-		CHECK_EQ(sk.weights[114][0].position, glm::vec3 {1.05304337f, 71.0284958f, 1.32049942f});
+		CHECK_EQ(sk.weights[114][0].position, zenkit::Vec3 {1.05304337f, 71.0284958f, 1.32049942f});
 		CHECK_EQ(sk.weights[114][0].node_index, 0);
 
 		CHECK_EQ(sk.wedge_normals.size(), 0);
@@ -52,11 +52,11 @@ TEST_SUITE("ModelMesh") {
 		CHECK_EQ(sk.nodes[2], 3);
 
 		CHECK_EQ(sk.bboxes.size(), 6);
-		CHECK_EQ(sk.bboxes[0].center, glm::vec3 {0.612892151, 41.7827187, 0.705307007});
-		CHECK_EQ(sk.bboxes[0].half_width, glm::vec3 {15.2073612, 33.4261742, 14.8513918});
-		CHECK_EQ(sk.bboxes[0].axes[0], glm::vec3 {0.777145922, 0, -0.629320442});
-		CHECK_EQ(sk.bboxes[0].axes[1], glm::vec3 {0, 1, 0});
-		CHECK_EQ(sk.bboxes[0].axes[2], glm::vec3 {0.629320442, 0, 0.777145922});
+		CHECK_EQ(sk.bboxes[0].center, zenkit::Vec3 {0.612892151, 41.7827187, 0.705307007});
+		CHECK_EQ(sk.bboxes[0].half_width, zenkit::Vec3 {15.2073612, 33.4261742, 14.8513918});
+		CHECK_EQ(sk.bboxes[0].axes[0], zenkit::Vec3 {0.777145922, 0, -0.629320442});
+		CHECK_EQ(sk.bboxes[0].axes[1], zenkit::Vec3 {0, 1, 0});
+		CHECK_EQ(sk.bboxes[0].axes[2], zenkit::Vec3 {0.629320442, 0, 0.777145922});
 
 		CHECK_EQ(sk.bboxes[0].children.size(), 0);
 	}

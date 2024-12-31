@@ -5,8 +5,6 @@
 
 #include "../Internal.hh"
 
-#include <glm/gtc/type_ptr.hpp>
-
 #include <algorithm>
 #include <charconv>
 #include <cstring>
@@ -142,7 +140,7 @@ namespace zenkit {
 		return read->read_uint() != 0;
 	}
 
-	glm::u8vec4 ReadArchiveBinsafe::read_color() {
+	Color ReadArchiveBinsafe::read_color() {
 		ensure_entry_meta<ArchiveEntryType::COLOR>();
 
 		auto b = read->read_ubyte();
@@ -153,12 +151,12 @@ namespace zenkit {
 		return {r, g, b, a};
 	}
 
-	glm::vec3 ReadArchiveBinsafe::read_vec3() {
+	Vec3 ReadArchiveBinsafe::read_vec3() {
 		ensure_entry_meta<ArchiveEntryType::VEC3>();
 		return read->read_vec3();
 	}
 
-	glm::vec2 ReadArchiveBinsafe::read_vec2() {
+	Vec2 ReadArchiveBinsafe::read_vec2() {
 		auto unused = static_cast<std::int32_t>(ensure_entry_meta<ArchiveEntryType::RAW_FLOAT>() - 2 * sizeof(float));
 
 		if (unused < 0) {
@@ -190,7 +188,7 @@ namespace zenkit {
 		return aabb;
 	}
 
-	glm::mat3x3 ReadArchiveBinsafe::read_mat3x3() {
+	Mat3 ReadArchiveBinsafe::read_mat3x3() {
 		auto unused = static_cast<std::int32_t>(ensure_entry_meta<ArchiveEntryType::RAW>() - 3 * 3 * sizeof(float));
 
 		if (unused < 0) {
@@ -356,7 +354,7 @@ namespace zenkit {
 		this->_m_write->write_uint(v ? 1 : 0);
 	}
 
-	void WriteArchiveBinsafe::write_color(std::string_view name, glm::u8vec4 v) {
+	void WriteArchiveBinsafe::write_color(std::string_view name, Color v) {
 		this->write_entry(name, ArchiveEntryType::COLOR);
 		this->_m_write->write_ubyte(v.b);
 		this->_m_write->write_ubyte(v.g);
@@ -364,13 +362,13 @@ namespace zenkit {
 		this->_m_write->write_ubyte(v.a);
 	}
 
-	void WriteArchiveBinsafe::write_vec3(std::string_view name, glm::vec3 const& v) {
+	void WriteArchiveBinsafe::write_vec3(std::string_view name, Vec3 const& v) {
 		this->write_entry(name, ArchiveEntryType::VEC3);
 		this->_m_write->write_vec3(v);
 	}
 
-	void WriteArchiveBinsafe::write_vec2(std::string_view name, glm::vec2 v) {
-		this->write_raw_float(name, glm::value_ptr(v), 2);
+	void WriteArchiveBinsafe::write_vec2(std::string_view name, Vec2 v) {
+		this->write_raw_float(name, v.pointer(), 2);
 	}
 
 	void WriteArchiveBinsafe::write_bbox(std::string_view name, AxisAlignedBoundingBox const& v) {
@@ -378,9 +376,9 @@ namespace zenkit {
 		this->write_raw_float(name, values, 6);
 	}
 
-	void WriteArchiveBinsafe::write_mat3x3(std::string_view name, glm::mat3x3 const& v) {
-		auto vT = glm::transpose(v);
-		this->write_raw_float(name, glm::value_ptr(vT), 9);
+	void WriteArchiveBinsafe::write_mat3x3(std::string_view name, Mat3 const& v) {
+		auto vT = v.transpose();
+		this->write_raw_float(name, vT.pointer(), 9);
 	}
 
 	void WriteArchiveBinsafe::write_raw(std::string_view name, std::vector<std::byte> const& v) {

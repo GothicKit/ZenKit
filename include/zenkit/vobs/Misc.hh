@@ -1,11 +1,9 @@
-// Copyright © 2022-2023 GothicKit Contributors.
+// Copyright © 2022-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Library.hh"
 #include "zenkit/Misc.hh"
 #include "zenkit/vobs/VirtualObject.hh"
-
-#include <glm/vec3.hpp>
 
 #include <cstdint>
 #include <memory>
@@ -423,7 +421,7 @@ namespace zenkit {
 
 		/// \brief The amplitude of the earthquake effect.
 		/// \see https://zk.gothickit.dev/engine/objects/zCEarthquake/#amplitudeCM
-		glm::vec3 amplitude;
+		Vec3 amplitude;
 
 		ZKREM("use ::load()") ZKAPI static void parse(VEarthquake& obj, ReadArchive& ctx, GameVersion version);
 
@@ -507,7 +505,7 @@ namespace zenkit {
 		};
 
 		std::string npc_instance;
-		glm::vec3 model_scale;
+		Vec3 model_scale;
 		float model_fatness;
 
 		std::vector<std::string> overlays;
@@ -565,7 +563,7 @@ namespace zenkit {
 		bool weaponmode_routine;
 		bool start_new_routine;
 		int ai_state_driven;
-		glm::vec3 ai_state_pos;
+		Vec3 ai_state_pos;
 		std::string current_routine;
 		bool respawn;
 		int respawn_time;

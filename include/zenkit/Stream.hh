@@ -3,11 +3,7 @@
 #pragma once
 #include "zenkit/Library.hh"
 #include "zenkit/Logger.hh"
-
-#include <glm/mat3x3.hpp>
-#include <glm/mat4x4.hpp>
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
+#include "zenkit/Misc.hh"
 
 #include <cstddef>
 #include <filesystem>
@@ -92,10 +88,10 @@ namespace zenkit {
 		[[nodiscard]] float read_float() noexcept;
 		[[nodiscard]] std::string read_string(size_t len) noexcept;
 		[[nodiscard]] std::string read_line(bool skipws) noexcept;
-		[[nodiscard]] glm::vec2 read_vec2() noexcept;
-		[[nodiscard]] glm::vec3 read_vec3() noexcept;
-		[[nodiscard]] glm::mat3 read_mat3() noexcept;
-		[[nodiscard]] glm::mat4 read_mat4() noexcept;
+		[[nodiscard]] Vec2 read_vec2() noexcept;
+		[[nodiscard]] Vec3 read_vec3() noexcept;
+		[[nodiscard]] Mat3 read_mat3() noexcept;
+		[[nodiscard]] Mat4 read_mat4() noexcept;
 
 		[[nodiscard]] virtual std::string read_line_then_ignore(std::string_view chars) noexcept;
 
@@ -127,10 +123,10 @@ namespace zenkit {
 		void write_string(std::string_view v) noexcept;
 		void write_string0(std::string_view v) noexcept;
 		void write_line(std::string_view v) noexcept;
-		void write_vec2(glm::vec2 const& v) noexcept;
-		void write_vec3(glm::vec3 const& v) noexcept;
-		void write_mat3(glm::mat3 const& v) noexcept;
-		void write_mat4(glm::mat4 const& v) noexcept;
+		void write_vec2(Vec2 const& v) noexcept;
+		void write_vec3(Vec3 const& v) noexcept;
+		void write_mat3(Mat3 const& v) noexcept;
+		void write_mat4(Mat4 const& v) noexcept;
 
 		virtual size_t write(void const* buf, size_t len) noexcept = 0;
 		virtual void seek(ssize_t off, Whence whence) noexcept = 0;

@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include <doctest/doctest.h>
 #include <zenkit/Material.hh>
@@ -21,38 +21,38 @@ TEST_SUITE("World") {
 		CHECK_EQ(mesh.name, "");
 
 		auto box0 = mesh.bbox;
-		CHECK_EQ(box0.min, glm::vec3 {0, 0, 0});
-		CHECK_EQ(box0.max, glm::vec3 {0, 0, 0});
+		CHECK_EQ(box0.min, zenkit::Vec3 {0, 0, 0});
+		CHECK_EQ(box0.max, zenkit::Vec3 {0, 0, 0});
 
 		auto obb = mesh.obb;
-		CHECK_EQ(obb.center, glm::vec3 {0, 0, 0});
-		CHECK_EQ(obb.axes[0], glm::vec3 {0, 0, 0});
-		CHECK_EQ(obb.axes[1], glm::vec3 {0, 0, 0});
-		CHECK_EQ(obb.axes[2], glm::vec3 {0, 0, 0});
-		CHECK_EQ(obb.half_width, glm::vec3 {0, 0, 0});
+		CHECK_EQ(obb.center, zenkit::Vec3 {0, 0, 0});
+		CHECK_EQ(obb.axes[0], zenkit::Vec3 {0, 0, 0});
+		CHECK_EQ(obb.axes[1], zenkit::Vec3 {0, 0, 0});
+		CHECK_EQ(obb.axes[2], zenkit::Vec3 {0, 0, 0});
+		CHECK_EQ(obb.half_width, zenkit::Vec3 {0, 0, 0});
 
 		auto& verts = mesh.vertices;
-		CHECK_EQ(verts[0], glm::vec3 {91365, -4026.60083, 46900});
-		CHECK_EQ(verts[1], glm::vec3 {92900, -4029.99976, 38399.9961});
-		CHECK_EQ(verts[500], glm::vec3 {44263.8203, 708.517822, 6841.18262});
-		CHECK_EQ(verts[501], glm::vec3 {45672.6094, 640.436157, 6877.81543});
+		CHECK_EQ(verts[0], zenkit::Vec3 {91365, -4026.60083, 46900});
+		CHECK_EQ(verts[1], zenkit::Vec3 {92900, -4029.99976, 38399.9961});
+		CHECK_EQ(verts[500], zenkit::Vec3 {44263.8203, 708.517822, 6841.18262});
+		CHECK_EQ(verts[501], zenkit::Vec3 {45672.6094, 640.436157, 6877.81543});
 
 		auto& feats = mesh.features;
-		CHECK_EQ(feats[0].texture, glm::vec2 {1.11193848, 2.64415169});
+		CHECK_EQ(feats[0].texture, zenkit::Vec2 {1.11193848, 2.64415169});
 		CHECK_EQ(feats[0].light, 4292927712);
-		CHECK_EQ(feats[0].normal, glm::vec3 {0.0000220107158, 1, -0.000121058853});
+		CHECK_EQ(feats[0].normal, zenkit::Vec3 {0.0000220107158, 1, -0.000121058853});
 
-		CHECK_EQ(feats[1].texture, glm::vec2 {-0.371101379, -0.909111022});
+		CHECK_EQ(feats[1].texture, zenkit::Vec2 {-0.371101379, -0.909111022});
 		CHECK_EQ(feats[1].light, 4292927712);
-		CHECK_EQ(feats[1].normal, glm::vec3 {0.0000251403726, 1, -0.000138271935});
+		CHECK_EQ(feats[1].normal, zenkit::Vec3 {0.0000251403726, 1, -0.000138271935});
 
-		CHECK_EQ(feats[500].texture, glm::vec2 {-0.524971008, 2.59478664});
+		CHECK_EQ(feats[500].texture, zenkit::Vec2 {-0.524971008, 2.59478664});
 		CHECK_EQ(feats[500].light, 4281084972);
-		CHECK_EQ(feats[500].normal, glm::vec3 {-0.000046945388, -0.99999994, 0.000258200336});
+		CHECK_EQ(feats[500].normal, zenkit::Vec3 {-0.000046945388, -0.99999994, 0.000258200336});
 
-		CHECK_EQ(feats[501].texture, glm::vec2 {1.93376923, -0.734043121});
+		CHECK_EQ(feats[501].texture, zenkit::Vec2 {1.93376923, -0.734043121});
 		CHECK_EQ(feats[501].light, 4281084972);
-		CHECK_EQ(feats[501].normal, glm::vec3 {0.000102534526, -1, -0.00014051389});
+		CHECK_EQ(feats[501].normal, zenkit::Vec3 {0.000102534526, -1, -0.00014051389});
 
 		auto& mats = mesh.materials;
 		auto& mat0 = mats[0];
@@ -129,24 +129,24 @@ TEST_SUITE("World") {
 
 		auto& nodes = tree.nodes;
 		CHECK_EQ(nodes.size(), 6644);
-		CHECK_EQ(nodes[0].plane, glm::vec4 {1, 0, 0, 18540.0156f});
+		CHECK_EQ(nodes[0].plane, zenkit::Vec4 {1, 0, 0, 18540.0156f});
 		CHECK_EQ(nodes[0].front_index, 1);
 		CHECK_EQ(nodes[0].parent_index, -1);
 		CHECK_EQ(nodes[0].back_index, 1599);
 		CHECK_EQ(nodes[0].polygon_index, 0);
 		CHECK_EQ(nodes[0].polygon_count, 0);
-		CHECK_EQ(nodes[0].bbox.min, glm::vec3 {-71919.9609f, -12000, -59900});
-		CHECK_EQ(nodes[0].bbox.max, glm::vec3 {108999.992f, 20014.0371f, 67399.9921f});
+		CHECK_EQ(nodes[0].bbox.min, zenkit::Vec3 {-71919.9609f, -12000, -59900});
+		CHECK_EQ(nodes[0].bbox.max, zenkit::Vec3 {108999.992f, 20014.0371f, 67399.9921f});
 		CHECK_FALSE(nodes[0].is_leaf());
 
-		CHECK_EQ(nodes[1].plane, glm::vec4 {0, 0, 1, 3749.99609f});
+		CHECK_EQ(nodes[1].plane, zenkit::Vec4 {0, 0, 1, 3749.99609f});
 		CHECK_EQ(nodes[1].front_index, 2);
 		CHECK_EQ(nodes[1].parent_index, 0);
 		CHECK_EQ(nodes[1].back_index, 445);
 		CHECK_EQ(nodes[1].polygon_index, 0);
 		CHECK_EQ(nodes[1].polygon_count, 0);
-		CHECK_EQ(nodes[1].bbox.min, glm::vec3 {15499.999f, -12000, -59900});
-		CHECK_EQ(nodes[1].bbox.max, glm::vec3 {108999.992f, 19502.1973f, 67399.9921f});
+		CHECK_EQ(nodes[1].bbox.min, zenkit::Vec3 {15499.999f, -12000, -59900});
+		CHECK_EQ(nodes[1].bbox.max, zenkit::Vec3 {108999.992f, 19502.1973f, 67399.9921f});
 		CHECK_FALSE(nodes[1].is_leaf());
 
 		auto& leaves = tree.leaf_node_indices;
@@ -158,15 +158,15 @@ TEST_SUITE("World") {
 		CHECK_EQ(nodes[5].parent_index, 4);
 		CHECK_EQ(nodes[5].polygon_index, 0);
 		CHECK_EQ(nodes[5].polygon_count, 22);
-		CHECK_EQ(nodes[5].bbox.min, glm::vec3 {81900, -4029.99976f, 28500.0039f});
-		CHECK_EQ(nodes[5].bbox.max, glm::vec3 {100000, -4026.60083f, 53899.9922f});
+		CHECK_EQ(nodes[5].bbox.min, zenkit::Vec3 {81900, -4029.99976f, 28500.0039f});
+		CHECK_EQ(nodes[5].bbox.max, zenkit::Vec3 {100000, -4026.60083f, 53899.9922f});
 
 		CHECK(nodes[26].is_leaf());
 		CHECK_EQ(nodes[26].parent_index, 25);
 		CHECK_EQ(nodes[26].polygon_index, 446);
 		CHECK_EQ(nodes[26].polygon_count, 24);
-		CHECK_EQ(nodes[26].bbox.min, glm::vec3 {48899.9961f, -4029.99976f, 47400});
-		CHECK_EQ(nodes[26].bbox.max, glm::vec3 {67900, -4026.59961f, 67399.9921f});
+		CHECK_EQ(nodes[26].bbox.min, zenkit::Vec3 {48899.9961f, -4029.99976f, 47400});
+		CHECK_EQ(nodes[26].bbox.max, zenkit::Vec3 {67900, -4026.59961f, 67399.9921f});
 
 		auto& sectors = tree.sectors;
 		CHECK_EQ(sectors.size(), 299);
@@ -183,7 +183,7 @@ TEST_SUITE("World") {
 		CHECK_EQ(portal_polys.size(), 0);
 
 		CHECK_EQ(tree.light_points.size(), 3318);
-		CHECK_EQ(tree.light_points[0], glm::vec3 {-99, -99, -99});
+		CHECK_EQ(tree.light_points[0], zenkit::Vec3 {-99, -99, -99});
 
 		// Check the VOb tree
 		auto& vobs = wld.world_vobs;
@@ -194,8 +194,8 @@ TEST_SUITE("World") {
 
 		{
 			box0 = vob0->bbox;
-			CHECK_EQ(box0.min, glm::vec3 {-71919.9609, -13091.8232, -59900});
-			CHECK_EQ(box0.max, glm::vec3 {108999.992, 20014.0352, 67399.9921});
+			CHECK_EQ(box0.min, zenkit::Vec3 {-71919.9609, -13091.8232, -59900});
+			CHECK_EQ(box0.max, zenkit::Vec3 {108999.992, 20014.0352, 67399.9921});
 
 			auto mat = vob0->rotation;
 			CHECK_EQ(mat[0][0], 1.0f);
@@ -211,7 +211,7 @@ TEST_SUITE("World") {
 			CHECK_EQ(vob0->vob_name, "LEVEL-VOB");
 			CHECK_EQ(vob0->visual_name, "SURFACE.3DS");
 			CHECK(vob0->preset_name.empty());
-			CHECK_EQ(vob0->position, glm::vec3 {0, 0, 0});
+			CHECK_EQ(vob0->position, zenkit::Vec3 {0, 0, 0});
 			CHECK_FALSE(vob0->show_visual);
 			CHECK_EQ(vob0->sprite_camera_facing_mode, zenkit::SpriteAlignment::NONE);
 			CHECK_EQ(vob0->anim_mode, zenkit::AnimationType::NONE);
@@ -231,8 +231,8 @@ TEST_SUITE("World") {
 			{
 				auto& child1 = children[0];
 				auto box1 = child1->bbox;
-				CHECK_EQ(box1.min, glm::vec3 {-18596.9004, -161.17189, 4091.1333});
-				CHECK_EQ(box1.max, glm::vec3 {-18492.0723, -111.171906, 4191.26221});
+				CHECK_EQ(box1.min, zenkit::Vec3 {-18596.9004, -161.17189, 4091.1333});
+				CHECK_EQ(box1.max, zenkit::Vec3 {-18492.0723, -111.171906, 4191.26221});
 
 				auto matc = child1->rotation;
 				CHECK_EQ(matc[0][0], -0.779196978f);
@@ -250,7 +250,7 @@ TEST_SUITE("World") {
 				CHECK_EQ(child1->vob_name, "FP_CAMPFIRE_PATH_BANDITOS2_03_02");
 				CHECK(child1->visual_name.empty());
 				CHECK(child1->preset_name.empty());
-				CHECK_EQ(child1->position, glm::vec3 {-18544.4863, -136.171906, 4141.19727});
+				CHECK_EQ(child1->position, zenkit::Vec3 {-18544.4863, -136.171906, 4141.19727});
 				CHECK_FALSE(child1->show_visual);
 				CHECK_EQ(child1->sprite_camera_facing_mode, zenkit::SpriteAlignment::NONE);
 				CHECK_EQ(child1->anim_mode, zenkit::AnimationType::NONE);
@@ -269,8 +269,8 @@ TEST_SUITE("World") {
 
 		{
 			auto box2 = vob13->bbox;
-			CHECK_EQ(box2.min, glm::vec3 {-9999.40234, -10000.0039, -9200});
-			CHECK_EQ(box2.max, glm::vec3 {9060.59765, 5909.90039, 7537.47461});
+			CHECK_EQ(box2.min, zenkit::Vec3 {-9999.40234, -10000.0039, -9200});
+			CHECK_EQ(box2.max, zenkit::Vec3 {9060.59765, 5909.90039, 7537.47461});
 
 			auto mat = vob13->rotation;
 			CHECK_EQ(mat[0][0], 1.0f);
@@ -286,7 +286,7 @@ TEST_SUITE("World") {
 			CHECK_EQ(vob13->vob_name, "LEVEL-VOB");
 			CHECK_EQ(vob13->visual_name, "OLDCAMP.3DS");
 			CHECK(vob13->preset_name.empty());
-			CHECK_EQ(vob13->position, glm::vec3 {0, 0, 0});
+			CHECK_EQ(vob13->position, zenkit::Vec3 {0, 0, 0});
 			CHECK_FALSE(vob13->show_visual);
 			CHECK_EQ(vob13->sprite_camera_facing_mode, zenkit::SpriteAlignment::NONE);
 			CHECK_EQ(vob13->anim_mode, zenkit::AnimationType::NONE);
@@ -316,15 +316,15 @@ TEST_SUITE("World") {
 		CHECK_EQ(wp0.name, "LOCATION_28_07");
 		CHECK_EQ(wp0.water_depth, 0);
 		CHECK_FALSE(wp0.under_water);
-		CHECK_EQ(wp0.position, glm::vec3 {23871.457, -553.283813, 27821.3516});
-		CHECK_EQ(wp0.direction, glm::vec3 {0.86651814, 0, -0.499145567});
+		CHECK_EQ(wp0.position, zenkit::Vec3 {23871.457, -553.283813, 27821.3516});
+		CHECK_EQ(wp0.direction, zenkit::Vec3 {0.86651814, 0, -0.499145567});
 		CHECK(wp0.free_point);
 
 		CHECK_EQ(wp100.name, "CASTLE_MOVEMENT_STRAIGHT3");
 		CHECK_EQ(wp100.water_depth, 0);
 		CHECK_FALSE(wp100.under_water);
-		CHECK_EQ(wp100.position, glm::vec3 {3362.21948, 8275.1709, -21067.9473});
-		CHECK_EQ(wp100.direction, glm::vec3 {-0.342115372, 0, 0.939657927});
+		CHECK_EQ(wp100.position, zenkit::Vec3 {3362.21948, 8275.1709, -21067.9473});
+		CHECK_EQ(wp100.direction, zenkit::Vec3 {-0.342115372, 0, 0.939657927});
 		CHECK_FALSE(wp100.free_point);
 
 		auto& edge0 = waynet.edges[0];
@@ -356,14 +356,14 @@ TEST_SUITE("World") {
 		CHECK_EQ(wp0.name, "LOCATION_28_07");
 		CHECK_EQ(wp0.water_depth, 0);
 		CHECK_FALSE(wp0.under_water);
-		CHECK_EQ(wp0.position, glm::vec3 {23871.457, -553.283813, 27821.3516});
-		CHECK_EQ(wp0.direction, glm::vec3 {0.86651814, 0, -0.499145567});
+		CHECK_EQ(wp0.position, zenkit::Vec3 {23871.457, -553.283813, 27821.3516});
+		CHECK_EQ(wp0.direction, zenkit::Vec3 {0.86651814, 0, -0.499145567});
 
 		CHECK_EQ(wp100.name, "CASTLE_MOVEMENT_STRAIGHT3");
 		CHECK_EQ(wp100.water_depth, 0);
 		CHECK_FALSE(wp100.under_water);
-		CHECK_EQ(wp100.position, glm::vec3 {3362.21948, 8275.1709, -21067.9473});
-		CHECK_EQ(wp100.direction, glm::vec3 {-0.342115372, 0, 0.939657927});
+		CHECK_EQ(wp100.position, zenkit::Vec3 {3362.21948, 8275.1709, -21067.9473});
+		CHECK_EQ(wp100.direction, zenkit::Vec3 {-0.342115372, 0, 0.939657927});
 #endif
 	}
 

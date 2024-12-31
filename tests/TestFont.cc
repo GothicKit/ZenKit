@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/Archive.hh"
 
@@ -7,21 +7,21 @@
 
 #include <doctest/doctest.h>
 
-static constexpr zenkit::FontGlyph G1_GLYPH0 {0, {glm::vec2 {0.0f, 0.0f}, glm::vec2 {0.0f, 0.0f}}};
+static constexpr zenkit::FontGlyph G1_GLYPH0 {0, {zenkit::Vec2 {0.0f, 0.0f}, zenkit::Vec2 {0.0f, 0.0f}}};
 static constexpr zenkit::FontGlyph G1_GLYPH127 {
     8,
-    {glm::vec2 {0.3984375f, 0.23828125f}, glm::vec2 {0.412109375f, 0.30859375f}}};
+    {zenkit::Vec2 {0.3984375f, 0.23828125f}, zenkit::Vec2 {0.412109375f, 0.30859375f}}};
 static constexpr zenkit::FontGlyph G1_GLYPH255 {
     9,
-    {glm::vec2 {0.95703125f, 0.55078125f}, glm::vec2 {0.97265625f, 0.62109375f}}};
+    {zenkit::Vec2 {0.95703125f, 0.55078125f}, zenkit::Vec2 {0.97265625f, 0.62109375f}}};
 
-static constexpr zenkit::FontGlyph G2_GLYPH0 {0, {glm::vec2 {0.0f, 0.0f}, glm::vec2 {0.0f, 0.0f}}};
+static constexpr zenkit::FontGlyph G2_GLYPH0 {0, {zenkit::Vec2 {0.0f, 0.0f}, zenkit::Vec2 {0.0f, 0.0f}}};
 static constexpr zenkit::FontGlyph G2_GLYPH127 {
     8,
-    {glm::vec2 {0.3984375f, 0.23828125f}, glm::vec2 {0.412109375f, 0.30859375f}}};
+    {zenkit::Vec2 {0.3984375f, 0.23828125f}, zenkit::Vec2 {0.412109375f, 0.30859375f}}};
 static constexpr zenkit::FontGlyph G2_GLYPH255 {
     10,
-    {glm::vec2 {0.958984375f, 0.55078125f}, glm::vec2 {0.9765625f, 0.62109375f}}};
+    {zenkit::Vec2 {0.958984375f, 0.55078125f}, zenkit::Vec2 {0.9765625f, 0.62109375f}}};
 
 static void verify_g1(zenkit::Font const& fnt) {
 	CHECK_EQ(fnt.name, "FONT_OLD_10_WHITE_HI.TGA");

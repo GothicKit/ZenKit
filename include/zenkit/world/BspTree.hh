@@ -1,15 +1,13 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Boxes.hh"
 #include "zenkit/Library.hh"
 #include "zenkit/Misc.hh"
 
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
-
 #include <string>
 #include <vector>
+#include <cstdint>
 
 namespace zenkit {
 	class Read;
@@ -26,7 +24,7 @@ namespace zenkit {
 
 	/// \brief Represents a BSP tree node.
 	struct BspNode {
-		glm::vec4 plane;
+		Vec4 plane;
 		AxisAlignedBoundingBox bbox;
 		std::uint32_t polygon_index;
 		std::uint32_t polygon_count;
@@ -66,7 +64,7 @@ namespace zenkit {
 		std::vector<std::uint32_t> leaf_polygons;
 
 		/// \brief All BSP light points.
-		std::vector<glm::vec3> light_points;
+		std::vector<Vec3> light_points;
 
 		/// \brief All BSP sectors.
 		std::vector<BspSector> sectors;

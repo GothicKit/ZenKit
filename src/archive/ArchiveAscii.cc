@@ -5,8 +5,6 @@
 
 #include "../Internal.hh"
 
-#include <glm/gtc/type_ptr.hpp>
-
 #include <array>
 #include <charconv>
 #include <cstring>
@@ -154,28 +152,28 @@ namespace zenkit {
 		}
 	}
 
-	glm::u8vec4 ReadArchiveAscii::read_color() {
+	Color ReadArchiveAscii::read_color() {
 		std::stringstream in {read_entry("color")};
 
 		std::uint16_t r, g, b, a;
 		in >> r >> g >> b >> a;
-		return glm::u8vec4 {static_cast<std::uint8_t>(r),
+		return Color {static_cast<std::uint8_t>(r),
 		                    static_cast<std::uint8_t>(g),
 		                    static_cast<std::uint8_t>(b),
 		                    static_cast<std::uint8_t>(a)};
 	}
 
-	glm::vec3 ReadArchiveAscii::read_vec3() {
+	Vec3 ReadArchiveAscii::read_vec3() {
 		std::stringstream in {read_entry("vec3")};
-		glm::vec3 v {};
+		Vec3 v {};
 
 		in >> v.x >> v.y >> v.z;
 		return v;
 	}
 
-	glm::vec2 ReadArchiveAscii::read_vec2() {
+	Vec2 ReadArchiveAscii::read_vec2() {
 		std::stringstream in {read_entry("rawFloat")};
-		glm::vec2 v {};
+		Vec2 v {};
 
 		in >> v.x >> v.y;
 		return v;
@@ -193,7 +191,7 @@ namespace zenkit {
 		return box;
 	}
 
-	glm::mat3x3 ReadArchiveAscii::read_mat3x3() {
+	Mat3 ReadArchiveAscii::read_mat3x3() {
 		auto in = read_entry("raw");
 
 		if (in.length() < 2 /* 2 chars a byte */ * sizeof(float) * 9) {
@@ -202,7 +200,7 @@ namespace zenkit {
 
 		auto beg_it = in.data();
 
-		glm::mat3x3 v {};
+		Mat3 v {};
 		for (int32_t i = 0; i < 9; ++i) {
 			std::uint8_t tmp[4];
 			std::from_chars(beg_it + 0, beg_it + 2, tmp[0], 16);
@@ -214,7 +212,7 @@ namespace zenkit {
 			memcpy(&v[i / 3][i % 3], tmp, sizeof(float));
 		}
 
-		return glm::transpose(v);
+		return v.transpose();
 	}
 
 	std::unique_ptr<Read> ReadArchiveAscii::read_raw(std::size_t size) {
@@ -331,7 +329,7 @@ namespace zenkit {
 		this->write_entry(name, "bool", v ? "1" : "0");
 	}
 
-	void WriteArchiveAscii::write_color(std::string_view name, glm::u8vec4 v) {
+	void WriteArchiveAscii::write_color(std::string_view name, Color v) {
 		std::array<char, (std::numeric_limits<uint8_t>::digits10 + 2) * 4> buf {};
 
 		auto n = std::snprintf(buf.data(), buf.size(), "%d %d %d %d", v.r, v.g, v.b, v.a);
@@ -340,7 +338,7 @@ namespace zenkit {
 		this->write_entry(name, "color", s);
 	}
 
-	void WriteArchiveAscii::write_vec3(std::string_view name, glm::vec3 const& v) {
+	void WriteArchiveAscii::write_vec3(std::string_view name, Vec3 const& v) {
 		std::array<char,
 		           (std::numeric_limits<float>::max_exponent10 + std::numeric_limits<float>::max_digits10 + 3) * 3>
 		    buf {};
@@ -350,8 +348,8 @@ namespace zenkit {
 		this->write_entry(name, "vec3", s);
 	}
 
-	void WriteArchiveAscii::write_vec2(std::string_view name, glm::vec2 v) {
-		this->write_raw_float(name, glm::value_ptr(v), 2);
+	void WriteArchiveAscii::write_vec2(std::string_view name, Vec2 v) {
+		this->write_raw_float(name, v.pointer(), 2);
 	}
 
 	void WriteArchiveAscii::write_bbox(std::string_view name, AxisAlignedBoundingBox const& v) {
@@ -359,9 +357,9 @@ namespace zenkit {
 		this->write_raw_float(name, values, 6);
 	}
 
-	void WriteArchiveAscii::write_mat3x3(std::string_view name, glm::mat3x3 const& v) {
-		auto vT = glm::transpose(v);
-		this->write_raw_float(name, glm::value_ptr(vT), 9);
+	void WriteArchiveAscii::write_mat3x3(std::string_view name, Mat3 const& v) {
+		auto vT = v.transpose();
+		this->write_raw_float(name, vT.pointer(), 9);
 	}
 
 	void WriteArchiveAscii::write_raw(std::string_view name, std::vector<std::byte> const& v) {

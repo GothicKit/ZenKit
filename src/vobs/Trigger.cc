@@ -1,4 +1,4 @@
-// Copyright © 2022-2023 GothicKit Contributors.
+// Copyright © 2022-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include "zenkit/vobs/Trigger.hh"
 #include "zenkit/Archive.hh"
@@ -105,7 +105,7 @@ namespace zenkit {
 				auto z = sample_reader->read_float();
 				auto w = sample_reader->read_float();
 
-				this->keyframes.push_back(AnimationSample {pos, glm::quat {w, x, y, z}});
+				this->keyframes.push_back(AnimationSample {pos, Quat {w, x, y, z}});
 			}
 		}
 

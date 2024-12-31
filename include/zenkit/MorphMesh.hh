@@ -5,8 +5,6 @@
 #include "zenkit/Library.hh"
 #include "zenkit/MultiResolutionMesh.hh"
 
-#include <glm/vec3.hpp>
-
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -36,7 +34,7 @@ namespace zenkit {
 		std::vector<std::uint32_t> vertices;
 
 		/// \brief The set of samples of the animation.
-		std::vector<glm::vec3> samples;
+		std::vector<Vec3> samples;
 	};
 
 	/// \brief A reference to a morph mesh source file.
@@ -63,7 +61,7 @@ namespace zenkit {
 		MultiResolutionMesh mesh {};
 
 		/// \brief All morph positions associated with the mesh.
-		std::vector<glm::vec3> morph_positions {};
+		std::vector<Vec3> morph_positions {};
 
 		/// \brief All animations associated with the mesh.
 		std::vector<MorphAnimation> animations {};

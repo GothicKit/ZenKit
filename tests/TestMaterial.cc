@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 GothicKit Contributors.
+// Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include <zenkit/Archive.hh>
 #include <zenkit/Material.hh>
@@ -20,18 +20,18 @@ static void verify_g1(Read* r) {
 
 	CHECK_EQ(m1.name, "BODY");
 	CHECK_EQ(m1.group, MaterialGroup::UNDEFINED);
-	CHECK_EQ(m1.color, glm::u8vec4 {115, 91, 77, 255});
+	CHECK_EQ(m1.color, zenkit::Color {115, 91, 77, 255});
 	CHECK_EQ(m1.smooth_angle, 60.0f);
 	CHECK_EQ(m1.texture, "DEM_BODY_V0.TGA");
-	CHECK_EQ(m1.texture_scale, glm::vec2 {512.0f, 512.0f});
+	CHECK_EQ(m1.texture_scale, zenkit::Vec2 {512.0f, 512.0f});
 	CHECK_EQ(m1.texture_anim_fps, 0.0f);
 	CHECK_EQ(m1.texture_anim_map_mode, AnimationMapping::NONE);
-	CHECK_EQ(m1.texture_anim_map_dir, glm::vec2 {9.9999997e-005, 0.0f});
+	CHECK_EQ(m1.texture_anim_map_dir, zenkit::Vec2 {9.9999997e-005, 0.0f});
 	CHECK_FALSE(m1.disable_collision);
 	CHECK_FALSE(m1.disable_lightmap);
 	CHECK_FALSE(m1.dont_collapse);
 	CHECK_EQ(m1.detail_object, "");
-	CHECK_EQ(m1.default_mapping, glm::vec2 {2.34375f, 2.34375f});
+	CHECK_EQ(m1.default_mapping, zenkit::Vec2 {2.34375f, 2.34375f});
 }
 
 static void verify_g2(Read* r) {
@@ -45,18 +45,18 @@ static void verify_g2(Read* r) {
 
 	CHECK_EQ(m1.name, "BODY");
 	CHECK_EQ(m1.group, MaterialGroup::UNDEFINED);
-	CHECK_EQ(m1.color, glm::u8vec4 {115, 91, 77, 255});
+	CHECK_EQ(m1.color, zenkit::Color {115, 91, 77, 255});
 	CHECK_EQ(m1.smooth_angle, 60.0f);
 	CHECK_EQ(m1.texture, "DEM_BODY_V0.TGA");
-	CHECK_EQ(m1.texture_scale, glm::vec2 {512.0f, 512.0f});
+	CHECK_EQ(m1.texture_scale, zenkit::Vec2 {512.0f, 512.0f});
 	CHECK_EQ(m1.texture_anim_fps, 0.0f);
 	CHECK_EQ(m1.texture_anim_map_mode, AnimationMapping::NONE);
-	CHECK_EQ(m1.texture_anim_map_dir, glm::vec2 {0.0f, 0.0f});
+	CHECK_EQ(m1.texture_anim_map_dir, zenkit::Vec2 {0.0f, 0.0f});
 	CHECK_FALSE(m1.disable_collision);
 	CHECK_FALSE(m1.disable_lightmap);
 	CHECK_FALSE(m1.dont_collapse);
 	CHECK_EQ(m1.detail_object, "");
-	CHECK_EQ(m1.default_mapping, glm::vec2 {2.34375f, 2.34375f});
+	CHECK_EQ(m1.default_mapping, zenkit::Vec2 {2.34375f, 2.34375f});
 	CHECK_EQ(m1.alpha_func, AlphaFunction::NONE);
 	CHECK_EQ(m1.detail_object_scale, 1.0f);
 	CHECK_FALSE(m1.force_occluder);
@@ -80,18 +80,18 @@ TEST_SUITE("Material") {
 		Material m1 {};
 		m1.name = "BODY";
 		m1.group = MaterialGroup::UNDEFINED;
-		m1.color = glm::u8vec4 {115, 91, 77, 255};
+		m1.color = zenkit::Color {115, 91, 77, 255};
 		m1.smooth_angle = 60.0f;
 		m1.texture = "DEM_BODY_V0.TGA";
-		m1.texture_scale = glm::vec2 {512.0f, 512.0f};
+		m1.texture_scale = zenkit::Vec2 {512.0f, 512.0f};
 		m1.texture_anim_fps = 0.0f;
 		m1.texture_anim_map_mode = AnimationMapping::NONE;
-		m1.texture_anim_map_dir = glm::vec2 {9.9999997e-005, 0.0f};
+		m1.texture_anim_map_dir = zenkit::Vec2 {9.9999997e-005, 0.0f};
 		m1.disable_collision = false;
 		m1.disable_lightmap = false;
 		m1.dont_collapse = false;
 		m1.detail_object = "";
-		m1.default_mapping = glm::vec2 {2.34375f, 2.34375f};
+		m1.default_mapping = zenkit::Vec2 {2.34375f, 2.34375f};
 
 		std::vector<std::byte> data {};
 		auto out = Write::to(&data);
@@ -115,18 +115,18 @@ TEST_SUITE("Material") {
 		Material m1 {};
 		m1.name = "BODY";
 		m1.group = MaterialGroup::UNDEFINED;
-		m1.color = glm::u8vec4 {115, 91, 77, 255};
+		m1.color = zenkit::Color {115, 91, 77, 255};
 		m1.smooth_angle = 60.0f;
 		m1.texture = "DEM_BODY_V0.TGA";
-		m1.texture_scale = glm::vec2 {512.0f, 512.0f};
+		m1.texture_scale = zenkit::Vec2 {512.0f, 512.0f};
 		m1.texture_anim_fps = 0.0f;
 		m1.texture_anim_map_mode = AnimationMapping::NONE;
-		m1.texture_anim_map_dir = glm::vec2 {0.0f, 0.0f};
+		m1.texture_anim_map_dir = zenkit::Vec2 {0.0f, 0.0f};
 		m1.disable_collision = false;
 		m1.disable_lightmap = false;
 		m1.dont_collapse = false;
 		m1.detail_object = "";
-		m1.default_mapping = glm::vec2 {2.34375f, 2.34375f};
+		m1.default_mapping = zenkit::Vec2 {2.34375f, 2.34375f};
 		m1.alpha_func = AlphaFunction::NONE;
 		m1.detail_object_scale = 1.0f;
 		m1.force_occluder = false;

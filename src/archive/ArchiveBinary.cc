@@ -3,10 +3,9 @@
 #include "ArchiveBinary.hh"
 #include "zenkit/Error.hh"
 
-#include <glm/gtc/type_ptr.hpp>
-
 #include <charconv>
 #include <stdexcept>
+#include <cstring>
 
 namespace zenkit {
 	void ReadArchiveBinary::read_header() {
@@ -78,7 +77,7 @@ namespace zenkit {
 		return read->read_ubyte() != 0;
 	}
 
-	glm::u8vec4 ReadArchiveBinary::read_color() {
+	Color ReadArchiveBinary::read_color() {
 		auto b = read->read_ubyte();
 		auto g = read->read_ubyte();
 		auto r = read->read_ubyte();
@@ -87,11 +86,11 @@ namespace zenkit {
 		return {r, g, b, a};
 	}
 
-	glm::vec3 ReadArchiveBinary::read_vec3() {
+	Vec3 ReadArchiveBinary::read_vec3() {
 		return read->read_vec3();
 	}
 
-	glm::vec2 ReadArchiveBinary::read_vec2() {
+	Vec2 ReadArchiveBinary::read_vec2() {
 		return read->read_vec2();
 	}
 
@@ -101,7 +100,7 @@ namespace zenkit {
 		return aabb;
 	}
 
-	glm::mat3x3 ReadArchiveBinary::read_mat3x3() {
+	Mat3 ReadArchiveBinary::read_mat3x3() {
 		return read->read_mat3();
 	}
 
@@ -198,18 +197,18 @@ namespace zenkit {
 		this->_m_write->write_ubyte(v ? 1 : 0);
 	}
 
-	void WriteArchiveBinary::write_color(std::string_view, glm::u8vec4 v) {
+	void WriteArchiveBinary::write_color(std::string_view, Color v) {
 		this->_m_write->write_ubyte(v.b);
 		this->_m_write->write_ubyte(v.g);
 		this->_m_write->write_ubyte(v.r);
 		this->_m_write->write_ubyte(v.a);
 	}
 
-	void WriteArchiveBinary::write_vec3(std::string_view, glm::vec3 const& v) {
-		this->_m_write->write(glm::value_ptr(v), 3 * sizeof(float));
+	void WriteArchiveBinary::write_vec3(std::string_view, Vec3 const& v) {
+		this->_m_write->write(v.pointer(), 3 * sizeof(float));
 	}
 
-	void WriteArchiveBinary::write_vec2(std::string_view, glm::vec2 v) {
+	void WriteArchiveBinary::write_vec2(std::string_view, Vec2 v) {
 		this->_m_write->write_vec2(v);
 	}
 
@@ -217,7 +216,7 @@ namespace zenkit {
 		v.save(this->_m_write);
 	}
 
-	void WriteArchiveBinary::write_mat3x3(std::string_view, glm::mat3x3 const& v) {
+	void WriteArchiveBinary::write_mat3x3(std::string_view, Mat3 const& v) {
 		this->_m_write->write_mat3(v);
 	}
 
@@ -258,7 +257,7 @@ namespace zenkit {
 		this->_m_write->write_line(username);
 		this->_m_write->write_line("END");
 
-		memset(date_buffer, ' ', 20);
+		std::memset(date_buffer, ' ', 20);
 		date_buffer[10] = '\0';
 		std::to_chars(date_buffer, date_buffer + 9, _m_index);
 

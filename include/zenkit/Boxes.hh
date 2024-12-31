@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include "zenkit/Library.hh"
-
-#include <glm/vec3.hpp>
+#include "zenkit/Misc.hh"
 
 #include <vector>
 
@@ -14,14 +13,14 @@ namespace zenkit {
 	/// \brief Represents a axis-aligned bounding box (AABB)
 	struct AxisAlignedBoundingBox {
 		static constexpr AxisAlignedBoundingBox zero() {
-			return {glm::vec3 {0}, glm::vec3 {0}};
+			return {Vec3 {0}, Vec3 {0}};
 		}
 
 		/// \brief The coordinates of the minimum corner of the bounding box.
-		glm::vec3 min;
+		Vec3 min;
 
 		/// \brief The coordinates of the maximum corner of the bounding box.
-		glm::vec3 max;
+		Vec3 max;
 
 		ZKAPI void load(Read* r);
 		ZKAPI void save(Write* w) const;
@@ -33,9 +32,9 @@ namespace zenkit {
 	/// boxes](https://en.wikipedia.org/wiki/Minimum_bounding_box#Arbitrarily_oriented_minimum_bounding_box) may be
 	/// rotated in the coordinate system and don't have to align with its axes.
 	struct OrientedBoundingBox {
-		glm::vec3 center;
-		glm::vec3 axes[3];
-		glm::vec3 half_width;
+		Vec3 center;
+		Vec3 axes[3];
+		Vec3 half_width;
 
 		std::vector<OrientedBoundingBox> children;
 

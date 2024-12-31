@@ -3,6 +3,8 @@
 #include "zenkit/ModelAnimation.hh"
 #include "zenkit/Stream.hh"
 
+#include <math.h>
+
 namespace zenkit {
 	/// \brief The highest number representable by a single rotation component.
 	constexpr float SAMPLE_ROTATION_RANGE = static_cast<float>(1 << 16) - 1.0f;
@@ -27,8 +29,8 @@ namespace zenkit {
 	/// \param minimum The value of the smallest position component in the animation (part of its header).
 	/// \return A vector containing the parsed position.
 	/// \see http://phoenix.gothickit.dev/engine/formats/animation/#sample-positions
-	static glm::vec3 read_sample_position(Read* r, float scale, float minimum) {
-		glm::vec3 v {};
+	static Vec3 read_sample_position(Read* r, float scale, float minimum) {
+		Vec3 v {};
 		v.x = static_cast<float>(r->read_ushort()) * scale + minimum;
 		v.y = static_cast<float>(r->read_ushort()) * scale + minimum;
 		v.z = static_cast<float>(r->read_ushort()) * scale + minimum;
@@ -39,8 +41,8 @@ namespace zenkit {
 	/// \param r The stream to read from.
 	/// \return A quaternion containing the parsed rotation.
 	/// \see http://phoenix.gothickit.dev/engine/formats/animation/#sample-rotations
-	static glm::quat read_sample_quaternion(Read* r) {
-		glm::quat v {};
+	static Quat read_sample_quaternion(Read* r) {
+		Quat v {};
 		v.x = (static_cast<float>(r->read_ushort()) - SAMPLE_ROTATION_MID) * SAMPLE_ROTATION_SCALE;
 		v.y = (static_cast<float>(r->read_ushort()) - SAMPLE_ROTATION_MID) * SAMPLE_ROTATION_SCALE;
 		v.z = (static_cast<float>(r->read_ushort()) - SAMPLE_ROTATION_MID) * SAMPLE_ROTATION_SCALE;

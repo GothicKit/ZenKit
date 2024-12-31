@@ -7,10 +7,6 @@
 #include "zenkit/Stream.hh"
 #include "zenkit/Error.hh"
 
-#include <glm/mat3x3.hpp>
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
-
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -203,17 +199,17 @@ namespace zenkit {
 		/// \brief Reads a RGBA color value from the reader.
 		/// \return The value read.
 		/// \throws zenkit::ParserError if the value actually present is not a color
-		virtual glm::u8vec4 read_color() = 0;
+		virtual Color read_color() = 0;
 
 		/// \brief Reads a vec3 value from the reader.
 		/// \return The value read.
 		/// \throws zenkit::ParserError if the value actually present is not a vec3
-		virtual glm::vec3 read_vec3() = 0;
+		virtual Vec3 read_vec3() = 0;
 
 		/// \brief Reads a vec2 value from the reader.
 		/// \return The value read.
 		/// \throws zenkit::ParserError if the value actually present is not a vec2
-		virtual glm::vec2 read_vec2() = 0;
+		virtual Vec2 read_vec2() = 0;
 
 		/// \brief Reads a bounding box consisting of two consecutive vec3's from the reader.
 		/// \return The value read.
@@ -222,7 +218,7 @@ namespace zenkit {
 
 		/// \brief Reads a 3-by-3 matrix from the reader.
 		/// \return The matrix.
-		virtual glm::mat3x3 read_mat3x3() = 0;
+		virtual Mat3 read_mat3x3() = 0;
 
 		virtual std::unique_ptr<Read> read_raw(std::size_t size) = 0;
 
@@ -285,11 +281,11 @@ namespace zenkit {
 		virtual void write_word(std::string_view name, std::uint16_t v) = 0;
 		virtual void write_enum(std::string_view name, std::uint32_t v) = 0;
 		virtual void write_bool(std::string_view name, bool v) = 0;
-		virtual void write_color(std::string_view name, glm::u8vec4 v) = 0;
-		virtual void write_vec3(std::string_view name, glm::vec3 const& v) = 0;
-		virtual void write_vec2(std::string_view name, glm::vec2 v) = 0;
+		virtual void write_color(std::string_view name, Color v) = 0;
+		virtual void write_vec3(std::string_view name, Vec3 const& v) = 0;
+		virtual void write_vec2(std::string_view name, Vec2 v) = 0;
 		virtual void write_bbox(std::string_view name, AxisAlignedBoundingBox const& v) = 0;
-		virtual void write_mat3x3(std::string_view name, glm::mat3x3 const& v) = 0;
+		virtual void write_mat3x3(std::string_view name, Mat3 const& v) = 0;
 		virtual void write_raw(std::string_view name, std::vector<std::byte> const& v) = 0;
 		virtual void write_raw(std::string_view name, std::byte const* v, std::uint16_t length) = 0;
 		virtual void write_raw_float(std::string_view name, float const* v, std::uint16_t length) = 0;
