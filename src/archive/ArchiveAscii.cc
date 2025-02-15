@@ -371,7 +371,8 @@ namespace zenkit {
 		this->_m_write->write_string(name);
 		this->_m_write->write_string("=raw:");
 
-		std::array<char, 2> buf {};
+		std::array<char, 3> buf {};
+		buf[2] = '\0';
 		for (auto i = 0u; i < length; ++i) {
 			std::to_chars(buf.data(), buf.data() + buf.size(), static_cast<unsigned char>(v[i]), 16);
 
