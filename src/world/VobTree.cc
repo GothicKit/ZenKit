@@ -7,7 +7,9 @@
 namespace zenkit {
 	std::shared_ptr<VirtualObject> parse_vob_tree(ReadArchive& in, GameVersion version) {
 		auto obj = in.read_object(version);
-		if (!is_vobject(obj->get_object_type())) return nullptr;
+		if (obj != nullptr && !is_vobject(obj->get_object_type())) {
+			obj = nullptr;
+		}
 
 		// NOTE(lmichaelis): The NDK does not seem to support `reinterpret_pointer_cast`.
 		std::shared_ptr<VirtualObject> object {obj, reinterpret_cast<VirtualObject*>(obj.get())};
