@@ -138,7 +138,7 @@ namespace zenkit {
 			return this->pointer()[index];
 		}
 
-		constexpr Color operator*(float scalar) const {
+		constexpr Color operator*(unsigned char scalar) const {
 			return Color(r * scalar, g * scalar, b * scalar, a * scalar);
 		}
 
