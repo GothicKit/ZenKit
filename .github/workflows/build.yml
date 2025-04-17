@@ -62,7 +62,7 @@ jobs:
           submodules: 'recursive'
       - name: 'Configure'
         shell: 'bash'
-        run: 'cmake -B build -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Release -DZK_BUILD_EXAMPLES=ON -DZK_BUILD_TESTS=ON'
+        run: 'cmake -B build -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Release -DZK_BUILD_EXAMPLES=ON -DZK_BUILD_TESTS=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.5'
       - name: 'Build'
         run: 'cmake --build build --config Release -j 2'
       - name: 'Test'
