@@ -122,7 +122,7 @@ namespace zenkit {
 				evt.slot2 = b.value_or("");
 				break;
 			case MdsEventType::HIT_LIMB:
-				(void) a.value_or("");
+				evt.slot = a.value_or("");
 				break;
 			case MdsEventType::DAMAGE_MULTIPLIER:
 			case MdsEventType::PARRY_FRAME:
@@ -341,10 +341,10 @@ namespace zenkit {
 					    event.slot2 = c->read_line(true);
 					    break;
 				    case MdsEventType::HIT_LIMB:
-					    (void) c->read_line(true); // TODO
+					    event.slot = c->read_line(true); // TODO
 					    break;
 				    case MdsEventType::HIT_DIRECTION:
-					    (void) c->read_line(true); // TODO
+					    event.slot = c->read_line(true); // TODO
 					    break;
 				    case MdsEventType::SOUND_DRAW:
 				    case MdsEventType::SOUND_UNDRAW:
@@ -352,7 +352,7 @@ namespace zenkit {
 				    case MdsEventType::ITEM_DESTROY:
 				    case MdsEventType::TORCH_INVENTORY:
 				    case MdsEventType::ITEM_REMOVE:
-					    (void) c->read_line(true); // TODO
+					    event.slot = c->read_line(true); // TODO
 					    break;
 				    case MdsEventType::DAMAGE_MULTIPLIER:
 				    case MdsEventType::PARRY_FRAME:
