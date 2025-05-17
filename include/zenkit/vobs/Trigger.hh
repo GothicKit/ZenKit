@@ -44,8 +44,8 @@ namespace zenkit {
 	};
 
 	enum class MoverLerpType : uint32_t {
-		CURVE = 0,
-		LINEAR = 1,
+		LINEAR = 0,
+		CURVE = 1,
 
 		// Deprecated entries.
 		curve ZKREM("renamed to MoverLerpType::CURVE") = CURVE,
