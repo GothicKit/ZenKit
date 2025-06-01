@@ -545,7 +545,7 @@ TEST_SUITE("vobs") {
 		CHECK_FALSE(vob.auto_link);
 		CHECK_FALSE(vob.auto_rotate);
 		CHECK_EQ(vob.speed, 0.0500000007f);
-		CHECK_EQ(vob.lerp_mode, zenkit::MoverLerpType::CURVE);
+		CHECK_EQ(vob.lerp_mode, zenkit::MoverLerpType::LINEAR);
 		CHECK_EQ(vob.speed_mode, zenkit::MoverSpeedType::SLOW_START_END);
 		CHECK_EQ(vob.keyframes, G1_MOVER_KEYFRAMES);
 		CHECK_EQ(vob.sfx_open_start, "GATE_START");
