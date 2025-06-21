@@ -113,7 +113,7 @@ Interactive objects can be interacted with by NPCs and the player. Every time th
 
 #### `stateNum` {: .sp-int}
 
-:   Unknown.
+:   Contains number of states for an object.
 
 #### `triggerTarget` {: .sp-string}
 

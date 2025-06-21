@@ -109,9 +109,12 @@ namespace zenkit {
 	struct VInteractiveObject : VMovableObject {
 		ZK_OBJECT(ObjectType::oCMobInter);
 
-		/// \brief Unknown.
+		/// \brief Contains number of states for an object.
 		/// \see https://zk.gothickit.dev/engine/objects/oCMobInter/#stateNum
-		std::int32_t state;
+		union {
+			ZKREM("use state_count instead") std::int32_t state;
+			std::int32_t state_count;
+		};
 
 		/// \brief The name of the VObject(s) to send an `OnTrigger` event to when this object is interacted with.
 		///

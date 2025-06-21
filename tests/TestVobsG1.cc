@@ -191,7 +191,7 @@ TEST_SUITE("vobs") {
 		zenkit::VInteractiveObject vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_1);
 
-		CHECK_EQ(vob.state, 1);
+		CHECK_EQ(vob.state_count, 1);
 		CHECK_EQ(vob.target, "OW_ORC_MAINGATE_01");
 		CHECK_EQ(vob.item, "");
 		CHECK_EQ(vob.condition_function, "MC_ORCCITY_GATE");

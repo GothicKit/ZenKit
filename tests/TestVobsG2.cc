@@ -269,7 +269,7 @@ TEST_SUITE("vobs") {
 		zenkit::VInteractiveObject vob {};
 		vob.load(*ar, zenkit::GameVersion::GOTHIC_2);
 
-		CHECK_EQ(vob.state, 1);
+		CHECK_EQ(vob.state_count, 1);
 		CHECK_EQ(vob.target, "");
 		CHECK_EQ(vob.item, "");
 		CHECK_EQ(vob.condition_function, "");

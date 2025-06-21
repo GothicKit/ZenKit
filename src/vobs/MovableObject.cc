@@ -48,7 +48,7 @@ namespace zenkit {
 
 	void VInteractiveObject::load(ReadArchive& r, GameVersion version) {
 		VMovableObject::load(r, version);
-		this->state = r.read_int();                       // stateNum
+		this->state_count = r.read_int();                       // stateNum
 		this->target = r.read_string();                   // triggerTarget
 		this->item = r.read_string();                     // useWithItem
 		this->condition_function = r.read_string();       // conditionFunc
@@ -58,7 +58,7 @@ namespace zenkit {
 
 	void VInteractiveObject::save(WriteArchive& w, GameVersion version) const {
 		VMovableObject::save(w, version);
-		w.write_int("stateNum", state);
+		w.write_int("stateNum", state_count);
 		w.write_string("triggerTarget", target);
 		w.write_string("useWithItem", item);
 		w.write_string("conditionFunc", condition_function);
