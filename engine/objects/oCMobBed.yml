@@ -1,0 +1,15 @@
+class:
+  name: "oCMobBed"
+  bases:
+    - "zCVob"
+    - "oCVob"
+    - "oCMob"
+    - "oCMobInter"
+  description: |
+    VObject marking beds for NPCs and the player to sleep on. In the original Gothic I, there is a bug which prevents `oCMobBed`s from working correctly, so it is recommended to instead use [oCMobDoor] and attach the visual of a bed when targeting that platform.
+  zenkit: "VBed"
+sources:
+  spacerhilfedatei.sph: "https://wiki.worldofgothic.de/doku.php?id=spacer:hilfedatei"
+version:
+  gothic1: 35585
+  gothic2: 35585

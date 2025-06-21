@@ -1,0 +1,21 @@
+class:
+  name: "oCInfoManager"
+  bases: []
+  description: ""
+  zenkit: "—"
+version:
+  gothic1: 0
+  gothic2: 0
+properties:
+  NumOfEntries:
+    type: "int"
+    description: "The number of saved [oCInfo] objects."
+    default: "0"
+    version: [1, 2]
+    save: true
+  oCInfo:
+    type: "class"
+    default: "NULL"
+    version: [1, 2]
+    save: true
+    multi: true

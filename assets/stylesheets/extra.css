@@ -1,0 +1,92 @@
+/*
+ * Copyright © 2022 Luis Michaelis <me@lmichaelis.de>
+ * SPDX-License-Identifier: MIT
+ */
+
+:root > * {
+    --md-default-bg-color: #222222;
+    --md-code-bg-color: #282828;
+    --md-footer-bg-color: #282828;
+    --md-footer-bg-color--dark: #282828;
+}
+
+.md-typeset .md-annotation__index > ::before {
+    content: attr(data-md-annotation-id);
+}
+
+.md-typeset :focus-within > .md-annotation__index > ::before {
+    transform: none;
+}
+
+ul .sp-folder,
+ul .sp-class,
+ul .sp-int,
+ul .sp-string,
+ul .sp-misc,
+ul .sp-bool,
+ul .sp-enum,
+ul .sp-vec,
+ul .sp-float,
+ul .sp-color {
+    margin: 0 0 0 0.5em !important;
+    padding: 0 !important;
+    list-style-type: none;
+    font-family: monospace;
+}
+
+.sp-folder::before {
+    content: url("/assets/icons/spacer-folder.png");
+    padding-right: 0.5em;
+}
+
+.sp-int::before {
+    content: url("/assets/icons/spacer-int.png");
+    padding-right: 0.5em;
+}
+
+.sp-float::before {
+    content: url("/assets/icons/spacer-float.png");
+    padding-right: 0.5em;
+}
+
+.sp-string::before {
+    content: url("/assets/icons/spacer-string.png");
+    padding-right: 0.5em;
+}
+
+.sp-misc::before {
+    content: url("/assets/icons/spacer-misc.png");
+    padding-right: 0.5em;
+}
+
+.sp-vec::before {
+    content: url("/assets/icons/spacer-vec.png");
+    padding-right: 0.5em;
+}
+
+.sp-bool::before {
+    content: url("/assets/icons/spacer-bool.png");
+    padding-right: 0.5em;
+}
+
+.sp-enum::before {
+    content: url("/assets/icons/spacer-enum.png");
+    padding-right: 0.5em;
+}
+
+.sp-class::before {
+    content: url("/assets/icons/spacer-class.png");
+    padding-right: 0.5em;
+}
+
+.sp-color::before {
+    content: url("/assets/icons/spacer-color.png");
+    padding-right: 0.5em;
+}
+
+.sp-none {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    list-style: none;
+    font-family: monospace;
+}

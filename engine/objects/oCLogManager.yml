@@ -1,0 +1,21 @@
+class:
+  name: "oCLogManager"
+  bases: []
+  description: ""
+  zenkit: "—"
+version:
+  gothic1: 0
+  gothic2: 0
+properties:
+  LOGMANAGERTOPICCOUNT:
+    type: "int"
+    description: "The number of saved [oCLogTopic] objects."
+    default: "0"
+    version: [1, 2]
+    save: false
+  oCLogTopic:
+    type: "class"
+    default: "NULL"
+    version: [1, 2]
+    save: false
+    multi: true
