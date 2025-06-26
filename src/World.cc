@@ -45,11 +45,12 @@ namespace zenkit {
 		return GameVersion::GOTHIC_1;
 	}
 
-	void World::load(Read* r) {
+	GameVersion World::load(Read* r) {
 		auto begin = r->tell();
 		auto version = determine_world_version(r);
 		r->seek(static_cast<ssize_t>(begin), Whence::BEG);
 		this->load(r, version);
+		return version;
 	}
 
 	void World::load(Read* r, GameVersion version) {

@@ -66,7 +66,7 @@ namespace zenkit {
 	class World : public Object {
 		ZK_OBJECT(ObjectType::oCWorld);
 
-		ZKAPI void load(Read* r);
+		ZKAPI GameVersion load(Read* r);
 		ZKAPI void load(Read* r, GameVersion version);
 
 		ZKAPI void load(ReadArchive& r, GameVersion version) override;
