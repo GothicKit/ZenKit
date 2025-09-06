@@ -428,6 +428,7 @@ namespace zenkit {
 
 		std::function<void(VfsNode*, std::filesystem::path const&)> load_directory =
 		    [this, &load_directory](VfsNode* parent, std::filesystem::path const& host) {
+		    	(void) this;
 			    for (auto const& ref : std::filesystem::directory_iterator(host)) {
 				    auto const& path = ref.path();
 				    auto time =
@@ -504,6 +505,7 @@ namespace zenkit {
 
 		std::function<bool(VfsNode*)> load_entry =
 		    [&load_entry, overwrite, catalog_offset, timestamp, &r, &path, size, &mem](VfsNode* parent) {
+		    	(void) mem;
 			    auto e_name = r->read_string(64);
 			    auto e_offset = r->read_uint();
 			    auto e_size = r->read_uint();
