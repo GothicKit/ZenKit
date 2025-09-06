@@ -255,8 +255,9 @@ namespace zenkit {
 			uint64_t _m_size = -1;
 		};
 
-		static FILE* try_fopen(char const* path, char const* mode) {
-			FILE* stream = fopen(path, mode);
+		static FILE* try_fopen(std::filesystem::path const& path, char const* mode) {
+			auto name = path.string();
+			FILE* stream = fopen(name.c_str(), mode);
 			if (stream == nullptr) {
 				throw std::system_error(errno, std::system_category(), "fopen");
 			}
@@ -268,7 +269,7 @@ namespace zenkit {
 			explicit ReadFileOwned(std::filesystem::path const& path) : ReadFileOwned(path, 0, -1) {}
 
 			ReadFileOwned(std::filesystem::path const& path, int64_t offset, int64_t size)
-			    : ReadFileOwned(try_fopen(path.c_str(), "rb"), offset, size) {}
+			    : ReadFileOwned(try_fopen(path, "rb"), offset, size) {}
 
 			~ReadFileOwned() noexcept override {
 				if (_m_own) {
