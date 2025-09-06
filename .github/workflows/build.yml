@@ -55,14 +55,14 @@ jobs:
 
   windows:
     name: "Windows"
-    runs-on: 'windows-2019'
+    runs-on: 'windows-2022'
     steps:
       - uses: 'actions/checkout@v3'
         with:
           submodules: 'recursive'
       - name: 'Configure'
         shell: 'bash'
-        run: 'cmake -B build -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Release -DZK_BUILD_EXAMPLES=ON -DZK_BUILD_TESTS=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.5'
+        run: 'cmake -B build -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Release -DZK_BUILD_EXAMPLES=ON -DZK_BUILD_TESTS=ON'
       - name: 'Build'
         run: 'cmake --build build --config Release -j 2'
       - name: 'Test'
