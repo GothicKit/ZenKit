@@ -506,6 +506,7 @@ namespace zenkit {
 		std::function<bool(VfsNode*)> load_entry =
 		    [&load_entry, overwrite, catalog_offset, timestamp, &r, &path, size, &mem](VfsNode* parent) {
 		    	(void) mem;
+		    	(void) path;
 			    auto e_name = r->read_string(64);
 			    auto e_offset = r->read_uint();
 			    auto e_size = r->read_uint();
