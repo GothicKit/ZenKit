@@ -25,25 +25,6 @@ namespace zenkit {
 
 	VfsNotFoundError::VfsNotFoundError(std::string const& name) : Error("not found: \"" + name + "\"") {}
 
-	VfsFileDescriptor::VfsFileDescriptor(std::byte const* mem, size_t len, bool del)
-	    : memory(mem), size(len), refcnt(del ? new size_t(1) : nullptr) {}
-
-	VfsFileDescriptor::VfsFileDescriptor(VfsFileDescriptor const& cpy)
-	    : memory(cpy.memory), size(cpy.size), refcnt(cpy.refcnt) {
-		if (this->refcnt == nullptr) return;
-		*this->refcnt += 1;
-	}
-
-	VfsFileDescriptor::~VfsFileDescriptor() noexcept {
-		if (this->refcnt == nullptr) return;
-		*this->refcnt -= 1;
-
-		if (*this->refcnt == 0) {
-			delete[] memory;
-			delete this->refcnt;
-		}
-	}
-
 	bool VfsNodeComparator::operator()(VfsNode const& a, VfsNode const& b) const noexcept {
 		return icompare(a.name(), b.name());
 	}
@@ -56,9 +37,39 @@ namespace zenkit {
 		return icompare(a, b.name());
 	}
 
+	class VfsPhysicalFileDescription final : public VfsFileDescription {
+	public:
+		explicit VfsPhysicalFileDescription(std::filesystem::path path) : _m_path(std::move(path)) {}
+
+		VfsPhysicalFileDescription(std::filesystem::path path, int64_t offset, int64_t size)
+		    : _m_path(std::move(path)), _m_offset(offset), _m_size(size) {}
+
+		std::unique_ptr<Read> open() override {
+			return Read::from(_m_path, _m_offset, _m_size);
+		}
+
+	private:
+		std::filesystem::path _m_path;
+		int64_t _m_offset = -1;
+		int64_t _m_size = -1;
+	};
+
+	class VfsMemoryFileDescription final : public VfsFileDescription {
+	public:
+		explicit VfsMemoryFileDescription(std::byte const* memory, uint64_t size) : _m_memory(memory), _m_size(size) {}
+
+		std::unique_ptr<Read> open() override {
+			return Read::from(_m_memory, _m_size);
+		}
+
+	private:
+		std::byte const* _m_memory;
+		uint64_t _m_size;
+	};
+
 	VfsNode::VfsNode(std::string_view name, time_t ts) : _m_name(name), _m_time(ts), _m_data(ChildContainer {}) {}
 
-	VfsNode::VfsNode(std::string_view name, VfsFileDescriptor dev, time_t ts)
+	VfsNode::VfsNode(std::string_view name, std::shared_ptr<VfsFileDescription> dev, time_t ts)
 	    : _m_name(name), _m_time(ts), _m_data(dev) {}
 
 	VfsNode::ChildContainer const& VfsNode::children() const {
@@ -111,28 +122,29 @@ namespace zenkit {
 	}
 
 	std::unique_ptr<Read> VfsNode::open_read() const {
-		auto fd = std::get<VfsFileDescriptor>(_m_data);
-		return Read::from(fd.memory, fd.size);
+		auto fd = std::get<std::shared_ptr<VfsFileDescription>>(_m_data);
+		return fd->open();
 	}
 
 	VfsNode VfsNode::directory(std::string_view name) {
 		return directory(name, -1);
 	}
 
-	VfsNode VfsNode::file(std::string_view name, VfsFileDescriptor dev) {
-		return file(name, dev, -1);
+	VfsNode VfsNode::file(std::string_view name, std::shared_ptr<VfsFileDescription> dev) {
+		return file(name, std::move(dev), -1);
 	}
 
 	VfsNode VfsNode::directory(std::string_view name, std::time_t ts) {
 		return VfsNode(name, ts);
 	}
 
-	VfsNode VfsNode::file(std::string_view name, VfsFileDescriptor dev, std::time_t ts) {
-		return VfsNode(name, dev, ts);
+	VfsNode VfsNode::file(std::string_view name, std::shared_ptr<VfsFileDescription> dev, std::time_t ts) {
+		return VfsNode(name, std::move(dev), ts);
 	}
 
 	VfsNodeType VfsNode::type() const noexcept {
-		return std::holds_alternative<VfsFileDescriptor>(_m_data) ? VfsNodeType::FILE : VfsNodeType::DIRECTORY;
+		return std::holds_alternative<std::shared_ptr<VfsFileDescription>>(_m_data) ? VfsNodeType::FILE
+		                                                                            : VfsNodeType::DIRECTORY;
 	}
 
 	std::time_t VfsNode::time() const noexcept {
@@ -302,21 +314,6 @@ namespace zenkit {
 		w->write(catalog.data(), catalog.size());
 	}
 
-	void Vfs::mount_disk(std::filesystem::path const& host, VfsOverwriteBehavior overwrite) {
-#ifdef _ZK_WITH_MMAP
-		auto& mem = _m_data_mapped.emplace_back(host);
-		this->mount_disk(mem.data(), mem.size(), overwrite);
-#else
-		std::ifstream stream {host, std::ios::in | std::ios::ate | std::ios::binary};
-		auto size = stream.tellg();
-		stream.seekg(0);
-
-		auto& data = _m_data.emplace_back(new std::byte[(size_t) size]);
-		stream.read((char*) data.get(), size);
-		this->mount_disk(data.get(), (size_t) size, overwrite);
-#endif
-	}
-
 	static std::time_t vfs_dos_to_unix_time(std::uint32_t dos) noexcept {
 		tm t {};
 
@@ -328,18 +325,6 @@ namespace zenkit {
 		t.tm_sec = static_cast<int32_t>((dos >> 0) & 0x1F) * 2;
 
 		return mktime(&t);
-	}
-
-	void Vfs::mount_disk(Read* buf, VfsOverwriteBehavior overwrite) {
-		buf->seek(0, Whence::END);
-		auto size = buf->tell();
-		buf->seek(0, Whence::BEG);
-
-		auto mem = std::make_unique<std::byte[]>(size);
-		buf->read(mem.get(), size);
-
-		this->mount_disk(mem.get(), size, overwrite);
-		_m_data.push_back(std::move(mem));
 	}
 
 	VfsNode const& Vfs::root() const noexcept {
@@ -455,18 +440,11 @@ namespace zenkit {
 #ifdef _ZK_WITH_MMAP
 					    auto& mem = this->_m_data_mapped.emplace_back(path);
 					    parent->create(VfsNode::file(path.filename().string(),
-					                                 VfsFileDescriptor {mem.data(), mem.size(), false},
+					                                 std::make_shared<VfsMemoryFileDescription>(mem.data(), mem.size()),
 					                                 time.count()));
 #else
-					    std::ifstream stream {path, std::ios::in | std::ios::ate | std::ios::binary};
-					    auto size = stream.tellg();
-					    stream.seekg(0);
-
-					    auto& data = _m_data.emplace_back(new std::byte[(size_t) size]);
-					    stream.read((char*) data.get(), size);
-
 					    parent->create(VfsNode::file(path.filename().string(),
-					                                 VfsFileDescriptor {data.get(), static_cast<size_t>(size), false},
+					                                 std::make_shared<VfsPhysicalFileDescription>(path, 0, -1),
 					                                 time.count()));
 #endif
 				    }
@@ -480,8 +458,18 @@ namespace zenkit {
 		}
 	}
 
-	void Vfs::mount_disk(std::byte const* buf, std::size_t size, VfsOverwriteBehavior overwrite) {
-		auto r = Read::from(buf, size);
+	void Vfs::mount_disk(std::filesystem::path const& path, VfsOverwriteBehavior overwrite) {
+		auto r = Read::from(path);
+
+		r->seek(0, Whence::END);
+		auto size = r->tell();
+		r->seek(0, Whence::BEG);
+
+#ifdef _ZK_WITH_MMAP
+		auto& mem = this->_m_data_mapped.emplace_back(path);
+#else
+		int mem = 0; // dummy
+#endif
 
 		auto comment = r->read_string(256);
 		auto signature = r->read_string(16);
@@ -515,7 +503,7 @@ namespace zenkit {
 		}
 
 		std::function<bool(VfsNode*)> load_entry =
-		    [&load_entry, overwrite, catalog_offset, timestamp, &r, buf, size](VfsNode* parent) {
+		    [&load_entry, overwrite, catalog_offset, timestamp, &r, &path, size, &mem](VfsNode* parent) {
 			    auto e_name = r->read_string(64);
 			    auto e_offset = r->read_uint();
 			    auto e_size = r->read_uint();
@@ -601,8 +589,17 @@ namespace zenkit {
 					    parent->remove(e_name);
 				    }
 
+#ifdef _ZK_WITH_MMAP
 				    (void) parent->create(
-				        VfsNode::file(e_name, VfsFileDescriptor {buf + e_offset, e_size, false}, timestamp));
+				        VfsNode::file(e_name,
+				                      std::make_unique<VfsMemoryFileDescription>(mem.data() + e_offset, e_size),
+				                      timestamp));
+#else
+				    (void) parent->create(
+				        VfsNode::file(e_name,
+				                      std::make_unique<VfsPhysicalFileDescription>(path, e_offset, e_size),
+				                      timestamp));
+#endif
 			    }
 
 			    return last;

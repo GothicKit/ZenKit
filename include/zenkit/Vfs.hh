@@ -36,16 +36,10 @@ namespace zenkit {
 		FILE = 2,
 	};
 
-	struct VfsFileDescriptor {
-		std::byte const* memory;
-		std::size_t size;
-
-		VfsFileDescriptor(std::byte const* mem, size_t len, bool del);
-		VfsFileDescriptor(VfsFileDescriptor const& cpy);
-		~VfsFileDescriptor() noexcept;
-
-	private:
-		size_t* refcnt;
+	class VfsFileDescription {
+	public:
+		virtual ~VfsFileDescription() noexcept = default;
+		virtual std::unique_ptr<Read> open() = 0;
 	};
 
 	class VfsNode;
@@ -76,19 +70,19 @@ namespace zenkit {
 		[[nodiscard]] ZKAPI std::unique_ptr<Read> open_read() const;
 
 		[[nodiscard]] ZKAPI static VfsNode directory(std::string_view name);
-		[[nodiscard]] ZKAPI static VfsNode file(std::string_view name, VfsFileDescriptor dev);
+		[[nodiscard]] ZKAPI static VfsNode file(std::string_view name, std::shared_ptr<VfsFileDescription> dev);
 
 		[[nodiscard]] ZKAPI static VfsNode directory(std::string_view name, std::time_t ts);
-		[[nodiscard]] ZKAPI static VfsNode file(std::string_view name, VfsFileDescriptor dev, std::time_t ts);
+		[[nodiscard]] ZKAPI static VfsNode file(std::string_view name, std::shared_ptr<VfsFileDescription> dev, std::time_t ts);
 
 	protected:
 		ZKAPI explicit VfsNode(std::string_view name, std::time_t ts);
-		ZKAPI explicit VfsNode(std::string_view name, VfsFileDescriptor dev, std::time_t ts);
+		ZKAPI explicit VfsNode(std::string_view name, std::shared_ptr<VfsFileDescription> dev, std::time_t ts);
 
 	private:
 		std::string _m_name;
 		std::time_t _m_time;
-		std::variant<ChildContainer, VfsFileDescriptor> _m_data;
+		std::variant<ChildContainer, std::shared_ptr<VfsFileDescription>> _m_data;
 	};
 
 	enum class VfsOverwriteBehavior {
@@ -189,8 +183,6 @@ namespace zenkit {
 		ZKAPI void save(Write* w, GameVersion version, time_t unix_t = 0) const;
 
 	private:
-		ZKINT void mount_disk(std::byte const* buf, std::size_t size, VfsOverwriteBehavior overwrite);
-
 		VfsNode _m_root;
 		std::vector<std::unique_ptr<std::byte[]>> _m_data;
 

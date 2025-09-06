@@ -106,6 +106,7 @@ namespace zenkit {
 		[[nodiscard]] static std::unique_ptr<Read> from(std::vector<std::byte> const* vector);
 		[[nodiscard]] static std::unique_ptr<Read> from(std::vector<std::byte> vector);
 		[[nodiscard]] static std::unique_ptr<Read> from(std::filesystem::path const& path);
+		[[nodiscard]] static std::unique_ptr<Read> from(std::filesystem::path const& path, int64_t off, int64_t size);
 	};
 
 	class Write ZKAPI {

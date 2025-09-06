@@ -4,6 +4,7 @@
 #include "zenkit/Mmap.hh"
 
 #include "Internal.hh"
+#include "zenkit/Vfs.hh"
 
 #include <algorithm>
 #include <cstring>
@@ -206,28 +207,87 @@ namespace zenkit {
 			return static_cast<size_t>(new_position);
 		}
 
-		class ReadFile final ZKINT : public Read {
+		class ReadFile ZKINT : public Read {
 		public:
-			explicit ReadFile(FILE* stream) : _m_stream(stream) {}
+			explicit ReadFile(FILE* stream) : ReadFile(stream, 0, -1) {}
+
+			ReadFile(FILE* stream, int64_t offset, int64_t size) : _m_stream(stream), _m_offset(offset), _m_size(size) {
+				if (_m_size < 0) {
+					fseek(_m_stream, 0, SEEK_END);
+					_m_size = ftell(_m_stream) - _m_offset;
+					fseek(_m_stream, 0, SEEK_SET);
+				}
+
+				fseek(_m_stream, _m_offset, SEEK_SET);
+			}
 
 			size_t read(void* buf, size_t len) noexcept override {
+				if (_m_size >= 0) {
+					auto remaining = _m_size - tell();
+					len = remaining < len ? remaining : len;
+				}
+
 				return fread(buf, 1, len, _m_stream);
 			}
 
 			void seek(ssize_t off, Whence whence) noexcept override {
-				fseek(_m_stream, off, INTO_C_WHENCE[static_cast<int>(whence)]);
+				switch (whence) {
+				case Whence::BEG:
+					fseek(_m_stream, _m_offset + off, SEEK_SET);
+					break;
+				case Whence::CUR:
+					fseek(_m_stream, off, SEEK_CUR);
+					break;
+				case Whence::END:
+					if (_m_size < 0)
+						fseek(_m_stream, off, SEEK_END);
+					else
+						fseek(_m_stream, _m_offset + _m_size + off, SEEK_SET);
+					break;
+				}
 			}
 
 			[[nodiscard]] size_t tell() const noexcept override {
-				return static_cast<size_t>(ftell(_m_stream));
+				return static_cast<size_t>(ftell(_m_stream) - _m_offset);
 			}
 
 			[[nodiscard]] bool eof() const noexcept override {
-				return feof(_m_stream);
+				return tell() >= _m_size || feof(_m_stream);
 			}
 
 		private:
 			FILE* _m_stream;
+			int64_t _m_offset = 0;
+			int64_t _m_size = -1;
+		};
+
+		static FILE* try_fopen(char const* path, char const* mode) {
+			FILE* stream = fopen(path, mode);
+			if (stream == nullptr) {
+				throw std::system_error(errno, std::system_category(), "fopen");
+			}
+			return stream;
+		}
+
+		class ReadFileOwned final ZKINT : public ReadFile {
+		public:
+			explicit ReadFileOwned(std::filesystem::path const& path) : ReadFileOwned(path, 0, -1) {}
+
+			ReadFileOwned(std::filesystem::path const& path, int64_t offset, int64_t size)
+			    : ReadFileOwned(try_fopen(path.c_str(), "rb"), offset, size) {}
+
+			~ReadFileOwned() noexcept override {
+				if (_m_own) {
+					fclose(_m_own);
+				}
+			}
+
+		protected:
+			ReadFileOwned(FILE* stream, int64_t offset, int64_t size) : ReadFile(stream, offset, size), _m_own(stream) {
+			}
+
+		private:
+			FILE* _m_own;
 		};
 
 		class ReadStream final ZKINT : public Read {
@@ -448,14 +508,12 @@ namespace zenkit {
 #ifdef _ZK_WITH_MMAP
 		return std::make_unique<detail::ReadMmap>(path);
 #else
-		std::vector<std::byte> data {};
-		std::ifstream stream {path, std::ios::ate | std::ios::binary | std::ios::in};
-		data.resize(static_cast<size_t>(stream.tellg()));
-		stream.seekg(0);
-		stream.read(reinterpret_cast<char*>(data.data()), static_cast<std::streamsize>(data.size()));
-
-		return Read::from(std::move(data));
+		return from(path, 0, -1);
 #endif
+	}
+
+	std::unique_ptr<Read> Read::from(std::filesystem::path const& path, int64_t offset, int64_t size) {
+		return std::make_unique<detail::ReadFileOwned>(path, offset, size);
 	}
 
 	std::unique_ptr<Write> Write::to(std::filesystem::path const& path) {
