@@ -181,11 +181,18 @@ namespace zenkit {
 			w.write_object_begin("MeshAndBsp", "", 0);
 
 			Write* raw = w.get_stream();
-			raw->write_uint(0); // TODO: version
-			raw->write_uint(0); // TODO: size
+			raw->write_uint(version == GameVersion::GOTHIC_1 ?  0x2090000 : 0x4090000);
+
+			uint32_t size_off = raw->tell();
+			raw->write_uint(0);
 
 			this->world_mesh.save(raw, version);
 			this->world_bsp_tree.save(raw, version);
+
+			auto size = static_cast<uint32_t>(raw->tell() - size_off - sizeof(uint32_t));
+			raw->seek(size_off, Whence::BEG);
+			raw->write_uint(size);
+			raw->seek(size, Whence::CUR);
 
 			w.write_object_end();
 		}

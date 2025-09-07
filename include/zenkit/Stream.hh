@@ -217,9 +217,9 @@ namespace zenkit {
 
 			cb(w);
 
-			auto len = static_cast<ssize_t>(w->tell()) - size_off;
+			auto len = static_cast<ssize_t>(w->tell()) - size_off - sizeof(uint32_t);
 			w->seek(size_off, Whence::BEG);
-			w->write_uint(static_cast<uint32_t>(len) - sizeof(uint32_t));
+			w->write_uint(static_cast<uint32_t>(len));
 			w->seek(len, Whence::CUR);
 		}
 	} // namespace proto

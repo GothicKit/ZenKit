@@ -99,7 +99,7 @@ namespace zenkit {
 		this->direction = r.read_vec3();   // direction
 	}
 
-	void WayPoint::save(WriteArchive& w, GameVersion version) const {
+	void WayPoint::save(WriteArchive& w, GameVersion) const {
 		w.write_string("wpName", this->name);
 		w.write_int("waterDepth", this->water_depth);
 		w.write_bool("underWater", this->under_water);
@@ -140,7 +140,7 @@ namespace zenkit {
 		}
 
 		w.write_int("numWaypoints", count_free_points);
-		auto i = 0;
+		auto i = 0u;
 		for (auto& point : this->points) {
 			if (point->free_point) {
 				w.write_object("waypoint" + std::to_string(i), point, version);

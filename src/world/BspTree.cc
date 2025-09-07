@@ -231,6 +231,11 @@ namespace zenkit {
 					c->write_uint(i);
 				}
 			}
+
+			c->write_uint(static_cast<uint32_t>(this->portal_polygon_indices.size()));
+			for (auto i : this->portal_polygon_indices) {
+				c->write_uint(i);
+			}
 		});
 
 		proto::write_chunk(w, BspChunkType::END, [](Write* wr) {

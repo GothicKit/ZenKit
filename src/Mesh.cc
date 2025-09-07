@@ -5,6 +5,7 @@
 #include "zenkit/Stream.hh"
 
 #include <algorithm>
+#include <unordered_set>
 
 namespace zenkit {
 	[[maybe_unused]] static constexpr auto MESH_VERSION_G1 = 9;
@@ -270,14 +271,14 @@ namespace zenkit {
 			c->write_uint(this->geometry.size());
 
 			for (auto& poly : this->geometry) {
-				c->write_uint(poly.material);
-				c->write_uint(static_cast<uint32_t>(poly.lightmap));
+				c->write_ushort(poly.material);
+				c->write_short(static_cast<uint32_t>(poly.lightmap));
 
 				// TODO(lmichaelis): Figure these out.
 				c->write_float(0);
 				c->write_vec3({0, 0, 0});
 
-				if (version == GameVersion::GOTHIC_1) {
+				if (version == GameVersion::GOTHIC_2) {
 					auto& flags = poly.flags;
 					c->write_ubyte((flags.is_portal & 3) | ((flags.is_occluder & 1) << 2) |
 					               ((flags.is_sector & 1) << 3) | ((flags.should_relight & 1) << 4) |
@@ -307,9 +308,33 @@ namespace zenkit {
 			}
 		});
 
-		// TODO(lmichaelis): Fixup  lightmaps. We need to figure out all lightmaps which share a texture.
-		proto::write_chunk(w, MeshChunkType::LIGHTMAPS_SHARED, [](Write* c) { c->write_uint(0); });
-		proto::write_chunk(w, MeshChunkType::LIGHTMAPS, [](Write* c) { c->write_uint(0); });
+		proto::write_chunk(w, MeshChunkType::LIGHTMAPS_SHARED, [this](Write* c) {
+			std::unordered_map<Texture*, uint32_t> shared_textures {};
+
+			for (auto& lightmap : this->lightmaps) {
+				// Record the shared image with in a separate set.
+				shared_textures.try_emplace(lightmap.image.get(), 0);
+			}
+
+			c->write_uint(shared_textures.size());
+
+			uint32_t actual_index = 0;
+			for (auto& item : shared_textures) {
+				item.first->save(c);
+				item.second = actual_index++;
+			}
+
+			c->write_uint(this->lightmaps.size());
+			for (auto& lightmap : this->lightmaps) {
+				c->write_vec3(lightmap.origin);
+				c->write_vec3(lightmap.normals[0]);
+				c->write_vec3(lightmap.normals[1]);
+
+				auto it = shared_textures.find(lightmap.image.get());
+				c->write_uint(it != shared_textures.end() ? it->second : 0);
+			}
+		});
+
 		proto::write_chunk(w, MeshChunkType::END, [](Write*) {});
 	}
 } // namespace zenkit
