@@ -483,6 +483,7 @@ namespace zenkit {
 		ZKAPI void save(WriteArchive& w, GameVersion version) const override;
 
 		[[nodiscard]] ZKAPI uint16_t get_version_identifier(GameVersion game) const override;
+		static ZKAPI void enable_packed_save(bool pack);
 	};
 
 	/// \brief A VObject marking a location an orentation in virtual space.

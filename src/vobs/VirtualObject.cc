@@ -9,6 +9,7 @@
 
 namespace zenkit {
 	static std::shared_ptr<Visual> const DEFAULT_VISUAL = std::make_shared<Visual>();
+	static bool pack = false;
 
 	/// \brief A mapping of archive class names to visual_type values.
 	static std::unordered_map<ObjectType, VisualType> visual_type_map = {
@@ -202,54 +203,82 @@ namespace zenkit {
 	void VirtualObject::save(WriteArchive& w, GameVersion version) const {
 		Object::save(w, version);
 
-		w.write_int("pack", 1);
+		if (pack) {
+			w.write_int("pack", 1);
+			std::vector<std::byte> packed;
+			auto pw = Write::to(&packed);
 
-		std::vector<std::byte> packed;
-		auto pw = Write::to(&packed);
+			this->bbox.save(pw.get());
+			pw->write_vec3(this->position);
+			pw->write_mat3(this->rotation);
 
-		this->bbox.save(pw.get());
-		pw->write_vec3(this->position);
-		pw->write_mat3(this->rotation);
+			std::uint8_t bit0 = 0;
 
-		std::uint8_t bit0 = 0;
+			bit0 |= this->show_visual << 0;
+			bit0 |= (static_cast<uint8_t>(this->sprite_camera_facing_mode) & 3) << 1;
+			bit0 |= this->cd_static << 3;
+			bit0 |= this->cd_dynamic << 4;
+			bit0 |= this->vob_static << 5;
+			bit0 |= (static_cast<uint8_t>(this->dynamic_shadows) & 3) << 6;
 
-		bit0 |= this->show_visual << 0;
-		bit0 |= (static_cast<uint8_t>(this->sprite_camera_facing_mode) & 3) << 1;
-		bit0 |= this->cd_static << 3;
-		bit0 |= this->cd_dynamic << 4;
-		bit0 |= this->vob_static << 5;
-		bit0 |= (static_cast<uint8_t>(this->dynamic_shadows) & 3) << 6;
+			pw->write_ubyte(bit0);
 
-		pw->write_ubyte(bit0);
+			std::uint16_t bit1 = 0;
+			bit1 |= !preset_name.empty() << 0u;
+			bit1 |= !vob_name.empty() << 1u;
+			bit1 |= (this->visual && !this->visual->name.empty()) << 2u;
+			bit1 |= (!!this->visual && this->visual->type != VisualType::UNKNOWN) << 3u;
+			bit1 |= (!!this->ai) << 4u;
+			bit1 |= (!!this->event_manager) << 5u;
 
-		std::uint16_t bit1 = 0;
-		bit1 |= !preset_name.empty() << 0u;
-		bit1 |= !vob_name.empty() << 1u;
-		bit1 |= (this->visual && !this->visual->name.empty()) << 2u;
-		bit1 |= (!!this->visual && this->visual->type != VisualType::UNKNOWN) << 3u;
-		bit1 |= (!!this->ai) << 4u;
-		bit1 |= (!!this->event_manager) << 5u;
+			// Gothic 1 does not store rigid-body information.
+			if (version == GameVersion::GOTHIC_1) {
+				bit1 |= this->physics_enabled << 7u;
+			} else {
+				bit1 |= (this->physics_enabled && this->rigid_body) << 6u;
+			}
 
-		// Gothic 1 does not store rigid-body information.
-		if (version == GameVersion::GOTHIC_1) {
-			bit1 |= this->physics_enabled << 7u;
+			if (version == GameVersion::GOTHIC_2) {
+				bit1 |= (static_cast<uint8_t>(this->anim_mode) & 2) << 7u;
+				bit1 |= (static_cast<uint8_t>(this->bias) & 0b11111) << 13u;
+				bit1 |= this->ambient << 14u;
+
+				pw->write_ushort(bit1);
+				pw->write_float(this->anim_strength);
+				pw->write_float(this->far_clip_scale);
+			} else {
+				pw->write_ubyte(bit1 & 0xFF);
+			}
+
+			w.write_raw("dataRaw", packed);
 		} else {
-			bit1 |= (this->physics_enabled && this->rigid_body) << 6u;
+			w.write_int("pack", 0);
+			w.write_string("", this->preset_name);
+			w.write_bbox("bbox3DWS", this->bbox);
+			w.write_mat3x3("trafoOSToWSRot", this->rotation);
+			w.write_vec3("trafoOSToWSPos", this->position);
+			w.write_string("vobName", this->vob_name);
+			w.write_string("visual", this->visual_name);
+			w.write_bool("showVisual", this->show_visual);
+			w.write_enum("visualCamAlign", static_cast<int>(this->sprite_camera_facing_mode));
+
+			if (version == GameVersion::GOTHIC_1) {
+				w.write_bool("cdStatic", this->cd_static);
+				w.write_bool("cdDyn", this->cd_dynamic);
+				w.write_bool("staticVob", this->vob_static);
+				w.write_enum("dynShadow", static_cast<int>(this->dynamic_shadows));
+			} else {
+				w.write_enum("visualAniMode", static_cast<int>(this->anim_mode));
+				w.write_float("visualAniModeStrength", this->anim_strength);
+				w.write_float("vobFarClipZScale", this->far_clip_scale);
+				w.write_bool("cdStatic", this->cd_static);
+				w.write_bool("cdDyn", this->cd_dynamic);
+				w.write_bool("staticVob", this->vob_static);
+				w.write_enum("dynShadow", static_cast<int>(this->dynamic_shadows));
+				w.write_int("zbias", this->bias);
+				w.write_bool("isAmbient", this->ambient);
+			}
 		}
-
-		if (version == GameVersion::GOTHIC_2) {
-			bit1 |= (static_cast<uint8_t>(this->anim_mode) & 2) << 7u;
-			bit1 |= (static_cast<uint8_t>(this->bias) & 0b11111) << 13u;
-			bit1 |= this->ambient << 14u;
-
-			pw->write_ushort(bit1);
-			pw->write_float(this->anim_strength);
-			pw->write_float(this->far_clip_scale);
-		} else {
-			pw->write_ubyte(bit1 & 0xFF);
-		}
-
-		w.write_raw("dataRaw", packed);
 
 		if (!this->preset_name.empty()) {
 			w.write_string("presetName", this->preset_name);
@@ -288,6 +317,10 @@ namespace zenkit {
 
 	uint16_t VirtualObject::get_version_identifier(GameVersion game) const {
 		return game == GameVersion::GOTHIC_1 ? 12289 : 52224;
+	}
+
+	void VirtualObject::enable_packed_save(bool enable) {
+		pack = enable;
 	}
 
 	void RigidBody::load(ReadArchive& r, GameVersion) {
