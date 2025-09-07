@@ -495,14 +495,12 @@ namespace zenkit {
 		case ObjectType::zCCSProps:
 			syn = std::make_shared<CutsceneProps>();
 			break;
-#ifdef ZK_FUTURE
 		case ObjectType::zCWayNet:
 			syn = std::make_shared<WayNet>();
 			break;
 		case ObjectType::zCWaypoint:
 			syn = std::make_shared<WayPoint>();
 			break;
-#endif
 		default:
 			ZKLOGE("ReadArchive", "Unknown object type: %s", obj.class_name.c_str());
 			break;

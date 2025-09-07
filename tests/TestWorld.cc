@@ -305,47 +305,6 @@ TEST_SUITE("World") {
 		}
 
 		// Check the waynet
-#ifndef ZK_FUTURE
-		auto& waynet = wld.world_way_net;
-		CHECK_EQ(waynet.waypoints.size(), 2784);
-		CHECK_EQ(waynet.edges.size(), 3500);
-
-		auto& wp0 = waynet.waypoints[0];
-		auto& wp100 = waynet.waypoints[100];
-
-		CHECK_EQ(wp0.name, "LOCATION_28_07");
-		CHECK_EQ(wp0.water_depth, 0);
-		CHECK_FALSE(wp0.under_water);
-		CHECK_EQ(wp0.position, zenkit::Vec3 {23871.457, -553.283813, 27821.3516});
-		CHECK_EQ(wp0.direction, zenkit::Vec3 {0.86651814, 0, -0.499145567});
-		CHECK(wp0.free_point);
-
-		CHECK_EQ(wp100.name, "CASTLE_MOVEMENT_STRAIGHT3");
-		CHECK_EQ(wp100.water_depth, 0);
-		CHECK_FALSE(wp100.under_water);
-		CHECK_EQ(wp100.position, zenkit::Vec3 {3362.21948, 8275.1709, -21067.9473});
-		CHECK_EQ(wp100.direction, zenkit::Vec3 {-0.342115372, 0, 0.939657927});
-		CHECK_FALSE(wp100.free_point);
-
-		auto& edge0 = waynet.edges[0];
-		auto& edge5 = waynet.edges[5];
-		auto& edge100 = waynet.edges[100];
-		auto& edge500 = waynet.edges[500];
-
-		CHECK_EQ(edge0.a, 20);
-		CHECK_EQ(edge0.b, 21);
-
-		// edge 6 is a reference
-		CHECK_EQ(edge5.a, 28);
-		CHECK_EQ(edge5.b, 30);
-
-		CHECK_EQ(edge100.a, 123);
-		CHECK_EQ(edge100.b, 126);
-
-		CHECK_EQ(edge500.a, 521);
-		CHECK_EQ(edge500.b, 515);
-
-#else
 		auto& waynet = *wld.way_net;
 		CHECK_EQ(waynet.points.size(), 2784);
 		CHECK_EQ(waynet.edges.size(), 3500);
@@ -364,7 +323,6 @@ TEST_SUITE("World") {
 		CHECK_FALSE(wp100.under_water);
 		CHECK_EQ(wp100.position, zenkit::Vec3 {3362.21948, 8275.1709, -21067.9473});
 		CHECK_EQ(wp100.direction, zenkit::Vec3 {-0.342115372, 0, 0.939657927});
-#endif
 	}
 
 	TEST_CASE("World.load(GOTHIC2)" * doctest::skip()) {

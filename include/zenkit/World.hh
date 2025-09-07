@@ -82,13 +82,8 @@ namespace zenkit {
 		/// \brief The BSP-tree of this world.
 		BspTree world_bsp_tree;
 
-#ifndef ZK_FUTURE
-		/// \brief The way-net of this world.
-		WayNet world_way_net;
-#else
 		/// \brief The way-net of this world.
 		std::shared_ptr<WayNet> way_net;
-#endif
 
 		// \note Only available in save-games, otherwise empty.
 		std::vector<std::shared_ptr<VNpc>> npcs {};

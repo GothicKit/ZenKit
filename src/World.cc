@@ -125,11 +125,7 @@ namespace zenkit {
 					this->world_vobs.push_back(std::move(child));
 				}
 			} else if (hdr.object_name == "WayNet") {
-#ifndef ZK_FUTURE
-				this->world_way_net.load(r);
-#else
 				this->way_net = r.read_object<WayNet>(version);
-#endif
 			} else if (hdr.object_name == "CutscenePlayer") {
 				this->player = r.read_object<CutscenePlayer>(version);
 			} else if (hdr.object_name == "SkyCtrl") {
@@ -218,11 +214,9 @@ namespace zenkit {
 			}
 		}
 
-#ifdef ZK_FUTURE
 		w.write_object_begin("WayNet", "", 0);
 		w.write_object(this->way_net, version);
 		w.write_object_end();
-#endif
 
 		w.write_object_begin("EndMarker", "", 0);
 		w.write_object_end();
