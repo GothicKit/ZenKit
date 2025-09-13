@@ -253,7 +253,7 @@ namespace zenkit {
 			w.write_raw("dataRaw", packed);
 		} else {
 			w.write_int("pack", 0);
-			w.write_string("", this->preset_name);
+			w.write_string("presetName", this->preset_name);
 			w.write_bbox("bbox3DWS", this->bbox);
 			w.write_mat3x3("trafoOSToWSRot", this->rotation);
 			w.write_vec3("trafoOSToWSPos", this->position);
