@@ -298,40 +298,13 @@ namespace zenkit {
 				c->write_ubyte(poly.index_count);
 				for (auto i = 0u; i < poly.index_count; ++i) {
 					if (version == GameVersion::GOTHIC_1) {
-						c->write_ushort(this->polygons.vertex_indices[i]);
-						c->write_uint(this->polygons.feature_indices[i]);
+						c->write_ushort(this->polygon_vertex_indices[poly.index_offset + i]);
+						c->write_uint(this->polygon_feature_indices[poly.index_offset + i]);
 					} else {
-						c->write_uint(this->polygons.vertex_indices[i]);
-						c->write_uint(this->polygons.feature_indices[i]);
+						c->write_uint(this->polygons.vertex_indices[poly.index_offset + i]);
+						c->write_uint(this->polygons.feature_indices[poly.index_offset + i]);
 					}
 				}
-			}
-		});
-
-		proto::write_chunk(w, MeshChunkType::LIGHTMAPS_SHARED, [this](Write* c) {
-			std::unordered_map<Texture*, uint32_t> shared_textures {};
-
-			for (auto& lightmap : this->lightmaps) {
-				// Record the shared image with in a separate set.
-				shared_textures.try_emplace(lightmap.image.get(), 0);
-			}
-
-			c->write_uint(shared_textures.size());
-
-			uint32_t actual_index = 0;
-			for (auto& item : shared_textures) {
-				item.first->save(c);
-				item.second = actual_index++;
-			}
-
-			c->write_uint(this->lightmaps.size());
-			for (auto& lightmap : this->lightmaps) {
-				c->write_vec3(lightmap.origin);
-				c->write_vec3(lightmap.normals[0]);
-				c->write_vec3(lightmap.normals[1]);
-
-				auto it = shared_textures.find(lightmap.image.get());
-				c->write_uint(it != shared_textures.end() ? it->second : 0);
 			}
 		});
 
