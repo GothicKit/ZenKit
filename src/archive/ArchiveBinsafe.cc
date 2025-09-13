@@ -443,12 +443,12 @@ namespace zenkit {
 			this->_m_write->write_ushort(key.length());
 			this->_m_write->write_ushort(value);
 
-			auto hash_value = 0u;
+			uint32_t hash_value = 0u;
 			for (char c : key) {
 				hash_value = hash_value * 0x21 + c;
 			}
 
-			this->_m_write->write_uint(hash_value & 0x61);
+			this->_m_write->write_uint(hash_value % 0x61);
 			this->_m_write->write_string(key);
 		}
 
