@@ -250,6 +250,34 @@ namespace zenkit {
 			war->write_header();
 		});
 
+		proto::write_chunk(w, MeshChunkType::LIGHTMAPS_SHARED, [this](Write* c) {
+			std::unordered_map<Texture*, uint32_t> shared_textures {};
+
+			for (auto& lightmap : this->lightmaps) {
+				// Record the shared image with in a separate set.
+				shared_textures.try_emplace(lightmap.image.get(), 0);
+			}
+
+			c->write_uint(shared_textures.size());
+
+			uint32_t actual_index = 0;
+			for (auto& item : shared_textures) {
+				item.first->save(c);
+				item.second = actual_index++;
+			}
+
+			c->write_uint(this->lightmaps.size());
+			for (auto& lightmap : this->lightmaps) {
+				c->write_vec3(lightmap.origin);
+				c->write_vec3(lightmap.normals[0]);
+				c->write_vec3(lightmap.normals[1]);
+
+				auto it = shared_textures.find(lightmap.image.get());
+				c->write_uint(it != shared_textures.end() ? it->second : 0);
+			}
+		});
+
+
 		proto::write_chunk(w, MeshChunkType::VERTICES, [this](Write* c) {
 			c->write_uint(static_cast<uint32_t>(this->vertices.size()));
 
