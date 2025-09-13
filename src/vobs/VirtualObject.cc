@@ -233,7 +233,7 @@ namespace zenkit {
 
 			// Gothic 1 does not store rigid-body information.
 			if (version == GameVersion::GOTHIC_1) {
-				bit1 |= this->physics_enabled << 7u;
+				bit1 |= this->physics_enabled << 6u;
 			} else {
 				bit1 |= (this->physics_enabled && this->rigid_body) << 6u;
 			}
