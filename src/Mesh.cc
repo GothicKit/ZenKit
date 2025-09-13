@@ -93,9 +93,8 @@ namespace zenkit {
 					    this->geometry[i].material = c->read_ushort();
 					    this->geometry[i].lightmap = c->read_short();
 
-					    // TODO(lmichaelis): Figure out what these do.
-					    (void) c->read_float();
-					    (void) c->read_vec3();
+					    this->geometry[i].plane_distance = c->read_float();
+					    this->geometry[i].plane_normal = c->read_vec3();
 
 					    PolygonFlagSet& pflags = this->geometry[i].flags;
 					    if (version == MESH_VERSION_G2) {
@@ -274,9 +273,8 @@ namespace zenkit {
 				c->write_ushort(poly.material);
 				c->write_short(static_cast<uint32_t>(poly.lightmap));
 
-				// TODO(lmichaelis): Figure these out.
-				c->write_float(0);
-				c->write_vec3({0, 0, 0});
+				c->write_float(poly.plane_distance);
+				c->write_vec3(poly.plane_normal);
 
 				if (version == GameVersion::GOTHIC_2) {
 					auto& flags = poly.flags;

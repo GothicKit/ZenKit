@@ -76,6 +76,9 @@ namespace zenkit {
 
 		size_t index_count;
 		size_t index_offset;
+
+		float plane_distance;
+		Vec3 plane_normal;
 	};
 
 	/// \brief Represents a *ZenGin* basic mesh.
