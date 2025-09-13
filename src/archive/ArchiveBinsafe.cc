@@ -378,7 +378,7 @@ namespace zenkit {
 
 	void WriteArchiveBinsafe::write_mat3x3(std::string_view name, Mat3 const& v) {
 		auto vT = v.transpose();
-		this->write_raw_float(name, vT.pointer(), 9);
+		this->write_raw(name, reinterpret_cast<std::byte const*>(vT.pointer()), 9 * sizeof(float));
 	}
 
 	void WriteArchiveBinsafe::write_raw(std::string_view name, std::vector<std::byte> const& v) {
