@@ -46,7 +46,7 @@ namespace zenkit {
 			node.plane.z = in->read_float();
 
 			if (version == version_g1) {
-				(void) in->read_ubyte(); // "lod-flag"
+				node.lod = in->read_ubyte();// "lod-flag"
 			}
 
 			if ((flags & 0x01) != 0) {
@@ -202,14 +202,13 @@ namespace zenkit {
 					c->write_float(node.plane.z);
 
 					if (version == GameVersion::GOTHIC_1) {
-						c->write_ubyte(0); // TODO(lmichaelis): lod-flag
+						c->write_ubyte(node.lod);
 					}
 				}
 			}
 		});
 
 		proto::write_chunk(w, BspChunkType::LIGHT, [this](Write* c) {
-			c->write_uint(static_cast<uint32_t>(this->light_points.size()));
 			for (auto& point : this->light_points) {
 				c->write_vec3(point);
 			}
@@ -239,7 +238,7 @@ namespace zenkit {
 		});
 
 		proto::write_chunk(w, BspChunkType::END, [](Write* wr) {
-			wr->write_ubyte(0); // padding
+			wr->write_ubyte('B'); // padding
 		});
 	}
 } // namespace zenkit

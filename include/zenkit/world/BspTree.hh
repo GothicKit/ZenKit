@@ -32,6 +32,7 @@ namespace zenkit {
 		std::int32_t front_index {-1};
 		std::int32_t back_index {-1};
 		std::int32_t parent_index {-1};
+		std::uint8_t lod {0};
 
 		[[nodiscard]] ZKAPI bool is_leaf() const noexcept {
 			return front_index == -1 && back_index == -1;
