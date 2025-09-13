@@ -246,6 +246,8 @@ namespace zenkit {
 				war->write_string("", mat.name);
 				war->write_object("%", &mat, version);
 			}
+
+			war->write_header();
 		});
 
 		proto::write_chunk(w, MeshChunkType::VERTICES, [this](Write* c) {
