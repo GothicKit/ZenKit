@@ -9,7 +9,7 @@
 
 namespace zenkit {
 	static std::shared_ptr<Visual> const DEFAULT_VISUAL = std::make_shared<Visual>();
-	static bool pack = false;
+	static bool pack = true;
 
 	/// \brief A mapping of archive class names to visual_type values.
 	static std::unordered_map<ObjectType, VisualType> visual_type_map = {
