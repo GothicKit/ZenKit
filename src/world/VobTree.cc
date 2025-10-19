@@ -42,7 +42,8 @@ namespace zenkit {
 		return object;
 	}
 
-	static void save_vob_tree(WriteArchive& w, GameVersion version, std::shared_ptr<VirtualObject> const& obj, uint32_t& n) {
+	static void
+	save_vob_tree(WriteArchive& w, GameVersion version, std::shared_ptr<VirtualObject> const& obj, uint32_t& n) {
 		w.write_object(obj, version);
 		w.write_int("childs" + std::to_string(n++), obj->children.size());
 

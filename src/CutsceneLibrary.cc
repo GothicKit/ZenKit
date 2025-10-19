@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 #include "zenkit/CutsceneLibrary.hh"
 #include "zenkit/Archive.hh"
-#include "zenkit/Stream.hh"
 #include "zenkit/Error.hh"
+#include "zenkit/Stream.hh"
 
 #include "zenkit/vobs/Misc.hh"
 

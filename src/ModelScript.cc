@@ -7,8 +7,8 @@
 #include "Internal.hh"
 #include "ModelScriptDsl.hh"
 
-#include <unordered_map>
 #include <sstream>
+#include <unordered_map>
 
 namespace zenkit {
 	enum class ModelScriptBinaryChunkType : uint16_t {

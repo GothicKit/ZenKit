@@ -44,7 +44,9 @@ namespace zenkit {
 		w.write_float("continuity", this->continuity);
 		w.write_float("timeScale", this->time_scale);
 		w.write_bool("timeIsFixed", this->time_fixed);
-		w.write_raw("originalPose", reinterpret_cast<std::byte const*>(this->original_pose.pointer()), 4 * 4 * sizeof(float));
+		w.write_raw("originalPose",
+		            reinterpret_cast<std::byte const*>(this->original_pose.pointer()),
+		            4 * 4 * sizeof(float));
 	}
 
 	void VCutsceneCamera::parse(VCutsceneCamera& obj, ReadArchive& r, GameVersion version) {

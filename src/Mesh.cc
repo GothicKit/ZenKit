@@ -277,7 +277,6 @@ namespace zenkit {
 			}
 		});
 
-
 		proto::write_chunk(w, MeshChunkType::VERTICES, [this](Write* c) {
 			c->write_uint(static_cast<uint32_t>(this->vertices.size()));
 

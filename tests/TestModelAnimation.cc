@@ -12,21 +12,19 @@ static std::vector<uint32_t> const G1_NODE_INDICES {0,  1,  2,  3,  4,  5,  6,  
 static std::vector<uint32_t> const G2_NODE_INDICES {0,  1,  2,  3,  4,  5,  6,  8,  9,  10, 11, 12, 15,
                                                     16, 17, 18, 19, 26, 27, 28, 29, 30, 31, 32, 33};
 
-static constexpr AnimationSample G1_SAMPLE0 {zenkit::Vec3 {12.635274887084961f, 88.75251770019531f, -1.093428611755371f},
-                                             zenkit::Quat {0.7771535515785217f, 0.0f, 0.6293110251426697f, 0.0f}};
-static constexpr AnimationSample G1_SAMPLE249 {
-    zenkit::Vec3 {12.626323699951172f, -0.00145721435546875f, 22.643518447875977f},
-    zenkit::Quat {0.7071319222450256f, 0.0f, 0.70708167552948f, 0.0f}};
-static constexpr AnimationSample G1_SAMPLE499 {zenkit::Vec3 {12.626323699951172, -0.00145721435546875, 22.643518447875977},
-                                               zenkit::Quat {0.7071319222450256, 0.0, 0.70708167552948, 0.0}};
+static constexpr AnimationSample G1_SAMPLE0 {Vec3 {12.635274887084961f, 88.75251770019531f, -1.093428611755371f},
+                                             Quat {0.7771535515785217f, 0.0f, 0.6293110251426697f, 0.0f}};
+static constexpr AnimationSample G1_SAMPLE249 {Vec3 {12.626323699951172f, -0.00145721435546875f, 22.643518447875977f},
+                                               Quat {0.7071319222450256f, 0.0f, 0.70708167552948f, 0.0f}};
+static constexpr AnimationSample G1_SAMPLE499 {Vec3 {12.626323699951172, -0.00145721435546875, 22.643518447875977},
+                                               Quat {0.7071319222450256, 0.0, 0.70708167552948, 0.0}};
 
-static constexpr AnimationSample G2_SAMPLE0 {zenkit::Vec3 {12.635274887084961f, 88.75251770019531f, -1.093428611755371f},
-                                             zenkit::Quat {0.7771535515785217f, 0.0f, 0.6293110251426697f, 0.0f}};
-static constexpr AnimationSample G2_SAMPLE249 {
-    zenkit::Vec3 {12.626323699951172f, -0.00145721435546875f, 22.643518447875977f},
-    zenkit::Quat {0.7071319222450256f, 0.0f, 0.70708167552948f, 0.0f}};
-static constexpr AnimationSample G2_SAMPLE499 {zenkit::Vec3 {12.626323699951172, -0.00145721435546875, 22.643518447875977},
-                                               zenkit::Quat {0.7071319222450256, 0.0, 0.70708167552948, 0.0}};
+static constexpr AnimationSample G2_SAMPLE0 {Vec3 {12.635274887084961f, 88.75251770019531f, -1.093428611755371f},
+                                             Quat {0.7771535515785217f, 0.0f, 0.6293110251426697f, 0.0f}};
+static constexpr AnimationSample G2_SAMPLE249 {Vec3 {12.626323699951172f, -0.00145721435546875f, 22.643518447875977f},
+                                               Quat {0.7071319222450256f, 0.0f, 0.70708167552948f, 0.0f}};
+static constexpr AnimationSample G2_SAMPLE499 {Vec3 {12.626323699951172, -0.00145721435546875, 22.643518447875977},
+                                               Quat {0.7071319222450256, 0.0, 0.70708167552948, 0.0}};
 
 TEST_SUITE("ModelAnimation") {
 	TEST_CASE("ModelAnimation.load(GOTHIC1)") {

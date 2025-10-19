@@ -4,8 +4,8 @@
 #include "Internal.hh"
 
 #include "zenkit/Error.hh"
-#include "zenkit/Stream.hh"
 #include "zenkit/Misc.hh"
+#include "zenkit/Stream.hh"
 
 #define WARN_SYNTAX(msg) ZKLOGW("ModelScript", "Syntax error (line %d, column %d): %s", _m_line, _m_column, msg)
 

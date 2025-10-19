@@ -5,9 +5,9 @@
 #include "zenkit/Library.hh"
 #include "zenkit/Misc.hh"
 
+#include <cstdint>
 #include <string>
 #include <vector>
-#include <cstdint>
 
 namespace zenkit {
 	class Read;

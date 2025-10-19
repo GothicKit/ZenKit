@@ -1,8 +1,8 @@
 // Copyright © 2022-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #pragma once
-#include "zenkit/Stream.hh"
 #include "zenkit/ModelScript.hh"
+#include "zenkit/Stream.hh"
 
 #include <optional>
 #include <string>

@@ -46,7 +46,7 @@ namespace zenkit {
 			node.plane.z = in->read_float();
 
 			if (version == version_g1) {
-				node.lod = in->read_ubyte();// "lod-flag"
+				node.lod = in->read_ubyte(); // "lod-flag"
 			}
 
 			if ((flags & 0x01) != 0) {

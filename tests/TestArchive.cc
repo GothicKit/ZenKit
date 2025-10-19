@@ -1,8 +1,8 @@
 // Copyright © 2021-2024 GothicKit Contributors.
 // SPDX-License-Identifier: MIT
 #include <zenkit/Archive.hh>
-#include <zenkit/Stream.hh>
 #include <zenkit/Error.hh>
+#include <zenkit/Stream.hh>
 
 #include <doctest/doctest.h>
 

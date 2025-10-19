@@ -178,7 +178,7 @@ namespace zenkit {
 			w.write_object_begin("MeshAndBsp", "", 0);
 
 			Write* raw = w.get_stream();
-			raw->write_uint(version == GameVersion::GOTHIC_1 ?  0x2090000 : 0x4090000);
+			raw->write_uint(version == GameVersion::GOTHIC_1 ? 0x2090000 : 0x4090000);
 
 			uint32_t size_off = raw->tell();
 			raw->write_uint(0);
