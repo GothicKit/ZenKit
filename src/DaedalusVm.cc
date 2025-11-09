@@ -587,6 +587,14 @@ namespace zenkit {
 		return {std::get<DaedalusSymbol*>(v.value), v.index, v.context};
 	}
 
+	bool DaedalusVm::top_is_reference() const {
+		if (_m_stack_ptr == 0) {
+			throw DaedalusVmException {"popping from empty stack"};
+		}
+
+		return _m_stack[_m_stack_ptr - 1].reference;
+	}
+
 	std::shared_ptr<DaedalusInstance> DaedalusVm::pop_instance() {
 		if (_m_stack_ptr == 0) {
 			throw DaedalusVmException {"popping instance from empty stack"};

@@ -331,6 +331,7 @@ namespace zenkit {
 		[[nodiscard]] ZKAPI std::string const& pop_string();
 		[[nodiscard]] ZKAPI std::tuple<DaedalusSymbol*, std::uint8_t, std::shared_ptr<DaedalusInstance>>
 		pop_reference();
+		[[nodiscard]] ZKAPI bool top_is_reference() const;
 
 		/// \brief Registers a Daedalus external function.
 		///
