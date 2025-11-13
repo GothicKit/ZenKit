@@ -4,7 +4,7 @@
 #include <filesystem>
 
 namespace zenkit {
-#ifdef _ZK_WITH_MMAP
+#ifdef _ZK_MMAP_AVAILABLE
 	class Mmap {
 	public:
 		explicit Mmap(std::filesystem::path const& path);
