@@ -77,6 +77,8 @@ namespace zenkit {
 
 	DaedalusVm::DaedalusVm(DaedalusScript&& scr, std::uint8_t flags) : DaedalusScript(std::move(scr)), _m_flags(flags) {
 		_m_temporary_strings = add_temporary_strings_symbol();
+		_m_temporary_strings_free.push(0);
+
 		_m_self_sym = find_symbol_by_name("SELF");
 		_m_other_sym = find_symbol_by_name("OTHER");
 		_m_victim_sym = find_symbol_by_name("VICTIM");
@@ -508,8 +510,12 @@ namespace zenkit {
 	}
 
 	void DaedalusVm::push_string(std::string_view value) {
-		_m_temporary_strings->set_string(value);
-		push_reference(_m_temporary_strings);
+		// We need to push strings without an explicitly attached variable to a
+		// virtual string container variable.
+		auto index = this->get_free_string();
+
+		_m_temporary_strings->set_string(value, index);
+		push_reference(_m_temporary_strings, index);
 	}
 
 	void DaedalusVm::push_float(float value) {
@@ -582,6 +588,13 @@ namespace zenkit {
 
 		if (!v.reference) {
 			throw DaedalusVmException {"tried to pop_reference but frame does not contain a reference."};
+		}
+
+		auto sym = std::get<DaedalusSymbol*>(v.value);
+		if (sym->index() == _m_temporary_strings->index()) {
+			// For virtual strings, we'll mark this string as free when it's popped.
+			// This is likely unreliable but until it causes issues, it'll stay as-is.
+			this->mark_free_string(v.index);
 		}
 
 		return {std::get<DaedalusSymbol*>(v.value), v.index, v.context};
@@ -980,5 +993,26 @@ namespace zenkit {
 		} else if (ref->is_member()) {
 			ZKLOGE("DaedalusVm", "Accessing member \"%s\" without an instance set", ref->name().c_str());
 		}
+	}
+
+	void DaedalusVm::mark_free_string(uint32_t index) {
+		this->_m_temporary_strings_free.push(index);
+	}
+
+	uint32_t DaedalusVm::get_free_string() {
+		if (_m_temporary_strings_free.size() == 0) {
+			// Like a normal array, we'll grow exponentially.
+			auto prev_size = _m_temporary_strings->count();
+			_m_temporary_strings->grow(prev_size * 2);
+
+			// Mark new strings as unused.
+			for (uint32_t i = prev_size; i < _m_temporary_strings->count(); ++i) {
+				_m_temporary_strings_free.push(i);
+			}
+		}
+
+		auto index = this->_m_temporary_strings_free.top();
+		this->_m_temporary_strings_free.pop();
+		return index;
 	}
 } // namespace zenkit

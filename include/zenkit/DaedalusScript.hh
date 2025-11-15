@@ -667,6 +667,7 @@ namespace zenkit {
 			return *_m_registered_to;
 		}
 
+		ZKAPI void grow(uint32_t n);
 	protected:
 		template <typename T>
 		T const* get_member_ptr(std::uint16_t index, DaedalusInstance const* context) const {
