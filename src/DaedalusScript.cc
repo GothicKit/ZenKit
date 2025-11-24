@@ -200,7 +200,7 @@ namespace zenkit {
 		const std::uint32_t first = parent->index() + 1 + parent->count();
 		for (size_t i = first; i < _m_symbols.size(); ++i) {
 			auto& name = _m_symbols[i].name();
-			if(name.find(parent->name()) == 0 && name.size() >= parent->name().size() && name[parent->name().size()] == '.') {
+			if (name.find(parent->name()) == 0 && (name.size() >= parent->name().size()) && name[parent->name().size()] == '.') {
 				continue;
 			}
 			return std::span<DaedalusSymbol>(_m_symbols.begin() + first, _m_symbols.begin() + i);

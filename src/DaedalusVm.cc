@@ -502,20 +502,21 @@ namespace zenkit {
 
 	void DaedalusVm::push_local_variables(DaedalusSymbol const* sym) {
 		bool has_recursion = false;
-		for (auto& i:_m_call_stack)
+		for (auto& i : _m_call_stack)
 			if (i.function == sym) {
 				has_recursion = true;
 				break;
 			}
-		if (!has_recursion)
+		if (!has_recursion) {
 			return;
+		}
 
 		auto params = this->find_parameters_for_function(sym);
 		auto locals = this->find_locals_for_function(sym);
 
 		// estimate stack storage for local copy of variables
 		std::uint32_t locals_size = 0;
-		 for (auto& l:locals) {
+		 for (auto& l : locals) {
 			switch (l.type()) {
 			case DaedalusDataType::VOID:
 				break;
@@ -534,11 +535,11 @@ namespace zenkit {
 			}
 		}
 
-		if (_m_stack_ptr+locals_size > stack_size) {
+		if (_m_stack_ptr + locals_size > stack_size) {
 			throw DaedalusVmException {"stack overflow"};
 		}
 
-		if (_m_stack_ptr<params.size()) {
+		if (_m_stack_ptr < params.size()) {
 			throw DaedalusVmException {"stack underoverflow"};
 		}
 
@@ -548,7 +549,7 @@ namespace zenkit {
 			_m_stack[_m_stack_ptr + locals_size + i] = std::move(_m_stack[_m_stack_ptr + i]);
 		}
 
-		for (auto& l:locals) {
+		for (auto& l : locals) {
 			switch (l.type()) {
 			case DaedalusDataType::VOID:
 				break;
@@ -582,12 +583,13 @@ namespace zenkit {
 
 	void DaedalusVm::pop_local_variables(DaedalusSymbol const* sym) {
 		int has_recursion = 0;
-		for (auto& i:_m_call_stack)
+		for (auto& i : _m_call_stack)
 			if (i.function == sym) {
 				++has_recursion;
 			}
-		if (has_recursion <= 1)
+		if (has_recursion <= 1) {
 			return;
+		}
 
 		DaedalusStackFrame ret;
 		if (sym->has_return()) {
@@ -602,7 +604,7 @@ namespace zenkit {
 			case DaedalusDataType::VOID:
 				break;
 			case DaedalusDataType::FLOAT:
-				for (std::uint32_t r=l.count(); r>0; ) {
+				for (std::uint32_t r = l.count(); r>0; ) {
 					--r;
 					l.set_float(pop_float(), r);
 				}
@@ -620,8 +622,9 @@ namespace zenkit {
 					l.set_string(pop_string(), r);
 				}
 				break;
-			case DaedalusDataType::INSTANCE:
+			case DaedalusDataType::INSTANCE: {
 				l.set_instance(pop_instance());
+			}
 			break;
 			case DaedalusDataType::CLASS:
 			case DaedalusDataType::PROTOTYPE:
