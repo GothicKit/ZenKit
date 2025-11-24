@@ -973,6 +973,12 @@ namespace zenkit {
 			}
 		}
 
+		/// \brief Mark the temporary string at the given index as free.
+		void mark_free_string(uint32_t index);
+
+		/// \brief Obtain a random free temporary string index.
+		uint32_t get_free_string();
+
 	private:
 		std::array<DaedalusStackFrame, stack_size> _m_stack;
 		uint16_t _m_stack_ptr {0};
@@ -993,6 +999,7 @@ namespace zenkit {
 		DaedalusSymbol* _m_item_sym;
 
 		DaedalusSymbol* _m_temporary_strings;
+		std::stack<uint32_t> _m_temporary_strings_free {};
 
 		std::shared_ptr<DaedalusInstance> _m_instance;
 		std::uint32_t _m_pc {0};

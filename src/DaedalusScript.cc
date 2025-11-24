@@ -570,6 +570,39 @@ namespace zenkit {
 		std::get<std::shared_ptr<DaedalusInstance>>(_m_value) = inst;
 	}
 
+	void DaedalusSymbol::grow(uint32_t n) {
+		auto& value = this->_m_value;
+
+		if (std::holds_alternative<std::unique_ptr<std::string[]>>(value)) {
+			auto new_value = std::make_unique<std::string[]>(this->_m_count + n);
+			auto& old_value = std::get<std::unique_ptr<std::string[]>>(value);
+
+			// Move strings from the current value into the new, larger array.
+			for (uint32_t i = 0; i < this->_m_count; ++i) {
+				new_value[i] = std::move(old_value[i]);
+			}
+
+			this->_m_value = std::move(new_value);
+		} else if (std::holds_alternative<std::unique_ptr<std::int32_t[]>>(value)) {
+			auto new_value = std::make_unique<std::int32_t[]>(this->_m_count + n);
+			auto& old_value = std::get<std::unique_ptr<std::int32_t[]>>(value);
+
+			std::copy_n(&old_value[0], this->_m_count, &new_value[0]);
+			this->_m_value = std::move(new_value);
+		} else if (std::holds_alternative<std::unique_ptr<float[]>>(value)) {
+			auto new_value = std::make_unique<float[]>(this->_m_count + n);
+			auto& old_value = std::get<std::unique_ptr<float[]>>(value);
+
+			std::copy_n(&old_value[0], this->_m_count, &new_value[0]);
+			this->_m_value = std::move(new_value);
+		} else {
+			// Cannot grow other symbol types.
+			throw DaedalusIllegalTypeAccess(this, this->type());
+		}
+
+		this->_m_count = this->_m_count + n;
+	}
+
 	void DaedalusSymbol::set_access_trap_enable(bool enable) noexcept {
 		if (enable)
 			_m_flags |= DaedalusSymbolFlag::TRAP_ACCESS;
