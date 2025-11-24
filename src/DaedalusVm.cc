@@ -513,7 +513,28 @@ namespace zenkit {
 		auto params = this->find_parameters_for_function(sym);
 		auto locals = this->find_locals_for_function(sym);
 
-		if (_m_stack_ptr+locals.size() > stack_size) {
+		// estimate stack storage for local copy of variables
+		std::uint32_t locals_size = 0;
+		 for(auto& l:locals) {
+			switch (l.type()) {
+			case DaedalusDataType::VOID:
+				break;
+			case DaedalusDataType::FLOAT:
+			case DaedalusDataType::FUNCTION:
+			case DaedalusDataType::INT:
+			case DaedalusDataType::STRING:
+				locals_size += l.count();
+				break;
+			case DaedalusDataType::INSTANCE:
+				locals_size += 1;
+				break;
+			case DaedalusDataType::CLASS:
+			case DaedalusDataType::PROTOTYPE:
+				break;
+			}
+		}
+
+		if (_m_stack_ptr+locals_size > stack_size) {
 			throw DaedalusVmException {"stack overflow"};
 		}
 
@@ -524,7 +545,7 @@ namespace zenkit {
 		// move function arguments futher
 		_m_stack_ptr -= params.size();
 		for(size_t i=0; i<params.size(); ++i) {
-			_m_stack[_m_stack_ptr+locals.size()+i] = std::move(_m_stack[_m_stack_ptr+i]);
+			_m_stack[_m_stack_ptr+locals_size+i] = std::move(_m_stack[_m_stack_ptr+i]);
 		}
 
 		for(auto& l:locals) {
