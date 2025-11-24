@@ -490,7 +490,6 @@ namespace zenkit {
 			// }
 		}
 
-		if(call.function->has_local_variables_enabled()) {
 		if (call.function->has_local_variables_enabled()) {
 			pop_local_variables(call.function);
 		}
@@ -503,8 +502,8 @@ namespace zenkit {
 
 	void DaedalusVm::push_local_variables(DaedalusSymbol const* sym) {
 		bool has_recursion = false;
-		for(auto& i:_m_call_stack)
 		for (auto& i:_m_call_stack)
+			if (i.function == sym) {
 				has_recursion = true;
 				break;
 			}
@@ -596,7 +595,7 @@ namespace zenkit {
 		}
 
 		auto locals = this->find_locals_for_function(sym);
-		for(size_t i=locals.size(); i>0;) {
+		for (size_t i = locals.size(); i > 0;) {
 			--i;
 			auto& l = locals[i];
 			switch (l.type()) {
