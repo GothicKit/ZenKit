@@ -198,18 +198,18 @@ namespace zenkit {
 
 	std::span<DaedalusSymbol> DaedalusScript::find_locals_for_function(DaedalusSymbol const* parent) {
 		const std::uint32_t first = parent->index() + 1 + parent->count();
-		for (size_t i = first; i<_m_symbols.size(); ++i) {
+		for (size_t i = first; i < _m_symbols.size(); ++i) {
 			auto& name = _m_symbols[i].name();
-			if(name.find(parent->name())==0 && name.size()>=parent->name().size() && name[parent->name().size()]=='.') {
+			if(name.find(parent->name()) == 0 && name.size() >= parent->name().size() && name[parent->name().size()] == '.') {
 				continue;
 			}
 			return std::span<DaedalusSymbol>(_m_symbols.begin() + first, _m_symbols.begin() + i);
 		}
 		return {};
-		}
+	}
 
-	std::span<const DaedalusSymbol> DaedalusScript::find_parameters_for_function(DaedalusSymbol const* parent) const {
-		return std::span<const DaedalusSymbol>(_m_symbols.begin() + parent->index() + 1, _m_symbols.begin() + parent->index() + parent->count() + 1);
+	std::span<DaedalusSymbol const> DaedalusScript::find_parameters_for_function(DaedalusSymbol const* parent) const {
+		return std::span<DaedalusSymbol const>(_m_symbols.begin() + parent->index() + 1, _m_symbols.begin() + parent->index() + parent->count() + 1);
 	}
 
 	std::vector<DaedalusSymbol*> DaedalusScript::find_class_members(DaedalusSymbol const& cls) {

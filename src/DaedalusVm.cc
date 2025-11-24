@@ -455,7 +455,7 @@ namespace zenkit {
 	}
 
 	void DaedalusVm::push_call(DaedalusSymbol const* sym) {
-		if(sym->has_local_variables_enabled()) {
+		if (sym->has_local_variables_enabled()) {
 			push_local_variables(sym);
 		}
 		auto var_count = this->find_parameters_for_function(sym).size();
@@ -491,6 +491,7 @@ namespace zenkit {
 		}
 
 		if(call.function->has_local_variables_enabled()) {
+		if (call.function->has_local_variables_enabled()) {
 			pop_local_variables(call.function);
 		}
 
@@ -503,11 +504,11 @@ namespace zenkit {
 	void DaedalusVm::push_local_variables(DaedalusSymbol const* sym) {
 		bool has_recursion = false;
 		for(auto& i:_m_call_stack)
-			if(i.function==sym) {
+		for (auto& i:_m_call_stack)
 				has_recursion = true;
 				break;
 			}
-		if(!has_recursion)
+		if (!has_recursion)
 			return;
 
 		auto params = this->find_parameters_for_function(sym);
@@ -515,7 +516,7 @@ namespace zenkit {
 
 		// estimate stack storage for local copy of variables
 		std::uint32_t locals_size = 0;
-		 for(auto& l:locals) {
+		 for (auto& l:locals) {
 			switch (l.type()) {
 			case DaedalusDataType::VOID:
 				break;
@@ -544,27 +545,27 @@ namespace zenkit {
 
 		// move function arguments futher
 		_m_stack_ptr -= params.size();
-		for(size_t i=0; i<params.size(); ++i) {
-			_m_stack[_m_stack_ptr+locals_size+i] = std::move(_m_stack[_m_stack_ptr+i]);
+		for (size_t i = 0; i < params.size(); ++i) {
+			_m_stack[_m_stack_ptr + locals_size + i] = std::move(_m_stack[_m_stack_ptr + i]);
 		}
 
-		for(auto& l:locals) {
+		for (auto& l:locals) {
 			switch (l.type()) {
 			case DaedalusDataType::VOID:
 				break;
 			case DaedalusDataType::FLOAT:
-				for(std::uint32_t i=0; i<l.count(); ++i) {
+				for (std::uint32_t i = 0; i < l.count(); ++i) {
 					push_float(l.get_float(i));
 				}
 				break;
 			case DaedalusDataType::FUNCTION:
 			case DaedalusDataType::INT:
-				for(std::uint32_t i=0; i<l.count(); ++i) {
+				for (std::uint32_t i = 0; i < l.count(); ++i) {
 					push_int(l.get_int(i));
 				}
 				break;
 			case DaedalusDataType::STRING:
-				for(std::uint32_t i=0; i<l.count(); ++i) {
+				for (std::uint32_t i = 0; i < l.count(); ++i) {
 					push_string(l.get_string(i));
 				}
 				break;
@@ -582,15 +583,15 @@ namespace zenkit {
 
 	void DaedalusVm::pop_local_variables(DaedalusSymbol const* sym) {
 		int has_recursion = 0;
-		for(auto& i:_m_call_stack)
-			if(i.function==sym) {
+		for (auto& i:_m_call_stack)
+			if (i.function == sym) {
 				++has_recursion;
 			}
-		if(has_recursion<=1)
+		if (has_recursion <= 1)
 			return;
 
 		DaedalusStackFrame ret;
-		if(sym->has_return()) {
+		if (sym->has_return()) {
 			ret = std::move(_m_stack[--_m_stack_ptr]);
 		}
 
@@ -602,20 +603,20 @@ namespace zenkit {
 			case DaedalusDataType::VOID:
 				break;
 			case DaedalusDataType::FLOAT:
-				for(std::uint32_t r=l.count(); r>0; ) {
+				for (std::uint32_t r=l.count(); r>0; ) {
 					--r;
 					l.set_float(pop_float(), r);
 				}
 				break;
 			case DaedalusDataType::FUNCTION:
 			case DaedalusDataType::INT:
-				for(std::uint32_t r=l.count(); r>0; ) {
+				for (std::uint32_t r = l.count(); r>0; ) {
 					--r;
 					l.set_int(pop_int(), r);
 				}
 				break;
 			case DaedalusDataType::STRING:
-				for(std::uint32_t r=l.count(); r>0; ) {
+				for (std::uint32_t r = l.count(); r>0; ) {
 					--r;
 					l.set_string(pop_string(), r);
 				}
@@ -630,7 +631,7 @@ namespace zenkit {
 			}
 		}
 
-		if(sym->has_return()) {
+		if (sym->has_return()) {
 			_m_stack[_m_stack_ptr++] = std::move(ret);
 		}
 	}
