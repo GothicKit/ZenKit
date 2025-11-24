@@ -455,12 +455,15 @@ namespace zenkit {
 	}
 
 	void DaedalusVm::push_call(DaedalusSymbol const* sym) {
+		if(sym->has_local_variables_enabled()) {
+			push_local_variables(sym);
+		}
 		auto var_count = this->find_parameters_for_function(sym).size();
-		_m_call_stack.push({sym, _m_pc, _m_stack_ptr - static_cast<uint32_t>(var_count), _m_instance});
+		_m_call_stack.push_back({sym, _m_pc, _m_stack_ptr - static_cast<uint32_t>(var_count), _m_instance});
 	}
 
 	void DaedalusVm::pop_call() {
-		auto const& call = _m_call_stack.top();
+		auto const& call = _m_call_stack.back();
 
 		// First, try to fix up the stack.
 		if (!call.function->has_return()) {
@@ -487,10 +490,128 @@ namespace zenkit {
 			// }
 		}
 
+		if(call.function->has_local_variables_enabled()) {
+			pop_local_variables(call.function);
+		}
+
 		// Second, reset PC and context, then remove the call stack frame
 		_m_pc = call.program_counter;
 		_m_instance = call.context;
-		_m_call_stack.pop();
+		_m_call_stack.pop_back();
+	}
+
+	void DaedalusVm::push_local_variables(DaedalusSymbol const* sym) {
+		bool has_recursion = false;
+		for(auto& i:_m_call_stack)
+			if(i.function==sym) {
+				has_recursion = true;
+				break;
+			}
+		if(!has_recursion)
+			return;
+
+		auto params = this->find_parameters_for_function(sym);
+		auto locals = this->find_locals_for_function(sym);
+
+		if (_m_stack_ptr+locals.size() > stack_size) {
+			throw DaedalusVmException {"stack overflow"};
+		}
+
+		if (_m_stack_ptr<params.size()) {
+			throw DaedalusVmException {"stack underoverflow"};
+		}
+
+		// move function arguments futher
+		_m_stack_ptr -= params.size();
+		for(size_t i=0; i<params.size(); ++i) {
+			_m_stack[_m_stack_ptr+locals.size()+i] = std::move(_m_stack[_m_stack_ptr+i]);
+		}
+
+		for(auto& l:locals) {
+			switch (l.type()) {
+			case DaedalusDataType::VOID:
+				break;
+			case DaedalusDataType::FLOAT:
+				for(std::uint32_t i=0; i<l.count(); ++i) {
+					push_float(l.get_float(i));
+				}
+				break;
+			case DaedalusDataType::FUNCTION:
+			case DaedalusDataType::INT:
+				for(std::uint32_t i=0; i<l.count(); ++i) {
+					push_int(l.get_int(i));
+				}
+				break;
+			case DaedalusDataType::STRING:
+				for(std::uint32_t i=0; i<l.count(); ++i) {
+					push_string(l.get_string(i));
+				}
+				break;
+			case DaedalusDataType::INSTANCE:
+				push_instance(l.get_instance());
+				break;
+			case DaedalusDataType::CLASS:
+			case DaedalusDataType::PROTOTYPE:
+				throw DaedalusVmException {"unexpected"};
+				break;
+			}
+		}
+		_m_stack_ptr += params.size();
+	}
+
+	void DaedalusVm::pop_local_variables(DaedalusSymbol const* sym) {
+		int has_recursion = 0;
+		for(auto& i:_m_call_stack)
+			if(i.function==sym) {
+				++has_recursion;
+			}
+		if(has_recursion<=1)
+			return;
+
+		DaedalusStackFrame ret;
+		if(sym->has_return()) {
+			ret = std::move(_m_stack[--_m_stack_ptr]);
+		}
+
+		auto locals = this->find_locals_for_function(sym);
+		for(size_t i=locals.size(); i>0;) {
+			--i;
+			auto& l = locals[i];
+			switch (l.type()) {
+			case DaedalusDataType::VOID:
+				break;
+			case DaedalusDataType::FLOAT:
+				for(std::uint32_t r=l.count(); r>0; ) {
+					--r;
+					l.set_float(pop_float(), r);
+				}
+				break;
+			case DaedalusDataType::FUNCTION:
+			case DaedalusDataType::INT:
+				for(std::uint32_t r=l.count(); r>0; ) {
+					--r;
+					l.set_int(pop_int(), r);
+				}
+				break;
+			case DaedalusDataType::STRING:
+				for(std::uint32_t r=l.count(); r>0; ) {
+					--r;
+					l.set_string(pop_string(), r);
+				}
+				break;
+			case DaedalusDataType::INSTANCE:
+				l.set_instance(pop_instance());
+			break;
+			case DaedalusDataType::CLASS:
+			case DaedalusDataType::PROTOTYPE:
+				throw DaedalusVmException {"unexpected"};
+				break;
+			}
+		}
+
+		if(sym->has_return()) {
+			_m_stack[_m_stack_ptr++] = std::move(ret);
+		}
 	}
 
 	void DaedalusVm::push_int(std::int32_t value) {
@@ -661,12 +782,12 @@ namespace zenkit {
 			// pop all parameters from the stack
 			auto params = find_parameters_for_function(&sym);
 			for (int i = static_cast<int>(params.size()) - 1; i >= 0; --i) {
-				auto par = params[static_cast<unsigned>(i)];
-				if (par->type() == DaedalusDataType::INT)
+				auto& par = params[static_cast<unsigned>(i)];
+				if (par.type() == DaedalusDataType::INT)
 					(void) v.pop_int();
-				else if (par->type() == DaedalusDataType::FLOAT)
+				else if (par.type() == DaedalusDataType::FLOAT)
 					(void) v.pop_float();
-				else if (par->type() == DaedalusDataType::INSTANCE || par->type() == DaedalusDataType::STRING)
+				else if (par.type() == DaedalusDataType::INSTANCE || par.type() == DaedalusDataType::STRING)
 					(void) v.pop_reference();
 			}
 

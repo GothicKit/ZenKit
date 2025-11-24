@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
+#include <span>
 #include <string>
 #include <typeinfo>
 #include <unordered_map>
@@ -58,6 +59,7 @@ namespace zenkit {
 		static constexpr auto EXTERNAL = 1U << 3U;    ///< The symbol refers to an external function.
 		static constexpr auto MERGED = 1U << 4U;      ///< Unused.
 		static constexpr auto TRAP_ACCESS = 1U << 6U; ///< VM should call trap callback, when symbol accessed.
+		static constexpr auto FUNC_LOCALS = 1U << 7U; ///< VM should call trap callback, when symbol accessed.
 
 		// Deprecated entries.
 		ZKREM("renamed to DaedalusSymbolFlag::CONST") static constexpr auto const_ = CONST;
@@ -556,6 +558,10 @@ namespace zenkit {
 		/// \param enable true to enable and false to disable
 		ZKAPI void set_access_trap_enable(bool enable) noexcept;
 
+		/// \brief Allows function associated with this symbol to stash local variables on a stack during recursion.
+		/// \param enable true to enable and false to disable
+		ZKAPI void set_local_variables_enable(bool enable) noexcept;
+
 		/// \brief Tests whether the symbol is a constant.
 		/// \return `true` if the symbol is a constant, `false` if not.
 		[[nodiscard]] ZKAPI bool is_const() const noexcept {
@@ -596,6 +602,12 @@ namespace zenkit {
 		/// \return return `true` if the symbol has a return value, `false` if not.
 		[[nodiscard]] ZKAPI bool has_return() const noexcept {
 			return (_m_flags & DaedalusSymbolFlag::RETURN) != 0;
+		}
+
+		/// \brief brief Tests whether the symbol has local-variables enabled.
+		/// \return return `true` if enabled, `false` if not.
+		[[nodiscard]] ZKAPI bool has_local_variables_enabled() const noexcept {
+			return (_m_flags & DaedalusSymbolFlag::FUNC_LOCALS) != 0;
 		}
 
 		/// \return The name of the symbol.
@@ -799,7 +811,7 @@ namespace zenkit {
 		/// \brief Looks for parameters of the given function symbol. Only works for external functions.
 		/// \param parent The function symbol to get the parameter symbols for.
 		/// \return A list of function parameter symbols.
-		[[nodiscard]] ZKAPI std::vector<DaedalusSymbol const*>
+		[[nodiscard]] ZKAPI std::span<DaedalusSymbol const>
 		find_parameters_for_function(DaedalusSymbol const* parent) const;
 
 		/// \brief Retrieves the symbol with the given \p address set
@@ -825,7 +837,12 @@ namespace zenkit {
 		/// \brief Looks for parameters of the given function symbol. Only works for external functions.
 		/// \param parent The function symbol to get the parameter symbols for.
 		/// \return A list of function parameter symbols.
-		[[nodiscard]] ZKAPI std::vector<DaedalusSymbol*> find_parameters_for_function(DaedalusSymbol const* parent);
+		[[nodiscard]] ZKAPI std::span<DaedalusSymbol> find_parameters_for_function(DaedalusSymbol const* parent);
+
+		/// \brief Looks for local-variables of the given function symbol.
+		/// \param parent The function symbol to get the parameter symbols for.
+		/// \return A list of function local-variable symbols.
+		[[nodiscard]] ZKAPI std::span<DaedalusSymbol> find_locals_for_function(DaedalusSymbol const* parent);
 
 		/// \brief Retrieves the symbol with the given \p name.
 		/// \param name The name of the symbol to get.
