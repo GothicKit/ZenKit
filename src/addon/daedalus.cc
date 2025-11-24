@@ -177,11 +177,15 @@ void zenkit::INpc::register_(DaedalusScript& s) {
 	s.register_member("C_NPC.LP", &INpc::lp);
 
 	// Gothic 2 only
-	if (s.find_symbol_by_name("C_NPC.EFFECT") != nullptr) {
-		s.register_member("C_NPC.EFFECT", &INpc::effect);
+	if (s.find_symbol_by_name("C_NPC.HITCHANCE") != nullptr) {
 		s.register_member("C_NPC.HITCHANCE", &INpc::hitchance);
 		s.register_member("C_NPC.BODYSTATEINTERRUPTABLEOVERRIDE", &INpc::bodystate_interruptable_override);
 		s.register_member("C_NPC.NOFOCUS", &INpc::no_focus);
+	}
+
+	// Gothic 2 Night of the Raven only
+	if (s.find_symbol_by_name("C_NPC.EFFECT") != nullptr) {
+		s.register_member("C_NPC.EFFECT", &INpc::effect);
 	}
 }
 
@@ -244,13 +248,17 @@ void zenkit::IItem::register_(DaedalusScript& s) {
 	s.register_member("C_ITEM.COUNT", &IItem::count);
 
 	// Gothic 2 only
-	if (s.find_symbol_by_name("C_ITEM.EFFECT") != nullptr) {
-		s.register_member("C_ITEM.EFFECT", &IItem::effect);
+	if (s.find_symbol_by_name("C_ITEM.INV_ZBIAS") != nullptr) {
 		s.register_member("C_ITEM.INV_ZBIAS", &IItem::inv_zbias);
 		s.register_member("C_ITEM.INV_ROTX", &IItem::inv_rot_x);
 		s.register_member("C_ITEM.INV_ROTY", &IItem::inv_rot_y);
 		s.register_member("C_ITEM.INV_ROTZ", &IItem::inv_rot_z);
 		s.register_member("C_ITEM.INV_ANIMATE", &IItem::inv_animate);
+	}
+
+	// Gothic 2 Night of the Raven only
+	if (s.find_symbol_by_name("C_ITEM.EFFECT") != nullptr) {
+		s.register_member("C_ITEM.EFFECT", &IItem::effect);
 	}
 }
 
