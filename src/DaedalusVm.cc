@@ -516,7 +516,7 @@ namespace zenkit {
 
 		// estimate stack storage for local copy of variables
 		std::uint32_t locals_size = 0;
-		 for (auto& l : locals) {
+		for (auto& l : locals) {
 			switch (l.type()) {
 			case DaedalusDataType::VOID:
 				break;
@@ -604,28 +604,27 @@ namespace zenkit {
 			case DaedalusDataType::VOID:
 				break;
 			case DaedalusDataType::FLOAT:
-				for (std::uint32_t r = l.count(); r>0; ) {
+				for (std::uint32_t r = l.count(); r > 0; ) {
 					--r;
 					l.set_float(pop_float(), r);
 				}
 				break;
 			case DaedalusDataType::FUNCTION:
 			case DaedalusDataType::INT:
-				for (std::uint32_t r = l.count(); r>0; ) {
+				for (std::uint32_t r = l.count(); r > 0; ) {
 					--r;
 					l.set_int(pop_int(), r);
 				}
 				break;
 			case DaedalusDataType::STRING:
-				for (std::uint32_t r = l.count(); r>0; ) {
+				for (std::uint32_t r = l.count(); r > 0; ) {
 					--r;
 					l.set_string(pop_string(), r);
 				}
 				break;
-			case DaedalusDataType::INSTANCE: {
+			case DaedalusDataType::INSTANCE:
 				l.set_instance(pop_instance());
-			}
-			break;
+				break;
 			case DaedalusDataType::CLASS:
 			case DaedalusDataType::PROTOTYPE:
 				throw DaedalusVmException {"unexpected"};
