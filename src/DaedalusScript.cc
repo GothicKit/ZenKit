@@ -193,14 +193,15 @@ namespace zenkit {
 	}
 
 	std::span<DaedalusSymbol> DaedalusScript::find_parameters_for_function(DaedalusSymbol const* parent) {
-		return std::span<DaedalusSymbol>(_m_symbols.begin() + parent->index() + 1, _m_symbols.begin() + parent->index() + parent->count() + 1);
+		return std::span<DaedalusSymbol>(_m_symbols.begin() + parent->index() + 1,
+		                                 _m_symbols.begin() + parent->index() + parent->count() + 1);
 	}
 
 	std::span<DaedalusSymbol> DaedalusScript::find_locals_for_function(DaedalusSymbol const* parent) {
 		std::uint32_t const first = parent->index() + 1 + parent->count();
 		for (size_t i = first; i < _m_symbols.size(); ++i) {
 			auto& name = _m_symbols[i].name();
-			if (name.find(parent->name()) == 0 && (name.size() >= parent->name().size()) &&
+			if (name.find(parent->name()) == 0 && name.size() >= parent->name().size() &&
 			    name[parent->name().size()] == '.') {
 				continue;
 			}
