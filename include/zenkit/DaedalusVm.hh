@@ -23,13 +23,11 @@ namespace zenkit {
 	};
 
 	template <typename T>
-	static constexpr bool is_instance_ptr_v = false;
+	concept DaedalusInstancePointer = std::same_as<T, std::shared_ptr<typename T::element_type>> &&
+	    std::derived_from<typename T::element_type, DaedalusInstance>;
 
 	template <typename T>
-	static constexpr bool is_instance_ptr_v<std::shared_ptr<T>> = std::is_base_of_v<DaedalusInstance, T>;
-
-	template <typename T>
-	static constexpr bool is_raw_instance_ptr_v = std::is_base_of_v<DaedalusInstance, std::remove_pointer_t<T>>;
+	concept DaedalusInstancePointerRaw = std::derived_from<std::remove_pointer_t<T>, DaedalusInstance>;
 
 	/// \brief An exception thrown if the definition of an external is incorrect.
 	class DaedalusIllegalExternalDefinition : public DaedalusScriptError {
@@ -143,7 +141,7 @@ namespace zenkit {
 				                           std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
 			}
 
-			if constexpr (!std::is_same_v<R, IgnoreReturnValue>) {
+			if constexpr (!std::same_as<R, IgnoreReturnValue>) {
 				check_call_return_type<R>(sym);
 			}
 
@@ -153,14 +151,14 @@ namespace zenkit {
 
 			unsafe_call(sym);
 
-			if constexpr (std::is_same_v<R, IgnoreReturnValue>) {
+			if constexpr (std::same_as<R, IgnoreReturnValue>) {
 				if (sym->has_return()) {
 					// Make sure to still pop the return value off of the stack.
 					_m_stack_ptr--;
 				}
 
 				return {};
-			} else if constexpr (!std::is_same_v<R, void>) {
+			} else if constexpr (!std::same_as<R, void>) {
 				return pop_call_return_value<R>();
 			}
 		}
@@ -174,8 +172,8 @@ namespace zenkit {
 		/// \param name The name of the instance to initialize (ie. 'STT_309_WHISTLER')
 		/// \return The initialized instance.
 		template <typename _instance_t>
-		std::enable_if_t<std::is_base_of_v<DaedalusInstance, _instance_t>, std::shared_ptr<_instance_t>>
-		init_instance(std::string_view name) {
+		    requires std::derived_from<_instance_t, DaedalusInstance>
+		std::shared_ptr<_instance_t> init_instance(std::string_view name) {
 			return init_instance<_instance_t>(find_symbol_by_name(name));
 		}
 
@@ -184,8 +182,8 @@ namespace zenkit {
 		/// \param instance The instance to initialize.
 		/// \param name The name of the instance to initialize (ie. 'STT_309_WHISTLER')
 		template <typename _instance_t>
-		std::enable_if_t<std::is_base_of_v<DaedalusInstance, _instance_t>, void>
-		init_instance(std::shared_ptr<_instance_t> const& instance, std::string_view name) {
+		    requires std::derived_from<_instance_t, DaedalusInstance>
+		void init_instance(std::shared_ptr<_instance_t> const& instance, std::string_view name) {
 			init_instance<_instance_t>(instance, find_symbol_by_name(name));
 		}
 
@@ -198,8 +196,8 @@ namespace zenkit {
 		/// \param sym The symbol to initialize.
 		/// \return The initialized instance.
 		template <typename _instance_t>
-		std::enable_if_t<std::is_base_of_v<DaedalusInstance, _instance_t>, std::shared_ptr<_instance_t>>
-		init_instance(DaedalusSymbol* sym) {
+		    requires std::derived_from<_instance_t, DaedalusInstance>
+		std::shared_ptr<_instance_t> init_instance(DaedalusSymbol* sym) {
 			// create the instance
 			auto inst = std::make_shared<_instance_t>();
 			init_instance(inst, sym);
@@ -211,8 +209,8 @@ namespace zenkit {
 		/// \param instance The instance to initialize.
 		/// \param sym The symbol to initialize.
 		template <typename _instance_t>
-		std::enable_if_t<std::is_base_of_v<DaedalusInstance, _instance_t>, void>
-		init_instance(std::shared_ptr<_instance_t> const& instance, DaedalusSymbol* sym) {
+		    requires std::derived_from<_instance_t, DaedalusInstance>
+		void init_instance(std::shared_ptr<_instance_t> const& instance, DaedalusSymbol* sym) {
 			// Perform initial instance setup
 			this->allocate_instance(instance, sym);
 
@@ -241,8 +239,8 @@ namespace zenkit {
 		/// \param name The name of the instance to initialize (ie. 'STT_309_WHISTLER')
 		/// \return The initialized instance.
 		template <typename _instance_t>
-		std::enable_if_t<std::is_base_of_v<DaedalusInstance, _instance_t>, std::shared_ptr<_instance_t>>
-		allocate_instance(std::string_view name) {
+		    requires std::derived_from<_instance_t, DaedalusInstance>
+		std::shared_ptr<_instance_t> allocate_instance(std::string_view name) {
 			return allocate_instance<_instance_t>(find_symbol_by_name(name));
 		}
 
@@ -255,8 +253,8 @@ namespace zenkit {
 		/// \param instance The instance to initialize.
 		/// \param name The name of the instance to initialize (ie. 'STT_309_WHISTLER')
 		template <typename _instance_t>
-		std::enable_if_t<std::is_base_of_v<DaedalusInstance, _instance_t>, void>
-		allocate_instance(std::shared_ptr<_instance_t> const& instance, std::string_view name) {
+		    requires std::derived_from<_instance_t, DaedalusInstance>
+		void allocate_instance(std::shared_ptr<_instance_t> const& instance, std::string_view name) {
 			allocate_instance<_instance_t>(instance, find_symbol_by_name(name));
 		}
 
@@ -269,8 +267,8 @@ namespace zenkit {
 		/// \param sym The symbol to initialize.
 		/// \return The initialized instance.
 		template <typename _instance_t>
-		std::enable_if_t<std::is_base_of_v<DaedalusInstance, _instance_t>, std::shared_ptr<_instance_t>>
-		allocate_instance(DaedalusSymbol* sym) {
+		    requires std::derived_from<_instance_t, DaedalusInstance>
+		std::shared_ptr<_instance_t> allocate_instance(DaedalusSymbol* sym) {
 			// create the instance
 			auto inst = std::make_shared<_instance_t>();
 			allocate_instance(inst, sym);
@@ -286,8 +284,8 @@ namespace zenkit {
 		/// \param instance The instance to initialize.
 		/// \param sym The symbol to initialize.
 		template <typename _instance_t>
-		std::enable_if_t<std::is_base_of_v<DaedalusInstance, _instance_t>, void>
-		allocate_instance(std::shared_ptr<_instance_t> const& instance, DaedalusSymbol* sym) {
+		    requires std::derived_from<_instance_t, DaedalusInstance>
+		void allocate_instance(std::shared_ptr<_instance_t> const& instance, DaedalusSymbol* sym) {
 			if (sym == nullptr) {
 				throw DaedalusVmException {"Cannot init instance: not found"};
 			}
@@ -420,16 +418,16 @@ namespace zenkit {
 
 			if (!sym->is_external()) throw DaedalusVmException {"symbol is not external"};
 
-			if constexpr (!std::is_same_v<void, R>) {
+			if constexpr (!std::same_as<void, R>) {
 				if (!sym->has_return()) throw DaedalusIllegalExternalReturnType(sym, "<non-void>");
-				if constexpr (is_instance_ptr_v<R>) {
+				if constexpr (DaedalusInstancePointer<R>) {
 					if (sym->rtype() != DaedalusDataType::INSTANCE)
 						throw DaedalusIllegalExternalReturnType(sym, "instance");
-				} else if constexpr (std::is_floating_point_v<R>) {
+				} else if constexpr (std::floating_point<R>) {
 					if (sym->rtype() != DaedalusDataType::FLOAT) throw DaedalusIllegalExternalReturnType(sym, "float");
-				} else if constexpr (std::is_convertible_v<int32_t, R>) {
+				} else if constexpr (std::convertible_to<int32_t, R>) {
 					if (sym->rtype() != DaedalusDataType::INT) throw DaedalusIllegalExternalReturnType(sym, "int");
-				} else if constexpr (std::is_convertible_v<std::string, R>) {
+				} else if constexpr (std::convertible_to<std::string, R>) {
 					if (sym->rtype() != DaedalusDataType::STRING)
 						throw DaedalusIllegalExternalReturnType(sym, "string");
 				} else {
@@ -458,7 +456,7 @@ namespace zenkit {
 
 			// *evil template hacking ensues*
 			_m_externals[sym] = [callback](DaedalusVm& machine) {
-				if constexpr (std::is_same_v<void, R>) {
+				if constexpr (std::same_as<void, R>) {
 					if constexpr (sizeof...(P) > 0) {
 						auto v = machine.pop_values_for_external<P...>();
 						std::apply(callback, v);
@@ -507,16 +505,16 @@ namespace zenkit {
 			if (sym == nullptr) throw DaedalusVmException {"symbol not found"};
 			if (sym->is_external()) throw DaedalusVmException {"symbol is already an external"};
 
-			if constexpr (!std::is_same_v<void, R>) {
+			if constexpr (!std::same_as<void, R>) {
 				if (!sym->has_return()) throw DaedalusIllegalExternalReturnType(sym, "<non-void>");
-				if constexpr (is_instance_ptr_v<R>) {
+				if constexpr (DaedalusInstancePointer<R>) {
 					if (sym->rtype() != DaedalusDataType::INSTANCE)
 						throw DaedalusIllegalExternalReturnType(sym, "instance");
-				} else if constexpr (std::is_floating_point_v<R>) {
+				} else if constexpr (std::floating_point<R>) {
 					if (sym->rtype() != DaedalusDataType::FLOAT) throw DaedalusIllegalExternalReturnType(sym, "float");
-				} else if constexpr (std::is_convertible_v<int32_t, R>) {
+				} else if constexpr (std::convertible_to<int32_t, R>) {
 					if (sym->rtype() != DaedalusDataType::INT) throw DaedalusIllegalExternalReturnType(sym, "int");
-				} else if constexpr (std::is_convertible_v<std::string, R>) {
+				} else if constexpr (std::convertible_to<std::string, R>) {
 					if (sym->rtype() != DaedalusDataType::STRING)
 						throw DaedalusIllegalExternalReturnType(sym, "string");
 				} else {
@@ -546,7 +544,7 @@ namespace zenkit {
 			// *evil template hacking ensues*
 			_m_function_overrides[sym->address()] = [callback, sym](DaedalusVm& machine) {
 				machine.push_call(sym);
-				if constexpr (std::is_same_v<void, R>) {
+				if constexpr (std::same_as<void, R>) {
 					if constexpr (sizeof...(P) > 0) {
 						auto v = machine.pop_values_for_external<P...>();
 						std::apply(callback, v);
@@ -746,17 +744,18 @@ namespace zenkit {
 		/// \note Requires that sizeof...(Px) + 1 == defined.size().
 		template <int32_t i, typename P, typename... Px>
 		void check_external_params(std::span<DaedalusSymbol> const& defined) {
-			if constexpr (is_instance_ptr_v<P> || std::is_same_v<DaedalusSymbol*, P> || is_raw_instance_ptr_v<P>) {
+			if constexpr (DaedalusInstancePointer<P> || std::same_as<DaedalusSymbol*, P> ||
+			              DaedalusInstancePointerRaw<P>) {
 				if (defined[i].type() != DaedalusDataType::INSTANCE)
 					throw DaedalusIllegalExternalParameter(&defined[i], "instance", i + 1);
-			} else if constexpr (std::is_same_v<float, P>) {
+			} else if constexpr (std::same_as<float, P>) {
 				if (defined[i].type() != DaedalusDataType::FLOAT)
 					throw DaedalusIllegalExternalParameter(&defined[i], "float", i + 1);
-			} else if constexpr (std::is_same_v<int32_t, P> || std::is_same_v<bool, P> ||
-			                     std::is_same_v<DaedalusFunction, P>) {
+			} else if constexpr (std::same_as<int32_t, P> || std::same_as<bool, P> ||
+			                     std::same_as<DaedalusFunction, P>) {
 				if (defined[i].type() != DaedalusDataType::INT && defined[i].type() != DaedalusDataType::FUNCTION)
 					throw DaedalusIllegalExternalParameter(&defined[i], "int/func", i + 1);
-			} else if constexpr (std::is_same_v<std::string_view, P>) {
+			} else if constexpr (std::same_as<std::string_view, P>) {
 				if (defined[i].type() != DaedalusDataType::STRING)
 					throw DaedalusIllegalExternalParameter(&defined[i], "string", i + 1);
 			}
@@ -775,16 +774,19 @@ namespace zenkit {
 		///            DaedalusSymbol*, std::string_view)
 		/// \return The value popped.
 		template <typename T>
-		std::enable_if_t<is_instance_ptr_v<T> || std::is_same_v<T, float> || std::is_same_v<T, std::int32_t> ||
-		                     std::is_same_v<T, bool> || std::is_same_v<T, std::string_view> ||
-		                     std::is_same_v<T, DaedalusSymbol*> || is_raw_instance_ptr_v<T> ||
-		                     std::is_same_v<T, DaedalusFunction>,
-		                 T>
-		pop_value_for_external() {
-			if constexpr (is_instance_ptr_v<T>) {
+		    requires(std::same_as<T, std::string_view> || //
+		             std::same_as<T, float> ||            //
+		             std::same_as<T, int32_t> ||          //
+		             std::same_as<T, bool> ||             //
+		             std::same_as<T, DaedalusSymbol*> ||  //
+		             std::same_as<T, DaedalusFunction> || //
+		             DaedalusInstancePointer<T> ||        //
+		             DaedalusInstancePointerRaw<T>)
+		T pop_value_for_external() {
+			if constexpr (DaedalusInstancePointer<T>) {
 				auto r = pop_instance();
 
-				if (r != nullptr && !std::is_same_v<T, std::shared_ptr<DaedalusInstance>>) {
+				if (r != nullptr && !std::same_as<T, std::shared_ptr<DaedalusInstance>>) {
 					auto& expected = typeid(typename T::element_type);
 
 					if (!r->_m_type) {
@@ -799,10 +801,10 @@ namespace zenkit {
 				}
 
 				return std::static_pointer_cast<typename T::element_type>(r);
-			} else if constexpr (is_raw_instance_ptr_v<T>) {
+			} else if constexpr (DaedalusInstancePointerRaw<T>) {
 				auto r = pop_instance();
 
-				if (r != nullptr && !std::is_same_v<T, DaedalusInstance*>) {
+				if (r != nullptr && !std::same_as<T, DaedalusInstance*>) {
 					auto& expected = typeid(std::remove_pointer_t<T>);
 
 					if (!r->_m_type) {
@@ -817,17 +819,17 @@ namespace zenkit {
 				}
 
 				return reinterpret_cast<T>(r.get());
-			} else if constexpr (std::is_same_v<float, T>) {
+			} else if constexpr (std::same_as<float, T>) {
 				return pop_float();
-			} else if constexpr (std::is_same_v<std::int32_t, T>) {
+			} else if constexpr (std::same_as<std::int32_t, T>) {
 				return pop_int();
-			} else if constexpr (std::is_same_v<bool, T>) {
+			} else if constexpr (std::same_as<bool, T>) {
 				return pop_int() != 0;
-			} else if constexpr (std::is_same_v<std::string_view, T>) {
+			} else if constexpr (std::same_as<std::string_view, T>) {
 				return pop_string();
-			} else if constexpr (std::is_same_v<DaedalusSymbol*, T>) {
+			} else if constexpr (std::same_as<DaedalusSymbol*, T>) {
 				return std::get<0>(pop_reference());
-			} else if constexpr (std::is_same_v<DaedalusFunction, T>) {
+			} else if constexpr (std::same_as<DaedalusFunction, T>) {
 				auto symbol_id = static_cast<uint32_t>(pop_int());
 
 				auto* sym = find_symbol_by_index(symbol_id);
@@ -854,20 +856,22 @@ namespace zenkit {
 		/// \tparam T The type of value to push.
 		/// \param v The value to push.
 		template <typename T>
-		std::enable_if_t<is_instance_ptr_v<T> || std::is_convertible_v<T, float> ||
-		                     std::is_convertible_v<T, std::int32_t> || std::is_same_v<T, std::string> ||
-		                     std::is_same_v<T, std::string_view> || std::is_same_v<T, DaedalusFunction>,
-		                 void>
-		push_value_from_external(T v) { // clang-format on
-			if constexpr (is_instance_ptr_v<T>) {
+		    requires(DaedalusInstancePointer<T> ||           //
+		             std::convertible_to<T, float> ||        //
+		             std::convertible_to<T, std::int32_t> || //
+		             std::same_as<T, std::string> ||         //
+		             std::same_as<T, std::string_view> ||    //
+		             std::same_as<T, DaedalusFunction>)
+		void push_value_from_external(T v) { // clang-format on
+			if constexpr (DaedalusInstancePointer<T>) {
 				push_instance(std::static_pointer_cast<DaedalusInstance>(v));
-			} else if constexpr (std::is_floating_point_v<T>) {
+			} else if constexpr (std::floating_point<T>) {
 				push_float(static_cast<float>(v));
-			} else if constexpr (std::is_convertible_v<std::int32_t, T>) {
+			} else if constexpr (std::convertible_to<std::int32_t, T>) {
 				push_int(static_cast<std::int32_t>(v));
-			} else if constexpr (std::is_same_v<DaedalusFunction, T>) {
+			} else if constexpr (std::same_as<DaedalusFunction, T>) {
 				push_int(static_cast<std::int32_t>(v.value->index()));
-			} else if constexpr (std::is_same_v<T, std::string> || std::is_same_v<T, std::string_view>) {
+			} else if constexpr (std::same_as<T, std::string> || std::same_as<T, std::string_view>) {
 				push_string(v);
 			} else {
 				throw DaedalusVmException {"push: unsupported stack frame type"};
@@ -897,53 +901,55 @@ namespace zenkit {
 		}
 
 		template <typename R>
-		std::enable_if_t<is_instance_ptr_v<R> || std::is_same_v<R, float> || std::is_same_v<R, std::int32_t> ||
-		                     std::is_same_v<R, DaedalusFunction> || std::is_same_v<R, std::string> ||
-		                     std::is_same_v<R, void>,
-		                 void>
-		check_call_return_type(DaedalusSymbol const* sym) {
-			if constexpr (is_instance_ptr_v<R>) {
+		    requires(DaedalusInstancePointer<R> ||        //
+		             std::same_as<R, float> ||            //
+		             std::same_as<R, std::int32_t> ||     //
+		             std::same_as<R, DaedalusFunction> || //
+		             std::same_as<R, std::string> ||      //
+		             std::same_as<R, void>)
+		void check_call_return_type(DaedalusSymbol const* sym) {
+			if constexpr (DaedalusInstancePointer<R>) {
 				if (sym->rtype() != DaedalusDataType::INSTANCE)
 					throw DaedalusVmException {"invalid return type for function " + sym->name()};
-			} else if constexpr (std::is_same_v<float, R>) {
+			} else if constexpr (std::same_as<float, R>) {
 				if (sym->rtype() != DaedalusDataType::FLOAT)
 					throw DaedalusVmException {"invalid return type for function " + sym->name()};
-			} else if constexpr (std::is_same_v<int32_t, R> || std::is_same_v<DaedalusFunction, R>) {
+			} else if constexpr (std::same_as<int32_t, R> || std::same_as<DaedalusFunction, R>) {
 				if (sym->rtype() != DaedalusDataType::INT && sym->rtype() != DaedalusDataType::FUNCTION)
 					throw DaedalusVmException {"invalid return type for function " + sym->name()};
-			} else if constexpr (std::is_same_v<std::string, R>) {
+			} else if constexpr (std::same_as<std::string, R>) {
 				if (sym->rtype() != DaedalusDataType::STRING)
 					throw DaedalusVmException {"invalid return type for function " + sym->name()};
-			} else if constexpr (std::is_same_v<void, R>) {
+			} else if constexpr (std::same_as<void, R>) {
 				if (sym->rtype() != DaedalusDataType::VOID)
 					throw DaedalusVmException {"invalid return type for function " + sym->name()};
 			}
 		}
 
 		template <int32_t i, typename P, typename... Px>
-		std::enable_if_t<is_instance_ptr_v<P> || std::is_same_v<std::remove_reference_t<P>, float> ||
-		                     std::is_same_v<std::remove_reference_t<P>, std::int32_t> ||
-		                     std::is_same_v<std::remove_reference_t<P>, bool> ||
-		                     std::is_same_v<std::remove_reference_t<P>, std::string_view> ||
-		                     std::is_same_v<std::remove_reference_t<P>, DaedalusSymbol*>,
-		                 void>
-		push_call_parameters(std::span<DaedalusSymbol> const& defined, P value, Px... more) { // clang-format on
-			if constexpr (is_instance_ptr_v<P> || std::is_same_v<DaedalusSymbol*, P>) {
+		    requires(DaedalusInstancePointer<P> ||                                 //
+		             std::same_as<std::remove_reference_t<P>, float> ||            //
+		             std::same_as<std::remove_reference_t<P>, std::int32_t> ||     //
+		             std::same_as<std::remove_reference_t<P>, bool> ||             //
+		             std::same_as<std::remove_reference_t<P>, std::string_view> || //
+		             std::same_as<std::remove_reference_t<P>, DaedalusSymbol*>)
+		void push_call_parameters(std::span<DaedalusSymbol> const& defined, P value, Px... more) { // clang-format on
+			if constexpr (DaedalusInstancePointer<P> || std::same_as<DaedalusSymbol*, P>) {
 				if (defined[i].type() != DaedalusDataType::INSTANCE)
 					throw DaedalusIllegalExternalParameter(&defined[i], "instance", i + 1);
 
 				push_instance(value);
-			} else if constexpr (std::is_same_v<float, P>) {
+			} else if constexpr (std::same_as<float, P>) {
 				if (defined[i].type() != DaedalusDataType::FLOAT)
 					throw DaedalusIllegalExternalParameter(&defined[i], "float", i + 1);
 
 				push_float(value);
-			} else if constexpr (std::is_same_v<int32_t, P> || std::is_same_v<bool, P>) {
+			} else if constexpr (std::same_as<int32_t, P> || std::same_as<bool, P>) {
 				if (defined[i].type() != DaedalusDataType::INT && defined[i].type() != DaedalusDataType::FUNCTION)
 					throw DaedalusIllegalExternalParameter(&defined[i], "int", i + 1);
 
 				push_int(value);
-			} else if constexpr (std::is_same_v<std::string_view, P>) {
+			} else if constexpr (std::same_as<std::string_view, P>) {
 				if (defined[i].type() != DaedalusDataType::STRING)
 					throw DaedalusIllegalExternalParameter(&defined[i], "string", i + 1);
 
@@ -957,7 +963,7 @@ namespace zenkit {
 
 		template <typename R>
 		R pop_call_return_value() {
-			if constexpr (is_instance_ptr_v<R>) {
+			if constexpr (DaedalusInstancePointer<R>) {
 				auto r = pop_instance();
 
 				if (r != nullptr) {
@@ -975,11 +981,11 @@ namespace zenkit {
 				}
 
 				return std::static_pointer_cast<typename R::element_type>(r);
-			} else if constexpr (std::is_same_v<float, R>) {
+			} else if constexpr (std::same_as<float, R>) {
 				return pop_float();
-			} else if constexpr (std::is_same_v<int32_t, R>) {
+			} else if constexpr (std::same_as<int32_t, R>) {
 				return pop_int();
-			} else if constexpr (std::is_same_v<std::string, R>) {
+			} else if constexpr (std::same_as<std::string, R>) {
 				return pop_string();
 			}
 		}

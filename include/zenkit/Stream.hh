@@ -141,8 +141,8 @@ namespace zenkit {
 
 	namespace proto {
 		template <typename T>
-		std::enable_if_t<std::is_enum_v<T>, void>
-		read_chunked(Read* r, char const* name, std::function<bool(Read*, T)> const& cb) {
+		    requires std::is_enum_v<T>
+		void read_chunked(Read* r, char const* name, std::function<bool(Read*, T)> const& cb) {
 			do {
 				auto type = static_cast<T>(r->read_ushort());
 				auto size = r->read_uint();
@@ -175,8 +175,8 @@ namespace zenkit {
 		}
 
 		template <typename T>
-		std::enable_if_t<std::is_enum_v<T>, void>
-		read_chunked(Read* r, char const* name, std::function<bool(Read*, T, size_t&)> const& cb) {
+		    requires std::is_enum_v<T>
+		void read_chunked(Read* r, char const* name, std::function<bool(Read*, T, size_t&)> const& cb) {
 			do {
 				auto type = static_cast<T>(r->read_ushort());
 				auto size = r->read_uint();
@@ -209,7 +209,8 @@ namespace zenkit {
 		}
 
 		template <typename T>
-		std::enable_if_t<std::is_enum_v<T>, void> write_chunk(Write* w, T v, std::function<void(Write*)> const& cb) {
+		    requires std::is_enum_v<T>
+		void write_chunk(Write* w, T v, std::function<void(Write*)> const& cb) {
 			w->write_ushort(static_cast<uint16_t>(v));
 
 			auto size_off = static_cast<ssize_t>(w->tell());

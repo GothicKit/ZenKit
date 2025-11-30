@@ -246,7 +246,8 @@ namespace zenkit {
 	}
 
 	template <typename T, size_t N>
-	std::enable_if_t<!std::is_floating_point_v<T>, std::string_view> intosv(std::array<char, N>& buf, T v) {
+	    requires(!std::floating_point<T>)
+	std::string_view intosv(std::array<char, N>& buf, T v) {
 		auto r = std::to_chars(buf.data(), buf.data() + buf.size(), v);
 		return std::string_view {buf.data(), static_cast<size_t>(r.ptr - buf.data())};
 	}
