@@ -502,11 +502,13 @@ namespace zenkit {
 
 	void DaedalusVm::push_local_variables(DaedalusSymbol const* sym) {
 		bool has_recursion = false;
-		for (auto& i : _m_call_stack)
+		for (auto& i : _m_call_stack) {
 			if (i.function == sym) {
 				has_recursion = true;
 				break;
 			}
+		}
+
 		if (!has_recursion) {
 			return;
 		}
@@ -543,7 +545,8 @@ namespace zenkit {
 			throw DaedalusVmException {"stack underoverflow"};
 		}
 
-		// move function arguments futher
+		// Move function arguments further back, since we're currently at the call instruction and the
+		// arguments for the next call have already been pushed.
 		_m_stack_ptr -= params.size();
 		for (size_t i = 0; i < params.size(); ++i) {
 			_m_stack[_m_stack_ptr + locals_size + i] = std::move(_m_stack[_m_stack_ptr + i]);
@@ -574,19 +577,22 @@ namespace zenkit {
 				break;
 			case DaedalusDataType::CLASS:
 			case DaedalusDataType::PROTOTYPE:
-				throw DaedalusVmException {"unexpected"};
+				ZKLOGW("DaedalusVm", "Attempted to save class or prototype in stack frame");
 				break;
 			}
 		}
+
 		_m_stack_ptr += params.size();
 	}
 
 	void DaedalusVm::pop_local_variables(DaedalusSymbol const* sym) {
 		int has_recursion = 0;
-		for (auto& i : _m_call_stack)
+		for (auto& i : _m_call_stack) {
 			if (i.function == sym) {
 				++has_recursion;
 			}
+		}
+
 		if (has_recursion <= 1) {
 			return;
 		}
@@ -627,7 +633,7 @@ namespace zenkit {
 				break;
 			case DaedalusDataType::CLASS:
 			case DaedalusDataType::PROTOTYPE:
-				throw DaedalusVmException {"unexpected"};
+				ZKLOGW("DaedalusVm", "Attempted to restore class or prototype in stack frame");
 				break;
 			}
 		}
