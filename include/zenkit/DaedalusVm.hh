@@ -132,7 +132,7 @@ namespace zenkit {
 				throw DaedalusVmException {"Cannot call " + sym->name() + ": not a function"};
 			}
 
-			std::vector<DaedalusSymbol*> params = find_parameters_for_function(sym);
+			std::span<DaedalusSymbol> params = find_parameters_for_function(sym);
 			if (params.size() < sizeof...(P)) {
 				throw DaedalusVmException {"too many arguments provided for " + sym->name() + ": given " +
 				                           std::to_string(sizeof...(P)) + " expected " + std::to_string(params.size())};
@@ -439,7 +439,7 @@ namespace zenkit {
 				if (sym->has_return()) throw DaedalusIllegalExternalReturnType(sym, "void");
 			}
 
-			std::vector<DaedalusSymbol*> params = find_parameters_for_function(sym);
+			std::span<DaedalusSymbol> params = find_parameters_for_function(sym);
 			if (params.size() < sizeof...(P))
 				throw DaedalusIllegalExternalDefinition {sym,
 				                                         "too many arguments declared for external " + sym->name() +
@@ -526,7 +526,7 @@ namespace zenkit {
 				if (sym->has_return()) throw DaedalusIllegalExternalReturnType(sym, "void");
 			}
 
-			std::vector<DaedalusSymbol*> params = find_parameters_for_function(sym);
+			std::span<DaedalusSymbol> params = find_parameters_for_function(sym);
 			if (params.size() < sizeof...(P))
 				throw DaedalusIllegalExternalDefinition {
 				    sym,
@@ -714,11 +714,22 @@ namespace zenkit {
 		/// \param sym The symbol referring to the function called.
 		ZKINT void push_call(DaedalusSymbol const* sym);
 
-		/// \brief Pops a call stack from from the call stack.
+		/// \brief Pops a call stack frame from the call stack.
 		///
 		/// This method restores the interpreter's state to before the function which the
 		/// call stack entry refers to was called.
 		ZKINT void pop_call();
+
+		/// \brief Pushes a function local variables onto the call stack.
+		///
+		/// Part of #push_call implementation
+		/// \param sym The symbol referring to the function called.
+		ZKINT void push_local_variables(DaedalusSymbol const* sym);
+
+		/// \brief Pops a function-local variables from the call stack.
+		///
+		/// Part of #pop_call implementation
+		ZKINT void pop_local_variables(DaedalusSymbol const* sym);
 
 		/// \brief Checks that the type of each symbol in the given set of defined symbols matches the given type
 		/// parameters.
@@ -734,20 +745,20 @@ namespace zenkit {
 		/// \throws DaedalusIllegalExternalParameter If the types don't match.
 		/// \note Requires that sizeof...(Px) + 1 == defined.size().
 		template <int32_t i, typename P, typename... Px>
-		void check_external_params(std::vector<DaedalusSymbol*> const& defined) {
+		void check_external_params(std::span<DaedalusSymbol> const& defined) {
 			if constexpr (is_instance_ptr_v<P> || std::is_same_v<DaedalusSymbol*, P> || is_raw_instance_ptr_v<P>) {
-				if (defined[i]->type() != DaedalusDataType::INSTANCE)
-					throw DaedalusIllegalExternalParameter(defined[i], "instance", i + 1);
+				if (defined[i].type() != DaedalusDataType::INSTANCE)
+					throw DaedalusIllegalExternalParameter(&defined[i], "instance", i + 1);
 			} else if constexpr (std::is_same_v<float, P>) {
-				if (defined[i]->type() != DaedalusDataType::FLOAT)
-					throw DaedalusIllegalExternalParameter(defined[i], "float", i + 1);
+				if (defined[i].type() != DaedalusDataType::FLOAT)
+					throw DaedalusIllegalExternalParameter(&defined[i], "float", i + 1);
 			} else if constexpr (std::is_same_v<int32_t, P> || std::is_same_v<bool, P> ||
 			                     std::is_same_v<DaedalusFunction, P>) {
-				if (defined[i]->type() != DaedalusDataType::INT && defined[i]->type() != DaedalusDataType::FUNCTION)
-					throw DaedalusIllegalExternalParameter(defined[i], "int/func", i + 1);
+				if (defined[i].type() != DaedalusDataType::INT && defined[i].type() != DaedalusDataType::FUNCTION)
+					throw DaedalusIllegalExternalParameter(&defined[i], "int/func", i + 1);
 			} else if constexpr (std::is_same_v<std::string_view, P>) {
-				if (defined[i]->type() != DaedalusDataType::STRING)
-					throw DaedalusIllegalExternalParameter(defined[i], "string", i + 1);
+				if (defined[i].type() != DaedalusDataType::STRING)
+					throw DaedalusIllegalExternalParameter(&defined[i], "string", i + 1);
 			}
 
 			if constexpr (sizeof...(Px) > 0) {
@@ -916,25 +927,25 @@ namespace zenkit {
 		                     std::is_same_v<std::remove_reference_t<P>, std::string_view> ||
 		                     std::is_same_v<std::remove_reference_t<P>, DaedalusSymbol*>,
 		                 void>
-		push_call_parameters(std::vector<DaedalusSymbol*> const& defined, P value, Px... more) { // clang-format on
+		push_call_parameters(std::span<DaedalusSymbol> const& defined, P value, Px... more) { // clang-format on
 			if constexpr (is_instance_ptr_v<P> || std::is_same_v<DaedalusSymbol*, P>) {
-				if (defined[i]->type() != DaedalusDataType::INSTANCE)
-					throw DaedalusIllegalExternalParameter(defined[i], "instance", i + 1);
+				if (defined[i].type() != DaedalusDataType::INSTANCE)
+					throw DaedalusIllegalExternalParameter(&defined[i], "instance", i + 1);
 
 				push_instance(value);
 			} else if constexpr (std::is_same_v<float, P>) {
-				if (defined[i]->type() != DaedalusDataType::FLOAT)
-					throw DaedalusIllegalExternalParameter(defined[i], "float", i + 1);
+				if (defined[i].type() != DaedalusDataType::FLOAT)
+					throw DaedalusIllegalExternalParameter(&defined[i], "float", i + 1);
 
 				push_float(value);
 			} else if constexpr (std::is_same_v<int32_t, P> || std::is_same_v<bool, P>) {
-				if (defined[i]->type() != DaedalusDataType::INT && defined[i]->type() != DaedalusDataType::FUNCTION)
-					throw DaedalusIllegalExternalParameter(defined[i], "int", i + 1);
+				if (defined[i].type() != DaedalusDataType::INT && defined[i].type() != DaedalusDataType::FUNCTION)
+					throw DaedalusIllegalExternalParameter(&defined[i], "int", i + 1);
 
 				push_int(value);
 			} else if constexpr (std::is_same_v<std::string_view, P>) {
-				if (defined[i]->type() != DaedalusDataType::STRING)
-					throw DaedalusIllegalExternalParameter(defined[i], "string", i + 1);
+				if (defined[i].type() != DaedalusDataType::STRING)
+					throw DaedalusIllegalExternalParameter(&defined[i], "string", i + 1);
 
 				push_string(value);
 			}
@@ -983,7 +994,7 @@ namespace zenkit {
 		std::array<DaedalusStackFrame, stack_size> _m_stack;
 		uint16_t _m_stack_ptr {0};
 
-		std::stack<DaedalusCallStackFrame> _m_call_stack;
+		std::vector<DaedalusCallStackFrame> _m_call_stack;
 		std::unordered_map<DaedalusSymbol*, std::function<void(DaedalusVm&)>> _m_externals;
 		std::unordered_map<uint32_t, std::function<void(DaedalusVm&)>> _m_function_overrides;
 		std::optional<std::function<void(DaedalusVm&, DaedalusSymbol&)>> _m_default_external {std::nullopt};

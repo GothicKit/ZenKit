@@ -192,25 +192,27 @@ namespace zenkit {
 		}
 	}
 
-	std::vector<DaedalusSymbol*> DaedalusScript::find_parameters_for_function(DaedalusSymbol const* parent) {
-		std::vector<DaedalusSymbol*> syms {};
-
-		for (uint32_t i = 0; i < parent->count(); ++i) {
-			syms.push_back(find_symbol_by_index(parent->index() + i + 1));
-		}
-
-		return syms;
+	std::span<DaedalusSymbol> DaedalusScript::find_parameters_for_function(DaedalusSymbol const* parent) {
+		return std::span<DaedalusSymbol>(_m_symbols.begin() + parent->index() + 1,
+		                                 _m_symbols.begin() + parent->index() + parent->count() + 1);
 	}
 
-	std::vector<DaedalusSymbol const*>
-	DaedalusScript::find_parameters_for_function(DaedalusSymbol const* parent) const {
-		std::vector<DaedalusSymbol const*> syms {};
-
-		for (uint32_t i = 0; i < parent->count(); ++i) {
-			syms.push_back(find_symbol_by_index(parent->index() + i + 1));
+	std::span<DaedalusSymbol> DaedalusScript::find_locals_for_function(DaedalusSymbol const* parent) {
+		std::uint32_t const first = parent->index() + 1 + parent->count();
+		for (size_t i = first; i < _m_symbols.size(); ++i) {
+			auto& name = _m_symbols[i].name();
+			if (name.find(parent->name()) == 0 && name.size() >= parent->name().size() &&
+			    name[parent->name().size()] == '.') {
+				continue;
+			}
+			return std::span<DaedalusSymbol>(_m_symbols.begin() + first, _m_symbols.begin() + i);
 		}
+		return {};
+	}
 
-		return syms;
+	std::span<DaedalusSymbol const> DaedalusScript::find_parameters_for_function(DaedalusSymbol const* parent) const {
+		return std::span<DaedalusSymbol const>(_m_symbols.begin() + parent->index() + 1,
+		                                       _m_symbols.begin() + parent->index() + parent->count() + 1);
 	}
 
 	std::vector<DaedalusSymbol*> DaedalusScript::find_class_members(DaedalusSymbol const& cls) {
@@ -608,6 +610,13 @@ namespace zenkit {
 			_m_flags |= DaedalusSymbolFlag::TRAP_ACCESS;
 		else
 			_m_flags &= ~DaedalusSymbolFlag::TRAP_ACCESS;
+	}
+
+	void zenkit::DaedalusSymbol::set_local_variables_enable(bool enable) noexcept {
+		if (enable)
+			_m_flags |= DaedalusSymbolFlag::FUNC_LOCALS;
+		else
+			_m_flags &= ~DaedalusSymbolFlag::FUNC_LOCALS;
 	}
 
 	DaedalusOpaqueInstance::DaedalusOpaqueInstance(DaedalusSymbol const& sym,
