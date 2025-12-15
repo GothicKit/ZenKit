@@ -502,7 +502,7 @@ namespace zenkit {
 		template <typename R, typename... P>
 		void override_function(std::string_view name, std::function<R(P...)> const& callback) {
 			auto* sym = find_symbol_by_name(name);
-			if (sym == nullptr) throw DaedalusVmException {"symbol not found"};
+			if (sym == nullptr) throw DaedalusSymbolNotFound {std::string {name}};
 			if (sym->is_external()) throw DaedalusVmException {"symbol is already an external"};
 
 			if constexpr (!std::same_as<void, R>) {
@@ -571,8 +571,8 @@ namespace zenkit {
 		/// \param callback The C++ function to register as the external.
 		void override_function(std::string_view name, std::function<DaedalusNakedCall(DaedalusVm&)> const& callback) {
 			auto* sym = find_symbol_by_name(name);
-			if (sym == nullptr) throw DaedalusVmException {"symbol not found"};
-			if (sym->is_external()) throw DaedalusVmException {"symbol is already an external"};
+			if (sym == nullptr) throw DaedalusSymbolNotFound {std::string {name}};
+			if (sym->is_external()) throw DaedalusVmException {"symbol " + sym->name() + " is already an external"};
 
 			_m_function_overrides[sym->address()] = [callback](DaedalusVm& machine) { callback(machine); };
 		}
