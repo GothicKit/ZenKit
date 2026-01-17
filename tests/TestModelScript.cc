@@ -22,7 +22,7 @@ TEST_SUITE("ModelScript") {
 		CHECK_EQ(script.meshes[4], "AnotherTestModelMesh5.asc");
 		CHECK_EQ(script.meshes[5], "AnotherTestModelMesh(6).asc");
 
-		CHECK_EQ(script.animations.size(), 2);
+		CHECK_EQ(script.animations.size(), 3);
 		CHECK_EQ(script.animations[0].name, "aniName1");
 		CHECK_EQ(script.animations[0].layer, 111);
 		CHECK_EQ(script.animations[0].next, "aniNext1");
@@ -121,6 +121,32 @@ TEST_SUITE("ModelScript") {
 		CHECK_EQ(script.animations[1].tremors[0].field2, 882);
 		CHECK_EQ(script.animations[1].tremors[0].field3, 883);
 		CHECK_EQ(script.animations[1].tremors[0].field4, 884);
+
+		CHECK_EQ(script.animations[2].name, "aniName3");
+		CHECK_EQ(script.animations[2].layer, 113);
+		CHECK_EQ(script.animations[2].next, "aniNext3");
+		CHECK_EQ(script.animations[2].blend_in, 8.0f);
+		CHECK_EQ(script.animations[2].blend_out, 0.0f);
+		CHECK_EQ(script.animations[2].flags, zenkit::AnimationFlags::MOVE);
+		CHECK_EQ(script.animations[2].model, "aniModel3");
+		CHECK_EQ(script.animations[2].direction, zenkit::AnimationDirection::FORWARD);
+		CHECK_EQ(script.animations[2].first_frame, 223);
+		CHECK_EQ(script.animations[2].last_frame, 333);
+		CHECK_EQ(script.animations[2].fps, 25.0f);
+		CHECK_EQ(script.animations[2].speed, 0.0f);
+		CHECK_EQ(script.animations[2].collision_volume_scale, 1.0f);
+
+		CHECK_EQ(script.animations[2].events.size(), 1);
+		CHECK_EQ(script.animations[2].events[0].type, zenkit::MdsEventType::ITEM_CREATE);
+		CHECK_EQ(script.animations[2].events[0].slot, "eventSlot");
+		CHECK_EQ(script.animations[2].events[0].item, "eventItem");
+		CHECK_EQ(script.animations[2].events[0].attached, false);
+
+		CHECK_EQ(script.animations[2].sfx_ground.size(), 1);
+		CHECK_EQ(script.animations[2].sfx_ground[0].frame, 5);
+		CHECK_EQ(script.animations[2].sfx_ground[0].name, "sfxGrndName");
+		CHECK_EQ(script.animations[2].sfx_ground[0].empty_slot, false);
+
 
 		CHECK_EQ(script.blends.size(), 3);
 		CHECK_EQ(script.blends[0].name, "blendName1");

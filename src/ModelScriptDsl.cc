@@ -401,9 +401,10 @@ namespace zenkit {
 			} else if (iequals(kw, "*eventCamTremor")) {
 				ani.tremors.push_back(this->parse_eventCamTremor());
 			} else {
-				auto const loc = _m_stream.format_location();
-				ZKLOGW("ModelScript", "Syntax error (%s): invalid keyword in `aniEnum` block: %s", loc.c_str(), kw.c_str());
-				this->_m_stream.next_line();
+				// Note: Due to #122 we need to also not crash when there is no terminating curly brace.
+				//       To do this, we simply exit when we don't know the event.
+				_m_stream.backtrack();
+				break;
 			}
 		}
 	}
@@ -506,9 +507,9 @@ namespace zenkit {
 		ani.collision_volume_scale = this->maybe_named("CVS").value_or(1);
 
 		// Optional events block.
-		if (this->maybe<MdsToken::LBRACE>()) {
-			this->parse_events(ani);
-		}
+		// Note: Due to #122 the curly parens are actually optional
+		this->maybe<MdsToken::LBRACE>();
+		this->parse_events(ani);
 
 		return ani;
 	}

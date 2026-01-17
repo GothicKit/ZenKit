@@ -39,6 +39,10 @@ Model("TestModel") {
 		aniBlend(  ("blendName1" "blendNext1")
 		aniBlend("blendName2" 113 "blendNext2")
 
+		ani("aniName3" 113 "aniNext3" 8.0 0 M. "aniModel3" F 223 333)
+			*eventTag("DEF_CREATE_ITEM" "eventSlot" "eventItem")
+			*eventSFXGrnd(5 "sfxGrndName")
+
 		aniBlend("blendName3" "blendNext3" 223.1 333.1) {
 			*eventSFX(4 "sfxName2" R:67.4)
 		}
