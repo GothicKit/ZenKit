@@ -35,6 +35,8 @@ namespace zenkit {
 
 		[[nodiscard]] std::string format_location() const;
 
+		void next_line();
+
 	private:
 		Read* _m_buffer;
 		uint32_t _m_line {1}, _m_column {1};

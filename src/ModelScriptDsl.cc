@@ -145,6 +145,10 @@ namespace zenkit {
 		return "line " + std::to_string(_m_line) + " column " + std::to_string(_m_column);
 	}
 
+	void MdsTokenizer::next_line() {
+		while (_m_buffer->read_char() != '\n') {}
+	}
+
 	void MdsTokenizer::backtrack() {
 		this->_m_buffer->seek(static_cast<ssize_t>(_m_mark), Whence::BEG);
 	}
@@ -358,7 +362,9 @@ namespace zenkit {
 			} else if (iequals(kw, "modelTag")) {
 				into.model_tags.push_back(this->parse_modelTag());
 			} else {
-				throw ScriptSyntaxError {_m_stream.format_location(), "invalid KEYWORD in \"aniEnum\" block: " + kw};
+				auto const loc = _m_stream.format_location();
+				ZKLOGW("ModelScript", "Syntax error (%s): invalid keyword in `aniEnum` block: %s", loc.c_str(), kw.c_str());
+				this->_m_stream.next_line();
 			}
 		}
 	}
@@ -385,7 +391,9 @@ namespace zenkit {
 			} else if (iequals(kw, "*eventCamTremor")) {
 				ani.tremors.push_back(this->parse_eventCamTremor());
 			} else {
-				throw ScriptSyntaxError {_m_stream.format_location(), "invalid KEYWORD in \"ani\" block: " + kw};
+				auto const loc = _m_stream.format_location();
+				ZKLOGW("ModelScript", "Syntax error (%s): invalid keyword in `aniEnum` block: %s", loc.c_str(), kw.c_str());
+				this->_m_stream.next_line();
 			}
 		}
 	}
