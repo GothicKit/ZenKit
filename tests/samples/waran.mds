@@ -2,6 +2,10 @@ Model("TestModel") {
 	meshAndTree("TestModelMesh.asc" 	DONT_USE_MESH)
 	registerMesh("AnotherTestModelMesh1.asc")
 	registerMesh("AnotherTestModelMesh2.asc")
+	registerMesh("AnotherTestModelMesh3.asc"
+	registerMesh("AnotherTestModelMesh4.asc
+	registerMesh("AnotherTestModelMesh5.asc)
+	registerMesh("AnotherTestModelMesh(6).asc")
 
 	// A comment.
 

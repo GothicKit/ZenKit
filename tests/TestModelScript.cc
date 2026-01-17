@@ -15,6 +15,13 @@ TEST_SUITE("ModelScript") {
 		CHECK_EQ(script.skeleton.disable_mesh, true);
 		CHECK_EQ(script.skeleton.name, "TestModelMesh.asc");
 
+		CHECK_EQ(script.meshes[0], "AnotherTestModelMesh1.asc");
+		CHECK_EQ(script.meshes[1], "AnotherTestModelMesh2.asc");
+		CHECK_EQ(script.meshes[2], "AnotherTestModelMesh3.asc");
+		CHECK_EQ(script.meshes[3], "AnotherTestModelMesh4.asc");
+		CHECK_EQ(script.meshes[4], "AnotherTestModelMesh5.asc");
+		CHECK_EQ(script.meshes[5], "AnotherTestModelMesh(6).asc");
+
 		CHECK_EQ(script.animations.size(), 2);
 		CHECK_EQ(script.animations[0].name, "aniName1");
 		CHECK_EQ(script.animations[0].layer, 111);

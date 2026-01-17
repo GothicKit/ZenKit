@@ -82,7 +82,16 @@ namespace zenkit {
 				chr = static_cast<unsigned char>(_m_buffer->read_char());
 				_m_column += 1;
 
-				while (chr != '"' && chr != '\n' && chr != ')') {
+				// Modded. Some mods may include `(` and/or `)` in their strings. For this reason we need to handle
+				// all of these cases:
+				//			registerMesh ("Some_File Name(WithBrackets).ASC")
+				//			registerMesh ("Some_File Name.ASC")
+				//			registerMesh ("Some_File Name.ASC"
+				//			registerMesh ("Some_File Name.ASC)
+				//			registerMesh ("Some_File Name.ASC
+				unsigned char prev = '\0';
+				while (chr != '"' && chr != '\n') {
+					if (!std::isspace(chr)) prev = chr;
 					_m_value.push_back(static_cast<char>(chr));
 					chr = static_cast<unsigned char>(_m_buffer->read_char());
 					_m_column += 1;
@@ -94,6 +103,7 @@ namespace zenkit {
 					_m_column -= 1;
 				}
 
+				if (prev == ')') _m_value.pop_back();
 				return MdsToken::STRING;
 			}
 
