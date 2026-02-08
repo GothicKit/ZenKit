@@ -39,8 +39,10 @@ namespace zenkit {
 	struct VfsFileDescriptor {
 		std::byte const* memory;
 		std::size_t size;
+		std::size_t raw_size; ///< The catalog entry size (uncompressed size for zipped files).
+		bool zipped;          ///< Whether the file data is stored as a Union ZippedStream.
 
-		VfsFileDescriptor(std::byte const* mem, size_t len, bool del);
+		VfsFileDescriptor(std::byte const* mem, size_t len, bool del, bool zipped = false, size_t raw_size = 0);
 		VfsFileDescriptor(VfsFileDescriptor const& cpy);
 		~VfsFileDescriptor() noexcept;
 
@@ -186,10 +188,25 @@ namespace zenkit {
 		/// \return The node with the given name or `nullptr` if no node with the given name was found.
 		[[nodiscard]] ZKAPI VfsNode* find(std::string_view name) noexcept;
 
+		/// \brief Save the Vfs contents as an uncompressed VDF archive.
+		/// \param w The output stream to write the VDF archive to.
+		/// \param version The game version determining the VDF signature format.
+		/// \param unix_t The timestamp to store in the VDF header. If 0, the current time is used.
 		ZKAPI void save(Write* w, GameVersion version, time_t unix_t = 0) const;
+
+		/// \brief Save the Vfs contents as a compressed VDF archive (Union ZippedStream format).
+		///
+		/// File data is written as ZippedStream blocks (volume flag 0xA0).
+		/// Audio files (.WAV, .OGG) are always stored uncompressed, following Union's convention.
+		///
+		/// \param w The output stream to write the VDF archive to.
+		/// \param version The game version determining the VDF signature format.
+		/// \param unix_t The timestamp to store in the VDF header. If 0, the current time is used.
+		ZKAPI void save_compressed(Write* w, GameVersion version, time_t unix_t = 0) const;
 
 	private:
 		ZKINT void mount_disk(std::byte const* buf, std::size_t size, VfsOverwriteBehavior overwrite);
+		ZKINT void save_internal(Write* w, GameVersion version, time_t unix_t, bool compressed) const;
 
 		VfsNode _m_root;
 		std::vector<std::unique_ptr<std::byte[]>> _m_data;

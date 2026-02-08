@@ -7,7 +7,11 @@
 #include "zenkit/Error.hh"
 #include "zenkit/Stream.hh"
 
+#define MINIZ_NO_ZLIB_COMPATIBLE_NAMES
+#include <miniz.h>
+
 #include <algorithm>
+#include <cassert>
 #include <chrono>
 #include <filesystem>
 #include <fstream>
@@ -18,6 +22,13 @@ namespace zenkit {
 	static constexpr std::string_view VFS_DISK_SIGNATURE_G2 = "PSVDSC_V2.00\n\r\n\r";
 	static constexpr std::string_view VFS_DISK_SIGNATURE_VDFSTOOL = "PSVDSC_V2.00\x1A\x1A\x1A\x1A";
 
+	/// Volume header flags (VolumeHeader.Flags in Union VDFS).
+	/// These indicate whether file data within the VDF is stored compressed.
+	/// The catalog/file table is always uncompressed regardless of this flag;
+	/// only the actual file contents at each entry's offset are affected.
+	static constexpr uint32_t VFS_VOLUME_FLAG_NORMAL = 0x50; ///< 80 — file data is stored uncompressed
+	static constexpr uint32_t VFS_VOLUME_FLAG_ZIPPED = 0xA0; ///< 160 — file data is stored as ZippedStream blocks
+
 	VfsBrokenDiskError::VfsBrokenDiskError(std::string const& signature)
 	    : Error("VFS disk signature not recognized: \"" + signature + "\"") {}
 
@@ -25,11 +36,11 @@ namespace zenkit {
 
 	VfsNotFoundError::VfsNotFoundError(std::string const& name) : Error("not found: \"" + name + "\"") {}
 
-	VfsFileDescriptor::VfsFileDescriptor(std::byte const* mem, size_t len, bool del)
-	    : memory(mem), size(len), refcnt(del ? new size_t(1) : nullptr) {}
+	VfsFileDescriptor::VfsFileDescriptor(std::byte const* mem, size_t len, bool del, bool zip, size_t raw)
+	    : memory(mem), size(len), raw_size(raw == 0 ? len : raw), zipped(zip), refcnt(del ? new size_t(1) : nullptr) {}
 
 	VfsFileDescriptor::VfsFileDescriptor(VfsFileDescriptor const& cpy)
-	    : memory(cpy.memory), size(cpy.size), refcnt(cpy.refcnt) {
+	    : memory(cpy.memory), size(cpy.size), raw_size(cpy.raw_size), zipped(cpy.zipped), refcnt(cpy.refcnt) {
 		if (this->refcnt == nullptr) return;
 		*this->refcnt += 1;
 	}
@@ -112,7 +123,20 @@ namespace zenkit {
 
 	std::unique_ptr<Read> VfsNode::open_read() const {
 		auto fd = std::get<VfsFileDescriptor>(_m_data);
-		return Read::from(fd.memory, fd.size);
+		auto reader = Read::from(fd.memory, fd.size);
+
+		if (fd.zipped) {
+			auto zipped = Read::from_zipped(std::move(reader));
+			if (zipped != nullptr) {
+				return zipped;
+			}
+
+			// ZippedStream header validation failed (e.g. raw Ogg Vorbis audio).
+			// Fall back to raw data using the catalog entry size.
+			return Read::from(fd.memory, fd.raw_size);
+		}
+
+		return reader;
 	}
 
 	VfsNode VfsNode::directory(std::string_view name) {
@@ -220,7 +244,65 @@ namespace zenkit {
 		return dos;
 	}
 
+	/// Default ZippedStream block size (8 KB), matching Union's default.
+	static constexpr uint32_t VFS_ZIPPED_BLOCK_SIZE = 8192;
+
+	/// Returns true if the file name has a .WAV or .OGG extension (case-insensitive).
+	/// These files are stored uncompressed in zipped VDFs, following Union's convention.
+	static bool vfs_is_wave_file(std::string_view name) {
+		if (name.size() < 4) return false;
+		auto ext = name.substr(name.size() - 4);
+		return iequals(ext, ".wav") || iequals(ext, ".ogg");
+	}
+
+	/// Writes file data as a ZippedStream to the output.
+	///
+	/// ZippedStream layout:
+	///   Stream header:  Length (4) | BlockSize (4) | BlocksCount (4)
+	///   Per block (interleaved):
+	///     Block header:  LengthSource (4) | LengthCompressed (4) | BlockSize (4)
+	///     Block data:    [LengthCompressed bytes of zlib-compressed data]
+	static void vfs_write_zipped(Write* w, std::byte const* data, size_t size) {
+		uint32_t block_size = VFS_ZIPPED_BLOCK_SIZE;
+		uint32_t blocks_count = static_cast<uint32_t>((size + block_size - 1) / block_size);
+
+		// Write stream header
+		w->write_uint(static_cast<uint32_t>(size)); // Length (uncompressed)
+		w->write_uint(block_size);                  // BlockSize
+		w->write_uint(blocks_count);                // BlocksCount
+
+		// Write each block: header + compressed data (interleaved)
+		std::vector<uint8_t> cmp_buf;
+		for (uint32_t i = 0; i < blocks_count; i++) {
+			size_t src_offset = static_cast<size_t>(i) * block_size;
+			uint32_t src_len = static_cast<uint32_t>(std::min<size_t>(block_size, size - src_offset));
+
+			mz_ulong cmp_len = mz_compressBound(src_len);
+			cmp_buf.resize(cmp_len);
+
+			int res =
+			    mz_compress(cmp_buf.data(), &cmp_len, reinterpret_cast<uint8_t const*>(data + src_offset), src_len);
+			assert(res == MZ_OK && "mz_compress failed with a correctly sized buffer — this is a bug");
+
+			// Block header
+			w->write_uint(src_len);                        // LengthSource
+			w->write_uint(static_cast<uint32_t>(cmp_len)); // LengthCompressed
+			w->write_uint(block_size);                     // BlockSize
+
+			// Block data
+			w->write(cmp_buf.data(), cmp_len);
+		}
+	}
+
 	void Vfs::save(Write* w, GameVersion version, time_t unix_t) const {
+		save_internal(w, version, unix_t, false);
+	}
+
+	void Vfs::save_compressed(Write* w, GameVersion version, time_t unix_t) const {
+		save_internal(w, version, unix_t, true);
+	}
+
+	void Vfs::save_internal(Write* w, GameVersion version, time_t unix_t, bool compressed) const {
 		std::vector<std::byte> catalog;
 		auto write_catalog = Write::to(&catalog);
 
@@ -250,13 +332,18 @@ namespace zenkit {
 					auto sz = rd->tell();
 					rd->seek(0, Whence::BEG);
 
-					write_catalog->write_uint(w->tell());                                         // Offset
-					write_catalog->write_uint(sz);                                                // Size
-					write_catalog->write_uint(i + 1 == node->children().size() ? 0x40000000 : 0); // Type
-
 					cache.resize(sz);
 					rd->read(cache.data(), sz);
-					w->write(cache.data(), sz);
+
+					write_catalog->write_uint(w->tell()); // Offset
+					write_catalog->write_uint(sz);        // Size (always uncompressed)
+					write_catalog->write_uint(i + 1 == node->children().size() ? 0x40000000 : 0); // Type
+
+					if (compressed && !vfs_is_wave_file(child.name())) {
+						vfs_write_zipped(w, cache.data(), sz);
+					} else {
+						w->write(cache.data(), sz);
+					}
 
 					files += 1;
 				} else {
@@ -297,7 +384,7 @@ namespace zenkit {
 		w->write_uint(unix_t == 0 ? vfs_unix_to_dos_time(time(nullptr)) : vfs_unix_to_dos_time(unix_t));
 		w->write_uint(off + catalog.size());
 		w->write_uint(header_size);
-		w->write_uint(80);
+		w->write_uint(compressed ? VFS_VOLUME_FLAG_ZIPPED : VFS_VOLUME_FLAG_NORMAL);
 		w->seek(static_cast<ssize_t>(header_size), Whence::BEG);
 		w->write(catalog.data(), catalog.size());
 	}
@@ -488,12 +575,17 @@ namespace zenkit {
 		[[maybe_unused]] auto entry_count = r->read_uint();
 		[[maybe_unused]] auto file_count = r->read_uint();
 		auto timestamp = vfs_dos_to_unix_time(r->read_uint());
-		[[maybe_unused]] auto _size = r->read_uint();
+		[[maybe_unused]] auto archive_size = r->read_uint();
 		auto catalog_offset = r->read_uint();
+		auto volume_flags = r->read_uint();
 
-		// Check that we're not loading a compressed Union disk.
-		if (r->read_uint() != 80) {
-			throw VfsBrokenDiskError {"Detected unsupported Union disk"};
+		bool zipped = false;
+		if (volume_flags == VFS_VOLUME_FLAG_NORMAL) {
+			zipped = false;
+		} else if (volume_flags == VFS_VOLUME_FLAG_ZIPPED) {
+			zipped = true;
+		} else {
+			ZKLOGW("Vfs", "Unknown volume flags: 0x%X (%u), assuming uncompressed", volume_flags, volume_flags);
 		}
 
 		if (signature == VFS_DISK_SIGNATURE_VDFSTOOL) {
@@ -515,7 +607,7 @@ namespace zenkit {
 		}
 
 		std::function<bool(VfsNode*)> load_entry =
-		    [&load_entry, overwrite, catalog_offset, timestamp, &r, buf, size](VfsNode* parent) {
+		    [&load_entry, overwrite, catalog_offset, timestamp, zipped, &r, buf, size](VfsNode* parent) {
 			    auto e_name = r->read_string(64);
 			    auto e_offset = r->read_uint();
 			    auto e_size = r->read_uint();
@@ -576,7 +668,10 @@ namespace zenkit {
 					    ;
 				    r->seek(static_cast<ssize_t>(self_offset), Whence::BEG);
 			    } else {
-				    if (e_offset + e_size > size) {
+				    // For zipped VDFs, entry.Size is the uncompressed size; the actual
+				    // compressed data at e_offset is smaller. Only check offset validity.
+				    // For normal VDFs, the full extent must fit within the archive.
+				    if (zipped ? (e_offset >= size) : (e_offset + e_size > size)) {
 					    return last;
 				    }
 
@@ -601,8 +696,14 @@ namespace zenkit {
 					    parent->remove(e_name);
 				    }
 
+				    // For zipped files, the descriptor gets the full remaining buffer
+				    // so ReadZipped can read the compressed stream. raw_size preserves
+				    // the catalog entry size for fallback (e.g. raw audio files).
+				    auto desc_size = zipped ? (size - e_offset) : static_cast<std::size_t>(e_size);
 				    (void) parent->create(
-				        VfsNode::file(e_name, VfsFileDescriptor {buf + e_offset, e_size, false}, timestamp));
+				        VfsNode::file(e_name,
+				                      VfsFileDescriptor {buf + e_offset, desc_size, false, zipped, e_size},
+				                      timestamp));
 			    }
 
 			    return last;
