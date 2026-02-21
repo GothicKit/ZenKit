@@ -7,8 +7,10 @@
 #include "zenkit/Error.hh"
 #include "zenkit/Stream.hh"
 
+#ifdef _ZK_WITH_ZIPPED_VDF
 #define MINIZ_NO_ZLIB_COMPATIBLE_NAMES
 #include <miniz.h>
+#endif
 
 #include <algorithm>
 #include <cassert>
@@ -125,6 +127,7 @@ namespace zenkit {
 		auto fd = std::get<VfsFileDescriptor>(_m_data);
 		auto reader = Read::from(fd.memory, fd.size);
 
+#ifdef _ZK_WITH_ZIPPED_VDF
 		if (fd.zipped) {
 			auto zipped = Read::from_zipped(std::move(reader));
 			if (zipped != nullptr) {
@@ -135,6 +138,7 @@ namespace zenkit {
 			// Fall back to raw data using the catalog entry size.
 			return Read::from(fd.memory, fd.raw_size);
 		}
+#endif
 
 		return reader;
 	}
@@ -244,6 +248,7 @@ namespace zenkit {
 		return dos;
 	}
 
+#ifdef _ZK_WITH_ZIPPED_VDF
 	/// Default ZippedStream block size (8 KB), matching Union's default.
 	static constexpr uint32_t VFS_ZIPPED_BLOCK_SIZE = 8192;
 
@@ -294,12 +299,13 @@ namespace zenkit {
 		}
 	}
 
+  void Vfs::save_compressed(Write* w, GameVersion version, time_t unix_t) const {
+		save_internal(w, version, unix_t, true);
+	}
+#endif // _ZK_WITH_ZIPPED_VDF
+
 	void Vfs::save(Write* w, GameVersion version, time_t unix_t) const {
 		save_internal(w, version, unix_t, false);
-	}
-
-	void Vfs::save_compressed(Write* w, GameVersion version, time_t unix_t) const {
-		save_internal(w, version, unix_t, true);
 	}
 
 	void Vfs::save_internal(Write* w, GameVersion version, time_t unix_t, bool compressed) const {
@@ -339,11 +345,15 @@ namespace zenkit {
 					write_catalog->write_uint(sz);        // Size (always uncompressed)
 					write_catalog->write_uint(i + 1 == node->children().size() ? 0x40000000 : 0); // Type
 
+#ifdef _ZK_WITH_ZIPPED_VDF
 					if (compressed && !vfs_is_wave_file(child.name())) {
 						vfs_write_zipped(w, cache.data(), sz);
 					} else {
 						w->write(cache.data(), sz);
 					}
+#else
+					w->write(cache.data(), sz);
+#endif
 
 					files += 1;
 				} else {
@@ -384,7 +394,11 @@ namespace zenkit {
 		w->write_uint(unix_t == 0 ? vfs_unix_to_dos_time(time(nullptr)) : vfs_unix_to_dos_time(unix_t));
 		w->write_uint(off + catalog.size());
 		w->write_uint(header_size);
+#ifdef _ZK_WITH_ZIPPED_VDF
 		w->write_uint(compressed ? VFS_VOLUME_FLAG_ZIPPED : VFS_VOLUME_FLAG_NORMAL);
+#else
+		w->write_uint(VFS_VOLUME_FLAG_NORMAL);
+#endif
 		w->seek(static_cast<ssize_t>(header_size), Whence::BEG);
 		w->write(catalog.data(), catalog.size());
 	}
@@ -583,7 +597,11 @@ namespace zenkit {
 		if (volume_flags == VFS_VOLUME_FLAG_NORMAL) {
 			zipped = false;
 		} else if (volume_flags == VFS_VOLUME_FLAG_ZIPPED) {
+#ifdef _ZK_WITH_ZIPPED_VDF
 			zipped = true;
+#else
+			throw VfsBrokenDiskError {"Detected compressed VDF (build ZenKit with ZK_ENABLE_ZIPPED_VDF=ON to enable support)"};
+#endif
 		} else {
 			ZKLOGW("Vfs", "Unknown volume flags: 0x%X (%u), assuming uncompressed", volume_flags, volume_flags);
 		}

@@ -202,7 +202,9 @@ namespace zenkit {
 		/// \param w The output stream to write the VDF archive to.
 		/// \param version The game version determining the VDF signature format.
 		/// \param unix_t The timestamp to store in the VDF header. If 0, the current time is used.
+#ifdef _ZK_WITH_ZIPPED_VDF
 		ZKAPI void save_compressed(Write* w, GameVersion version, time_t unix_t = 0) const;
+#endif
 
 	private:
 		ZKINT void mount_disk(std::byte const* buf, std::size_t size, VfsOverwriteBehavior overwrite);

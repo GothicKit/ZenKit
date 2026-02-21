@@ -99,7 +99,9 @@ namespace zenkit {
 		virtual void seek(ssize_t off, Whence whence) noexcept = 0;
 		[[nodiscard]] virtual size_t tell() const noexcept = 0;
 		[[nodiscard]] virtual bool eof() const noexcept = 0;
+#ifdef _ZK_WITH_ZIPPED_VDF
 		[[nodiscard]] static std::unique_ptr<Read> from_zipped(std::unique_ptr<Read> stream);
+#endif
 
 		[[nodiscard]] static std::unique_ptr<Read> from(FILE* stream);
 		[[nodiscard]] static std::unique_ptr<Read> from(std::istream* stream);

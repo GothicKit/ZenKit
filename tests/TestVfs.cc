@@ -75,6 +75,7 @@ TEST_SUITE("Vfs") {
 		check_vfs(vdf);
 	}
 
+#ifdef _ZK_WITH_ZIPPED_VDF
 	TEST_CASE("Vfs.save_compressed") {
 		// Build a VFS from scratch with various file types and sizes.
 		auto vfs = zenkit::Vfs {};
@@ -185,4 +186,5 @@ TEST_SUITE("Vfs") {
 			CHECK_EQ(buf, tf.data);
 		}
 	}
+#endif // _ZK_WITH_ZIPPED_VDF
 }

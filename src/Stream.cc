@@ -8,8 +8,10 @@
 #include <algorithm>
 #include <cstring>
 #include <fstream>
+#ifdef _ZK_WITH_ZIPPED_VDF
 #define MINIZ_NO_ZLIB_COMPATIBLE_NAMES
 #include <miniz.h>
+#endif
 
 namespace zenkit {
 	template <typename T>
@@ -481,6 +483,7 @@ namespace zenkit {
 	}
 	// -----------------------------------------------------------------------------------------------------------------
 
+#ifdef _ZK_WITH_ZIPPED_VDF
 	namespace detail {
 		/// Reads file data stored as a Union ZippedStream.
 		///
@@ -651,4 +654,5 @@ namespace zenkit {
 		if (!reader->init()) return nullptr;
 		return reader;
 	}
+#endif // _ZK_WITH_ZIPPED_VDF
 } // namespace zenkit
