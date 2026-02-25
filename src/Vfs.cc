@@ -299,7 +299,7 @@ namespace zenkit {
 		}
 	}
 
-  void Vfs::save_compressed(Write* w, GameVersion version, time_t unix_t) const {
+	void Vfs::save_compressed(Write* w, GameVersion version, time_t unix_t) const {
 		save_internal(w, version, unix_t, true);
 	}
 #endif // _ZK_WITH_ZIPPED_VDF
