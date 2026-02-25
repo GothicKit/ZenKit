@@ -76,6 +76,12 @@ TEST_SUITE("Vfs") {
 	}
 
 #ifdef _ZK_WITH_ZIPPED_VDF
+	TEST_CASE("Vfs.mount_disk(basic_zipped)") {
+		auto vdf = zenkit::Vfs {};
+		vdf.mount_disk("./samples/basic_zipped.vdf");
+		check_vfs(vdf);
+	}
+
 	TEST_CASE("Vfs.save_compressed") {
 		// Build a VFS from scratch with various file types and sizes.
 		auto vfs = zenkit::Vfs {};

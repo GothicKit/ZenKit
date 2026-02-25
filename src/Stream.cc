@@ -539,15 +539,20 @@ namespace zenkit {
 
 			void seek(ssize_t off, Whence whence) noexcept override {
 				// Update _m_position and _m_current_block
-				size_t new_pos = 0;
+				ssize_t new_pos = 0;
 				if (whence == Whence::BEG)
 					new_pos = off;
 				else if (whence == Whence::CUR)
-					new_pos = _m_position + off;
+					new_pos = static_cast<ssize_t>(_m_position) + off;
 				else if (whence == Whence::END)
-					new_pos = _m_header.length_uncompressed + off; // stored in header
+					new_pos = static_cast<ssize_t>(_m_header.length_uncompressed) + off;
 
-				_m_position = new_pos;
+				// Clamp to [0, length_uncompressed]
+				if (new_pos < 0) new_pos = 0;
+				if (static_cast<size_t>(new_pos) > _m_header.length_uncompressed)
+					new_pos = static_cast<ssize_t>(_m_header.length_uncompressed);
+
+				_m_position = static_cast<size_t>(new_pos);
 				if (_m_header.block_size > 0) _m_current_block = _m_position / _m_header.block_size;
 			}
 
