@@ -8,6 +8,10 @@
 #include <algorithm>
 #include <cstring>
 #include <fstream>
+#ifdef _ZK_WITH_ZIPPED_VDF
+#define MINIZ_NO_ZLIB_COMPATIBLE_NAMES
+#include <miniz.h>
+#endif
 
 namespace zenkit {
 	template <typename T>
@@ -477,4 +481,190 @@ namespace zenkit {
 	std::unique_ptr<Write> Write::to(std::vector<std::byte>* vector) {
 		return std::make_unique<detail::WriteDynamic>(vector);
 	}
+	// -----------------------------------------------------------------------------------------------------------------
+
+#ifdef _ZK_WITH_ZIPPED_VDF
+	namespace detail {
+		/// Reads file data stored as a Union ZippedStream.
+		///
+		/// In a zipped VDF (VolumeHeader.Flags == 0xA0), the catalog/file table remains
+		/// uncompressed, but each file's data at its catalog offset is stored as a
+		/// ZippedStream — a block-compressed format used by Union's VDFS library.
+		///
+		/// ZippedStream layout (at the file's offset):
+		///   Stream header:  Length (4) | BlockSize (4) | BlocksCount (4)
+		///   Per block (interleaved):
+		///     Block header:  LengthSource (4) | LengthCompressed (4) | BlockSize (4)
+		///     Block data:    [LengthCompressed bytes of zlib-compressed data]
+		///
+		/// Each block is independently zlib-compressed and can be decompressed on demand.
+		class ReadZipped final : public Read {
+		public:
+			explicit ReadZipped(std::unique_ptr<Read> r) : _m_stream(std::move(r)) {
+				_m_stream->seek(0, Whence::BEG);
+			}
+
+			~ReadZipped() override = default;
+
+			size_t read(void* buf, size_t len) noexcept override {
+				// Implementation of reading logic using blocks
+				uint8_t* out = static_cast<uint8_t*>(buf);
+				size_t total_read = 0;
+
+				while (len > 0) {
+					if (_m_current_block >= _m_header.blocks_count) break;
+
+					// Ensure current block is cached/decompressed
+					if (!_m_cache_valid || _m_cache_idx != _m_current_block) {
+						if (!cache_block(_m_current_block)) {
+							ZKLOGE("ReadZipped", "Failed to decompress block %u", _m_current_block);
+							return total_read;
+						}
+					}
+
+					size_t offset_in_block = _m_position - (_m_current_block * _m_header.block_size);
+					size_t available = _m_blocks[_m_current_block].len_src - offset_in_block;
+					size_t to_copy = std::min(len, available);
+
+					memcpy(out, _m_cache.data() + offset_in_block, to_copy);
+
+					out += to_copy;
+					len -= to_copy;
+					total_read += to_copy;
+					_m_position += to_copy;
+
+					if (to_copy == available) {
+						_m_current_block++;
+					}
+				}
+				return total_read;
+			}
+
+			void seek(ssize_t off, Whence whence) noexcept override {
+				// Update _m_position and _m_current_block
+				ssize_t new_pos = 0;
+				if (whence == Whence::BEG)
+					new_pos = off;
+				else if (whence == Whence::CUR)
+					new_pos = static_cast<ssize_t>(_m_position) + off;
+				else if (whence == Whence::END)
+					new_pos = static_cast<ssize_t>(_m_header.length_uncompressed) + off;
+
+				// Clamp to [0, length_uncompressed]
+				if (new_pos < 0) new_pos = 0;
+				if (static_cast<size_t>(new_pos) > _m_header.length_uncompressed)
+					new_pos = static_cast<ssize_t>(_m_header.length_uncompressed);
+
+				_m_position = static_cast<size_t>(new_pos);
+				if (_m_header.block_size > 0) _m_current_block = _m_position / _m_header.block_size;
+			}
+
+			[[nodiscard]] size_t tell() const noexcept override {
+				return _m_position;
+			}
+
+			[[nodiscard]] bool eof() const noexcept override {
+				return _m_position >= _m_header.length_uncompressed;
+			}
+
+			/// Reads the ZippedStream header and block table from the underlying stream.
+			/// Block headers and data are interleaved: each block header (12 bytes) is
+			/// immediately followed by its compressed payload (len_cmp bytes).
+			bool init() {
+				try {
+					_m_header.length_uncompressed = _m_stream->read_uint();
+					_m_header.block_size = _m_stream->read_uint();
+					_m_header.blocks_count = _m_stream->read_uint();
+
+					// Validate: a valid ZippedStream must have at least one block
+					// and a non-zero block size.
+					if (_m_header.blocks_count == 0 || _m_header.block_size == 0 ||
+					    _m_header.length_uncompressed == 0) {
+						ZKLOGE("ReadZipped", "Invalid ZippedStream header: length=%u, block_size=%u, blocks_count=%u",
+									_m_header.length_uncompressed, _m_header.block_size, _m_header.blocks_count);
+						return false;
+					}
+
+					// Validate: blocks_count must be consistent with the header.
+					// In a valid ZippedStream, blocks_count == ceil(length / block_size).
+					// Reject if it doesn't match — the data is not a ZippedStream.
+					uint32_t expected_blocks =
+					    (_m_header.length_uncompressed + _m_header.block_size - 1) / _m_header.block_size;
+					if (_m_header.blocks_count != expected_blocks) {
+						ZKLOGE("ReadZipped", "Block count mismatch: expected %u, got %u", expected_blocks,
+									_m_header.blocks_count);
+						return false;
+					}
+
+					_m_blocks.resize(_m_header.blocks_count);
+
+					// Scan through the interleaved block headers to record each
+					// block's compressed data offset, then skip past its data.
+					for (auto& blk : _m_blocks) {
+						blk.len_src = _m_stream->read_uint();
+						blk.len_cmp = _m_stream->read_uint();
+						blk.size_blk = _m_stream->read_uint();
+						blk.offset = _m_stream->tell(); // compressed data starts here
+						_m_stream->seek(static_cast<ssize_t>(blk.len_cmp), Whence::CUR);
+					}
+
+					return true;
+				} catch (...) {
+					return false;
+				}
+			}
+
+		private:
+			std::unique_ptr<Read> _m_stream;
+
+			struct StreamHeader {
+				uint32_t length_uncompressed;
+				uint32_t block_size;
+				uint32_t blocks_count;
+			} _m_header {};
+
+			struct BlockInfo {
+				uint32_t len_src;
+				uint32_t len_cmp;
+				uint32_t size_blk;
+				size_t offset;
+			};
+			std::vector<BlockInfo> _m_blocks;
+
+			size_t _m_position = 0;
+			uint32_t _m_current_block = 0;
+
+			// Cache
+			std::vector<uint8_t> _m_cache;
+			uint32_t _m_cache_idx = 0xFFFFFFFF;
+			bool _m_cache_valid = false;
+
+			bool cache_block(uint32_t idx) {
+				if (idx >= _m_blocks.size()) return false;
+
+				BlockInfo& blk = _m_blocks[idx];
+				_m_stream->seek(blk.offset, Whence::BEG);
+				std::vector<uint8_t> cmp_data(blk.len_cmp);
+				if (_m_stream->read(cmp_data.data(), blk.len_cmp) != blk.len_cmp) return false;
+
+				_m_cache.resize(blk.len_src);
+
+				mz_ulong out_len = static_cast<mz_ulong>(blk.len_src);
+				int res = mz_uncompress(_m_cache.data(), &out_len, cmp_data.data(), static_cast<mz_ulong>(blk.len_cmp));
+
+				if (res != MZ_OK) return false;
+
+				_m_cache_idx = idx;
+				_m_cache_valid = true;
+				return true;
+			}
+		};
+	} // namespace detail
+
+	std::unique_ptr<Read> Read::from_zipped(std::unique_ptr<Read> stream) {
+		auto reader = std::make_unique<detail::ReadZipped>(std::move(stream));
+		if (!reader->init()) return nullptr;
+		return reader;
+	}
+#endif // _ZK_WITH_ZIPPED_VDF
 } // namespace zenkit

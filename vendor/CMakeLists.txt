@@ -33,6 +33,9 @@ endfunction()
 
 px_add_dependency(doctest https://github.com/doctest/doctest/archive/refs/tags/v2.4.9.zip d1563419fa370c34c90e028c2e903a70c8dc07b2)
 px_add_dependency(libsquish https://github.com/lmichaelis/phoenix-libsquish/archive/cc82beff55210816e1bd531fc6057203dc309807.zip 953f5cd072cd6674d1aeaff5ff91225f2197283c)
+if (ZK_ENABLE_ZIPPED_VDF)
+    px_add_dependency(miniz https://github.com/richgel999/miniz/archive/refs/tags/3.1.1.zip b761904541c8a49b140ade22f9477db31ec85439)
+endif ()
 
 # msvc: disable -wno-* flags
 if (NOT MSVC)
