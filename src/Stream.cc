@@ -516,7 +516,10 @@ namespace zenkit {
 
 					// Ensure current block is cached/decompressed
 					if (!_m_cache_valid || _m_cache_idx != _m_current_block) {
-						if (!cache_block(_m_current_block)) return total_read;
+						if (!cache_block(_m_current_block)) {
+							ZKLOGE("ReadZipped", "Failed to decompress block %u", _m_current_block);
+							return total_read;
+						}
 					}
 
 					size_t offset_in_block = _m_position - (_m_current_block * _m_header.block_size);
@@ -577,6 +580,8 @@ namespace zenkit {
 					// and a non-zero block size.
 					if (_m_header.blocks_count == 0 || _m_header.block_size == 0 ||
 					    _m_header.length_uncompressed == 0) {
+						ZKLOGE("ReadZipped", "Invalid ZippedStream header: length=%u, block_size=%u, blocks_count=%u",
+									_m_header.length_uncompressed, _m_header.block_size, _m_header.blocks_count);
 						return false;
 					}
 
@@ -586,6 +591,8 @@ namespace zenkit {
 					uint32_t expected_blocks =
 					    (_m_header.length_uncompressed + _m_header.block_size - 1) / _m_header.block_size;
 					if (_m_header.blocks_count != expected_blocks) {
+						ZKLOGE("ReadZipped", "Block count mismatch: expected %u, got %u", expected_blocks,
+									_m_header.blocks_count);
 						return false;
 					}
 

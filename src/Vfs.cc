@@ -308,7 +308,7 @@ namespace zenkit {
 		save_internal(w, version, unix_t, false);
 	}
 
-	void Vfs::save_internal(Write* w, GameVersion version, time_t unix_t, bool compressed) const {
+	void Vfs::save_internal(Write* w, GameVersion version, time_t unix_t, [[maybe_unused]] bool compressed) const {
 		std::vector<std::byte> catalog;
 		auto write_catalog = Write::to(&catalog);
 
