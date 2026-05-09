@@ -7,6 +7,7 @@
 namespace zenkit {
 	[[maybe_unused]] static constexpr auto VERSION_G1 = 0x305;
 	static constexpr auto VERSION_G2 = 0x905;
+	static constexpr auto VERSION_G2_OTHER = 0x805;
 
 	enum class MrmChunkType : std::uint16_t { MESH = 0xB100, END = 0xB1FF };
 
@@ -64,7 +65,7 @@ namespace zenkit {
 			material.load(*mats);
 		}
 
-		if (version == VERSION_G2) {
+		if (version == VERSION_G2 || version == VERSION_G2_OTHER) {
 			this->alpha_test = r->read_byte() != 0;
 		}
 
