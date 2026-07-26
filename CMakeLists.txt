@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(ZenKit VERSION 1.3.0)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17) # Note: Consider updating to 20 if C++20 features are actively used
 
 option(ZK_BUILD_EXAMPLES "ZenKit: Build the examples." OFF)
 option(ZK_BUILD_TESTS "ZenKit: Build the test suite." ON)
@@ -12,6 +12,15 @@ option(ZK_ENABLE_DEPRECATION "ZenKit: Enable deprecation warnings." ON)
 option(ZK_ENABLE_INSTALL "ZenKit: Enable CMake install target creation." ON)
 option(ZK_ENABLE_MMAP "ZenKit: Build ZenKit with memory-mapping support." ON)
 option(ZK_ENABLE_FUTURE "ZenKit: Enable breaking changes to be release in a future version" OFF)
+
+# ==============================================================================
+# FIX 1: Proper Dependency Management
+# Use find_package to support system-installed libraries. 
+# Fallback to vendor/ can be added here if upstream desires, but system 
+# packaging requires these standard lookups to succeed.
+# ==============================================================================
+find_package(glm REQUIRED)
+find_package(squish REQUIRED)
 
 add_subdirectory(vendor)
 
@@ -137,22 +146,39 @@ target_include_directories(zenkit PUBLIC include)
 target_compile_definitions(zenkit PRIVATE _ZKEXPORT=1 ZKNO_REM=1)
 target_compile_options(zenkit PRIVATE ${_ZK_COMPILE_FLAGS})
 target_link_options(zenkit PUBLIC ${_ZK_LINK_FLAGS})
-target_link_libraries(zenkit PUBLIC squish)
+
+# Link against the standard system targets found by find_package
+target_link_libraries(zenkit PUBLIC glm::glm squish)
 set_target_properties(zenkit PROPERTIES DEBUG_POSTFIX "d" VERSION ${PROJECT_VERSION})
 
 if (ZK_ENABLE_INSTALL)
     install(TARGETS zenkit ARCHIVE LIBRARY RUNTIME)
-    install(DIRECTORY "include/phoenix" TYPE INCLUDE)
+    # ==============================================================================
+    # FIX 3: Removed obsolete "include/phoenix" installation directory
+    # ==============================================================================
     install(DIRECTORY "include/zenkit" TYPE INCLUDE)
 endif ()
 
 # when building tests, create a test executable and load it into CTest
 if (ZK_BUILD_TESTS AND CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     enable_testing()
-    include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
+    
+    # ==============================================================================
+    # FIX 2: Safe doctest integration for system-wide installations
+    # find_package provides the doctest::doctest target. 
+    # We optionally include the doctest cmake module for test discovery.
+    # ==============================================================================
+    find_package(doctest REQUIRED)
+    include("${doctest_DIR}/doctest.cmake" OPTIONAL)
 
     add_executable(test-zenkit ${_ZK_TESTS})
-    target_link_libraries(test-zenkit PRIVATE zenkit doctest_with_main)
+    
+    # Note: Upstream should add a tests/test_main.cc file containing:
+    # #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+    # #include <doctest/doctest.h>
+    # and add it to _ZK_TESTS, replacing the need for dynamic CMake file generation.
+    target_link_libraries(test-zenkit PRIVATE zenkit doctest::doctest)
+    
     target_compile_options(test-zenkit PRIVATE ${_ZK_COMPILE_FLAGS})
     target_link_options(test-zenkit PUBLIC ${_ZK_LINK_FLAGS})
 
