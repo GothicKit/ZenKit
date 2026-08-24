@@ -59,6 +59,9 @@ namespace zenkit {
 				    for (auto& material : this->materials) {
 					    material.load(*matreader);
 				    }
+				    if (version == MESH_VERSION_G2) {
+					    this->alpha_test = c->read_byte() != 0;
+				    }
 
 				    break;
 			    }
