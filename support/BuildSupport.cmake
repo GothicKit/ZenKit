@@ -113,7 +113,7 @@ function(bs_check_win32_mmap _MMAP_AVAIL)
     check_c_source_compiles("
     #include <windows.h>
     int main(int argc, char** argv) {
-        HANDLE hFile = CreateFile(L\"test.txt\", GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+        HANDLE hFile = CreateFileW(L\"test.txt\", GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
         DWORD dwFileSize = GetFileSize(hFile, NULL);
         HANDLE hFileMapping = CreateFileMapping(hFile, NULL, PAGE_READONLY, 0, dwFileSize, NULL);
         LPVOID lpFileBase = MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0);

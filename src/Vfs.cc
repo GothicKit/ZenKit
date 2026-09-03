@@ -403,6 +403,18 @@ namespace zenkit {
 		w->write(catalog.data(), catalog.size());
 	}
 
+#ifndef _ZK_WITH_MMAP
+	/// Maximum number of bytes to request from a stream in a single read (256 MB).
+	static constexpr std::streamsize VFS_READ_CHUNK_SIZE = 256 * 1024 * 1024;
+
+	/// Reads up to size bytes from the stream into data.
+	/// A single read of 2 GiB or more fails outright on some platforms, so we split the read into chunks.
+	static void vfs_read_chunked(std::istream& stream, std::byte* data, std::streamsize size) {
+		for (std::streamsize off = 0; off < size && stream; off += stream.gcount())
+			stream.read((char*) data + off, std::min(VFS_READ_CHUNK_SIZE, size - off));
+	}
+#endif // _ZK_WITH_MMAP
+
 	void Vfs::mount_disk(std::filesystem::path const& host, VfsOverwriteBehavior overwrite) {
 #ifdef _ZK_WITH_MMAP
 		auto& mem = _m_data_mapped.emplace_back(host);
@@ -413,7 +425,7 @@ namespace zenkit {
 		stream.seekg(0);
 
 		auto& data = _m_data.emplace_back(new std::byte[(size_t) size]);
-		stream.read((char*) data.get(), size);
+		vfs_read_chunked(stream, data.get(), size);
 		this->mount_disk(data.get(), (size_t) size, overwrite);
 #endif
 	}
@@ -564,7 +576,7 @@ namespace zenkit {
 					    stream.seekg(0);
 
 					    auto& data = _m_data.emplace_back(new std::byte[(size_t) size]);
-					    stream.read((char*) data.get(), size);
+					    vfs_read_chunked(stream, data.get(), size);
 
 					    parent->create(VfsNode::file(path.filename().string(),
 					                                 VfsFileDescriptor {data.get(), static_cast<size_t>(size), false},
