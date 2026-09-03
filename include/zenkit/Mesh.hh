@@ -110,6 +110,9 @@ namespace zenkit {
 		/// \brief A list of materials used by this mesh.
 		std::vector<Material> materials {};
 
+		/// \brief If alpha testing should be enabled.
+		std::uint8_t alpha_test {true};
+
 		/// \brief A list of vertices of this mesh.
 		std::vector<Vec3> vertices {};
 
