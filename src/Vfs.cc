@@ -8,8 +8,8 @@
 #include "zenkit/Stream.hh"
 
 #ifdef _ZK_WITH_ZIPPED_VDF
-#define MINIZ_NO_ZLIB_COMPATIBLE_NAMES
-#include <miniz.h>
+	#define MINIZ_NO_ZLIB_COMPATIBLE_NAMES
+	#include <miniz.h>
 #endif
 
 #include <algorithm>
@@ -600,7 +600,8 @@ namespace zenkit {
 #ifdef _ZK_WITH_ZIPPED_VDF
 			zipped = true;
 #else
-			throw VfsBrokenDiskError {"Detected compressed VDF (build ZenKit with ZK_ENABLE_ZIPPED_VDF=ON to enable support)"};
+			throw VfsBrokenDiskError {
+			    "Detected compressed VDF (build ZenKit with ZK_ENABLE_ZIPPED_VDF=ON to enable support)"};
 #endif
 		} else {
 			ZKLOGW("Vfs", "Unknown volume flags: 0x%X (%u), assuming uncompressed", volume_flags, volume_flags);

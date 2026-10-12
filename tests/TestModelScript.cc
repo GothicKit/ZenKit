@@ -147,7 +147,6 @@ TEST_SUITE("ModelScript") {
 		CHECK_EQ(script.animations[2].sfx_ground[0].name, "sfxGrndName");
 		CHECK_EQ(script.animations[2].sfx_ground[0].empty_slot, false);
 
-
 		CHECK_EQ(script.blends.size(), 3);
 		CHECK_EQ(script.blends[0].name, "blendName1");
 		CHECK_EQ(script.blends[0].next, "blendNext1");

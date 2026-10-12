@@ -373,7 +373,10 @@ namespace zenkit {
 				into.model_tags.push_back(this->parse_modelTag());
 			} else {
 				auto const loc = _m_stream.format_location();
-				ZKLOGW("ModelScript", "Syntax error (%s): invalid keyword in `aniEnum` block: %s", loc.c_str(), kw.c_str());
+				ZKLOGW("ModelScript",
+				       "Syntax error (%s): invalid keyword in `aniEnum` block: %s",
+				       loc.c_str(),
+				       kw.c_str());
 				this->_m_stream.next_line();
 			}
 		}
