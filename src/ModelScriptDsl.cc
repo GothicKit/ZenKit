@@ -90,7 +90,7 @@ namespace zenkit {
 				//			registerMesh ("Some_File Name.ASC)
 				//			registerMesh ("Some_File Name.ASC
 				unsigned char prev = '\0';
-				while (chr != '"' && chr != '\n') {
+				while (chr != '"' && chr != '\n' && chr != '\r') {
 					if (!std::isspace(chr)) prev = chr;
 					_m_value.push_back(static_cast<char>(chr));
 					chr = static_cast<unsigned char>(_m_buffer->read_char());
