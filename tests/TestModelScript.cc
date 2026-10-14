@@ -5,7 +5,28 @@
 #include <zenkit/ModelScript.hh>
 #include <zenkit/Stream.hh>
 
+#include <sstream>
+
 TEST_SUITE("ModelScript") {
+	TEST_CASE("ModelScript.load line endings") {
+		for (std::string const eol : {"\n", "\r\n"}) {
+			CAPTURE(eol.size());
+			std::istringstream source {"Model (\"test\") {" + eol + "registerMesh(\"Some File(1).asc\")" + eol +
+			                           "registerMesh(\"MissingQuote.asc" + eol +
+			                           "registerMesh(\"MissingQuoteAndParen.asc)" + eol +
+			                           "registerMesh(\"After.asc\")" + eol + "}" + eol};
+			auto r = zenkit::Read::from(&source);
+			zenkit::ModelScript script {};
+			script.load(r.get());
+
+			REQUIRE_EQ(script.meshes.size(), 4);
+			CHECK_EQ(script.meshes[0], "Some File(1).asc");
+			CHECK_EQ(script.meshes[1], "MissingQuote.asc");
+			CHECK_EQ(script.meshes[2], "MissingQuoteAndParen.asc");
+			CHECK_EQ(script.meshes[3], "After.asc");
+		}
+	}
+
 	TEST_CASE("ModelScript.load(GOTHIC?)") {
 		zenkit::Logger::set_default(zenkit::LogLevel::INFO);
 		auto r = zenkit::Read::from("./samples/waran.mds");
@@ -146,7 +167,6 @@ TEST_SUITE("ModelScript") {
 		CHECK_EQ(script.animations[2].sfx_ground[0].frame, 5);
 		CHECK_EQ(script.animations[2].sfx_ground[0].name, "sfxGrndName");
 		CHECK_EQ(script.animations[2].sfx_ground[0].empty_slot, false);
-
 
 		CHECK_EQ(script.blends.size(), 3);
 		CHECK_EQ(script.blends[0].name, "blendName1");

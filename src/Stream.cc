@@ -9,8 +9,8 @@
 #include <cstring>
 #include <fstream>
 #ifdef _ZK_WITH_ZIPPED_VDF
-#define MINIZ_NO_ZLIB_COMPATIBLE_NAMES
-#include <miniz.h>
+	#define MINIZ_NO_ZLIB_COMPATIBLE_NAMES
+	#include <miniz.h>
 #endif
 
 namespace zenkit {
@@ -580,8 +580,11 @@ namespace zenkit {
 					// and a non-zero block size.
 					if (_m_header.blocks_count == 0 || _m_header.block_size == 0 ||
 					    _m_header.length_uncompressed == 0) {
-						ZKLOGE("ReadZipped", "Invalid ZippedStream header: length=%u, block_size=%u, blocks_count=%u",
-									_m_header.length_uncompressed, _m_header.block_size, _m_header.blocks_count);
+						ZKLOGE("ReadZipped",
+						       "Invalid ZippedStream header: length=%u, block_size=%u, blocks_count=%u",
+						       _m_header.length_uncompressed,
+						       _m_header.block_size,
+						       _m_header.blocks_count);
 						return false;
 					}
 
@@ -591,8 +594,10 @@ namespace zenkit {
 					uint32_t expected_blocks =
 					    (_m_header.length_uncompressed + _m_header.block_size - 1) / _m_header.block_size;
 					if (_m_header.blocks_count != expected_blocks) {
-						ZKLOGE("ReadZipped", "Block count mismatch: expected %u, got %u", expected_blocks,
-									_m_header.blocks_count);
+						ZKLOGE("ReadZipped",
+						       "Block count mismatch: expected %u, got %u",
+						       expected_blocks,
+						       _m_header.blocks_count);
 						return false;
 					}
 

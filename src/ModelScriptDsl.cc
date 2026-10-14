@@ -90,7 +90,7 @@ namespace zenkit {
 				//			registerMesh ("Some_File Name.ASC)
 				//			registerMesh ("Some_File Name.ASC
 				unsigned char prev = '\0';
-				while (chr != '"' && chr != '\n') {
+				while (chr != '"' && chr != '\n' && chr != '\r') {
 					if (!std::isspace(chr)) prev = chr;
 					_m_value.push_back(static_cast<char>(chr));
 					chr = static_cast<unsigned char>(_m_buffer->read_char());
@@ -373,7 +373,10 @@ namespace zenkit {
 				into.model_tags.push_back(this->parse_modelTag());
 			} else {
 				auto const loc = _m_stream.format_location();
-				ZKLOGW("ModelScript", "Syntax error (%s): invalid keyword in `aniEnum` block: %s", loc.c_str(), kw.c_str());
+				ZKLOGW("ModelScript",
+				       "Syntax error (%s): invalid keyword in `aniEnum` block: %s",
+				       loc.c_str(),
+				       kw.c_str());
 				this->_m_stream.next_line();
 			}
 		}
