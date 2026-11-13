@@ -183,6 +183,8 @@ namespace zenkit {
 				continue;
 			}
 
+			if (context->type() != VfsNodeType::DIRECTORY) return nullptr;
+
 			auto name = path.substr(0, next);
 			context = context->child(name);
 
@@ -533,7 +535,7 @@ namespace zenkit {
 		auto childName = path.substr(lastSlash + 1);
 
 		VfsNode* pNode = this->resolve(parentPath);
-		if (pNode == nullptr) return false;
+		if (pNode == nullptr || pNode->type() != VfsNodeType::DIRECTORY) return false;
 		return pNode->remove(childName);
 	}
 
