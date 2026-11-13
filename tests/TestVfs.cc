@@ -75,6 +75,30 @@ TEST_SUITE("Vfs") {
 		check_vfs(vdf);
 	}
 
+	TEST_CASE("Vfs.resolve(through_file)") {
+		auto vdf = zenkit::Vfs {};
+		vdf.mount_disk("./samples/basic.vdf");
+
+		CHECK_EQ(vdf.resolve("config.yml/nonexistent"), nullptr);
+		CHECK_EQ(vdf.resolve("licenses/gpl/lgpl-3.0.md/nonexistent"), nullptr);
+		CHECK_THROWS_AS(vdf.mount(zenkit::VfsNode::directory("dir"), "config.yml/nonexistent"),
+		                zenkit::VfsNotFoundError);
+	}
+
+	TEST_CASE("Vfs.remove(through_file)") {
+		auto vdf = zenkit::Vfs {};
+		vdf.mount_disk("./samples/basic.vdf");
+
+		CHECK_FALSE(vdf.remove("config.yml/nonexistent"));
+
+		auto const* config_yml = vdf.resolve("config.yml");
+		REQUIRE_NE(config_yml, nullptr);
+		CHECK(config_yml->type() == zenkit::VfsNodeType::FILE);
+
+		CHECK(vdf.remove("licenses/gpl/lgpl-3.0.md"));
+		CHECK_EQ(vdf.resolve("licenses/gpl/lgpl-3.0.md"), nullptr);
+	}
+
 #ifdef _ZK_WITH_ZIPPED_VDF
 	TEST_CASE("Vfs.mount_disk(basic_zipped)") {
 		auto vdf = zenkit::Vfs {};
