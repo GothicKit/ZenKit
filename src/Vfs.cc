@@ -550,7 +550,10 @@ namespace zenkit {
 				        std::chrono::duration_cast<std::chrono::seconds>(ref.last_write_time().time_since_epoch());
 
 				    if (ref.is_directory()) {
-					    VfsNode* newP = parent->create(VfsNode::directory(path.filename().string(), time.count()));
+					    VfsNode* newP = parent->child(path.filename().string());
+					    if (newP == nullptr || newP->type() != VfsNodeType::DIRECTORY) {
+						    newP = parent->create(VfsNode::directory(path.filename().string(), time.count()));
+					    }
 					    load_directory(newP, path);
 				    } else if (ref.file_size() > 0) {
 #ifdef _ZK_WITH_MMAP

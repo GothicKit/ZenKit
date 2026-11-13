@@ -5,6 +5,7 @@
 
 #include <doctest/doctest.h>
 
+#include <fstream>
 #include <stack>
 #include <string>
 #include <vector>
@@ -73,6 +74,25 @@ TEST_SUITE("Vfs") {
 		auto vdf = zenkit::Vfs {};
 		vdf.mount_host("./samples/basic.vdf.dir", "/");
 		check_vfs(vdf);
+	}
+
+	TEST_CASE("Vfs.mount_host(case-insensitive collision)") {
+		// On case-insensitive file systems both spellings are one folder.
+		auto const host = std::filesystem::temp_directory_path() / "zenkit-test-vfs-twin-dirs";
+		std::filesystem::remove_all(host);
+		std::filesystem::create_directories(host / "Data" / "Sub");
+		std::filesystem::create_directories(host / "data" / "sub");
+		std::ofstream {host / "Data" / "Sub" / "a.txt"} << "a";
+		std::ofstream {host / "data" / "sub" / "b.txt"} << "b";
+
+		{
+			auto vdf = zenkit::Vfs {};
+			vdf.mount_host(host, "/");
+			CHECK_NE(vdf.resolve("/data/sub/a.txt"), nullptr);
+			CHECK_NE(vdf.resolve("/data/sub/b.txt"), nullptr);
+		}
+
+		std::filesystem::remove_all(host);
 	}
 
 #ifdef _ZK_WITH_ZIPPED_VDF
