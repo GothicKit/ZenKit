@@ -17,19 +17,19 @@ namespace zenkit {
 
 		struct stat st {};
 		if (fstat(handle, &st) != 0) {
+			close(handle);
 			throw std::runtime_error {"Failed to stat " + path.string()};
 		}
 
 		_m_data =
 		    static_cast<std::byte*>(mmap(nullptr, static_cast<size_t>(st.st_size), PROT_READ, MAP_SHARED, handle, 0));
-		if (_m_data == nullptr) {
+		close(handle);
+		if (_m_data == MAP_FAILED) {
 			throw std::runtime_error {"Failed to mmap " + path.string()};
 		}
 
 		_m_size = static_cast<std::size_t>(st.st_size);
 		_m_platform_handle = (void*) _m_data;
-
-		close(handle);
 	}
 
 	Mmap::Mmap(Mmap&& other) noexcept {

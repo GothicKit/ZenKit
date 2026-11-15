@@ -6,6 +6,7 @@
 #include <doctest/doctest.h>
 
 #include <stack>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -63,6 +64,16 @@ void check_vfs(zenkit::Vfs const& vdf) {
 }
 
 TEST_SUITE("Vfs") {
+#if defined(_ZK_WITH_MMAP) && !defined(_WIN32)
+	TEST_CASE("Vfs.mount_disk rejects an unmappable path") {
+		auto vdf = zenkit::Vfs {};
+		CHECK_THROWS_AS(vdf.mount_disk("./samples"), std::runtime_error);
+		CHECK(vdf.root().children().empty());
+		vdf.mount_disk("./samples/basic.vdf");
+		check_vfs(vdf);
+	}
+#endif
+
 	TEST_CASE("Vfs.mount_disk(GOTHIC?)") {
 		auto vdf = zenkit::Vfs {};
 		vdf.mount_disk("./samples/basic.vdf");
