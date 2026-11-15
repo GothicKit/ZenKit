@@ -5,6 +5,11 @@
 
 #include <doctest/doctest.h>
 
+#include <cstdlib>
+#include <ctime>
+#include <filesystem>
+#include <fstream>
+#include <random>
 #include <stack>
 #include <string>
 #include <vector>
@@ -217,4 +222,23 @@ TEST_SUITE("Vfs") {
 		}
 	}
 #endif // _ZK_WITH_ZIPPED_VDF
+
+	TEST_CASE("Vfs.mount_host(time)") {
+		auto const dir = std::filesystem::temp_directory_path() /
+		    ("zenkit-test-mount-host-time-" + std::to_string(std::random_device {}()));
+		std::filesystem::remove_all(dir);
+		std::filesystem::create_directories(dir);
+		std::ofstream {dir / "file.txt"} << "ZenKit";
+
+		{
+			auto vdf = zenkit::Vfs {};
+			vdf.mount_host(dir, "/");
+
+			auto const* file = vdf.find("file.txt");
+			REQUIRE_NE(file, nullptr);
+			CHECK_LT(std::abs(file->time() - std::time(nullptr)), 86400);
+		}
+
+		std::filesystem::remove_all(dir);
+	}
 }
