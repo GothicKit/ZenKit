@@ -14,10 +14,14 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cerrno>
 #include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <stack>
+#include <system_error>
+
+#include <sys/stat.h>
 
 namespace zenkit {
 	static constexpr std::string_view VFS_DISK_SIGNATURE_G1 = "PSVDSC_V2.00\r\n\r\n";
@@ -539,6 +543,24 @@ namespace zenkit {
 		return pNode->remove(childName);
 	}
 
+	static std::time_t host_file_time(std::filesystem::path const& path) {
+#ifdef _WIN32
+		struct _stat64 st {};
+		auto result = _wstat64(path.c_str(), &st);
+#else
+		struct stat st {};
+		auto result = stat(path.c_str(), &st);
+#endif
+		if (result != 0) {
+			auto const error = errno;
+			throw std::filesystem::filesystem_error {"cannot get file time",
+			                                         path,
+			                                         std::error_code {error, std::generic_category()}};
+		}
+
+		return st.st_mtime;
+	}
+
 	void Vfs::mount_host(std::filesystem::path const& sourcePath,
 	                     std::string_view mountPoint,
 	                     VfsOverwriteBehavior overwrite) {
@@ -548,18 +570,17 @@ namespace zenkit {
 		    [this, &load_directory](VfsNode* parent, std::filesystem::path const& host) {
 			    for (auto const& ref : std::filesystem::directory_iterator(host)) {
 				    auto const& path = ref.path();
-				    auto time =
-				        std::chrono::duration_cast<std::chrono::seconds>(ref.last_write_time().time_since_epoch());
+				    auto time = host_file_time(path);
 
 				    if (ref.is_directory()) {
-					    VfsNode* newP = parent->create(VfsNode::directory(path.filename().string(), time.count()));
+					    VfsNode* newP = parent->create(VfsNode::directory(path.filename().string(), time));
 					    load_directory(newP, path);
 				    } else if (ref.file_size() > 0) {
 #ifdef _ZK_WITH_MMAP
 					    auto& mem = this->_m_data_mapped.emplace_back(path);
 					    parent->create(VfsNode::file(path.filename().string(),
 					                                 VfsFileDescriptor {mem.data(), mem.size(), false},
-					                                 time.count()));
+					                                 time));
 #else
 					    std::ifstream stream {path, std::ios::in | std::ios::ate | std::ios::binary};
 					    auto size = stream.tellg();
@@ -570,7 +591,7 @@ namespace zenkit {
 
 					    parent->create(VfsNode::file(path.filename().string(),
 					                                 VfsFileDescriptor {data.get(), static_cast<size_t>(size), false},
-					                                 time.count()));
+					                                 time));
 #endif
 				    }
 			    }
